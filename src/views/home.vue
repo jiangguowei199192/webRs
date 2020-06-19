@@ -58,7 +58,7 @@ export default {
           content: '评战系统'
         },
         {
-          content: '智慧消防指挥调度系统'
+          content: '消防救援现场指挥系统'
         },
 
         {
@@ -85,23 +85,33 @@ export default {
 <style lang="less">
 .home {
   .el-header {
-    padding-top: 30px;
+    margin-top: 30px;
   }
   .box {
     display: flex;
     justify-content: space-between;
-    .item {
-      padding-bottom: 5px;
-    }
+    font-size:24px;
+    font-weight: 500;
     .item:not(:nth-child(4)) {
       cursor: pointer;
+      width:182px;
+      height:52px;
+      background:url(../assets/images/unselected.png);
+      line-height: 52px;
+      text-align: center;
+    }
+    .item:nth-child(4){
+      border-top: 1px solid #7BE4FF
     }
     .title {
-      font-size: 30px;
-      margin-top: -15px;
+      padding-top:11px;
+      font-size: 36px;
+      font-weight:bold;
+      margin-top: -13px;
     }
     .active {
-      border-bottom: 1px solid #fff;
+      // border-bottom: 1px solid #fff;
+       background:url(../assets/images/selected.png)!important
     }
   }
 }
