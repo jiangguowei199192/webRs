@@ -29,7 +29,7 @@ service.interceptors.request.use((config) => {
 // 添加响应拦截器
 service.interceptors.response.use(
   (response) => {
-    if (response.data.code !== 200) {
+    if (response.data.code !== 0) {
       Message({
         message: response.data.msg,
         type: 'error',
@@ -40,15 +40,11 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    if (!error.response) {
-      Message({
-        message: error.response,
-        type: 'error',
-        duration: 5 * 1000
-      })
-    } else {
-      // 此处整理错误信息格式
-    }
+    Message({
+      message: error.response,
+      type: 'error',
+      duration: 5 * 1000
+    })
   }
 )
 

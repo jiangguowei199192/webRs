@@ -1,3 +1,3 @@
 export const api = {
-  getAreaAxios: 'rma/getMenusAndActions'
+  getAreaAxios: 'graph/comparation/startByTifFileIds'
 }
