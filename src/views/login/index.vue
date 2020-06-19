@@ -18,17 +18,11 @@
             <el-form-item prop="code">
               <el-input
                 v-model.trim="ruleForm.code"
-                placeholder="填写6位短信验证码"
+                placeholder="请输入密码"
                 :maxlength="6"
               ></el-input>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item class="getCode">
-              <el-button type="text" v-show="show" @click="getCode">获取短信验证码</el-button>
-              <el-button type="text" v-show="!show">{{count}}s后重新获取</el-button>
-            </el-form-item>
-          </el-col> -->
         </el-row>
         <el-row>
           <el-col>

@@ -15,15 +15,11 @@ const routes = [{
   component: () => import('../views/home'),
   children: [{
     path: '/videoSystem',
+    name: 'videoSystem',
     component: () => import('../views/videoSystem')
   }
   ]
 }
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   component: () => import('../views/About.vue')
-  // }
 ]
 
 const router = new VueRouter({
@@ -32,15 +28,16 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, from, next) => {
-  // const token = sessionStorage.getItem('token')
+  const token = sessionStorage.getItem('token') || 'token'
   const notNeedToLogin = ['login', 'register', 'forgetPass']
   if (notNeedToLogin.indexOf(to.name) > -1) {
     next()
   } else {
-    // if (!token || !to.name) {
-    //   next({ name: 'login' })
-    //   return
-    // }
+    debugger
+    if (!token || !to.name) {
+      next({ name: 'login' })
+      return
+    }
     next()
   }
 })
