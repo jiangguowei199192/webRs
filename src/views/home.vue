@@ -34,6 +34,9 @@
             <span>{{item.content}}</span>
           </div>
         </div>
+        <div class="cur">
+          <div class="realTime">显示当前日期和所在城市</div>
+        </div>
       </el-header>
       <el-main>
         <router-view />
@@ -86,43 +89,64 @@ export default {
 .home {
   .el-header {
     margin-top: 30px;
+    height:auto!important;
   }
   .box {
     display: flex;
     justify-content: space-between;
-    font-size:24px;
+    font-size: 24px;
     font-weight: 500;
     .item:not(:nth-child(4)) {
       cursor: pointer;
-      width:182px;
-      height:52px;
-      background:url(../assets/images/unselected.png);
+      width: 182px;
+      height: 52px;
+      background: url(../assets/images/unselected.png);
       line-height: 52px;
       text-align: center;
     }
-    .item:nth-child(4){
-      border-top: 3px solid #7BE4FF
+    .item:nth-child(4) {
+      border-top: 3px solid #7be4ff;
     }
     .title {
-      width:559px;
+      width: 559px;
       text-align: center;
-      padding-top:11px;
+      padding-top: 11px;
       font-size: 36px;
-      font-weight:bold;
+      font-weight: bold;
       margin-top: -13px;
-      font-family:Source Han Sans CN;
+      font-family: Source Han Sans CN;
+      // background: linear-gradient(
+      //   90deg,
+      //   rgba(0, 168, 217, 0.01) 0%,
+      //   rgba(0, 168, 217, 0) 100%
+      // );
       background:linear-gradient(90deg,rgba(0,168,217,0.01) 0%,rgba(0,168,217,0) 100%);
-      span{
+      span {
         //  background:linear-gradient(180deg,rgba(0,168,217,0.01), rgba(0,168,217,1));
         // background:rgba(0,168,217,1);
-        text-shadow:#000 3px 4px 5px
+        text-shadow: #000 3px 4px 5px;
       }
-
-// opacity:0.35;
     }
     .active {
       // border-bottom: 1px solid #fff;
-       background:url(../assets/images/selected.png)!important
+      background: url(../assets/images/selected.png) !important;
+    }
+  }
+  .cur {
+    position: relative;
+    margin-top: 8px;
+    margin-bottom:25px;
+    font-family: Source Han Sans CN;
+    font-weight: 500;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+    .realTime {
+      width: 936px;
+      // background:url()
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
   }
 }
