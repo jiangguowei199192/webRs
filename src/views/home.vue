@@ -101,13 +101,24 @@ export default {
       text-align: center;
     }
     .item:nth-child(4){
-      border-top: 1px solid #7BE4FF
+      border-top: 3px solid #7BE4FF
     }
     .title {
+      width:559px;
+      text-align: center;
       padding-top:11px;
       font-size: 36px;
       font-weight:bold;
       margin-top: -13px;
+      font-family:Source Han Sans CN;
+      background:linear-gradient(90deg,rgba(0,168,217,0.01) 0%,rgba(0,168,217,0) 100%);
+      span{
+        //  background:linear-gradient(180deg,rgba(0,168,217,0.01), rgba(0,168,217,1));
+        // background:rgba(0,168,217,1);
+        text-shadow:#000 3px 4px 5px
+      }
+
+// opacity:0.35;
     }
     .active {
       // border-bottom: 1px solid #fff;
