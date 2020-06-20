@@ -1,9 +1,8 @@
 <template>
    <div class="videoContainer">
-       <VideoMain :showLeft="showLeft" :showRight="showRight">
+       <VideoMain :showLeft="showLeft" :showRight="showRight"  @hideLeftNav="closeLeftNav" @hideRightInfo="closeRightInfo">
            <div slot="left">
-               <span @click.stop="closeLeft" class="iconRight">&gt;</span>
-               <span @click.stop="showLeft" class="iconLeft">&lt;</span>
+                 左
            </div>
            <div slot="center">
                中
@@ -28,8 +27,11 @@ export default {
     }
   },
   methods: {
-    closeLeft () {
-      this.showLeft = false
+    closeLeftNav (type) {
+      this.showLeft = type !== 1
+    },
+    closeRightInfo (type) {
+      this.showRight = type !== 1
     }
   }
 }
@@ -37,13 +39,6 @@ export default {
 </script>
 <style lang="less">
     .videoContainer{
-        .iconRight,.iconLeft{
-            position:absolute;
-            top:50%;
-            cursor: pointer;
-        }
-        .iconRight{
-            left:100%;
-        }
+
     }
 </style>
