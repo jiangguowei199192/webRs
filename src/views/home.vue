@@ -100,7 +100,7 @@ export default {
       cursor: pointer;
       width: 182px;
       height: 52px;
-      background: url(../assets/images/unselected.png);
+      background: url(../assets/images/unselected.png) no-repeat;
       line-height: 52px;
       text-align: center;
     }
@@ -129,7 +129,7 @@ export default {
     }
     .active {
       // border-bottom: 1px solid #fff;
-      background: url(../assets/images/selected.png) !important;
+      background: url(../assets/images/selected.png) no-repeat  !important;
     }
   }
   .cur {
