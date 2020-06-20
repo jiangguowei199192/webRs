@@ -77,7 +77,7 @@ export default {
   }
   .rightInfo .iconRight{
     right:0px;
-    background: url(../../../assets/images/arrow-left-info.png) no-repeat;
+    background: url(../../../assets/images/arrow-right-info.png) no-repeat;
   }
   .rightInfo .iconLeft{
     background: url(../../../assets/images/arrow-left-info.png) no-repeat;
