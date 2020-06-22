@@ -90,6 +90,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .home {
+   background: url(../assets/images/bakcground.png) no-repeat;
   .el-header {
     margin-top: 36px;
     height: auto !important;
