@@ -134,7 +134,15 @@ export default {
       line-height: 34px;
       color: #23cefd;
       div {
-        flex: 1;
+        // flex: 1;
+        width:126px;
+        height:34px;
+        background:url(../../assets/images/left.png) no-repeat;
+        padding-left:32px;
+      }
+      div:nth-child(2){
+          background:url(../../assets/images/right.png) no-repeat;
+          transform: translateX(-30px);
       }
       div.active {
         color: #fff;

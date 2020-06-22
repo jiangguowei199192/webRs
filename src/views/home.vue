@@ -173,7 +173,7 @@ export default {
     text-align: center;
     .realTime {
       width: 936px;
-      // background:url()
+      background:url(../assets/images/logo.png) no-repeat;
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
