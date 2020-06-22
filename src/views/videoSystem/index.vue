@@ -8,17 +8,19 @@
                中
            </div>
            <div slot="right">
-               右
+               <Calendar></Calendar>
            </div>
        </VideoMain>
    </div>
 </template>
 <script>
 import VideoMain from './components/main'
+import Calendar from './components/calendar' 
 export default {
   name: 'videoContainer',
   components: {
-    VideoMain
+    VideoMain,
+    Calendar
   },
   data () {
     return {
