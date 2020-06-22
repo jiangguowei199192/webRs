@@ -30,8 +30,15 @@
             v-for="(item,index) in systems"
             :key="index"
             @click.stop="jumpTo(index)"
+            @mouseover="showCur(index)"
           >
             <span>{{item.content}}</span>
+            <template v-if="index==1">
+              <div class="status">
+                <el-button type="primary" :class="{activeStatus:curActive==1}">实时视频</el-button>
+                <el-button type="primary" :class="{activeStatus:curActive==2}">回放</el-button>
+              </div>
+            </template>
           </div>
         </div>
         <div class="cur">
@@ -73,7 +80,8 @@ export default {
         {
           content: '系统设置'
         }
-      ]
+      ],
+      curActive: 1
     }
   },
   methods: {
@@ -81,6 +89,12 @@ export default {
       if (index !== 3) {
         this.isActive = index
       }
+    },
+    showCur (index) {
+      this.isHowever = index
+    },
+    hideCur () {
+      this.isHowever = ''
     }
   }
 }
@@ -88,14 +102,31 @@ export default {
 <style lang="less">
 .home {
   .el-header {
-    margin-top: 30px;
-    height:auto!important;
+    margin-top: 36px;
+    height: auto !important;
+    padding: 0 62px 0 46px;
   }
   .box {
     display: flex;
     justify-content: space-between;
     font-size: 24px;
     font-weight: 500;
+    .item {
+      position: relative;
+      .status {
+        position: absolute;
+        width: 300px;
+        left: -30px;
+        top: 54px;
+        display: none;
+        .el-button {
+          width: 140px;
+        }
+        .activeStatus{
+          border:2px solid rgba(233,226,101,1);
+        }
+      }
+    }
     .item:not(:nth-child(4)) {
       cursor: pointer;
       width: 182px;
@@ -107,6 +138,9 @@ export default {
     .item:nth-child(4) {
       border-top: 3px solid #7be4ff;
     }
+    // .item:nth-child(n+5){
+
+    // }
     .title {
       width: 559px;
       text-align: center;
@@ -120,7 +154,11 @@ export default {
       //   rgba(0, 168, 217, 0.01) 0%,
       //   rgba(0, 168, 217, 0) 100%
       // );
-      background:linear-gradient(90deg,rgba(0,168,217,0.01) 0%,rgba(0,168,217,0) 100%);
+      background: linear-gradient(
+        90deg,
+        rgba(0, 168, 217, 0.01) 0%,
+        rgba(0, 168, 217, 0) 100%
+      );
       span {
         //  background:linear-gradient(180deg,rgba(0,168,217,0.01), rgba(0,168,217,1));
         // background:rgba(0,168,217,1);
@@ -129,18 +167,23 @@ export default {
     }
     .active {
       // border-bottom: 1px solid #fff;
-      background: url(../assets/images/selected.png) no-repeat  !important;
+      background: url(../assets/images/selected.png) no-repeat !important;
+    }
+    .active:hover{
+      div{
+        display:block;
+      }
     }
   }
   .cur {
     position: relative;
     margin-top: 8px;
-    margin-bottom:25px;
+    margin-bottom: 25px;
     font-family: Source Han Sans CN;
     font-weight: 500;
-      height: 40px;
-      line-height: 40px;
-      text-align: center;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
     .realTime {
       width: 936px;
       // background:url()

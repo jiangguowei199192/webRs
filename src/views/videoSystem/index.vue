@@ -1,17 +1,18 @@
 <template>
-   <div class="videoContainer">
-       <VideoMain :showLeft="showLeft" :showRight="showRight"  @hideLeftNav="closeLeftNav" @hideRightInfo="closeRightInfo">
-           <div slot="left">
-                 左
-           </div>
-           <div slot="center">
-               中
-           </div>
-           <div slot="right">
-               右
-           </div>
-       </VideoMain>
-   </div>
+  <div class="videoContainer">
+    <VideoMain
+      :showLeft="showLeft"
+      :showRight="showRight"
+      @hideLeftNav="closeLeftNav"
+      @hideRightInfo="closeRightInfo"
+    >
+      <div slot="left">
+        <div>左</div>
+      </div>
+      <div slot="center">中</div>
+      <div slot="right">右</div>
+    </VideoMain>
+  </div>
 </template>
 <script>
 import VideoMain from './components/main'
@@ -35,10 +36,8 @@ export default {
     }
   }
 }
-
 </script>
 <style lang="less">
-    .videoContainer{
-
-    }
+.videoContainer {
+}
 </style>
