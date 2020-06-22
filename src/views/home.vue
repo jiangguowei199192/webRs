@@ -3,27 +3,6 @@
     <el-container>
       <el-header>
         <div class="box">
-          <!-- <div class="item" :class="{active:index==0}">
-            <span>智慧决策系统</span>
-          </div>
-          <div class="item" :class="{active:index==1}">
-            <span>视频侦查</span>
-          </div>
-          <div class="item">
-            <span>评战系统</span>
-          </div>
-          <div class="item title " :class="{active:index==2}">
-            <span>智慧消防指挥调度系统</span>
-          </div>
-          <div class="item" :class="{active:index==3}">
-            <span>数字化单兵</span>
-          </div>
-          <div class="item" :class="{active:index==4}">
-            <span>数字化装备</span>
-          </div>
-          <div class="item" :class="{active:index==5}">
-            <span>系统设置</span>
-          </div>-->
           <div
             class="item"
             :class="{title:index==3,active:isActive==index}"
@@ -31,12 +10,13 @@
             :key="index"
             @click.stop="jumpTo(index)"
             @mouseover="showCur(index)"
+            @mouseleave="hideCur(index)"
           >
             <span>{{item.content}}</span>
-            <template v-if="index==1">
-              <div class="status">
-                <el-button type="primary" :class="{activeStatus:curActive==1}">实时视频</el-button>
-                <el-button type="primary" :class="{activeStatus:curActive==2}">回放</el-button>
+            <template >
+              <div class="status" v-if="index==1&&isHowever==index">
+                <el-button type="primary" :class="{activeStatus:curActive==1}" @click.stop="curActive=1">实时视频</el-button>
+                <el-button type="primary" :class="{activeStatus:curActive==2}" @click.stop="curActive=2">回放</el-button>
               </div>
             </template>
           </div>
@@ -81,6 +61,7 @@ export default {
           content: '系统设置'
         }
       ],
+      isHowever: 0,
       curActive: 1
     }
   },
@@ -99,7 +80,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .home {
   .el-header {
     margin-top: 36px;
@@ -114,11 +95,11 @@ export default {
     .item {
       position: relative;
       .status {
-        position: absolute;
+        position: relative;
+        z-index:999;
         width: 300px;
         left: -30px;
-        top: 54px;
-        display: none;
+        //  top: 54px;
         .el-button {
           width: 140px;
         }
@@ -149,30 +130,17 @@ export default {
       font-weight: bold;
       margin-top: -13px;
       font-family: Source Han Sans CN;
-      // background: linear-gradient(
-      //   90deg,
-      //   rgba(0, 168, 217, 0.01) 0%,
-      //   rgba(0, 168, 217, 0) 100%
-      // );
       background: linear-gradient(
         90deg,
         rgba(0, 168, 217, 0.01) 0%,
         rgba(0, 168, 217, 0) 100%
       );
       span {
-        //  background:linear-gradient(180deg,rgba(0,168,217,0.01), rgba(0,168,217,1));
-        // background:rgba(0,168,217,1);
         text-shadow: #000 3px 4px 5px;
       }
     }
     .active {
-      // border-bottom: 1px solid #fff;
       background: url(../assets/images/selected.png) no-repeat !important;
-    }
-    .active:hover{
-      div{
-        display:block;
-      }
     }
   }
   .cur {
