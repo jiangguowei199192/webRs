@@ -16,7 +16,7 @@ const routes = [{
   children: [{
     path: '/videoSystem',
     name: 'videoSystem',
-    component: () => import('../views/videoSystem')
+    component: () => import('../views/videoSystem/realVideo')
   }
   ]
 }

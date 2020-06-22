@@ -4,20 +4,28 @@
       <el-header>
         <div class="box">
           <div
-            class="item"
-            :class="{title:index==3,active:isActive==index}"
             v-for="(item,index) in systems"
             :key="index"
+            class="list"
             @click.stop="jumpTo(index)"
             @mouseover="showCur(index)"
-            @mouseleave="hideCur(index)"
           >
-            <span>{{item.content}}</span>
+            <div class="item" :class="{title:index==3,active:isActive==index}">
+              <span>{{item.content}}</span>
+            </div>
             <template >
-              <div class="status" v-if="index==1&&isHowever==index">
-                <el-button type="primary" :class="{activeStatus:curActive==1}" @click.stop="curActive=1">实时视频</el-button>
-                <el-button type="primary" :class="{activeStatus:curActive==2}" @click.stop="curActive=2">回放</el-button>
-              </div>
+            <div class="status" v-if="index==1">
+              <el-button
+                type="primary"
+                :class="{activeStatus:curActive==1}"
+                @click.stop="curActive=1"
+              >实时视频</el-button>
+              <el-button
+                type="primary"
+                :class="{activeStatus:curActive==2}"
+                @click.stop="curActive=2"
+              >回放</el-button>
+            </div>
             </template>
           </div>
         </div>
@@ -73,10 +81,10 @@ export default {
     },
     showCur (index) {
       this.isHowever = index
-    },
-    hideCur () {
-      this.isHowever = ''
     }
+    // hideCur () {
+    //   this.isHowever = ''
+    // }
   }
 }
 </script>
@@ -92,23 +100,36 @@ export default {
     justify-content: space-between;
     font-size: 24px;
     font-weight: 500;
-    .item {
+    .list {
       position: relative;
-      .status {
+      z-index: 1;
+      .item {
         position: relative;
-        z-index:999;
+      }
+      .status {
+        position: absolute;
+        z-index: 999;
         width: 300px;
         left: -30px;
-        //  top: 54px;
+        padding-top: 30px;
+        display: none;
         .el-button {
           width: 140px;
+          background: #082d56;
         }
-        .activeStatus{
-          border:2px solid rgba(233,226,101,1);
+        .activeStatus {
+          border: 2px solid rgba(233, 226, 101, 1);
+          color: #e9e265;
         }
       }
     }
-    .item:not(:nth-child(4)) {
+    // :list:not(:nth-child(4)) .status{
+    //   display: none;
+    // }
+    .list:not(:nth-child(4)):hover .status{
+      display: block!important;
+    }
+    div.list:not(:nth-child(4)) .item {
       cursor: pointer;
       width: 182px;
       height: 52px;
@@ -116,12 +137,9 @@ export default {
       line-height: 52px;
       text-align: center;
     }
-    .item:nth-child(4) {
+    .list:nth-child(4) .item  {
       border-top: 3px solid #7be4ff;
     }
-    // .item:nth-child(n+5){
-
-    // }
     .title {
       width: 559px;
       text-align: center;
