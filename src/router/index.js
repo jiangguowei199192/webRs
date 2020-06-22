@@ -17,6 +17,11 @@ const routes = [{
     path: '/videoSystem',
     name: 'videoSystem',
     component: () => import('../views/videoSystem/realVideo')
+  },
+  {
+    path: '/playback',
+    name: 'playbackSystem',
+    component: () => import('../views/videoSystem/playback')
   }
   ]
 }
