@@ -58,7 +58,7 @@
       <div slot="center">中</div>
       <!-- 右侧部分 -->
       <div slot="right">
-        <div class="rightInfo">
+        <div class="rightContent">
           <div class="baseInfo">
             <div class="info">基本信息</div>
             <div class="detail">
@@ -337,7 +337,7 @@ export default {
       background: url(../../assets/images/list-selected.png) no-repeat;
     }
   }
-  .rightInfo {
+  .rightContent {
     font-size: 16px;
     font-family: Source Han Sans CN;
     font-weight: bold;
