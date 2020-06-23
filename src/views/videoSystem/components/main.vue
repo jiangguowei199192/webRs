@@ -41,8 +41,7 @@ export default {
       this.$emit('hideRightInfo', type)
     }
   },
-  created () {
-  }
+  created () {}
 }
 </script>
 <style lang="less">
@@ -64,21 +63,22 @@ export default {
       position: absolute;
       top: 50%;
       cursor: pointer;
+      transform: translateY(-50%);
     }
   }
   .leftNav .iconRight {
     left: 100%;
     background: url(../../../assets/images/arrow-right.png) no-repeat;
-    margin-left:-9px;
+    margin-left: -9px;
   }
   .leftNav .iconLeft {
     background: url(../../../assets/images/arrow-left.png) no-repeat;
   }
-  .rightInfo .iconRight{
-    right:0px;
+  .rightInfo .iconRight {
+    right: 0px;
     background: url(../../../assets/images/arrow-right-info.png) no-repeat;
   }
-  .rightInfo .iconLeft{
+  .rightInfo .iconLeft {
     background: url(../../../assets/images/arrow-left-info.png) no-repeat;
     left: -18px;
   }
