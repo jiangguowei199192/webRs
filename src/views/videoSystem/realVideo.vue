@@ -121,31 +121,30 @@ export default {
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 25px 0 28px;
-    // text-align: center;
     font-size: 18px;
     font-family: Source Han Sans CN;
     font-weight: bold;
 
     div.tab {
       display: flex;
-      // justify-content: space-between;
       cursor: pointer;
       height: 34px;
       line-height: 34px;
       color: #23cefd;
-      div {
-        // flex: 1;
-        width:126px;
-        height:34px;
-        background:url(../../assets/images/left.png) no-repeat;
-        padding-left:32px;
-      }
-      div:nth-child(2){
-          background:url(../../assets/images/right.png) no-repeat;
-          transform: translateX(-30px);
-      }
+      background: #1a3e68;
+      text-align: center;
+       div{
+         width:104px;
+       }
       div.active {
+        width: 126px !important;
         color: #fff;
+      }
+      div:nth-child(1).active {
+        background: url(../../assets/images/left.png) no-repeat;
+      }
+      div:nth-child(2).active {
+        background: url(../../assets/images/right.png) no-repeat;
       }
     }
     div.search {
