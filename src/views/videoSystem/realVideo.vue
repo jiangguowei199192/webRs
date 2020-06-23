@@ -12,15 +12,15 @@
             <div :class="{active:index==0}" @click.stop="index=0">已选</div>
             <div :class="{active:index==1}" @click.stop="index=1">全部</div>
           </div>
+          <div class="search">
+            <el-input
+              type="text"
+              v-model="input"
+              placeholder="请输入设备名称"
+              suffix-icon="el-icon-search"
+            ></el-input>
+          </div>
           <template v-if="index==0">
-            <div class="search">
-              <el-input
-                type="text"
-                v-model="input"
-                placeholder="请输入设备名称"
-                suffix-icon="el-icon-search"
-              ></el-input>
-            </div>
             <div
               class="list"
               v-for="(item,index) in listArray"
@@ -51,7 +51,75 @@
         </div>
       </div>
       <div slot="center">中</div>
-      <div slot="right"></div>
+      <div slot="right">
+        <div class="rightInfo">
+          <div class="baseInfo">
+            <div class="info">基本信息</div>
+            <div class="detail">
+              <ul>
+                <li>
+                  <span>设备名称：</span>
+                  <span>xxx</span>
+                </li>
+                <li>
+                  <span>设备编号：</span>
+                  <span>xxx</span>
+                </li>
+                <li>
+                  <span>设备品牌：</span>
+                  <span>xxx</span>
+                </li>
+                <li>
+                  <span>设备状态：</span>
+                  <span>xxx</span>
+                </li>
+                <li>
+                  <span>所在地点：</span>
+                  <span>xxx</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="deviceInfo">
+            <div class="info">云台</div>
+            <div class="operate">
+              <div class="icons">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="btns">
+                <div>
+                  <span>+</span>
+                  <b>变倍</b>
+                  <span>-</span>
+                </div>
+                <div>
+                  <span>+</span>
+                  <b>变焦</b>
+                  <span>-</span>
+                </div>
+                <div>
+                  <span>+</span>
+                  <b>光圈</b>
+                  <span>-</span>
+                </div>
+              </div>
+              <div class="slider">
+                <span class="demonstration">步速</span>
+                <el-slider v-model="value2" :min="1" :max="8" style="width:91px;margin-left:16px;margin-right:8px;"></el-slider>
+                <span>{{value2}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </VideoMain>
   </div>
 </template>
@@ -99,7 +167,8 @@ export default {
           infraredIsclick: false
         }
       ],
-      input: ''
+      input: '',
+      value2: 4
     }
   },
   methods: {
@@ -123,6 +192,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .videoContainer {
+  box-sizing: border-box;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 25px 0 28px;
@@ -158,12 +228,12 @@ export default {
       /deep/ .el-input__inner {
         background: #10203b;
         border: 1px solid #1eb0fc;
-        color:#1EB0FC;
+        color: #1eb0fc;
       }
 
       ::-webkit-input-placeholder {
         /* WebKit, Blink, Edge */
-        color: #1EB0FC;
+        color: #1eb0fc;
       }
     }
     div.list {
@@ -208,6 +278,161 @@ export default {
     }
     div.selected {
       background: url(../../assets/images/list-selected.png) no-repeat;
+    }
+  }
+  .rightInfo {
+    font-size: 16px;
+    font-family: Source Han Sans CN;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    line-height: 14px;
+    padding: 15px 10px;
+    .baseInfo,
+    .deviceInfo {
+      .info {
+        box-sizing: border-box;
+        width: 202px;
+        height: 45px;
+        background: url(../../assets/images/device/info-title.png) no-repeat;
+        line-height: 45px;
+        padding-left: 35px;
+      }
+    }
+    .baseInfo {
+      .detail {
+        margin-top: 22px;
+        ul {
+          padding-left: 24px;
+          li {
+            line-height: 20px;
+            text-align: justify;
+          }
+          li:not(:nth-child(1)) {
+            margin-top: 14px;
+          }
+          li:nth-child(2) {
+            margin-top: 17px;
+          }
+        }
+      }
+    }
+    .deviceInfo {
+      margin-top: 130px;
+      .info {
+        padding-left: 50px;
+      }
+      .operate {
+        margin-top: 20px;
+        .icons {
+          display: flex;
+          flex-wrap: wrap;
+          padding-left: 48px;
+          div {
+            width: 48px;
+            height: 48px;
+            margin-right: 19px;
+            margin-bottom: 19px;
+            cursor: pointer;
+          }
+          div:nth-child(1) {
+            background: url(../../assets/images/device/1.png) no-repeat;
+          }
+          div:nth-child(2) {
+            background: url(../../assets/images/device/2.png) no-repeat;
+          }
+          div:nth-child(3) {
+            background: url(../../assets/images/device/3.png) no-repeat;
+          }
+          div:nth-child(4) {
+            margin-right: 10px;
+            background: url(../../assets/images/device/4.png) no-repeat;
+          }
+          div:nth-child(5) {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            top: -7px;
+            // left: -5px;
+            margin-right: 10px;
+            background: url(../../assets/images/device/5.png) no-repeat;
+          }
+          div:nth-child(6) {
+            background: url(../../assets/images/device/6.png) no-repeat;
+          }
+          div:nth-child(7) {
+            background: url(../../assets/images/device/7.png) no-repeat;
+          }
+          div:nth-child(8) {
+            background: url(../../assets/images/device/8.png) no-repeat;
+          }
+          div:nth-child(9) {
+            background: url(../../assets/images/device/9.png) no-repeat;
+          }
+        }
+        .btns {
+          box-sizing: border-box;
+          font-family: Source Han Sans CN;
+          font-weight: 400;
+          font-size: 18px;
+          // color:rgb(24, 93, 121);
+          > div {
+            width: 201px;
+            height: 37px;
+            line-height: 37px;
+            text-align: center;
+            margin-left: 39px;
+            background: rgba(46, 108, 147, 1);
+            border: 1px solid rgba(28, 161, 220, 1);
+            color: #84ddff;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 13px;
+            span {
+              display: inline-block;
+              width: 48px;
+              font-size: 24px;
+              cursor: pointer;
+            }
+            span:nth-child(1):after {
+              content: "|";
+              position: relative;
+              left: 15px;
+              color: #1ca1dc;
+            }
+            span:nth-child(3):before {
+              content: "|";
+              position: relative;
+              left: -15px;
+              color: #1ca1dc;
+            }
+          }
+        }
+        .slider {
+          display: flex;
+          padding-left:39px;
+          span {
+            line-height: 38px;
+          }
+          span:nth-child(3) {
+            display: inline-block;
+            width: 38px;
+            height: 24px;
+            background: rgba(46, 108, 147, 1);
+            border: 1px solid rgba(28, 161, 220, 1);
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            top:5px;
+            line-height: 24px;
+          }
+         /deep/.el-slider__bar{
+              background-color:#84DDFF;
+         }
+         /deep/.el-slider__button{
+           background-color:#84DDFF
+         }
+        }
+      }
     }
   }
 }
