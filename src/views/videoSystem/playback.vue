@@ -8,6 +8,7 @@
     >
       <div slot="left">左</div>
       <div slot="center">
+        <TimeBar :segments="records"></TimeBar>
       </div>
       <div slot="right">
         <Calendar></Calendar>
@@ -18,16 +19,19 @@
 <script>
 import VideoMain from "./components/main";
 import Calendar from "./components/calendar";
+import TimeBar from "./components/timeBar";
 export default {
   name: "videoContainer",
   components: {
     VideoMain,
-    Calendar
+    Calendar,
+    TimeBar
   },
   data() {
     return {
       showLeft: true,
-      showRight: true
+      showRight: true,
+      records: [{ start: 60, duration: 90 }]
     };
   },
   methods: {
