@@ -50,7 +50,22 @@
             </div>
           </template>
           <template v-if="index==1">
-            <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+            <div class="tree">
+              <el-tree
+                :data="data5"
+                node-key="id"
+                default-expand-all
+                highlight-current
+                @node-click="handleNodeClick"
+              >
+                <span class="custom-tree-node" slot-scope="{ node,data }">
+                  <span>
+                    <span :class="data.class"></span>
+                    {{ node.label }}
+                  </span>
+                </span>
+              </el-tree>
+            </div>
           </template>
         </div>
       </div>
@@ -143,6 +158,46 @@ export default {
   },
   data () {
     return {
+      data5: [
+        {
+          id: 1,
+          label: '高点设备',
+          class: 'highdevice',
+          children: [
+            {
+              id: 4,
+              label: '二级 1-1',
+              children: [
+                {
+                  id: 9,
+                  label: '三级 1-1-1',
+                  icon: 'el-icon-info'
+                },
+                {
+                  id: 10,
+                  label: '三级 1-1-2'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 2,
+          label: '无人机',
+          class: 'unmanned',
+          children: [
+            {
+              id: 5,
+              label: '二级 2-1'
+            },
+            {
+              id: 6,
+              label: '二级 2-2'
+            }
+          ]
+        }
+      ],
+
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       index: 0, // 默认展示已选 0已选 1全部
@@ -179,47 +234,7 @@ export default {
         }
       ],
       input: '', // 设备名称
-      value2: 4, // 步速值
-      data: [
-        {
-          label: '一级 1',
-          children: [
-            {
-              label: '二级 1-1',
-              children: [
-                {
-                  label: '三级 1-1-1'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 2',
-          children: [
-            {
-              label: '二级 2-1',
-              children: [
-                {
-                  label: '三级 2-1-1'
-                }
-              ]
-            },
-            {
-              label: '二级 2-2',
-              children: [
-                {
-                  label: '三级 2-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+      value2: 4 // 步速值
     }
   },
   methods: {
@@ -241,8 +256,11 @@ export default {
       this.listArray[index].isSelected = true
     },
     // 点击数节点
-    handleNodeClick (data) {
-      console.log(data)
+    handleNodeClick (data, a, b) {
+      console.log(data, a, b)
+    },
+    handleCheckChange (data, checked, indeterminate) {
+      console.log(data, checked, indeterminate)
     }
   }
 }
@@ -490,6 +508,41 @@ export default {
           }
         }
       }
+    }
+  }
+  // 修改树形控件样式
+  /deep/.tree {
+    font-size: 18px;
+
+    font-family: Source Han Sans CN;
+    font-weight: bold;
+    margin-top: 24px;
+    .el-tree {
+      color: #23cefd;
+      background-color: transparent;
+    }
+    .custom-tree-node {
+      > span {
+        span.unmanned,
+        span.highdevice {
+          display: inline-block;
+          width: 28px;
+          height: 28px;
+        }
+        span.unmanned {
+          background: url(../../assets/images/infrared.png) no-repeat center
+            center;
+        }
+        span.highdevice {
+          background: url(../../assets/images/infrared.png) no-repeat center
+            center;
+        }
+      }
+    }
+    .el-tree--highlight-current
+      .el-tree-node.is-current
+      > .el-tree-node__content {
+      background: #096090;
     }
   }
 }
