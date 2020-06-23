@@ -8,7 +8,6 @@
             :key="index"
             class="list"
             @click.stop="jumpTo(index)"
-            @mouseover="showCur(index)"
           >
             <div class="item" :class="{title:index==3,active:isActive==index}">
               <span>{{item.content}}</span>
@@ -18,12 +17,12 @@
                 <el-button
                   type="primary"
                   :class="{activeStatus:curActive==1}"
-                  @click.stop="curActive=1"
+                  @click.stop="jumpToVideoUrl(1)"
                 >实时视频</el-button>
                 <el-button
                   type="primary"
                   :class="{activeStatus:curActive==2}"
-                  @click.stop="curActive=2"
+                  @click.stop="jumpToVideoUrl(2)"
                 >回放</el-button>
               </div>
             </template>
@@ -41,59 +40,52 @@
 </template>
 <script>
 export default {
-  name: "Home",
-  data() {
+  name: 'Home',
+  data () {
     return {
-      isActive: "1",
+      isActive: '1', // 默认激活视频侦查系统
       systems: [
         {
-          content: "智慧决策系统"
+          content: '智慧决策系统'
         },
         {
-          content: "视频侦查"
+          content: '视频侦查'
         },
         {
-          content: "评战系统"
+          content: '评战系统'
         },
         {
-          content: "消防救援现场指挥系统"
+          content: '消防救援现场指挥系统'
         },
 
         {
-          content: "数字化单兵"
+          content: '数字化单兵'
         },
         {
-          content: "数字化装备"
+          content: '数字化装备'
         },
         {
-          content: "系统设置"
+          content: '系统设置'
         }
       ],
-      isHowever: 0,
-      curActive: 1
-    };
-  },
-
-  watch: {
-    curActive(val) {
-      if (val == 1) this.$router.push({ path: "/videoSystem" });
-      else this.$router.push({ path: "/playback" });
+      curActive: 1 // 激活实时视频还是回放视频 1实时 2回放
     }
   },
   methods: {
-    jumpTo(index) {
+    // 点击激活当前系统
+    jumpTo (index) {
       if (index !== 3) {
-        this.isActive = index;
+        this.isActive = index
       }
     },
-    showCur(index) {
-      this.isHowever = index;
+    // 视频侦查二级菜单跳转
+    jumpToVideoUrl (type) {
+      this.curActive = type
+      if (type === 1) this.$router.push({ path: '/videoSystem' })
+      else this.$router.push({ path: '/playback' })
     }
-    // hideCur () {
-    //   this.isHowever = ''
-    // }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .home {
@@ -131,9 +123,6 @@ export default {
         }
       }
     }
-    // :list:not(:nth-child(4)) .status{
-    //   display: none;
-    // }
     .list:not(:nth-child(4)):hover .status {
       display: block !important;
     }

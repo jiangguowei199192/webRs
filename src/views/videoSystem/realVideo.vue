@@ -15,7 +15,7 @@
           <div class="search">
             <el-input
               type="text"
-              v-model="input"
+              v-model.trim="input"
               placeholder="请输入设备名称"
               suffix-icon="el-icon-search"
             ></el-input>
@@ -113,7 +113,12 @@
               </div>
               <div class="slider">
                 <span class="demonstration">步速</span>
-                <el-slider v-model="value2" :min="1" :max="8" style="width:91px;margin-left:16px;margin-right:8px;"></el-slider>
+                <el-slider
+                  v-model="value2"
+                  :min="1"
+                  :max="8"
+                  style="width:91px;margin-left:16px;margin-right:8px;"
+                ></el-slider>
                 <span>{{value2}}</span>
               </div>
             </div>
@@ -132,9 +137,9 @@ export default {
   },
   data () {
     return {
-      showLeft: true,
-      showRight: true,
-      index: 0,
+      showLeft: true, // 是否展开左侧部分
+      showRight: true, // 是否展开右侧部分
+      index: 0, // 默认展示已选 0已选 1全部
       listArray: [
         {
           area: '发展大道黄浦路1',
@@ -167,25 +172,27 @@ export default {
           infraredIsclick: false
         }
       ],
-      input: '',
-      value2: 4
+      input: '', // 设备名称
+      value2: 4 // 步速值
     }
   },
   methods: {
+    // 左侧菜单显示与隐藏
     closeLeftNav (type) {
       this.showLeft = type !== 1
     },
+    // 右侧信息显示与隐藏
     closeRightInfo (type) {
       this.showRight = type !== 1
     },
+    // 点击按钮
     changeStatus (type, index) {
       if (type === 1) {
         this.listArray[index].visibleIsClick = true
-        this.listArray[index].isSelected = true
       } else {
         this.listArray[index].infraredIsclick = true
-        this.listArray[index].isSelected = true
       }
+      this.listArray[index].isSelected = true
     }
   }
 }
@@ -409,7 +416,7 @@ export default {
         }
         .slider {
           display: flex;
-          padding-left:39px;
+          padding-left: 39px;
           span {
             line-height: 38px;
           }
@@ -422,15 +429,15 @@ export default {
             border-radius: 10px;
             text-align: center;
             position: relative;
-            top:5px;
+            top: 5px;
             line-height: 24px;
           }
-         /deep/.el-slider__bar{
-              background-color:#84DDFF;
-         }
-         /deep/.el-slider__button{
-           background-color:#84DDFF
-         }
+          /deep/.el-slider__bar {
+            background-color: #84ddff;
+          }
+          /deep/.el-slider__button {
+            background-color: #84ddff;
+          }
         }
       }
     }
