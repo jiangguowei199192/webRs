@@ -21,6 +21,10 @@
         <span class="mark"></span>
       </template>
     </el-calendar>
+    <div class="search">
+      <span></span>
+      <span>查找</span>
+    </div>
   </div>
 </template>
 <script>
@@ -148,6 +152,34 @@ export default {
   top: 12px;
   left: -20px;
 }
+
+.search {
+  cursor: pointer;
+  margin-left: 60px;
+  width: 150px;
+  height: 30px;
+  border: 1px solid rgba(57, 164, 221, 1);
+  margin-top: 13px;
+  :nth-child(1) {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url(../../../assets/images/search-white.png) no-repeat;
+    position: relative;
+    top: 5px;
+    left: 36px;
+  }
+
+  :nth-child(2) {
+    font-size: 15px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    line-height: 30px;
+    position: relative;
+    left: 56px;
+  }
+}
+
 /deep/.el-calendar {
   background-color: transparent;
 }

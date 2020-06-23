@@ -113,7 +113,7 @@ export default {
     },
 
     /**
-     * 跳转到X小时
+     * 跳转到X分钟
      * @param {Integer}} minute 分钟
      */
     jumpMinute(minute) {
@@ -121,6 +121,9 @@ export default {
       this.toHourMinute(minute);
     },
 
+    /**
+     * 点击时间轴
+     */
     barClick: function(event) {
       var x = event.offsetX;
       this.pointerLeft = x - this.pointerW + 5;
