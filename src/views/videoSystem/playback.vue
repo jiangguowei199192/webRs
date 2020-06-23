@@ -1,5 +1,5 @@
 <template>
-  <div class="videoContainer">
+  <div>
     <VideoMain
       :showLeft="showLeft"
       :showRight="showRight"
