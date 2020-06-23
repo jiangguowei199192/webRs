@@ -14,7 +14,12 @@
           </div>
           <template v-if="index==0">
             <div class="search">
-              <el-input type="text" placeholder="请输入设备名称" suffix-icon="el-icon-search"></el-input>
+              <el-input
+                type="text"
+                v-model="input"
+                placeholder="请输入设备名称"
+                suffix-icon="el-icon-search"
+              ></el-input>
             </div>
             <div
               class="list"
@@ -94,7 +99,7 @@ export default {
           infraredIsclick: false
         }
       ],
-      isClick: false
+      input: ''
     }
   },
   methods: {
@@ -133,9 +138,9 @@ export default {
       color: #23cefd;
       background: #1a3e68;
       text-align: center;
-       div{
-         width:104px;
-       }
+      div {
+        width: 104px;
+      }
       div.active {
         width: 126px !important;
         color: #fff;
@@ -149,6 +154,17 @@ export default {
     }
     div.search {
       margin-top: 20px;
+      background: #10203b;
+      /deep/ .el-input__inner {
+        background: #10203b;
+        border: 1px solid #1eb0fc;
+        color:#1EB0FC;
+      }
+
+      ::-webkit-input-placeholder {
+        /* WebKit, Blink, Edge */
+        color: #1EB0FC;
+      }
     }
     div.list {
       margin-top: 20px;
