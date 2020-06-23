@@ -6,6 +6,7 @@
       @hideLeftNav="closeLeftNav"
       @hideRightInfo="closeRightInfo"
     >
+      <!-- 左侧部分 -->
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
@@ -48,9 +49,14 @@
               </div>
             </div>
           </template>
+          <template v-if="index==1">
+            <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+          </template>
         </div>
       </div>
+      <!-- 中间部分 -->
       <div slot="center">中</div>
+      <!-- 右侧部分 -->
       <div slot="right">
         <div class="rightInfo">
           <div class="baseInfo">
@@ -173,7 +179,47 @@ export default {
         }
       ],
       input: '', // 设备名称
-      value2: 4 // 步速值
+      value2: 4, // 步速值
+      data: [
+        {
+          label: '一级 1',
+          children: [
+            {
+              label: '二级 1-1',
+              children: [
+                {
+                  label: '三级 1-1-1'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: '一级 2',
+          children: [
+            {
+              label: '二级 2-1',
+              children: [
+                {
+                  label: '三级 2-1-1'
+                }
+              ]
+            },
+            {
+              label: '二级 2-2',
+              children: [
+                {
+                  label: '三级 2-2-1'
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   methods: {
@@ -193,6 +239,10 @@ export default {
         this.listArray[index].infraredIsclick = true
       }
       this.listArray[index].isSelected = true
+    },
+    // 点击数节点
+    handleNodeClick (data) {
+      console.log(data)
     }
   }
 }

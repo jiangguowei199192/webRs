@@ -69,7 +69,7 @@ export default {
   .leftNav .iconRight {
     left: 100%;
     background: url(../../../assets/images/arrow-right.png) no-repeat;
-    margin-left:-20px;
+    margin-left:-9px;
   }
   .leftNav .iconLeft {
     background: url(../../../assets/images/arrow-left.png) no-repeat;
