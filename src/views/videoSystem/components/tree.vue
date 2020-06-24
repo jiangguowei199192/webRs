@@ -42,9 +42,8 @@ export default {
     // 点击树节点
     handleNodeClick (data) {
       if (!data.children) {
-        this.$nextTick(function () {
-          data.isShow = true
-        })
+        data.isShow = true
+        this.$emit('dataUpdate', this.treeData)
       }
     }
   }
@@ -82,7 +81,8 @@ export default {
         vertical-align: middle;
       }
       span.unmanned {
-        background: url(../../../assets/images/noman.png) no-repeat center center;
+        background: url(../../../assets/images/noman.png) no-repeat center
+          center;
       }
       span.highdevice {
         background: url(../../../assets/images/high.png) no-repeat center center;

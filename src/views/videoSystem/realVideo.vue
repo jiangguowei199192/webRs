@@ -72,7 +72,7 @@
                 </span>
               </el-tree>
             </div> -->
-            <tree-data :treeData= data5></tree-data>
+            <tree-data :treeData= data5 @dataUpdate="getUpdateData"></tree-data>
           </template>
         </div>
       </div>
@@ -286,6 +286,9 @@ export default {
         this.listArray[index].infraredIsclick = true
       }
       this.listArray[index].isSelected = true
+    },
+    getUpdateData (data) {
+      debugger
     }
   }
 }
