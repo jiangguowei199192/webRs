@@ -53,14 +53,18 @@
             <div class="tree">
               <el-tree
                 :data="data5"
+                highlight-current
                 node-key="id"
                 default-expand-all
-                highlight-current
+                :expand-on-click-node="false"
+                :props="defaultProps"
                 @node-click="handleNodeClick"
               >
                 <span class="custom-tree-node" slot-scope="{ node,data }">
                   <span>
-                    <span :class="data.class"></span>
+                    <!-- 控制一级菜单的图标 -->
+                    <span :class="data.class" v-if="data.class"></span>
+                    <img src="../../assets/images/onlive.png" v-if="data.isShow">
                     {{ node.label }}
                   </span>
                 </span>
@@ -171,11 +175,12 @@ export default {
                 {
                   id: 9,
                   label: '三级 1-1-1',
-                  icon: 'el-icon-info'
+                  isShow: false
                 },
                 {
                   id: 10,
-                  label: '三级 1-1-2'
+                  label: '三级 1-1-2',
+                  isShow: false
                 }
               ]
             }
@@ -188,16 +193,35 @@ export default {
           children: [
             {
               id: 5,
-              label: '二级 2-1'
+              label: '二级 2-1',
+              isShow: false
             },
             {
               id: 6,
-              label: '二级 2-2'
+              label: '二级 2-2',
+              isShow: false
+            }
+          ]
+        },
+        {
+          id: 3,
+          label: '一级 3',
+          children: [
+            {
+              id: 7,
+              label: '二级 3-1'
+            },
+            {
+              id: 8,
+              label: '二级 3-2'
             }
           ]
         }
       ],
-
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       index: 0, // 默认展示已选 0已选 1全部
@@ -256,11 +280,11 @@ export default {
       this.listArray[index].isSelected = true
     },
     // 点击数节点
-    handleNodeClick (data, a, b) {
-      console.log(data, a, b)
-    },
-    handleCheckChange (data, checked, indeterminate) {
-      console.log(data, checked, indeterminate)
+    handleNodeClick (data) {
+      console.log(data)
+      if (!data.children) {
+        data.isShow = true
+      }
     }
   }
 }
@@ -520,22 +544,30 @@ export default {
     .el-tree {
       color: #23cefd;
       background-color: transparent;
+      .el-tree-node {
+        .el-tree-node__content {
+          line-height: 28px;
+        }
+        .el-icon-caret-right {
+          color: #23cefd;
+        }
+      }
     }
     .custom-tree-node {
       > span {
-        span.unmanned,
-        span.highdevice {
+        span {
           display: inline-block;
-          width: 28px;
-          height: 28px;
+          width: 30px;
+          height: 30px;
+          vertical-align: middle;
         }
         span.unmanned {
-          background: url(../../assets/images/infrared.png) no-repeat center
-            center;
+          background: url(../../assets/images/noman.png) no-repeat center center;
         }
         span.highdevice {
-          background: url(../../assets/images/infrared.png) no-repeat center
-            center;
+          background: url(../../assets/images/high.png) no-repeat center center;
+          position: relative;
+          top: -2px;
         }
       }
     }
@@ -543,6 +575,9 @@ export default {
       .el-tree-node.is-current
       > .el-tree-node__content {
       background: #096090;
+    }
+    .el-tree-node__content:hover {
+      background-color: #096090;
     }
   }
 }
