@@ -94,7 +94,10 @@ export default {
   }
   .center {
     flex: 1;
-    margin: 0 40px;
+    margin: 0 27px;
+     width: 1243px;
+    height: 899px;
+    background: url(../../../assets/images/video-bg.png) no-repeat;
   }
 }
 </style>

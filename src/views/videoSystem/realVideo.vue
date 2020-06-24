@@ -27,7 +27,7 @@
               class="list"
               v-for="(item,index) in listArray"
               :key="index"
-              :class="{selected:item.isSelected}"
+              :class="{selected:selectedIndex==index}"
             >
               <p>
                 <span class="area">{{item.area}}</span>
@@ -71,13 +71,23 @@
                   </span>
                 </span>
               </el-tree>
-            </div> -->
-            <tree-data :treeData= data5 @selectedChange="getSelectedData"></tree-data>
+            </div>-->
+            <tree-data :treeData="data5" @selectedChange="getSelectedData"></tree-data>
           </template>
         </div>
       </div>
-      <!-- 中间部分 -->
-      <div slot="center">中</div>
+      <!-- 中间视频部分 -->
+      <div slot="center">
+        <div class="video">
+          <div class="box">
+            <div class="title">直播</div>
+            <div>当前选中：解放大道高点1</div>
+          </div>
+          <div class="videoList">
+            <div></div>
+          </div>
+        </div>
+      </div>
       <!-- 右侧部分 -->
       <div slot="right">
         <div class="rightContent">
@@ -238,7 +248,7 @@ export default {
           area: '发展大道黄浦路1',
           visibleText: '可见光',
           infraredText: '红外光',
-          isSelected: false,
+          // isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
@@ -265,6 +275,7 @@ export default {
           infraredIsclick: false
         }
       ],
+      selectedIndex: '9', // 激活已选择
       input: '', // 设备名称
       value2: 4 // 步速值
     }
@@ -285,13 +296,14 @@ export default {
       } else {
         this.listArray[index].infraredIsclick = true
       }
-      this.listArray[index].isSelected = true
+      this.selectedIndex = index
     },
     // 获取子组件传递过来的数据
     getSelectedData (data) {
-      this.$nextTick(() => {
-        this.data5 = data
-      })
+      // this.$nextTick(() => {
+      // this.data5 = data
+      // })
+      console.log(data)
     }
   }
 }
@@ -541,6 +553,20 @@ export default {
       }
     }
   }
-
+  .video {
+    box-sizing: border-box;
+    padding: 21px 30px 21px 21px;
+    .box {
+      display: flex;
+      justify-content: space-between;
+      .title {
+        width: 202px;
+        height: 45px;
+        background: url(../../assets/images/device/info-title.png) no-repeat;
+        line-height: 45px;
+        padding-left: 30px;
+      }
+    }
+  }
 }
 </style>
