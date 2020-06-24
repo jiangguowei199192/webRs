@@ -98,6 +98,7 @@ export default {
      width: 1243px;
     height: 899px;
     background: url(../../../assets/images/video-bg.png) no-repeat;
+    background-size: cover;
   }
 }
 </style>

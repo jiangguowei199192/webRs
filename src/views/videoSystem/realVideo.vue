@@ -84,7 +84,7 @@
             <div>当前选中：解放大道高点1</div>
           </div>
           <div class="videoList">
-            <div></div>
+            <div v-for="(item,index) in 9" :key="index"></div>
           </div>
         </div>
       </div>
@@ -555,16 +555,30 @@ export default {
   }
   .video {
     box-sizing: border-box;
-    padding: 21px 30px 21px 21px;
+    padding: 21px 0px 21px 21px;
     .box {
       display: flex;
       justify-content: space-between;
+      margin-right:64px;
       .title {
         width: 202px;
         height: 45px;
         background: url(../../assets/images/device/info-title.png) no-repeat;
         line-height: 45px;
         padding-left: 30px;
+      }
+    }
+    .videoList {
+      display: flex;
+      flex-wrap: wrap;
+      > div {
+        // width: 384px;
+        width:31%;
+        box-sizing:border-box;
+        height: 223px;
+        background:#00497C;
+        margin-right:20px;
+        margin-bottom:20px;
       }
     }
   }
