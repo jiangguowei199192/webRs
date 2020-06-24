@@ -43,7 +43,7 @@ export default {
     handleNodeClick (data) {
       if (!data.children) {
         data.isShow = true
-        this.$emit('dataUpdate', this.treeData)
+        this.$emit('selectedChange', this.treeData)
       }
     }
   }

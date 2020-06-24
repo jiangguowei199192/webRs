@@ -72,7 +72,7 @@
                 </span>
               </el-tree>
             </div> -->
-            <tree-data :treeData= data5 @dataUpdate="getUpdateData"></tree-data>
+            <tree-data :treeData= data5 @selectedChange="getSelectedData"></tree-data>
           </template>
         </div>
       </div>
@@ -211,23 +211,23 @@ export default {
               // isShow: false
             }
           ]
-        },
-        {
-          id: 3,
-          label: '一级 3',
-          children: [
-            {
-              id: 7,
-              label: '二级 3-1'
-              // isShow: false
-            },
-            {
-              id: 8,
-              label: '二级 3-2'
-              // isShow: false
-            }
-          ]
         }
+        // {
+        //   id: 3,
+        //   label: '一级 3',
+        //   children: [
+        //     {
+        //       id: 7,
+        //       label: '二级 3-1'
+        //       // isShow: false
+        //     },
+        //     {
+        //       id: 8,
+        //       label: '二级 3-2'
+        //       // isShow: false
+        //     }
+        //   ]
+        // }
       ],
 
       showLeft: true, // 是否展开左侧部分
@@ -288,7 +288,7 @@ export default {
       this.listArray[index].isSelected = true
     },
     // 获取子组件传递过来的数据
-    getUpdateData (data) {
+    getSelectedData (data) {
       this.$nextTick(() => {
         this.data5 = data
       })
