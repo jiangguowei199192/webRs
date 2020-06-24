@@ -21,6 +21,7 @@
               suffix-icon="el-icon-search"
             ></el-input>
           </div>
+          <!-- 默认展示已选部分 -->
           <template v-if="index==0">
             <div
               class="list"
@@ -49,8 +50,9 @@
               </div>
             </div>
           </template>
+          <!-- 全部部分 -->
           <template v-if="index==1">
-            <div class="tree">
+            <!-- <div class="tree">
               <el-tree
                 :data="data5"
                 highlight-current
@@ -62,14 +64,15 @@
               >
                 <span class="custom-tree-node" slot-scope="{ node,data }">
                   <span>
-                    <!-- 控制一级菜单的图标 -->
+
                     <span :class="data.class" v-if="data.class"></span>
-                    <img src="../../assets/images/onlive.png" v-if="data.isShow">
+                    <img src="../../assets/images/onlive.png" v-if="data.isShow" />
                     {{ node.label }}
                   </span>
                 </span>
               </el-tree>
-            </div>
+            </div> -->
+            <tree-data :treeData= data5></tree-data>
           </template>
         </div>
       </div>
@@ -155,10 +158,12 @@
 </template>
 <script>
 import VideoMain from './components/main'
+import TreeData from './components/tree'
 export default {
   name: 'videoContainer',
   components: {
-    VideoMain
+    VideoMain,
+    TreeData
   },
   data () {
     return {
@@ -173,16 +178,20 @@ export default {
               label: '二级 1-1',
               children: [
                 {
-                  id: 9,
+                  id: 12,
                   label: '三级 1-1-1',
                   isShow: false
                 },
                 {
-                  id: 10,
+                  id: 13,
                   label: '三级 1-1-2',
                   isShow: false
                 }
               ]
+            },
+            {
+              id: 9,
+              label: '二级 2-1'
             }
           ]
         },
@@ -209,19 +218,18 @@ export default {
           children: [
             {
               id: 7,
-              label: '二级 3-1'
+              label: '二级 3-1',
+              isShow: false
             },
             {
               id: 8,
-              label: '二级 3-2'
+              label: '二级 3-2',
+              isShow: false
             }
           ]
         }
       ],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
+
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       index: 0, // 默认展示已选 0已选 1全部
@@ -278,13 +286,6 @@ export default {
         this.listArray[index].infraredIsclick = true
       }
       this.listArray[index].isSelected = true
-    },
-    // 点击数节点
-    handleNodeClick (data) {
-      console.log(data)
-      if (!data.children) {
-        data.isShow = true
-      }
     }
   }
 }
@@ -534,51 +535,6 @@ export default {
       }
     }
   }
-  // 修改树形控件样式
-  /deep/.tree {
-    font-size: 18px;
 
-    font-family: Source Han Sans CN;
-    font-weight: bold;
-    margin-top: 24px;
-    .el-tree {
-      color: #23cefd;
-      background-color: transparent;
-      .el-tree-node {
-        .el-tree-node__content {
-          line-height: 28px;
-        }
-        .el-icon-caret-right {
-          color: #23cefd;
-        }
-      }
-    }
-    .custom-tree-node {
-      > span {
-        span {
-          display: inline-block;
-          width: 30px;
-          height: 30px;
-          vertical-align: middle;
-        }
-        span.unmanned {
-          background: url(../../assets/images/noman.png) no-repeat center center;
-        }
-        span.highdevice {
-          background: url(../../assets/images/high.png) no-repeat center center;
-          position: relative;
-          top: -2px;
-        }
-      }
-    }
-    .el-tree--highlight-current
-      .el-tree-node.is-current
-      > .el-tree-node__content {
-      background: #096090;
-    }
-    .el-tree-node__content:hover {
-      background-color: #096090;
-    }
-  }
 }
 </style>
