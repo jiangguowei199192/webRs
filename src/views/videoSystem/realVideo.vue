@@ -179,13 +179,13 @@ export default {
               children: [
                 {
                   id: 12,
-                  label: '三级 1-1-1',
-                  isShow: false
+                  label: '三级 1-1-1'
+                  // isShow: false
                 },
                 {
                   id: 13,
-                  label: '三级 1-1-2',
-                  isShow: false
+                  label: '三级 1-1-2'
+                  // isShow: false
                 }
               ]
             },
@@ -202,13 +202,13 @@ export default {
           children: [
             {
               id: 5,
-              label: '二级 2-1',
-              isShow: false
+              label: '二级 2-1'
+              // isShow: false
             },
             {
               id: 6,
-              label: '二级 2-2',
-              isShow: false
+              label: '二级 2-2'
+              // isShow: false
             }
           ]
         },
@@ -218,13 +218,13 @@ export default {
           children: [
             {
               id: 7,
-              label: '二级 3-1',
-              isShow: false
+              label: '二级 3-1'
+              // isShow: false
             },
             {
               id: 8,
-              label: '二级 3-2',
-              isShow: false
+              label: '二级 3-2'
+              // isShow: false
             }
           ]
         }
@@ -287,8 +287,11 @@ export default {
       }
       this.listArray[index].isSelected = true
     },
+    // 获取子组件传递过来的数据
     getUpdateData (data) {
-      debugger
+      this.$nextTick(() => {
+        this.data5 = data
+      })
     }
   }
 }
