@@ -56,7 +56,30 @@
         </div>
       </div>
       <div slot="center">
-        <TimeBar :segments="records"></TimeBar>
+        <!-- <VideoWall :videoList.sync="videoList"></VideoWall> -->
+        <div class="video">
+          <div class="box">
+            <div class="title">回放</div>
+            <div>当前选中：解放大道高点1</div>
+          </div>
+          <div class="videoList">
+            <div v-for="(item,index) in 9" :key="index"></div>
+          </div>
+          <!-- 下面按钮部分 -->
+          <div class="tools">
+            <div class="leftTool">
+              <img :src="ninePalace" />
+              <img :src="fourPalace" />
+              <img :src="onePalace" />
+            </div>
+            <div class="rightTool">
+              <img :src="stop" />
+              <img :src="play" />
+              <img :src="fullScreen" />
+            </div>
+          </div>
+          <TimeBar class="time" :segments="records"></TimeBar>
+        </div>
       </div>
       <div slot="right">
         <Calendar></Calendar>
@@ -69,22 +92,23 @@ import VideoMain from "./components/main";
 import Calendar from "./components/calendar";
 import TimeBar from "./components/timeBar";
 import Tree from "./components/tree";
+import VideoWall from "./components/videoWall";
+import videoMixin from "./mixins/videoMixin";
 export default {
   name: "videoContainer",
   components: {
     VideoMain,
     Calendar,
     TimeBar,
-    Tree
+    Tree,
+    VideoWall
   },
+  mixins: [videoMixin],
   data() {
     return {
-      showLeft: true,
-      showRight: true,
+      stop: require("../../assets/images/stop.png"),
+      play: require("../../assets/images/play.png"),
       records: [{ start: 60, duration: 90 }],
-      selectedIndex:787,
-      index: 0, // 默认展示已选 0已选 1全部
-      input: "", // 设备名称
       treeArray: [
         {
           id: 1,
@@ -162,27 +186,16 @@ export default {
           visibleIsClick: false,
           infraredIsclick: false
         }
+      ],
+      videoList: [
+        { srcUrl: "", isLive: true },
+        { srcUrl: "", isLive: true }
       ]
     };
   },
   methods: {
-    closeLeftNav(type) {
-      this.showLeft = type !== 1;
-    },
-    closeRightInfo(type) {
-      this.showRight = type !== 1;
-    },
     // 获取子组件传递过来的数据
-    getSelectedData(data) {},
-    // 点击按钮
-    changeStatus(type, index) {
-      if (type === 1) {
-        this.listArray[index].visibleIsClick = true;
-      } else {
-        this.listArray[index].infraredIsclick = true;
-      }
-      this.selectedIndex = index;
-    }
+    getSelectedData(data) {}
   }
 };
 </script>
@@ -272,6 +285,68 @@ export default {
   }
   div.selected {
     background: url(../../assets/images/list-selected.png) no-repeat;
+  }
+}
+
+.video {
+  box-sizing: border-box;
+  padding: 21px 0px 0px 21px;
+  // position: relative;
+  .box {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 64px;
+    .title {
+      width: 202px;
+      height: 45px;
+      background: url(../../assets/images/device/info-title.png) no-repeat;
+      line-height: 45px;
+      padding-left: 30px;
+    }
+  }
+  .videoList {
+    display: flex;
+    flex-wrap: wrap;
+    > div {
+      // width: 384px;
+      width: 31%;
+      box-sizing: border-box;
+      height: 223px;
+
+      margin-right: 20px;
+      margin-bottom: 11px;
+      background: url(../../assets/images/video.png) no-repeat center center;
+      background-color: #00497c;
+    }
+  }
+  .tools {
+    position: absolute;
+    bottom: 60px;
+    width: 95%;
+    height: 65px;
+    background: url(../../assets/images/tool-bar.png) no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: space-between;
+    .leftTool,
+    .rightTool {
+      position: relative;
+      top: 22px;
+      left: 40px;
+      img {
+        margin-right: 20px;
+        cursor: pointer;
+      }
+    }
+    .rightTool {
+      margin-right: 90px;
+    }
+  }
+
+  .time {
+    position: absolute;
+    bottom: 10px;
+    width: 96%;
   }
 }
 </style>
