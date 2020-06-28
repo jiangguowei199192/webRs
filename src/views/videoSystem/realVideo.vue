@@ -577,6 +577,7 @@ export default {
   .video {
     box-sizing: border-box;
     padding: 21px 0px 21px 21px;
+    // position: relative;
     .box {
       display: flex;
       justify-content: space-between;
@@ -597,15 +598,20 @@ export default {
         width: 31%;
         box-sizing: border-box;
         height: 223px;
-        background: #00497c;
+
         margin-right: 20px;
         margin-bottom: 20px;
+        background: url(../../assets/images/video.png) no-repeat center center;
+        background-color: #00497c;
       }
     }
     .tools {
-      width: 1155px;
+      position: absolute;
+      bottom:25px;
+      width:95%;
       height: 71px;
-      background: url(../../assets/images/tool-bar.png) no-repeat;
+      background: url(../../assets/images/tool-bar.png) no-repeat ;
+      background-size:cover;
       display: flex;
       justify-content: space-between;
       .leftTool,
@@ -624,7 +630,7 @@ export default {
           display: inline-block;
           position: relative;
           top: -10px;
-          margin-right:20px;
+          margin-right: 20px;
           /deep/.el-pagination {
             button {
               background-color: transparent !important;
@@ -632,7 +638,7 @@ export default {
                 width: 20px;
                 height: 20px;
                 border-radius: 50%;
-                background: #23CEFD;
+                background: #23cefd;
                 text-align: center;
                 line-height: 20px;
               }
