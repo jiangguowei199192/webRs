@@ -43,7 +43,7 @@ export default {
   name: 'Home',
   data () {
     return {
-      isActive: '1', // 默认激活视频侦查系统
+      isActive: 1, // 默认激活视频侦查系统
       systems: [
         {
           content: '智慧决策系统'
@@ -71,14 +71,16 @@ export default {
       curActive: 1 // 激活实时视频还是回放视频 1实时 2回放
     }
   },
+  mounted () {
+    this.jumpTo(this.isActive)
+  },
   methods: {
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
         if (index === 0) this.$router.push({ path: '/decisionSystem' })
-        else if (index === 1 && this.isActive !== 1) {
-          this.curActive = 1
-          this.$router.push({ path: '/videoSystem' })
+        else if (index === 1) {
+          this.jumpToVideoUrl(this.curActive)
         } else if (index === 2) this.$router.push({ path: '/evaluationSystem' })
         else if (index === 4) this.$router.push({ path: '/digitalIndividual' })
         else if (index === 5) this.$router.push({ path: '/digitalEquipment' })
