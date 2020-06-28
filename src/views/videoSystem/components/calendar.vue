@@ -29,30 +29,30 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
       showDate: new Date(),
-      curYear: ""
-    };
+      curYear: ''
+    }
   },
   watch: {
-    showDate(val) {
-      this.getYear();
+    showDate (val) {
+      this.getYear()
     }
   },
 
-  mounted() {
-    this.getYear();
+  mounted () {
+    this.getYear()
   },
 
   methods: {
     /**
      * 获取当前显示的年
      */
-    getYear() {
-      var year = this.showDate.getYear();
-      var year = year < 2000 ? year + 1900 : year;
-      this.curYear = year.toString().substr(2, 2);
+    getYear () {
+      var year = this.showDate.getYear()
+      year = year < 2000 ? year + 1900 : year
+      this.curYear = year.toString().substr(2, 2)
     },
 
     /**
@@ -60,21 +60,20 @@ export default {
      * @param {Boolean} isYear
      * @param {Boolean} isNext
      */
-    calendarPre(isYear, isNext) {
-      var time = undefined;
-      var step = isNext == true ? 1 : -1;
+    calendarPre (isYear, isNext) {
+      var time
+      var step = isNext === true ? 1 : -1
 
-      if (isYear)
-        time = new Date().setFullYear(this.showDate.getFullYear() + step);
-      else
+      if (isYear) { time = new Date().setFullYear(this.showDate.getFullYear() + step) } else {
         time = new Date(this.showDate).setMonth(
           this.showDate.getMonth() + step
-        );
+        )
+      }
 
-      this.showDate = new Date(time);
+      this.showDate = new Date(time)
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .container {

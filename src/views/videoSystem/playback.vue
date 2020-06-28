@@ -88,68 +88,66 @@
   </div>
 </template>
 <script>
-import VideoMain from "./components/main";
-import Calendar from "./components/calendar";
-import TimeBar from "./components/timeBar";
-import Tree from "./components/tree";
-import VideoWall from "./components/videoWall";
-import videoMixin from "./mixins/videoMixin";
+import VideoMain from './components/main'
+import Calendar from './components/calendar'
+import TimeBar from './components/timeBar'
+import Tree from './components/tree'
+import videoMixin from './mixins/videoMixin'
 export default {
-  name: "videoContainer",
+  name: 'videoContainer',
   components: {
     VideoMain,
     Calendar,
     TimeBar,
-    Tree,
-    VideoWall
+    Tree
   },
   mixins: [videoMixin],
-  data() {
+  data () {
     return {
-      stop: require("../../assets/images/stop.png"),
-      play: require("../../assets/images/play.png"),
+      stop: require('../../assets/images/stop.png'),
+      play: require('../../assets/images/play.png'),
       records: [{ start: 60, duration: 90 }],
       treeArray: [
         {
           id: 1,
-          label: "高点设备",
-          class: "highdevice",
+          label: '高点设备',
+          class: 'highdevice',
           children: [
             {
               id: 4,
-              label: "二级 1-1",
+              label: '二级 1-1',
               children: [
                 {
                   id: 12,
-                  label: "三级 1-1-1"
+                  label: '三级 1-1-1'
                   // isShow: false
                 },
                 {
                   id: 13,
-                  label: "三级 1-1-2"
+                  label: '三级 1-1-2'
                   // isShow: false
                 }
               ]
             },
             {
               id: 9,
-              label: "二级 2-1"
+              label: '二级 2-1'
             }
           ]
         },
         {
           id: 2,
-          label: "无人机",
-          class: "unmanned",
+          label: '无人机',
+          class: 'unmanned',
           children: [
             {
               id: 5,
-              label: "二级 2-1"
+              label: '二级 2-1'
               // isShow: false
             },
             {
               id: 6,
-              label: "二级 2-2"
+              label: '二级 2-2'
               // isShow: false
             }
           ]
@@ -157,47 +155,47 @@ export default {
       ],
       listArray: [
         {
-          area: "发展大道黄浦路1",
-          visibleText: "可见光",
-          infraredText: "红外光",
+          area: '发展大道黄浦路1',
+          visibleText: '可见光',
+          infraredText: '红外光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
         {
-          area: "发展大道黄浦路2",
-          infraredText: "红外光",
+          area: '发展大道黄浦路2',
+          infraredText: '红外光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
         {
-          area: "发展大道黄浦路3",
-          visibleText: "可见光",
+          area: '发展大道黄浦路3',
+          visibleText: '可见光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
         {
-          area: "发展大道黄浦路4",
-          visibleText: "可见光",
-          infraredText: "红外光",
+          area: '发展大道黄浦路4',
+          visibleText: '可见光',
+          infraredText: '红外光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         }
       ],
       videoList: [
-        { srcUrl: "", isLive: true },
-        { srcUrl: "", isLive: true }
+        { srcUrl: '', isLive: true },
+        { srcUrl: '', isLive: true }
       ]
-    };
+    }
   },
   methods: {
     // 获取子组件传递过来的数据
-    getSelectedData(data) {}
+    getSelectedData (data) {}
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .leftContainer {
@@ -321,7 +319,7 @@ export default {
   }
   .tools {
     position: absolute;
-    bottom: 60px;
+    bottom: 75px;
     width: 95%;
     height: 65px;
     background: url(../../assets/images/tool-bar.png) no-repeat;
@@ -345,7 +343,7 @@ export default {
 
   .time {
     position: absolute;
-    bottom: 10px;
+    bottom: 25px;
     width: 96%;
   }
 }

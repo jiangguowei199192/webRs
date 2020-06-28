@@ -24,10 +24,10 @@
   </div>
 </template>
 <script>
-import LivePlayer from "@liveqing/liveplayer";
+import LivePlayer from '@liveqing/liveplayer'
 export default {
-  data() {
-    return {};
+  data () {
+    return {}
   },
 
   components: {
@@ -42,32 +42,32 @@ export default {
   },
 
   methods: {
-    playAll() {
+    playAll () {
       var list = [
-        { srcUrl: "rtmp://116.85.50.50/live/zxstream", isLive: true },
-        { srcUrl: "rtmp://116.85.50.50/live/zxstream", isLive: true }
-      ];
-      this.$emit("update:videoList", list);
+        { srcUrl: 'rtmp://116.85.50.50/live/zxstream', isLive: true },
+        { srcUrl: 'rtmp://116.85.50.50/live/zxstream', isLive: true }
+      ]
+      this.$emit('update:videoList', list)
       this.$nextTick(() => {
         for (var i = 0; i < this.$refs.mainCtrl.childNodes.length; i++) {
-          var p = this.$refs.mainCtrl.childNodes[i].__vue__;
-          p.play();
+          var p = this.$refs.mainCtrl.childNodes[i].__vue__
+          p.play()
         }
-      });
+      })
     },
-    stopAll() {
+    stopAll () {
       var list = [
-        { srcUrl: "", isLive: true },
-        { srcUrl: "", isLive: true }
-      ];
-      this.$emit("update:videoList", list);
+        { srcUrl: '', isLive: true },
+        { srcUrl: '', isLive: true }
+      ]
+      this.$emit('update:videoList', list)
     },
-    fullScreen() {
-      var p = this.$refs.mainCtrl.childNodes[0].__vue__;
-      p.requestFullscreen();
+    fullScreen () {
+      var p = this.$refs.mainCtrl.childNodes[0].__vue__
+      p.requestFullscreen()
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .videoContainer {

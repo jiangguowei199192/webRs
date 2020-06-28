@@ -35,14 +35,14 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
       step: 0,
       minuteWidth: 0,
       pointerW: 0,
       pointerLeft: -45,
-      curTime: "00:00"
-    };
+      curTime: '00:00'
+    }
   },
 
   props: {
@@ -52,85 +52,85 @@ export default {
     }
   },
 
-  mounted() {
-    this.pointerW = this.$refs.pointer.clientWidth;
-    this.calculateStep();
+  mounted () {
+    this.pointerW = this.$refs.pointer.clientWidth
+    this.calculateStep()
     window.onresize = () => {
-      this.calculateStep();
-    };
+      this.calculateStep()
+    }
   },
 
-  destroyed() {
-    window.onresize = null;
+  destroyed () {
+    window.onresize = null
   },
 
   methods: {
     /**
      * 计算刻度尺
      */
-    calculateStep() {
-      var w = this.$refs.bar.clientWidth;
-      this.step = w / 24;
-      this.minuteWidth = w / (24 * 60);
+    calculateStep () {
+      var w = this.$refs.bar.clientWidth
+      this.step = w / 24
+      this.minuteWidth = w / (24 * 60)
     },
 
     /**
      * 格式化时间
      * @param {Integer}} time 时间
      */
-    formatTime(time) {
-      if (time < 10) return "0" + time.toString() + ":00";
-      else return time.toString() + ":00";
+    formatTime (time) {
+      if (time < 10) return '0' + time.toString() + ':00'
+      else return time.toString() + ':00'
     },
 
     /**
      * 格式化时间
      * @param {Integer}} minutes 时间
      */
-    formatMinutes(minutes) {
-      if (minutes < 10) return "0" + minutes.toString();
-      else return minutes.toString();
+    formatMinutes (minutes) {
+      if (minutes < 10) return '0' + minutes.toString()
+      else return minutes.toString()
     },
 
     /**
      * 跳转到X小时
      * @param {Integer}} hour 小时
      */
-    jumpHour(hour) {
-      this.jumpMinute(hour * 60);
+    jumpHour (hour) {
+      this.jumpMinute(hour * 60)
     },
 
     /**
      * 将分钟转换为小时和分钟字符串
      * @param {Integer}} minute 分钟
      */
-    toHourMinute(minutes) {
-      var hour = Math.floor(minutes / 60);
-      var minute = Math.floor(minutes % 60);
-      hour = this.formatMinutes(hour);
-      minute = this.formatMinutes(minute);
-      this.curTime = hour + ":" + minute;
+    toHourMinute (minutes) {
+      var hour = Math.floor(minutes / 60)
+      var minute = Math.floor(minutes % 60)
+      hour = this.formatMinutes(hour)
+      minute = this.formatMinutes(minute)
+      this.curTime = hour + ':' + minute
     },
 
     /**
      * 跳转到X分钟
      * @param {Integer}} minute 分钟
      */
-    jumpMinute(minute) {
-      this.pointerLeft = minute * this.minuteWidth - this.pointerW + 5;
-      this.toHourMinute(minute);
+    jumpMinute (minute) {
+      this.pointerLeft = minute * this.minuteWidth - this.pointerW + 5
+      this.toHourMinute(minute)
     },
 
     /**
      * 点击时间轴
      */
-    barClick: function(event) {
-      var x = event.offsetX;
-      this.pointerLeft = x - this.pointerW + 5;
-      this.toHourMinute(x / this.minuteWidth);
+    barClick: function (event) {
+      var x = event.offsetX
+      this.pointerLeft = x - this.pointerW + 5
+      this.toHourMinute(x / this.minuteWidth)
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .numContainer {
@@ -150,7 +150,7 @@ export default {
 .bar {
   position: relative;
   height: 28px;
-  background-size: cover;
+  background-size: 100% 100%;
   background: url(../../../assets/images/timebar.png) no-repeat;
   cursor: pointer;
   .segment {
