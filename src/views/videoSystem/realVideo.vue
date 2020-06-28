@@ -86,6 +86,22 @@
           <div class="videoList">
             <div v-for="(item,index) in 9" :key="index"></div>
           </div>
+          <!-- 下面按钮部分 -->
+          <div class="tools">
+            <div class="leftTool">
+              <img :src="ninePalace" />
+              <img :src="fourPalace" />
+              <img :src="onePalace" />
+            </div>
+            <div class="rightTool">
+              <img :src="playAll" />
+              <div class="pagination">
+                <el-pagination :page-size="10" layout="prev, next" :total="1000"></el-pagination>
+              </div>
+
+              <img :src="fullScreen" />
+            </div>
+          </div>
         </div>
       </div>
       <!-- 右侧部分 -->
@@ -177,6 +193,11 @@ export default {
   },
   data () {
     return {
+      ninePalace: require('../../assets/images/9.png'),
+      fourPalace: require('../../assets/images/4.png'),
+      onePalace: require('../../assets/images/1.png'),
+      playAll: require('../../assets/images/play-all.png'),
+      fullScreen: require('../../assets/images/full-screen.png'),
       data5: [
         {
           id: 1,
@@ -559,7 +580,7 @@ export default {
     .box {
       display: flex;
       justify-content: space-between;
-      margin-right:64px;
+      margin-right: 64px;
       .title {
         width: 202px;
         height: 45px;
@@ -573,12 +594,51 @@ export default {
       flex-wrap: wrap;
       > div {
         // width: 384px;
-        width:31%;
-        box-sizing:border-box;
+        width: 31%;
+        box-sizing: border-box;
         height: 223px;
-        background:#00497C;
-        margin-right:20px;
-        margin-bottom:20px;
+        background: #00497c;
+        margin-right: 20px;
+        margin-bottom: 20px;
+      }
+    }
+    .tools {
+      width: 1155px;
+      height: 71px;
+      background: url(../../assets/images/tool-bar.png) no-repeat;
+      display: flex;
+      justify-content: space-between;
+      .leftTool,
+      .rightTool {
+        position: relative;
+        top: 22px;
+        left: 40px;
+        img {
+          margin-right: 20px;
+          cursor: pointer;
+        }
+      }
+      .rightTool {
+        margin-right: 90px;
+        .pagination {
+          display: inline-block;
+          position: relative;
+          top: -10px;
+          margin-right:20px;
+          /deep/.el-pagination {
+            button {
+              background-color: transparent !important;
+              i {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #23CEFD;
+                text-align: center;
+                line-height: 20px;
+              }
+            }
+          }
+        }
       }
     }
   }
