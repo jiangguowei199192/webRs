@@ -22,6 +22,31 @@ const routes = [{
     path: '/playback',
     name: 'playbackSystem',
     component: () => import('../views/videoSystem/playback')
+  },
+  {
+    path: '/decisionSystem',
+    name: 'decisionSystem',
+    component: () => import('../views/decisionSystem')
+  },
+  {
+    path: '/evaluationSystem',
+    name: 'evaluationSystem',
+    component: () => import('../views/evaluationSystem')
+  },
+  {
+    path: '/digitalIndividual',
+    name: 'digitalIndividual',
+    component: () => import('../views/digitalIndividual')
+  },
+  {
+    path: '/digitalEquipment',
+    name: 'digitalEquipment',
+    component: () => import('../views/digitalEquipment')
+  },
+  {
+    path: '/systemSettings',
+    name: 'systemSettings',
+    component: () => import('../views/systemSettings')
   }
   ]
 }
@@ -38,7 +63,6 @@ router.beforeEach((to, from, next) => {
   if (notNeedToLogin.indexOf(to.name) > -1) {
     next()
   } else {
-    debugger
     if (!token || !to.name) {
       next({ name: 'login' })
       return
