@@ -84,14 +84,18 @@
             <div>当前选中：解放大道高点1</div>
           </div>
           <div class="videoList">
-            <div v-for="(item,index) in 9" :key="index"></div>
+            <div
+              v-for="(item,index) in showVideoNums"
+              :key="index"
+              :style="machineStatusStyle(showVideoNums)"
+            ></div>
           </div>
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="ninePalace" />
-              <img :src="fourPalace" />
-              <img :src="onePalace" />
+              <img :src="ninePalace" @click.stop="showVideosType(9)" />
+              <img :src="fourPalace" @click.stop="showVideosType(4)" />
+              <img :src="onePalace" @click.stop="showVideosType(1)" />
             </div>
             <div class="rightTool">
               <img :src="playAll" />
@@ -198,6 +202,7 @@ export default {
       onePalace: require('../../assets/images/1.png'),
       playAll: require('../../assets/images/play-all.png'),
       fullScreen: require('../../assets/images/full-screen.png'),
+      showVideoNums: 9, // 每屏显示视频的个数
       data5: [
         {
           id: 1,
@@ -325,6 +330,32 @@ export default {
       // this.data5 = data
       // })
       console.log(data)
+    },
+    // 每屏显示视频的个数
+    showVideosType (n) {
+      this.showVideoNums = n
+    },
+    machineStatusStyle (n) {
+      // console.log('值', e)
+      if (n === 9) {
+        return {
+          width: '31%',
+          height: '31%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 4) {
+        return {
+          width: '48%',
+          height: '48%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 1) {
+        return {
+          width: '99%',
+          height: '99%'
+          // marginLeft: '10px'
+        }
+      }
     }
   }
 }
@@ -588,18 +619,20 @@ export default {
         background: url(../../assets/images/device/info-title.png) no-repeat;
         line-height: 45px;
         padding-left: 30px;
+        margin-bottom: 20px;
       }
     }
     .videoList {
       display: flex;
       flex-wrap: wrap;
+      height: 710px;
       > div {
         // width: 384px;
         width: 31%;
         box-sizing: border-box;
         height: 223px;
 
-        margin-right: 20px;
+        margin-right: 19px;
         margin-bottom: 20px;
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
@@ -607,11 +640,11 @@ export default {
     }
     .tools {
       position: absolute;
-      bottom:25px;
-      width:95%;
+      bottom: 25px;
+      width: 95%;
       height: 71px;
-      background: url(../../assets/images/tool-bar.png) no-repeat ;
-      background-size:cover;
+      background: url(../../assets/images/tool-bar.png) no-repeat;
+      background-size: 100% 100%;
       display: flex;
       justify-content: space-between;
       .leftTool,
