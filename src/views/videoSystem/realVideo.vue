@@ -187,60 +187,60 @@
   </div>
 </template>
 <script>
-import VideoMain from "./components/main";
-import TreeData from "./components/tree";
-import videoMixin from "./mixins/videoMixin";
+import VideoMain from './components/main'
+import TreeData from './components/tree'
+import videoMixin from './mixins/videoMixin'
 export default {
-  name: "videoContainer",
+  name: 'videoContainer',
   components: {
     VideoMain,
     TreeData
   },
   mixins: [videoMixin],
-  data() {
+  data () {
     return {
       showVideoNums: 9, // 每屏显示视频的个数
       data5: [
         {
           id: 1,
-          label: "高点设备",
-          class: "highdevice",
+          label: '高点设备',
+          class: 'highdevice',
           children: [
             {
               id: 4,
-              label: "二级 1-1",
+              label: '二级 1-1',
               children: [
                 {
                   id: 12,
-                  label: "三级 1-1-1"
+                  label: '三级 1-1-1'
                   // isShow: false
                 },
                 {
                   id: 13,
-                  label: "三级 1-1-2"
+                  label: '三级 1-1-2'
                   // isShow: false
                 }
               ]
             },
             {
               id: 9,
-              label: "二级 2-1"
+              label: '二级 2-1'
             }
           ]
         },
         {
           id: 2,
-          label: "无人机",
-          class: "unmanned",
+          label: '无人机',
+          class: 'unmanned',
           children: [
             {
               id: 5,
-              label: "二级 2-1"
+              label: '二级 2-1'
               // isShow: false
             },
             {
               id: 6,
-              label: "二级 2-2"
+              label: '二级 2-2'
               // isShow: false
             }
           ]
@@ -264,42 +264,42 @@ export default {
       ],
       listArray: [
         {
-          area: "发展大道黄浦路1",
-          visibleText: "可见光",
-          infraredText: "红外光",
+          area: '发展大道黄浦路1',
+          visibleText: '可见光',
+          infraredText: '红外光',
           // isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
         {
-          area: "发展大道黄浦路2",
-          infraredText: "红外光",
+          area: '发展大道黄浦路2',
+          infraredText: '红外光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
         {
-          area: "发展大道黄浦路3",
-          visibleText: "可见光",
+          area: '发展大道黄浦路3',
+          visibleText: '可见光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         },
         {
-          area: "发展大道黄浦路4",
-          visibleText: "可见光",
-          infraredText: "红外光",
+          area: '发展大道黄浦路4',
+          visibleText: '可见光',
+          infraredText: '红外光',
           isSelected: false,
           visibleIsClick: false,
           infraredIsclick: false
         }
       ],
       value2: 4 // 步速值
-    };
+    }
   },
   methods: {
     // 获取子组件传递过来的数据
-    getSelectedData(data) {
+    getSelectedData (data) {
       // this.$nextTick(() => {
       // this.data5 = data
       // })
@@ -332,7 +332,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .videoContainer {
