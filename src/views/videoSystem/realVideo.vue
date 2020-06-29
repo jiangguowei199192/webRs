@@ -84,11 +84,9 @@
             <div>当前选中：解放大道高点1</div>
           </div>
           <div class="videoList">
-            <div
-              v-for="(item,index) in curVideosArray"
-              :key="index"
-              :style="machineStatusStyle(showVideoPageSize)"
-            ></div>
+            <div  v-for="(item,index) in curVideosArray" :key="index" :style="machineStatusStyle(showVideoPageSize)">
+              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl"></VideoWall>
+            </div>
           </div>
           <!-- 下面按钮部分 -->
           <div class="tools">
@@ -194,15 +192,18 @@
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
+import VideoWall from './components/videoWall'
 export default {
   name: 'videoContainer',
   components: {
     VideoMain,
-    TreeData
+    TreeData,
+    VideoWall
   },
   mixins: [videoMixin],
   data () {
     return {
+      videoInfo: { srcUrl: 'rtmp://120.24.12.64/live/test', isLive: true },
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
@@ -360,6 +361,7 @@ export default {
     for (let i = 0; i < this.showVideoPageSize; i++) {
       this.totalVideosArray.push('')
       this.curVideosArray.push('')
+      this.curVideosArray[0] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
     }
   }
 }

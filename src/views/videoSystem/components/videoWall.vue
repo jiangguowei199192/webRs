@@ -7,7 +7,7 @@
         :show-custom-button="false"
         :muted="false"
         :controls="false"
-        :autoplay="false"
+        :autoplay="true"
         class="playerStyle"
         oncontextmenu="return false"
         fluent
