@@ -18,17 +18,19 @@
         >{{formatTime(index)}}</span>
       </template>
     </div>
-    <div ref="bar" class="bar" @click="barClick">
-      <template v-for="(item,index) in segments">
-        <span
-          :key="index"
-          class="segment"
-          :style="'width:' + item.duration * minuteWidth + 'px;' + 'left:' + item.start * minuteWidth + 'px;'"
-        ></span>
-      </template>
-      <div class="pointer" ref="pointer" :style="'left:' + pointerLeft + 'px;'">
-        <span>{{curTime}}</span>
-        <span class="icon"></span>
+    <div class="barContainer">
+      <div ref="bar" class="bar" @click="barClick">
+        <template v-for="(item,index) in segments">
+          <span
+            :key="index"
+            class="segment"
+            :style="'width:' + item.duration * minuteWidth + 'px;' + 'left:' + item.start * minuteWidth + 'px;'"
+          ></span>
+        </template>
+        <div class="pointer" ref="pointer" :style="'left:' + pointerLeft + 'px;'">
+          <span>{{curTime}}</span>
+          <span class="icon"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -147,36 +149,33 @@ export default {
   cursor: pointer;
 }
 
-.bar {
-  position: relative;
+.barContainer {
   height: 28px;
-  background-size: 100% 100%;
-  background: url(../../../assets/images/timebar.png) no-repeat;
-  cursor: pointer;
-  .segment {
-    position: absolute;
-    height: 28px;
-    background: rgba(0, 215, 255, 1);
-    opacity: 0.65;
-    pointer-events: none;
+  background: rgba(63, 119, 155, 1);
+  border-radius: 4px;
+  margin: 0px -15px;
+  padding: 0px 15px;
+  .bar {
+    position: relative;
+    height: 100%;
+    background: url(../../../assets/images/timebar.png) no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    .segment {
+      position: absolute;
+      height: 100%;
+      background: rgba(0, 215, 255, 1);
+      opacity: 0.65;
+      pointer-events: none;
+    }
   }
-}
 
-.point {
-  width: 4px;
-  height: 4px;
-  background: rgba(209, 209, 209, 1);
-  border-radius: 50%;
-  position: absolute;
-  top: 5px;
-  cursor: pointer;
-}
-
-.pointer {
+  .pointer {
   pointer-events: none;
   display: inline-block;
   position: absolute;
   height: 42px;
+  width: 49.25px;
   top: -7px;
   :nth-child(1) {
     position: relative;
@@ -194,5 +193,16 @@ export default {
     height: 42px;
     background: url(../../../assets/images/time-pointer.png) no-repeat;
   }
+}
+}
+
+.point {
+  width: 4px;
+  height: 4px;
+  background: rgba(209, 209, 209, 1);
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  cursor: pointer;
 }
 </style>

@@ -34,16 +34,13 @@
               </p>
               <div class="btns">
                 <el-button
-                  class="visible"
-                  :style="{backgroundColor:item.visibleIsClick?'rgba(14,90,148,1)':''}"
-                  @click.stop="changeStatus(1,index)"
+                  :class="{visible:true, selected:curDevice==item.id, playing:item.playVl}"
+                  @click.stop="changeSelectDevice(item.id,index)"
                   v-if="item.visibleText"
                 >{{item. visibleText}}</el-button>
                 <el-button
-                  class="infrared"
-                  :style="{backgroundColor:item.infraredIsclick?'rgba(14,90,148,1)':''}"
-                  @click.stop="changeStatus(2,index)"
-                  :class="{isSelected:item.infraredIsclick}"
+                  :class="{infrared:true, selected:curDevice==item.idIr, playing:item.playIr}"
+                  @click.stop="changeSelectDevice(item.idIr,index)"
                   v-if="item.infraredText"
                 >{{item.infraredText}}</el-button>
               </div>
@@ -56,7 +53,7 @@
         </div>
       </div>
       <div slot="center">
-        <!-- <VideoWall :videoList.sync="videoList"></VideoWall> -->
+        <!-- <VideoWall :videoInfo.sync="videoInfo"></VideoWall> -->
         <div class="video">
           <div class="box">
             <div class="title">回放</div>
@@ -93,17 +90,22 @@ import Calendar from './components/calendar'
 import TimeBar from './components/timeBar'
 import Tree from './components/tree'
 import videoMixin from './mixins/videoMixin'
+// import VideoWall from './components/videoWall'
 export default {
   name: 'videoContainer',
   components: {
     VideoMain,
     Calendar,
     TimeBar,
+
     Tree
+
+    // VideoWall
   },
   mixins: [videoMixin],
   data () {
     return {
+      curDevice: '0', // 当前选中设备
       stop: require('../../assets/images/stop.png'),
       play: require('../../assets/images/play.png'),
       records: [{ start: 60, duration: 90 }],
@@ -159,41 +161,54 @@ export default {
           visibleText: '可见光',
           infraredText: '红外光',
           isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
+          idIr: '1',
+          id: '11',
+          playVl: false,
+          playIr: false
         },
         {
           area: '发展大道黄浦路2',
           infraredText: '红外光',
           isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
+          idIr: '22',
+          id: '2',
+          playVl: false,
+          playIr: false
         },
         {
           area: '发展大道黄浦路3',
           visibleText: '可见光',
           isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
+          idIr: '33',
+          id: '3',
+          playVl: false,
+          playIr: false
         },
         {
           area: '发展大道黄浦路4',
           visibleText: '可见光',
           infraredText: '红外光',
           isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
+          idIr: '44',
+          id: '4',
+          playVl: false,
+          playIr: false
         }
       ],
-      videoList: [
-        { srcUrl: '', isLive: true },
-        { srcUrl: '', isLive: true }
-      ]
+      videoInfo: { srcUrl: '', isLive: true }
     }
   },
   methods: {
     // 获取子组件传递过来的数据
-    getSelectedData (data) {}
+    getSelectedData (data) {},
+
+    /**
+     * 修改选中设备
+     */
+    changeSelectDevice (id, index) {
+      this.curDevice = id
+      this.selectedIndex = index
+    }
   }
 }
 </script>
@@ -279,6 +294,12 @@ export default {
       button.infrared {
         background: url(../../assets/images/infrared.png) no-repeat 4px center;
       }
+      button.selected {
+        border: 1px solid rgba(0, 255, 17, 1);
+      }
+      button.playing {
+       background:rgba(0,212,14,1);
+      }
     }
   }
   div.selected {
@@ -311,7 +332,7 @@ export default {
       box-sizing: border-box;
       height: 223px;
 
-      margin-right: 20px;
+      margin-right: 11px;
       margin-bottom: 11px;
       background: url(../../assets/images/video.png) no-repeat center center;
       background-color: #00497c;
@@ -344,7 +365,8 @@ export default {
   .time {
     position: absolute;
     bottom: 25px;
-    width: 96%;
+    width: 92%;
+    left: 40px;
   }
 }
 </style>
