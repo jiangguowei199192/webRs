@@ -84,7 +84,11 @@
             <div>当前选中：解放大道高点1</div>
           </div>
           <div class="videoList">
-            <div  v-for="(item,index) in curVideosArray" :key="index" :style="machineStatusStyle(showVideoPageSize)">
+            <div
+              v-for="(item,index) in curVideosArray"
+              :key="index"
+              :style="machineStatusStyle(showVideoPageSize)"
+            >
               <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl"></VideoWall>
             </div>
           </div>
@@ -100,8 +104,11 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev, next"
+                  layout="prev,pager, next"
                   :total="totalVideosArray.length"
+                  :current-page.sync="currentPage"
+                  @prev-click="pre"
+                  @next-click="next"
                 ></el-pagination>
               </div>
 
@@ -203,7 +210,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
-      videoInfo: { srcUrl: 'rtmp://120.24.12.64/live/test', isLive: true },
+      currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
@@ -315,23 +322,64 @@ export default {
     // 切换每屏显示的个数
     changeVideosType (n) {
       debugger
+      this.currentPage = 1
       this.showVideoPageSize = n
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')
       console.log(result)
+      // 如果有值并且小于每屏的展示数据
       if (result.length <= n) {
         // 由大变小
-        if (this.totalVideosArray.length > n) {
+        if (this.totalVideosArray.length >= n) {
           this.curVideosArray = this.totalVideosArray.slice(0, n)
           this.totalVideosArray = this.totalVideosArray.slice(0, n)
         } else {
           const j = this.totalVideosArray.length
           for (let i = 0; i < n - j; i++) {
-            this.curVideosArray.push('')
+            // this.curVideosArray.push('')
             this.totalVideosArray.push('')
           }
+          this.curVideosArray = this.totalVideosArray.slice(0, n)
+        }
+      } else {
+        this.totalVideosArray = this.totalVideosArray.filter(
+          item => item !== ''
+        )
+        this.curVideosArray = this.totalVideosArray.slice(0, n)
+      }
+    },
+    // 上一页
+    pre (cpage) {
+      // if (cpage * 4 > this.totalVideosArray.length) {
+      //   const j = this.totalVideosArray.length
+      //   for (
+      //     let i = 0;
+      //     i < cpage * 4 - j;
+      //     i++
+      //   ) {
+      //     this.totalVideosArray.push('')
+      //   }
+      // }
+      this.curVideosArray = this.totalVideosArray.slice(
+        (cpage - 1) * this.showVideoPageSize,
+        cpage * this.showVideoPageSize
+      )
+    },
+    // 下一页
+    next (cpage) {
+      debugger
+      if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
+        const j = this.totalVideosArray.length
+        for (let i = 0; i < cpage * this.showVideoPageSize - j; i++) {
+          this.totalVideosArray.push('')
         }
       }
+      console.log(this.totalVideosArray.length)
+      this.curVideosArray = this.totalVideosArray.slice(
+        (cpage - 1) * this.showVideoPageSize,
+        cpage * this.showVideoPageSize
+      )
+      console.log(cpage, this.curVideosArray.length)
     },
     // 动态渲染9个空元素
     machineStatusStyle (n) {
@@ -358,11 +406,22 @@ export default {
   },
   created () {
     // 初始加载9个空元素
-    for (let i = 0; i < this.showVideoPageSize; i++) {
-      this.totalVideosArray.push('')
-      this.curVideosArray.push('')
-      this.curVideosArray[0] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
+    for (let i = 0; i < 6; i++) {
+      this.totalVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
+      // this.curVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
     }
+    for (let i = 0; i < 3; i++) {
+      this.totalVideosArray.push('')
+      // this.curVideosArray.push('')
+    }
+    this.curVideosArray = this.totalVideosArray.slice(
+      0,
+      this.showVideoPageSize
+    )
+    // this.curVideosArray[0] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
+    // this.curVideosArray[1] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
+    // this.curVideosArray[2] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
+    // this.curVideosArray[3] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
   }
 }
 </script>
