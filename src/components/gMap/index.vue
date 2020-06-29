@@ -5,6 +5,17 @@
       :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
       @dblclick="dblClickMap"
     ></div>
+    <el-input
+      id="_addrSearch"
+      class="searchBox"
+      v-model="filterText"
+      size="mini"
+      :placeholder="placeHolder">
+      <div slot="append">
+        <el-button icon="el-icon-search" size="mini" class="appendBtn"></el-button>
+        <el-button icon="el-icon-close" size="mini" class="appendBtn"></el-button>
+      </div>
+    </el-input>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -84,6 +95,8 @@ export default {
   name: 'gMap',
   data () {
     return {
+      filterText: '',
+      placeHolder: '请输入目的地',
       locale: 'zh',
       measureType: 0,
       bShowTheTif: true,
@@ -171,8 +184,10 @@ export default {
   },
 
   methods: {
+    // 创建地图组件
     createMap () {
       this.mapTypeCur = this.mapTypeBasic + this.mapTypeIndex
+      // eslint-disable-next-line
       this.map2D = new D2.Map2D({
         containerId: 'mapContainer',
         baseLayerType: this.mapTypeCur,
@@ -184,6 +199,28 @@ export default {
       this.map2D.zoomToCenter(this.lon, this.lat)
       this.map2D.markerLayerManager.baseUrl = localStorage.ftpBaseUrl
       this.$emit('eventMapLoaded')
+
+      this.map2D.geoLocation()
+      this.map2D.addAutocomplete(this.initSearchBox)
+    },
+
+    // 初始化搜索提示框
+    initSearchBox () {
+      // 输入提示
+      var autoOptions = {
+        input: '_addrSearch'
+      }
+      // eslint-disable-next-line
+      var auto = new AMap.Autocomplete(autoOptions)
+      // eslint-disable-next-line
+      AMap.event.addListener(auto, 'select', select) // 注册监听，当选中某条记录时会触发
+      var that = this
+      function select (e) {
+        if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+          that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
+        }
+      }
+      console.log('initSearchBox ...... OK')
     },
 
     // 绘制多边形
@@ -396,6 +433,17 @@ export default {
   }
   .areaCursor {
     cursor: url("../../assets/images/m_area.png") 3 2, auto;
+  }
+  .searchBox {
+    position: absolute;
+    height: 34px;
+    width: 300px;
+    left: 15px;
+    top: 15px;
+    border-radius: 4px;
+    .appendBtn {
+      width: 40px;
+    }
   }
   .measureTools {
     position: absolute;

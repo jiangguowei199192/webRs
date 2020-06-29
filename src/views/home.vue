@@ -71,9 +71,9 @@ export default {
       curActive: 1 // 激活实时视频还是回放视频 1实时 2回放
     }
   },
-  // mounted () {
-  //   this.jumpTo(this.isActive)
-  // },
+  mounted () {
+    this.jumpTo(this.isActive)
+  },
   methods: {
     // 点击激活当前系统
     jumpTo (index) {
