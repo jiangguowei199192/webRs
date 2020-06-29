@@ -79,7 +79,7 @@
         </div>
       </div>
       <div slot="right">
-        <Calendar></Calendar>
+        <Calendar @dateChangeEvent="dateChange"></Calendar>
       </div>
     </VideoMain>
   </div>
@@ -199,7 +199,9 @@ export default {
     }
   },
   methods: {
-    // 获取子组件传递过来的数据
+    /**
+     * 获取子组件传递过来的数据
+     */
     getSelectedData (data) {},
 
     /**
@@ -208,6 +210,14 @@ export default {
     changeSelectDevice (id, index) {
       this.curDevice = id
       this.selectedIndex = index
+    },
+
+    /**
+     * 日历日期改变
+     * @param {Object} dataInfo 日期信息
+     */
+    dateChange (dataInfo) {
+
     }
   }
 }

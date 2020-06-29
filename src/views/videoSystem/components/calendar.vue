@@ -6,12 +6,12 @@
     <div class="btnContainer">
       <div>
         <span class="btn pre" @click="calendarPre(true,false)"></span>
-        <span class="month">{{curYear}}</span>
+        <span class="month">{{dateInfo.curYear}}</span>
         <span class="btn next" @click="calendarPre(true,true)"></span>
       </div>
       <div>
         <span class="btn pre" @click="calendarPre(false,false)"></span>
-        <span class="month">{{showDate.getMonth() + 1}}</span>
+        <span class="month">{{dateInfo.curMonth}}</span>
         <span class="btn next" @click="calendarPre(false,true)"></span>
       </div>
     </div>
@@ -32,17 +32,24 @@ export default {
   data () {
     return {
       showDate: new Date(),
-      curYear: ''
+      dateInfo: { curYear: '', curMonth: '' }
     }
   },
   watch: {
     showDate (val) {
       this.getYear()
+    },
+    dateInfo: {
+      handler (newVal, oldVal) {
+        this.$emit('dateChangeEvent', this.dateInfo)
+      },
+      deep: true
     }
   },
 
   mounted () {
     this.getYear()
+    this.$emit('dateChangeEvent', this.dateInfo)
   },
 
   methods: {
@@ -52,7 +59,9 @@ export default {
     getYear () {
       var year = this.showDate.getYear()
       year = year < 2000 ? year + 1900 : year
-      this.curYear = year.toString().substr(2, 2)
+      this.dateInfo.curYear = year.toString().substr(2, 2)
+      this.dateInfo.curMonth = this.showDate.getMonth() + 1
+      // this.$emit("", "");
     },
 
     /**

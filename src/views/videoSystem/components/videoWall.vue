@@ -1,20 +1,17 @@
 <template>
-  <div>
-    <div class="videoContainer">
-      <LivePlayer
-        ref="playerCtrl"
-        :videoUrl="videoInfo.srcUrl"
-        :show-custom-button="false"
-        :muted="false"
-        :controls="false"
-        :autoplay="true"
-        class="playerStyle"
-        oncontextmenu="return false"
-        fluent
-        :live="videoInfo.isLive"
-        :stretch="true"
-      ></LivePlayer>
-    </div>
+  <div class="playerStyle">
+    <LivePlayer
+      ref="playerCtrl"
+      :videoUrl="videoInfo.srcUrl"
+      :show-custom-button="false"
+      :muted="false"
+      :controls="false"
+      :autoplay="true"
+      oncontextmenu="return false"
+      fluent
+      :live="videoInfo.isLive"
+      aspect="fullscreen"
+    ></LivePlayer>
   </div>
 </template>
 <script>
@@ -36,12 +33,12 @@ export default {
 
   methods: {
     playAll () {
-      var videoInfo = {
-        srcUrl: 'rtmp://116.85.50.50/live/zxstream',
-        isLive: true
-      }
+      // var videoInfo = {
+      //   srcUrl: 'rtmp://116.85.50.50/live/zxstream',
+      //   isLive: true
+      // }
 
-      this.$emit('update:videoInfo', videoInfo)
+      // this.$emit('update:videoInfo', videoInfo)
       this.$nextTick(() => {
         var p = this.$refs.playerCtrl.player
         p.play()
@@ -50,22 +47,18 @@ export default {
     stopAll () {
       var videoInfo = { srcUrl: '', isLive: true }
       this.$emit('update:videoInfo', videoInfo)
-    },
-    fullScreen () {
-      var p = this.$refs.playerCtrl.player
-      p.requestFullscreen()
     }
+    // fullScreen () {
+    //   var p = this.$refs.playerCtrl.player
+    //   p.requestFullscreen()
+    // }
   }
 }
 </script>
 <style lang="less" scoped>
-.videoContainer {
-  display: flex;
-}
-
 .playerStyle {
-  margin-left: 10px;
-  width: 48%;
-  height: 360px;
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 </style>
