@@ -1,6 +1,6 @@
 <template>
   <div class="decision">
-    decision
+    <gMap ref="gduMap" handleType="Dashboard" :bShowBasic="true" :bShowMeasure="true"></gMap>
   </div>
 </template>
 

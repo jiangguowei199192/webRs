@@ -1,0 +1,38 @@
+{
+  "name": "dataConfig",
+  "description": "基础数据",
+  "data": {
+    "baseLayers": [
+      {
+        "description": "谷歌中国混合地图（默认）",
+        "url": "http://mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=CN&src=app&s=G&x={x}&y={y}&z={z}",
+        "code":1
+      },
+      {
+        "description": "谷歌中国卫星地图",
+        "url": "http://mt0.google.cn/vt/lyrs=s@170&gl=cn&s=Ga&x={x}&y={y}&z={z}",
+        "code":2
+      },
+      {
+        "description": "谷歌中国普通地图",
+        "url": "http://mt0.google.cn/vt/lyrs=m@298&hl=zh-CN&gl=cn&s=G&x={x}&y={y}&z={z}",
+        "code":3
+      },
+      {
+        "description": "谷歌混合地图",
+        "url": "http://mt3.google.com/maps/vt/lyrs=y@333000000&hl=en&s=Gal&x={x}&y={y}&z={z}",
+        "code":4
+      },
+      {
+        "description": "谷歌卫星地图",
+        "url": "http://mt3.google.com/maps/vt/lyrs=s@333000000&hl=en&s=G&x={x}&y={y}&z={z}",
+        "code":5
+      },
+      {
+        "description": "谷歌普通地图",
+        "url": "http://mt2.google.com/maps/vt/lyrs=m@333000000&hl=en&s=Galil&x={x}&y={y}&z={z}",
+        "code":6
+      }
+    ]
+  }
+}
