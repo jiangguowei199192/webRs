@@ -42,7 +42,7 @@
                 >{{item. visibleText}}</el-button>
                 <el-button
                   class="infrared"
-                  :style="{backgroundColor:item.infraredIsclick?'rgba(14,90,148,1)':''}"
+                  :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
                   @click.stop="changeStatus(2,index)"
                   :class="{isSelected:item.infraredIsclick}"
                   v-if="item.infraredText"
@@ -85,22 +85,26 @@
           </div>
           <div class="videoList">
             <div
-              v-for="(item,index) in showVideoNums"
+              v-for="(item,index) in curVideosArray"
               :key="index"
-              :style="machineStatusStyle(showVideoNums)"
+              :style="machineStatusStyle(showVideoPageSize)"
             ></div>
           </div>
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="ninePalace" @click.stop="showVideosType(9)" />
-              <img :src="fourPalace" @click.stop="showVideosType(4)" />
-              <img :src="onePalace" @click.stop="showVideosType(1)" />
+              <img :src="ninePalace" @click.stop="changeVideosType(9)" />
+              <img :src="fourPalace" @click.stop="changeVideosType(4)" />
+              <img :src="onePalace" @click.stop="changeVideosType(1)" />
             </div>
             <div class="rightTool">
               <img :src="playAll" />
               <div class="pagination">
-                <el-pagination :page-size="10" layout="prev, next" :total="1000"></el-pagination>
+                <el-pagination
+                  :page-size="showVideoPageSize"
+                  layout="prev, next"
+                  :total="totalVideosArray.length"
+                ></el-pagination>
               </div>
 
               <img :src="fullScreen" />
@@ -199,7 +203,9 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
-      showVideoNums: 9, // 每屏显示视频的个数
+      totalVideosArray: [], // 总共的数据
+      curVideosArray: [], // 当前展示的数据
+      showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       data5: [
         {
           id: 1,
@@ -305,12 +311,29 @@ export default {
       // })
       console.log(data)
     },
-    // 每屏显示视频的个数
-    showVideosType (n) {
-      this.showVideoNums = n
+    // 切换每屏显示的个数
+    changeVideosType (n) {
+      debugger
+      this.showVideoPageSize = n
+      // 在总数据中获取实际有视频的数据
+      const result = this.totalVideosArray.filter(item => item !== '')
+      console.log(result)
+      if (result.length <= n) {
+        // 由大变小
+        if (this.totalVideosArray.length > n) {
+          this.curVideosArray = this.totalVideosArray.slice(0, n)
+          this.totalVideosArray = this.totalVideosArray.slice(0, n)
+        } else {
+          const j = this.totalVideosArray.length
+          for (let i = 0; i < n - j; i++) {
+            this.curVideosArray.push('')
+            this.totalVideosArray.push('')
+          }
+        }
+      }
     },
+    // 动态渲染9个空元素
     machineStatusStyle (n) {
-      // console.log('值', e)
       if (n === 9) {
         return {
           width: '31%',
@@ -330,6 +353,13 @@ export default {
           // marginLeft: '10px'
         }
       }
+    }
+  },
+  created () {
+    // 初始加载9个空元素
+    for (let i = 0; i < this.showVideoPageSize; i++) {
+      this.totalVideosArray.push('')
+      this.curVideosArray.push('')
     }
   }
 }
@@ -602,7 +632,7 @@ export default {
       height: 710px;
       > div {
         // width: 384px;
-        width: 31%;
+        // width: 31%;
         box-sizing: border-box;
         height: 223px;
 
