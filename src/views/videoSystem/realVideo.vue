@@ -72,7 +72,11 @@
                 </span>
               </el-tree>
             </div>-->
-            <tree-data :treeData="treeData" @selectedChange="getSelectedData"></tree-data>
+            <tree-data
+              :treeData="treeData"
+              @selectedChange="getSelectedData"
+              @videoChange="closeOrOpen"
+            ></tree-data>
           </template>
         </div>
       </div>
@@ -89,7 +93,7 @@
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
-              <VideoWall :videoInfo="item" :key="index" v-if="item.srcUrl" ref=""></VideoWall>
+              <VideoWall :videoInfo="item" :key="index" v-if="item.srcUrl" ref></VideoWall>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -315,6 +319,21 @@ export default {
     // 获取子组件传递过来的数据
     getSelectedData (data) {
       console.log(data)
+    },
+    closeOrOpen (type, curData) {
+      debugger
+      if (type === 1) {
+        const i = this.totalVideosArray.indexOf('')
+        this.totalVideosArray.splice(i, 1, {
+          srcUrl: 'rtmp://120.24.12.64/live/test'
+        })
+        this.curVideosArray = this.totalVideosArray.slice(
+          0,
+          this.showVideoPageSize
+        )
+      } else {
+
+      }
     },
     // 切换每屏显示的个数
     changeVideosType (n) {

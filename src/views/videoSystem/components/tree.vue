@@ -53,11 +53,13 @@ export default {
 
     showLiveVideo (data, $event) {
       if (!data.children) {
-        // debugger
+        // 若没有，则添加class，并传递当前数据
         if (!$event.currentTarget.getAttribute('class')) {
           $event.currentTarget.setAttribute('class', 'liveIcon')
+          this.$emit('videoChange', 1, data)
         } else {
           $event.currentTarget.setAttribute('class', '')
+          this.$emit('videoChange', 2, data)
         }
       }
     }

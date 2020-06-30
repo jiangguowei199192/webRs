@@ -6,7 +6,7 @@
       :show-custom-button="false"
       :muted="false"
       :controls="false"
-      :autoplay="true"
+      :autoplay="false"
       oncontextmenu="return false"
       fluent
       :live="videoInfo.isLive"
