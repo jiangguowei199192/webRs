@@ -73,9 +73,10 @@ export default {
   }
   .leftNav .iconLeft {
     background: url(../../../assets/images/arrow-left.png) no-repeat;
+    left:-20px;
   }
   .rightInfo .iconRight {
-    right: 0px;
+    right: -20px;
     background: url(../../../assets/images/arrow-right-info.png) no-repeat;
   }
   .rightInfo .iconLeft {

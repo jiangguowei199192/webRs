@@ -41,7 +41,7 @@ export default {
     },
     dateInfo: {
       handler (newVal, oldVal) {
-        this.$emit('dateChangeEvent', this.dateInfo)
+        this.$emit('dateChangeEvent', this.showDate)
       },
       deep: true
     }
@@ -49,7 +49,7 @@ export default {
 
   mounted () {
     this.getYear()
-    this.$emit('dateChangeEvent', this.dateInfo)
+    this.$emit('dateChangeEvent', this.showDate)
   },
 
   methods: {

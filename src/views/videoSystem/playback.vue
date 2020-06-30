@@ -60,7 +60,13 @@
             <div>当前选中：解放大道高点1</div>
           </div>
           <div class="videoList">
-            <div v-for="(item,index) in 9" :key="index"></div>
+            <div
+              v-for="(item,index) in curVideosArray"
+              :key="index"
+              :style="machineStatusStyle(showVideoPageSize)"
+            >
+              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl"></VideoWall>
+            </div>
           </div>
           <!-- 下面按钮部分 -->
           <div class="tools">
@@ -85,19 +91,20 @@
   </div>
 </template>
 <script>
+import { api } from '@/api/videoRecord.js'
 import VideoMain from './components/main'
 import Calendar from './components/calendar'
 import TimeBar from './components/timeBar'
 import Tree from './components/tree'
 import videoMixin from './mixins/videoMixin'
-// import VideoWall from './components/videoWall'
+import VideoWall from './components/videoWall'
 export default {
   name: 'videoContainer',
   components: {
     VideoMain,
     Calendar,
     TimeBar,
-
+    VideoWall,
     Tree
 
     // VideoWall
@@ -105,6 +112,8 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      curVideosArray: [], // 当前展示的数据
+      showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curDevice: '0', // 当前选中设备
       stop: require('../../assets/images/stop.png'),
       play: require('../../assets/images/play.png'),
@@ -198,6 +207,15 @@ export default {
       videoInfo: { srcUrl: '', isLive: true }
     }
   },
+
+  created () {
+    // 初始加载9个空元素
+    for (let i = 0; i < this.showVideoPageSize; i++) {
+      this.curVideosArray.push('')
+      this.curVideosArray[0] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
+    }
+  },
+
   methods: {
     /**
      * 获取子组件传递过来的数据
@@ -214,10 +232,43 @@ export default {
 
     /**
      * 日历日期改变
-     * @param {Object} dataInfo 日期信息
+     * @param {Date} date 日期信息
      */
-    dateChange (dataInfo) {
+    dateChange (date) {
+      // this.$axios
+      //   .post(api.getMp4RecordFile, {
+      //     vhost: '__defaultVhost_ ',
+      //     app: 'live',
+      //     stream: 'lqsstream'
+      //   })
+      //   .then(res => {
+      //     if (res) {
+      //       debugger
+      //     }
+      //   })
+    },
 
+    // 动态渲染9个空元素
+    machineStatusStyle (n) {
+      if (n === 9) {
+        return {
+          width: '31%',
+          height: '31%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 4) {
+        return {
+          width: '48%',
+          height: '48%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 1) {
+        return {
+          width: '99%',
+          height: '99%'
+          // marginLeft: '10px'
+        }
+      }
     }
   }
 }
@@ -308,7 +359,7 @@ export default {
         border: 1px solid rgba(0, 255, 17, 1);
       }
       button.playing {
-       background:rgba(0,212,14,1);
+        background: rgba(0, 212, 14, 1);
       }
     }
   }
@@ -336,9 +387,10 @@ export default {
   .videoList {
     display: flex;
     flex-wrap: wrap;
+    height: 710px;
     > div {
       // width: 384px;
-      width: 31%;
+      // width: 31%;
       box-sizing: border-box;
       height: 223px;
 
