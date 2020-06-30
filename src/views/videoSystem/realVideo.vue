@@ -72,7 +72,7 @@
                 </span>
               </el-tree>
             </div>-->
-            <tree-data :treeData="data5" @selectedChange="getSelectedData"></tree-data>
+            <tree-data :treeData="treeData" @selectedChange="getSelectedData"></tree-data>
           </template>
         </div>
       </div>
@@ -214,7 +214,7 @@ export default {
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
-      data5: [
+      treeData: [
         {
           id: 1,
           label: '高点设备',

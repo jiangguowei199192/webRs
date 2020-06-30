@@ -7,13 +7,12 @@
       default-expand-all
       :expand-on-click-node="false"
       :props="defaultProps"
-      @node-click="handleNodeClick"
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
-        <span>
+        <span @click.stop="showLiveVideo(data,$event)">
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
-          <img src="../../../assets/images/onlive.png" v-if="data.isShow" />
+          <!-- <img src="../../../assets/images/onlive.png" v-if="data.isShow" /> -->
           {{ node.label }}
         </span>
       </span>
@@ -41,9 +40,25 @@ export default {
   methods: {
     // 点击树节点
     handleNodeClick (data) {
+      console.log(data.id)
       if (!data.children) {
-        data.isShow = true
-        this.$emit('selectedChange', this.treeData)
+        // data.isShow = true
+        // this.$emit('selectedChange', this.treeData)
+      }
+    },
+    // 获得选中的节点的key
+    checkedKeys: function (data) {
+      alert(JSON.stringify(this.$refs.tree.getCheckedKeys()))
+    },
+
+    showLiveVideo (data, $event) {
+      if (!data.children) {
+        // debugger
+        if (!$event.currentTarget.getAttribute('class')) {
+          $event.currentTarget.setAttribute('class', 'liveIcon')
+        } else {
+          $event.currentTarget.setAttribute('class', '')
+        }
       }
     }
   }
@@ -90,13 +105,23 @@ export default {
         top: -2px;
       }
     }
+    span.liveIcon {
+      padding-right: 25px;
+      background: url(../../../assets/images/onlive.png) no-repeat right center;
+    }
   }
-  .el-tree--highlight-current
+  /deep/.el-tree--highlight-current
     .el-tree-node.is-current
     > .el-tree-node__content {
-    background: #096090;
+    background: #096090 !important;
   }
-  .el-tree-node__content:hover {
+  /deep/.el-tree-node__content {
+    cursor: text;
+    .custom-tree-node {
+      cursor: pointer;
+    }
+  }
+  /deep/.el-tree-node__content:hover {
     background-color: #096090;
   }
 }

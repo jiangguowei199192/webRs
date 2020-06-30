@@ -103,7 +103,7 @@ export default {
   .el-header {
     margin-top: 36px;
     height: auto !important;
-    padding: 0 62px 0 46px;
+    padding: 0 20px 0 20px;
   }
   .box {
     display: flex;
@@ -151,7 +151,7 @@ export default {
     //   border-top: 3px solid #7be4ff;
     // }
     .title {
-      width: 550px;
+      width: 540px;
       height:66px;
       line-height: 66px;;
       text-align: center;
