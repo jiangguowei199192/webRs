@@ -27,7 +27,7 @@ export default {
 
   props: {
     videoInfo: {
-      default: () => ''
+      default: () => {}
     }
   },
 

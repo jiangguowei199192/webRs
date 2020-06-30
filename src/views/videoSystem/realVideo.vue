@@ -89,7 +89,7 @@
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
-              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl"></VideoWall>
+              <VideoWall :videoInfo="item" :key="index" v-if="item.srcUrl" ref=""></VideoWall>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -398,12 +398,13 @@ export default {
   },
   created () {
     // 初始加载9个空元素
-    for (let i = 0; i < 6; i++) {
-      this.totalVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
-    }
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 9; i++) {
+      // this.totalVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
       this.totalVideosArray.push('')
     }
+    // for (let i = 0; i < 3; i++) {
+    //   this.totalVideosArray.push('')
+    // }
     this.curVideosArray = this.totalVideosArray.slice(
       0,
       this.showVideoPageSize
