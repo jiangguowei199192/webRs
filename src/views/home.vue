@@ -147,22 +147,25 @@ export default {
     div.list:nth-child(n + 5) .item {
       background: url(../assets/images/unselected-right.png) no-repeat;
     }
-    .list:nth-child(4) .item {
-      border-top: 3px solid #7be4ff;
-    }
+    // .list:nth-child(4) .item {
+    //   border-top: 3px solid #7be4ff;
+    // }
     .title {
-      width: 559px;
+      width: 550px;
+      height:66px;
+      line-height: 66px;;
       text-align: center;
-      padding-top: 11px;
+      // padding-top: 11px;
       font-size: 36px;
       font-weight: bold;
       margin-top: -13px;
       font-family: Source Han Sans CN;
-      background: linear-gradient(
-        90deg,
-        rgba(0, 168, 217, 0.01) 0%,
-        rgba(0, 168, 217, 0) 100%
-      );
+      // background: linear-gradient(
+      //   90deg,
+      //   rgba(0, 168, 217, 0.01) 0%,
+      //   rgba(0, 168, 217, 0) 100%
+      // );
+       background: url(../assets/images/title.png) no-repeat ;
       span {
         text-shadow: #000 3px 4px 5px;
       }
