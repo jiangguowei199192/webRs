@@ -81,8 +81,7 @@ export default {
         if (index === 0) this.$router.push({ path: '/decisionSystem' })
         else if (index === 1) {
           this.jumpToVideoUrl(this.curActive)
-        } else if (index === 2) this.$router.push({ path: '/evaluationSystem' })
-        else if (index === 4) this.$router.push({ path: '/digitalIndividual' })
+        } else if (index === 2) { this.$router.push({ path: '/evaluationSystem' }) } else if (index === 4) this.$router.push({ path: '/digitalIndividual' })
         else if (index === 5) this.$router.push({ path: '/digitalEquipment' })
         else if (index === 6) this.$router.push({ path: '/systemSettings' })
         this.isActive = index
@@ -145,6 +144,9 @@ export default {
       line-height: 52px;
       text-align: center;
     }
+    div.list:nth-child(n + 5) .item {
+      background: url(../assets/images/unselected-right.png) no-repeat;
+    }
     .list:nth-child(4) .item {
       border-top: 3px solid #7be4ff;
     }
@@ -165,8 +167,11 @@ export default {
         text-shadow: #000 3px 4px 5px;
       }
     }
-    .active {
+    div.list:not(:nth-child(4)) .active {
       background: url(../assets/images/selected.png) no-repeat !important;
+    }
+    div.list:nth-child(n + 5) .active {
+      background: url(../assets/images/selected-right.png) no-repeat !important;
     }
   }
   .cur {
