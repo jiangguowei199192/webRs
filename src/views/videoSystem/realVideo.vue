@@ -314,9 +314,6 @@ export default {
   methods: {
     // 获取子组件传递过来的数据
     getSelectedData (data) {
-      // this.$nextTick(() => {
-      // this.data5 = data
-      // })
       console.log(data)
     },
     // 切换每屏显示的个数
@@ -327,21 +324,24 @@ export default {
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')
       console.log(result)
-      // 如果有值并且小于每屏的展示数据
+      // 1.如果实际视频并且小于每屏的展示数据
       if (result.length <= n) {
-        // 由大变小
+        // 1.1由大变小
         if (this.totalVideosArray.length >= n) {
           this.curVideosArray = this.totalVideosArray.slice(0, n)
+          // 此操作过滤掉不要的空元素
           this.totalVideosArray = this.totalVideosArray.slice(0, n)
         } else {
+          // 1.2由小变大
           const j = this.totalVideosArray.length
           for (let i = 0; i < n - j; i++) {
-            // this.curVideosArray.push('')
             this.totalVideosArray.push('')
           }
           this.curVideosArray = this.totalVideosArray.slice(0, n)
         }
       } else {
+        // 2.如果实际视频并且大于每屏的展示数据
+        // 过滤掉本身数据中空元素
         this.totalVideosArray = this.totalVideosArray.filter(
           item => item !== ''
         )
@@ -350,16 +350,7 @@ export default {
     },
     // 上一页
     pre (cpage) {
-      // if (cpage * 4 > this.totalVideosArray.length) {
-      //   const j = this.totalVideosArray.length
-      //   for (
-      //     let i = 0;
-      //     i < cpage * 4 - j;
-      //     i++
-      //   ) {
-      //     this.totalVideosArray.push('')
-      //   }
-      // }
+      // 始终截取当前页需要的数据
       this.curVideosArray = this.totalVideosArray.slice(
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
@@ -370,6 +361,7 @@ export default {
       debugger
       if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
+        // 若不够，数据则补位空格
         for (let i = 0; i < cpage * this.showVideoPageSize - j; i++) {
           this.totalVideosArray.push('')
         }
@@ -408,20 +400,14 @@ export default {
     // 初始加载9个空元素
     for (let i = 0; i < 6; i++) {
       this.totalVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
-      // this.curVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
     }
     for (let i = 0; i < 3; i++) {
       this.totalVideosArray.push('')
-      // this.curVideosArray.push('')
     }
     this.curVideosArray = this.totalVideosArray.slice(
       0,
       this.showVideoPageSize
     )
-    // this.curVideosArray[0] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
-    // this.curVideosArray[1] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
-    // this.curVideosArray[2] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
-    // this.curVideosArray[3] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
   }
 }
 </script>
