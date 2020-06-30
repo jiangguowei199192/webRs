@@ -5,11 +5,11 @@
       highlight-current
       node-key="id"
       default-expand-all
-      :expand-on-click-node="false"
+      ref="tree"
       :props="defaultProps"
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
-        <span @click.stop="showLiveVideo(data,$event)">
+        <span @click="showLiveVideo(data,$event)">
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <!-- <img src="../../../assets/images/onlive.png" v-if="data.isShow" /> -->
@@ -86,6 +86,9 @@ export default {
         color: transparent;
       }
     }
+    // .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+    //    background: #096090 !important;
+    // }
   }
   .custom-tree-node {
     > span {
