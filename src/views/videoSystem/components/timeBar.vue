@@ -42,8 +42,7 @@ export default {
       step: 0,
       minuteWidth: 0,
       pointerW: 0,
-      pointerLeft: -45,
-      curTime: '00:00'
+      pointerLeft: -45
     }
   },
 
@@ -51,6 +50,10 @@ export default {
     segments: {
       type: Array,
       default: () => []
+    },
+    curTime: {
+      type: String,
+      default: () => ''
     }
   },
 
@@ -111,7 +114,7 @@ export default {
       var minute = Math.floor(minutes % 60)
       hour = this.formatMinutes(hour)
       minute = this.formatMinutes(minute)
-      this.curTime = hour + ':' + minute
+      this.$emit('update:curTime', hour + ':' + minute)
     },
 
     /**

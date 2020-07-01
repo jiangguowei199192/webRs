@@ -18,10 +18,12 @@
     <el-calendar v-model="showDate">
       <template slot="dateCell" slot-scope="{date, data}">
         <span class="dayText">{{ data.day.split('-').slice(2).join() }}</span>
-        <span class="mark"></span>
+        <template v-for="(item,index) in markData" >
+        <span v-if="item === data.day" class="mark" :key="index"></span>
+         </template>
       </template>
     </el-calendar>
-    <div class="search">
+    <div class="search" @click="searchRecord">
       <span></span>
       <span>查找</span>
     </div>
@@ -35,13 +37,20 @@ export default {
       dateInfo: { curYear: '', curMonth: '' }
     }
   },
+
+  props: {
+    markData: {
+      type: Array,
+      default: () => []
+    }
+  },
   watch: {
     showDate (val) {
       this.getYear()
     },
     dateInfo: {
       handler (newVal, oldVal) {
-        this.$emit('dateChangeEvent', this.showDate)
+        this.$emit('dateChangeEvent', this.getYYMM(this.showDate))
       },
       deep: true
     }
@@ -49,7 +58,6 @@ export default {
 
   mounted () {
     this.getYear()
-    this.$emit('dateChangeEvent', this.showDate)
   },
 
   methods: {
@@ -61,7 +69,27 @@ export default {
       year = year < 2000 ? year + 1900 : year
       this.dateInfo.curYear = year.toString().substr(2, 2)
       this.dateInfo.curMonth = this.showDate.getMonth() + 1
-      // this.$emit("", "");
+    },
+
+    /**
+     * 获取格式化的时间YYYY-MM
+     */
+    getYYMM () {
+      var month = this.showDate.getMonth() + 1
+      var year = this.showDate.getFullYear()
+      if (month.toString().length < 2) month = '0' + month
+      var yyyyMM = year + '-' + month
+      return yyyyMM
+    },
+
+    /**
+     * 获取格式化的时间YYYY-MM-DD
+     */
+    getYYMMDD () {
+      var day = this.showDate.getDate()
+      if (day.toString().length < 2) day = '0' + day
+      var yyyyMM = this.getYYMM() + '-' + day
+      return yyyyMM
     },
 
     /**
@@ -73,13 +101,22 @@ export default {
       var time
       var step = isNext === true ? 1 : -1
 
-      if (isYear) { time = new Date().setFullYear(this.showDate.getFullYear() + step) } else {
+      if (isYear) {
+        time = new Date().setFullYear(this.showDate.getFullYear() + step)
+      } else {
         time = new Date(this.showDate).setMonth(
           this.showDate.getMonth() + step
         )
       }
 
       this.showDate = new Date(time)
+    },
+
+    /**
+     * 查找记录
+     */
+    searchRecord () {
+      this.$emit('searchRecordEvent', this.getYYMMDD())
     }
   }
 }

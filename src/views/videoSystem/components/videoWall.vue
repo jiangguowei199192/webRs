@@ -16,6 +16,7 @@
 </template>
 <script>
 import LivePlayer from '@liveqing/liveplayer'
+var player
 export default {
   data () {
     return {}
@@ -31,27 +32,37 @@ export default {
     }
   },
 
-  methods: {
-    playAll () {
-      // var videoInfo = {
-      //   srcUrl: 'rtmp://116.85.50.50/live/zxstream',
-      //   isLive: true
-      // }
+  mounted () {
+    player = this.$refs.playerCtrl.player
+  },
 
-      // this.$emit('update:videoInfo', videoInfo)
-      this.$nextTick(() => {
-        var p = this.$refs.playerCtrl.player
-        p.play()
-      })
+  methods: {
+    play () {
+      player.play()
     },
     stopAll () {
       var videoInfo = { srcUrl: '', isLive: true }
       this.$emit('update:videoInfo', videoInfo)
-    }
+    },
     // fullScreen () {
     //   var p = this.$refs.playerCtrl.player
     //   p.requestFullscreen()
     // }
+
+    /**
+     * 跳转到XX秒开始播放
+     * @param {Number} time xx秒
+     */
+    jumpToSeconds (time) {
+      player.currentTime(time)
+    },
+
+    /**
+     * 暂停播放
+     */
+    pause () {
+      player.pause()
+    }
   }
 }
 </script>

@@ -53,11 +53,10 @@
         </div>
       </div>
       <div slot="center">
-        <!-- <VideoWall :videoInfo.sync="videoInfo"></VideoWall> -->
         <div class="video">
           <div class="box">
             <div class="title">回放</div>
-            <div>当前选中：解放大道高点1</div>
+            <div>{{curDevice.area}}</div>
           </div>
           <div class="videoList">
             <div
@@ -65,7 +64,7 @@
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
-              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl"></VideoWall>
+              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl" ref="videoCtrl"></VideoWall>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -75,17 +74,24 @@
               <img :src="fourPalace" />
               <img :src="onePalace" />
             </div>
+            <div class="centerTool">
+              <img :src="stop" @click="stopPlayRecord"/>
+              <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay"/>
+              <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay"/>
+            </div>
             <div class="rightTool">
-              <img :src="stop" />
-              <img :src="play" />
               <img :src="fullScreen" />
             </div>
           </div>
-          <TimeBar class="time" :segments="records"></TimeBar>
+          <TimeBar class="time" :segments="records" :curTime.sync="curTime"></TimeBar>
         </div>
       </div>
       <div slot="right">
-        <Calendar @dateChangeEvent="dateChange"></Calendar>
+        <Calendar
+          @dateChangeEvent="dateChange"
+          :markData="recordData"
+          @searchRecordEvent="searchRecord"
+        ></Calendar>
       </div>
     </VideoMain>
   </div>
@@ -112,12 +118,18 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      curPlayer: { isPlay: false }, // 当前播放对象
+      curTime: '00:00', // 当前播放时间
+      recordData: [],
+      currentPage: 1, // 默认第1页
+      totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curDevice: '0', // 当前选中设备
       stop: require('../../assets/images/stop.png'),
       play: require('../../assets/images/play.png'),
-      records: [{ start: 60, duration: 90 }],
+      pause: require('../../assets/images/pause.png'),
+      records: [],
       treeArray: [
         {
           id: 1,
@@ -211,9 +223,12 @@ export default {
   created () {
     // 初始加载9个空元素
     for (let i = 0; i < this.showVideoPageSize; i++) {
-      this.curVideosArray.push('')
-      this.curVideosArray[0] = { srcUrl: 'rtmp://120.24.12.64/live/test' }
+      this.totalVideosArray.push('')
     }
+    this.curVideosArray = this.totalVideosArray.slice(
+      0,
+      this.showVideoPageSize
+    )
   },
 
   methods: {
@@ -232,20 +247,62 @@ export default {
 
     /**
      * 日历日期改变
-     * @param {Date} date 日期信息
+     * @param {String} date 日期信息
      */
     dateChange (date) {
-      // this.$axios
-      //   .post(api.getMp4RecordFile, {
-      //     vhost: '__defaultVhost_ ',
-      //     app: 'live',
-      //     stream: 'lqsstream'
-      //   })
-      //   .then(res => {
-      //     if (res) {
-      //       debugger
-      //     }
-      //   })
+      this.$axios
+        .post(api.getMp4RecordFile, {
+          vhost: '__defaultVhost_ ',
+          app: 'live',
+          stream: 'yaochen',
+          period: date,
+          secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
+        })
+        .then(res => {
+          var rs = res.data
+          if (rs && rs.code === 0) {
+            this.recordData = rs.data.paths
+          }
+        })
+    },
+
+    /**
+     * 搜索回放mp4文件
+     * @param {String} date 日期信息
+     */
+    searchRecord (date) {
+      this.records = []
+      this.$axios
+        .post(api.getMp4RecordFile, {
+          vhost: '__defaultVhost_ ',
+          app: 'live',
+          stream: 'yaochen',
+          period: date,
+          secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
+        })
+        .then(res => {
+          var rs = res.data
+          if (rs && rs.code === 0) {
+            rs.data.paths.forEach(p => {
+              var date = new Date(p.start_time * 1000)
+              var start =
+                date.getHours() * 60 +
+                date.getMinutes() +
+                date.getSeconds() / 60
+              var index = rs.data.rootPath.indexOf('/record')
+              var url = ''
+              if (index !== -1) {
+                url =
+                  'http://116.85.50.50:8888' +
+                  rs.data.rootPath.substring(index) +
+                  p.file_name
+              }
+
+              var r = { duration: p.time_len / 60, start: start, url: url }
+              this.records.push(r)
+            })
+          }
+        })
     },
 
     // 动态渲染9个空元素
@@ -269,6 +326,93 @@ export default {
           // marginLeft: '10px'
         }
       }
+    },
+
+    /**
+     * 跳转到XX秒开始播放
+     * @param {Number} time xx秒
+     */
+    jumpToSeconds (time) {
+      var ctrl = this.findVideoControl()
+      if (ctrl !== undefined) { ctrl.jumpToSeconds(time) }
+    },
+
+    /**
+     * 添加Player
+     * @param {Object} player
+     */
+    addPlayer (player) {
+      var index = this.totalVideosArray.indexOf('')
+      if (index !== -1) this.totalVideosArray[index] = player
+      this.curVideosArray = this.totalVideosArray.slice(
+        0,
+        this.showVideoPageSize
+      )
+
+      this.curPlayer.isPlay = true
+      this.curPlayer.p = player
+    },
+
+    /**
+     * 移除Player
+     * @param {Object} player
+     */
+    removePlayer (player) {
+      var index = this.totalVideosArray.indexOf(player)
+      if (index !== -1) this.totalVideosArray[index] = ''
+      this.curVideosArray = this.totalVideosArray.slice(
+        0,
+        this.showVideoPageSize
+      )
+
+      this.curPlayer.isPlay = false
+      this.curPlayer.p = ''
+    },
+
+    /**
+     * 开始播放
+     */
+    playRecord () {
+      var arry = this.curTime.split(':')
+      var time = parseInt(arry[0]) * 60 + parseInt(arry[1])
+      var r = this.records.find(
+        x => x.start <= time && x.start + x.duration >= time
+      )
+      if (r !== undefined) {
+        this.addPlayer({ srcUrl: r.url, isLive: false })
+        this.$nextTick(() => {
+          this.jumpToSeconds((time - r.start) * 60)
+        })
+      } else {
+        r = this.records.find(x => x.start > time)
+        if (r !== undefined) this.addPlayer({ srcUrl: r.url, isLive: false })
+      }
+    },
+
+    /**
+     * 暂停播放
+     */
+    pauseRecord () {
+      var ctrl = this.findVideoControl()
+      if (ctrl !== undefined) {
+        ctrl.pause()
+        this.curPlayer.isPlay = false
+      }
+    },
+
+    /**
+     * 停止播放
+     */
+    stopPlayRecord () {
+      if (this.curPlayer.isPlay && this.curPlayer.p) this.removePlayer(this.curPlayer.p)
+    },
+
+    /**
+     * 查找视频墙组件
+     */
+    findVideoControl () {
+      if (!this.curPlayer.p) return undefined
+      return this.$refs.videoCtrl.find(c => c.videoInfo.srcUrl === this.curPlayer.p.srcUrl)
     }
   }
 }
@@ -410,17 +554,21 @@ export default {
     display: flex;
     justify-content: space-between;
     .leftTool,
-    .rightTool {
+    .rightTool,
+    .centerTool {
       position: relative;
       top: 22px;
-      left: 40px;
       img {
         margin-right: 20px;
         cursor: pointer;
       }
     }
+    .leftTool {
+      left: 40px;
+    }
+
     .rightTool {
-      margin-right: 90px;
+      margin-right: 20px;
     }
   }
 
