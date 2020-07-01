@@ -371,7 +371,7 @@ export default {
     },
     // 点击当前视频
     operateCurVideo (curVideo, index) {
-      debugger
+      // debugger
       this.curVideoIndex = index
     },
     // 预览全部
