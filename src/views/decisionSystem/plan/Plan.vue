@@ -13,7 +13,8 @@
         <div>基本情况说明</div>
       </el-collapse-item>
       <el-collapse-item title="建筑平面图" name="2">
-        <el-row gutter="50">
+        <HorCardList></HorCardList>
+        <!-- <el-row gutter="50">
           <el-col span="6">
             <img src="http://img4.imgtn.bdimg.com/it/u=3773584324,1413178473&fm=214&gp=0.jpg" style="width: 75px; height: 68px;">
           </el-col>
@@ -26,7 +27,7 @@
           <el-col span="6">
             <img src="http://img4.imgtn.bdimg.com/it/u=3773584324,1413178473&fm=214&gp=0.jpg" style="width: 75px; height: 60px;">
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-collapse-item>
       <el-collapse-item title="作战部署图" name="3">
         <div>
@@ -41,18 +42,23 @@
 </template>
 
 <script>
+import HorCardList from './HorizontalCardList.vue'
+
 export default {
-  data() {
+  data () {
     return {
       address: '地址',
       subAddress: '描述',
       detailAddress: '具体地址',
       phoneNumber: '电话',
 
-      coll_actives: [1],
-    };
+      coll_actives: [1]
+    }
   },
-};
+  components: {
+    HorCardList
+  }
+}
 </script>
 
 <style>
@@ -62,6 +68,5 @@ export default {
 }
 .el-col {
   background-color: red;
-  
 }
 </style>

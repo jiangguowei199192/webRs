@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Plan from './plan.vue';
+import Plan from './plan/Plan.vue'
 
 export default {
   name: 'decision',
