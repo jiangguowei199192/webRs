@@ -96,7 +96,7 @@
               :class="{active:curVideoIndex===index}"
             >
               <!-- <div > -->
-              <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-show="item.srcUrl"></VideoWall>
+              <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
               <!-- </div> -->
             </div>
           </div>
@@ -330,32 +330,56 @@ export default {
     closeOrOpen (type, curTreeData) {
       debugger
       if (type === 1) {
-        // 没有选中任何视频框,默认位置添加
+        // 1.1默认位置添加
         if (this.curVideoIndex === 1000) {
+          debugger
           const i = this.totalVideosArray.indexOf('')
-          this.totalVideosArray.splice(i, 1, {
-            id: curTreeData.id,
-            srcUrl:
-              'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
-          })
-          this.curVideosArray = this.totalVideosArray.slice(
-            0,
-            this.showVideoPageSize
-          )
+          // 如果有空元素，则替换
+          if (i !== -1) {
+            this.totalVideosArray.splice(i, 1, {
+              id: curTreeData.id,
+              srcUrl:
+                'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
+            })
+            this.curVideosArray = this.totalVideosArray.slice(
+              0,
+              this.showVideoPageSize
+            )
+          } else {
+            // 若没有，则追加
+            this.totalVideosArray.push({
+              id: curTreeData.id,
+              srcUrl:
+                'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
+            })
+            this.curVideosArray = this.totalVideosArray.slice(
+              0,
+              this.showVideoPageSize
+            )
+          }
         } else {
-          // 指定位置添加
+          // 1.2指定位置添加
+          // 若指定位置之前有元素
+          if (this.totalVideosArray[this.curVideoIndex]) {
+            document
+              .querySelector(
+                '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+              )
+              .parentElement.setAttribute('class', '')
+          }
           this.totalVideosArray.splice(this.curVideoIndex, 1, {
             id: curTreeData.id,
             srcUrl:
               'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
           })
+          this.curVideoIndex = 1000
           this.curVideosArray = this.totalVideosArray.slice(
             0,
             this.showVideoPageSize
           )
         }
       } else {
-        // 关闭
+        // 关闭视频
         let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {

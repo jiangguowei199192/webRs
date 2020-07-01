@@ -12,8 +12,7 @@
         <span @click="showLiveVideo(data,$event)">
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
-          <!-- <img src="../../../assets/images/onlive.png" v-if="data.isShow" /> -->
-          {{ node.label }}
+          <i :id="'liveVideo'+data.id">{{ node.label }}</i>
         </span>
       </span>
     </el-tree>
@@ -93,6 +92,9 @@ export default {
   }
   .custom-tree-node {
     > span {
+      i{
+        font-style:normal;
+      }
       span {
         display: inline-block;
         width: 30px;
@@ -112,6 +114,7 @@ export default {
     span.liveIcon {
       padding-right: 25px;
       background: url(../../../assets/images/onlive.png) no-repeat right center;
+
     }
   }
   /deep/.el-tree--highlight-current
