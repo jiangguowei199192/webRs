@@ -42,7 +42,7 @@ export default {
       step: 0,
       minuteWidth: 0,
       pointerW: 0,
-      pointerLeft: -45
+      pointerLeft: -64
     }
   },
 
@@ -110,11 +110,39 @@ export default {
      * @param {Integer}} minute 分钟
      */
     toHourMinute (minutes) {
-      var hour = Math.floor(minutes / 60)
-      var minute = Math.floor(minutes % 60)
-      hour = this.formatMinutes(hour)
-      minute = this.formatMinutes(minute)
-      this.$emit('update:curTime', hour + ':' + minute)
+      // var hour = Math.floor(minutes / 60)
+      // var minute = Math.floor(minutes % 60)
+      // hour = this.formatMinutes(hour)
+      // minute = this.formatMinutes(minute)
+      // this.$emit('update:curTime', hour + ':' + minute)
+
+      this.formatSeconds(minutes * 60)
+    },
+
+    /**
+     * 将秒数转换为时分秒格式
+     * @param {Integer}} value 秒
+     */
+    formatSeconds (value) {
+      var sTime = parseInt(value) // 秒
+      var mTime = 0 // 分
+      var hTime = 0 //
+
+      if (sTime > 60) {
+        // 获取分钟，除以60取整数，得到整数分钟
+        mTime = parseInt(sTime / 60)
+        // 获取秒数，秒数取佘，得到整数秒数
+        sTime = parseInt(sTime % 60)
+        // 如果分钟大于60，将分钟转换成小时
+        if (mTime > 60) {
+          // 获取小时，获取分钟除以60，得到整数小时
+          hTime = parseInt(mTime / 60)
+          // 获取小时后取佘的分，获取分钟除以60取佘的分
+          mTime = parseInt(mTime % 60)
+        }
+      }
+      var result = this.formatMinutes(hTime) + ':' + this.formatMinutes(mTime) + ':' + this.formatMinutes(sTime)
+      this.$emit('update:curTime', result)
     },
 
     /**
@@ -133,6 +161,7 @@ export default {
       var x = event.offsetX
       this.pointerLeft = x - this.pointerW + 5
       this.toHourMinute(x / this.minuteWidth)
+      this.$emit('jumpEvent', '')
     }
   }
 }
@@ -174,29 +203,29 @@ export default {
   }
 
   .pointer {
-  pointer-events: none;
-  display: inline-block;
-  position: absolute;
-  height: 42px;
-  width: 49.25px;
-  top: -7px;
-  :nth-child(1) {
-    position: relative;
-    top: -16px;
-    padding: 1px 3px;
-    font-size: 13px;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 1);
-    background: rgba(239, 128, 24, 1);
-    border-radius: 4px;
-  }
-  :nth-child(2) {
+    pointer-events: none;
     display: inline-block;
-    width: 10px;
+    position: absolute;
     height: 42px;
-    background: url(../../../assets/images/time-pointer.png) no-repeat;
+    width: 68.05px;
+    top: -7px;
+    :nth-child(1) {
+      position: relative;
+      top: -16px;
+      padding: 1px 3px;
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      background: rgba(239, 128, 24, 1);
+      border-radius: 4px;
+    }
+    :nth-child(2) {
+      display: inline-block;
+      width: 10px;
+      height: 42px;
+      background: url(../../../assets/images/time-pointer.png) no-repeat;
+    }
   }
-}
 }
 
 .point {

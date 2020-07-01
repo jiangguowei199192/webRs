@@ -22,9 +22,12 @@
 <script>
 import LivePlayer from '@liveqing/liveplayer'
 var player
+var that
 export default {
   data () {
-    return {}
+    return {
+      curTime: 0
+    }
   },
 
   components: {
@@ -37,8 +40,29 @@ export default {
     }
   },
 
+  watch: {
+    curTime (val) {
+      var r = this.videoInfo.records.find(x => x.url === this.videoInfo.srcUrl)
+      if (r !== undefined) {
+        this.$emit('timeupdateEvent', this.curTime + r.start * 60)
+      }
+    }
+  },
+
   mounted () {
+    that = this
     player = this.$refs.playerCtrl.player
+    // player.on('timeupdate', function () {
+    //   console.log('555555555')
+    // })
+
+    // player.on('play', function () {
+    //   console.log('视频开始播放')
+    // }
+
+    player.on('ended', function () {
+      that.ended()
+    })
   },
 
   methods: {
@@ -54,7 +78,9 @@ export default {
      * 全屏
      */
     fullScreen () {
-      if (player.isFullscreen()) { player.exitFullscreen() } else player.requestFullscreen()
+      if (player.isFullscreen()) {
+        player.exitFullscreen()
+      } else player.requestFullscreen()
     },
 
     /**
@@ -70,7 +96,47 @@ export default {
      */
     pause () {
       player.pause()
+    },
+
+    /**
+     * 播放结束
+     */
+    ended () {
+      if (this.videoInfo.isLive === false) {
+        // 播放完成后，自动播放回放记录中的下一个mp4
+        var r = this.videoInfo.records.find(x => x.url === this.videoInfo.srcUrl)
+        if (r !== undefined) {
+          var index = this.videoInfo.records.indexOf(r)
+          // 如果不是最后一个回放记录，就继续播放下一个记录
+          if (index !== -1 && index < this.videoInfo.records.length - 1) {
+            this.videoInfo.srcUrl = this.videoInfo.records[index + 1].url
+            console.log('继续播放下一个记录')
+          }
+        }
+      }
+    },
+
+    /**
+     * 更新进度
+     */
+    timeupdate: function () {
+      if (this.videoInfo.isLive === false) {
+        // console.log('111111111111')
+        this.curTime = Math.floor(player.currentTime())
+      }
+    },
+
+    /**
+     * 订阅更新进度事件
+     */
+    subTimeupdate (isSub) {
+      if (isSub === true) {
+        player.on('timeupdate', this.timeupdate)
+      } else {
+        player.off('timeupdate', this.timeupdate)
+      }
     }
+
   }
 }
 </script>

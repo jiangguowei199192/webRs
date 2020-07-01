@@ -64,7 +64,7 @@
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
-              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl" ref="videoCtrl"></VideoWall>
+              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl" ref="videoCtrl" @timeupdateEvent="timeupdate"></VideoWall>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -83,7 +83,7 @@
               <img :src="fullScreen" />
             </div>
           </div>
-          <TimeBar class="time" :segments="records" :curTime.sync="curTime"></TimeBar>
+          <TimeBar ref="timeCtrl" class="time" :segments="records" :curTime.sync="curTime"></TimeBar>
         </div>
       </div>
       <div slot="right">
@@ -119,7 +119,7 @@ export default {
   data () {
     return {
       curPlayer: { isPlay: false }, // 当前播放对象
-      curTime: '00:00', // 当前播放时间
+      curTime: '00:00:00', // 当前播放时间
       recordData: [],
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
@@ -354,6 +354,16 @@ export default {
     },
 
     /**
+     * 订阅播放进度更新事件
+     */
+    subTimeupdate () {
+      var ctrl = this.findVideoControl()
+      if (ctrl !== undefined) {
+        ctrl.subTimeupdate(true)
+      }
+    },
+
+    /**
      * 移除Player
      * @param {Object} player
      */
@@ -379,13 +389,19 @@ export default {
         x => x.start <= time && x.start + x.duration >= time
       )
       if (r !== undefined) {
-        this.addPlayer({ srcUrl: r.url, isLive: false })
+        this.addPlayer({ srcUrl: r.url, isLive: false, records: this.records })
         this.$nextTick(() => {
+          this.subTimeupdate()
           this.jumpToSeconds((time - r.start) * 60)
         })
       } else {
         r = this.records.find(x => x.start > time)
-        if (r !== undefined) this.addPlayer({ srcUrl: r.url, isLive: false })
+        if (r !== undefined) {
+          this.addPlayer({ srcUrl: r.url, isLive: false, records: this.records })
+          this.$nextTick(() => {
+            this.subTimeupdate()
+          })
+        }
       }
     },
 
@@ -413,6 +429,14 @@ export default {
     findVideoControl () {
       if (!this.curPlayer.p) return undefined
       return this.$refs.videoCtrl.find(c => c.videoInfo.srcUrl === this.curPlayer.p.srcUrl)
+    },
+
+    /**
+     * 播放进度更新
+     * @param {seconds} 当前进度（秒）
+     */
+    timeupdate (seconds) {
+      this.$refs.timeCtrl.jumpMinute(seconds / 60)
     }
   }
 }
