@@ -16,7 +16,6 @@ service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencod
 
 // 添加请求拦截器
 service.interceptors.request.use((config) => {
-  debugger
   // 判断请求方式是否为POST，进行转换格式
   config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
   return config
