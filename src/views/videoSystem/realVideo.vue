@@ -93,7 +93,7 @@
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
-              <VideoWall :videoInfo="item" :key="index" v-if="item.srcUrl" ref></VideoWall>
+              <VideoWall :videoInfo="item" :key="index" v-if="item.srcUrl" ref="playerCtrl" ></VideoWall>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -104,7 +104,7 @@
               <img :src="onePalace" @click.stop="changeVideosType(1)" />
             </div>
             <div class="rightTool">
-              <img :src="playAll" />
+              <img :src="playAll" @click.stop="playAllVideos"/>
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
@@ -312,7 +312,8 @@ export default {
           infraredIsclick: false
         }
       ],
-      value2: 4 // 步速值
+      value2: 4, // 步速值
+      isPlayAll: false // 是否播放所有 控制预览全部
     }
   },
   methods: {
@@ -334,6 +335,18 @@ export default {
       } else {
 
       }
+    },
+    // 预览全部
+    playAllVideos () {
+      const spans = document.querySelectorAll('.el-tree-node__content span.is-leaf +span.custom-tree-node>span')
+      for (let i = 0; i < spans.length; i++) {
+        if (!this.isPlayAll) {
+          spans[i].setAttribute('class', 'liveIcon')
+        } else {
+          spans[i].setAttribute('class', '')
+        }
+      }
+      this.isPlayAll = !this.isPlayAll
     },
     // 切换每屏显示的个数
     changeVideosType (n) {
