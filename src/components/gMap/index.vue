@@ -21,10 +21,12 @@
     <div class="searchResult ownScrollStyle" v-show="addrResults !== null">
       <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
         :class="{itemSeparator:index!=0}"
-        @click.stop="gotoAddrDetails($event,addr)">
-        <img class="itemImg" v-show="addr.imgUrl != null" :src="addr.imgUrl"/>
+        @click.stop="gotoAddrDetails($event,addr)"
+        @mouseenter="mouseHandler($event,addr,true)"
+        @mouseleave="mouseHandler($event,addr,false)">
+        <img class="itemImg" v-show="addr._imgUrl != null" :src="addr._imgUrl"/>
         <div class="itemName" :title="addr.name">{{index + 1}}. {{ addr.name }}</div>
-        <div class="itemAddr">{{ addr.address }}</div>
+        <div class="itemAddr" v-show="addr._addr != null">{{ addr._addr }}</div>
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
       </div>
     </div>
@@ -223,11 +225,20 @@ export default {
 
     updateSearchResults (_results) {
       _results.forEach(addr => {
+        addr._bHover = false
         if (addr.photos.length > 0) {
-          addr.imgUrl = addr.photos[0].url
+          addr._imgUrl = addr.photos[0].url
         } else {
-          addr.imgUrl = null
+          addr._imgUrl = null
         }
+        if (addr.address != null && !(addr.address instanceof Array)) {
+          addr._addr = addr.address
+        } else {
+          addr._addr = null
+        }
+        const tmpStrs = addr.location.split(',')
+        addr._lon = parseFloat(tmpStrs[0])
+        addr._lat = parseFloat(tmpStrs[1])
       })
       this.addrResults = _results
     },
@@ -296,6 +307,10 @@ export default {
 
     gotoAddrDetails (event, addr) {
       console.log(addr)
+    },
+
+    mouseHandler (event, addr, bHover) {
+      addr._bHover = bHover
     },
 
     // 绘制多边形
@@ -565,7 +580,6 @@ export default {
         height: 60px;
         width: 80px;
         margin-top: 5px;
-        background: blue;
       }
     }
     .searchItem:hover {
