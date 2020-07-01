@@ -30,6 +30,7 @@
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
       </div>
     </div>
+    <plan class="plan ownScrollStyle" v-show="bShowPaln"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -106,8 +107,12 @@
 
 <script>
 import AMapHelper from '../../axios/amapapis'
+import Plan from '../../views/decisionSystem/plan/Plan.vue'
 export default {
   name: 'gMap',
+  components: {
+    Plan
+  },
   data () {
     return {
       autoTips: null,
@@ -115,7 +120,9 @@ export default {
       placeHolder: '请输入目的地',
       titelTel: '电话: ',
       addrResults: null,
+      lastResults: null,
       chooseAddr: null,
+      bShowPaln: false,
       locale: 'zh',
       measureType: 0,
       bShowTheTif: true,
@@ -282,6 +289,7 @@ export default {
       if (this.chooseAddr != null && bDetail !== true) {
         return
       }
+      this.bShowPaln = false
       this.autoTips.Ub.style.visibility = 'hidden'
       this.addrResults = null
       AMapHelper.getPOIs({ keywords: addrStr })
@@ -303,10 +311,13 @@ export default {
       this.filterText = ''
       this.autoTips.Ub.style.visibility = 'hidden'
       this.addrResults = null
+      this.bShowPaln = false
     },
 
     gotoAddrDetails (event, addr) {
-      console.log(addr)
+      this.lastResults = this.addrResults
+      this.addrResults = null
+      this.bShowPaln = true
     },
 
     mouseHandler (event, addr, bHover) {
@@ -588,6 +599,18 @@ export default {
     .itemSeparator {
       border-top:1px solid rgb(221, 214, 214)
     }
+  }
+  .plan {
+    position: absolute;
+    width: 400px;
+    max-height: 500px;
+    left: 15px;
+    top: 60px;
+    border-radius: 4px;
+    // background-color: rgb(21, 51, 77);
+    background: white;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .measureTools {
     position: absolute;
