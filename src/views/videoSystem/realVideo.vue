@@ -96,12 +96,7 @@
               :class="{active:curVideoIndex===index}"
             >
               <!-- <div > -->
-              <VideoWall
-                :videoInfo="item"
-                :key="index"
-                ref="playerCtrl"
-                v-show="item.srcUrl"
-              ></VideoWall>
+              <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-show="item.srcUrl"></VideoWall>
               <!-- </div> -->
             </div>
           </div>
@@ -331,11 +326,13 @@ export default {
     getSelectedData (data) {
       console.log(data)
     },
-    closeOrOpen (type, curData) {
+    // 点击树节点
+    closeOrOpen (type, curTreeData) {
       debugger
       if (type === 1) {
         const i = this.totalVideosArray.indexOf('')
         this.totalVideosArray.splice(i, 1, {
+          id: curTreeData.id,
           srcUrl:
             'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
         })
@@ -344,6 +341,17 @@ export default {
           this.showVideoPageSize
         )
       } else {
+        let i = 0
+        this.totalVideosArray.forEach((item, index) => {
+          if (item.id === curTreeData.id) {
+            i = index
+          }
+        })
+        this.totalVideosArray.splice(i, 1, '')
+        this.curVideosArray = this.totalVideosArray.slice(
+          0,
+          this.showVideoPageSize
+        )
       }
     },
     // 点击当前视频

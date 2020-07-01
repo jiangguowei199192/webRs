@@ -50,7 +50,7 @@ export default {
     checkedKeys: function (data) {
       alert(JSON.stringify(this.$refs.tree.getCheckedKeys()))
     },
-    // 播放或关闭视频
+    // 点击子节点播放或关闭视频
     showLiveVideo (data, $event) {
       if (!data.children) {
         // 若没有，则添加class，并传递当前数据
@@ -70,7 +70,6 @@ export default {
 // 修改树形控件样式
 .tree {
   font-size: 18px;
-
   font-family: Source Han Sans CN;
   font-weight: bold;
   margin-top: 24px;
