@@ -208,6 +208,7 @@ import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
+import { api } from '@/api/videoSystem/realVideo'
 export default {
   name: 'videoContainer',
   components: {
@@ -322,6 +323,13 @@ export default {
     }
   },
   methods: {
+    getAllDeptDevices () {
+      this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
+        if (res) {
+          debugger
+        }
+      })
+    },
     // 获取子组件传递过来的数据
     getSelectedData (data) {
       console.log(data)
@@ -416,6 +424,7 @@ export default {
     changeVideosType (n) {
       debugger
       this.currentPage = 1
+      this.curVideoIndex = 999
       this.showVideoPageSize = n
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')
@@ -505,7 +514,9 @@ export default {
       0,
       this.showVideoPageSize
     )
+    this.getAllDeptDevices()
   }
+
 }
 </script>
 <style lang="less" scoped>
