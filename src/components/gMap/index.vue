@@ -10,12 +10,24 @@
       class="searchBox"
       v-model="filterText"
       size="mini"
+      @keyup.enter.native="searchAddrs(filterText,false)"
+      @keyup.delete.native="resetChooseAddr"
       :placeholder="placeHolder">
       <div slot="append">
-        <el-button icon="el-icon-search" size="mini" class="appendBtn"></el-button>
-        <el-button icon="el-icon-close" size="mini" class="appendBtn"></el-button>
+        <el-button @click.stop="searchAddrs(filterText,true)" icon="el-icon-search" size="mini" class="appendBtn"></el-button>
+        <el-button @click.stop="clearSearchBox" icon="el-icon-close" size="mini" class="appendBtn"></el-button>
       </div>
     </el-input>
+    <div class="searchResult ownScrollStyle" v-show="addrResults !== null">
+      <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
+        :class="{itemSeparator:index!=0}"
+        @click.stop="gotoAddrDetails($event,addr)">
+        <img class="itemImg" v-show="addr.imgUrl != null" :src="addr.imgUrl"/>
+        <div class="itemName" :title="addr.name">{{index + 1}}. {{ addr.name }}</div>
+        <div class="itemAddr">{{ addr.address }}</div>
+        <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
+      </div>
+    </div>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -91,12 +103,17 @@
 </template>
 
 <script>
+import AMapHelper from '../../axios/amapapis'
 export default {
   name: 'gMap',
   data () {
     return {
+      autoTips: null,
       filterText: '',
       placeHolder: '请输入目的地',
+      titelTel: '电话: ',
+      addrResults: null,
+      chooseAddr: null,
       locale: 'zh',
       measureType: 0,
       bShowTheTif: true,
@@ -204,6 +221,17 @@ export default {
       this.map2D.addAutocomplete(this.initSearchBox)
     },
 
+    updateSearchResults (_results) {
+      _results.forEach(addr => {
+        if (addr.photos.length > 0) {
+          addr.imgUrl = addr.photos[0].url
+        } else {
+          addr.imgUrl = null
+        }
+      })
+      this.addrResults = _results
+    },
+
     // 初始化搜索提示框
     initSearchBox () {
       // 输入提示
@@ -211,16 +239,63 @@ export default {
         input: '_addrSearch'
       }
       // eslint-disable-next-line
-      var auto = new AMap.Autocomplete(autoOptions)
+      this.autoTips = new AMap.Autocomplete(autoOptions)
       // eslint-disable-next-line
-      AMap.event.addListener(auto, 'select', select) // 注册监听，当选中某条记录时会触发
+      AMap.event.addListener(this.autoTips, 'select', select) // 注册监听，当选中某条记录时会触发
       var that = this
       function select (e) {
+        AMapHelper.getPoiDetail({ id: e.poi.id })
+          .then(res => {
+            that.chooseAddr = null
+            if (res.data.status === '1') {
+              that.updateSearchResults(res.data.pois)
+            }
+          })
+          .catch(err => {
+            console.log('AMapHelper.getPoiDetail Err : ' + err)
+          })
+
         if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
           that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
         }
       }
+      // eslint-disable-next-line
+      AMap.event.addListener(this.autoTips, 'choose', choose) // 注册监听，当选中某条记录时会触发
+      function choose (e) {
+        that.chooseAddr = e
+      }
       console.log('initSearchBox ...... OK')
+    },
+
+    async searchAddrs (addrStr, bDetail) {
+      if (this.chooseAddr != null && bDetail !== true) {
+        return
+      }
+      this.autoTips.Ub.style.visibility = 'hidden'
+      this.addrResults = null
+      AMapHelper.getPOIs({ keywords: addrStr })
+        .then(res => {
+          if (res.data.status === '1') {
+            this.updateSearchResults(res.data.pois)
+          }
+        })
+        .catch(err => {
+          console.log('AMapHelper.getPOIs Err : ' + err)
+        })
+    },
+
+    resetChooseAddr () {
+      this.chooseAddr = null
+    },
+
+    clearSearchBox () {
+      this.filterText = ''
+      this.autoTips.Ub.style.visibility = 'hidden'
+      this.addrResults = null
+    },
+
+    gotoAddrDetails (event, addr) {
+      console.log(addr)
     },
 
     // 绘制多边形
@@ -437,12 +512,67 @@ export default {
   .searchBox {
     position: absolute;
     height: 34px;
-    width: 300px;
+    width: 400px;
     left: 15px;
     top: 15px;
     border-radius: 4px;
     .appendBtn {
       width: 40px;
+    }
+    .appendBtn:hover {
+      color: rgb(63, 107, 165);
+      opacity: 50%;
+    }
+    .appendBtn:active {
+      color: rgb(63, 107, 165);
+      opacity: 1;
+    }
+  }
+  .searchResult {
+    position: absolute;
+    width: 400px;
+    left: 15px;
+    top: 60px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 4px;
+    background: white;
+    max-height: 500px;
+    .searchItem {
+      padding: 5px 5px 10px 5px;
+      margin: 0px 10px;
+      overflow:hidden;
+      color: black;
+      background: white;
+      cursor: pointer;
+      .itemName {
+        font-size:14px;
+        margin-top:3px;
+        color: rgb(63, 107, 165);
+      }
+      .itemAddr {
+        font-size:12px;
+        margin-top:5px;
+        color: rgb(148, 157, 168);
+      }
+      .itemTel {
+        font-size:12px;
+        margin-top:5px;
+        color: rgb(71, 76, 83);
+      }
+      .itemImg {
+        float: right;
+        height: 60px;
+        width: 80px;
+        margin-top: 5px;
+        background: blue;
+      }
+    }
+    .searchItem:hover {
+      background: rgba($color: #f7f5f5, $alpha: 1);
+    }
+    .itemSeparator {
+      border-top:1px solid rgb(221, 214, 214)
     }
   }
   .measureTools {
