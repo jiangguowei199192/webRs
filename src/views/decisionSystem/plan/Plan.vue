@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="width: 280px; margin-left: 10px;">
+    <div style="width: 380px; margin-left: 10px;">
       <div class="addressInfo">
         <span>{{address}}</span>
         <span>{{subAddress}}</span>
@@ -37,10 +37,10 @@ import HorCardList from './HorizontalCardList.vue'
 export default {
   data () {
     return {
-      address: '地址',
-      subAddress: '描述',
-      detailAddress: '具体地址',
-      phoneNumber: '电话',
+      address: '武汉华夏理工学院',
+      subAddress: 'XXXX-高校',
+      detailAddress: '武汉市江夏区新技术开发区关山大道XXX',
+      phoneNumber: '027-XXXXXXXX',
 
       coll_actives: [1]
     }
@@ -54,15 +54,20 @@ export default {
 <style lang="scss" scoped>
 .addressInfo {
   position: relative;
-  height: 100px;
+  height: 120px;
   span {
     display: block;
     color: black;
+    font-size: 14px;
+    margin-top: 10px;
   }
 }
 
 .basicFactSheetBtn {
   width: 100px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 10px;
 }
 
 /deep/.el-collapse-item__content {
