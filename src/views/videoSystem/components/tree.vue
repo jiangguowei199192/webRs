@@ -50,7 +50,7 @@ export default {
     checkedKeys: function (data) {
       alert(JSON.stringify(this.$refs.tree.getCheckedKeys()))
     },
-
+    // 播放或关闭视频
     showLiveVideo (data, $event) {
       if (!data.children) {
         // 若没有，则添加class，并传递当前数据

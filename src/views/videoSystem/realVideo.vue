@@ -92,8 +92,17 @@
               v-for="(item,index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
+              @click.stop="operateCurVideo(item,index)"
+              :class="{active:curVideoIndex===index}"
             >
-              <VideoWall :videoInfo="item" :key="index" v-if="item.srcUrl" ref="playerCtrl" ></VideoWall>
+              <!-- <div > -->
+              <VideoWall
+                :videoInfo="item"
+                :key="index"
+                ref="playerCtrl"
+                v-show="item.srcUrl"
+              ></VideoWall>
+              <!-- </div> -->
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -104,7 +113,7 @@
               <img :src="onePalace" @click.stop="changeVideosType(1)" />
             </div>
             <div class="rightTool">
-              <img :src="playAll" @click.stop="playAllVideos"/>
+              <img :src="playAll" @click.stop="playAllVideos" />
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
@@ -218,6 +227,7 @@ export default {
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
+      curVideoIndex: 1000,
       treeData: [
         {
           id: 1,
@@ -326,19 +336,25 @@ export default {
       if (type === 1) {
         const i = this.totalVideosArray.indexOf('')
         this.totalVideosArray.splice(i, 1, {
-          srcUrl: 'rtmp://120.24.12.64/live/test'
+          srcUrl:
+            'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
         })
         this.curVideosArray = this.totalVideosArray.slice(
           0,
           this.showVideoPageSize
         )
       } else {
-
       }
+    },
+    // 点击当前视频
+    operateCurVideo (curVideo, index) {
+      this.curVideoIndex = index
     },
     // 预览全部
     playAllVideos () {
-      const spans = document.querySelectorAll('.el-tree-node__content span.is-leaf +span.custom-tree-node>span')
+      const spans = document.querySelectorAll(
+        '.el-tree-node__content span.is-leaf +span.custom-tree-node>span'
+      )
       for (let i = 0; i < spans.length; i++) {
         if (!this.isPlayAll) {
           spans[i].setAttribute('class', 'liveIcon')
@@ -711,8 +727,6 @@ export default {
       flex-wrap: wrap;
       height: 710px;
       > div {
-        // width: 384px;
-        // width: 31%;
         box-sizing: border-box;
         height: 223px;
 
@@ -720,6 +734,10 @@ export default {
         margin-bottom: 20px;
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
+        cursor: pointer;
+      }
+      > div.active {
+        border: 2px solid rgba(255, 244, 100, 1);
       }
     }
     .tools {
