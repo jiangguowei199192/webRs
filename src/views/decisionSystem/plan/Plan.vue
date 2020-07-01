@@ -1,17 +1,19 @@
 <template>
   <div>
-    <div style="width: 285px; margin-left: 15px;">
+    <div style="width: 280px; margin-left: 10px;">
       <div class="addressInfo">
-        <div>{{address}}</div>
-        <div>{{subAddress}}</div>
-        <div>{{detailAddress}}</div>
-        <div>{{phoneNumber}}</div>
+        <span>{{address}}</span>
+        <span>{{subAddress}}</span>
+        <span>{{detailAddress}}</span>
+        <span>{{phoneNumber}}</span>
       </div>
       <el-collapse v-model="coll_actives">
         <el-collapse-item title="基本情况说明" name="1">
-          <div>基本情况说明</div>
-          <div>基本情况说明</div>
-          <div>基本情况说明</div>
+          <el-button size="mini" class="basicFactSheetBtn">单位基本情况</el-button>
+          <el-button size="mini" class="basicFactSheetBtn">主要消防设施</el-button>
+          <el-button size="mini" class="basicFactSheetBtn">重点部位情况</el-button>
+          <el-button size="mini" class="basicFactSheetBtn">力量调集情况</el-button>
+          <el-button size="mini" class="basicFactSheetBtn">重点提示</el-button>
         </el-collapse-item>
         <el-collapse-item title="建筑平面图" name="2">
           <HorCardList></HorCardList>
@@ -49,12 +51,27 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .addressInfo {
   position: relative;
   height: 100px;
+  span {
+    display: block;
+    color: black;
+  }
 }
-.el-col {
-  background-color: red;
+
+.basicFactSheetBtn {
+  width: 100px;
 }
+
+/deep/.el-collapse-item__content {
+  padding-bottom: 0;
+}
+// /deep/.el-collapse-item__header {
+//   background-color: rgba(0, 0, 0, 0.1);
+// }
+// /deep/.el-collapse-item__wrap {
+//   background-color: white;
+// }
 </style>

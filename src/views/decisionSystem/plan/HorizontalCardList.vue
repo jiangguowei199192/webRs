@@ -35,4 +35,5 @@ export default {
   background-color: green;
   margin-right: 10px;
 }
+
 </style>

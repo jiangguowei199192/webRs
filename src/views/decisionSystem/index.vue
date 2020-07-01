@@ -35,7 +35,8 @@ export default {
   left: 15px;
   top: -735px;
   border-radius: 4px;
-  background: rgb(21, 51, 77);
+  // background-color: rgb(21, 51, 77);
+  background: white;
   overflow-y: scroll;
 }
 </style>
