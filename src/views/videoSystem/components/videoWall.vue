@@ -1,5 +1,5 @@
 <template>
-  <div class="playerStyle">
+  <div class="playerStyle" @dblclick="fullScreen">
     <LivePlayer
       ref="playerCtrl"
       :videoUrl="videoInfo.srcUrl"
@@ -11,7 +11,12 @@
       fluent
       :live="videoInfo.isLive"
       aspect="fullscreen"
-    ></LivePlayer>
+    >
+      <div class="info">
+        <span></span>
+        <span>发展大道黄埔大街</span>
+      </div>
+    </LivePlayer>
   </div>
 </template>
 <script>
@@ -44,10 +49,13 @@ export default {
       var videoInfo = { srcUrl: '', isLive: true }
       this.$emit('update:videoInfo', videoInfo)
     },
-    // fullScreen () {
-    //   var p = this.$refs.playerCtrl.player
-    //   p.requestFullscreen()
-    // }
+
+    /**
+     * 全屏
+     */
+    fullScreen () {
+      if (player.isFullscreen()) { player.exitFullscreen() } else player.requestFullscreen()
+    },
 
     /**
      * 跳转到XX秒开始播放
@@ -71,5 +79,29 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  :focus {
+    outline: none;
+  }
+}
+
+.info {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  :nth-child(1) {
+    position: relative;
+    top: -2px;
+    display: inline-block;
+    width: 17px;
+    height: 10px;
+    background: url(../../../assets/images/videowall-play.png) no-repeat;
+  }
+
+  :nth-child(2) {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    margin-left: 8px;
+  }
 }
 </style>
