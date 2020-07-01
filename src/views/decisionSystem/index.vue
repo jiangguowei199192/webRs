@@ -31,7 +31,6 @@ export default {
 .plan {
   position: relative;
   width: 300px;
-  // height: 500px;
   max-height: 500px;
   left: 15px;
   top: -735px;
