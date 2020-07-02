@@ -63,7 +63,9 @@ export default {
           this.$emit('videoChange', 1, data)
         } else {
           $event.currentTarget.setAttribute('class', '')
-          $event.currentTarget.parentElement.parentElement.parentElement.classList.remove('is-current')
+          $event.currentTarget.parentElement.parentElement.parentElement.classList.remove(
+            'is-current'
+          )
           this.$emit('videoChange', 2, data)
         }
       }
@@ -92,14 +94,11 @@ export default {
         color: transparent;
       }
     }
-    // .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
-    //    background: #096090 !important;
-    // }
   }
   .custom-tree-node {
     > span {
-      i{
-        font-style:normal;
+      i {
+        font-style: normal;
       }
       span {
         display: inline-block;
@@ -120,7 +119,6 @@ export default {
     span.liveIcon {
       padding-right: 25px;
       background: url(../../../assets/images/onlive.png) no-repeat right center;
-
     }
   }
   /deep/.el-tree--highlight-current
@@ -136,6 +134,9 @@ export default {
   }
   /deep/.el-tree-node__content:hover {
     background-color: #096090;
+  }
+  /deep/ .el-tree-node:focus > .el-tree-node__content {
+    background-color: #096090 !important;
   }
 }
 </style>

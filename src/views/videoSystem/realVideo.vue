@@ -417,19 +417,18 @@ export default {
     // 点击当前视频
     operateCurVideo (curVideo, index) {
       this.curVideoIndex = index
-      // 去掉所有激活的
+      // 点击当前视频区域，默认去掉所有激活的样式
       const divs = document.querySelectorAll('.el-tree-node')
       for (let i = 0; i < divs.length; i++) {
         divs[i].classList.remove('is-current')
       }
-      // 给对应的数结构添加样式
+      // 如果不是空白区域，给对应的数结构添加样式
       if (this.totalVideosArray[this.curVideoIndex]) {
         document
           .querySelector(
             '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
           )
           .parentElement.parentElement.parentElement.parentElement.classList.add('is-current')
-          // node.setAttribute("class",'is-current' )
       }
     },
     // 预览全部
