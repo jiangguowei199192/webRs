@@ -122,7 +122,7 @@ export default {
       addrResults: null,
       lastResults: null,
       chooseAddr: null,
-      bShowPaln: false,
+      bShowPaln: true,
       locale: 'zh',
       measureType: 0,
       bShowTheTif: true,
