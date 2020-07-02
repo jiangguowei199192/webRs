@@ -64,7 +64,13 @@
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
-              <VideoWall :videoInfo.sync="item" :key="index" v-if="item.srcUrl" ref="videoCtrl" @timeupdateEvent="timeupdate"></VideoWall>
+              <VideoWall
+                :videoInfo.sync="item"
+                :key="index"
+                v-if="item.srcUrl"
+                ref="videoCtrl"
+                @timeupdateEvent="timeupdate"
+              ></VideoWall>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -75,15 +81,21 @@
               <img :src="onePalace" />
             </div>
             <div class="centerTool">
-              <img :src="stop" @click="stopPlayRecord"/>
-              <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay"/>
-              <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay"/>
+              <img :src="stop" @click="stopPlayRecord" />
+              <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay" />
+              <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
             </div>
             <div class="rightTool">
               <img :src="fullScreen" />
             </div>
           </div>
-          <TimeBar ref="timeCtrl" class="time" :segments="records" :curTime.sync="curTime"></TimeBar>
+          <TimeBar
+            ref="timeCtrl"
+            class="time"
+            :segments="records"
+            :curTime.sync="curTime"
+            @jumpEvent="jump"
+          ></TimeBar>
         </div>
       </div>
       <div slot="right">
@@ -97,7 +109,7 @@
   </div>
 </template>
 <script>
-import { api } from '@/api/videoRecord.js'
+import { api } from '@/api/videoSystem/videoRecord.js'
 import VideoMain from './components/main'
 import Calendar from './components/calendar'
 import TimeBar from './components/timeBar'
@@ -354,16 +366,6 @@ export default {
     },
 
     /**
-     * 订阅播放进度更新事件
-     */
-    subTimeupdate () {
-      var ctrl = this.findVideoControl()
-      if (ctrl !== undefined) {
-        ctrl.subTimeupdate(true)
-      }
-    },
-
-    /**
      * 移除Player
      * @param {Object} player
      */
@@ -383,23 +385,15 @@ export default {
      * 开始播放
      */
     playRecord () {
-      var arry = this.curTime.split(':')
-      var time = parseInt(arry[0]) * 60 + parseInt(arry[1])
-      var r = this.records.find(
-        x => x.start <= time && x.start + x.duration >= time
-      )
+      var r = this.findRecordByTime()
       if (r !== undefined) {
-        this.addPlayer({ srcUrl: r.url, isLive: false, records: this.records })
-        this.$nextTick(() => {
-          this.subTimeupdate()
-          this.jumpToSeconds((time - r.start) * 60)
-        })
-      } else {
-        r = this.records.find(x => x.start > time)
-        if (r !== undefined) {
-          this.addPlayer({ srcUrl: r.url, isLive: false, records: this.records })
+        var seconds = r.record.start * 60
+        if (r.jump === true) seconds += r.jumpSeconds
+        this.timeupdate(seconds)
+        this.addPlayer({ srcUrl: r.record.url, isLive: false, records: this.records, timeupdate: true })
+        if (r.jump === true) {
           this.$nextTick(() => {
-            this.subTimeupdate()
+            this.jumpToSeconds(r.jumpSeconds)
           })
         }
       }
@@ -421,6 +415,7 @@ export default {
      */
     stopPlayRecord () {
       if (this.curPlayer.isPlay && this.curPlayer.p) this.removePlayer(this.curPlayer.p)
+      this.timeupdate(0)
     },
 
     /**
@@ -437,6 +432,44 @@ export default {
      */
     timeupdate (seconds) {
       this.$refs.timeCtrl.jumpMinute(seconds / 60)
+    },
+
+    /**
+     * 根据时间找回放记录
+     */
+    findRecordByTime () {
+      var arry = this.curTime.split(':')
+      var time = parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
+      var r = this.records.find(
+        x => x.start <= time && x.start + x.duration >= time
+      )
+      // 是否需要跳转
+      var jump = false
+      // 跳转的秒数
+      var jumpSeconds = 0
+      if (r !== undefined) {
+        jump = true
+        jumpSeconds = (time - r.start) * 60
+      } else {
+        r = this.records.find(x => x.start > time)
+      }
+
+      return { record: r, jump: jump, jumpSeconds: jumpSeconds }
+    },
+
+    /**
+     * 跳转播放
+     */
+    jump () {
+      if (this.curPlayer.isPlay === true) {
+        var r = this.findRecordByTime()
+        if (r !== undefined) {
+          var ctrl = this.findVideoControl()
+          if (ctrl !== undefined) {
+            ctrl.changeVideoUrl(r.record.url, r.jump, r.jumpSeconds)
+          }
+        }
+      }
     }
   }
 }
