@@ -62,6 +62,10 @@ export default {
     this.calculateStep()
     window.onresize = () => {
       this.calculateStep()
+      var arry = this.curTime.split(':')
+      var minute =
+        parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
+      this.pointerLeft = minute * this.minuteWidth - this.pointerW + 5
     }
   },
 
@@ -141,7 +145,12 @@ export default {
           mTime = parseInt(mTime % 60)
         }
       }
-      var result = this.formatMinutes(hTime) + ':' + this.formatMinutes(mTime) + ':' + this.formatMinutes(sTime)
+      var result =
+        this.formatMinutes(hTime) +
+        ':' +
+        this.formatMinutes(mTime) +
+        ':' +
+        this.formatMinutes(sTime)
       this.$emit('update:curTime', result)
     },
 

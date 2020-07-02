@@ -18,15 +18,15 @@
     <el-calendar v-model="showDate">
       <template slot="dateCell" slot-scope="{date, data}">
         <span class="dayText">{{ data.day.split('-').slice(2).join() }}</span>
-        <template v-for="(item,index) in markData" >
-        <span v-if="item === data.day" class="mark" :key="index"></span>
-         </template>
+        <template v-for="(item,index) in markData">
+          <span v-if="item === data.day" class="mark" :key="index"></span>
+        </template>
       </template>
     </el-calendar>
-    <div class="search" @click="searchRecord">
+    <!-- <div class="search" @click="searchRecord">
       <span></span>
       <span>查找</span>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>
@@ -47,13 +47,13 @@ export default {
   watch: {
     showDate (val) {
       this.getYear()
-    },
-    dateInfo: {
-      handler (newVal, oldVal) {
-        this.$emit('dateChangeEvent', this.getYYMM(this.showDate))
-      },
-      deep: true
     }
+    // dateInfo: {
+    //   handler (newVal, oldVal) {
+    //     this.$emit('dateChangeEvent', this.getYYMM(this.showDate))
+    //   },
+    //   deep: true
+    // }
   },
 
   mounted () {
@@ -67,8 +67,17 @@ export default {
     getYear () {
       var year = this.showDate.getYear()
       year = year < 2000 ? year + 1900 : year
-      this.dateInfo.curYear = year.toString().substr(2, 2)
-      this.dateInfo.curMonth = this.showDate.getMonth() + 1
+      // this.dateInfo.curYear = year.toString().substr(2, 2)
+      // this.dateInfo.curMonth = this.showDate.getMonth() + 1
+      year = year.toString().substr(2, 2)
+      var month = this.showDate.getMonth() + 1
+
+      if (year !== this.dateInfo.curYear || month !== this.dateInfo.curMonth) {
+        this.$emit('dateChangeEvent', this.getYYMM(this.showDate), this.getYYMMDD())
+      }
+      this.$emit('searchRecordEvent', this.getYYMMDD())
+      this.dateInfo.curYear = year
+      this.dateInfo.curMonth = month
     },
 
     /**

@@ -63,6 +63,8 @@
               v-for="(item,index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
+              @click.stop="operateCurVideo(item,index)"
+              :class="{active:curVideoIndex===index}"
             >
               <VideoWall
                 :videoInfo.sync="item"
@@ -137,6 +139,7 @@ export default {
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
+      curVideoIndex: 1000,
       curDevice: '0', // 当前选中设备
       stop: require('../../assets/images/stop.png'),
       play: require('../../assets/images/play.png'),
@@ -244,6 +247,36 @@ export default {
   },
 
   methods: {
+
+    /**
+     * 插入视频墙
+     * @param {Object} curTreeData 插入视频墙数据
+     */
+    insertVideoWall (curTreeData) {
+
+    },
+
+    /**
+     * 点击当前视频
+     */
+    operateCurVideo (curVideo, index) {
+      this.curVideoIndex = index
+      // // 去掉所有激活的
+      // const divs = document.querySelectorAll('.el-tree-node')
+      // for (let i = 0; i < divs.length; i++) {
+      //   divs[i].classList.remove('is-current')
+      // }
+      // // 给对应的数结构添加样式
+      // if (this.totalVideosArray[this.curVideoIndex]) {
+      //   document
+      //     .querySelector(
+      //       '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+      //     )
+      //     .parentElement.parentElement.parentElement.parentElement.classList.add('is-current')
+      //     // node.setAttribute("class",'is-current' )
+      // }
+    },
+
     /**
      * 获取子组件传递过来的数据
      */
@@ -259,7 +292,7 @@ export default {
 
     /**
      * 日历日期改变
-     * @param {String} date 日期信息
+     * @param {String} date 日期信息 YYMM
      */
     dateChange (date) {
       this.$axios
@@ -280,7 +313,7 @@ export default {
 
     /**
      * 搜索回放mp4文件
-     * @param {String} date 日期信息
+     * @param {String} date 日期信息 YYMMDD
      */
     searchRecord (date) {
       this.records = []
@@ -346,7 +379,9 @@ export default {
      */
     jumpToSeconds (time) {
       var ctrl = this.findVideoControl()
-      if (ctrl !== undefined) { ctrl.jumpToSeconds(time) }
+      if (ctrl !== undefined) {
+        ctrl.jumpToSeconds(time)
+      }
     },
 
     /**
@@ -390,7 +425,12 @@ export default {
         var seconds = r.record.start * 60
         if (r.jump === true) seconds += r.jumpSeconds
         this.timeupdate(seconds)
-        this.addPlayer({ srcUrl: r.record.url, isLive: false, records: this.records, timeupdate: true })
+        this.addPlayer({
+          srcUrl: r.record.url,
+          isLive: false,
+          records: this.records,
+          timeupdate: true
+        })
         if (r.jump === true) {
           this.$nextTick(() => {
             this.jumpToSeconds(r.jumpSeconds)
@@ -414,7 +454,9 @@ export default {
      * 停止播放
      */
     stopPlayRecord () {
-      if (this.curPlayer.isPlay && this.curPlayer.p) this.removePlayer(this.curPlayer.p)
+      if (this.curPlayer.isPlay && this.curPlayer.p) {
+        this.removePlayer(this.curPlayer.p)
+      }
       this.timeupdate(0)
     },
 
@@ -423,7 +465,9 @@ export default {
      */
     findVideoControl () {
       if (!this.curPlayer.p) return undefined
-      return this.$refs.videoCtrl.find(c => c.videoInfo.srcUrl === this.curPlayer.p.srcUrl)
+      return this.$refs.videoCtrl.find(
+        c => c.videoInfo.srcUrl === this.curPlayer.p.srcUrl
+      )
     },
 
     /**
@@ -439,7 +483,8 @@ export default {
      */
     findRecordByTime () {
       var arry = this.curTime.split(':')
-      var time = parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
+      var time =
+        parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
       var r = this.records.find(
         x => x.start <= time && x.start + x.duration >= time
       )
@@ -453,6 +498,8 @@ export default {
       } else {
         r = this.records.find(x => x.start > time)
       }
+
+      if (r === undefined) return undefined
 
       return { record: r, jump: jump, jumpSeconds: jumpSeconds }
     },
@@ -599,6 +646,10 @@ export default {
       margin-bottom: 11px;
       background: url(../../assets/images/video.png) no-repeat center center;
       background-color: #00497c;
+      cursor: pointer;
+    }
+    > div.active {
+      border: 2px solid rgba(255, 244, 100, 1);
     }
   }
   .tools {
