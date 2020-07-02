@@ -120,7 +120,7 @@
                 ></el-pagination>
               </div>
 
-              <img :src="fullScreen" />
+              <img :src="fullScreen" @click.stop="dialogVisible=true" />
             </div>
           </div>
         </div>
@@ -201,6 +201,17 @@
         </div>
       </div>
     </VideoMain>
+    <el-dialog :visible.sync="dialogVisible" width="100%" @keyup.27="dialogVisible=false">
+      <div
+        v-for="(item,index) in curVideosArray"
+        :key="index"
+        :style="machineStatusStyle(showVideoPageSize)"
+      >
+        <!-- <div > -->
+        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
+        <!-- </div> -->
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -219,6 +230,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      dialogVisible: false, // 全屏弹窗
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
@@ -499,7 +511,9 @@ export default {
           // marginLeft: '10px'
         }
       }
-    }
+    },
+    // 点击全屏按钮
+    openDialog () {}
   },
   created () {
     // 初始加载9个空元素
@@ -516,7 +530,6 @@ export default {
     )
     this.getAllDeptDevices()
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -838,6 +851,30 @@ export default {
               }
             }
           }
+        }
+      }
+    }
+  }
+  // 修改弹框样式
+  .el-dialog__wrapper {
+    overflow: visible;
+    /deep/.el-dialog {
+      margin-top: 0 !important;
+      height: 100%;
+      .el-dialog__header {
+        display: none;
+      }
+      .el-dialog__body {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+        padding:0 15px;
+        > div {
+          cursor: pointer;
+          margin-right: 19px;
+          margin-bottom: 20px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
         }
       }
     }
