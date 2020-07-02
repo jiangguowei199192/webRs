@@ -202,17 +202,17 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" @keyup.27="dialogVisible=false" v-if="dialogVisible">
-      <div
-        v-for="(item,index) in curVideosArray"
-        :key="index"
-        :style="machineStatusStyle(showVideoPageSize)"
-      >
-        <!-- <div > -->
-        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
-        <!-- </div> -->
-      </div>
-    </el-dialog>
+    <div class="videoFullScreen" v-show="dialogVisible">
+      <el-dialog :visible.sync="dialogVisible" width="100%">
+        <div
+          v-for="(item,index) in curVideosArray"
+          :key="index"
+          :style="machineStatusStyle(showVideoPageSize)"
+        >
+          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script>
@@ -387,6 +387,11 @@ export default {
                 '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
               )
               .parentElement.setAttribute('class', '')
+            document
+              .querySelector(
+                '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+              )
+              .parentElement.parentElement.parentElement.parentElement.classList.remove('is-current')
           }
           this.totalVideosArray.splice(this.curVideoIndex, 1, {
             id: curTreeData.id,
@@ -428,7 +433,9 @@ export default {
           .querySelector(
             '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
           )
-          .parentElement.parentElement.parentElement.parentElement.classList.add('is-current')
+          .parentElement.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
       }
     },
     // 预览全部
@@ -487,7 +494,6 @@ export default {
     },
     // 下一页
     next (cpage) {
-      debugger
       if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
         // 若不够，数据则补位空格
@@ -524,8 +530,10 @@ export default {
         }
       }
     },
-    // 点击全屏按钮
-    openDialog () {}
+    // 关闭全屏
+    closeDialog (e) {
+      debugger
+    }
   },
   created () {
     // 初始加载9个空元素
@@ -873,6 +881,11 @@ export default {
     }
   }
   // 修改弹框样式
+  .videoFullScreen{
+    position: relative;
+    height:100%;
+
+  }
   .el-dialog__wrapper {
     overflow: visible;
     /deep/.el-dialog {

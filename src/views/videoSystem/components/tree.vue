@@ -60,12 +60,18 @@ export default {
         // 若没有，则添加class，并传递当前数据
         if (!$event.currentTarget.getAttribute('class')) {
           $event.currentTarget.setAttribute('class', 'liveIcon')
+          $event.currentTarget.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
+
           this.$emit('videoChange', 1, data)
         } else {
           $event.currentTarget.setAttribute('class', '')
+          // debugger
           $event.currentTarget.parentElement.parentElement.parentElement.classList.remove(
             'is-current'
           )
+
           this.$emit('videoChange', 2, data)
         }
       }
