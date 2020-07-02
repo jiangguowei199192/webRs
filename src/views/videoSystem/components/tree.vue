@@ -7,6 +7,7 @@
       default-expand-all
       ref="tree"
       :props="defaultProps"
+      :filter-node-method="filterNode"
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
         <span @click="showLiveVideo(data,$event)">
@@ -37,6 +38,10 @@ export default {
     }
   },
   methods: {
+    filterNode (value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
+    },
     // 点击树节点
     handleNodeClick (data) {
       console.log(data.id)

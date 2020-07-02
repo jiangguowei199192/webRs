@@ -16,7 +16,7 @@
           <div class="search">
             <el-input
               type="text"
-              v-model.trim="input"
+              v-model.trim="filterText"
               placeholder="请输入设备名称"
               suffix-icon="el-icon-search"
             ></el-input>
@@ -74,6 +74,7 @@
             </div>-->
             <tree-data
               :treeData="treeData"
+              ref="tree"
               @selectedChange="getSelectedData"
               @videoChange="closeOrOpen"
             ></tree-data>
@@ -230,6 +231,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      filterText: '', // 节点过滤文字
       dialogVisible: false, // 全屏弹窗
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
@@ -348,11 +350,10 @@ export default {
     },
     // 点击树节点
     closeOrOpen (type, curTreeData) {
-      debugger
+      // 1.添加
       if (type === 1) {
         // 1.1默认位置添加
         if (this.curVideoIndex === 1000) {
-          debugger
           const i = this.totalVideosArray.indexOf('')
           // 如果有空元素，则替换
           if (i !== -1) {
@@ -399,7 +400,7 @@ export default {
           )
         }
       } else {
-        // 关闭视频
+        // 2.关闭视频
         let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {
@@ -415,8 +416,21 @@ export default {
     },
     // 点击当前视频
     operateCurVideo (curVideo, index) {
-      // debugger
       this.curVideoIndex = index
+      // 去掉所有激活的
+      const divs = document.querySelectorAll('.el-tree-node')
+      for (let i = 0; i < divs.length; i++) {
+        divs[i].classList.remove('is-current')
+      }
+      // 给对应的数结构添加样式
+      if (this.totalVideosArray[this.curVideoIndex]) {
+        document
+          .querySelector(
+            '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+          )
+          .parentElement.parentElement.parentElement.parentElement.classList.add('is-current')
+          // node.setAttribute("class",'is-current' )
+      }
     },
     // 预览全部
     playAllVideos () {
@@ -529,6 +543,11 @@ export default {
       this.showVideoPageSize
     )
     this.getAllDeptDevices()
+  },
+  watch: {
+    filterText (val) {
+      this.$refs.tree.$refs.tree.filter(val)
+    }
   }
 }
 </script>
@@ -868,9 +887,9 @@ export default {
         display: flex;
         flex-wrap: wrap;
         height: 100%;
-        padding:0 15px;
+        padding: 0 15px;
         > div {
-          cursor: pointer;
+          // cursor: pointer;
           margin-right: 19px;
           margin-bottom: 20px;
           background: url(../../assets/images/video.png) no-repeat center center;
