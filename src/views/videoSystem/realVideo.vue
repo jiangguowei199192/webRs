@@ -202,7 +202,7 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" @keyup.27="dialogVisible=false">
+    <el-dialog :visible.sync="dialogVisible" width="100%" @keyup.27="dialogVisible=false" v-if="dialogVisible">
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
@@ -380,7 +380,7 @@ export default {
           }
         } else {
           // 1.2指定位置添加
-          // 若指定位置之前有元素
+          // 若指定位置之前有元素，去掉其激活的样式
           if (this.totalVideosArray[this.curVideoIndex]) {
             document
               .querySelector(
@@ -448,9 +448,8 @@ export default {
     },
     // 切换每屏显示的个数
     changeVideosType (n) {
-      debugger
       this.currentPage = 1
-      this.curVideoIndex = 999
+      this.curVideoIndex = 1000
       this.showVideoPageSize = n
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')

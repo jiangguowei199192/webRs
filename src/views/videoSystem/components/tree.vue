@@ -63,6 +63,7 @@ export default {
           this.$emit('videoChange', 1, data)
         } else {
           $event.currentTarget.setAttribute('class', '')
+          $event.currentTarget.parentElement.parentElement.parentElement.classList.remove('is-current')
           this.$emit('videoChange', 2, data)
         }
       }
