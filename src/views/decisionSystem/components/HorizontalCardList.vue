@@ -23,7 +23,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 100%;
-  height: 90px;
+  height: 100px;
   overflow-x: auto;
   white-space: nowrap;
   overflow: auto;
@@ -34,6 +34,7 @@ export default {
   height: 80px;
   background-color: green;
   margin-right: 10px;
+  margin-top: 10px;
 }
 
 </style>
