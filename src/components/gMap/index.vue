@@ -107,7 +107,7 @@
 
 <script>
 import AMapHelper from '../../axios/amapapis'
-import Plan from '../../views/decisionSystem/plan/Plan.vue'
+import Plan from '../../views/decisionSystem/components/Plan.vue'
 export default {
   name: 'gMap',
   components: {
