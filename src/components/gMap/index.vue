@@ -607,8 +607,7 @@ export default {
     left: 15px;
     top: 60px;
     border-radius: 4px;
-    // background-color: rgb(21, 51, 77);
-    background: white;
+    background-color: rgba(21, 51, 77, .9);
     overflow-y: auto;
     overflow-x: hidden;
   }
