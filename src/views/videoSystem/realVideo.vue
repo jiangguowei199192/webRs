@@ -202,17 +202,15 @@
         </div>
       </div>
     </VideoMain>
-    <div class="videoFullScreen" v-show="dialogVisible">
-      <el-dialog :visible.sync="dialogVisible" width="100%">
-        <div
-          v-for="(item,index) in curVideosArray"
-          :key="index"
-          :style="machineStatusStyle(showVideoPageSize)"
-        >
-          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
-        </div>
-      </el-dialog>
-    </div>
+    <el-dialog :visible.sync="dialogVisible" width="100%" :close-on-press-escape="false" id="realVideo">
+      <div
+        v-for="(item,index) in curVideosArray"
+        :key="index"
+        :style="machineStatusStyle(showVideoPageSize)"
+      >
+        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -391,7 +389,9 @@ export default {
               .querySelector(
                 '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
               )
-              .parentElement.parentElement.parentElement.parentElement.classList.remove('is-current')
+              .parentElement.parentElement.parentElement.parentElement.classList.remove(
+                'is-current'
+              )
           }
           this.totalVideosArray.splice(this.curVideoIndex, 1, {
             id: curTreeData.id,
@@ -529,10 +529,6 @@ export default {
           // marginLeft: '10px'
         }
       }
-    },
-    // 关闭全屏
-    closeDialog (e) {
-      debugger
     }
   },
   created () {
@@ -881,11 +877,11 @@ export default {
     }
   }
   // 修改弹框样式
-  .videoFullScreen{
-    position: relative;
-    height:100%;
-
-  }
+  //   .videoFullScreen{
+  //     position: relative;
+  //     height:100%;
+  //  width:100%;
+  //   }
   .el-dialog__wrapper {
     overflow: visible;
     /deep/.el-dialog {
