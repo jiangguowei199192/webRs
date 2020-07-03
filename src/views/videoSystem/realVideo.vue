@@ -203,7 +203,7 @@
       </div>
     </VideoMain>
     <!-- <el-dialog :visible.sync="dialogVisible" width="100%" > -->
-    <div class="fullContainer"  v-if="dialogVisible" >
+    <div class="fullContainer" v-if="dialogVisible">
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
@@ -548,7 +548,6 @@ export default {
       this.showVideoPageSize
     )
     this.getAllDeptDevices()
-    // const me = this
     window.onkeydown = e => {
       if (e.keyCode === 27 && this.dialogVisible) {
         this.dialogVisible = false
@@ -884,48 +883,50 @@ export default {
       }
     }
   }
-  // 修改弹框样式
-   .fullContainer {
+  // 全屏弹框
+  .fullContainer {
     position: fixed;
     top: 0;
-    right:0;
-    left:0;
-    bottom:0;
-    z-index: 999;
-    background:#fff;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10000;
+    background: #fff;
     display: flex;
     flex-wrap: wrap;
-  overflow: visible;
-      > div {
-          // cursor: pointer;
-          margin-right: 19px;
-          margin-bottom: 20px;
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
-        }
-  }
-  .el-dialog__wrapper {
     overflow: visible;
-    /deep/.el-dialog {
-      margin-top: 0 !important;
-      height: 100%;
-      .el-dialog__header {
-        display: none;
-      }
-      .el-dialog__body {
-        display: flex;
-        flex-wrap: wrap;
-        height: 100%;
-        padding: 0 15px;
-        > div {
-          // cursor: pointer;
-          margin-right: 19px;
-          margin-bottom: 20px;
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
-        }
-      }
+    padding:20px 30px;
+    > div {
+      // cursor: pointer;
+      margin-right: 19px;
+      margin-bottom: 20px;
+      background: url(../../assets/images/video.png) no-repeat center center;
+      background-color: #00497c;
     }
   }
+  // 修改弹框样式
+  // .el-dialog__wrapper {
+  //   overflow: visible;
+  //   /deep/.el-dialog {
+  //     margin-top: 0 !important;
+  //     height: 100%;
+  //     .el-dialog__header {
+  //       display: none;
+  //     }
+  //     .el-dialog__body {
+  //       display: flex;
+  //       flex-wrap: wrap;
+  //       height: 100%;
+  //       padding: 0 15px;
+  //       > div {
+  //         // cursor: pointer;
+  //         margin-right: 19px;
+  //         margin-bottom: 20px;
+  //         background: url(../../assets/images/video.png) no-repeat center center;
+  //         background-color: #00497c;
+  //       }
+  //     }
+  //   }
+  // }
 }
 </style>
