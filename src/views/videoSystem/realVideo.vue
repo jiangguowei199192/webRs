@@ -202,7 +202,8 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" :close-on-press-escape="false" id="realVideo">
+    <!-- <el-dialog :visible.sync="dialogVisible" width="100%" > -->
+    <div class="fullContainer"  v-if="dialogVisible" >
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
@@ -210,7 +211,9 @@
       >
         <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
       </div>
-    </el-dialog>
+    </div>
+
+    <!-- </el-dialog> -->
   </div>
 </template>
 <script>
@@ -545,6 +548,12 @@ export default {
       this.showVideoPageSize
     )
     this.getAllDeptDevices()
+    // const me = this
+    window.onkeydown = e => {
+      if (e.keyCode === 27 && this.dialogVisible) {
+        this.dialogVisible = false
+      }
+    }
   },
   watch: {
     filterText (val) {
@@ -737,7 +746,6 @@ export default {
           font-family: Source Han Sans CN;
           font-weight: 400;
           font-size: 18px;
-          // color:rgb(24, 93, 121);
           > div {
             width: 201px;
             height: 37px;
@@ -877,11 +885,25 @@ export default {
     }
   }
   // 修改弹框样式
-  //   .videoFullScreen{
-  //     position: relative;
-  //     height:100%;
-  //  width:100%;
-  //   }
+   .fullContainer {
+    position: fixed;
+    top: 0;
+    right:0;
+    left:0;
+    bottom:0;
+    z-index: 999;
+    background:#fff;
+    display: flex;
+    flex-wrap: wrap;
+  overflow: visible;
+      > div {
+          // cursor: pointer;
+          margin-right: 19px;
+          margin-bottom: 20px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
+        }
+  }
   .el-dialog__wrapper {
     overflow: visible;
     /deep/.el-dialog {
