@@ -20,7 +20,7 @@
     </el-input>
     <div class="searchResult ownScrollStyle" v-show="addrResults !== null">
       <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
-        :class="{itemSeparator:index!=0}"
+        :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
         @click.stop="gotoAddrDetails($event,addr)"
         @mouseenter="mouseHandler($event,addr,true)"
         @mouseleave="mouseHandler($event,addr,false)">
@@ -228,26 +228,48 @@ export default {
 
       this.map2D.geoLocation()
       this.map2D.addAutocomplete(this.initSearchBox)
+
+      this.map2D.searchLayerManager.select()
     },
 
     updateSearchResults (_results) {
-      _results.forEach(addr => {
-        addr._bHover = false
-        if (addr.photos.length > 0) {
-          addr._imgUrl = addr.photos[0].url
-        } else {
-          addr._imgUrl = null
-        }
-        if (addr.address != null && !(addr.address instanceof Array)) {
-          addr._addr = addr.address
-        } else {
-          addr._addr = null
-        }
-        const tmpStrs = addr.location.split(',')
-        addr._lon = parseFloat(tmpStrs[0])
-        addr._lat = parseFloat(tmpStrs[1])
-      })
-      this.addrResults = _results
+      if (_results != null) {
+        let tmpIndex = 0
+        let tmpMaxLon = -180
+        let tmpMaxLat = -90
+        let tmpMinLon = 180
+        let tmpMinLat = 90
+        _results.forEach(addr => {
+          tmpIndex += 1
+          addr._index = tmpIndex
+          addr._bHover = false
+          addr._updateHoverCB = this.updateMouseHover
+          if (addr.photos.length > 0) {
+            addr._imgUrl = addr.photos[0].url
+          } else {
+            addr._imgUrl = null
+          }
+          if (addr.address != null && !(addr.address instanceof Array)) {
+            addr._addr = addr.address
+          } else {
+            addr._addr = null
+          }
+          const tmpStrs = addr.location.split(',')
+          addr._lon = parseFloat(tmpStrs[0])
+          addr._lat = parseFloat(tmpStrs[1])
+          if (addr._lon > tmpMaxLon) tmpMaxLon = addr._lon
+          if (addr._lat > tmpMaxLat) tmpMaxLat = addr._lat
+          if (addr._lon < tmpMinLon) tmpMinLon = addr._lon
+          if (addr._lat < tmpMinLat) tmpMinLat = addr._lat
+        })
+        this.addrResults = _results
+        this.map2D.searchLayerManager.addSearchAddrs(_results)
+        this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+        this.map2D.zoomOut()
+      } else {
+        this.addrResults = null
+        this.map2D.searchLayerManager.clear()
+      }
     },
 
     // 初始化搜索提示框
@@ -291,7 +313,7 @@ export default {
       }
       this.bShowPaln = false
       this.autoTips.Ub.style.visibility = 'hidden'
-      this.addrResults = null
+      this.updateSearchResults(null)
       AMapHelper.getPOIs({ keywords: addrStr })
         .then(res => {
           if (res.data.status === '1') {
@@ -310,18 +332,26 @@ export default {
     clearSearchBox () {
       this.filterText = ''
       this.autoTips.Ub.style.visibility = 'hidden'
-      this.addrResults = null
+      this.updateSearchResults(null)
       this.bShowPaln = false
     },
 
     gotoAddrDetails (event, addr) {
       this.lastResults = this.addrResults
-      this.addrResults = null
+      this.updateSearchResults(null)
       this.bShowPaln = true
     },
 
+    updateMouseHover (addr, bHover) {
+      this.addrResults.forEach(tmpAddr => {
+        if (tmpAddr._index === addr._index) {
+          tmpAddr._bHover = bHover
+        }
+      })
+    },
+
     mouseHandler (event, addr, bHover) {
-      addr._bHover = bHover
+      this.map2D.searchLayerManager.mouseHoverHandler(addr._feature, addr._layer, bHover)
     },
 
     // 绘制多边形
@@ -593,7 +623,7 @@ export default {
         margin-top: 5px;
       }
     }
-    .searchItem:hover {
+    .searchItemHover {
       background: rgba($color: #f7f5f5, $alpha: 1);
     }
     .itemSeparator {

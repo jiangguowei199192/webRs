@@ -406,8 +406,96 @@
 
 /* ---------------------------------------- */
 
-/*  气泡样式  */
+/*  利用after和before伪元素实现顶部弹窗样式  */
+.topPopup {
+  background-color: #eeeeee;
+  color: #000000;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+  margin-bottom: 10px;
 
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+}
+.topPopup:after, .topPopup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.topPopup:after {
+  border-top-color: #eeeeee;
+  border-width: 10px;
+  left: 50%;
+  margin-left: -10px;
+}
+.topPopup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 50%;
+  margin-left: -11px;
+}
+/*  利用after和before伪元素实现右侧弹窗样式  */
+.rightPopup {
+  position: absolute;
+  background-color: #eeeeee;
+  color: #000000;
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  padding: 0px 0px 0px 5px;
+  border-radius: 2px;
+  border: 1px solid #cccccc;
+  left: 20px;
+  top: -4px;
+  min-width: 187px;
+}
+.rightPopup:after, .rightPopup:before {
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.rightPopup:after {
+  border-right-color: #eeeeee;
+  border-width: 10px;
+  left: -10px;
+  top: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+}
+.rightPopup:before {
+  border-right-color: #cccccc;
+  border-width: 11px;
+  left: -11px;
+  top: 50%;
+  margin-top: -11px;
+  margin-left: -11px;
+}
+
+.popupImgNav {
+  height:32px;
+  width:32px;
+  background-color: #22222222;
+  cursor: pointer;
+  float:right;
+}
+.popupTextNav {
+  line-height:32px;
+  width:150px;
+  cursor: default;
+  word-break:keep-all;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/*  气泡样式  */
 .ol-popup {
   position: absolute;
   background-color: #eeeeee;
