@@ -368,7 +368,7 @@ export default {
               this.showVideoPageSize
             )
           } else {
-            // 若没有，则追加
+            // 若没有空元素，则追加
             this.totalVideosArray.push({
               id: curTreeData.id,
               srcUrl:
@@ -431,10 +431,10 @@ export default {
         divs[i].classList.remove('is-current')
       }
       // 如果不是空白区域，给对应的数结构添加样式
-      if (this.totalVideosArray[this.curVideoIndex]) {
+      if (this.curVideosArray[this.curVideoIndex]) {
         document
           .querySelector(
-            '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+            '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
           )
           .parentElement.parentElement.parentElement.parentElement.classList.add(
             'is-current'
@@ -490,6 +490,7 @@ export default {
     // 上一页
     pre (cpage) {
       // 始终截取当前页需要的数据
+      this.curVideoIndex = 1000
       this.curVideosArray = this.totalVideosArray.slice(
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
@@ -497,6 +498,12 @@ export default {
     },
     // 下一页
     next (cpage) {
+      // 清掉之前的选中状态
+      this.curVideoIndex = 1000
+      const divs = document.querySelectorAll('.el-tree-node')
+      for (let i = 0; i < divs.length; i++) {
+        divs[i].classList.remove('is-current')
+      }
       if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
         // 若不够，数据则补位空格
