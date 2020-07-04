@@ -18,7 +18,7 @@
         <el-button @click.stop="clearSearchBox" icon="el-icon-close" size="mini" class="appendBtn"></el-button>
       </div>
     </el-input>
-    <div class="searchResult ownScrollStyle" v-show="addrResults !== null">
+    <div class="searchResult ownScrollStyle" v-show="bShowResult">
       <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
         :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
         @click.stop="gotoAddrDetails($event,addr)"
@@ -123,6 +123,7 @@ export default {
       lastResults: null,
       chooseAddr: null,
       bShowPaln: true,
+      bShowResult: false,
       locale: 'zh',
       measureType: 0,
       bShowTheTif: true,
@@ -230,8 +231,23 @@ export default {
       this.map2D.addAutocomplete(this.initSearchBox)
 
       this.map2D.searchLayerManager.select()
+      this.map2D.searchLayerManager.selectMarkerEvent.addEventListener(this.selectMarkerEventCB)
+      this.map2D.searchLayerManager.popNavImgClickEvent.addEventListener(this.popNavImgClickEventCB)
     },
 
+    // 点击气泡弹窗中图标按钮事件回调
+    popNavImgClickEventCB (addr) {
+      if (addr != null && addr !== undefined) {
+        console.log(addr)
+      }
+    },
+
+    // 点击位置标记图标事件回调
+    selectMarkerEventCB (addr) {
+      this.gotoAddrDetails(null, addr, false)
+    },
+
+    // 处理搜索结果并显示
     updateSearchResults (_results) {
       if (_results != null) {
         let tmpIndex = 0
@@ -264,10 +280,14 @@ export default {
         })
         this.addrResults = _results
         this.map2D.searchLayerManager.addSearchAddrs(_results)
-        this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
-        this.map2D.zoomOut()
+        if (_results.length > 0) this.bShowResult = true
+        if (_results.length > 1) {
+          this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+          this.map2D.zoomOut()
+        }
       } else {
         this.addrResults = null
+        this.bShowResult = false
         this.map2D.searchLayerManager.clear()
       }
     },
@@ -307,6 +327,7 @@ export default {
       console.log('initSearchBox ...... OK')
     },
 
+    // 根据输入搜索位置信息
     async searchAddrs (addrStr, bDetail) {
       if (this.chooseAddr != null && bDetail !== true) {
         return
@@ -325,10 +346,15 @@ export default {
         })
     },
 
+    // 删除搜索框中文字事件处理
     resetChooseAddr () {
       this.chooseAddr = null
+      if (this.filterText === '') {
+        this.updateSearchResults(null)
+      }
     },
 
+    // 清理所有搜索结果项
     clearSearchBox () {
       this.filterText = ''
       this.autoTips.Ub.style.visibility = 'hidden'
@@ -336,12 +362,18 @@ export default {
       this.bShowPaln = false
     },
 
-    gotoAddrDetails (event, addr) {
+    // 选择某一搜索结果显示其预案详情信息
+    gotoAddrDetails (event, addr, bCallHandler = true) {
       this.lastResults = this.addrResults
-      this.updateSearchResults(null)
+      this.bShowResult = false
       this.bShowPaln = true
+      if (bCallHandler) {
+        this.map2D.searchLayerManager._select.getFeatures().push(addr._feature)// 此句避免位置标记右侧的弹窗不消失
+        this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
+      }
     },
 
+    // 在地图中鼠标移入移出标记时回调刷新列表中结果项
     updateMouseHover (addr, bHover) {
       this.addrResults.forEach(tmpAddr => {
         if (tmpAddr._index === addr._index) {
@@ -350,6 +382,7 @@ export default {
       })
     },
 
+    // 鼠标移入移出搜索结果项
     mouseHandler (event, addr, bHover) {
       this.map2D.searchLayerManager.mouseHoverHandler(addr._feature, addr._layer, bHover)
     },
