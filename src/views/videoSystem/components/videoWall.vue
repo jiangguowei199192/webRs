@@ -21,7 +21,6 @@
 </template>
 <script>
 import LivePlayer from '@liveqing/liveplayer'
-var player
 export default {
   data () {
     return {
@@ -39,8 +38,7 @@ export default {
     }
   },
 
-  computed:
-  {
+  computed: {
     timeupdateVal () {
       return this.videoInfo.timeupdate
     }
@@ -60,7 +58,6 @@ export default {
   },
 
   mounted () {
-    player = this.$refs.playerCtrl.player
     this.subEnded()
     this.subTimeupdate(this.timeupdateVal)
     // player.on('loadeddata', function () {
@@ -74,7 +71,7 @@ export default {
 
   methods: {
     play () {
-      player.play()
+      this.$refs.playerCtrl.player.play()
     },
     stopAll () {
       var videoInfo = { srcUrl: '', isLive: true }
@@ -101,6 +98,8 @@ export default {
      * 全屏
      */
     fullScreen () {
+      // 防止弹出全屏视频对话框后，player为null
+      var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
         player.exitFullscreen()
       } else player.requestFullscreen()
@@ -111,14 +110,14 @@ export default {
      * @param {Number} time xx秒
      */
     jumpToSeconds (time) {
-      player.currentTime(time)
+      this.$refs.playerCtrl.player.currentTime(time)
     },
 
     /**
      * 暂停播放
      */
     pause () {
-      player.pause()
+      this.$refs.playerCtrl.player.pause()
     },
 
     /**
@@ -148,8 +147,6 @@ export default {
     changeVideoUrl (url) {
       this.videoInfo.srcUrl = url
       setTimeout(() => {
-        // 需要重新获取下播放控件
-        player = this.$refs.playerCtrl.player
         this.subEnded()
         this.subTimeupdate(this.timeupdateVal)
       }, 1000)
@@ -160,8 +157,7 @@ export default {
      */
     timeupdate: function () {
       if (this.videoInfo.isLive === false) {
-        // console.log('111111111111')
-        this.curTime = Math.floor(player.currentTime())
+        this.curTime = Math.floor(this.$refs.playerCtrl.player.currentTime())
       }
     },
 
@@ -170,9 +166,9 @@ export default {
      */
     subTimeupdate (isSub) {
       if (isSub === true) {
-        player.on('timeupdate', this.timeupdate)
+        this.$refs.playerCtrl.player.on('timeupdate', this.timeupdate)
       } else {
-        player.off('timeupdate', this.timeupdate)
+        this.$refs.playerCtrl.player.off('timeupdate', this.timeupdate)
       }
     },
 
@@ -180,7 +176,7 @@ export default {
      * 订阅播放结束事件
      */
     subEnded () {
-      player.on('ended', this.ended)
+      this.$refs.playerCtrl.player.on('ended', this.ended)
     }
   }
 }

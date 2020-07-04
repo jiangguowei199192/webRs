@@ -67,6 +67,8 @@ export default {
           }
         }
       }
+
+      if (!this.isLive) this.$emit('selectedChange', data)
     },
     // 获得选中的节点的key
     checkedKeys: function (data) {

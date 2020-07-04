@@ -17,10 +17,12 @@
     </div>
     <el-calendar v-model="showDate">
       <template slot="dateCell" slot-scope="{date, data}">
-        <span class="dayText">{{ data.day.split('-').slice(2).join() }}</span>
-        <template v-for="(item,index) in markData">
-          <span v-if="item === data.day" class="mark" :key="index"></span>
-        </template>
+        <div style="position: relative;">
+          <span class="dayText">{{ data.day.split('-').slice(2).join() }}</span>
+          <template v-for="(item,index) in markData">
+            <span v-if="item === data.day" class="mark" :key="index"></span>
+          </template>
+        </div>
       </template>
     </el-calendar>
     <!-- <div class="search" @click="searchRecord">
@@ -73,7 +75,11 @@ export default {
       var month = this.showDate.getMonth() + 1
 
       if (year !== this.dateInfo.curYear || month !== this.dateInfo.curMonth) {
-        this.$emit('dateChangeEvent', this.getYYMM(this.showDate), this.getYYMMDD())
+        this.$emit(
+          'dateChangeEvent',
+          this.getYYMM(this.showDate),
+          this.getYYMMDD()
+        )
       }
       this.$emit('searchRecordEvent', this.getYYMMDD())
       this.dateInfo.curYear = year
@@ -202,9 +208,9 @@ export default {
   background: rgba(255, 0, 0, 1);
   border-radius: 50%;
   display: inline-block;
-  position: relative;
-  top: 12px;
-  left: -20px;
+  position: absolute;
+   top: 22px;
+   left: 3px;
 }
 
 .search {

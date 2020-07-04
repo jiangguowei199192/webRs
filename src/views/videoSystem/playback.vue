@@ -48,7 +48,7 @@
           </template>
           <!-- 全部部分 -->
           <template v-if="index==1">
-            <Tree :treeData="treeArray" @selectedChange="getSelectedData"></Tree>
+            <Tree :treeData="treeData" :isLive="false" @selectedChange="getSelectedData"></Tree>
           </template>
         </div>
       </div>
@@ -102,6 +102,7 @@
       </div>
       <div slot="right">
         <Calendar
+          ref="calendarCtrl"
           @dateChangeEvent="dateChange"
           :markData="recordData"
           @searchRecordEvent="searchRecord"
@@ -132,65 +133,20 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
-      curPlayer: { isPlay: false }, // 当前播放对象
+      curPlayer: '', // 当前播放对象
       curTime: '00:00:00', // 当前播放时间
-      recordData: [],
+      recordData: [], // 日历上的回放记录
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
       curDevice: '0', // 当前选中设备
+      curNodeID: -1, // 当前选中设备树节点ID
       stop: require('../../assets/images/stop.png'),
       play: require('../../assets/images/play.png'),
       pause: require('../../assets/images/pause.png'),
-      records: [],
-      treeArray: [
-        {
-          id: 1,
-          label: '高点设备',
-          class: 'highdevice',
-          children: [
-            {
-              id: 4,
-              label: '二级 1-1',
-              children: [
-                {
-                  id: 12,
-                  label: '三级 1-1-1'
-                  // isShow: false
-                },
-                {
-                  id: 13,
-                  label: '三级 1-1-2'
-                  // isShow: false
-                }
-              ]
-            },
-            {
-              id: 9,
-              label: '二级 2-1'
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: '无人机',
-          class: 'unmanned',
-          children: [
-            {
-              id: 5,
-              label: '二级 2-1'
-              // isShow: false
-            },
-            {
-              id: 6,
-              label: '二级 2-2'
-              // isShow: false
-            }
-          ]
-        }
-      ],
+      records: [], // timeBar上的回放记录
       listArray: [
         {
           area: '发展大道黄浦路1',
@@ -244,43 +200,56 @@ export default {
       0,
       this.showVideoPageSize
     )
+    this.getAllDeptDevices()
   },
 
   methods: {
-
-    /**
-     * 插入视频墙
-     * @param {Object} curTreeData 插入视频墙数据
-     */
-    insertVideoWall (curTreeData) {
-
-    },
 
     /**
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
       this.curVideoIndex = index
-      // // 去掉所有激活的
-      // const divs = document.querySelectorAll('.el-tree-node')
-      // for (let i = 0; i < divs.length; i++) {
-      //   divs[i].classList.remove('is-current')
-      // }
-      // // 给对应的数结构添加样式
-      // if (this.totalVideosArray[this.curVideoIndex]) {
-      //   document
-      //     .querySelector(
-      //       '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
-      //     )
-      //     .parentElement.parentElement.parentElement.parentElement.classList.add('is-current')
-      //     // node.setAttribute("class",'is-current' )
-      // }
+      // 如果不是空白区域，给对应的数结构添加样式
+      if (this.curVideosArray[index] !== '') {
+        this.curPlayer = this.curVideosArray[index]
+        // 查询回放记录
+        this.dateChange(this.$refs.calendarCtrl.getYYMM())
+        this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
+
+        // 点击当前视频区域，默认去掉所有激活的样式
+        // const divs = document.querySelectorAll('.el-tree-node')
+        // for (let i = 0; i < divs.length; i++) {
+        //   divs[i].classList.remove('is-current')
+        // }
+
+        // document
+        //   .querySelector(
+        //     '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+        //   )
+        //   .parentElement.parentElement.parentElement.parentElement.classList.add(
+        //     'is-current'
+        //   )
+      }
     },
 
     /**
      * 获取子组件传递过来的数据
      */
-    getSelectedData (data) {},
+    getSelectedData (data) {
+      this.curNodeID = data.id
+      if (data.deviceCode) {
+        this.dateChange(this.$refs.calendarCtrl.getYYMM())
+        this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
+      } else {
+        // 更新时间轴指针的位置
+        this.timeupdate(0)
+        this.records = []
+        this.recordData = []
+      }
+      var player = this.totalVideosArray.find(v => v.id === data.id)
+      this.curPlayer = player === undefined ? '' : player
+    },
 
     /**
      * 修改选中设备
@@ -389,15 +358,49 @@ export default {
      * @param {Object} player
      */
     addPlayer (player) {
-      var index = this.totalVideosArray.indexOf('')
-      if (index !== -1) this.totalVideosArray[index] = player
-      this.curVideosArray = this.totalVideosArray.slice(
-        0,
-        this.showVideoPageSize
-      )
-
-      this.curPlayer.isPlay = true
-      this.curPlayer.p = player
+      this.curPlayer = player
+      // 1.1默认位置添加
+      if (this.curVideoIndex === 1000) {
+        const i = this.totalVideosArray.indexOf('')
+        // 如果有空元素，则替换
+        if (i !== -1) {
+          this.totalVideosArray.splice(i, 1, player)
+          this.curVideosArray = this.totalVideosArray.slice(
+            0,
+            this.showVideoPageSize
+          )
+        } else {
+          // 若没有空元素，则追加
+          this.totalVideosArray.push(player)
+          this.curVideosArray = this.totalVideosArray.slice(
+            0,
+            this.showVideoPageSize
+          )
+        }
+      } else {
+        // 1.2指定位置添加
+        // 若指定位置之前有元素，去掉其激活的样式
+        if (this.totalVideosArray[this.curVideoIndex]) {
+          document
+            .querySelector(
+              '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+            )
+            .parentElement.setAttribute('class', '')
+          document
+            .querySelector(
+              '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+            )
+            .parentElement.parentElement.parentElement.parentElement.classList.remove(
+              'is-current'
+            )
+        }
+        this.totalVideosArray.splice(this.curVideoIndex, 1, player)
+        this.curVideoIndex = 1000
+        this.curVideosArray = this.totalVideosArray.slice(
+          0,
+          this.showVideoPageSize
+        )
+      }
     },
 
     /**
@@ -411,25 +414,35 @@ export default {
         0,
         this.showVideoPageSize
       )
-
-      this.curPlayer.isPlay = false
-      this.curPlayer.p = ''
+      this.curPlayer = ''
     },
 
     /**
      * 开始播放
      */
     playRecord () {
-      var r = this.findRecordByTime()
-      if (r !== undefined) {
+      // 如果当前有播放对象
+      if (this.curPlayer) {
+        if (this.curPlayer.isPlay === false) {
+          var ctrl = this.findVideoControl()
+          if (ctrl !== undefined) {
+            ctrl.play()
+            this.curPlayer.isPlay = true
+          }
+        }
+      } else {
+        var r = this.findRecordByTime()
+        if (r === undefined) return
         var seconds = r.record.start * 60
         if (r.jump === true) seconds += r.jumpSeconds
         this.timeupdate(seconds)
         this.addPlayer({
+          id: this.curNodeID,
           srcUrl: r.record.url,
           isLive: false,
           records: this.records,
-          timeupdate: true
+          timeupdate: true,
+          isPlay: true
         })
         if (r.jump === true) {
           this.$nextTick(() => {
@@ -454,9 +467,10 @@ export default {
      * 停止播放
      */
     stopPlayRecord () {
-      if (this.curPlayer.isPlay && this.curPlayer.p) {
-        this.removePlayer(this.curPlayer.p)
+      if (this.curPlayer) {
+        this.removePlayer(this.curPlayer)
       }
+      // 更新时间轴指针的位置
       this.timeupdate(0)
     },
 
@@ -464,9 +478,9 @@ export default {
      * 查找视频墙组件
      */
     findVideoControl () {
-      if (!this.curPlayer.p) return undefined
+      if (!this.curPlayer) return undefined
       return this.$refs.videoCtrl.find(
-        c => c.videoInfo.srcUrl === this.curPlayer.p.srcUrl
+        c => c.videoInfo.srcUrl === this.curPlayer.srcUrl
       )
     },
 
@@ -482,6 +496,8 @@ export default {
      * 根据时间找回放记录
      */
     findRecordByTime () {
+      if (this.records.length === 0) return undefined
+
       var arry = this.curTime.split(':')
       var time =
         parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
