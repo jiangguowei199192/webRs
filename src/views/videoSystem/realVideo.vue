@@ -202,8 +202,8 @@
         </div>
       </div>
     </VideoMain>
-    <!-- <el-dialog :visible.sync="dialogVisible" width="100%" > -->
-    <div class="fullContainer" v-if="dialogVisible">
+    <el-dialog :visible.sync="dialogVisible" width="100%" >
+    <!-- <div class="fullContainer" v-if="dialogVisible"> -->
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
@@ -211,9 +211,9 @@
       >
         <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
       </div>
-    </div>
+    <!-- </div> -->
 
-    <!-- </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -803,11 +803,6 @@ export default {
       }
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[this.curVideoIndex]) {
-        // 点击当前视频区域，默认去掉所有激活的样式
-        const divs = document.querySelectorAll('.el-tree-node')
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].classList.remove('is-current')
-        }
         document
           .querySelector(
             '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
@@ -934,6 +929,12 @@ export default {
           // marginLeft: '10px'
         }
       }
+    },
+    // 检查全屏
+    checkFull () {
+      let isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled
+      if (isFull === undefined) isFull = false
+      return isFull
     }
   },
   created () {
@@ -950,9 +951,14 @@ export default {
       this.showVideoPageSize
     )
     this.getAllDeptDevices()
-    window.onkeydown = e => {
-      if (e.keyCode === 27 && this.dialogVisible) {
-        this.dialogVisible = false
+  },
+  mounted () {
+    const that = this
+    window.onresize = function () {
+      debugger
+      if (!that.checkFull()) {
+        // 退出全屏后要执行的动作
+        that.$emit('Fullscreen', false)
       }
     }
   },
@@ -1307,28 +1313,28 @@ export default {
     }
   }
   // 修改弹框样式
-  // .el-dialog__wrapper {
-  //   overflow: visible;
-  //   /deep/.el-dialog {
-  //     margin-top: 0 !important;
-  //     height: 100%;
-  //     .el-dialog__header {
-  //       display: none;
-  //     }
-  //     .el-dialog__body {
-  //       display: flex;
-  //       flex-wrap: wrap;
-  //       height: 100%;
-  //       padding: 0 15px;
-  //       > div {
-  //         // cursor: pointer;
-  //         margin-right: 19px;
-  //         margin-bottom: 20px;
-  //         background: url(../../assets/images/video.png) no-repeat center center;
-  //         background-color: #00497c;
-  //       }
-  //     }
-  //   }
-  // }
+  .el-dialog__wrapper {
+    overflow: visible;
+    /deep/.el-dialog {
+      margin-top: 0 !important;
+      height: 100%;
+      .el-dialog__header {
+        display: none;
+      }
+      .el-dialog__body {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+        padding: 0 15px;
+        > div {
+          // cursor: pointer;
+          margin-right: 19px;
+          margin-bottom: 20px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
+        }
+      }
+    }
+  }
 }
 </style>
