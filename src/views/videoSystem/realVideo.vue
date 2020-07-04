@@ -202,8 +202,8 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" >
-    <!-- <div class="fullContainer" v-if="dialogVisible"> -->
+    <el-dialog :visible.sync="dialogVisible" width="100%" id="d1" >
+    <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
@@ -951,14 +951,13 @@ export default {
       this.showVideoPageSize
     )
     this.getAllDeptDevices()
-  },
-  mounted () {
-    const that = this
+    const me = this
     window.onresize = function () {
-      debugger
-      if (!that.checkFull()) {
-        // 退出全屏后要执行的动作
-        that.$emit('Fullscreen', false)
+      if (me.dialogVisible) {
+        if (me.checkFull()) {
+          // 要执行的动作
+          document.getElementById('d1').focus()
+        }
       }
     }
   },
