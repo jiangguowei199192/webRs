@@ -8,9 +8,10 @@
       ref="tree"
       :props="defaultProps"
       :filter-node-method="filterNode"
+      @node-click="handleNodeClick"
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
-        <span @click="showLiveVideo(data,$event)">
+        <span >
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id">{{ node.label }}</i>
@@ -47,11 +48,22 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     // 点击树节点
-    handleNodeClick (data) {
-      console.log(data.id)
+    handleNodeClick (data, $event) {
       if (!data.children) {
-        // data.isShow = true
-        // this.$emit('selectedChange', this.treeData)
+        const curSpan = document.getElementById('liveVideo' + data.id).parentElement
+        if (!curSpan.getAttribute('class')) {
+          curSpan.setAttribute('class', 'liveIcon')
+          curSpan.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
+          this.$emit('videoChange', 1, data)
+        } else {
+          curSpan.setAttribute('class', '')
+          curSpan.parentElement.parentElement.parentElement.classList.remove(
+            'is-current'
+          )
+          this.$emit('videoChange', 2, data)
+        }
       }
     },
     // 获得选中的节点的key
@@ -138,16 +150,16 @@ export default {
     background: #096090 !important;
   }
   /deep/.el-tree-node__content {
-    cursor: text;
-    .custom-tree-node {
-      cursor: pointer;
-    }
+    // cursor: text;
+    // .custom-tree-node {
+    //   cursor: pointer;
+    // }
   }
   /deep/.el-tree-node__content:hover {
-    background-color: #096090;
+    background-color: #096090 !important;
   }
   /deep/ .el-tree-node:focus > .el-tree-node__content {
-    background-color: #096090 !important;
+    background-color: transparent;
   }
 }
 </style>

@@ -803,6 +803,11 @@ export default {
       }
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[this.curVideoIndex]) {
+        // 点击当前视频区域，默认去掉所有激活的样式
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
         document
           .querySelector(
             '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
