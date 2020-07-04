@@ -211,25 +211,24 @@ export default {
     operateCurVideo (curVideo, index) {
       this.curVideoIndex = index
       // 如果不是空白区域，给对应的数结构添加样式
-      if (this.curVideosArray[index] !== '') {
+      if (this.curVideosArray[index]) {
         this.curPlayer = this.curVideosArray[index]
         // 查询回放记录
         this.dateChange(this.$refs.calendarCtrl.getYYMM())
         this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
 
         // 点击当前视频区域，默认去掉所有激活的样式
-        // const divs = document.querySelectorAll('.el-tree-node')
-        // for (let i = 0; i < divs.length; i++) {
-        //   divs[i].classList.remove('is-current')
-        // }
-
-        // document
-        //   .querySelector(
-        //     '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-        //   )
-        //   .parentElement.parentElement.parentElement.parentElement.classList.add(
-        //     'is-current'
-        //   )
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
+        document
+          .querySelector(
+            '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+          )
+          .parentElement.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
       }
     },
 
@@ -237,16 +236,22 @@ export default {
      * 获取子组件传递过来的数据
      */
     getSelectedData (data) {
+      // this.curNodeID = data.id
+      // if (data.streamCode) {
+      //   this.dateChange(this.$refs.calendarCtrl.getYYMM())
+      //   this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
+      // } else {
+      //   // 更新时间轴指针的位置
+      //   this.timeupdate(0)
+      //   this.records = []
+      //   this.recordData = []
+      // }
+      // var player = this.totalVideosArray.find(v => v.id === data.id)
+      // this.curPlayer = player === undefined ? '' : player
+
       this.curNodeID = data.id
-      if (data.deviceCode) {
-        this.dateChange(this.$refs.calendarCtrl.getYYMM())
-        this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
-      } else {
-        // 更新时间轴指针的位置
-        this.timeupdate(0)
-        this.records = []
-        this.recordData = []
-      }
+      this.dateChange(this.$refs.calendarCtrl.getYYMM())
+      this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
       var player = this.totalVideosArray.find(v => v.id === data.id)
       this.curPlayer = player === undefined ? '' : player
     },
@@ -264,6 +269,7 @@ export default {
      * @param {String} date 日期信息 YYMM
      */
     dateChange (date) {
+      if (this.curNodeID === -1) return
       this.$axios
         .post(api.getMp4RecordFile, {
           vhost: '__defaultVhost_ ',
@@ -285,6 +291,7 @@ export default {
      * @param {String} date 日期信息 YYMMDD
      */
     searchRecord (date) {
+      if (this.curNodeID === -1) return
       this.records = []
       this.$axios
         .post(api.getMp4RecordFile, {

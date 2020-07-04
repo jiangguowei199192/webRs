@@ -50,8 +50,8 @@ export default {
     // 点击树节点
     handleNodeClick (data, $event) {
       if (!data.children) {
+        const curSpan = document.getElementById('liveVideo' + data.id).parentElement
         if (this.isLive) {
-          const curSpan = document.getElementById('liveVideo' + data.id).parentElement
           if (!curSpan.getAttribute('class')) {
             curSpan.setAttribute('class', 'liveIcon')
             curSpan.parentElement.parentElement.parentElement.classList.add(
@@ -68,10 +68,21 @@ export default {
 
             this.$emit('videoChange', 2, data)
           }
+        } else {
+          // 点击当前视频区域，默认去掉所有激活的样式
+          const divs = document.querySelectorAll('.el-tree-node')
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.remove('is-current')
+          }
+          // 当前点击节点，添加激活的样式
+          curSpan.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
+          this.$emit('selectedChange', data)
         }
       }
 
-      if (!this.isLive) this.$emit('selectedChange', data)
+      // if (!this.isLive) this.$emit('selectedChange', data)
     },
     // 获得选中的节点的key
     checkedKeys: function (data) {
