@@ -60,9 +60,12 @@ export default {
             this.$emit('videoChange', 1, data)
           } else {
             curSpan.setAttribute('class', '')
-            curSpan.parentElement.parentElement.parentElement.classList.remove(
-              'is-current'
-            )
+            this.$nextTick(() => {
+              curSpan.parentElement.parentElement.parentElement.classList.remove(
+                'is-current'
+              )
+            })
+
             this.$emit('videoChange', 2, data)
           }
         }
