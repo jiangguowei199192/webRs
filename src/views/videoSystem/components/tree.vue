@@ -50,49 +50,51 @@ export default {
     // 点击树节点
     handleNodeClick (data, $event) {
       if (!data.children) {
-        const curSpan = document.getElementById('liveVideo' + data.id).parentElement
-        if (!curSpan.getAttribute('class')) {
-          curSpan.setAttribute('class', 'liveIcon')
-          curSpan.parentElement.parentElement.parentElement.classList.add(
-            'is-current'
-          )
-          this.$emit('videoChange', 1, data)
-        } else {
-          curSpan.setAttribute('class', '')
-          curSpan.parentElement.parentElement.parentElement.classList.remove(
-            'is-current'
-          )
-          this.$emit('videoChange', 2, data)
+        if (this.isLive) {
+          const curSpan = document.getElementById('liveVideo' + data.id).parentElement
+          if (!curSpan.getAttribute('class')) {
+            curSpan.setAttribute('class', 'liveIcon')
+            curSpan.parentElement.parentElement.parentElement.classList.add(
+              'is-current'
+            )
+            this.$emit('videoChange', 1, data)
+          } else {
+            curSpan.setAttribute('class', '')
+            curSpan.parentElement.parentElement.parentElement.classList.remove(
+              'is-current'
+            )
+            this.$emit('videoChange', 2, data)
+          }
         }
       }
     },
     // 获得选中的节点的key
     checkedKeys: function (data) {
       alert(JSON.stringify(this.$refs.tree.getCheckedKeys()))
-    },
-    // 点击子节点播放或关闭视频
-    showLiveVideo (data, $event) {
-      if (!data.children) {
-        if (this.isLive) {
-          // 若没有，则添加class，并传递当前数据
-          if (!$event.currentTarget.getAttribute('class')) {
-            $event.currentTarget.setAttribute('class', 'liveIcon')
-            $event.currentTarget.parentElement.parentElement.parentElement.classList.add(
-              'is-current'
-            )
-
-            this.$emit('videoChange', 1, data)
-          } else {
-            $event.currentTarget.setAttribute('class', '')
-            $event.currentTarget.parentElement.parentElement.parentElement.classList.remove(
-              'is-current'
-            )
-
-            this.$emit('videoChange', 2, data)
-          }
-        }
-      }
     }
+    // 点击子节点播放或关闭视频
+    // showLiveVideo (data, $event) {
+    //   if (!data.children) {
+    //     if (this.isLive) {
+    //       // 若没有，则添加class，并传递当前数据
+    //       if (!$event.currentTarget.getAttribute('class')) {
+    //         $event.currentTarget.setAttribute('class', 'liveIcon')
+    //         $event.currentTarget.parentElement.parentElement.parentElement.classList.add(
+    //           'is-current'
+    //         )
+
+    //         this.$emit('videoChange', 1, data)
+    //       } else {
+    //         $event.currentTarget.setAttribute('class', '')
+    //         $event.currentTarget.parentElement.parentElement.parentElement.classList.remove(
+    //           'is-current'
+    //         )
+
+    //         this.$emit('videoChange', 2, data)
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 </script>
