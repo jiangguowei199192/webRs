@@ -71,12 +71,9 @@ const videoMixin = {
         if (res && res.data && res.data.code === 0) {
           var data = res.data.data
           // 修改属性名称
-          data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName/g, 'label'))
-          data = JSON.parse(JSON.stringify(data).replace(/deptName/g, 'label'))
-          data = JSON.parse(JSON.stringify(data).replace(/deviceName/g, 'label'))
-          data = JSON.parse(JSON.stringify(data).replace(/streamName/g, 'label'))
-          data = JSON.parse(JSON.stringify(data).replace(/streamList/g, 'children'))
-          data = JSON.parse(JSON.stringify(data).replace(/subDept/g, 'children'))
+          // data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
+          data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamCode/g, 'label'))
+          data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
           data.forEach(p => {
             p = JSON.parse(JSON.stringify(p).replace('deviceList', 'children'))
             p.children = this.parseDeviceList(p.children)
