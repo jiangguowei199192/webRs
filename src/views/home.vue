@@ -29,7 +29,15 @@
           </div>
         </div>
         <div class="cur">
-          <div class="realTime">显示当前日期和所在城市</div>
+          <div class="realTime">
+            <span class="extra">{{timeObj.year}}</span> 年
+            <span class="extra">{{timeObj.month}}</span> 月
+            <span class="extra">{{timeObj.day}}</span> 日
+            <span class="extra">{{timeObj.weekday}}</span>
+            <span class="curCity extra"> {{curCity}}</span>
+            天气：<span class="extra"> {{weatherReport.weather}}</span>
+            <span class="extra"> {{weatherReport.temperature}}<i>。</i></span>
+          </div>
         </div>
       </el-header>
       <el-main>
@@ -39,10 +47,16 @@
   </div>
 </template>
 <script>
+import { getTime } from '@/utils/date'
+import amapApi from '@/axios/amapapis'
+
 export default {
   name: 'Home',
   data () {
     return {
+      timeObj: '', // 当前时间
+      curCity: '', // 所在城市
+      weatherReport: '', // 天气情况
       isActive: 1, // 默认激活视频侦查系统
       systems: [
         {
@@ -73,8 +87,13 @@ export default {
   },
   mounted () {
     this.jumpTo(this.isActive)
+    setInterval(() => {
+      this.timeObj = getTime()
+    }, 1000)
+    this.init()
   },
   methods: {
+    getTime,
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
@@ -93,6 +112,21 @@ export default {
       this.curActive = type
       if (type === 1) this.$router.push({ path: '/videoSystem' })
       else this.$router.push({ path: '/playback' })
+    },
+    init () {
+      amapApi.getLocation({}).then(res => {
+        if (res) {
+          if (res && res.data && res.data.info === 'OK') {
+            this.curCity = res.data.city || ''
+            const cityCode = res.data.adcode
+            amapApi.getWeather({ city: cityCode }).then(res => {
+              if (res && res.data && res.data.info === 'OK') {
+                this.weatherReport = res.data.lives[0]
+              }
+            })
+          }
+        }
+      })
     }
   }
 }
@@ -147,9 +181,6 @@ export default {
     div.list:nth-child(n + 5) .item {
       background: url(../assets/images/unselected-right.png) no-repeat;
     }
-    // .list:nth-child(4) .item {
-    //   border-top: 3px solid #7be4ff;
-    // }
     .title {
       width: 540px;
       height:66px;
@@ -160,11 +191,6 @@ export default {
       font-weight: bold;
       margin-top: -13px;
       font-family: Source Han Sans CN;
-      // background: linear-gradient(
-      //   90deg,
-      //   rgba(0, 168, 217, 0.01) 0%,
-      //   rgba(0, 168, 217, 0) 100%
-      // );
        background: url(../assets/images/title.png) no-repeat ;
       span {
         text-shadow: #000 3px 4px 5px;
@@ -192,6 +218,22 @@ export default {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
+      color:#fff;
+      span.extra{
+        color:#FFF45C;
+        i{
+          font-style: normal;
+          position:relative;
+          top:-10px;
+        }
+      }
+      span.extra:last-child{
+        margin-left:8px;
+      }
+      span.curCity{
+        margin-left:30px;
+        margin-right:25px;
+      }
     }
   }
 }
