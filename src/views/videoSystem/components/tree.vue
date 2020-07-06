@@ -49,7 +49,6 @@ export default {
     },
     // 点击树节点
     handleNodeClick (data, $event) {
-      debugger
       if ((data.children && data.children.length === 0) || !data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id).parentElement
         if (this.isLive) {
@@ -122,6 +121,8 @@ export default {
   font-family: Source Han Sans CN;
   font-weight: bold;
   margin-top: 24px;
+      height: 750px;
+    overflow-y: auto;
   /deep/.el-tree {
     color: #23cefd;
     background-color: transparent;
