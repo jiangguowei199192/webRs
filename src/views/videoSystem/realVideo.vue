@@ -734,7 +734,7 @@ export default {
               id: curTreeData.id,
               label: curTreeData.label,
               srcUrl:
-                'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
+                curTreeData.streamUrl
             })
             this.curVideosArray = this.totalVideosArray.slice(
               0,
@@ -746,7 +746,7 @@ export default {
               id: curTreeData.id,
               label: curTreeData.label,
               srcUrl:
-                'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
+                 curTreeData.streamUrl
             })
             this.curVideosArray = this.totalVideosArray.slice(
               0,
@@ -774,7 +774,7 @@ export default {
             id: curTreeData.id,
             label: curTreeData.label,
             srcUrl:
-              'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
+               curTreeData.streamUrl
           })
           this.curVideoIndex = 1000
           this.curVideosArray = this.totalVideosArray.slice(
