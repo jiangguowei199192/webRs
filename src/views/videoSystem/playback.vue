@@ -15,7 +15,7 @@
           <div class="search">
             <el-input
               type="text"
-              v-model.trim="input"
+              v-model.trim="filterDevice"
               placeholder="请输入设备名称"
               suffix-icon="el-icon-search"
             ></el-input>
@@ -88,6 +88,16 @@
               <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
             </div>
             <div class="rightTool">
+              <div class="pagination">
+                <el-pagination
+                  :page-size="showVideoPageSize"
+                  layout="prev,pager, next"
+                  :total="totalVideosArray.length"
+                  :current-page.sync="currentPage"
+                  @prev-click="pre"
+                  @next-click="next"
+                ></el-pagination>
+              </div>
               <img :src="fullScreen" />
             </div>
           </div>
@@ -143,8 +153,8 @@ export default {
       curVideoIndex: 1000,
       curDevice: '0', // 当前选中设备
       curNodeID: -1, // 当前选中设备树节点ID
-      stop: require('../../assets/images/stop.png'),
-      play: require('../../assets/images/play.png'),
+      stop: require('../../assets/images/stop-disable.png'),
+      play: require('../../assets/images/play-disable.png'),
       pause: require('../../assets/images/pause.png'),
       records: [], // timeBar上的回放记录
       listArray: [
@@ -206,17 +216,46 @@ export default {
   methods: {
 
     /**
+     * 设置当前播放对象
+     */
+    setCurrentPlayerObject (index) {
+      if (this.totalVideosArray[index].id !== this.curPlayer.id) {
+        if (this.curPlayer) {
+          this.curPlayer.curTime = this.curTime
+          // 取消订阅进度更新事件
+          var ctrl = this.findVideoControl()
+          if (ctrl !== undefined) {
+            ctrl.subTimeupdate(false)
+          }
+        }
+        this.curPlayer = this.totalVideosArray[index]
+        if (this.curPlayer.curTime) {
+          var arry = this.curPlayer.curTime.split(':')
+          var time =
+              parseInt(arry[0]) * 60 * 60 +
+              parseInt(arry[1]) * 60 +
+              parseInt(arry[2])
+          this.timeupdate(time)
+        }
+        ctrl = this.findVideoControl()
+        if (ctrl !== undefined) {
+          ctrl.subTimeupdate(true)
+        }
+      }
+      // 查询回放记录
+      this.dateChange(this.$refs.calendarCtrl.getYYMM())
+      this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
+    },
+
+    /**
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
       this.curVideoIndex = index
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[index]) {
-        this.curPlayer = this.curVideosArray[index]
-        // 查询回放记录
-        this.dateChange(this.$refs.calendarCtrl.getYYMM())
-        this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
-
+        var i = this.totalVideosArray.indexOf(curVideo)
+        if (i !== -1) { this.setCurrentPlayerObject(i) }
         // 点击当前视频区域，默认去掉所有激活的样式
         const divs = document.querySelectorAll('.el-tree-node')
         for (let i = 0; i < divs.length; i++) {
@@ -253,7 +292,36 @@ export default {
       this.dateChange(this.$refs.calendarCtrl.getYYMM())
       this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
       var player = this.totalVideosArray.find(v => v.id === data.id)
-      this.curPlayer = player === undefined ? '' : player
+      if (player === undefined) { player = '' }
+
+      // this.curPlayer = player
+
+      // if (curVideo.id !== this.curPlayer.id) {
+      //   if (this.curPlayer) {
+      //     this.curPlayer.curTime = this.curTime
+      //     // 取消订阅进度更新事件
+      //     var ctrl = this.findVideoControl()
+      //     if (ctrl !== undefined) {
+      //       ctrl.subTimeupdate(false)
+      //     }
+      //   }
+      //   this.curPlayer = this.curVideosArray[index]
+      //   if (this.curPlayer.curTime) {
+      //     var arry = this.curPlayer.curTime.split(':')
+      //     var time =
+      //         parseInt(arry[0]) * 60 * 60 +
+      //         parseInt(arry[1]) * 60 +
+      //         parseInt(arry[2])
+      //     this.timeupdate(time)
+      //   }
+      //   ctrl = this.findVideoControl()
+      //   if (ctrl !== undefined) {
+      //     ctrl.subTimeupdate(true)
+      //   }
+      // }
+      // // 查询回放记录
+      // this.dateChange(this.$refs.calendarCtrl.getYYMM())
+      // this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
     },
 
     /**
@@ -293,6 +361,7 @@ export default {
     searchRecord (date) {
       if (this.curNodeID === -1) return
       this.records = []
+      this.playbarEnable(false)
       this.$axios
         .post(api.getMp4RecordFile, {
           vhost: '__defaultVhost_ ',
@@ -321,9 +390,48 @@ export default {
 
               var r = { duration: p.time_len / 60, start: start, url: url }
               this.records.push(r)
+              if (this.records.length > 0) {
+                this.playbarEnable(true)
+              }
             })
           }
         })
+    },
+
+    // 上一页
+    pre (cpage) {
+      // 始终截取当前页需要的数据
+      this.curVideoIndex = 1000
+      const divs = document.querySelectorAll('.el-tree-node')
+      for (let i = 0; i < divs.length; i++) {
+        divs[i].classList.remove('is-current')
+      }
+      this.curVideosArray = this.totalVideosArray.slice(
+        (cpage - 1) * this.showVideoPageSize,
+        cpage * this.showVideoPageSize
+      )
+    },
+    // 下一页
+    next (cpage) {
+      // 清掉之前的选中状态
+      this.curVideoIndex = 1000
+      const divs = document.querySelectorAll('.el-tree-node')
+      for (let i = 0; i < divs.length; i++) {
+        divs[i].classList.remove('is-current')
+      }
+      if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
+        const j = this.totalVideosArray.length
+        // 若不够，数据则补位空格
+        for (let i = 0; i < cpage * this.showVideoPageSize - j; i++) {
+          this.totalVideosArray.push('')
+        }
+      }
+      // console.log(this.totalVideosArray.length)
+      this.curVideosArray = this.totalVideosArray.slice(
+        (cpage - 1) * this.showVideoPageSize,
+        cpage * this.showVideoPageSize
+      )
+      // console.log(cpage, this.curVideosArray.length)
     },
 
     // 动态渲染9个空元素
@@ -449,7 +557,8 @@ export default {
           isLive: false,
           records: this.records,
           timeupdate: true,
-          isPlay: true
+          isPlay: true,
+          curTime: this.curTime
         })
         if (r.jump === true) {
           this.$nextTick(() => {
@@ -487,7 +596,7 @@ export default {
     findVideoControl () {
       if (!this.curPlayer) return undefined
       return this.$refs.videoCtrl.find(
-        c => c.videoInfo.srcUrl === this.curPlayer.srcUrl
+        c => c.videoInfo.id === this.curPlayer.id
       )
     },
 
@@ -539,6 +648,20 @@ export default {
             ctrl.changeVideoUrl(r.record.url, r.jump, r.jumpSeconds)
           }
         }
+      }
+    },
+
+    /**
+     * playbar可用/禁用
+     * @param {Boolean} isEnable 是否可用
+     */
+    playbarEnable (isEnable) {
+      if (isEnable) {
+        this.stop = require('../../assets/images/stop.png')
+        this.play = require('../../assets/images/play.png')
+      } else {
+        this.stop = require('../../assets/images/stop-disable.png')
+        this.play = require('../../assets/images/play-disable.png')
       }
     }
   }
@@ -700,6 +823,25 @@ export default {
 
     .rightTool {
       margin-right: 20px;
+      .pagination {
+        display: inline-block;
+        position: relative;
+        top: -12px;
+        margin-right: 20px;
+        /deep/.el-pagination {
+          button {
+            background-color: transparent !important;
+            i {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              background: #23cefd;
+              text-align: center;
+              line-height: 20px;
+            }
+          }
+        }
+      }
     }
   }
 

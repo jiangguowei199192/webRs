@@ -40,8 +40,9 @@ const videoMixin = {
     parseDeviceList (data) {
       for (var i = 0; i < data.length; i++) {
         if (data[i].children) { this.parseDeviceList(data[i].children) }
+        // 如果children为null 将children置为[]
+        if (data[i].deviceList && !data[i].children) { data[i].children = [] }
         if (data[i].deviceList.length > 0) {
-          if (!data[i].children) data[i].children = []
           data[i].deviceList.forEach(d => {
             data[i].children.push(d)
           })
@@ -58,21 +59,34 @@ const videoMixin = {
       if (tree == null) return
       for (var i = 0; i < tree.length; i++) {
         Reflect.set(tree[i], 'id', this.idStart)
+        // 添加onlineStatus和deviceTypeCode属性
+        if (!Object.prototype.hasOwnProperty.call(tree[i], 'onlineStatus')) {
+          if (Object.prototype.hasOwnProperty.call(tree[i], 'deviceCountOnline')) {
+            var online = tree[i].deviceCountOnline > 0 ? 'online' : 'offline'
+            Reflect.set(tree[i], 'onlineStatus', online)
+          }
+        } else {
+          if (tree[i].children) {
+            tree[i].children.forEach(c => {
+              Reflect.set(c, 'onlineStatus', tree[i].onlineStatus)
+              Reflect.set(c, 'deviceTypeCode', tree[i].deviceTypeCode)
+            })
+          }
+        }
         this.idStart += 1
         this.setDeviceTreeNodeID(tree[i].children, this.idStart)
       }
     },
 
     /**
-     * 获取所有设备
-     */
+       * 获取所有设备
+       */
     getAllDeptDevices () {
       this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
         if (res && res.data && res.data.code === 0) {
           var data = res.data.data
           // 修改属性名称
           data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
-          data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamCode/g, 'label'))
           data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
           data.forEach(p => {
             p = JSON.parse(JSON.stringify(p).replace('deviceList', 'children'))
@@ -89,7 +103,7 @@ const videoMixin = {
           })
           this.setDeviceTreeNodeID(this.treeData)
 
-          // console.log(this.treeData)
+          console.log(this.treeData)
         }
       })
     }
