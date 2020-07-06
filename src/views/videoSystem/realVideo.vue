@@ -16,7 +16,7 @@
           <div class="search">
             <el-input
               type="text"
-              v-model.trim="filterText"
+              v-model.trim="filterDevice"
               placeholder="请输入设备名称"
               suffix-icon="el-icon-search"
             ></el-input>
@@ -221,7 +221,7 @@ import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
-import { api } from '@/api/videoSystem/realVideo'
+// import { api } from '@/api/videoSystem/realVideo'
 export default {
   name: 'videoContainer',
   components: {
@@ -232,75 +232,75 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
-      filterText: '', // 节点过滤文字
+      // filterText: '', // 节点过滤文字
       dialogVisible: false, // 全屏弹窗
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
-      treeData: [
-        {
-          id: 1,
-          label: '高点设备',
-          class: 'highdevice',
-          children: [
-            {
-              id: 4,
-              label: '二级 1-1',
-              children: [
-                {
-                  id: 12,
-                  label: '三级 1-1-1'
-                  // isShow: false
-                },
-                {
-                  id: 13,
-                  label: '三级 1-1-2'
-                  // isShow: false
-                }
-              ]
-            },
-            {
-              id: 9,
-              label: '二级 2-1'
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: '无人机',
-          class: 'unmanned',
-          children: [
-            {
-              id: 5,
-              label: '二级 2-1'
-              // isShow: false
-            },
-            {
-              id: 6,
-              label: '二级 2-2'
-              // isShow: false
-            }
-          ]
-        }
-        // {
-        //   id: 3,
-        //   label: '一级 3',
-        //   children: [
-        //     {
-        //       id: 7,
-        //       label: '二级 3-1'
-        //       // isShow: false
-        //     },
-        //     {
-        //       id: 8,
-        //       label: '二级 3-2'
-        //       // isShow: false
-        //     }
-        //   ]
-        // }
-      ],
+      // treeData: [
+      //   {
+      //     id: 1,
+      //     label: '高点设备',
+      //     class: 'highdevice',
+      //     children: [
+      //       {
+      //         id: 4,
+      //         label: '二级 1-1',
+      //         children: [
+      //           {
+      //             id: 12,
+      //             label: '三级 1-1-1'
+      //             // isShow: false
+      //           },
+      //           {
+      //             id: 13,
+      //             label: '三级 1-1-2'
+      //             // isShow: false
+      //           }
+      //         ]
+      //       },
+      //       {
+      //         id: 9,
+      //         label: '二级 2-1'
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     id: 2,
+      //     label: '无人机',
+      //     class: 'unmanned',
+      //     children: [
+      //       {
+      //         id: 5,
+      //         label: '二级 2-1'
+      //         // isShow: false
+      //       },
+      //       {
+      //         id: 6,
+      //         label: '二级 2-2'
+      //         // isShow: false
+      //       }
+      //     ]
+      //   }
+      //   // {
+      //   //   id: 3,
+      //   //   label: '一级 3',
+      //   //   children: [
+      //   //     {
+      //   //       id: 7,
+      //   //       label: '二级 3-1'
+      //   //       // isShow: false
+      //   //     },
+      //   //     {
+      //   //       id: 8,
+      //   //       label: '二级 3-2'
+      //   //       // isShow: false
+      //   //     }
+      //   //   ]
+      //   // }
+      // ],
       listArray: [
         {
           area: '发展大道黄浦路1',
@@ -338,384 +338,384 @@ export default {
     }
   },
   methods: {
-    getAllDeptDevices () {
-      this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          const data1 = res.data.data
-          console.dir(data1)
-          const data = [
-            {
-              deviceTypeCode: 'GDJK',
-              deviceTypeName: '高点监控',
-              deviceList: [
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_113',
-                  deptName: '江岸区',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: null,
-                  deviceList: []
-                },
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_112',
-                  deptName: '东湖高新区',
-                  orderNum: null,
-                  deviceCountTotal: 2,
-                  deviceCountOnline: 2,
-                  subDept: null,
-                  deviceList: [
-                    {
-                      deviceTypeCode: 'GDJK',
-                      deviceName: '高点监控测试设备1',
-                      deviceCode: '5HD10PA4E88F0',
-                      deviceBrand: '高德红外',
-                      deviceAddress: '武汉市东湖高新区黄龙山路',
-                      deviceLatitude: 30.52,
-                      deviceLongitude: 114.31,
-                      onlineStatus: 'online',
-                      onlineTime: '2020-06-22T09:01:24.000+00:00',
-                      offlineTime: null,
-                      createTime: '2020-06-22T09:01:26.000+00:00',
-                      streamCode: null,
-                      streamCodeRed: null,
-                      onlineVideoUrl: null,
-                      onlineVideoUrlRed: null
-                    },
-                    {
-                      deviceTypeCode: 'GDJK',
-                      deviceName: '高点监控测试设备2',
-                      deviceCode: '5H1H2H3D0D5D',
-                      deviceBrand: '高德红外',
-                      deviceAddress: '武汉市东湖高新区黄龙山路',
-                      deviceLatitude: 30.51,
-                      deviceLongitude: 114.32,
-                      onlineStatus: 'online',
-                      onlineTime: '2020-06-22T11:09:54.000+00:00',
-                      offlineTime: null,
-                      createTime: '2020-06-22T11:10:01.000+00:00',
-                      streamCode: null,
-                      streamCodeRed: null,
-                      onlineVideoUrl: null,
-                      onlineVideoUrlRed: null
-                    }
-                  ]
-                },
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_116',
-                  deptName: '武昌区',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: null,
-                  deviceList: []
-                },
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_111',
-                  deptName: '江夏区',
-                  orderNum: null,
-                  deviceCountTotal: 1,
-                  deviceCountOnline: 1,
-                  subDept: null,
-                  deviceList: [
-                    {
-                      deviceTypeCode: 'GDJK',
-                      deviceName: '高点监控测试设备3',
-                      deviceCode: '5H1H2H3D0D5F',
-                      deviceBrand: '高德红外',
-                      deviceAddress: '武汉市江夏区庙山',
-                      deviceLatitude: 30.51,
-                      deviceLongitude: 114.3,
-                      onlineStatus: 'online',
-                      onlineTime: '2020-06-22T11:39:23.000+00:00',
-                      offlineTime: null,
-                      createTime: null,
-                      streamCode: null,
-                      streamCodeRed: null,
-                      onlineVideoUrl: null,
-                      onlineVideoUrlRed: null
-                    },
-                    {
-                      deviceTypeCode: 'GDJK',
-                      deviceName: '江夏一中测试设备',
-                      deviceCode: '5HD10PA4E88F5',
-                      deviceBrand: '高德红外',
-                      deviceAddress: '武汉市江夏区江夏一中',
-                      deviceLatitude: 30.41,
-                      deviceLongitude: 114.3,
-                      onlineStatus: 'offline',
-                      onlineTime: '2020-06-22T02:36:30.000+00:00',
-                      offlineTime: '2020-06-23T02:36:41.000+00:00',
-                      createTime: '2020-06-22T02:36:44.000+00:00',
-                      streamCode: null,
-                      streamCodeRed: null,
-                      onlineVideoUrl: null,
-                      onlineVideoUrlRed: null
-                    }
-                  ]
-                },
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_115',
-                  deptName: '青山区',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: null,
-                  deviceList: []
-                },
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_110',
-                  deptName: '洪山区',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: null,
-                  deviceList: []
-                },
-                {
-                  deptTypeCode: 'district',
-                  parentDeptCode: null,
-                  deptCode: 'district_114',
-                  deptName: '蔡甸区',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: null,
-                  deviceList: []
-                }
-              ]
-            },
-            {
-              deviceTypeCode: 'WRJ',
-              deviceTypeName: '无人机',
-              deviceList: [
-                {
-                  deptTypeCode: 'department_fire',
-                  parentDeptCode: null,
-                  deptCode: 'department_fire_222',
-                  deptName: '洪山消防大队',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: [
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_222',
-                      deptCode: 'department_fire_222330',
-                      deptName: '徐东路中队',
-                      orderNum: null,
-                      deviceCountTotal: 1,
-                      deviceCountOnline: 1,
-                      subDept: null,
-                      deviceList: [
-                        {
-                          deviceTypeCode: 'WRJ',
-                          deviceName: 'saga22',
-                          deviceCode: '10201010104',
-                          deviceBrand: '普宙无人机',
-                          deviceAddress: '光谷火车站',
-                          deviceLatitude: 30.51,
-                          deviceLongitude: 114.332,
-                          onlineStatus: 'online',
-                          onlineTime: '2020-06-23T08:21:34.000+00:00',
-                          offlineTime: null,
-                          createTime: null,
-                          streamCode: 'app_stream_1589535463087',
-                          streamCodeRed: null,
-                          onlineVideoUrl:
-                            'rtmp://127.0.0.1/live/app_stream_1589535463087',
-                          onlineVideoUrlRed: null
-                        }
-                      ]
-                    },
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_222',
-                      deptCode: 'department_fire_222332',
-                      deptName: '武汉火车站中队',
-                      orderNum: null,
-                      deviceCountTotal: 1,
-                      deviceCountOnline: 1,
-                      subDept: null,
-                      deviceList: [
-                        {
-                          deviceTypeCode: 'WRJ',
-                          deviceName: 'suzz',
-                          deviceCode: '10201010102',
-                          deviceBrand: '普宙无人机',
-                          deviceAddress: '武汉火车站',
-                          deviceLatitude: 30.511,
-                          deviceLongitude: 114.33,
-                          onlineStatus: 'offline',
-                          onlineTime: '2020-06-24T06:21:43.000+00:00',
-                          offlineTime: '2020-06-28T07:02:01.000+00:00',
-                          createTime: '2020-06-22T08:12:39.000+00:00',
-                          streamCode: 'app_stream_1589534988074',
-                          streamCodeRed: null,
-                          onlineVideoUrl:
-                            'rtmp://127.0.0.1/live/app_stream_1589534988074',
-                          onlineVideoUrlRed: null
-                        },
-                        {
-                          deviceTypeCode: 'WRJ',
-                          deviceName: 'saga11',
-                          deviceCode: '10201010103',
-                          deviceBrand: '普宙无人机',
-                          deviceAddress: '武汉火车站',
-                          deviceLatitude: 30.51,
-                          deviceLongitude: 114.331,
-                          onlineStatus: 'online',
-                          onlineTime: '2020-06-23T08:12:22.000+00:00',
-                          offlineTime: null,
-                          createTime: '2020-06-22T08:12:42.000+00:00',
-                          streamCode: 'pc_stream_1589535416277',
-                          streamCodeRed: null,
-                          onlineVideoUrl:
-                            'rtmp://127.0.0.1/live/pc_stream_1589535416277',
-                          onlineVideoUrlRed: null
-                        }
-                      ]
-                    },
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_222',
-                      deptCode: 'department_fire_222331',
-                      deptName: '八一路中队',
-                      orderNum: null,
-                      deviceCountTotal: 0,
-                      deviceCountOnline: 0,
-                      subDept: null,
-                      deviceList: []
-                    }
-                  ],
-                  deviceList: []
-                },
-                {
-                  deptTypeCode: 'department_fire',
-                  parentDeptCode: null,
-                  deptCode: 'department_fire_220',
-                  deptName: '特勤大队',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: [
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_220',
-                      deptCode: 'department_fire_220332',
-                      deptName: '特勤三中队',
-                      orderNum: null,
-                      deviceCountTotal: 0,
-                      deviceCountOnline: 0,
-                      subDept: null,
-                      deviceList: []
-                    },
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_220',
-                      deptCode: 'department_fire_220331',
-                      deptName: '特勤二中队',
-                      orderNum: null,
-                      deviceCountTotal: 0,
-                      deviceCountOnline: 0,
-                      subDept: null,
-                      deviceList: []
-                    },
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_220',
-                      deptCode: 'department_fire_220330',
-                      deptName: '特勤一中队',
-                      orderNum: null,
-                      deviceCountTotal: 0,
-                      deviceCountOnline: 0,
-                      subDept: null,
-                      deviceList: []
-                    }
-                  ],
-                  deviceList: []
-                },
-                {
-                  deptTypeCode: 'department_fire',
-                  parentDeptCode: null,
-                  deptCode: 'department_fire_221',
-                  deptName: '青山消防大队',
-                  orderNum: null,
-                  deviceCountTotal: 0,
-                  deviceCountOnline: 0,
-                  subDept: [
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_221',
-                      deptCode: 'department_fire_221331',
-                      deptName: '武丰中队',
-                      orderNum: null,
-                      deviceCountTotal: 0,
-                      deviceCountOnline: 0,
-                      subDept: null,
-                      deviceList: []
-                    },
-                    {
-                      deptTypeCode: 'department_fire',
-                      parentDeptCode: 'department_fire_221',
-                      deptCode: 'department_fire_221330',
-                      deptName: '青山中队',
-                      orderNum: null,
-                      deviceCountTotal: 0,
-                      deviceCountOnline: 0,
-                      subDept: null,
-                      deviceList: []
-                    }
-                  ],
-                  deviceList: []
-                }
-              ]
-            }
-          ]
-          data.forEach((item, index) => {
-            item.id = item.deviceTypeCode
-            item.label = item.deviceTypeName
-            item.children = item.deviceList
-            item.children.forEach(child => {
-              child.id = child.deptCode
-              child.label = child.deptName
-              if (index === 0) {
-                child.children = child.deviceList
-                child.children.forEach(list => {
-                  list.id = list.deviceCode
-                  list.label = list.deviceName
-                })
-              } else {
-                child.children = child.subDept
-                child.children.forEach(list => {
-                  list.id = list.deptCode
-                  list.label = list.deptName
-                  list.children = list.deviceList
-                  list.children.forEach(device => {
-                    device.id = device.deviceCode
-                    device.label = device.deviceName
-                  })
-                })
-              }
-            })
-          })
-          console.log(data)
-          this.treeData = data
-        }
-      })
-    },
+    // getAllDeptDevices () {
+    //   this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
+    //     if (res && res.data && res.data.code === 0) {
+    //       const data1 = res.data.data
+    //       console.dir(data1)
+    //       const data = [
+    //         {
+    //           deviceTypeCode: 'GDJK',
+    //           deviceTypeName: '高点监控',
+    //           deviceList: [
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_113',
+    //               deptName: '江岸区',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: null,
+    //               deviceList: []
+    //             },
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_112',
+    //               deptName: '东湖高新区',
+    //               orderNum: null,
+    //               deviceCountTotal: 2,
+    //               deviceCountOnline: 2,
+    //               subDept: null,
+    //               deviceList: [
+    //                 {
+    //                   deviceTypeCode: 'GDJK',
+    //                   deviceName: '高点监控测试设备1',
+    //                   deviceCode: '5HD10PA4E88F0',
+    //                   deviceBrand: '高德红外',
+    //                   deviceAddress: '武汉市东湖高新区黄龙山路',
+    //                   deviceLatitude: 30.52,
+    //                   deviceLongitude: 114.31,
+    //                   onlineStatus: 'online',
+    //                   onlineTime: '2020-06-22T09:01:24.000+00:00',
+    //                   offlineTime: null,
+    //                   createTime: '2020-06-22T09:01:26.000+00:00',
+    //                   streamCode: null,
+    //                   streamCodeRed: null,
+    //                   onlineVideoUrl: null,
+    //                   onlineVideoUrlRed: null
+    //                 },
+    //                 {
+    //                   deviceTypeCode: 'GDJK',
+    //                   deviceName: '高点监控测试设备2',
+    //                   deviceCode: '5H1H2H3D0D5D',
+    //                   deviceBrand: '高德红外',
+    //                   deviceAddress: '武汉市东湖高新区黄龙山路',
+    //                   deviceLatitude: 30.51,
+    //                   deviceLongitude: 114.32,
+    //                   onlineStatus: 'online',
+    //                   onlineTime: '2020-06-22T11:09:54.000+00:00',
+    //                   offlineTime: null,
+    //                   createTime: '2020-06-22T11:10:01.000+00:00',
+    //                   streamCode: null,
+    //                   streamCodeRed: null,
+    //                   onlineVideoUrl: null,
+    //                   onlineVideoUrlRed: null
+    //                 }
+    //               ]
+    //             },
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_116',
+    //               deptName: '武昌区',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: null,
+    //               deviceList: []
+    //             },
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_111',
+    //               deptName: '江夏区',
+    //               orderNum: null,
+    //               deviceCountTotal: 1,
+    //               deviceCountOnline: 1,
+    //               subDept: null,
+    //               deviceList: [
+    //                 {
+    //                   deviceTypeCode: 'GDJK',
+    //                   deviceName: '高点监控测试设备3',
+    //                   deviceCode: '5H1H2H3D0D5F',
+    //                   deviceBrand: '高德红外',
+    //                   deviceAddress: '武汉市江夏区庙山',
+    //                   deviceLatitude: 30.51,
+    //                   deviceLongitude: 114.3,
+    //                   onlineStatus: 'online',
+    //                   onlineTime: '2020-06-22T11:39:23.000+00:00',
+    //                   offlineTime: null,
+    //                   createTime: null,
+    //                   streamCode: null,
+    //                   streamCodeRed: null,
+    //                   onlineVideoUrl: null,
+    //                   onlineVideoUrlRed: null
+    //                 },
+    //                 {
+    //                   deviceTypeCode: 'GDJK',
+    //                   deviceName: '江夏一中测试设备',
+    //                   deviceCode: '5HD10PA4E88F5',
+    //                   deviceBrand: '高德红外',
+    //                   deviceAddress: '武汉市江夏区江夏一中',
+    //                   deviceLatitude: 30.41,
+    //                   deviceLongitude: 114.3,
+    //                   onlineStatus: 'offline',
+    //                   onlineTime: '2020-06-22T02:36:30.000+00:00',
+    //                   offlineTime: '2020-06-23T02:36:41.000+00:00',
+    //                   createTime: '2020-06-22T02:36:44.000+00:00',
+    //                   streamCode: null,
+    //                   streamCodeRed: null,
+    //                   onlineVideoUrl: null,
+    //                   onlineVideoUrlRed: null
+    //                 }
+    //               ]
+    //             },
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_115',
+    //               deptName: '青山区',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: null,
+    //               deviceList: []
+    //             },
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_110',
+    //               deptName: '洪山区',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: null,
+    //               deviceList: []
+    //             },
+    //             {
+    //               deptTypeCode: 'district',
+    //               parentDeptCode: null,
+    //               deptCode: 'district_114',
+    //               deptName: '蔡甸区',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: null,
+    //               deviceList: []
+    //             }
+    //           ]
+    //         },
+    //         {
+    //           deviceTypeCode: 'WRJ',
+    //           deviceTypeName: '无人机',
+    //           deviceList: [
+    //             {
+    //               deptTypeCode: 'department_fire',
+    //               parentDeptCode: null,
+    //               deptCode: 'department_fire_222',
+    //               deptName: '洪山消防大队',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: [
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_222',
+    //                   deptCode: 'department_fire_222330',
+    //                   deptName: '徐东路中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 1,
+    //                   deviceCountOnline: 1,
+    //                   subDept: null,
+    //                   deviceList: [
+    //                     {
+    //                       deviceTypeCode: 'WRJ',
+    //                       deviceName: 'saga22',
+    //                       deviceCode: '10201010104',
+    //                       deviceBrand: '普宙无人机',
+    //                       deviceAddress: '光谷火车站',
+    //                       deviceLatitude: 30.51,
+    //                       deviceLongitude: 114.332,
+    //                       onlineStatus: 'online',
+    //                       onlineTime: '2020-06-23T08:21:34.000+00:00',
+    //                       offlineTime: null,
+    //                       createTime: null,
+    //                       streamCode: 'app_stream_1589535463087',
+    //                       streamCodeRed: null,
+    //                       onlineVideoUrl:
+    //                         'rtmp://127.0.0.1/live/app_stream_1589535463087',
+    //                       onlineVideoUrlRed: null
+    //                     }
+    //                   ]
+    //                 },
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_222',
+    //                   deptCode: 'department_fire_222332',
+    //                   deptName: '武汉火车站中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 1,
+    //                   deviceCountOnline: 1,
+    //                   subDept: null,
+    //                   deviceList: [
+    //                     {
+    //                       deviceTypeCode: 'WRJ',
+    //                       deviceName: 'suzz',
+    //                       deviceCode: '10201010102',
+    //                       deviceBrand: '普宙无人机',
+    //                       deviceAddress: '武汉火车站',
+    //                       deviceLatitude: 30.511,
+    //                       deviceLongitude: 114.33,
+    //                       onlineStatus: 'offline',
+    //                       onlineTime: '2020-06-24T06:21:43.000+00:00',
+    //                       offlineTime: '2020-06-28T07:02:01.000+00:00',
+    //                       createTime: '2020-06-22T08:12:39.000+00:00',
+    //                       streamCode: 'app_stream_1589534988074',
+    //                       streamCodeRed: null,
+    //                       onlineVideoUrl:
+    //                         'rtmp://127.0.0.1/live/app_stream_1589534988074',
+    //                       onlineVideoUrlRed: null
+    //                     },
+    //                     {
+    //                       deviceTypeCode: 'WRJ',
+    //                       deviceName: 'saga11',
+    //                       deviceCode: '10201010103',
+    //                       deviceBrand: '普宙无人机',
+    //                       deviceAddress: '武汉火车站',
+    //                       deviceLatitude: 30.51,
+    //                       deviceLongitude: 114.331,
+    //                       onlineStatus: 'online',
+    //                       onlineTime: '2020-06-23T08:12:22.000+00:00',
+    //                       offlineTime: null,
+    //                       createTime: '2020-06-22T08:12:42.000+00:00',
+    //                       streamCode: 'pc_stream_1589535416277',
+    //                       streamCodeRed: null,
+    //                       onlineVideoUrl:
+    //                         'rtmp://127.0.0.1/live/pc_stream_1589535416277',
+    //                       onlineVideoUrlRed: null
+    //                     }
+    //                   ]
+    //                 },
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_222',
+    //                   deptCode: 'department_fire_222331',
+    //                   deptName: '八一路中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 0,
+    //                   deviceCountOnline: 0,
+    //                   subDept: null,
+    //                   deviceList: []
+    //                 }
+    //               ],
+    //               deviceList: []
+    //             },
+    //             {
+    //               deptTypeCode: 'department_fire',
+    //               parentDeptCode: null,
+    //               deptCode: 'department_fire_220',
+    //               deptName: '特勤大队',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: [
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_220',
+    //                   deptCode: 'department_fire_220332',
+    //                   deptName: '特勤三中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 0,
+    //                   deviceCountOnline: 0,
+    //                   subDept: null,
+    //                   deviceList: []
+    //                 },
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_220',
+    //                   deptCode: 'department_fire_220331',
+    //                   deptName: '特勤二中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 0,
+    //                   deviceCountOnline: 0,
+    //                   subDept: null,
+    //                   deviceList: []
+    //                 },
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_220',
+    //                   deptCode: 'department_fire_220330',
+    //                   deptName: '特勤一中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 0,
+    //                   deviceCountOnline: 0,
+    //                   subDept: null,
+    //                   deviceList: []
+    //                 }
+    //               ],
+    //               deviceList: []
+    //             },
+    //             {
+    //               deptTypeCode: 'department_fire',
+    //               parentDeptCode: null,
+    //               deptCode: 'department_fire_221',
+    //               deptName: '青山消防大队',
+    //               orderNum: null,
+    //               deviceCountTotal: 0,
+    //               deviceCountOnline: 0,
+    //               subDept: [
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_221',
+    //                   deptCode: 'department_fire_221331',
+    //                   deptName: '武丰中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 0,
+    //                   deviceCountOnline: 0,
+    //                   subDept: null,
+    //                   deviceList: []
+    //                 },
+    //                 {
+    //                   deptTypeCode: 'department_fire',
+    //                   parentDeptCode: 'department_fire_221',
+    //                   deptCode: 'department_fire_221330',
+    //                   deptName: '青山中队',
+    //                   orderNum: null,
+    //                   deviceCountTotal: 0,
+    //                   deviceCountOnline: 0,
+    //                   subDept: null,
+    //                   deviceList: []
+    //                 }
+    //               ],
+    //               deviceList: []
+    //             }
+    //           ]
+    //         }
+    //       ]
+    //       data.forEach((item, index) => {
+    //         item.id = item.deviceTypeCode
+    //         item.label = item.deviceTypeName
+    //         item.children = item.deviceList
+    //         item.children.forEach(child => {
+    //           child.id = child.deptCode
+    //           child.label = child.deptName
+    //           if (index === 0) {
+    //             child.children = child.deviceList
+    //             child.children.forEach(list => {
+    //               list.id = list.deviceCode
+    //               list.label = list.deviceName
+    //             })
+    //           } else {
+    //             child.children = child.subDept
+    //             child.children.forEach(list => {
+    //               list.id = list.deptCode
+    //               list.label = list.deptName
+    //               list.children = list.deviceList
+    //               list.children.forEach(device => {
+    //                 device.id = device.deviceCode
+    //                 device.label = device.deviceName
+    //               })
+    //             })
+    //           }
+    //         })
+    //       })
+    //       console.log(data)
+    //       this.treeData = data
+    //     }
+    //   })
+    // },
     // 获取子组件传递过来的数据
     getSelectedData (data) {
       console.log(data)
@@ -962,7 +962,7 @@ export default {
     }
   },
   watch: {
-    filterText (val) {
+    filterDevice (val) {
       this.$refs.tree.$refs.tree.filter(val)
     }
   }

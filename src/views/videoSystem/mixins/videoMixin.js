@@ -7,7 +7,7 @@ const videoMixin = {
       showRight: true, // 是否展开右侧部分
       index: 0, // 默认展示已选 0已选 1全部
       selectedIndex: '9', // 激活已选择
-      input: '', // 设备名称
+      filterDevice: '', // 设备名称
       treeData: [], // 设备tree数据
       ninePalace: require('../../../assets/images/9.png'),
       fourPalace: require('../../../assets/images/4.png'),
@@ -71,7 +71,7 @@ const videoMixin = {
         if (res && res.data && res.data.code === 0) {
           var data = res.data.data
           // 修改属性名称
-          // data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
+          data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
           data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamCode/g, 'label'))
           data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
           data.forEach(p => {
