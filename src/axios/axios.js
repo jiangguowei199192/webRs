@@ -30,6 +30,7 @@ service.interceptors.request.use((config) => {
 
 // 添加响应拦截器
 service.interceptors.response.use(
+
   (response) => {
     if (response.data.code !== 0) {
       Message({
@@ -43,7 +44,7 @@ service.interceptors.response.use(
   },
   (error) => {
     Message({
-      message: error.response,
+      message: error.response || '服务器无响应，网络出错啦！',
       type: 'error',
       duration: 5 * 1000
     })

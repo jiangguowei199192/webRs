@@ -202,7 +202,7 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" id="d1" >
+    <el-dialog :visible.sync="dialogVisible" width="100%"  :fullscreen="true" tabIndex="1" id="d1">
     <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
       <div
         v-for="(item,index) in curVideosArray"
@@ -1291,32 +1291,32 @@ export default {
     }
   }
   // 全屏弹框
-  .fullContainer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 10000;
-    background: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    overflow: visible;
-    padding: 20px 30px;
-    > div {
-      // cursor: pointer;
-      margin-right: 19px;
-      margin-bottom: 20px;
-      background: url(../../assets/images/video.png) no-repeat center center;
-      background-color: #00497c;
-    }
-  }
-  // 修改弹框样式
+  // .fullContainer {
+  //   position: fixed;
+  //   top: 0;
+  //   right: 0;
+  //   left: 0;
+  //   bottom: 0;
+  //   z-index: 10000;
+  //   background: #fff;
+  //   display: flex;
+  //   flex-wrap: wrap;
+  //   overflow: visible;
+  //   padding: 20px 30px;
+  //   > div {
+  //     // cursor: pointer;
+  //     margin-right: 19px;
+  //     margin-bottom: 20px;
+  //     background: url(../../assets/images/video.png) no-repeat center center;
+  //     background-color: #00497c;
+  //   }
+  // }
+
+}
+// 修改弹框样式
   .el-dialog__wrapper {
     overflow: visible;
     /deep/.el-dialog {
-      margin-top: 0 !important;
-      height: 100%;
       .el-dialog__header {
         display: none;
       }
@@ -1335,5 +1335,4 @@ export default {
       }
     }
   }
-}
 </style>
