@@ -1,9 +1,9 @@
 export function getTime () {
-  var date = new Date()// 调取当前时间
-  var year = date.getFullYear()// 调取年;
-  var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1// 调取月;
-  var day = date.getDate()// 调取日
-  var weekday = date.getDay()// 调取周几;
+  const date = new Date()// 调取当前时间
+  const year = date.getFullYear()// 调取年;
+  const month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1// 调取月;
+  const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()// 调取日
+  let weekday = date.getDay()// 调取周几;
   // 转换星期数值
   switch (weekday) {
     case 0:weekday = '日'

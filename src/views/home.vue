@@ -35,7 +35,7 @@
             <span class="extra">{{timeObj.day}}</span> 日
             <span class="extra">{{timeObj.weekday}}</span>
             <span class="curCity extra"> {{curCity}}</span>
-            天气：<span class="extra"> {{weatherReport.weather}}</span>
+            天气: <span class="extra">&nbsp;&nbsp;{{weatherReport.weather}}</span>
             <span class="extra"> {{weatherReport.temperature}}<i>。</i></span>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default {
         }
       }
       span.extra:last-child{
-        margin-left:8px;
+        margin-left:10px;
       }
       span.curCity{
         margin-left:30px;
