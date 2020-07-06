@@ -86,7 +86,7 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
-            <div>当前选中：解放大道高点1</div>
+            <div v-if="curVideosArray[curVideoIndex]">当前选中：{{curVideosArray[curVideoIndex].label}}</div>
           </div>
           <div class="videoList">
             <div
@@ -728,9 +728,11 @@ export default {
         if (this.curVideoIndex === 1000) {
           const i = this.totalVideosArray.indexOf('')
           // 如果有空元素，则替换
+          debugger
           if (i !== -1) {
             this.totalVideosArray.splice(i, 1, {
               id: curTreeData.id,
+              label: curTreeData.label,
               srcUrl:
                 'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
             })
@@ -742,6 +744,7 @@ export default {
             // 若没有空元素，则追加
             this.totalVideosArray.push({
               id: curTreeData.id,
+              label: curTreeData.label,
               srcUrl:
                 'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
             })
@@ -769,6 +772,7 @@ export default {
           }
           this.totalVideosArray.splice(this.curVideoIndex, 1, {
             id: curTreeData.id,
+            label: curTreeData.label,
             srcUrl:
               'http://116.85.50.50:8888/record/live/yaochen/2020-06-30/11-15-55.mp4'
           })

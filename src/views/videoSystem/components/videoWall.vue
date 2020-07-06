@@ -14,7 +14,7 @@
     >
       <div class="info">
         <span></span>
-        <span>发展大道黄埔大街</span>
+        <span>{{videoInfo.label}}</span>
       </div>
     </LivePlayer>
   </div>
