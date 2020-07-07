@@ -975,7 +975,7 @@ export default {
   box-sizing: border-box;
   .leftContainer {
     box-sizing: border-box;
-    padding: 27px 25px 0 28px;
+    padding: 27px 0 0 28px;
     font-size: 18px;
     font-family: Source Han Sans CN;
     font-weight: bold;
@@ -985,6 +985,7 @@ export default {
       cursor: pointer;
       height: 34px;
       line-height: 34px;
+      width:230px;
       color: #23cefd;
       background: #1a3e68;
       text-align: center;
@@ -1003,6 +1004,7 @@ export default {
       }
     }
     div.search {
+      width:230px;
       margin-top: 20px;
       background: #10203b;
       /deep/ .el-input__inner {
@@ -1288,6 +1290,7 @@ export default {
                 background: #23cefd;
                 text-align: center;
                 line-height: 20px;
+                color:#000;
               }
             }
           }

@@ -147,6 +147,7 @@ export default {
   font-weight: bold;
   margin-top: 24px;
   height: 750px;
+  width: 248px;
   overflow-y: auto;
   overflow-x: auto;
   /deep/.el-tree {
@@ -208,4 +209,24 @@ export default {
     background-color: transparent;
   }
 }
+/* --- 改变滚动条样式 --- */
+.tree::-webkit-scrollbar {
+width: 10px;
+}
+
+/* --- 滚动条里面的滚动块 --- */
+.tree::-webkit-scrollbar-thumb {
+border-radius: 10px;
+box-shadow: inset 0 0 5px #096090;
+background: #096090;
+}
+
+/* --- 滚动条里面轨道 --- */
+.tree::-webkit-scrollbar-track {
+box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+border-radius: 10px;background: #096090;
+/* border: none;
+background: none; */
+}
+
 </style>
