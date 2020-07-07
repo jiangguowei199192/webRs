@@ -2,7 +2,7 @@ import { api } from '@/api/videoSystem/realVideo'
 const videoMixin = {
   data () {
     return {
-      idStart: 0,
+      // idStart: 0,
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       index: 0, // 默认展示已选 0已选 1全部
@@ -88,6 +88,7 @@ const videoMixin = {
           // 修改属性名称
           data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
           data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
+          data = JSON.parse(JSON.stringify(data).replace(/deptCode|deviceCode|streamCode/g, 'id'))
           data.forEach(p => {
             p = JSON.parse(JSON.stringify(p).replace('deviceList', 'children'))
             p.children = this.parseDeviceList(p.children)
@@ -101,9 +102,9 @@ const videoMixin = {
             Reflect.set(p, 'deviceCountOnline', online)
             this.treeData.push(p)
           })
-          this.setDeviceTreeNodeID(this.treeData)
+          // this.setDeviceTreeNodeID(this.treeData)
 
-          console.log(this.treeData)
+          // console.log(this.treeData)
         }
       })
     }
