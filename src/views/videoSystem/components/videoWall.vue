@@ -14,7 +14,7 @@
     >
       <div class="info">
         <span></span>
-        <span>{{videoInfo.label}}</span>
+        <span>{{videoInfo.parentLabel}}</span>
       </div>
     </LivePlayer>
   </div>

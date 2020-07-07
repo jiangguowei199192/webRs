@@ -733,6 +733,8 @@ export default {
             this.totalVideosArray.splice(i, 1, {
               id: curTreeData.id,
               label: curTreeData.label,
+              labelTotal: curTreeData.labelTotal,
+              parentLabel: curTreeData.parentLabel,
               srcUrl:
                 curTreeData.streamUrl
             })
@@ -746,6 +748,7 @@ export default {
               id: curTreeData.id,
               label: curTreeData.label,
               labelTotal: curTreeData.labelTotal,
+              parentLabel: curTreeData.parentLabel,
               srcUrl:
                  curTreeData.streamUrl
             })
@@ -775,6 +778,7 @@ export default {
             id: curTreeData.id,
             label: curTreeData.label,
             labelTotal: curTreeData.labelTotal,
+            parentLabel: curTreeData.parentLabel,
             srcUrl:
                curTreeData.streamUrl
           })

@@ -67,6 +67,7 @@ export default {
           const obj = {
             deviceAddress: $event.parent.data.deviceAddress,
             deviceBrand: $event.parent.data.deviceBrand,
+            parentLabel: $event.parent.data.label,
             labelTotal: $event.parent.data.label + '-' + data.label
           }
           const curData = Object.assign({}, data, obj)
