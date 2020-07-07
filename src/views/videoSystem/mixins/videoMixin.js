@@ -2,7 +2,7 @@ import { api } from '@/api/videoSystem/realVideo'
 const videoMixin = {
   data () {
     return {
-      // idStart: 0,
+      idStart: 0,
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       index: 0, // 默认展示已选 0已选 1全部
@@ -58,7 +58,7 @@ const videoMixin = {
     setDeviceTreeNodeID (tree) {
       if (tree == null) return
       for (var i = 0; i < tree.length; i++) {
-        Reflect.set(tree[i], 'id', this.idStart)
+        // Reflect.set(tree[i], 'id', this.idStart)
         // 添加onlineStatus和deviceTypeCode属性
         if (!Object.prototype.hasOwnProperty.call(tree[i], 'onlineStatus')) {
           if (Object.prototype.hasOwnProperty.call(tree[i], 'deviceCountOnline')) {
@@ -102,7 +102,7 @@ const videoMixin = {
             Reflect.set(p, 'deviceCountOnline', online)
             this.treeData.push(p)
           })
-          // this.setDeviceTreeNodeID(this.treeData)
+          this.setDeviceTreeNodeID(this.treeData)
 
           // console.log(this.treeData)
         }
