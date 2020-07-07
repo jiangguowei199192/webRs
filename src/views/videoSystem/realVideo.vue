@@ -155,7 +155,7 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo">
+          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
