@@ -15,7 +15,7 @@
           <!-- {{data.onlineStatus==='offline'}} -->
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
-          <i :id="'liveVideo'+data.id">{{ node.label }}</i>
+          <i :id="'liveVideo'+data.id">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">({{data.deviceCountTotal}}/{{data.deviceCountOnline}})</a></i>
         </span>
       </span>
     </el-tree>

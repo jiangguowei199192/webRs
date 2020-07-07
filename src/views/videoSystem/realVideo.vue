@@ -75,7 +75,6 @@
             <tree-data
               :treeData="treeData"
               ref="tree"
-              @selectedChange="getSelectedData"
               @videoChange="closeOrOpen"
             ></tree-data>
           </template>
@@ -86,7 +85,7 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
-            <div v-if="curVideosArray[curVideoIndex]">当前选中：{{curVideosArray[curVideoIndex].label}}</div>
+            <div v-if="curSelectedVideo.label">当前选中:{{curSelectedVideo.label}}</div>
           </div>
           <div class="videoList">
             <div
@@ -334,7 +333,8 @@ export default {
         }
       ],
       value2: 4, // 步速值
-      isPlayAll: false // 是否播放所有 控制预览全部
+      isPlayAll: false, // 是否播放所有 控制预览全部
+      curSelectedVideo: {}// 当前选中
     }
   },
   methods: {
@@ -724,6 +724,7 @@ export default {
     closeOrOpen (type, curTreeData) {
       // 1.添加
       if (type === 1) {
+        this.curSelectedVideo = curTreeData
         // 1.1默认位置添加
         if (this.curVideoIndex === 1000) {
           const i = this.totalVideosArray.indexOf('')
@@ -754,8 +755,8 @@ export default {
           }
         } else {
           // 1.2指定位置添加
-          // 若指定位置之前有元素，去掉其激活的样式
-          if (this.totalVideosArray[this.curVideoIndex]) {
+          // 若指定位置之前有元素，去掉其对应树节点激活的样式
+          if (this.curVideosArray[this.curVideoIndex]) {
             document
               .querySelector(
                 '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
@@ -783,6 +784,7 @@ export default {
         }
       } else {
         // 2.关闭视频
+        this.curSelectedVideo = {}
         let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {
