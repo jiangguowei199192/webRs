@@ -11,7 +11,7 @@
       @node-click="handleNodeClick"
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
-        <span :class="{disabled:data.onlineStatus==='offline'}">
+        <span :class="{disabled:data.onlineStatus==='offline'&&!data.children}">
           <!-- {{data.onlineStatus==='offline'}} -->
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
@@ -51,10 +51,18 @@ export default {
     // 点击树节点
     handleNodeClick (data, $event) {
       debugger
-      if (data.onlineStatus === 'offline') return
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)
           .parentElement
+          // 下线设备点击时移除激活的样式
+        if (data.onlineStatus === 'offline') {
+          this.$nextTick(() => {
+            curSpan.parentElement.parentElement.parentElement.classList.remove(
+              'is-current'
+            )
+          })
+          return
+        }
         if (this.isLive) {
           if (!curSpan.getAttribute('class')) {
             curSpan.setAttribute('class', 'liveIcon')
@@ -118,14 +126,14 @@ export default {
     this.$nextTick(() => {
       const divs = document.querySelectorAll('span.disabled')
       for (let i = 0; i < divs.length; i++) {
-        divs[i].style.cursor =
-            'not-allowed'
-        divs[i].style.color =
-            '#007291'
+        divs[i].parentElement.parentElement.style.pointerEvents = 'none'
+        divs[i].parentElement.parentElement.style.cursor = 'not-allowed'
+        // divs[i].parentElement.style.cursor =
+        //     'not-allowed'
+        divs[i].parentElement.parentElement.style.color = '#007291'
       }
     })
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -137,6 +145,7 @@ export default {
   margin-top: 24px;
   height: 750px;
   overflow-y: auto;
+  overflow-x: auto;
   /deep/.el-tree {
     color: #23cefd;
     background-color: transparent;

@@ -799,11 +799,11 @@ export default {
     // 点击当前视频
     operateCurVideo (curVideo, index) {
       this.curVideoIndex = index
-      // 点击当前视频区域，默认去掉所有激活的样式
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
-      }
+      // // 点击当前视频区域，默认去掉所有激活的样式
+      // const divs = document.querySelectorAll('.el-tree-node')
+      // for (let i = 0; i < divs.length; i++) {
+      //   divs[i].classList.remove('is-current')
+      // }
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[this.curVideoIndex]) {
         document
@@ -943,12 +943,8 @@ export default {
   created () {
     // 初始加载9个空元素
     for (let i = 0; i < 9; i++) {
-      // this.totalVideosArray.push({ srcUrl: 'rtmp://120.24.12.64/live/test' })
       this.totalVideosArray.push('')
     }
-    // for (let i = 0; i < 3; i++) {
-    //   this.totalVideosArray.push('')
-    // }
     this.curVideosArray = this.totalVideosArray.slice(
       0,
       this.showVideoPageSize
@@ -1116,13 +1112,14 @@ export default {
             cursor: pointer;
           }
           div:nth-child(1) {
-            background: url(../../assets/images/device/1.png) no-repeat;
+
+             background: url(../../assets/images/device/7.png) no-repeat;
           }
           div:nth-child(2) {
-            background: url(../../assets/images/device/2.png) no-repeat;
+            background: url(../../assets/images/device/8.png) no-repeat;
           }
           div:nth-child(3) {
-            background: url(../../assets/images/device/3.png) no-repeat;
+            background: url(../../assets/images/device/9.png) no-repeat;
           }
           div:nth-child(4) {
             margin-right: 10px;
@@ -1141,13 +1138,14 @@ export default {
             background: url(../../assets/images/device/6.png) no-repeat;
           }
           div:nth-child(7) {
-            background: url(../../assets/images/device/7.png) no-repeat;
+             background: url(../../assets/images/device/1.png) no-repeat;
           }
           div:nth-child(8) {
-            background: url(../../assets/images/device/8.png) no-repeat;
+
+             background: url(../../assets/images/device/2.png) no-repeat;
           }
           div:nth-child(9) {
-            background: url(../../assets/images/device/9.png) no-repeat;
+          background: url(../../assets/images/device/3.png) no-repeat;
           }
         }
         .btns {
