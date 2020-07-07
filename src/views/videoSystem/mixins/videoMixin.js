@@ -17,6 +17,12 @@ const videoMixin = {
     }
   },
 
+  watch: {
+    filterDevice (val) {
+      this.$refs.tree.$refs.tree.filter(val)
+    }
+  },
+
   methods: {
     closeLeftNav (type) {
       this.showLeft = type !== 1
@@ -104,7 +110,7 @@ const videoMixin = {
           })
           this.setDeviceTreeNodeID(this.treeData)
 
-          // console.log(this.treeData)
+          console.log(this.treeData)
         }
       })
     }

@@ -32,6 +32,11 @@
   </div>
 </template>
 <script>
+import {
+  Message
+} from 'element-ui'
+import $ from 'jquery'
+var that
 export default {
   data () {
     return {
@@ -44,22 +49,25 @@ export default {
     markData: {
       type: Array,
       default: () => []
+    },
+    player: {
+      default: () => ''
     }
   },
   watch: {
     showDate (val) {
       this.getYear()
     }
-    // dateInfo: {
-    //   handler (newVal, oldVal) {
-    //     this.$emit('dateChangeEvent', this.getYYMM(this.showDate))
-    //   },
-    //   deep: true
-    // }
   },
 
   mounted () {
+    that = this
     this.getYear()
+    // 给日历按钮添加点击事件
+    $('.el-calendar-day').click(function (event) {
+      // 如果当前正在回放，阻止事件冒泡
+      if (that.isStopPlayerFirst()) { return false }
+    })
   },
 
   methods: {
@@ -69,8 +77,6 @@ export default {
     getYear () {
       var year = this.showDate.getYear()
       year = year < 2000 ? year + 1900 : year
-      // this.dateInfo.curYear = year.toString().substr(2, 2)
-      // this.dateInfo.curMonth = this.showDate.getMonth() + 1
       year = year.toString().substr(2, 2)
       var month = this.showDate.getMonth() + 1
 
@@ -113,6 +119,7 @@ export default {
      * @param {Boolean} isNext
      */
     calendarPre (isYear, isNext) {
+      if (this.isStopPlayerFirst()) return
       var time
       var step = isNext === true ? 1 : -1
 
@@ -132,7 +139,26 @@ export default {
      */
     searchRecord () {
       this.$emit('searchRecordEvent', this.getYYMMDD())
+    },
+
+    /**
+     * 是否需要停止回放
+     */
+    isStopPlayerFirst () {
+      console.log(this.player)
+      if (this.player) {
+        Message({
+          message: '请先停止当前回放',
+          type: 'info',
+          duration: 3 * 1000
+        })
+
+        return true
+      }
+
+      return false
     }
+
   }
 }
 </script>
