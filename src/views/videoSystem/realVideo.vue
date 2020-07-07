@@ -85,7 +85,7 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
-            <div v-if="curSelectedVideo.label">当前选中:{{curSelectedVideo.label}}</div>
+            <div v-if="curSelectedVideo.labelTotal">当前选中:{{curSelectedVideo.labelTotal}}</div>
           </div>
           <div class="videoList">
             <div
@@ -745,6 +745,7 @@ export default {
             this.totalVideosArray.push({
               id: curTreeData.id,
               label: curTreeData.label,
+              labelTotal: curTreeData.labelTotal,
               srcUrl:
                  curTreeData.streamUrl
             })
@@ -773,6 +774,7 @@ export default {
           this.totalVideosArray.splice(this.curVideoIndex, 1, {
             id: curTreeData.id,
             label: curTreeData.label,
+            labelTotal: curTreeData.labelTotal,
             srcUrl:
                curTreeData.streamUrl
           })
@@ -1087,8 +1089,12 @@ export default {
         ul {
           padding-left: 24px;
           li {
-            line-height: 20px;
-            text-align: justify;
+
+            // text-align: justify;
+            word-break: break-all;
+            span{
+                line-height: 20px;
+            }
           }
           li:not(:nth-child(1)) {
             margin-top: 14px;
