@@ -728,7 +728,6 @@ export default {
         if (this.curVideoIndex === 1000) {
           const i = this.totalVideosArray.indexOf('')
           // 如果有空元素，则替换
-          debugger
           if (i !== -1) {
             this.totalVideosArray.splice(i, 1, {
               id: curTreeData.id,

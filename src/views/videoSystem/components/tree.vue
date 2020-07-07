@@ -11,7 +11,8 @@
       @node-click="handleNodeClick"
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
-        <span >
+        <span :class="{disabled:data.onlineStatus==='offline'}">
+          <!-- {{data.onlineStatus==='offline'}} -->
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id">{{ node.label }}</i>
@@ -49,8 +50,11 @@ export default {
     },
     // 点击树节点
     handleNodeClick (data, $event) {
-      if ((data.children && data.children.length === 0) || !data.children) {
-        const curSpan = document.getElementById('liveVideo' + data.id).parentElement
+      debugger
+      if (data.onlineStatus === 'offline') return
+      if (!data.children) {
+        const curSpan = document.getElementById('liveVideo' + data.id)
+          .parentElement
         if (this.isLive) {
           if (!curSpan.getAttribute('class')) {
             curSpan.setAttribute('class', 'liveIcon')
@@ -81,8 +85,6 @@ export default {
           this.$emit('selectedChange', data)
         }
       }
-
-      // if (!this.isLive) this.$emit('selectedChange', data)
     },
     // 获得选中的节点的key
     checkedKeys: function (data) {
@@ -111,7 +113,19 @@ export default {
     //     }
     //   }
     // }
+  },
+  created () {
+    this.$nextTick(() => {
+      const divs = document.querySelectorAll('span.disabled')
+      for (let i = 0; i < divs.length; i++) {
+        divs[i].style.cursor =
+            'not-allowed'
+        divs[i].style.color =
+            '#007291'
+      }
+    })
   }
+
 }
 </script>
 <style lang="less" scoped>
@@ -121,8 +135,8 @@ export default {
   font-family: Source Han Sans CN;
   font-weight: bold;
   margin-top: 24px;
-      height: 750px;
-    overflow-y: auto;
+  height: 750px;
+  overflow-y: auto;
   /deep/.el-tree {
     color: #23cefd;
     background-color: transparent;
