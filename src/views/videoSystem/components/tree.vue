@@ -50,7 +50,8 @@ export default {
     },
     // 点击树节点
     handleNodeClick (data, $event) {
-      debugger
+      console.log($event.parent.data)
+
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)
           .parentElement
@@ -64,12 +65,14 @@ export default {
           return
         }
         if (this.isLive) {
+          const curData = Object.assign({}, data, $event.parent.data)
           if (!curSpan.getAttribute('class')) {
             curSpan.setAttribute('class', 'liveIcon')
             curSpan.parentElement.parentElement.parentElement.classList.add(
               'is-current'
             )
-            this.$emit('videoChange', 1, data)
+            console.log(curData)
+            this.$emit('videoChange', 1, curData)
           } else {
             curSpan.setAttribute('class', '')
             this.$nextTick(() => {
@@ -78,7 +81,7 @@ export default {
               )
             })
 
-            this.$emit('videoChange', 2, data)
+            this.$emit('videoChange', 2, curData)
           }
         } else {
           // 点击当前视频区域，默认去掉所有激活的样式

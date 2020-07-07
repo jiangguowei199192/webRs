@@ -130,27 +130,27 @@
         <div class="rightContent">
           <div class="baseInfo">
             <div class="info">基本信息</div>
-            <div class="detail">
-              <ul>
-                <li>
+            <div class="detail" >
+              <ul v-show="Object.keys(curSelectedVideo).length>0">
+                <!-- <li>
                   <span>设备名称：</span>
-                  <span>xxx</span>
-                </li>
+                  <span>{{curSelectedVideo.}}</span>
+                </li> -->
                 <li>
                   <span>设备编号：</span>
-                  <span>xxx</span>
+                  <span>{{curSelectedVideo.id}}</span>
                 </li>
                 <li>
                   <span>设备品牌：</span>
-                  <span>xxx</span>
+                  <span>{{curSelectedVideo.deviceBrand}}</span>
                 </li>
-                <li>
+                <!-- <li>
                   <span>设备状态：</span>
                   <span>xxx</span>
-                </li>
+                </li> -->
                 <li>
                   <span>所在地点：</span>
-                  <span>xxx</span>
+                  <span>{{curSelectedVideo.deviceAddress}}</span>
                 </li>
               </ul>
             </div>
@@ -800,14 +800,15 @@ export default {
     },
     // 点击当前视频
     operateCurVideo (curVideo, index) {
+      this.curSelectedVideo = curVideo
       this.curVideoIndex = index
-      // // 点击当前视频区域，默认去掉所有激活的样式
-      // const divs = document.querySelectorAll('.el-tree-node')
-      // for (let i = 0; i < divs.length; i++) {
-      //   divs[i].classList.remove('is-current')
-      // }
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[this.curVideoIndex]) {
+        // 点击当前视频区域，默认去掉所有激活的样式
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
         document
           .querySelector(
             '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
@@ -1080,6 +1081,7 @@ export default {
     .baseInfo {
       .detail {
         margin-top: 22px;
+        min-height:90px;
         ul {
           padding-left: 24px;
           li {
