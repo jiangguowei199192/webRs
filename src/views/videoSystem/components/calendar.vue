@@ -63,9 +63,10 @@ export default {
     // 给日历按钮添加点击事件
     const divs = document.querySelectorAll('.el-calendar-day')
     for (let i = 0; i < divs.length; i++) {
-      divs[i].addEventListener('click', function () {
+      divs[i].addEventListener('click', function (event) {
         // 如果当前正在回放，阻止事件冒泡
         if (that.isStopPlayerFirst()) {
+          event.stopPropagation()
           return false
         }
       })
