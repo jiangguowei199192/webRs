@@ -209,8 +209,7 @@ export default {
           playVl: false,
           playIr: false
         }
-      ],
-      videoInfo: { streamUrl: '', isLive: true }
+      ]
     }
   },
 
@@ -527,40 +526,44 @@ export default {
         if (i !== -1) {
           this.totalVideosArray.splice(i, 1, player)
           this.curVideosArray = this.totalVideosArray.slice(
-            0,
-            this.showVideoPageSize
+            (this.currentPage - 1) * this.showVideoPageSize,
+            this.currentPage * this.showVideoPageSize
           )
         } else {
           // 若没有空元素，则追加
           this.totalVideosArray.push(player)
-          this.curVideosArray = this.totalVideosArray.slice(
-            0,
-            this.showVideoPageSize
-          )
+          // this.curVideosArray = this.totalVideosArray.slice(
+          //   0,
+          //   this.showVideoPageSize
+          // )
+          this.next(++this.currentPage)
         }
       } else {
         // 1.2指定位置添加
         // 若指定位置之前有元素，去掉其激活的样式
-        if (this.totalVideosArray[this.curVideoIndex]) {
+        if (this.curVideosArray[this.curVideoIndex]) {
           document
             .querySelector(
-              '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+              '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
             )
             .parentElement.setAttribute('class', '')
           document
             .querySelector(
-              '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+              '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
             )
             .parentElement.parentElement.parentElement.parentElement.classList.remove(
               'is-current'
             )
+          this.curVideosArray[this.curVideoIndex].streamUrl = ''
         }
-        this.totalVideosArray.splice(this.curVideoIndex, 1, player)
-        this.curVideoIndex = 1000
-        this.curVideosArray = this.totalVideosArray.slice(
-          0,
-          this.showVideoPageSize
-        )
+        var index =
+          this.curVideoIndex + this.showVideoPageSize * (this.currentPage - 1)
+        this.totalVideosArray.splice(index, 1, player)
+        const me = this
+        setTimeout(() => {
+          me.curVideosArray[me.curVideoIndex] = me.curPlayer
+          me.curVideoIndex = 1000
+        }, 500)
       }
     },
 
