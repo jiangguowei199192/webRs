@@ -772,8 +772,8 @@ export default {
         })
         this.totalVideosArray.splice(i, 1, '')
         this.curVideosArray = this.totalVideosArray.slice(
-          0,
-          this.showVideoPageSize
+          (this.currentPage - 1) * this.showVideoPageSize,
+          this.currentPage * this.showVideoPageSize
         )
       }
     },
