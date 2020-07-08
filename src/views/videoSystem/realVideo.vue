@@ -723,8 +723,8 @@ export default {
           if (i !== -1) {
             this.totalVideosArray.splice(i, 1, curTreeData)
             this.curVideosArray = this.totalVideosArray.slice(
-              0,
-              this.showVideoPageSize
+              (this.currentPage - 1) * this.showVideoPageSize,
+              this.currentPage * this.showVideoPageSize
             )
           } else {
             // 若没有空元素，则追加
