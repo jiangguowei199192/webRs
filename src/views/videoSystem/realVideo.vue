@@ -711,10 +711,6 @@ export default {
     //     }
     //   })
     // },
-    // 获取子组件传递过来的数据
-    getSelectedData (data) {
-      console.log(data)
-    },
     // 点击树节点
     closeOrOpen (type, curTreeData) {
       // 1.添加
