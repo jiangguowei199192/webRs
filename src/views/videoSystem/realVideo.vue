@@ -741,22 +741,24 @@ export default {
           if (this.curVideosArray[this.curVideoIndex]) {
             document
               .querySelector(
-                '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
               )
               .parentElement.setAttribute('class', '')
             document
               .querySelector(
-                '#liveVideo' + this.totalVideosArray[this.curVideoIndex].id
+                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
               )
               .parentElement.parentElement.parentElement.parentElement.classList.remove(
                 'is-current'
               )
           }
-          this.totalVideosArray.splice(this.curVideoIndex, 1, curTreeData)
+          // 防止有分页的情况
+          const index = this.curVideoIndex + this.showVideoPageSize * (this.currentPage - 1)
+          this.totalVideosArray.splice(index, 1, curTreeData)
           this.curVideoIndex = 1000
           this.curVideosArray = this.totalVideosArray.slice(
-            0,
-            this.showVideoPageSize
+            (this.currentPage - 1) * this.showVideoPageSize,
+            this.currentPage * this.showVideoPageSize
           )
         }
       } else {
