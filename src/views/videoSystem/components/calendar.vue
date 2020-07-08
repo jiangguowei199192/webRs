@@ -32,10 +32,7 @@
   </div>
 </template>
 <script>
-import {
-  Message
-} from 'element-ui'
-import $ from 'jquery'
+import { Message } from 'element-ui'
 var that
 export default {
   data () {
@@ -64,10 +61,15 @@ export default {
     that = this
     this.getYear()
     // 给日历按钮添加点击事件
-    $('.el-calendar-day').click(function (event) {
-      // 如果当前正在回放，阻止事件冒泡
-      if (that.isStopPlayerFirst()) { return false }
-    })
+    const divs = document.querySelectorAll('.el-calendar-day')
+    for (let i = 0; i < divs.length; i++) {
+      divs[i].addEventListener('click', function () {
+        // 如果当前正在回放，阻止事件冒泡
+        if (that.isStopPlayerFirst()) {
+          return false
+        }
+      })
+    }
   },
 
   methods: {
@@ -145,7 +147,6 @@ export default {
      * 是否需要停止回放
      */
     isStopPlayerFirst () {
-      console.log(this.player)
       if (this.player) {
         Message({
           message: '请先停止当前回放',
@@ -158,7 +159,6 @@ export default {
 
       return false
     }
-
   }
 }
 </script>
@@ -235,8 +235,8 @@ export default {
   border-radius: 50%;
   display: inline-block;
   position: absolute;
-   top: 22px;
-   left: 3px;
+  top: 22px;
+  left: 3px;
 }
 
 .search {

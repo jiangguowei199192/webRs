@@ -56,7 +56,7 @@
         <div class="video">
           <div class="box">
             <div class="title">回放</div>
-            <div v-if="curNode">当前选中:{{curNode.label2}}</div>
+            <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
           </div>
           <div class="videoList">
             <div
@@ -69,7 +69,7 @@
               <VideoWall
                 :videoInfo.sync="item"
                 :key="index"
-                v-if="item.srcUrl"
+                v-if="item.streamUrl"
                 ref="videoCtrl"
                 @timeupdateEvent="timeupdate"
               ></VideoWall>
@@ -127,7 +127,7 @@
         :key="index"
         :style="machineStatusStyle(showVideoPageSize)"
       >
-        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
+        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
       </div>
       <!-- </div> -->
     </el-dialog>
@@ -210,7 +210,7 @@ export default {
           playIr: false
         }
       ],
-      videoInfo: { srcUrl: '', isLive: true }
+      videoInfo: { streamUrl: '', isLive: true }
     }
   },
 
@@ -316,7 +316,7 @@ export default {
      */
     getSelectedData (data, pData) {
       this.curNode = data
-      this.curNode.label2 = pData.label + '-' + this.curNode.label
+      this.curNode.parentLabel = pData.label + '-' + this.curNode.label
       var player = this.totalVideosArray.find(v => v.id === data.id)
       if (player === undefined) {
         player = ''
@@ -419,7 +419,7 @@ export default {
       this.totalVideosArray = newTotalVideosArray
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')
-      console.log(result)
+      // console.log(result)
       // 1.如果有视频小于每屏的展示数据（包含没有的情况）
       if (result.length <= n) {
         // 1.1由大变小
@@ -600,13 +600,13 @@ export default {
         this.addPlayer({
           treeNode: this.curNode,
           id: this.curNode.id,
-          srcUrl: r.record.url,
+          streamUrl: r.record.url,
           isLive: false,
           records: this.records,
           timeupdate: true,
           isPlay: true,
           curTime: this.curTime,
-          label: this.curNode.label2
+          parentLabel: this.curNode.parentLabel
         })
         if (r.jump === true) {
           this.$nextTick(() => {

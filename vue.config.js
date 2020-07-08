@@ -1,4 +1,4 @@
-const webpack = require('webpack')
+
 // vue.config.js 配置说明
 // 这里只列一部分，具体配置惨考文档啊
 module.exports = {
@@ -46,14 +46,5 @@ module.exports = {
         changeOrigin: true
       }
     } // 配置多个代理
-  },
-  configureWebpack: {
-    plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jquery',
-        jQuery: 'jquery',
-        'windows.jQuery': 'jquery'
-      })
-    ]
   }
 }

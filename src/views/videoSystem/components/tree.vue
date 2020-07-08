@@ -50,7 +50,7 @@ export default {
     },
     // 点击树节点
     handleNodeClick (data, $event) {
-      console.log($event.parent.data)
+      // console.log($event.parent.data)
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)
           .parentElement

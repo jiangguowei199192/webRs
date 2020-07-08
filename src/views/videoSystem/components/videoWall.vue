@@ -24,7 +24,8 @@ import LivePlayer from '@liveqing/liveplayer'
 export default {
   data () {
     return {
-      curTime: 0
+      curTime: 0,
+      curUrl: ''
     }
   },
 
@@ -38,32 +39,19 @@ export default {
     }
   },
 
-  computed: {
-    timeupdateVal () {
-      return this.videoInfo.timeupdate
-    }
-  },
-
   watch: {
     curTime (val) {
-      var r = this.videoInfo.records.find(x => x.url === this.videoInfo.srcUrl)
+      var r = this.videoInfo.records.find(x => x.url === this.curUrl)
       if (r !== undefined) {
         this.$emit('timeupdateEvent', this.curTime + r.start * 60)
       }
-    },
-
-    timeupdateVal (val) {
-      this.subTimeupdate(this.timeupdateVal)
     }
   },
 
   mounted () {
     this.subEnded()
-    this.subTimeupdate(this.timeupdateVal)
-    // player.on('loadeddata', function () {
-    //   console.log('loadeddata')
-    // })
-
+    this.subTimeupdate(this.videoInfo.timeupdate)
+    this.curUrl = this.videoInfo.streamUrl
     // player.on('play', function () {
     //   console.log('视频开始播放')
     // }
@@ -127,15 +115,16 @@ export default {
       if (this.videoInfo.isLive === false) {
         // 播放完成后，自动播放回放记录中的下一个mp4
         var r = this.videoInfo.records.find(
-          x => x.url === this.videoInfo.srcUrl
+          x => x.url === this.curUrl
         )
         if (r !== undefined) {
           var index = this.videoInfo.records.indexOf(r)
           // 如果不是最后一个回放记录，就继续播放下一个记录
           if (index !== -1 && index < this.videoInfo.records.length - 1) {
-            console.log('继续播放下一个记录')
-            this.changeVideoUrl(this.videoInfo.records[index + 1].url)
-          }
+            var url = this.videoInfo.records[index + 1].url
+            console.log('继续播放下一个记录:' + url)
+            this.changeVideoUrl(url)
+          } else console.log(this.curUrl + '----最后一个回放记录播放完毕')
         }
       }
     },
@@ -145,11 +134,8 @@ export default {
      * @param {String} url 播放地址
      */
     changeVideoUrl (url) {
-      this.videoInfo.srcUrl = url
-      setTimeout(() => {
-        this.subEnded()
-        this.subTimeupdate(this.timeupdateVal)
-      }, 1000)
+      this.$refs.playerCtrl.player.src([{ src: url }])
+      this.curUrl = url
     },
 
     /**
