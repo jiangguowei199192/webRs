@@ -964,12 +964,12 @@ export default {
         }
       }
     }
-  },
-  watch: {
-    filterDevice (val) {
-      this.$refs.tree.$refs.tree.filter(val)
-    }
   }
+  // watch: {
+  //   filterDevice (val) {
+  //     this.$refs.tree.$refs.tree.filter(val)
+  //   }
+  // }
 }
 </script>
 <style lang="less" scoped>

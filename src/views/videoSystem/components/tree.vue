@@ -98,7 +98,7 @@ export default {
           curSpan.parentElement.parentElement.parentElement.classList.add(
             'is-current'
           )
-          this.$emit('selectedChange', data)
+          this.$emit('selectedChange', data, $event.parent.data)
         }
       }
     },
