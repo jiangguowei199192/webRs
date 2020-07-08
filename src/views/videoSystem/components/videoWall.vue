@@ -2,7 +2,7 @@
   <div class="playerStyle" @dblclick="fullScreen">
     <LivePlayer
       ref="playerCtrl"
-      :videoUrl="videoInfo.srcUrl"
+      :videoUrl="videoInfo.streamUrl"
       :show-custom-button="false"
       :muted="false"
       :controls="false"

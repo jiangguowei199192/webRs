@@ -72,11 +72,7 @@
                 </span>
               </el-tree>
             </div>-->
-            <tree-data
-              :treeData="treeData"
-              ref="tree"
-              @videoChange="closeOrOpen"
-            ></tree-data>
+            <tree-data :treeData="treeData" ref="tree" @videoChange="closeOrOpen"></tree-data>
           </template>
         </div>
       </div>
@@ -96,7 +92,7 @@
               :class="{active:curVideoIndex===index}"
             >
               <!-- <div > -->
-              <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
+              <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
               <!-- </div> -->
             </div>
           </div>
@@ -130,12 +126,12 @@
         <div class="rightContent">
           <div class="baseInfo">
             <div class="info">基本信息</div>
-            <div class="detail" >
+            <div class="detail">
               <ul v-show="Object.keys(curSelectedVideo).length>0">
                 <!-- <li>
                   <span>设备名称：</span>
                   <span>{{curSelectedVideo.}}</span>
-                </li> -->
+                </li>-->
                 <li>
                   <span>设备编号：</span>
                   <span>{{curSelectedVideo.id}}</span>
@@ -147,7 +143,7 @@
                 <!-- <li>
                   <span>设备状态：</span>
                   <span>xxx</span>
-                </li> -->
+                </li>-->
                 <li>
                   <span>所在地点：</span>
                   <span>{{curSelectedVideo.deviceAddress}}</span>
@@ -201,17 +197,16 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%"  :fullscreen="true" tabIndex="1" id="d1">
-    <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
+    <el-dialog :visible.sync="dialogVisible" width="100%" :fullscreen="true" tabindex="1" id="d1">
+      <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
         :style="machineStatusStyle(showVideoPageSize)"
       >
-        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.srcUrl"></VideoWall>
+        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
       </div>
-    <!-- </div> -->
-
+      <!-- </div> -->
     </el-dialog>
   </div>
 </template>
@@ -334,7 +329,7 @@ export default {
       ],
       value2: 4, // 步速值
       isPlayAll: false, // 是否播放所有 控制预览全部
-      curSelectedVideo: {}// 当前选中
+      curSelectedVideo: {} // 当前选中
     }
   },
   methods: {
@@ -730,32 +725,19 @@ export default {
           const i = this.totalVideosArray.indexOf('')
           // 如果有空元素，则替换
           if (i !== -1) {
-            this.totalVideosArray.splice(i, 1, {
-              id: curTreeData.id,
-              label: curTreeData.label,
-              labelTotal: curTreeData.labelTotal,
-              parentLabel: curTreeData.parentLabel,
-              srcUrl:
-                curTreeData.streamUrl
-            })
+            this.totalVideosArray.splice(i, 1, curTreeData)
             this.curVideosArray = this.totalVideosArray.slice(
               0,
               this.showVideoPageSize
             )
           } else {
             // 若没有空元素，则追加
-            this.totalVideosArray.push({
-              id: curTreeData.id,
-              label: curTreeData.label,
-              labelTotal: curTreeData.labelTotal,
-              parentLabel: curTreeData.parentLabel,
-              srcUrl:
-                 curTreeData.streamUrl
-            })
-            this.curVideosArray = this.totalVideosArray.slice(
-              0,
-              this.showVideoPageSize
-            )
+            this.totalVideosArray.push(curTreeData)
+            // this.curVideosArray = this.totalVideosArray.slice(
+            //   0,
+            //   this.showVideoPageSize
+            // )
+            this.next(++this.currentPage)
           }
         } else {
           // 1.2指定位置添加
@@ -774,14 +756,7 @@ export default {
                 'is-current'
               )
           }
-          this.totalVideosArray.splice(this.curVideoIndex, 1, {
-            id: curTreeData.id,
-            label: curTreeData.label,
-            labelTotal: curTreeData.labelTotal,
-            parentLabel: curTreeData.parentLabel,
-            srcUrl:
-               curTreeData.streamUrl
-          })
+          this.totalVideosArray.splice(this.curVideoIndex, 1, curTreeData)
           this.curVideoIndex = 1000
           this.curVideosArray = this.totalVideosArray.slice(
             0,
@@ -883,29 +858,45 @@ export default {
           item => item !== ''
         )
         this.curVideosArray = this.totalVideosArray.slice(0, n)
+        console.log(this.curVideosArray)
       }
+      this.activeFirstTree()
+    },
+    // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
+    activeFirstTree () {
+      const divs = document.querySelectorAll('.el-tree-node')
+      for (let i = 0; i < divs.length; i++) {
+        divs[i].classList.remove('is-current')
+      }
+      document
+        .querySelector('#liveVideo' + this.curVideosArray[0].id)
+        .parentElement.parentElement.parentElement.parentElement.classList.add(
+          'is-current'
+        )
+      this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
     pre (cpage) {
       // 始终截取当前页需要的数据
       this.curVideoIndex = 1000
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
-      }
+      // const divs = document.querySelectorAll('.el-tree-node')
+      // for (let i = 0; i < divs.length; i++) {
+      //   divs[i].classList.remove('is-current')
+      // }
       this.curVideosArray = this.totalVideosArray.slice(
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
+      this.activeFirstTree()
     },
     // 下一页
     next (cpage) {
       // 清掉之前的选中状态
       this.curVideoIndex = 1000
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
-      }
+      // const divs = document.querySelectorAll('.el-tree-node')
+      // for (let i = 0; i < divs.length; i++) {
+      //   divs[i].classList.remove('is-current')
+      // }
       if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
         // 若不够，数据则补位空格
@@ -918,6 +909,7 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
+      this.activeFirstTree()
       console.log(cpage, this.curVideosArray.length)
     },
     // 动态渲染9个空元素
@@ -944,7 +936,11 @@ export default {
     },
     // 检查全屏
     checkFull () {
-      let isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled
+      let isFull =
+        document.fullscreenEnabled ||
+        window.fullScreen ||
+        document.webkitIsFullScreen ||
+        document.msFullscreenEnabled
       if (isFull === undefined) isFull = false
       return isFull
     }
@@ -991,7 +987,7 @@ export default {
       cursor: pointer;
       height: 34px;
       line-height: 34px;
-      width:230px;
+      width: 230px;
       color: #23cefd;
       background: #1a3e68;
       text-align: center;
@@ -1010,7 +1006,7 @@ export default {
       }
     }
     div.search {
-      width:230px;
+      width: 230px;
       margin-top: 20px;
       background: #10203b;
       /deep/ .el-input__inner {
@@ -1089,15 +1085,14 @@ export default {
     .baseInfo {
       .detail {
         margin-top: 22px;
-        min-height:90px;
+        min-height: 90px;
         ul {
           padding-left: 24px;
           li {
-
             // text-align: justify;
             word-break: break-all;
-            span{
-                line-height: 20px;
+            span {
+              line-height: 20px;
             }
           }
           li:not(:nth-child(1)) {
@@ -1128,8 +1123,7 @@ export default {
             cursor: pointer;
           }
           div:nth-child(1) {
-
-             background: url(../../assets/images/device/7.png) no-repeat;
+            background: url(../../assets/images/device/7.png) no-repeat;
           }
           div:nth-child(2) {
             background: url(../../assets/images/device/8.png) no-repeat;
@@ -1154,14 +1148,13 @@ export default {
             background: url(../../assets/images/device/6.png) no-repeat;
           }
           div:nth-child(7) {
-             background: url(../../assets/images/device/1.png) no-repeat;
+            background: url(../../assets/images/device/1.png) no-repeat;
           }
           div:nth-child(8) {
-
-             background: url(../../assets/images/device/2.png) no-repeat;
+            background: url(../../assets/images/device/2.png) no-repeat;
           }
           div:nth-child(9) {
-          background: url(../../assets/images/device/3.png) no-repeat;
+            background: url(../../assets/images/device/3.png) no-repeat;
           }
         }
         .btns {
@@ -1300,7 +1293,7 @@ export default {
                 background: #23cefd;
                 text-align: center;
                 line-height: 20px;
-                color:#000;
+                color: #000;
               }
             }
           }
@@ -1329,28 +1322,27 @@ export default {
   //     background-color: #00497c;
   //   }
   // }
-
 }
 // 修改弹框样式
-  .el-dialog__wrapper {
-    overflow: visible;
-    /deep/.el-dialog {
-      .el-dialog__header {
-        display: none;
-      }
-      .el-dialog__body {
-        display: flex;
-        flex-wrap: wrap;
-        height: 100%;
-        padding: 0 15px;
-        > div {
-          // cursor: pointer;
-          margin-right: 19px;
-          margin-bottom: 20px;
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
-        }
+.el-dialog__wrapper {
+  overflow: visible;
+  /deep/.el-dialog {
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      display: flex;
+      flex-wrap: wrap;
+      height: 100%;
+      padding: 0 15px;
+      > div {
+        // cursor: pointer;
+        margin-right: 19px;
+        margin-bottom: 20px;
+        background: url(../../assets/images/video.png) no-repeat center center;
+        background-color: #00497c;
       }
     }
   }
+}
 </style>
