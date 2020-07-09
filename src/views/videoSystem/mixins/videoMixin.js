@@ -13,6 +13,7 @@ const videoMixin = {
       fourPalace: require('../../../assets/images/4.png'),
       onePalace: require('../../../assets/images/1.png'),
       playAll: require('../../../assets/images/play-all.png'),
+      closeAll: require('../../../assets/images/close-all.png'),
       fullScreen: require('../../../assets/images/full-screen.png')
     }
   },

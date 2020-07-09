@@ -104,7 +104,7 @@
               <img :src="onePalace" @click.stop="changeVideosType(1)" />
             </div>
             <div class="rightTool">
-              <img :src="playAll" @click.stop="playAllVideos" />
+              <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
@@ -151,19 +151,20 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
+          <div class="deviceInfo" >
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+                <!-- <div @click="changeCurvideo(1)" :class="{active:activeIconObj.isActiveFirst}"></div>
+                <div @click="changeCurvideo(2)" :class="{active:activeIconObj.isActiveSecond}"></div>
+                <div @click="changeCurvideo(3)" :class="{active:activeIconObj.isActiveThird}"></div>
+                <div @click="changeCurvideo(4)" :class="{active:activeIconObj.isActiveFourth}"></div>
+                <div @click="changeCurvideo(5)" :class="{active:activeIconObj.isActiveFifth}"></div>
+                <div @click="changeCurvideo(6)" :class="{active:activeIconObj.isActiveSixth}"></div>
+                <div @click="changeCurvideo(7)" :class="{active:activeIconObj.isActiveSeventh}"></div>
+                <div @click="changeCurvideo(8)" :class="{active:activeIconObj.isActiveEighth}"></div>
+                <div @click="changeCurvideo(9)" :class="{active:activeIconObj.isActiveNineth}"></div> -->
+                <div v-for="(item,index) in 9" :key="index" @click.stop="changeCurVideo(index)" :class="{active:activeCurIcon===index}"></div>
               </div>
               <div class="btns">
                 <div>
@@ -233,6 +234,7 @@ export default {
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
+      activeCurIcon: '', // 默认选中云台的图标
       listArray: [
         {
           area: '发展大道黄浦路1',
@@ -271,6 +273,10 @@ export default {
     }
   },
   methods: {
+    // 点击云台图标按钮，控制当前视频
+    changeCurVideo (index) {
+      this.activeCurIcon = index
+    },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
       // 1.添加
@@ -709,15 +715,27 @@ export default {
           div:nth-child(1) {
             background: url(../../assets/images/device/7.png) no-repeat;
           }
+           div:nth-child(1).active {
+            background: url(../../assets/images/device/7_selected.png) no-repeat;
+          }
           div:nth-child(2) {
             background: url(../../assets/images/device/8.png) no-repeat;
+          }
+           div:nth-child(2).active {
+            background: url(../../assets/images/device/8_selected.png) no-repeat;
           }
           div:nth-child(3) {
             background: url(../../assets/images/device/9.png) no-repeat;
           }
+           div:nth-child(3).active {
+            background: url(../../assets/images/device/9_selected.png) no-repeat;
+          }
           div:nth-child(4) {
             margin-right: 10px;
             background: url(../../assets/images/device/4.png) no-repeat;
+          }
+            div:nth-child(4).active {
+            background: url(../../assets/images/device/4_selected.png) no-repeat;
           }
           div:nth-child(5) {
             width: 64px;
@@ -728,17 +746,32 @@ export default {
             margin-right: 10px;
             background: url(../../assets/images/device/5.png) no-repeat;
           }
+           div:nth-child(5).active {
+            background: url(../../assets/images/device/5_selected.png) no-repeat;
+          }
           div:nth-child(6) {
             background: url(../../assets/images/device/6.png) no-repeat;
+          }
+           div:nth-child(6).active {
+            background: url(../../assets/images/device/6_selected.png) no-repeat;
           }
           div:nth-child(7) {
             background: url(../../assets/images/device/1.png) no-repeat;
           }
+           div:nth-child(7).active {
+            background: url(../../assets/images/device/1_selected.png) no-repeat;
+          }
           div:nth-child(8) {
             background: url(../../assets/images/device/2.png) no-repeat;
           }
+           div:nth-child(8).active {
+            background: url(../../assets/images/device/2_selected.png) no-repeat;
+          }
           div:nth-child(9) {
             background: url(../../assets/images/device/3.png) no-repeat;
+          }
+           div:nth-child(9).active {
+            background: url(../../assets/images/device/3_selected.png) no-repeat;
           }
         }
         .btns {
@@ -886,8 +919,15 @@ color:rgba(132,221,255,1)
                 background: #23cefd;
                 text-align: center;
                 line-height: 20px;
-                color: #000;
+                color: #1C638B;
               }
+            }
+            button[disabled]{
+              i{
+                background:#999;
+                color:#2D506F;
+              }
+
             }
           }
         }

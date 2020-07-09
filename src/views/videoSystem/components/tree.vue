@@ -202,6 +202,7 @@ export default {
   /deep/.el-tree--highlight-current
     .el-tree-node.is-current
     > .el-tree-node__content {
+      font-size:14px;
     background: #096090 !important;
   }
   /deep/.el-tree-node__content {
@@ -211,7 +212,7 @@ export default {
     // }
   }
   /deep/.el-tree-node__content:hover {
-    background-color: #096090 !important;
+    background-color: #00B4FF !important;
   }
   /deep/ .el-tree-node:focus > .el-tree-node__content {
     background-color: transparent;
