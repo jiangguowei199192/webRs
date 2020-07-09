@@ -442,7 +442,9 @@ export default {
         this.curVideosArray = this.totalVideosArray.slice(0, n)
         console.log(this.curVideosArray)
       }
-      this.activeFirstTree()
+      if (this.curVideosArray[0]) {
+        this.activeFirstTree()
+      }
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
