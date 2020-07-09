@@ -128,10 +128,10 @@
             <div class="info">基本信息</div>
             <div class="detail">
               <ul v-show="Object.keys(curSelectedVideo).length>0">
-                <!-- <li>
+                <li>
                   <span>设备名称：</span>
-                  <span>{{curSelectedVideo.}}</span>
-                </li>-->
+                  <span>{{curSelectedVideo.parentLabel}}</span>
+                </li>
                 <li>
                   <span>设备编号：</span>
                   <span>{{curSelectedVideo.id}}</span>
