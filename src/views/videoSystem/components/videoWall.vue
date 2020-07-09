@@ -152,6 +152,8 @@ export default {
      */
     subTimeupdate (isSub) {
       if (isSub === true) {
+        // 防止回放视频已经播放完毕，没有触发timeupdate事件，而导致时间没有更新
+        this.curTime = Math.floor(this.$refs.playerCtrl.player.currentTime())
         this.$refs.playerCtrl.player.on('timeupdate', this.timeupdate)
       } else {
         this.$refs.playerCtrl.player.off('timeupdate', this.timeupdate)
