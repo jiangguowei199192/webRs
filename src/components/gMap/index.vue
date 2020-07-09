@@ -29,20 +29,6 @@
       <div class="routeBtn routeClose" @click.stop="closeRouteCtrl"></div>
       <div class="routeBtn routeSwap" @click.stop="swapRoutePoint"></div>
     </div>
-    <!-- <el-input
-      class="searchBox"
-      id="_addrSearch"
-      v-show="true"
-      v-model="filterText"
-      size="mini"
-      @keyup.enter.native="searchAddrs(filterText,false)"
-      @keyup.delete.native="resetChooseAddr"
-      :placeholder="placeHolder">
-      <div slot="append">
-        <el-button @click.stop="searchAddrs(filterText,true)" icon="el-icon-search" size="mini" class="appendBtn"></el-button>
-        <el-button @click.stop="routeOrCloseFunc" icon="el-icon-close" size="mini" class="appendBtn"></el-button>
-      </div>
-    </el-input> -->
     <div class="searchResult ownScrollStyle" v-show="bShowResult">
       <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
         :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
