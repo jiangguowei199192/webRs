@@ -81,7 +81,7 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
-            <div v-if="curSelectedVideo.labelTotal">当前选中:{{curSelectedVideo.labelTotal}}</div>
+            <div v-if="curSelectedVideo.labelTotal" class="curSelected">当前选中:{{curSelectedVideo.labelTotal}}</div>
           </div>
           <div class="videoList">
             <div
@@ -819,6 +819,10 @@ export default {
         line-height: 45px;
         padding-left: 30px;
         margin-bottom: 20px;
+      }
+      .curSelected{
+        font-weight:400;
+color:rgba(132,221,255,1)
       }
     }
     .videoList {
