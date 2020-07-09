@@ -779,8 +779,13 @@ export default {
         .slider {
           display: flex;
           padding-left: 39px;
+
           span {
             line-height: 38px;
+          }
+          span.demonstration{
+            font-weight:bold;
+            color:rgba(132,221,255,1);
           }
           span:nth-child(3) {
             display: inline-block;
