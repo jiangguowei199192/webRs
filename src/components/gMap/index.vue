@@ -5,9 +5,34 @@
       :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
       @dblclick="dblClickMap"
     ></div>
-    <el-input
-      id="_addrSearch"
+    <div class="searchCtrl">
+      <input class="inputText" id="_addrSearch"
+        v-model="filterText"
+        type="text"
+        autocomplete="off"
+        value=""
+        v-on:keyup.enter="searchAddrs(filterText,false)"
+        v-on:keyup.delete="resetChooseAddr"
+        :placeholder="placeHolder"/>
+      <div class="inputSearch" @click.stop="searchAddrs(filterText,true)"/>
+      <div class="inputFunc" @click.stop="routeOrCloseFunc" :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"/>
+    </div>
+    <div class="routeCtrl" v-show="bShowRouteCtrl">
+      <el-input id="_pointStart" class="pointInput" v-model="startText" size="mini" :placeholder="startHolder" auto-complete="new-address">
+        <div slot="prepend" style="corlor:black">起</div>
+        <el-button slot="append" icon="el-icon-close" size="mini" class="appendBtn" @click.stop="clearStartPoi"></el-button>
+      </el-input>
+      <el-input id="_pointEnd" class="pointInput" v-model="endText" size="mini" :placeholder="endHolder" auto-complete="new-address">
+        <div slot="prepend" style="corlor:black">终</div>
+        <el-button slot="append" icon="el-icon-close" size="mini" class="appendBtn" @click.stop="clearEndPoi"></el-button>
+      </el-input>
+      <div class="routeBtn routeClose" @click.stop="closeRouteCtrl"></div>
+      <div class="routeBtn routeSwap" @click.stop="swapRoutePoint"></div>
+    </div>
+    <!-- <el-input
       class="searchBox"
+      id="_addrSearch"
+      v-show="true"
       v-model="filterText"
       size="mini"
       @keyup.enter.native="searchAddrs(filterText,false)"
@@ -15,9 +40,9 @@
       :placeholder="placeHolder">
       <div slot="append">
         <el-button @click.stop="searchAddrs(filterText,true)" icon="el-icon-search" size="mini" class="appendBtn"></el-button>
-        <el-button @click.stop="clearSearchBox" icon="el-icon-close" size="mini" class="appendBtn"></el-button>
+        <el-button @click.stop="routeOrCloseFunc" icon="el-icon-close" size="mini" class="appendBtn"></el-button>
       </div>
-    </el-input>
+    </el-input> -->
     <div class="searchResult ownScrollStyle" v-show="bShowResult">
       <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
         :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
@@ -116,14 +141,26 @@ export default {
   data () {
     return {
       autoTips: null,
+      autoStartTips: null,
+      startPoi: null,
+      startText: null,
+      startFeature: null,
+      startHolder: '请输入起点地址',
+      autoEndTips: null,
+      endPoi: null,
+      endText: null,
+      endFeature: null,
+      endHolder: '请输入终点地址',
       filterText: '',
       placeHolder: '请输入目的地',
       titelTel: '电话: ',
+      bRouteOrClose: true, // true:route,false:close
+      bShowRouteCtrl: false,
+      bShowResult: false,
+      bShowPaln: false,
       addrResults: null,
       lastResults: null,
       chooseAddr: null,
-      bShowPaln: true,
-      bShowResult: false,
       locale: 'zh',
       measureType: 0,
       bShowTheTif: true,
@@ -238,7 +275,10 @@ export default {
     // 点击气泡弹窗中图标按钮事件回调
     popNavImgClickEventCB (addr) {
       if (addr != null && addr !== undefined) {
-        console.log(addr)
+        this.map2D.searchLayerManager.clear()
+        this.addRoutePoint(addr, false)
+        this.bShowRouteCtrl = true
+        this.bShowPaln = false
       }
     },
 
@@ -280,7 +320,10 @@ export default {
         })
         this.addrResults = _results
         this.map2D.searchLayerManager.addSearchAddrs(_results)
-        if (_results.length > 0) this.bShowResult = true
+        if (_results.length > 0) {
+          this.bShowResult = true
+          this.bRouteOrClose = false
+        }
         if (_results.length > 1) {
           this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
           this.map2D.zoomOut()
@@ -288,6 +331,7 @@ export default {
       } else {
         this.addrResults = null
         this.bShowResult = false
+        this.bRouteOrClose = true
         this.map2D.searchLayerManager.clear()
       }
     },
@@ -304,6 +348,7 @@ export default {
       AMap.event.addListener(this.autoTips, 'select', select) // 注册监听，当选中某条记录时会触发
       var that = this
       function select (e) {
+        that.bShowPaln = false
         AMapHelper.getPoiDetail({ id: e.poi.id })
           .then(res => {
             that.chooseAddr = null
@@ -323,6 +368,37 @@ export default {
       AMap.event.addListener(this.autoTips, 'choose', choose) // 注册监听，当选中某条记录时会触发
       function choose (e) {
         that.chooseAddr = e
+        that.filterText = e.poi.name
+      }
+
+      // Init start POI
+      // eslint-disable-next-line
+      this.autoStartTips = new AMap.Autocomplete({ input: '_pointStart'})
+      // eslint-disable-next-line
+      AMap.event.addListener(this.autoStartTips, 'select', selectStart) // 注册监听，当选中某条记录时会触发
+      function selectStart (e) {
+        if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+          e.poi._lon = e.poi.location.lng
+          e.poi._lat = e.poi.location.lat
+          that.mapMoveTo(e.poi._lon, e.poi._lat, false)
+          that.map2D.setZoom(16)
+          that.addRoutePoint(e.poi, true)
+        }
+      }
+
+      // Init end POI
+      // eslint-disable-next-line
+      this.autoEndTips = new AMap.Autocomplete({ input: '_pointEnd'})
+      // eslint-disable-next-line
+      AMap.event.addListener(this.autoEndTips, 'select', selectEnd) // 注册监听，当选中某条记录时会触发
+      function selectEnd (e) {
+        if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+          e.poi._lon = e.poi.location.lng
+          e.poi._lat = e.poi.location.lat
+          that.mapMoveTo(e.poi._lon, e.poi._lat, false)
+          that.map2D.setZoom(16)
+          that.addRoutePoint(e.poi, false)
+        }
       }
       console.log('initSearchBox ...... OK')
     },
@@ -354,12 +430,38 @@ export default {
       }
     },
 
-    // 清理所有搜索结果项
-    clearSearchBox () {
+    // 显示导航页面或清理所有搜索结果项
+    routeOrCloseFunc () {
+      if (this.bRouteOrClose) {
+        this.bShowRouteCtrl = true
+        if (this.chooseAddr != null) {
+          this.endPoi = this.chooseAddr.poi
+          this.endText = this.endPoi.name
+        }
+      }
       this.filterText = ''
+      this.chooseAddr = null
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
       this.bShowPaln = false
+    },
+
+    // 隐藏导航框
+    closeRouteCtrl () {
+      this.bShowRouteCtrl = false
+      this.clearStartPoi()
+      this.clearEndPoi()
+      this.map2D.routeLayerManager.clear()
+    },
+
+    // 交换路线起始点
+    swapRoutePoint () {
+      const tmpStartPoi = this.endPoi
+      this.endPoi = null
+      const tmpEndPoi = this.startPoi
+      this.startPoi = null
+      this.addRoutePoint(tmpStartPoi, true)
+      this.addRoutePoint(tmpEndPoi, false)
     },
 
     // 选择某一搜索结果显示其预案详情信息
@@ -385,6 +487,108 @@ export default {
     // 鼠标移入移出搜索结果项
     mouseHandler (event, addr, bHover) {
       this.map2D.searchLayerManager.mouseHoverHandler(addr._feature, addr._layer, bHover)
+    },
+
+    // 处理高德地图路线数据
+    updateRoutes (srcData) {
+      const that = this
+      const tmpStart = [this.startPoi._lon, this.startPoi._lat]
+      const tmpEnd = [this.endPoi._lon, this.endPoi._lat]
+      const tmpRoutes = srcData.paths
+      tmpRoutes.forEach(route => {
+        const polyLintArray = []
+        polyLintArray.push(tmpStart)
+        route.steps.forEach(s => {
+          const polyLine = s.polyline.split(';')
+          polyLine.forEach(item => {
+            const ll = item.split(',')
+            const tmpLL = [+ll[0], +ll[1]]
+            polyLintArray.push(tmpLL)
+          })
+        })
+        polyLintArray.push(tmpEnd)
+        that.map2D.routeLayerManager.addRoute(polyLintArray, false)
+      })
+    },
+    // 高德地图路线规划接口
+    qureyRoutes (startPoi, endPoi) {
+      const tmpOrigin = startPoi._lon + ',' + startPoi._lat
+      const tmpOriginId = startPoi.id
+      const tmpDestination = endPoi._lon + ',' + endPoi._lat
+      const tmpDestinationId = endPoi.id
+      const tmpOption = {
+        origin: tmpOrigin,
+        destination: tmpDestination,
+        originid: tmpOriginId,
+        destinationid: tmpDestinationId,
+        strategy: 10
+      }
+      AMapHelper.getRoutes(tmpOption)
+        .then(res => {
+          if (res.data.status === '1') {
+            this.updateRoutes(res.data.route)
+          }
+        })
+        .catch(err => {
+          console.log('AMapHelper.getRoutes Err : ' + err)
+        })
+    },
+
+    // 在路线规划层增加起始点标记 bStartOrEnd: true,Start point | false,End point
+    addRoutePoint (pointPoi, bStartOrEnd) {
+      pointPoi._bWgs2Gcj = false
+      if (bStartOrEnd) {
+        this.startPoi = pointPoi
+        this.startText = pointPoi.name
+        this.delRoutePoint(true)
+        this.startFeature = this.map2D.routeLayerManager.addPoint(this.startPoi, true)
+      } else {
+        this.endPoi = pointPoi
+        this.endText = pointPoi.name
+        this.delRoutePoint(false)
+        this.endFeature = this.map2D.routeLayerManager.addPoint(this.endPoi, false)
+      }
+      if (this.startPoi != null && this.endPoi != null) {
+        this.map2D.routeLayerManager.clearAllRoutes()
+        const tmpMaxLon = this.startPoi._lon > this.endPoi._lon ? this.startPoi._lon : this.endPoi._lon
+        const tmpMaxLat = this.startPoi._lat > this.endPoi._lat ? this.startPoi._lat : this.endPoi._lat
+        const tmpMinLon = this.startPoi._lon < this.endPoi._lon ? this.startPoi._lon : this.endPoi._lon
+        const tmpMinLat = this.startPoi._lat < this.endPoi._lat ? this.startPoi._lat : this.endPoi._lat
+        this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+        this.map2D.zoomOut()
+        this.qureyRoutes(this.startPoi, this.endPoi)
+      }
+    },
+    // 移除起始点标记
+    delRoutePoint (bStartOrEnd) {
+      if (bStartOrEnd) {
+        if (this.startFeature != null) {
+          this.map2D.routeLayerManager.removeFeature(this.startFeature)
+          this.startFeature = null
+        }
+      } else {
+        if (this.endFeature != null) {
+          this.map2D.routeLayerManager.removeFeature(this.endFeature)
+          this.endFeature = null
+        }
+      }
+    },
+
+    // 清理起点POI信息
+    clearStartPoi () {
+      this.startPoi = null
+      this.startText = ''
+      this.autoStartTips.Ub.style.visibility = 'hidden'
+      this.delRoutePoint(true)
+      this.map2D.routeLayerManager.clearAllRoutes()
+    },
+    // 清理终点POI信息
+    clearEndPoi () {
+      this.endPoi = null
+      this.endText = ''
+      this.autoEndTips.Ub.style.visibility = 'hidden'
+      this.delRoutePoint(false)
+      this.map2D.routeLayerManager.clearAllRoutes()
     },
 
     // 绘制多边形
@@ -598,6 +802,62 @@ export default {
   .areaCursor {
     cursor: url("../../assets/images/m_area.png") 3 2, auto;
   }
+  .searchCtrl {
+    position: absolute;
+    width: 400px;
+    height: 32px;
+    background-color: white;
+    left: 15px;
+    top: 15px;
+    border-radius: 4px;
+    border:0px solid transparent;
+    .inputText {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 326px;//326
+      height: 32px;
+      border-width:0px;
+      border-radius: 4px;
+      padding: 0px 66px 0px 5px;
+      background-color: white;
+      outline: none;
+    }
+    .inputSearch {
+      position: absolute;
+      left: 336px;
+      top: 0px;
+      height: 32px;
+      width: 32px;
+      border-width:0px;
+      border: 0px solid transparent;
+      cursor: pointer;
+      padding: 0px;
+      margin: 0px;
+      //border-left: 1px solid gray;
+      background-image: url('../../../public/assets/images/addrSearch.png');
+    }
+    .inputFunc {
+      position: absolute;
+      left: 368px;
+      top: 0px;
+      height: 32px;
+      width: 32px;
+      border-width:0px;
+      border: 0px solid transparent;
+      cursor: pointer;
+      padding: 0px;
+      margin: 0px;
+    }
+    .inputFunc_route {
+      background-color: gray;
+      background-image: url('../../../public/assets/images/route.png');
+    }
+    .inputFunc_close {
+      background-color: white;
+      background-image: url('../../../public/assets/images/search_close.png');
+    }
+  }
   .searchBox {
     position: absolute;
     height: 34px;
@@ -661,6 +921,53 @@ export default {
     }
     .itemSeparator {
       border-top:1px solid rgb(221, 214, 214)
+    }
+  }
+  .routeCtrl {
+    position: absolute;
+    width: 400px;
+    height: 100px;
+    background-color: rgb(14, 217, 231);
+    left: 15px;
+    top: 15px;
+    border-radius: 4px;
+    border:0px solid transparent;
+    .routeBtn {
+      position: absolute;
+      height: 32px;
+      width: 32px;
+      border-width:0px;
+      border: 0px solid transparent;
+      cursor: pointer;
+      padding: 0px;
+      margin: 0px;
+      background-color: rgba($color: #f7f5f5, $alpha: 0.3);
+    }
+    .routeSwap {
+      left: 10px;
+      top: 31px;
+      background-image: url('../../../public/assets/images/swap.png');
+    }
+    .routeClose {
+      left: 368px;
+      top: 0px;
+      background-image: url('../../../public/assets/images/search_close.png');
+    }
+    .pointInput {
+      width: 306px;
+      margin-left: 52px;
+      margin-top: 10px;
+      .appendBtn {
+        width: 48px;
+      }
+      .appendBtn:hover {
+        color: rgb(63, 107, 165);
+        opacity: 50%;
+      }
+      .appendBtn:active {
+        color: rgb(63, 107, 165);
+        opacity: 1;
+      }
     }
   }
   .plan {

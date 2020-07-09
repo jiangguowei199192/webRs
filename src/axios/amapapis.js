@@ -51,4 +51,8 @@ const getWeather = params => {
   return client.get('weather/weatherInfo', { params: params })
 }
 
-export default { getPOIs, getPoiDetail, getLocation, getWeather }
+const getRoutes = params => {
+  return client.get('direction/driving', { params: params })
+}
+
+export default { getPOIs, getPoiDetail, getLocation, getWeather, getRoutes }

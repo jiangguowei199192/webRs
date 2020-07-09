@@ -13,3 +13,12 @@
   -webkit-box-shadow: inset 0 0 6px rgb(86, 87, 61);//滑块阴影颜色
   background-color: rgba($color: rgb(86, 87, 61), $alpha: 0.2);//滑块背景色
 }
+
+// 地图组件中-路线规划输入框前后缀样式
+.el-input-group__prepend {
+  padding: 0px 10px;
+}
+.el-input-group__append {
+  margin: 0px;
+  padding: 0px 10px;
+}
