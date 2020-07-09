@@ -15,7 +15,7 @@
           <!-- {{data.onlineStatus==='offline'}} -->
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
-          <i :id="'liveVideo'+data.id">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">({{data.deviceCountTotal}}/{{data.deviceCountOnline}})</a>
+          <i :id="'liveVideo'+data.id">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">[{{data.deviceCountTotal}}/{{data.deviceCountOnline}}]</a>
           </i>
           <b :obj="JSON.stringify(Object.assign({},data,{deviceAddress:node.parent.data.deviceAddress,deviceBrand:node.parent.data.deviceBrand,parentLabel:node.parent.data.label, labelTotal:node.parent.data.label+ '-' + data.label}))" ></b>
         </span>
