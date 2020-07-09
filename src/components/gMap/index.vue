@@ -250,12 +250,18 @@ export default {
       this.map2D.markerLayerManager.baseUrl = localStorage.ftpBaseUrl
       this.$emit('eventMapLoaded')
 
-      this.map2D.geoLocation()
+      this.map2D.geoLocation(this.curLocationCB)
       this.map2D.addAutocomplete(this.initSearchBox)
 
       this.map2D.searchLayerManager.select()
       this.map2D.searchLayerManager.selectMarkerEvent.addEventListener(this.selectMarkerEventCB)
       this.map2D.searchLayerManager.popNavImgClickEvent.addEventListener(this.popNavImgClickEventCB)
+    },
+
+    // 自动定位当前位置回调
+    curLocationCB (lon, lat) {
+      this.lon = lon
+      this.lat = lat
     },
 
     // 点击气泡弹窗中图标按钮事件回调
