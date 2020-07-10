@@ -26,7 +26,6 @@ export default {
   height: 100px;
   overflow-x: auto;
   white-space: nowrap;
-  overflow: auto;
 }
 .item {
   display: inline-block;

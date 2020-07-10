@@ -3,7 +3,7 @@
     <div style="width: 100%;">
       <div class="addressInfo">
         <div style="height: 70px;">
-          <el-button style="float: right; width: 40px; margin-right: 20px;" type="primary" icon="el-icon-top-right" circle></el-button>
+          <el-button style="float: right; width: 40px; margin-right: 20px;" type="primary" icon="el-icon-top-right" @click="goPlanSetting" circle></el-button>
           <div style="margin-top: 30px; margin-left: 15px; font-size: 15px;">{{address}}</div>
           <div style="margin-top: 5px; margin-left: 15px; font-size: 12px;">{{subAddress}} <i class="el-icon-warning"></i></div>
         </div>
@@ -81,6 +81,14 @@ export default {
   },
   components: {
     HorCardList
+  },
+  methods: {
+    goPlanSetting: function () {
+      console.log(666)
+      this.$router.push({
+        path: '/PlanSetting'
+      })
+    }
   }
 }
 </script>
