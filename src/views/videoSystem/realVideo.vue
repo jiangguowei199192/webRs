@@ -398,8 +398,7 @@ export default {
             )
         } else {
           this.onlineArray.forEach((item, index) => {
-            if (
-              item.children && item.children.length > 0) {
+            if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
                 list.isSelected = false
                 if (list.id === curVideo.id) {
@@ -422,22 +421,45 @@ export default {
       this.currentPage = 1
       this.totalVideosArray = []
       this.curVideoIndex = 1000
-      for (let i = 0; i < bs.length; i++) {
-        if (!JSON.parse(bs[i].getAttribute('obj')).children) {
-          if (!this.isPlayAll) {
-            bs[i].parentElement.setAttribute('class', 'liveIcon')
-            this.totalVideosArray.push(JSON.parse(bs[i].getAttribute('obj')))
-          } else {
-            // 移除所有激活的
-            const divs = document.querySelectorAll('.el-tree-node')
-            for (let i = 0; i < divs.length; i++) {
-              divs[i].classList.remove('is-current')
+      if (this.isOnline) {
+        this.onlineArray.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              const divs = document.querySelectorAll('div.list')
+              if (!this.isPlayAll) {
+                for (let i = 0; i < divs.length; i++) {
+                  divs[i].classList.add('selected')
+                }
+                list.isSelected = true
+              } else {
+                for (let i = 0; i < divs.length; i++) {
+                  divs[i].classList.remove('selected')
+                }
+                list.isSelected = false
+                this.curSelectedVideo = {}
+              }
+            })
+          }
+        })
+      } else {
+        for (let i = 0; i < bs.length; i++) {
+          if (!JSON.parse(bs[i].getAttribute('obj')).children) {
+            if (!this.isPlayAll) {
+              bs[i].parentElement.setAttribute('class', 'liveIcon')
+              this.totalVideosArray.push(JSON.parse(bs[i].getAttribute('obj')))
+            } else {
+              // 移除所有激活的
+              const divs = document.querySelectorAll('.el-tree-node')
+              for (let i = 0; i < divs.length; i++) {
+                divs[i].classList.remove('is-current')
+              }
+              this.curSelectedVideo = {}
+              bs[i].parentElement.setAttribute('class', '')
             }
-            this.curSelectedVideo = {}
-            bs[i].parentElement.setAttribute('class', '')
           }
         }
       }
+
       // 若不够，数据则补位空格
       if (this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
