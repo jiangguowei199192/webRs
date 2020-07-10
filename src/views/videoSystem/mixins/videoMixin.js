@@ -9,6 +9,7 @@ const videoMixin = {
       selectedIndex: '9', // 激活已选择
       filterDevice: '', // 设备名称
       treeData: [], // 设备tree数据
+      onlineArray: [], // 在线设备列表
       ninePalace: require('../../../assets/images/9.png'),
       fourPalace: require('../../../assets/images/4.png'),
       onePalace: require('../../../assets/images/1.png'),
@@ -60,6 +61,7 @@ const videoMixin = {
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
             data[i].children.push(d)
+            this.onlineArray.push(d)
           })
         }
         delete data[i].deviceList
@@ -97,6 +99,8 @@ const videoMixin = {
        * 获取所有设备
        */
     getAllDeptDevices () {
+      this.onlineArray = []
+      this.treeData = []
       this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
         if (res && res.data && res.data.code === 0) {
           var data = res.data.data
@@ -119,7 +123,7 @@ const videoMixin = {
           })
           this.setDeviceTreeNodeID(this.treeData)
 
-          console.log(this.treeData)
+          // console.log(this.onlineArray)
         }
       })
     }
