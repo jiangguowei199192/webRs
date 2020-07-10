@@ -15,7 +15,7 @@
           <!-- {{data.onlineStatus==='offline'}} -->
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
-          <i :id="'liveVideo'+data.id">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">[{{data.deviceCountTotal}}/{{data.deviceCountOnline}}]</a>
+          <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">[{{data.deviceCountTotal}}/{{data.deviceCountOnline}}]</a>
           </i>
           <b :obj="JSON.stringify(Object.assign({},data,{deviceAddress:node.parent.data.deviceAddress,deviceBrand:node.parent.data.deviceBrand,parentLabel:node.parent.data.label, labelTotal:node.parent.data.label+ '-' + data.label}))" ></b>
         </span>
@@ -163,7 +163,7 @@ export default {
     background-color: transparent;
     .el-tree-node {
       .el-tree-node__content {
-        line-height: 28px;
+        line-height: 30px;
       }
       .el-tree-node__expand-icon {
         color: #23cefd;
@@ -177,6 +177,21 @@ export default {
     > span {
       i {
         font-style: normal;
+        position:relative;
+      }
+      i.extra{
+        font-size:14px;
+        color:#FFF464;
+      }
+      i.extra::before{
+        position:absolute;
+        top:7px;
+        left:-13px;
+        content:'.';
+        width:6px;
+        height:6px;
+        background:#FFF464;
+        border-radius:50%;
       }
       span {
         display: inline-block;
@@ -195,24 +210,21 @@ export default {
       }
     }
     span.liveIcon {
-      padding-right: 25px;
+      padding-right: 35px;
       background: url(../../../assets/images/onlive.png) no-repeat right center;
     }
   }
   /deep/.el-tree--highlight-current
     .el-tree-node.is-current
     > .el-tree-node__content {
-      font-size:14px;
-    background: #096090 !important;
+    background:rgba(0,180,255,0.43)!important;
+
   }
   /deep/.el-tree-node__content {
-    // cursor: text;
-    // .custom-tree-node {
-    //   cursor: pointer;
-    // }
+    height:30px;
   }
   /deep/.el-tree-node__content:hover {
-    background-color: #00B4FF !important;
+    background:rgba(0,180,255,0.2);
   }
   /deep/ .el-tree-node:focus > .el-tree-node__content {
     background-color: transparent;
