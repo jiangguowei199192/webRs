@@ -10,11 +10,11 @@
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
-            <div :class="{active:index==0}" @click.stop="changeOnlineOrAll(0)">在线</div>
-            <div :class="{active:index==1}" @click.stop="changeOnlineOrAll(1)">全部</div>
+            <div :class="{active:isOnline}" @click.stop="changeOnlineOrAll(true)">在线</div>
+            <div :class="{active:!isOnline}" @click.stop="changeOnlineOrAll(false)">全部</div>
           </div>
           <!-- 默认展示在线设备 -->
-          <template v-if="index==0">
+          <template v-if="isOnline">
             <div
               class="list"
               v-for="(item,index1) in onlineArray"
@@ -44,7 +44,7 @@
             </div>
           </template>
           <!-- 全部部分 -->
-          <template v-if="index==1">
+          <template v-else>
             <div class="search">
               <el-input
                 type="text"
@@ -242,11 +242,11 @@ export default {
   },
   methods: {
     // 在线或所有设备切换
-    changeOnlineOrAll (index) {
-      if (index === this.index) return
-      this.index = index
+    changeOnlineOrAll (isOnline) {
+      if (Number(this.isOnline) === Number(isOnline)) return
+      this.isOnline = isOnline
       // 如果选择在线设备，则清除所有设备的数据
-      if (index === 0) {
+      if (this.isOnline) {
         this.palace = 9 // 默认选中9宫格
         this.zoom = 0 // 变倍
         this.zoomLens = 0 // 变焦
@@ -377,17 +377,30 @@ export default {
       if (this.curVideosArray[this.curVideoIndex]) {
         this.curSelectedVideo = curVideo
         // 点击当前视频区域，默认去掉所有激活的样式
-        const divs = document.querySelectorAll('.el-tree-node')
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].classList.remove('is-current')
+        if (!this.isOnline) {
+          const divs = document.querySelectorAll('.el-tree-node')
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.remove('is-current')
+          }
+          document
+            .querySelector(
+              '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+            )
+            .parentElement.parentElement.parentElement.parentElement.classList.add(
+              'is-current'
+            )
+        } else {
+          this.onlineArray.forEach((item, index) => {
+            if (
+              item.children && item.children.length > 0) {
+              item.children.forEach(list => {
+                if (list.id === curVideo.id) {
+                  this.selectedIndex = index
+                }
+              })
+            }
+          })
         }
-        document
-          .querySelector(
-            '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-          )
-          .parentElement.parentElement.parentElement.parentElement.classList.add(
-            'is-current'
-          )
       }
     },
     // 预览全部

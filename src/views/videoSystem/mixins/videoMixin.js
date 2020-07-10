@@ -5,7 +5,7 @@ const videoMixin = {
       idStart: 0,
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
-      index: 0, // 默认展示在线设备 0在线 1全部
+      isOnline: true, // 默认展示在线设备 true在线 false全部
       selectedIndex: 200, // 激活在线设备
       filterDevice: '', // 设备名称
       treeData: [], // 设备tree数据
