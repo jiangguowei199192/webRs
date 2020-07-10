@@ -24,25 +24,29 @@
           <template v-if="index==0">
             <div
               class="list"
-              v-for="(item,index) in listArray"
-              :key="index"
-              :class="{selected:selectedIndex==index}"
+              v-for="(item,index1) in onlineArray"
+              :key="index1"
+              :class="{selected:selectedIndex==index1,unman:item.deviceTypeCode==='WRJ'}"
             >
               <p>
-                <span class="area">{{item.area}}</span>
+                <span class="area">{{item.label}}</span>
                 <i></i>
               </p>
               <div class="btns">
+                <!-- <div > -->
                 <el-button
-                  :class="{visible:true, selected:curDevice==item.id, playing:item.playVl}"
-                  @click.stop="changeSelectDevice(item.id,index)"
-                  v-if="item.visibleText"
-                >{{item. visibleText}}</el-button>
-                <el-button
-                  :class="{infrared:true, selected:curDevice==item.idIr, playing:item.playIr}"
-                  @click.stop="changeSelectDevice(item.idIr,index)"
-                  v-if="item.infraredText"
-                >{{item.infraredText}}</el-button>
+                  v-for="(list,index2) in item.children"
+                  :key="index2"
+                  :class="{visible:list.label==='可见光',infrared:list.label==='红外光'}"
+                  :style="{backgroundColor:list.isSelected?'rgba(14,90,148,1)':''}"
+                  @click.stop="playDeviceVideo(item,list,index1,index2)"
+                >{{list.label}}</el-button>
+                <!-- <el-button
+                    :class="{infrared:list.label==='可见光'}"
+                    :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
+                    @click.stop="changeStatus(2,index)"
+                >{{list.label}}</el-button>-->
+                <!-- </div> -->
               </div>
             </div>
           </template>
@@ -63,24 +67,29 @@
               v-for="(item,index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
-              @click.stop="operateCurVideo(item,index)"
-              :class="{active:curVideoIndex===index}"
             >
-              <VideoWall
-                :videoInfo.sync="item"
-                :key="index"
-                v-if="item.streamUrl"
-                ref="videoCtrl"
-                @timeupdateEvent="timeupdate"
-              ></VideoWall>
+              <div
+                class="videoItem"
+                @click.stop="operateCurVideo(item,index)"
+                :class="{active:curVideoIndex===index}"
+                :style="machineStatusStyle2(showVideoPageSize)"
+              >
+                <VideoWall
+                  :videoInfo.sync="item"
+                  :key="index"
+                  v-if="item.streamUrl"
+                  ref="videoCtrl"
+                  @timeupdateEvent="timeupdate"
+                ></VideoWall>
+              </div>
             </div>
           </div>
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="ninePalace" @click.stop="changeVideosType(9)" />
-              <img :src="fourPalace" @click.stop="changeVideosType(4)" />
-              <img :src="onePalace" @click.stop="changeVideosType(1)" />
+              <img :src="showVideoPageSize==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" />
+              <img :src="showVideoPageSize==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
+              <img :src="showVideoPageSize==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
             </div>
             <div class="centerTool">
               <img :src="stop" @click="stopPlayRecord" />
@@ -125,7 +134,7 @@
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
-        :style="machineStatusStyle(showVideoPageSize)"
+        :style="machineStatusStyle3(showVideoPageSize)"
       >
         <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
       </div>
@@ -418,7 +427,7 @@ export default {
       this.totalVideosArray = newTotalVideosArray
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')
-      // console.log(result)
+      console.log(result)
       // 1.如果有视频小于每屏的展示数据（包含没有的情况）
       if (result.length <= n) {
         // 1.1由大变小
@@ -441,29 +450,48 @@ export default {
           item => item !== ''
         )
         this.curVideosArray = this.totalVideosArray.slice(0, n)
+        console.log(this.curVideosArray)
+      }
+      if (this.curVideosArray[0]) {
+        this.activeFirstTree()
       }
     },
-    // 上一页
-    pre (cpage) {
-      // 始终截取当前页需要的数据
-      this.curVideoIndex = 1000
+
+    // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
+    activeFirstTree () {
       const divs = document.querySelectorAll('.el-tree-node')
       for (let i = 0; i < divs.length; i++) {
         divs[i].classList.remove('is-current')
       }
+      document
+        .querySelector('#liveVideo' + this.curVideosArray[0].id)
+        .parentElement.parentElement.parentElement.parentElement.classList.add(
+          'is-current'
+        )
+    },
+
+    // 上一页
+    pre (cpage) {
+      // 始终截取当前页需要的数据
+      this.curVideoIndex = 1000
+      // const divs = document.querySelectorAll('.el-tree-node')
+      // for (let i = 0; i < divs.length; i++) {
+      //   divs[i].classList.remove('is-current')
+      // }
       this.curVideosArray = this.totalVideosArray.slice(
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
+      this.activeFirstTree()
     },
     // 下一页
     next (cpage) {
       // 清掉之前的选中状态
       this.curVideoIndex = 1000
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
-      }
+      // const divs = document.querySelectorAll('.el-tree-node')
+      // for (let i = 0; i < divs.length; i++) {
+      //   divs[i].classList.remove('is-current')
+      // }
       if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
         // 若不够，数据则补位空格
@@ -471,16 +499,64 @@ export default {
           this.totalVideosArray.push('')
         }
       }
-      // console.log(this.totalVideosArray.length)
+      console.log(this.totalVideosArray.length)
       this.curVideosArray = this.totalVideosArray.slice(
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
-      // console.log(cpage, this.curVideosArray.length)
+      this.activeFirstTree()
+      console.log(cpage, this.curVideosArray.length)
     },
 
     // 动态渲染9个空元素
     machineStatusStyle (n) {
+      if (n === 9) {
+        return {
+          width: '33.3%',
+          height: '33.3%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 4) {
+        return {
+          width: '50%',
+          height: '50%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 1) {
+        return {
+          width: '100%',
+          height: '100%'
+          // marginLeft: '10px'
+        }
+      }
+    },
+
+    // 动态渲染9个空元素
+    machineStatusStyle2 (n) {
+      var dom = document.querySelector('.videoList')
+      if (!dom) return
+      var h = dom.clientHeight
+      var marginBottom = 10
+      if (n === 9) {
+        h = (h - 3 * marginBottom) / 3
+        return {
+          height: h + 'px'
+        }
+      } else if (n === 4) {
+        h = (h - 2 * marginBottom) / 2
+        return {
+          height: h + 'px'
+        }
+      } else if (n === 1) {
+        h = h - 1 * marginBottom
+        return {
+          height: h + 'px'
+        }
+      }
+    },
+
+    // 动态渲染9个空元素
+    machineStatusStyle3 (n) {
       if (n === 9) {
         return {
           width: '31%',
@@ -573,10 +649,14 @@ export default {
      */
     removePlayer (player) {
       var index = this.totalVideosArray.indexOf(player)
-      if (index !== -1) this.totalVideosArray[index] = ''
+      if (index !== -1) {
+        this.totalVideosArray[index] = ''
+        // 去掉黄色边框
+        if (index === this.curVideoIndex) this.curVideoIndex = 1000
+      }
       this.curVideosArray = this.totalVideosArray.slice(
-        0,
-        this.showVideoPageSize
+        (this.currentPage - 1) * this.showVideoPageSize,
+        this.currentPage * this.showVideoPageSize
       )
       this.curPlayer = ''
     },
@@ -778,50 +858,47 @@ export default {
     }
   }
   div.list {
-    margin-top: 20px;
-    padding-left: 10px;
-    padding-top: 10px;
-    height: 62px;
-    background: url(../../assets/images/list-unselected.png) no-repeat;
-    p {
-      margin-bottom: 8px;
-      color: #1eb0fc;
-      i {
-        display: inline-block;
-        width: 17px;
-        height: 10px;
-        background: url(../../assets/images/live.png) no-repeat;
-        margin-left: 12px;
-      }
-    }
-    div.btns {
-      button {
-        font-size: 12px;
-        font-weight: bold;
-        box-sizing: border-box;
-        width: 74px;
-        height: 22px;
-        line-height: 22px;
-        border: 1px solid rgba(30, 176, 252, 1);
-        padding: 0;
-        background: #10243f;
+      margin-top: 20px;
+      padding-left: 10px;
+      padding-top: 10px;
+      height: 72px;
+      background: url(../../assets/images/list-unselected.png) no-repeat;
+      width: 230px;
+      box-sizing: border-box;
+      p {
+        margin-bottom: 8px;
         color: #1eb0fc;
-        text-align: right;
-        padding-right: 8px;
+        i {
+          display: inline-block;
+          width: 17px;
+          height: 10px;
+          background: url(../../assets/images/live.png) no-repeat;
+          margin-left: 12px;
+        }
       }
-      button.visible {
-        background: url(../../assets/images/visible.png) no-repeat 4px center;
+      div.btns {
+        button {
+          font-size: 12px;
+          font-weight: bold;
+          box-sizing: border-box;
+          width: 74px;
+          height: 22px;
+          line-height: 22px;
+          border: 1px solid rgba(30, 176, 252, 1);
+          padding: 0;
+          background: #10243f;
+          color: #1eb0fc;
+          text-align: right;
+          padding-right: 8px;
+          vertical-align: middle;
+        }
+        button.visible {
+          background: url(../../assets/images/visible.png) no-repeat 4px center;
+        }
+        button.infrared {
+          background: url(../../assets/images/infrared.png) no-repeat 4px center;
+        }
       }
-      button.infrared {
-        background: url(../../assets/images/infrared.png) no-repeat 4px center;
-      }
-      button.selected {
-        border: 1px solid rgba(0, 255, 17, 1);
-      }
-      button.playing {
-        background: rgba(0, 212, 14, 1);
-      }
-    }
   }
   div.selected {
     background: url(../../assets/images/list-selected.png) no-repeat;
@@ -830,7 +907,8 @@ export default {
 
 .video {
   box-sizing: border-box;
-  padding: 21px 0px 0px 21px;
+  padding: 21px 13px 0px 23px;
+  //background: red;
   // position: relative;
   .box {
     display: flex;
@@ -847,28 +925,25 @@ export default {
   .videoList {
     display: flex;
     flex-wrap: wrap;
-    height: 710px;
-    > div {
-      // width: 384px;
-      // width: 31%;
+    .videoItem {
       box-sizing: border-box;
-      height: 223px;
 
-      margin-right: 11px;
-      margin-bottom: 11px;
+      margin-right: 10px;
+      margin-bottom: 10px;
       background: url(../../assets/images/video.png) no-repeat center center;
       background-color: #00497c;
       cursor: pointer;
     }
-    > div.active {
+    .videoItem.active {
       border: 2px solid rgba(255, 244, 100, 1);
     }
   }
   .tools {
     position: absolute;
-    bottom: 75px;
-    width: 95%;
-    height: 65px;
+    left:18px;
+    right: 21px;
+    bottom: 70px;
+    height: 60px;
     background: url(../../assets/images/tool-bar.png) no-repeat;
     background-size: 100% 100%;
     display: flex;
@@ -877,7 +952,7 @@ export default {
     .rightTool,
     .centerTool {
       position: relative;
-      top: 22px;
+      top: 20px;
       img {
         margin-right: 20px;
         cursor: pointer;
@@ -921,9 +996,9 @@ export default {
 
   .time {
     position: absolute;
-    bottom: 25px;
-    width: 92%;
-    left: 40px;
+    bottom: 20px;
+    left:40px;
+    right: 40px;
   }
 }
 
