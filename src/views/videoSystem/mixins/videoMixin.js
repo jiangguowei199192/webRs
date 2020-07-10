@@ -12,9 +12,17 @@ const videoMixin = {
       ninePalace: require('../../../assets/images/9.png'),
       fourPalace: require('../../../assets/images/4.png'),
       onePalace: require('../../../assets/images/1.png'),
+      nineSelectedPalace: require('../../../assets/images/9_selected.png'),
+      fourSelectedPalace: require('../../../assets/images/4_selected.png'),
+      oneSelectedPalace: require('../../../assets/images/1_selected.png'),
       playAll: require('../../../assets/images/play-all.png'),
       closeAll: require('../../../assets/images/close-all.png'),
-      fullScreen: require('../../../assets/images/full-screen.png')
+      fullScreen: require('../../../assets/images/full-screen.png'),
+      fullScreenSelected: require('../../../assets/images/full-screen-selected.png'),
+      map: require('../../../assets/images/map.png'),
+      mapSelected: require('../../../assets/images/map_selected.png'),
+      photo: require('../../../assets/images/photo.png'),
+      photoSelected: require('../../../assets/images/photo_selected.png')
     }
   },
 

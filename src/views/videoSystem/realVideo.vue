@@ -99,9 +99,11 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="ninePalace" @click.stop="changeVideosType(9)" />
-              <img :src="fourPalace" @click.stop="changeVideosType(4)" />
-              <img :src="onePalace" @click.stop="changeVideosType(1)" />
+              <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)"  />
+              <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
+              <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
+              <img :src="photoClicked?photoSelected:photo" @click.stop="photoClicked=true" />
+              <img :src="mapClicked?mapSelected:map"  @click.stop="mapClicked=true" />
             </div>
             <div class="rightTool">
               <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />
@@ -116,7 +118,7 @@
                 ></el-pagination>
               </div>
 
-              <img :src="fullScreen" @click.stop="dialogVisible=true" />
+              <img :src="!dialogVisible?fullScreen:fullScreenSelected" @click.stop="dialogVisible=true" />
             </div>
           </div>
         </div>
@@ -151,36 +153,36 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'" >
+          <div class="deviceInfo"  >
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
-                <!-- <div @click="changeCurvideo(1)" :class="{active:activeIconObj.isActiveFirst}"></div>
-                <div @click="changeCurvideo(2)" :class="{active:activeIconObj.isActiveSecond}"></div>
-                <div @click="changeCurvideo(3)" :class="{active:activeIconObj.isActiveThird}"></div>
-                <div @click="changeCurvideo(4)" :class="{active:activeIconObj.isActiveFourth}"></div>
-                <div @click="changeCurvideo(5)" :class="{active:activeIconObj.isActiveFifth}"></div>
-                <div @click="changeCurvideo(6)" :class="{active:activeIconObj.isActiveSixth}"></div>
-                <div @click="changeCurvideo(7)" :class="{active:activeIconObj.isActiveSeventh}"></div>
-                <div @click="changeCurvideo(8)" :class="{active:activeIconObj.isActiveEighth}"></div>
-                <div @click="changeCurvideo(9)" :class="{active:activeIconObj.isActiveNineth}"></div> -->
+                <!-- <div></div>
+                <div ></div>
+                <div ></div>
+                <div ></div>
+                <div ></div>
+                <div ></div>
+                <div ></div>
+                <div></div>
+                <div></div> -->
                 <div v-for="(item,index) in 9" :key="index" @click.stop="changeCurVideo(index)" :class="{active:activeCurIcon===index}"></div>
               </div>
               <div class="btns">
                 <div>
-                  <span>+</span>
+                  <span :class="{active:zoom==1}" @click="zoom=1">+</span>
                   <b>变倍</b>
-                  <span>-</span>
+                  <span :class="{active:zoom==2}" @click="zoom=2">-</span>
                 </div>
                 <div>
-                  <span>+</span>
+                  <span :class="{active:zoomLens==1}" @click="zoomLens=1">+</span>
                   <b>变焦</b>
-                  <span>-</span>
+                  <span :class="{active:zoomLens==2}" @click="zoomLens=2">-</span>
                 </div>
                 <div>
-                  <span>+</span>
+                  <span :class="{active:zoomGuang==1}" @click="zoomGuang=1">+</span>
                   <b>光圈</b>
-                  <span>-</span>
+                  <span :class="{active:zoomGuang==2}" @click="zoomGuang=2">-</span>
                 </div>
               </div>
               <div class="slider">
@@ -228,6 +230,12 @@ export default {
   data () {
     return {
       // filterText: '', // 节点过滤文字
+      palace: 9, // 默认选中9宫格
+      zoom: 0, // 变倍
+      zoomLens: 0, // 变焦
+      zoomGuang: 0, // 变光
+      mapClicked: false, // 设备地图
+      photoClicked: false, // 拍照
       dialogVisible: false, // 全屏弹窗
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
@@ -403,6 +411,7 @@ export default {
     },
     // 切换每屏显示的个数
     changeVideosType (n) {
+      this.palace = n
       this.currentPage = 1
       this.curVideoIndex = 1000
       this.showVideoPageSize = n
@@ -809,6 +818,15 @@ export default {
               left: -15px;
               color: #1ca1dc;
             }
+            span.active{
+              background:linear-gradient(90deg,rgb(32,72,105) 0%,rgb(32,72,105) 100%);
+            }
+            span:nth-child(1).active:after{
+                content: "";
+            }
+            span:nth-child(3).active:before{
+                content: "";
+            }
           }
         }
         .slider {
@@ -900,6 +918,13 @@ color:rgba(132,221,255,1)
         img {
           margin-right: 20px;
           cursor: pointer;
+        }
+        img:nth-child(n+4){
+          margin-left:22px;
+          margin-right:0;
+        }
+        img:nth-child(4){
+          margin-right:20px;
         }
       }
       .rightTool {
