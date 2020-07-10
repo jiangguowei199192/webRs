@@ -907,6 +907,13 @@ export default {
               color: #000;
             }
           }
+
+          button[disabled] {
+            i {
+              background: #999;
+              color: #2d506f;
+            }
+          }
         }
       }
     }
