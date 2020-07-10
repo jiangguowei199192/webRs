@@ -23,7 +23,7 @@
             >
               <p>
                 <span class="area">{{item.label}}</span>
-                <i></i>
+                <i v-show="selectedIndex==index1"></i>
               </p>
               <div class="btns">
                 <!-- <div > -->
@@ -280,12 +280,19 @@ export default {
         labelTotal: item.label + '-' + list.label
       })
       if (!this.onlineArray[index1].children[index2].isSelected) {
+        this.onlineArray.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              list.isSelected = false
+            })
+          }
+        })
+        this.selectedIndex = index1
         this.$set(
           this.onlineArray[index1].children[index2],
           'isSelected',
           true
         )
-        this.selectedIndex = index1
         this.playOrClose(1, curData)
       } else {
         this.$set(
