@@ -403,6 +403,7 @@ export default {
               item.children.forEach(list => {
                 if (list.id === curVideo.id) {
                   this.selectedIndex = index
+                  list.isSelected = true
                 }
               })
             }
