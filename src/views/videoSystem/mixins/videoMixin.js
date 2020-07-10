@@ -5,8 +5,8 @@ const videoMixin = {
       idStart: 0,
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
-      index: 0, // 默认展示已选 0已选 1全部
-      selectedIndex: '9', // 激活已选择
+      index: 0, // 默认展示在线设备 0在线 1全部
+      selectedIndex: 200, // 激活在线设备
       filterDevice: '', // 设备名称
       treeData: [], // 设备tree数据
       onlineArray: [], // 在线设备列表
@@ -41,14 +41,14 @@ const videoMixin = {
       this.showRight = type !== 1
     },
     // 点击按钮
-    changeStatus (type, index) {
-      if (type === 1) {
-        this.listArray[index].visibleIsClick = true
-      } else {
-        this.listArray[index].infraredIsclick = true
-      }
-      this.selectedIndex = index
-    },
+    // changeStatus (type, index) {
+    //   if (type === 1) {
+    //     this.listArray[index].visibleIsClick = true
+    //   } else {
+    //     this.listArray[index].infraredIsclick = true
+    //   }
+    //   this.selectedIndex = index
+    // },
 
     /**
      * 递归解析设备
@@ -104,6 +104,13 @@ const videoMixin = {
       this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
         if (res && res.data && res.data.code === 0) {
           var data = res.data.data
+          data.forEach(item => {
+            if (item.deviceTypeCode === 'GDJK') {
+              item.class = 'highdevice'
+            } else {
+              item.class = 'unmanned'
+            }
+          })
           // 修改属性名称
           data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
           data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
@@ -123,7 +130,7 @@ const videoMixin = {
           })
           this.setDeviceTreeNodeID(this.treeData)
 
-          // console.log(this.onlineArray)
+          console.log(this.onlineArray)
         }
       })
     }

@@ -12,7 +12,6 @@
     >
       <span class="custom-tree-node" slot-scope="{ node,data }">
         <span :class="{disabled:data.onlineStatus==='offline'&&!data.children}">
-          <!-- {{data.onlineStatus==='offline'}} -->
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">[{{data.deviceCountTotal}}/{{data.deviceCountOnline}}]</a>
@@ -195,7 +194,7 @@ export default {
       }
       span {
         display: inline-block;
-        width: 30px;
+        width: 35px;
         height: 30px;
         vertical-align: middle;
       }
@@ -226,6 +225,9 @@ export default {
   /deep/.el-tree-node__content:hover {
     background:rgba(0,180,255,0.2);
   }
+  // /deep/.custom-tree-node{
+  //   padding-left:3px;
+  // }
   /deep/ .el-tree-node:focus > .el-tree-node__content {
     background-color: transparent;
   }

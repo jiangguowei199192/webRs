@@ -10,68 +10,49 @@
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
-            <div :class="{active:index==0}" @click.stop="index=0">已选</div>
-            <div :class="{active:index==1}" @click.stop="index=1">全部</div>
+            <div :class="{active:index==0}" @click.stop="changeOnlineOrAll(0)">在线</div>
+            <div :class="{active:index==1}" @click.stop="changeOnlineOrAll(1)">全部</div>
           </div>
-          <div class="search">
-            <el-input
-              type="text"
-              v-model.trim="filterDevice"
-              placeholder="请输入设备名称"
-              suffix-icon="el-icon-search"
-            ></el-input>
-          </div>
-          <!-- 默认展示已选部分 -->
+          <!-- 默认展示在线设备 -->
           <template v-if="index==0">
             <div
               class="list"
-              v-for="(item,index) in listArray"
-              :key="index"
-              :class="{selected:selectedIndex==index}"
+              v-for="(item,index1) in onlineArray"
+              :key="index1"
+              :class="{selected:selectedIndex==index1,unman:item.deviceTypeCode==='WRJ'}"
             >
               <p>
-                <span class="area">{{item.area}}</span>
+                <span class="area">{{item.label}}</span>
                 <i></i>
               </p>
               <div class="btns">
+                <!-- <div > -->
                 <el-button
-                  class="visible"
-                  :style="{backgroundColor:item.visibleIsClick?'rgba(14,90,148,1)':''}"
-                  @click.stop="changeStatus(1,index)"
-                  v-if="item.visibleText"
-                >{{item. visibleText}}</el-button>
-                <el-button
-                  class="infrared"
-                  :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
-                  @click.stop="changeStatus(2,index)"
-                  :class="{isSelected:item.infraredIsclick}"
-                  v-if="item.infraredText"
-                >{{item.infraredText}}</el-button>
+                  v-for="(list,index2) in item.children"
+                  :key="index2"
+                  :class="{visible:list.label==='可见光',infrared:list.label==='红外光'}"
+                  :style="{backgroundColor:list.isSelected?'rgba(14,90,148,1)':''}"
+                  @click.stop="playDeviceVideo(item,list,index1,index2)"
+                >{{list.label}}</el-button>
+                <!-- <el-button
+                    :class="{infrared:list.label==='可见光'}"
+                    :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
+                    @click.stop="changeStatus(2,index)"
+                >{{list.label}}</el-button>-->
+                <!-- </div> -->
               </div>
             </div>
           </template>
           <!-- 全部部分 -->
           <template v-if="index==1">
-            <!-- <div class="tree">
-              <el-tree
-                :data="data5"
-                highlight-current
-                node-key="id"
-                default-expand-all
-                :expand-on-click-node="false"
-                :props="defaultProps"
-                @node-click="handleNodeClick"
-              >
-                <span class="custom-tree-node" slot-scope="{ node,data }">
-                  <span>
-
-                    <span :class="data.class" v-if="data.class"></span>
-                    <img src="../../assets/images/onlive.png" v-if="data.isShow" />
-                    {{ node.label }}
-                  </span>
-                </span>
-              </el-tree>
-            </div>-->
+            <div class="search">
+              <el-input
+                type="text"
+                v-model.trim="filterDevice"
+                placeholder="请输入设备名称"
+                suffix-icon="el-icon-search"
+              ></el-input>
+            </div>
             <tree-data :treeData="treeData" ref="tree" @videoChange="playOrClose"></tree-data>
           </template>
         </div>
@@ -81,7 +62,10 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
-            <div v-if="curSelectedVideo.labelTotal" class="curSelected">当前选中:{{curSelectedVideo.labelTotal}}</div>
+            <div
+              v-if="curSelectedVideo.labelTotal"
+              class="curSelected"
+            >当前选中:{{curSelectedVideo.labelTotal}}</div>
           </div>
           <div class="videoList">
             <div
@@ -99,11 +83,11 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)"  />
+              <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" />
               <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
               <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
               <img :src="photoClicked?photoSelected:photo" @click.stop="photoClicked=true" />
-              <img :src="mapClicked?mapSelected:map"  @click.stop="mapClicked=true" />
+              <img :src="mapClicked?mapSelected:map" @click.stop="mapClicked=true" />
             </div>
             <div class="rightTool">
               <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />
@@ -118,7 +102,10 @@
                 ></el-pagination>
               </div>
 
-              <img :src="!dialogVisible?fullScreen:fullScreenSelected" @click.stop="dialogVisible=true" />
+              <img
+                :src="!dialogVisible?fullScreen:fullScreenSelected"
+                @click.stop="dialogVisible=true"
+              />
             </div>
           </div>
         </div>
@@ -153,7 +140,7 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo"  v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
+          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
@@ -165,8 +152,13 @@
                 <div ></div>
                 <div ></div>
                 <div></div>
-                <div></div> -->
-                <div v-for="(item,index) in 9" :key="index" @click.stop="changeCurVideo(index)" :class="{active:activeCurIcon===index}"></div>
+                <div></div>-->
+                <div
+                  v-for="(item,index) in 9"
+                  :key="index"
+                  @click.stop="changeCurVideo(index)"
+                  :class="{active:activeCurIcon===index}"
+                ></div>
               </div>
               <div class="btns">
                 <div>
@@ -243,44 +235,68 @@ export default {
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
       activeCurIcon: '', // 默认选中云台的图标
-      listArray: [
-        {
-          area: '发展大道黄浦路1',
-          visibleText: '可见光',
-          infraredText: '红外光',
-          // isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
-        },
-        {
-          area: '发展大道黄浦路2',
-          infraredText: '红外光',
-          isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
-        },
-        {
-          area: '发展大道黄浦路3',
-          visibleText: '可见光',
-          isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
-        },
-        {
-          area: '发展大道黄浦路4',
-          visibleText: '可见光',
-          infraredText: '红外光',
-          isSelected: false,
-          visibleIsClick: false,
-          infraredIsclick: false
-        }
-      ],
       value2: 4, // 步速值
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {} // 当前选中
     }
   },
   methods: {
+    // 在线或所有设备切换
+    changeOnlineOrAll (index) {
+      if (index === this.index) return
+      this.index = index
+      // 如果选择在线设备，则清除所有设备的数据
+      if (index === 0) {
+        this.palace = 9 // 默认选中9宫格
+        this.zoom = 0 // 变倍
+        this.zoomLens = 0 // 变焦
+        this.zoomGuang = 0 // 变光
+        this.mapClicked = false // 设备地图
+        this.photoClicked = false // 拍照
+        this.value2 = 4 // 步速值
+        this.activeCurIcon = '' // 默认选中云台的图标
+      } else {
+        this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
+        this.onlineArray.forEach(item => {
+          item.children.forEach(list => {
+            list.isSelected = false
+          })
+        })
+      }
+      this.currentPage = 1 // 默认第1页
+      this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
+      this.curVideoIndex = 1000
+
+      this.isPlayAll = false // 是否播放所有 控制预览全部
+      this.curSelectedVideo = {} // 当前选中
+      this.init()
+    },
+    // 点击在线设备中红外光或可见光
+    playDeviceVideo (item, list, index1, index2) {
+      const curData = Object.assign({}, list, {
+        deviceAddress: item.deviceAddress,
+        deviceBrand: item.deviceBrand,
+        parentLabel: item.label,
+        labelTotal: item.label + '-' + list.label
+      })
+      if (!this.onlineArray[index1].children[index2].isSelected) {
+        this.$set(
+          this.onlineArray[index1].children[index2],
+          'isSelected',
+          true
+        )
+        this.selectedIndex = index1
+        this.playOrClose(1, curData)
+      } else {
+        this.$set(
+          this.onlineArray[index1].children[index2],
+          'isSelected',
+          false
+        )
+        this.selectedIndex = 200
+        this.playOrClose(2, curData)
+      }
+    },
     // 点击云台图标按钮，控制当前视频
     changeCurVideo (index) {
       this.activeCurIcon = index
@@ -327,7 +343,9 @@ export default {
               )
           }
           // 防止有分页的情况
-          const index = this.curVideoIndex + this.showVideoPageSize * (this.currentPage - 1)
+          const index =
+            this.curVideoIndex +
+            this.showVideoPageSize * (this.currentPage - 1)
           this.totalVideosArray.splice(index, 1, curTreeData)
           this.curVideoIndex = 1000
           this.curVideosArray = this.totalVideosArray.slice(
@@ -405,7 +423,10 @@ export default {
           this.totalVideosArray.push('')
         }
       }
-      this.curVideosArray = this.totalVideosArray.slice(0, this.showVideoPageSize)
+      this.curVideosArray = this.totalVideosArray.slice(
+        0,
+        this.showVideoPageSize
+      )
 
       this.isPlayAll = !this.isPlayAll
     },
@@ -542,17 +563,21 @@ export default {
         document.msFullscreenEnabled
       if (isFull === undefined) isFull = false
       return isFull
+    },
+    init () {
+      // 初始加载9个空元素
+      this.totalVideosArray = []
+      for (let i = 0; i < 9; i++) {
+        this.totalVideosArray.push('')
+      }
+      this.curVideosArray = this.totalVideosArray.slice(
+        0,
+        this.showVideoPageSize
+      )
     }
   },
   created () {
-    // 初始加载9个空元素
-    for (let i = 0; i < 9; i++) {
-      this.totalVideosArray.push('')
-    }
-    this.curVideosArray = this.totalVideosArray.slice(
-      0,
-      this.showVideoPageSize
-    )
+    this.init()
     this.getAllDeptDevices()
     const me = this
     window.onresize = function () {
@@ -623,8 +648,10 @@ export default {
       margin-top: 20px;
       padding-left: 10px;
       padding-top: 10px;
-      height: 62px;
+      height: 72px;
       background: url(../../assets/images/list-unselected.png) no-repeat;
+      width: 230px;
+      box-sizing: border-box;
       p {
         margin-bottom: 8px;
         color: #1eb0fc;
@@ -650,6 +677,7 @@ export default {
           color: #1eb0fc;
           text-align: right;
           padding-right: 8px;
+          vertical-align: middle;
         }
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
@@ -661,6 +689,12 @@ export default {
     }
     div.selected {
       background: url(../../assets/images/list-selected.png) no-repeat;
+    }
+    div.list.unman {
+      background: url(../../assets/images/unman_unselected.png) no-repeat;
+    }
+    div.list.unman.selected {
+      background: url(../../assets/images/unman_selected.png) no-repeat;
     }
   }
   .rightContent {
@@ -724,26 +758,26 @@ export default {
           div:nth-child(1) {
             background: url(../../assets/images/device/7.png) no-repeat;
           }
-           div:nth-child(1).active {
+          div:nth-child(1).active {
             background: url(../../assets/images/device/7_selected.png) no-repeat;
           }
           div:nth-child(2) {
             background: url(../../assets/images/device/8.png) no-repeat;
           }
-           div:nth-child(2).active {
+          div:nth-child(2).active {
             background: url(../../assets/images/device/8_selected.png) no-repeat;
           }
           div:nth-child(3) {
             background: url(../../assets/images/device/9.png) no-repeat;
           }
-           div:nth-child(3).active {
+          div:nth-child(3).active {
             background: url(../../assets/images/device/9_selected.png) no-repeat;
           }
           div:nth-child(4) {
             margin-right: 10px;
             background: url(../../assets/images/device/4.png) no-repeat;
           }
-            div:nth-child(4).active {
+          div:nth-child(4).active {
             background: url(../../assets/images/device/4_selected.png) no-repeat;
           }
           div:nth-child(5) {
@@ -755,31 +789,31 @@ export default {
             margin-right: 10px;
             background: url(../../assets/images/device/5.png) no-repeat;
           }
-           div:nth-child(5).active {
+          div:nth-child(5).active {
             background: url(../../assets/images/device/5_selected.png) no-repeat;
           }
           div:nth-child(6) {
             background: url(../../assets/images/device/6.png) no-repeat;
           }
-           div:nth-child(6).active {
+          div:nth-child(6).active {
             background: url(../../assets/images/device/6_selected.png) no-repeat;
           }
           div:nth-child(7) {
             background: url(../../assets/images/device/1.png) no-repeat;
           }
-           div:nth-child(7).active {
+          div:nth-child(7).active {
             background: url(../../assets/images/device/1_selected.png) no-repeat;
           }
           div:nth-child(8) {
             background: url(../../assets/images/device/2.png) no-repeat;
           }
-           div:nth-child(8).active {
+          div:nth-child(8).active {
             background: url(../../assets/images/device/2_selected.png) no-repeat;
           }
           div:nth-child(9) {
             background: url(../../assets/images/device/3.png) no-repeat;
           }
-           div:nth-child(9).active {
+          div:nth-child(9).active {
             background: url(../../assets/images/device/3_selected.png) no-repeat;
           }
         }
@@ -818,14 +852,18 @@ export default {
               left: -15px;
               color: #1ca1dc;
             }
-            span.active{
-              background:linear-gradient(90deg,rgb(32,72,105) 0%,rgb(32,72,105) 100%);
+            span.active {
+              background: linear-gradient(
+                90deg,
+                rgb(32, 72, 105) 0%,
+                rgb(32, 72, 105) 100%
+              );
             }
-            span:nth-child(1).active:after{
-                content: "";
+            span:nth-child(1).active:after {
+              content: "";
             }
-            span:nth-child(3).active:before{
-                content: "";
+            span:nth-child(3).active:before {
+              content: "";
             }
           }
         }
@@ -836,9 +874,9 @@ export default {
           span {
             line-height: 38px;
           }
-          span.demonstration{
-            font-weight:bold;
-            color:rgba(132,221,255,1);
+          span.demonstration {
+            font-weight: bold;
+            color: rgba(132, 221, 255, 1);
           }
           span:nth-child(3) {
             display: inline-block;
@@ -878,9 +916,9 @@ export default {
         padding-left: 30px;
         margin-bottom: 20px;
       }
-      .curSelected{
-        font-weight:400;
-color:rgba(132,221,255,1)
+      .curSelected {
+        font-weight: 400;
+        color: rgba(132, 221, 255, 1);
       }
     }
     .videoList {
@@ -919,12 +957,12 @@ color:rgba(132,221,255,1)
           margin-right: 20px;
           cursor: pointer;
         }
-        img:nth-child(n+4){
-          margin-left:22px;
-          margin-right:0;
+        img:nth-child(n + 4) {
+          margin-left: 22px;
+          margin-right: 0;
         }
-        img:nth-child(4){
-          margin-right:20px;
+        img:nth-child(4) {
+          margin-right: 20px;
         }
       }
       .rightTool {
@@ -944,15 +982,14 @@ color:rgba(132,221,255,1)
                 background: #23cefd;
                 text-align: center;
                 line-height: 20px;
-                color: #1C638B;
+                color: #1c638b;
               }
             }
-            button[disabled]{
-              i{
-                background:#999;
-                color:#2D506F;
+            button[disabled] {
+              i {
+                background: #999;
+                color: #2d506f;
               }
-
             }
           }
         }
