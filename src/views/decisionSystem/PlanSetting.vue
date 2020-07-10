@@ -79,7 +79,7 @@ export default {
         { title: '《重点提示》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' }
       ],
       operationalDeployment: { title: '《作战部署图》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' }, // 作战部署
-      threeDPlan: { title: '《三维预案》', subTitle: 'tif单个文件大小不超过1G' }, // 三维预案
+      threeDPlan: { title: '《三维预案》', subTitle: 'tif单个文件大小不超过1G' }// 三维预案
     }
   },
   components: {
