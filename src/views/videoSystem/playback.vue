@@ -233,14 +233,7 @@ export default {
         }
       } else {
         this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
-        this.onlineArray.forEach(item => {
-          if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
-            delete item.isPlay
-          }
-          item.children.forEach(list => {
-            list.isSelected = false
-          })
-        })
+        this.initOnlineArray()
       }
       this.currentPage = 1 // 默认第1页
       this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
@@ -297,6 +290,22 @@ export default {
     },
 
     /**
+     * 初始化OnlineArray
+     */
+    initOnlineArray () {
+      this.onlineArray.forEach(item => {
+        if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+          delete item.isPlay
+        }
+        if (item.children && item.children.length > 0) {
+          item.children.forEach(list => {
+            list.isSelected = false
+          })
+        }
+      })
+    },
+
+    /**
      *  点击在线设备中红外光或可见光
      */
     playDeviceVideo (item, list, index1, index2) {
@@ -330,6 +339,24 @@ export default {
     },
 
     /**
+     * 激活在线设备和对应的相机
+     * @param {String}} id 相机id
+     */
+    activeOnlineArrayItem (id) {
+      this.onlineArray.forEach((item, index) => {
+        if (item.children && item.children.length > 0) {
+          item.children.forEach(list => {
+            list.isSelected = false
+            if (list.id === id) {
+              this.selectedIndex = index
+              list.isSelected = true
+            }
+          })
+        }
+      })
+    },
+
+    /**
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
@@ -342,18 +369,7 @@ export default {
         }
         this.curNode = this.curPlayer.treeNode
         if (this.isOnline) {
-          // 激活在线设备对应的item
-          this.onlineArray.forEach((item, index) => {
-            if (item.children && item.children.length > 0) {
-              item.children.forEach(list => {
-                list.isSelected = false
-                if (list.id === curVideo.id) {
-                  this.selectedIndex = index
-                  list.isSelected = true
-                }
-              })
-            }
-          })
+          this.activeOnlineArrayItem(curVideo.id)
         } else {
           // 点击当前视频区域，默认去掉所有激活的样式
           const divs = document.querySelectorAll('.el-tree-node')
@@ -511,15 +527,26 @@ export default {
 
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
+      if (this.isOnline) {
+        // 清除所有的在线设备播放样式
+        this.onlineArray.forEach(item => {
+          if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+            delete item.isPlay
+          }
+        })
+        this.activeOnlineArrayItem(this.curVideosArray[0].id)
+        this.setOnlineItemLiveIcon(true, this.selectedIndex)
+      } else {
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
+        document
+          .querySelector('#liveVideo' + this.curVideosArray[0].id)
+          .parentElement.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
       }
-      document
-        .querySelector('#liveVideo' + this.curVideosArray[0].id)
-        .parentElement.parentElement.parentElement.parentElement.classList.add(
-          'is-current'
-        )
     },
 
     // 上一页
@@ -671,7 +698,7 @@ export default {
         // 若指定位置之前有元素，去掉其激活的样式
         if (this.curVideosArray[this.curVideoIndex]) {
           if (this.isOnline) {
-            // 默认去掉所有isSelected的样式
+            // 去掉前个在线设备的播放样式
             for (var j = 0; j < this.onlineArray.length; j++) {
               var item = this.onlineArray[j]
               if (item.children && item.children.length > 0) {
