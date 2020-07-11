@@ -349,18 +349,20 @@ export default {
           // 1.2指定位置添加
           // 若指定位置之前有元素，去掉其对应树节点激活的样式
           if (this.curVideosArray[this.curVideoIndex]) {
-            document
-              .querySelector(
-                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-              )
-              .parentElement.setAttribute('class', '')
-            document
-              .querySelector(
-                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-              )
-              .parentElement.parentElement.parentElement.parentElement.classList.remove(
-                'is-current'
-              )
+            if (!this.isOnline) {
+              document
+                .querySelector(
+                  '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+                )
+                .parentElement.setAttribute('class', '')
+              document
+                .querySelector(
+                  '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+                )
+                .parentElement.parentElement.parentElement.parentElement.classList.remove(
+                  'is-current'
+                )
+            }
           }
           // 防止有分页的情况
           const index =
@@ -546,16 +548,18 @@ export default {
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
+      if (!this.isOnline) {
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
+        document
+          .querySelector('#liveVideo' + this.curVideosArray[0].id)
+          .parentElement.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
+        this.curSelectedVideo = this.curVideosArray[0]
       }
-      document
-        .querySelector('#liveVideo' + this.curVideosArray[0].id)
-        .parentElement.parentElement.parentElement.parentElement.classList.add(
-          'is-current'
-        )
-      this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
     pre (cpage) {
@@ -574,6 +578,7 @@ export default {
     // 下一页
     next (cpage) {
       // 清掉之前的选中状态
+
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
       // for (let i = 0; i < divs.length; i++) {
@@ -591,6 +596,7 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
+      debugger
       this.activeFirstTree()
       console.log(cpage, this.curVideosArray.length)
     },
