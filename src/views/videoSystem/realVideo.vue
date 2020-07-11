@@ -615,9 +615,9 @@ export default {
           }
         })
       }
-      // if (!this.curVideosArray[0]) {
-      //   this.selectedIndex = 200
-      // }
+      if (!this.curVideosArray[0]) {
+        this.selectedIndex = 200
+      }
       this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
@@ -632,7 +632,6 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
-      debugger
       this.activeFirstTree()
     },
     // 下一页
@@ -656,7 +655,6 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
-      debugger
       this.activeFirstTree()
       console.log(cpage, this.curVideosArray.length)
     },
