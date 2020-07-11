@@ -23,7 +23,9 @@
             >
               <p>
                 <span class="area">{{item.label}}</span>
-                <i v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"></i>
+                <i
+                  v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"
+                ></i>
               </p>
               <div class="btns">
                 <!-- <div > -->
@@ -55,9 +57,10 @@
             </div>
             <tree-data :treeData="treeData" ref="tree" @videoChange="playOrClose"></tree-data>
           </template>
-          <div v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0" class="empty">
-            暂无数据
-          </div>
+          <div
+            v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0"
+            class="empty"
+          >暂无数据</div>
         </div>
       </div>
       <!-- 中间视频部分 -->
@@ -379,9 +382,11 @@ export default {
           )
         }
       } else {
-        // 2.关闭视频
-        this.curSelectedVideo = {}
-        this.curVideoIndex = 1000
+        // 2.关闭视频 如果关闭的是显示的视频
+        if (curTreeData.id === this.curSelectedVideo.id) {
+          this.curSelectedVideo = {}
+          this.curVideoIndex = 1000
+        }
         let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {
@@ -561,8 +566,19 @@ export default {
           .parentElement.parentElement.parentElement.parentElement.classList.add(
             'is-current'
           )
-        this.curSelectedVideo = this.curVideosArray[0]
+      } else {
+        this.onlineArray.forEach((item, index) => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              if (list.id === this.curVideosArray[0].id) {
+                this.selectedIndex = index
+                list.isSelected = true
+              }
+            })
+          }
+        })
       }
+      this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
     pre (cpage) {
@@ -767,15 +783,15 @@ export default {
     div.list.unman.selected {
       background: url(../../assets/images/unman_selected.png) no-repeat;
     }
-    div.empty{
-    position: relative;
-    min-height: 60px;
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    color:#909399;
-  line-height: 60px;;
-  font-size:14px
+    div.empty {
+      position: relative;
+      min-height: 60px;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      color: #909399;
+      line-height: 60px;
+      font-size: 14px;
     }
   }
   .rightContent {
