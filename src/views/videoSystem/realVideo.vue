@@ -413,7 +413,6 @@ export default {
           this.onlineArray.forEach((item, index) => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
-                list.isSelected = false
                 if (list.id === curVideo.id) {
                   this.selectedIndex = index
                   list.isSelected = true
