@@ -55,6 +55,9 @@
             </div>
             <tree-data :treeData="treeData" ref="tree" @videoChange="playOrClose"></tree-data>
           </template>
+          <div v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0" class="empty">
+            暂无数据
+          </div>
         </div>
       </div>
       <!-- 中间视频部分 -->
@@ -763,6 +766,16 @@ export default {
     }
     div.list.unman.selected {
       background: url(../../assets/images/unman_selected.png) no-repeat;
+    }
+    div.empty{
+    position: relative;
+    min-height: 60px;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    color:#909399;
+  line-height: 60px;;
+  font-size:14px
     }
   }
   .rightContent {
