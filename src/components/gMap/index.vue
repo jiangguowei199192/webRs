@@ -448,6 +448,8 @@ export default {
 
     // 交换路线起始点
     swapRoutePoint () {
+      this.delRoutePoint(true)
+      this.delRoutePoint(false)
       const tmpStartPoi = this.endPoi
       this.endPoi = null
       const tmpEndPoi = this.startPoi
@@ -528,6 +530,14 @@ export default {
 
     // 在路线规划层增加起始点标记 bStartOrEnd: true,Start point | false,End point
     addRoutePoint (pointPoi, bStartOrEnd) {
+      if (pointPoi == null) {
+        if (bStartOrEnd) {
+          this.startText = ''
+        } else {
+          this.endText = ''
+        }
+        return
+      }
       pointPoi._bWgs2Gcj = false
       if (bStartOrEnd) {
         this.startPoi = pointPoi
