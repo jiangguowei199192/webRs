@@ -5,7 +5,7 @@ import {
 } from 'element-ui'
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? 'http://172.16.63.167:8850' : 'http://111.47.13.103:50017/gdu/', // 请求前缀
+  baseURL: process.env.NODE_ENV === 'development' ? 'http://172.16.63.194:8850' : 'http://111.47.13.103:50017/gdu/', // 请求前缀
   timeout: 10000, // 请求超时时间
   // crossDomain: true, // 设置cross跨域
   withCredentials: true // 设置cross跨域 并设置访问权限 允许跨域携带cookie信息

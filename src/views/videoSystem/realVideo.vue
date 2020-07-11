@@ -33,7 +33,7 @@
                   v-for="(list,index2) in item.children"
                   :key="index2"
                   :class="{visible:list.label==='可见光',infrared:list.label==='红外光'}"
-                  :style="{backgroundColor:list.isSelected?'rgba(14,90,148,1)':''}"
+                  :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                 >{{list.label}}</el-button>
                 <!-- <el-button
@@ -146,7 +146,7 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
+          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'" >
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
@@ -177,11 +177,11 @@
                   <b>变焦</b>
                   <span :class="{active:zoomLens==2}" @click="zoomLens=2">-</span>
                 </div>
-                <div>
+                <!-- <div>
                   <span :class="{active:zoomGuang==1}" @click="zoomGuang=1">+</span>
                   <b>光圈</b>
                   <span :class="{active:zoomGuang==2}" @click="zoomGuang=2">-</span>
-                </div>
+                </div> -->
               </div>
               <div class="slider">
                 <span class="demonstration">步速</span>
@@ -326,6 +326,42 @@ export default {
     // 点击云台图标按钮，控制当前视频
     changeCurVideo (index) {
       this.activeCurIcon = index
+      const params = {}
+      switch (index) {
+        case 0:
+          params.leftRight = 1
+          params.upDown = 1
+          break
+        case 1:
+          params.upDown = 1
+          break
+        case 2:
+          params.leftRight = 2
+          params.upDown = 1
+          break
+        case 3:
+          params.leftRight = 1
+          break
+        case 4:
+          params.leftRight = 1
+          break
+        case 5:
+          params.leftRight = 2
+          break
+        case 6:
+          params.leftRight = 1
+          params.upDown = 2
+          break
+        case 7:
+          params.upDown = 2
+          break
+        case 8:
+          params.leftRight = 2
+          params.upDown = 2
+          break
+        default:
+          break
+      }
     },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
@@ -556,6 +592,7 @@ export default {
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
+      debugger
       if (!this.isOnline) {
         const divs = document.querySelectorAll('.el-tree-node')
         for (let i = 0; i < divs.length; i++) {
@@ -578,6 +615,9 @@ export default {
           }
         })
       }
+      // if (!this.curVideosArray[0]) {
+      //   this.selectedIndex = 200
+      // }
       this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
@@ -592,6 +632,7 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
+      debugger
       this.activeFirstTree()
     },
     // 下一页
