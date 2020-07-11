@@ -23,7 +23,7 @@
             >
               <p>
                 <span class="area">{{item.label}}</span>
-                <i v-show="selectedIndex==index1"></i>
+                <i v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"></i>
               </p>
               <div class="btns">
                 <!-- <div > -->
@@ -245,16 +245,12 @@ export default {
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
       this.isOnline = isOnline
-      // 如果选择在线设备，则清除所有设备的数据
+      // 如果选择在线设备
       if (this.isOnline) {
-        this.palace = 9 // 默认选中9宫格
-        this.zoom = 0 // 变倍
-        this.zoomLens = 0 // 变焦
-        this.zoomGuang = 0 // 变光
-        this.mapClicked = false // 设备地图
-        this.photoClicked = false // 拍照
-        this.value2 = 4 // 步速值
-        this.activeCurIcon = '' // 默认选中云台的图标
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
       } else {
         this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
         this.onlineArray.forEach(item => {
@@ -265,9 +261,17 @@ export default {
       }
       this.currentPage = 1 // 默认第1页
       this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
-      this.curVideoIndex = 1000
+      this.palace = 9 // 默认选中9宫格
+      this.zoom = 0 // 变倍
+      this.zoomLens = 0 // 变焦
+      this.zoomGuang = 0 // 变光
+      this.mapClicked = false // 设备地图
+      this.photoClicked = false // 拍照
+      this.value2 = 4 // 步速值
+      this.activeCurIcon = '' // 默认选中云台的图标
 
       this.isPlayAll = false // 是否播放所有 控制预览全部
+      this.curVideoIndex = 1000 // 默认不选中
       this.curSelectedVideo = {} // 当前选中
       this.init()
     },
@@ -280,13 +284,14 @@ export default {
         labelTotal: item.label + '-' + list.label
       })
       if (!this.onlineArray[index1].children[index2].isSelected) {
-        this.onlineArray.forEach(item => {
-          if (item.children && item.children.length > 0) {
-            item.children.forEach(list => {
-              list.isSelected = false
-            })
-          }
-        })
+        // 关闭其它所有的选中状态
+        // this.onlineArray.forEach(item => {
+        //   if (item.children && item.children.length > 0) {
+        //     item.children.forEach(list => {
+        //       list.isSelected = false
+        //     })
+        //   }
+        // })
         this.selectedIndex = index1
         this.$set(
           this.onlineArray[index1].children[index2],
@@ -300,7 +305,15 @@ export default {
           'isSelected',
           false
         )
-        this.selectedIndex = 200
+        const result = this.onlineArray[index1].children.some(child => {
+          return child.isSelected === true
+        })
+        // 只要有一个被选中
+        if (result) {
+          this.selectedIndex = index1
+        } else {
+          this.selectedIndex = 200
+        }
         this.playOrClose(2, curData)
       }
     },
@@ -422,25 +435,31 @@ export default {
       this.totalVideosArray = []
       this.curVideoIndex = 1000
       if (this.isOnline) {
-        this.onlineArray.forEach(item => {
-          if (item.children && item.children.length > 0) {
-            item.children.forEach(list => {
-              const divs = document.querySelectorAll('div.list')
-              if (!this.isPlayAll) {
-                for (let i = 0; i < divs.length; i++) {
-                  divs[i].classList.add('selected')
-                }
-                list.isSelected = true
-              } else {
-                for (let i = 0; i < divs.length; i++) {
-                  divs[i].classList.remove('selected')
-                }
-                list.isSelected = false
-                this.curSelectedVideo = {}
-              }
-            })
+        const divs = document.querySelectorAll('div.list')
+        if (!this.isPlayAll) {
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.add('selected')
           }
-        })
+          this.onlineArray.forEach(item => {
+            if (item.children && item.children.length > 0) {
+              item.children.forEach(list => {
+                list.isSelected = true
+              })
+            }
+          })
+        } else {
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.remove('selected')
+          }
+          this.onlineArray.forEach(item => {
+            if (item.children && item.children.length > 0) {
+              item.children.forEach(list => {
+                list.isSelected = false
+              })
+            }
+          })
+          this.curSelectedVideo = {}
+        }
       } else {
         for (let i = 0; i < bs.length; i++) {
           if (!JSON.parse(bs[i].getAttribute('obj')).children) {
