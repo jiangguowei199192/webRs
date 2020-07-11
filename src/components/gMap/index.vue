@@ -17,7 +17,7 @@
       <div class="inputSearch" @click.stop="searchAddrs(filterText,true)"/>
       <div class="inputFunc" @click.stop="routeOrCloseFunc" :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"/>
     </div>
-    <div class="routeCtrl" v-show="bShowRouteCtrl">
+    <div class="routeCtrl disable-user-select" v-show="bShowRouteCtrl">
       <el-input id="_pointStart" class="pointInput" v-model="startText" size="mini" :placeholder="startHolder" auto-complete="new-address">
         <div slot="prepend" style="corlor:black">起</div>
         <el-button slot="append" icon="el-icon-close" size="mini" class="appendBtn" @click.stop="clearStartPoi"></el-button>
