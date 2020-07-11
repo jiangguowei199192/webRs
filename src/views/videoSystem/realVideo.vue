@@ -592,7 +592,6 @@ export default {
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
-      debugger
       if (!this.isOnline) {
         const divs = document.querySelectorAll('.el-tree-node')
         for (let i = 0; i < divs.length; i++) {
