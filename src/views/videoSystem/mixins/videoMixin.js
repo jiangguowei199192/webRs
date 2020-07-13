@@ -61,7 +61,9 @@ const videoMixin = {
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
             data[i].children.push(d)
-            this.onlineArray.push(d)
+            if (d.children.length > 0) {
+              this.onlineArray.push(d)
+            }
           })
         }
         delete data[i].deviceList

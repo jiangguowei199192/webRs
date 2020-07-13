@@ -74,7 +74,7 @@
                 v-show="curSelectedVideo.labelTotal"
               >当前选中:{{curSelectedVideo.labelTotal}}</div>
               <div class="warning">
-                <img :src="firePic" alt="">
+                <img :src="firePic" alt />
                 监控报警
                 <b>3</b>个
               </div>
@@ -184,11 +184,11 @@
                   <b>变焦</b>
                   <span :class="{active:zoomLens==2}" @click="zoomLens=2">-</span>
                 </div>
-                <!-- <div>
+                <div>
                   <span :class="{active:zoomGuang==1}" @click="zoomGuang=1">+</span>
                   <b>光圈</b>
                   <span :class="{active:zoomGuang==2}" @click="zoomGuang=2">-</span>
-                </div>-->
+                </div>
               </div>
               <div class="slider">
                 <span class="demonstration">步速</span>
@@ -334,12 +334,15 @@ export default {
     },
     // 点击云台图标按钮，控制当前视频
     changeCurVideo (index) {
+      console.log('当前选中' + this.curSelectedVideo)
+      debugger
       this.activeCurIcon = index
       const params = {}
       switch (index) {
         case 0:
           params.leftRight = 1
           params.upDown = 1
+          this.changeViewVideo(params)
           break
         case 1:
           params.upDown = 1
@@ -371,6 +374,22 @@ export default {
         default:
           break
       }
+    },
+    // 点击云台操作按钮
+    changeViewVideo (params) {
+      debugger
+      this.$axios
+        .get(
+          'api/ptz/' +
+            this.curSelectedVideo.deviceCode +
+            '/' +
+            this.curSelectedVideo.id
+        )
+        .then(res => {
+          if (res && res.data && res.data.code === 0) {
+            debugger
+          }
+        })
     },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
@@ -489,16 +508,27 @@ export default {
       this.currentPage = 1
       this.totalVideosArray = []
       this.curVideoIndex = 1000
+      this.curSelectedVideo = {}
       if (this.isOnline) {
-        const divs = document.querySelectorAll('div.list')
+        const divs = document.querySelectorAll('.leftContainer > div.list')
         if (!this.isPlayAll) {
-          for (let i = 0; i < divs.length; i++) {
-            divs[i].classList.add('selected')
-          }
+          // for (let i = 0; i < divs.length; i++) {
+          //   divs[0].classList.add('selected')
+          // }
           this.onlineArray.forEach(item => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
-                list.isSelected = true
+                if (list.onlineStatus === 'online') {
+                  list.isSelected = true
+                  const curData = Object.assign({}, list, {
+                    deviceCode: item.id,
+                    deviceAddress: item.deviceAddress,
+                    deviceBrand: item.deviceBrand,
+                    parentLabel: item.label,
+                    labelTotal: item.label + '-' + list.label
+                  })
+                  this.totalVideosArray.push(curData)
+                }
               })
             }
           })
@@ -513,11 +543,10 @@ export default {
               })
             }
           })
-          this.curSelectedVideo = {}
         }
       } else {
         for (let i = 0; i < bs.length; i++) {
-          if (!JSON.parse(bs[i].getAttribute('obj')).children) {
+          if (!JSON.parse(bs[i].getAttribute('obj')).children && JSON.parse(bs[i].getAttribute('obj')).onlineStatus === 'online') {
             if (!this.isPlayAll) {
               bs[i].parentElement.setAttribute('class', 'liveIcon')
               this.totalVideosArray.push(JSON.parse(bs[i].getAttribute('obj')))
@@ -527,7 +556,6 @@ export default {
               for (let i = 0; i < divs.length; i++) {
                 divs[i].classList.remove('is-current')
               }
-              this.curSelectedVideo = {}
               bs[i].parentElement.setAttribute('class', '')
             }
           }
@@ -545,7 +573,6 @@ export default {
         0,
         this.showVideoPageSize
       )
-
       this.isPlayAll = !this.isPlayAll
     },
     // 切换每屏显示的个数
@@ -714,6 +741,7 @@ export default {
   created () {
     this.init()
     this.getAllDeptDevices()
+
     const me = this
     window.onresize = function () {
       if (me.dialogVisible) {
@@ -1072,15 +1100,15 @@ export default {
         .warning {
           font-size: 16px;
           font-weight: 400;
-          cursor:pointer;
-          img{
+          cursor: pointer;
+          img {
             vertical-align: middle;
-            margin-right:12px;
+            margin-right: 12px;
             position: relative;
-            top:-2px;
+            top: -2px;
           }
           b {
-            color:#FF0000
+            color: #ff0000;
           }
         }
       }
