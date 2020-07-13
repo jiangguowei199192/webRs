@@ -138,6 +138,7 @@ export default {
       for (let i = 0; i < divs.length; i++) {
         divs[i].parentElement.parentElement.style.pointerEvents = 'none'
         divs[i].parentElement.parentElement.style.cursor = 'not-allowed'
+        divs[i].parentElement.parentElement.style.opacity = '0.5'
         // divs[i].parentElement.style.cursor =
         //     'not-allowed'
         divs[i].parentElement.parentElement.style.color = '#007291'

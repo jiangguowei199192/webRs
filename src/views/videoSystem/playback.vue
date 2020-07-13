@@ -9,8 +9,8 @@
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
-            <div :class="{active:index==0}" @click.stop="index=0">已选</div>
-            <div :class="{active:index==1}" @click.stop="index=1">全部</div>
+            <div :class="{active:isOnline}" @click.stop="changeOnlineOrAll(true)">在线</div>
+            <div :class="{active:!isOnline}" @click.stop="changeOnlineOrAll(false)">全部</div>
           </div>
           <div class="search">
             <el-input
@@ -21,7 +21,7 @@
             ></el-input>
           </div>
           <!-- 默认展示已选部分 -->
-          <template v-if="index==0">
+          <template v-if="isOnline">
             <div
               class="list"
               v-for="(item,index1) in onlineArray"
@@ -30,7 +30,7 @@
             >
               <p>
                 <span class="area">{{item.label}}</span>
-                <i></i>
+                <i v-show="item.isPlay"></i>
               </p>
               <div class="btns">
                 <!-- <div > -->
@@ -51,7 +51,7 @@
             </div>
           </template>
           <!-- 全部部分 -->
-          <template v-if="index==1">
+          <template v-else>
             <Tree :treeData="treeData" :isLive="false" @selectedChange="getSelectedData" ref="tree"></Tree>
           </template>
         </div>
@@ -87,9 +87,18 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="showVideoPageSize==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" />
-              <img :src="showVideoPageSize==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
-              <img :src="showVideoPageSize==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
+              <img
+                :src="showVideoPageSize==9?nineSelectedPalace:ninePalace"
+                @click.stop="changeVideosType(9)"
+              />
+              <img
+                :src="showVideoPageSize==4?fourSelectedPalace:fourPalace"
+                @click.stop="changeVideosType(4)"
+              />
+              <img
+                :src="showVideoPageSize==1?oneSelectedPalace:onePalace"
+                @click.stop="changeVideosType(1)"
+              />
             </div>
             <div class="centerTool">
               <img :src="stop" @click="stopPlayRecord" />
@@ -164,6 +173,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      selectedIndex: 200, // 激活在线设备 初始值200，不激活
       dialogVisible: false, // 全屏弹窗
       curPlayer: '', // 当前播放对象
       curTime: '00:00:00', // 当前播放时间
@@ -178,59 +188,12 @@ export default {
       stop: require('../../assets/images/stop-disable.png'),
       play: require('../../assets/images/play-disable.png'),
       pause: require('../../assets/images/pause.png'),
-      records: [], // timeBar上的回放记录
-      listArray: [
-        {
-          area: '发展大道黄浦路1',
-          visibleText: '可见光',
-          infraredText: '红外光',
-          isSelected: false,
-          idIr: '1',
-          id: '11',
-          playVl: false,
-          playIr: false
-        },
-        {
-          area: '发展大道黄浦路2',
-          infraredText: '红外光',
-          isSelected: false,
-          idIr: '22',
-          id: '2',
-          playVl: false,
-          playIr: false
-        },
-        {
-          area: '发展大道黄浦路3',
-          visibleText: '可见光',
-          isSelected: false,
-          idIr: '33',
-          id: '3',
-          playVl: false,
-          playIr: false
-        },
-        {
-          area: '发展大道黄浦路4',
-          visibleText: '可见光',
-          infraredText: '红外光',
-          isSelected: false,
-          idIr: '44',
-          id: '4',
-          playVl: false,
-          playIr: false
-        }
-      ]
+      records: [] // timeBar上的回放记录
     }
   },
 
   created () {
-    // 初始加载9个空元素
-    for (let i = 0; i < this.showVideoPageSize; i++) {
-      this.totalVideosArray.push('')
-    }
-    this.curVideosArray = this.totalVideosArray.slice(
-      0,
-      this.showVideoPageSize
-    )
+    this.init()
     this.getAllDeptDevices()
     const me = this
     window.onresize = function () {
@@ -244,6 +207,40 @@ export default {
   },
 
   methods: {
+    init () {
+      // 初始加载9个空元素
+      this.totalVideosArray = []
+      for (let i = 0; i < 9; i++) {
+        this.totalVideosArray.push('')
+      }
+      this.curVideosArray = this.totalVideosArray.slice(
+        0,
+        this.showVideoPageSize
+      )
+    },
+
+    /**
+     * 在线或所有设备切换
+     */
+    changeOnlineOrAll (isOnline) {
+      if (Number(this.isOnline) === Number(isOnline)) return
+      this.isOnline = isOnline
+      // 如果选择在线设备，则清除所有设备的数据
+      if (this.isOnline) {
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
+      } else {
+        this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
+        this.initOnlineArray()
+      }
+      this.currentPage = 1 // 默认第1页
+      this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
+      this.curVideoIndex = 1000
+      this.init()
+    },
+
     /**
      * 检查全屏
      */
@@ -293,6 +290,73 @@ export default {
     },
 
     /**
+     * 初始化OnlineArray
+     */
+    initOnlineArray () {
+      this.onlineArray.forEach(item => {
+        if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+          delete item.isPlay
+        }
+        if (item.children && item.children.length > 0) {
+          item.children.forEach(list => {
+            list.isSelected = false
+          })
+        }
+      })
+    },
+
+    /**
+     *  点击在线设备中红外光或可见光
+     */
+    playDeviceVideo (item, list, index1, index2) {
+      this.selectedIndex = index1
+      this.curNode = this.onlineArray[index1].children[index2]
+      this.curNode.parentLabel =
+        this.onlineArray[index1].label +
+        '-' +
+        this.onlineArray[index1].children[index2].label
+      var player = this.totalVideosArray.find(v => v.id === this.curNode.id)
+      if (player === undefined) {
+        player = ''
+      }
+      this.setCurrentPlayerObject(player)
+
+      if (!this.onlineArray[index1].children[index2].isSelected) {
+        // 默认去掉所有isSelected的样式
+        this.onlineArray.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              list.isSelected = false
+            })
+          }
+        })
+        this.$set(
+          this.onlineArray[index1].children[index2],
+          'isSelected',
+          true
+        )
+      }
+    },
+
+    /**
+     * 激活在线设备和对应的相机
+     * @param {String}} id 相机id
+     */
+    activeOnlineArrayItem (id) {
+      this.onlineArray.forEach((item, index) => {
+        if (item.children && item.children.length > 0) {
+          item.children.forEach(list => {
+            list.isSelected = false
+            if (list.id === id) {
+              this.selectedIndex = index
+              list.isSelected = true
+            }
+          })
+        }
+      })
+    },
+
+    /**
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
@@ -304,18 +368,22 @@ export default {
           this.setCurrentPlayerObject(this.totalVideosArray[i])
         }
         this.curNode = this.curPlayer.treeNode
-        // 点击当前视频区域，默认去掉所有激活的样式
-        const divs = document.querySelectorAll('.el-tree-node')
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].classList.remove('is-current')
+        if (this.isOnline) {
+          this.activeOnlineArrayItem(curVideo.id)
+        } else {
+          // 点击当前视频区域，默认去掉所有激活的样式
+          const divs = document.querySelectorAll('.el-tree-node')
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.remove('is-current')
+          }
+          document
+            .querySelector(
+              '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+            )
+            .parentElement.parentElement.parentElement.parentElement.classList.add(
+              'is-current'
+            )
         }
-        document
-          .querySelector(
-            '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-          )
-          .parentElement.parentElement.parentElement.parentElement.classList.add(
-            'is-current'
-          )
       }
     },
 
@@ -459,15 +527,26 @@ export default {
 
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
+      if (this.isOnline) {
+        // 清除所有的在线设备播放样式
+        this.onlineArray.forEach(item => {
+          if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+            delete item.isPlay
+          }
+        })
+        this.activeOnlineArrayItem(this.curVideosArray[0].id)
+        this.setOnlineItemLiveIcon(true, this.selectedIndex)
+      } else {
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
+        document
+          .querySelector('#liveVideo' + this.curVideosArray[0].id)
+          .parentElement.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
       }
-      document
-        .querySelector('#liveVideo' + this.curVideosArray[0].id)
-        .parentElement.parentElement.parentElement.parentElement.classList.add(
-          'is-current'
-        )
     },
 
     // 上一页
@@ -618,18 +697,36 @@ export default {
         // 1.2指定位置添加
         // 若指定位置之前有元素，去掉其激活的样式
         if (this.curVideosArray[this.curVideoIndex]) {
-          document
-            .querySelector(
-              '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-            )
-            .parentElement.setAttribute('class', '')
-          document
-            .querySelector(
-              '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-            )
-            .parentElement.parentElement.parentElement.parentElement.classList.remove(
-              'is-current'
-            )
+          if (this.isOnline) {
+            // 去掉前个在线设备的播放样式
+            for (var j = 0; j < this.onlineArray.length; j++) {
+              var item = this.onlineArray[j]
+              if (item.children && item.children.length > 0) {
+                var c = item.children.find(
+                  i => i.id === this.curVideosArray[this.curVideoIndex].id
+                )
+                if (c !== undefined) {
+                  if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+                    delete item.isPlay
+                  }
+                  break
+                }
+              }
+            }
+          } else {
+            document
+              .querySelector(
+                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+              )
+              .parentElement.setAttribute('class', '')
+            document
+              .querySelector(
+                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+              )
+              .parentElement.parentElement.parentElement.parentElement.classList.remove(
+                'is-current'
+              )
+          }
           this.curVideosArray[this.curVideoIndex].streamUrl = ''
         }
         var index =
@@ -698,7 +795,9 @@ export default {
         }
       }
 
-      this.setTreeNodeLiveIcon(true, this.curNode.id)
+      if (this.isOnline) {
+        this.setOnlineItemLiveIcon(true, this.selectedIndex)
+      } else this.setTreeNodeLiveIcon(true, this.curNode.id)
     },
 
     /**
@@ -717,7 +816,10 @@ export default {
      */
     stopPlayRecord () {
       if (this.curPlayer) {
-        this.setTreeNodeLiveIcon(false, this.curPlayer.id)
+        if (this.isOnline) {
+          this.setOnlineItemLiveIcon(false, this.selectedIndex)
+        } else this.setTreeNodeLiveIcon(false, this.curPlayer.id)
+
         this.removePlayer(this.curPlayer)
       }
       // 更新时间轴指针的位置
@@ -733,6 +835,17 @@ export default {
         curSpan.setAttribute('class', 'liveIcon')
       } else if (!isPlay) {
         curSpan.setAttribute('class', '')
+      }
+    },
+
+    /**
+     * 设置在线设备的liveicon
+     */
+    setOnlineItemLiveIcon (isPlay, index) {
+      if (isPlay) { Reflect.set(this.onlineArray[index], 'isPlay', isPlay) } else {
+        if (Object.prototype.hasOwnProperty.call(this.onlineArray[index], 'isPlay')) {
+          delete this.onlineArray[index].isPlay
+        }
       }
     },
 
@@ -858,50 +971,56 @@ export default {
     }
   }
   div.list {
-      margin-top: 20px;
-      padding-left: 10px;
-      padding-top: 10px;
-      height: 72px;
-      background: url(../../assets/images/list-unselected.png) no-repeat;
-      width: 230px;
-      box-sizing: border-box;
-      p {
-        margin-bottom: 8px;
+    margin-top: 20px;
+    padding-left: 10px;
+    padding-top: 10px;
+    height: 72px;
+    background: url(../../assets/images/list-unselected.png) no-repeat;
+    width: 230px;
+    box-sizing: border-box;
+    p {
+      margin-bottom: 8px;
+      color: #1eb0fc;
+      i {
+        display: inline-block;
+        width: 17px;
+        height: 10px;
+        background: url(../../assets/images/live.png) no-repeat;
+        margin-left: 12px;
+      }
+    }
+    div.btns {
+      button {
+        font-size: 12px;
+        font-weight: bold;
+        box-sizing: border-box;
+        width: 74px;
+        height: 22px;
+        line-height: 22px;
+        border: 1px solid rgba(30, 176, 252, 1);
+        padding: 0;
+        background: #10243f;
         color: #1eb0fc;
-        i {
-          display: inline-block;
-          width: 17px;
-          height: 10px;
-          background: url(../../assets/images/live.png) no-repeat;
-          margin-left: 12px;
-        }
+        text-align: right;
+        padding-right: 8px;
+        vertical-align: middle;
       }
-      div.btns {
-        button {
-          font-size: 12px;
-          font-weight: bold;
-          box-sizing: border-box;
-          width: 74px;
-          height: 22px;
-          line-height: 22px;
-          border: 1px solid rgba(30, 176, 252, 1);
-          padding: 0;
-          background: #10243f;
-          color: #1eb0fc;
-          text-align: right;
-          padding-right: 8px;
-          vertical-align: middle;
-        }
-        button.visible {
-          background: url(../../assets/images/visible.png) no-repeat 4px center;
-        }
-        button.infrared {
-          background: url(../../assets/images/infrared.png) no-repeat 4px center;
-        }
+      button.visible {
+        background: url(../../assets/images/visible.png) no-repeat 4px center;
       }
+      button.infrared {
+        background: url(../../assets/images/infrared.png) no-repeat 4px center;
+      }
+    }
   }
   div.selected {
     background: url(../../assets/images/list-selected.png) no-repeat;
+  }
+  div.list.unman {
+    background: url(../../assets/images/unman_unselected.png) no-repeat;
+  }
+  div.list.unman.selected {
+    background: url(../../assets/images/unman_selected.png) no-repeat;
   }
 }
 
@@ -940,7 +1059,7 @@ export default {
   }
   .tools {
     position: absolute;
-    left:18px;
+    left: 18px;
     right: 21px;
     bottom: 70px;
     height: 60px;
@@ -997,7 +1116,7 @@ export default {
   .time {
     position: absolute;
     bottom: 20px;
-    left:40px;
+    left: 40px;
     right: 40px;
   }
 }

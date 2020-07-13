@@ -14,6 +14,14 @@
   background-color: rgba($color: rgb(86, 87, 61), $alpha: 0.2);//滑块背景色
 }
 
+.disable-user-select {
+  //以下四行取消双击选中文字效果
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 // 地图组件中-路线规划输入框前后缀样式
 .el-input-group__prepend {
   padding: 0px 10px;

@@ -23,7 +23,9 @@
             >
               <p>
                 <span class="area">{{item.label}}</span>
-                <i v-show="selectedIndex==index1"></i>
+                <i
+                  v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"
+                ></i>
               </p>
               <div class="btns">
                 <!-- <div > -->
@@ -31,7 +33,7 @@
                   v-for="(list,index2) in item.children"
                   :key="index2"
                   :class="{visible:list.label==='可见光',infrared:list.label==='红外光'}"
-                  :style="{backgroundColor:list.isSelected?'rgba(14,90,148,1)':''}"
+                  :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                 >{{list.label}}</el-button>
                 <!-- <el-button
@@ -55,6 +57,10 @@
             </div>
             <tree-data :treeData="treeData" ref="tree" @videoChange="playOrClose"></tree-data>
           </template>
+          <div
+            v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0"
+            class="empty"
+          >暂无数据</div>
         </div>
       </div>
       <!-- 中间视频部分 -->
@@ -140,7 +146,7 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
+          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'" >
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
@@ -171,11 +177,11 @@
                   <b>变焦</b>
                   <span :class="{active:zoomLens==2}" @click="zoomLens=2">-</span>
                 </div>
-                <div>
+                <!-- <div>
                   <span :class="{active:zoomGuang==1}" @click="zoomGuang=1">+</span>
                   <b>光圈</b>
                   <span :class="{active:zoomGuang==2}" @click="zoomGuang=2">-</span>
-                </div>
+                </div> -->
               </div>
               <div class="slider">
                 <span class="demonstration">步速</span>
@@ -245,16 +251,12 @@ export default {
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
       this.isOnline = isOnline
-      // 如果选择在线设备，则清除所有设备的数据
+      // 如果选择在线设备
       if (this.isOnline) {
-        this.palace = 9 // 默认选中9宫格
-        this.zoom = 0 // 变倍
-        this.zoomLens = 0 // 变焦
-        this.zoomGuang = 0 // 变光
-        this.mapClicked = false // 设备地图
-        this.photoClicked = false // 拍照
-        this.value2 = 4 // 步速值
-        this.activeCurIcon = '' // 默认选中云台的图标
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
       } else {
         this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
         this.onlineArray.forEach(item => {
@@ -265,9 +267,17 @@ export default {
       }
       this.currentPage = 1 // 默认第1页
       this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
-      this.curVideoIndex = 1000
+      this.palace = 9 // 默认选中9宫格
+      this.zoom = 0 // 变倍
+      this.zoomLens = 0 // 变焦
+      this.zoomGuang = 0 // 变光
+      this.mapClicked = false // 设备地图
+      this.photoClicked = false // 拍照
+      this.value2 = 4 // 步速值
+      this.activeCurIcon = '' // 默认选中云台的图标
 
       this.isPlayAll = false // 是否播放所有 控制预览全部
+      this.curVideoIndex = 1000 // 默认不选中
       this.curSelectedVideo = {} // 当前选中
       this.init()
     },
@@ -280,13 +290,14 @@ export default {
         labelTotal: item.label + '-' + list.label
       })
       if (!this.onlineArray[index1].children[index2].isSelected) {
-        this.onlineArray.forEach(item => {
-          if (item.children && item.children.length > 0) {
-            item.children.forEach(list => {
-              list.isSelected = false
-            })
-          }
-        })
+        // 关闭其它所有的选中状态
+        // this.onlineArray.forEach(item => {
+        //   if (item.children && item.children.length > 0) {
+        //     item.children.forEach(list => {
+        //       list.isSelected = false
+        //     })
+        //   }
+        // })
         this.selectedIndex = index1
         this.$set(
           this.onlineArray[index1].children[index2],
@@ -300,13 +311,57 @@ export default {
           'isSelected',
           false
         )
-        this.selectedIndex = 200
+        const result = this.onlineArray[index1].children.some(child => {
+          return child.isSelected === true
+        })
+        // 只要有一个被选中
+        if (result) {
+          this.selectedIndex = index1
+        } else {
+          this.selectedIndex = 200
+        }
         this.playOrClose(2, curData)
       }
     },
     // 点击云台图标按钮，控制当前视频
     changeCurVideo (index) {
       this.activeCurIcon = index
+      const params = {}
+      switch (index) {
+        case 0:
+          params.leftRight = 1
+          params.upDown = 1
+          break
+        case 1:
+          params.upDown = 1
+          break
+        case 2:
+          params.leftRight = 2
+          params.upDown = 1
+          break
+        case 3:
+          params.leftRight = 1
+          break
+        case 4:
+          params.leftRight = 1
+          break
+        case 5:
+          params.leftRight = 2
+          break
+        case 6:
+          params.leftRight = 1
+          params.upDown = 2
+          break
+        case 7:
+          params.upDown = 2
+          break
+        case 8:
+          params.leftRight = 2
+          params.upDown = 2
+          break
+        default:
+          break
+      }
     },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
@@ -336,18 +391,20 @@ export default {
           // 1.2指定位置添加
           // 若指定位置之前有元素，去掉其对应树节点激活的样式
           if (this.curVideosArray[this.curVideoIndex]) {
-            document
-              .querySelector(
-                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-              )
-              .parentElement.setAttribute('class', '')
-            document
-              .querySelector(
-                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-              )
-              .parentElement.parentElement.parentElement.parentElement.classList.remove(
-                'is-current'
-              )
+            if (!this.isOnline) {
+              document
+                .querySelector(
+                  '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+                )
+                .parentElement.setAttribute('class', '')
+              document
+                .querySelector(
+                  '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
+                )
+                .parentElement.parentElement.parentElement.parentElement.classList.remove(
+                  'is-current'
+                )
+            }
           }
           // 防止有分页的情况
           const index =
@@ -361,9 +418,11 @@ export default {
           )
         }
       } else {
-        // 2.关闭视频
-        this.curSelectedVideo = {}
-        this.curVideoIndex = 1000
+        // 2.关闭视频 如果关闭的是显示的视频
+        if (curTreeData.id === this.curSelectedVideo.id) {
+          this.curSelectedVideo = {}
+          this.curVideoIndex = 1000
+        }
         let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {
@@ -400,7 +459,6 @@ export default {
           this.onlineArray.forEach((item, index) => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
-                list.isSelected = false
                 if (list.id === curVideo.id) {
                   this.selectedIndex = index
                   list.isSelected = true
@@ -422,25 +480,31 @@ export default {
       this.totalVideosArray = []
       this.curVideoIndex = 1000
       if (this.isOnline) {
-        this.onlineArray.forEach(item => {
-          if (item.children && item.children.length > 0) {
-            item.children.forEach(list => {
-              const divs = document.querySelectorAll('div.list')
-              if (!this.isPlayAll) {
-                for (let i = 0; i < divs.length; i++) {
-                  divs[i].classList.add('selected')
-                }
-                list.isSelected = true
-              } else {
-                for (let i = 0; i < divs.length; i++) {
-                  divs[i].classList.remove('selected')
-                }
-                list.isSelected = false
-                this.curSelectedVideo = {}
-              }
-            })
+        const divs = document.querySelectorAll('div.list')
+        if (!this.isPlayAll) {
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.add('selected')
           }
-        })
+          this.onlineArray.forEach(item => {
+            if (item.children && item.children.length > 0) {
+              item.children.forEach(list => {
+                list.isSelected = true
+              })
+            }
+          })
+        } else {
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.remove('selected')
+          }
+          this.onlineArray.forEach(item => {
+            if (item.children && item.children.length > 0) {
+              item.children.forEach(list => {
+                list.isSelected = false
+              })
+            }
+          })
+          this.curSelectedVideo = {}
+        }
       } else {
         for (let i = 0; i < bs.length; i++) {
           if (!JSON.parse(bs[i].getAttribute('obj')).children) {
@@ -528,15 +592,31 @@ export default {
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
-      const divs = document.querySelectorAll('.el-tree-node')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].classList.remove('is-current')
+      if (!this.isOnline) {
+        const divs = document.querySelectorAll('.el-tree-node')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('is-current')
+        }
+        document
+          .querySelector('#liveVideo' + this.curVideosArray[0].id)
+          .parentElement.parentElement.parentElement.parentElement.classList.add(
+            'is-current'
+          )
+      } else {
+        this.onlineArray.forEach((item, index) => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              if (list.id === this.curVideosArray[0].id) {
+                this.selectedIndex = index
+                list.isSelected = true
+              }
+            })
+          }
+        })
       }
-      document
-        .querySelector('#liveVideo' + this.curVideosArray[0].id)
-        .parentElement.parentElement.parentElement.parentElement.classList.add(
-          'is-current'
-        )
+      if (!this.curVideosArray[0]) {
+        this.selectedIndex = 200
+      }
       this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
@@ -556,6 +636,7 @@ export default {
     // 下一页
     next (cpage) {
       // 清掉之前的选中状态
+
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
       // for (let i = 0; i < divs.length; i++) {
@@ -739,6 +820,16 @@ export default {
     }
     div.list.unman.selected {
       background: url(../../assets/images/unman_selected.png) no-repeat;
+    }
+    div.empty {
+      position: relative;
+      min-height: 60px;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      color: #909399;
+      line-height: 60px;
+      font-size: 14px;
     }
   }
   .rightContent {

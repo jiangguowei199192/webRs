@@ -24,6 +24,7 @@
         :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"
       />
     </div>
+<<<<<<< HEAD
     <div class="routeCtrl" v-show="bShowRouteCtrl">
       <el-input
         id="_pointStart"
@@ -33,6 +34,10 @@
         :placeholder="startHolder"
         auto-complete="new-address"
       >
+=======
+    <div class="routeCtrl disable-user-select" v-show="bShowRouteCtrl">
+      <el-input id="_pointStart" class="pointInput" v-model="startText" size="mini" :placeholder="startHolder" auto-complete="new-address">
+>>>>>>> 169a3811fddc508c3c85c4356eed7b079b0ef5cb
         <div slot="prepend" style="corlor:black">起</div>
         <el-button
           slot="append"
@@ -497,6 +502,8 @@ export default {
 
     // 交换路线起始点
     swapRoutePoint () {
+      this.delRoutePoint(true)
+      this.delRoutePoint(false)
       const tmpStartPoi = this.endPoi
       this.endPoi = null
       const tmpEndPoi = this.startPoi
@@ -581,6 +588,14 @@ export default {
 
     // 在路线规划层增加起始点标记 bStartOrEnd: true,Start point | false,End point
     addRoutePoint (pointPoi, bStartOrEnd) {
+      if (pointPoi == null) {
+        if (bStartOrEnd) {
+          this.startText = ''
+        } else {
+          this.endText = ''
+        }
+        return
+      }
       pointPoi._bWgs2Gcj = false
       if (bStartOrEnd) {
         this.startPoi = pointPoi
