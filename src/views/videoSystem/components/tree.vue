@@ -67,6 +67,7 @@ export default {
         }
         if (this.isLive) {
           const obj = {
+            deviceCode: $event.parent.data.id,
             deviceAddress: $event.parent.data.deviceAddress,
             deviceBrand: $event.parent.data.deviceBrand,
             parentLabel: $event.parent.data.label,
