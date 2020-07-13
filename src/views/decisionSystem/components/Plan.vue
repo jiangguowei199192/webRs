@@ -55,7 +55,7 @@
           <div class="itemContainer">
             <img
               class="edit_img fl"
-              src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1594360313848&di=2fe9b1c2486eff6ec18ca8a115b0225e&imgtype=0&src=http%3A%2F%2Ftech.cnr.cn%2Flist%2F201206%2FW020120615244096806710.jpg"
+              src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
             />
             <i class="el-icon-edit-outline edit_icon fl" @click="toFightDeploy()"></i>
           </div>

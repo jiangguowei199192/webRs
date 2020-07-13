@@ -11,18 +11,29 @@
     </div>
     <div class="main" :style="'height:' + workHeight + 'px;'">
       <div class="left fl">
-        <img
-          src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1594360313848&di=2fe9b1c2486eff6ec18ca8a115b0225e&imgtype=0&src=http%3A%2F%2Ftech.cnr.cn%2Flist%2F201206%2FW020120615244096806710.jpg"
-          alt
-        />
+        <img src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png" alt />
         <div class="model_edit" :style="'height:' + (this.workHeight - 60) + 'px;'">
-          <el-select v-model="value" filterable placeholder="常用" size="mini">
+          <el-select
+            placeholder="常用"
+            size="mini"
+            v-model="filterText"
+            @visible-change="visibleChange"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
+            >
+              <el-tooltip
+                effect="light"
+                :content="item.label"
+                placement="bottom-start"
+                visibleArrow="true"
+              >
+                <div class="tooltip_span">{{item.label}}</div>
+              </el-tooltip>
+            </el-option>
           </el-select>
           <div
             class="edit_list ownScrollStyle"
@@ -46,9 +57,11 @@
       <div class="right fr">
         <h3>停靠设置/任务分配</h3>
         <div class="task_list ownScrollStyle" :style="'height:' + (this.workHeight - 60) + 'px;'">
-          <ul>
-            <li class="fl" v-for="item in taskList" :key="item.index">
+          <div class="list_wrap" v-for="item in arrList" :key="item.index">
+            <div class="list_left">
               <el-tree
+                v-for="item in taskList"
+                :key="item.index"
                 :data="taskList"
                 :props="defaultProps"
                 node-key="id"
@@ -56,30 +69,19 @@
                 @node-click="handleNodeClick"
               ></el-tree>
               <!-- <p>任务: 人员疏散</p> -->
-            </li>
-            <li class="fr" v-for="item in areaList" :key="item.index">
-              <el-select v-model="value" filterable :placeholder="item.area" size="mini">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </li>
-          </ul>
-          <!-- <ul class="fr">
-            <li v-for="item in areaList" :key="item.index">
-              <el-select v-model="value" filterable :placeholder="item.area" size="mini">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </li>
-          </ul>-->
+            </div>
+            <div class="list_right">
+              <el-tree
+                v-for="item in selectList"
+                :key="item.index"
+                :data="selectList"
+                :props="defaultProps"
+                node-key="id"
+                :default-expanded-keys="[1]"
+                @node-click="handleNodeClick"
+              ></el-tree>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -98,32 +100,106 @@ export default {
 
       areaList: [],
       markList: [],
-      taskList: [],
-
+      taskList: [
+        {
+          id: 1,
+          label: '汉口北中队: 5辆车',
+          children: [
+            {
+              label: '水罐消防车'
+            },
+            {
+              label: '云梯消防车'
+            },
+            {
+              label: '泡沫消防车'
+            },
+            {
+              label: '登高平台消防车'
+            },
+            {
+              label: '抢险救援消防车'
+            }
+          ]
+        }
+      ],
+      selectList: [
+        {
+          id: 1,
+          label: '1号作业区',
+          children: [
+            {
+              id: 111,
+              label: '1区-1',
+              children: [
+                {
+                  label: '1区-1-1'
+                }
+              ]
+            },
+            {
+              id: 121,
+              label: '1区-2',
+              children: [
+                {
+                  label: '1区-2-1'
+                }
+              ]
+            },
+            {
+              id: 131,
+              label: '1区-3',
+              children: [
+                {
+                  label: '1区-3-1'
+                }
+              ]
+            },
+            {
+              id: 141,
+              label: '1区-4',
+              children: [
+                {
+                  label: '1区-4-1'
+                }
+              ]
+            },
+            {
+              id: 151,
+              label: '1区-5',
+              children: [
+                {
+                  label: '1区-5-1'
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      arrList: [1, 1, 1, 1, 1],
+      filterText: '',
       options: [
         {
-          value: '选项1',
+          value: '1',
           label: '北京'
         },
         {
-          value: '选项2',
+          value: '2',
           label: '上海'
         },
         {
-          value: '选项3',
+          value: '3',
           label: '广州'
         },
         {
-          value: '选项4',
+          value: '4',
           label: '武汉'
         },
         {
-          value: '选项5',
+          value: '5',
           label: '杭州'
         }
       ],
-      value: '',
-
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -137,10 +213,10 @@ export default {
       this.setWorkAreaHeight()
     }
 
-    var items = ['指挥区', '作业区', '集结区', '休整区', '入口']
+    var items1 = ['指挥区', '作业区', '集结区', '休整区', '入口']
     for (var i = 0; i < 10; i++) {
       this.areaList.push({
-        area: items[Math.floor(Math.random() * items.length)],
+        area: items1[Math.floor(Math.random() * items1.length)],
         bgColor:
           '#' +
           Math.random()
@@ -150,31 +226,9 @@ export default {
       })
       this.markList.push({
         imgSrc:
-          'https://p0.meituan.net/moviemachine/9312e90f25f5ad40f2ceb4561f6fa08830409.jpg@128w_170h_1e_1c'
+          'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1594636274169&di=fd85ea5d51bbe1ef98add42151180b70&imgtype=0&src=http%3A%2F%2Fn.sinaimg.cn%2Ffront%2F433%2Fw564h669%2F20181027%2FoWtj-hmxrkzx6079521.jpg'
       })
     }
-
-    this.taskList.push({
-      id: 1,
-      label: '汉口北中队: 5辆车',
-      children: [
-        {
-          label: '水罐消防车'
-        },
-        {
-          label: '云梯消防车'
-        },
-        {
-          label: '泡沫消防车'
-        },
-        {
-          label: '登高平台消防车'
-        },
-        {
-          label: '抢险救援消防车'
-        }
-      ]
-    })
   },
 
   destroyed () {
@@ -187,12 +241,33 @@ export default {
       if (h < this.minHeight) this.fullHeight = this.minHeight
       else this.fullHeight = h
       this.workHeight = this.fullHeight - 126 - 20
-      console.log(this.workHeight)
+      // console.log(this.workHeight)
     },
 
     backToPlan () {
       //   console.log(545)
       this.$router.back(-1)
+    },
+
+    handleNodeClick () {
+      // console.log('出来混迟早是要还的')
+    },
+
+    visibleChange (value) {
+      // if (!value) this.filterText = ''
+      setTimeout(function () {
+        var tagTextList = document
+          .querySelector('#app')
+          .querySelectorAll('.el-input__inner')
+        // console.log(tagTextList)
+        tagTextList.forEach(item => {
+          item.setAttribute('title', item.value)
+        })
+      }, 100)
+    },
+
+    renderContent () {
+      console.log('出来混迟早是要还的')
     }
   }
 }
@@ -278,21 +353,19 @@ export default {
       height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
       text-align: center;
-      padding: 0 15px;
+      padding-left: 15px;
       h3 {
         height: 50px;
         line-height: 50px;
       }
       .task_list {
         overflow-y: auto;
-        ul {
+        .list_wrap {
           display: flex;
           justify-content: space-between;
-          flex-direction: column;
-          li:nth-child(1) {
-            width: 220px;
-            position: relative;
-            margin-bottom: 10px;
+          margin-bottom: 20px;
+          .list_left {
+            width: 200px;
             p {
               font-size: 12px;
               color: #23cefd;
@@ -301,11 +374,17 @@ export default {
               left: 30px;
             }
           }
-          li:nth-child(2) {
-            width: 110px;
-            margin-bottom: 15px;
-            /deep/.el-input {
-              width: 80%;
+          .list_right {
+            width: 130px;
+            margin-left: 10px;
+            /deep/.el-select {
+              line-height: 35px;
+              .el-input {
+                width: 80%;
+                .el-input__inner {
+                  height: 25px;
+                }
+              }
             }
           }
         }
@@ -313,20 +392,30 @@ export default {
     }
   }
 }
+
 /deep/.el-input {
-  width: 97%;
-  margin-left: 16px;
-}
-/deep/.el-input__inner {
-  height: 28px;
+  width: 218px;
+  margin-left: 10px;
+  .el-input__inner {
+    height: 28px;
+  }
 }
 /deep/.el-tree {
   color: #23cefd;
   background-color: transparent;
   .el-tree-node {
     .el-tree-node__content {
-      height: 30px;
-      line-height: 30px;
+      height: 35px;
+      line-height: 35px;
+      border: 1px solid transparent;
+    }
+    .el-tree-node__content:hover,
+    .el-tree-node:focus > .el-tree-node__content {
+      color: #fff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .el-tree-node:focus > .el-tree-node__content {
+      border: 1px solid #23cefd;
     }
     .el-tree-node__expand-icon {
       color: #23cefd;
