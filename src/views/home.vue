@@ -146,6 +146,7 @@ export default {
 <style lang="less" scoped>
 .home {
   background: url(../assets/images/bakcground.png) no-repeat;
+  background-size: 100% 100%;
   .el-header {
     margin-top: 36px;
     height: auto !important;
