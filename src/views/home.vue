@@ -34,14 +34,22 @@
             <span class="extra">{{timeObj.month}}</span> 月
             <span class="extra">{{timeObj.day}}</span> 日
             <span class="extra">{{timeObj.weekday}}</span>
-            <span class="curCity extra"> {{curCity}}</span>
-            天气：<span class="extra">{{weatherReport.weather}}</span>
-            <span class="extra"> {{weatherReport.temperature}}<i>。</i></span>
+            <span class="curCity extra">{{curCity}}</span>
+            天气：
+            <span class="extra">{{weatherReport.weather}}</span>
+            <span class="extra">
+              {{weatherReport.temperature}}
+              <i>。</i>
+            </span>
           </div>
         </div>
       </el-header>
       <el-main>
-        <router-view />
+        <!-- <router-view /> -->
+        <keep-alive>
+          <router-view v-if="$route.meta.keepAlive"></router-view>
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive"></router-view>
       </el-main>
     </el-container>
   </div>
@@ -100,9 +108,13 @@ export default {
         if (index === 0) this.$router.push({ path: '/decisionSystem' })
         else if (index === 1) {
           this.jumpToVideoUrl(this.curActive)
-        } else if (index === 2) { this.$router.push({ path: '/evaluationSystem' }) } else if (index === 4) this.$router.push({ path: '/digitalIndividual' })
-        else if (index === 5) this.$router.push({ path: '/digitalEquipment' })
-        else if (index === 6) this.$router.push({ path: '/systemSettings' })
+        } else if (index === 2) {
+          this.$router.push({ path: '/evaluationSystem' })
+        } else if (index === 4) {
+          this.$router.push({ path: '/digitalIndividual' })
+        } else if (index === 5) {
+          this.$router.push({ path: '/digitalEquipment' })
+        } else if (index === 6) this.$router.push({ path: '/systemSettings' })
         this.isActive = index
       }
     },
@@ -183,15 +195,15 @@ export default {
     }
     .title {
       width: 540px;
-      height:66px;
-      line-height: 66px;;
+      height: 66px;
+      line-height: 66px;
       text-align: center;
       // padding-top: 11px;
       font-size: 36px;
       font-weight: bold;
       margin-top: -13px;
       font-family: Source Han Sans CN;
-       background: url(../assets/images/title.png) no-repeat ;
+      background: url(../assets/images/title.png) no-repeat;
       span {
         text-shadow: #000 3px 4px 5px;
       }
@@ -218,21 +230,21 @@ export default {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      color:#fff;
-      span.extra{
-        color:#FFF45C;
-        i{
+      color: #fff;
+      span.extra {
+        color: #fff45c;
+        i {
           font-style: normal;
-          position:relative;
-          top:-10px;
+          position: relative;
+          top: -10px;
         }
       }
-      span.extra:last-child{
-        margin-left:4px;
+      span.extra:last-child {
+        margin-left: 4px;
       }
-      span.curCity{
-        margin-left:30px;
-        margin-right:25px;
+      span.curCity {
+        margin-left: 30px;
+        margin-right: 25px;
       }
     }
   }

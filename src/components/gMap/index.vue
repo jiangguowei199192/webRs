@@ -6,36 +6,73 @@
       @dblclick="dblClickMap"
     ></div>
     <div class="searchCtrl">
-      <input class="inputText" id="_addrSearch"
+      <input
+        class="inputText"
+        id="_addrSearch"
         v-model="filterText"
         type="text"
         autocomplete="off"
-        value=""
+        value
         v-on:keyup.enter="searchAddrs(filterText,false)"
         v-on:keyup.delete="resetChooseAddr"
-        :placeholder="placeHolder"/>
-      <div class="inputSearch" @click.stop="searchAddrs(filterText,true)"/>
-      <div class="inputFunc" @click.stop="routeOrCloseFunc" :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"/>
+        :placeholder="placeHolder"
+      />
+      <div class="inputSearch" @click.stop="searchAddrs(filterText,true)" />
+      <div
+        class="inputFunc"
+        @click.stop="routeOrCloseFunc"
+        :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"
+      />
     </div>
     <div class="routeCtrl" v-show="bShowRouteCtrl">
-      <el-input id="_pointStart" class="pointInput" v-model="startText" size="mini" :placeholder="startHolder" auto-complete="new-address">
+      <el-input
+        id="_pointStart"
+        class="pointInput"
+        v-model="startText"
+        size="mini"
+        :placeholder="startHolder"
+        auto-complete="new-address"
+      >
         <div slot="prepend" style="corlor:black">起</div>
-        <el-button slot="append" icon="el-icon-close" size="mini" class="appendBtn" @click.stop="clearStartPoi"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-close"
+          size="mini"
+          class="appendBtn"
+          @click.stop="clearStartPoi"
+        ></el-button>
       </el-input>
-      <el-input id="_pointEnd" class="pointInput" v-model="endText" size="mini" :placeholder="endHolder" auto-complete="new-address">
+      <el-input
+        id="_pointEnd"
+        class="pointInput"
+        v-model="endText"
+        size="mini"
+        :placeholder="endHolder"
+        auto-complete="new-address"
+      >
         <div slot="prepend" style="corlor:black">终</div>
-        <el-button slot="append" icon="el-icon-close" size="mini" class="appendBtn" @click.stop="clearEndPoi"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-close"
+          size="mini"
+          class="appendBtn"
+          @click.stop="clearEndPoi"
+        ></el-button>
       </el-input>
       <div class="routeBtn routeClose" @click.stop="closeRouteCtrl"></div>
       <div class="routeBtn routeSwap" @click.stop="swapRoutePoint"></div>
     </div>
     <div class="searchResult ownScrollStyle" v-show="bShowResult">
-      <div class="searchItem" v-for="(addr,index) in addrResults" :key="index"
+      <div
+        class="searchItem"
+        v-for="(addr,index) in addrResults"
+        :key="index"
         :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
         @click.stop="gotoAddrDetails($event,addr)"
         @mouseenter="mouseHandler($event,addr,true)"
-        @mouseleave="mouseHandler($event,addr,false)">
-        <img class="itemImg" v-show="addr._imgUrl != null" :src="addr._imgUrl"/>
+        @mouseleave="mouseHandler($event,addr,false)"
+      >
+        <img class="itemImg" v-show="addr._imgUrl != null" :src="addr._imgUrl" />
         <div class="itemName" :title="addr.name">{{index + 1}}. {{ addr.name }}</div>
         <div class="itemAddr" v-show="addr._addr != null">{{ addr._addr }}</div>
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
@@ -219,8 +256,7 @@ export default {
     this.createMap()
   },
 
-  computed: {
-  },
+  computed: {},
 
   watch: {
     handleType: {
@@ -254,8 +290,12 @@ export default {
       this.map2D.addAutocomplete(this.initSearchBox)
 
       this.map2D.searchLayerManager.select()
-      this.map2D.searchLayerManager.selectMarkerEvent.addEventListener(this.selectMarkerEventCB)
-      this.map2D.searchLayerManager.popNavImgClickEvent.addEventListener(this.popNavImgClickEventCB)
+      this.map2D.searchLayerManager.selectMarkerEvent.addEventListener(
+        this.selectMarkerEventCB
+      )
+      this.map2D.searchLayerManager.popNavImgClickEvent.addEventListener(
+        this.popNavImgClickEventCB
+      )
     },
 
     // 自动定位当前位置回调
@@ -335,9 +375,9 @@ export default {
         input: '_addrSearch'
       }
       // eslint-disable-next-line
-      this.autoTips = new AMap.Autocomplete(autoOptions)
+      this.autoTips = new AMap.Autocomplete(autoOptions);
       // eslint-disable-next-line
-      AMap.event.addListener(this.autoTips, 'select', select) // 注册监听，当选中某条记录时会触发
+      AMap.event.addListener(this.autoTips, "select", select); // 注册监听，当选中某条记录时会触发
       var that = this
       function select (e) {
         that.bShowPaln = false
@@ -352,12 +392,15 @@ export default {
             console.log('AMapHelper.getPoiDetail Err : ' + err)
           })
 
-        if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+        if (
+          e.poi.location.lng !== undefined &&
+          e.poi.location.lat !== undefined
+        ) {
           that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
         }
       }
       // eslint-disable-next-line
-      AMap.event.addListener(this.autoTips, 'choose', choose) // 注册监听，当选中某条记录时会触发
+      AMap.event.addListener(this.autoTips, "choose", choose); // 注册监听，当选中某条记录时会触发
       function choose (e) {
         that.chooseAddr = e
         that.filterText = e.poi.name
@@ -365,11 +408,14 @@ export default {
 
       // Init start POI
       // eslint-disable-next-line
-      this.autoStartTips = new AMap.Autocomplete({ input: '_pointStart'})
+      this.autoStartTips = new AMap.Autocomplete({ input: "_pointStart" });
       // eslint-disable-next-line
-      AMap.event.addListener(this.autoStartTips, 'select', selectStart) // 注册监听，当选中某条记录时会触发
+      AMap.event.addListener(this.autoStartTips, "select", selectStart); // 注册监听，当选中某条记录时会触发
       function selectStart (e) {
-        if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+        if (
+          e.poi.location.lng !== undefined &&
+          e.poi.location.lat !== undefined
+        ) {
           e.poi._lon = e.poi.location.lng
           e.poi._lat = e.poi.location.lat
           that.mapMoveTo(e.poi._lon, e.poi._lat, false)
@@ -380,11 +426,14 @@ export default {
 
       // Init end POI
       // eslint-disable-next-line
-      this.autoEndTips = new AMap.Autocomplete({ input: '_pointEnd'})
+      this.autoEndTips = new AMap.Autocomplete({ input: "_pointEnd" });
       // eslint-disable-next-line
-      AMap.event.addListener(this.autoEndTips, 'select', selectEnd) // 注册监听，当选中某条记录时会触发
+      AMap.event.addListener(this.autoEndTips, "select", selectEnd); // 注册监听，当选中某条记录时会触发
       function selectEnd (e) {
-        if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+        if (
+          e.poi.location.lng !== undefined &&
+          e.poi.location.lat !== undefined
+        ) {
           e.poi._lon = e.poi.location.lng
           e.poi._lat = e.poi.location.lat
           that.mapMoveTo(e.poi._lon, e.poi._lat, false)
@@ -462,7 +511,7 @@ export default {
       this.bShowResult = false
       this.bShowPaln = true
       if (bCallHandler) {
-        this.map2D.searchLayerManager._select.getFeatures().push(addr._feature)// 此句避免位置标记右侧的弹窗不消失
+        this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
       }
     },
@@ -478,7 +527,11 @@ export default {
 
     // 鼠标移入移出搜索结果项
     mouseHandler (event, addr, bHover) {
-      this.map2D.searchLayerManager.mouseHoverHandler(addr._feature, addr._layer, bHover)
+      this.map2D.searchLayerManager.mouseHoverHandler(
+        addr._feature,
+        addr._layer,
+        bHover
+      )
     },
 
     // 处理高德地图路线数据
@@ -533,19 +586,37 @@ export default {
         this.startPoi = pointPoi
         this.startText = pointPoi.name
         this.delRoutePoint(true)
-        this.startFeature = this.map2D.routeLayerManager.addPoint(this.startPoi, true)
+        this.startFeature = this.map2D.routeLayerManager.addPoint(
+          this.startPoi,
+          true
+        )
       } else {
         this.endPoi = pointPoi
         this.endText = pointPoi.name
         this.delRoutePoint(false)
-        this.endFeature = this.map2D.routeLayerManager.addPoint(this.endPoi, false)
+        this.endFeature = this.map2D.routeLayerManager.addPoint(
+          this.endPoi,
+          false
+        )
       }
       if (this.startPoi != null && this.endPoi != null) {
         this.map2D.routeLayerManager.clearAllRoutes()
-        const tmpMaxLon = this.startPoi._lon > this.endPoi._lon ? this.startPoi._lon : this.endPoi._lon
-        const tmpMaxLat = this.startPoi._lat > this.endPoi._lat ? this.startPoi._lat : this.endPoi._lat
-        const tmpMinLon = this.startPoi._lon < this.endPoi._lon ? this.startPoi._lon : this.endPoi._lon
-        const tmpMinLat = this.startPoi._lat < this.endPoi._lat ? this.startPoi._lat : this.endPoi._lat
+        const tmpMaxLon =
+          this.startPoi._lon > this.endPoi._lon
+            ? this.startPoi._lon
+            : this.endPoi._lon
+        const tmpMaxLat =
+          this.startPoi._lat > this.endPoi._lat
+            ? this.startPoi._lat
+            : this.endPoi._lat
+        const tmpMinLon =
+          this.startPoi._lon < this.endPoi._lon
+            ? this.startPoi._lon
+            : this.endPoi._lon
+        const tmpMinLat =
+          this.startPoi._lat < this.endPoi._lat
+            ? this.startPoi._lat
+            : this.endPoi._lat
         this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
         this.map2D.zoomOut()
         this.qureyRoutes(this.startPoi, this.endPoi)
@@ -802,14 +873,14 @@ export default {
     left: 15px;
     top: 15px;
     border-radius: 4px;
-    border:0px solid transparent;
+    border: 0px solid transparent;
     .inputText {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 326px;//326
+      width: 326px; //326
       height: 32px;
-      border-width:0px;
+      border-width: 0px;
       border-radius: 4px;
       padding: 0px 66px 0px 5px;
       background-color: white;
@@ -821,13 +892,13 @@ export default {
       top: 0px;
       height: 32px;
       width: 32px;
-      border-width:0px;
+      border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
       margin: 0px;
       //border-left: 1px solid gray;
-      background-image: url('../../../public/assets/images/addrSearch.png');
+      background-image: url("../../../public/assets/images/addrSearch.png");
     }
     .inputFunc {
       position: absolute;
@@ -835,7 +906,7 @@ export default {
       top: 0px;
       height: 32px;
       width: 32px;
-      border-width:0px;
+      border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
@@ -843,11 +914,11 @@ export default {
     }
     .inputFunc_route {
       background-color: gray;
-      background-image: url('../../../public/assets/images/route.png');
+      background-image: url("../../../public/assets/images/route.png");
     }
     .inputFunc_close {
       background-color: white;
-      background-image: url('../../../public/assets/images/search_close.png');
+      background-image: url("../../../public/assets/images/search_close.png");
     }
   }
   .searchBox {
@@ -882,23 +953,23 @@ export default {
     .searchItem {
       padding: 5px 5px 10px 5px;
       margin: 0px 10px;
-      overflow:hidden;
+      overflow: hidden;
       color: black;
       background: white;
       cursor: pointer;
       .itemName {
-        font-size:14px;
-        margin-top:3px;
+        font-size: 14px;
+        margin-top: 3px;
         color: rgb(63, 107, 165);
       }
       .itemAddr {
-        font-size:12px;
-        margin-top:5px;
+        font-size: 12px;
+        margin-top: 5px;
         color: rgb(148, 157, 168);
       }
       .itemTel {
-        font-size:12px;
-        margin-top:5px;
+        font-size: 12px;
+        margin-top: 5px;
         color: rgb(71, 76, 83);
       }
       .itemImg {
@@ -912,7 +983,7 @@ export default {
       background: rgba($color: #f7f5f5, $alpha: 1);
     }
     .itemSeparator {
-      border-top:1px solid rgb(221, 214, 214)
+      border-top: 1px solid rgb(221, 214, 214);
     }
   }
   .routeCtrl {
@@ -923,12 +994,12 @@ export default {
     left: 15px;
     top: 15px;
     border-radius: 4px;
-    border:0px solid transparent;
+    border: 0px solid transparent;
     .routeBtn {
       position: absolute;
       height: 32px;
       width: 32px;
-      border-width:0px;
+      border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
@@ -938,12 +1009,12 @@ export default {
     .routeSwap {
       left: 10px;
       top: 31px;
-      background-image: url('../../../public/assets/images/swap.png');
+      background-image: url("../../../public/assets/images/swap.png");
     }
     .routeClose {
       left: 368px;
       top: 0px;
-      background-image: url('../../../public/assets/images/search_close.png');
+      background-image: url("../../../public/assets/images/search_close.png");
     }
     .pointInput {
       width: 306px;
@@ -969,7 +1040,7 @@ export default {
     left: 15px;
     top: 60px;
     border-radius: 4px;
-    background-color: rgba(21, 51, 77, .9);
+    background-color: rgba(21, 51, 77, 0.9);
     overflow-y: auto;
     overflow-x: hidden;
   }

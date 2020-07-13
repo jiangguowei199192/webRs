@@ -32,12 +32,18 @@ const routes = [{
   {
     path: '/decisionSystem',
     name: 'decisionSystem',
-    component: () => import('../views/decisionSystem')
+    component: () => import('../views/decisionSystem'),
+    meta: { keepAlive: true }
   },
   {
     path: '/PlanSetting',
     name: 'PlanSetting',
     component: () => import('../views/decisionSystem/PlanSetting')
+  },
+  {
+    path: '/FightDeploy',
+    name: 'FightDeploy',
+    component: () => import('../views/decisionSystem/FightDeploy')
   },
   {
     path: '/evaluationSystem',
@@ -66,8 +72,17 @@ const routes = [{
 const router = new VueRouter({
   mode: 'history',
   base: process.env.publicPath,
-  routes
+  routes,
+  // 记录滚动条的坐标
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
+
 router.beforeEach((to, from, next) => {
   // debugger
   const token = sessionStorage.getItem('token') || 'token'
@@ -82,4 +97,5 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
 export default router
