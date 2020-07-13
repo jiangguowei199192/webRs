@@ -34,6 +34,10 @@ export default {
     isLive: {
       type: Boolean,
       default: true
+    },
+    isLiveTree: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -66,32 +70,41 @@ export default {
           return
         }
         if (this.isLive) {
+          // 直播
           const obj = {
             deviceCode: $event.parent.data.id,
             deviceAddress: $event.parent.data.deviceAddress,
             deviceBrand: $event.parent.data.deviceBrand,
             parentLabel: $event.parent.data.label,
-            labelTotal: $event.parent.data.label + '-' + data.label
+            labelTotal: $event.parent.data.label + '-' + data.label,
+            deviceLatitude: $event.parent.data.deviceLatitude,
+            deviceLongitude: $event.parent.data.deviceLongitude
           }
           const curData = Object.assign({}, data, obj)
-          if (!curSpan.getAttribute('class')) {
-            curSpan.setAttribute('class', 'liveIcon')
-            curSpan.parentElement.parentElement.parentElement.classList.add(
-              'is-current'
-            )
-            console.log(curData)
-            this.$emit('videoChange', 1, curData)
-          } else {
-            curSpan.setAttribute('class', '')
-            this.$nextTick(() => {
-              curSpan.parentElement.parentElement.parentElement.classList.remove(
+          if (this.isLiveTree) {
+            if (!curSpan.getAttribute('class')) {
+              curSpan.setAttribute('class', 'liveIcon')
+              curSpan.parentElement.parentElement.parentElement.classList.add(
                 'is-current'
               )
-            })
+              console.log(curData)
+              this.$emit('videoChange', 1, curData)
+            } else {
+              curSpan.setAttribute('class', '')
+              this.$nextTick(() => {
+                curSpan.parentElement.parentElement.parentElement.classList.remove(
+                  'is-current'
+                )
+              })
 
-            this.$emit('videoChange', 2, curData)
+              this.$emit('videoChange', 2, curData)
+            }
+          } else {
+            debugger
+            this.$emit('selectedDevice', curData)
           }
         } else {
+          // 回放
           // 点击当前视频区域，默认去掉所有激活的样式
           const divs = document.querySelectorAll('.el-tree-node')
           for (let i = 0; i < divs.length; i++) {

@@ -25,6 +25,11 @@ const routes = [{
     component: () => import('../views/videoSystem/realVideo')
   },
   {
+    path: '/fireAlarm',
+    name: 'fireAlarm',
+    component: () => import('../views/videoSystem/fireAlarm')
+  },
+  {
     path: '/playback',
     name: 'playbackSystem',
     component: () => import('../views/videoSystem/playback')

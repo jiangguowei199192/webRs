@@ -11,7 +11,7 @@
     <div class="center">
       <slot name="center"></slot>
     </div>
-    <div class="rightInfo">
+    <div class="rightInfo" v-show="isShowRight">
       <span @click.stop="operateInfo(1)" class="iconLeft" v-if="showRight"></span>
       <span @click.stop="operateInfo(2)" class="iconRight" v-else></span>
       <div class="right" v-show="showRight">
@@ -29,6 +29,11 @@ export default {
       default: true
     },
     showRight: {
+      type: Boolean,
+      default: true
+    },
+    // 是否显示整体右侧部分
+    isShowRight: {
       type: Boolean,
       default: true
     }

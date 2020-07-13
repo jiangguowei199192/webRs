@@ -73,7 +73,7 @@
                 class="curSelected"
                 v-show="curSelectedVideo.labelTotal"
               >当前选中:{{curSelectedVideo.labelTotal}}</div>
-              <div class="warning">
+              <div class="warning" @click.stop="$router.push({name:'fireAlarm'})">
                 <img :src="firePic" alt />
                 监控报警
                 <b>3</b>个
