@@ -32,7 +32,7 @@
                 <el-button
                   v-for="(list,index2) in item.children"
                   :key="index2"
-                  :class="{visible:list.label==='可见光',infrared:list.label==='红外光'}"
+                  :class="{visible:!list.isSelected,visibleSelected:list.isSelected}"
                   :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                 >{{list.label}}</el-button>
@@ -68,10 +68,17 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
-            <div
-              v-if="curSelectedVideo.labelTotal"
-              class="curSelected"
-            >当前选中:{{curSelectedVideo.labelTotal}}</div>
+            <div class="info">
+              <div
+                class="curSelected"
+                v-show="curSelectedVideo.labelTotal"
+              >当前选中:{{curSelectedVideo.labelTotal}}</div>
+              <div class="warning">
+                <img :src="firePic" alt="">
+                监控报警
+                <b>3</b>个
+              </div>
+            </div>
           </div>
           <div class="videoList">
             <div
@@ -146,7 +153,7 @@
               </ul>
             </div>
           </div>
-          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'" >
+          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
             <div class="info">云台</div>
             <div class="operate">
               <div class="icons">
@@ -181,7 +188,7 @@
                   <span :class="{active:zoomGuang==1}" @click="zoomGuang=1">+</span>
                   <b>光圈</b>
                   <span :class="{active:zoomGuang==2}" @click="zoomGuang=2">-</span>
-                </div> -->
+                </div>-->
               </div>
               <div class="slider">
                 <span class="demonstration">步速</span>
@@ -227,6 +234,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      firePic: require('@/assets/images/fire.png'),
       // filterText: '', // 节点过滤文字
       palace: 9, // 默认选中9宫格
       zoom: 0, // 变倍
@@ -284,6 +292,7 @@ export default {
     // 点击在线设备中红外光或可见光
     playDeviceVideo (item, list, index1, index2) {
       const curData = Object.assign({}, list, {
+        deviceCode: item.id,
         deviceAddress: item.deviceAddress,
         deviceBrand: item.deviceBrand,
         parentLabel: item.label,
@@ -365,6 +374,7 @@ export default {
     },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
+      debugger
       // 1.添加
       if (type === 1) {
         this.curSelectedVideo = curTreeData
@@ -807,8 +817,9 @@ export default {
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
         }
-        button.infrared {
-          background: url(../../assets/images/infrared.png) no-repeat 4px center;
+        button.visibleSelected {
+          background: url(../../assets/images/visible_selected.png) no-repeat
+            4px center;
         }
       }
     }
@@ -1051,9 +1062,27 @@ export default {
         padding-left: 30px;
         margin-bottom: 20px;
       }
-      .curSelected {
+      div.info {
+        display: flex;
         font-weight: 400;
         color: rgba(132, 221, 255, 1);
+        .curSelected {
+          margin-right: 70px;
+        }
+        .warning {
+          font-size: 16px;
+          font-weight: 400;
+          cursor:pointer;
+          img{
+            vertical-align: middle;
+            margin-right:12px;
+            position: relative;
+            top:-2px;
+          }
+          b {
+            color:#FF0000
+          }
+        }
       }
     }
     .videoList {
