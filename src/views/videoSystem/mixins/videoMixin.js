@@ -40,6 +40,11 @@ const videoMixin = {
     this.getAllDeptDevices()
   },
 
+  beforeDestroy () {
+    EventBus.$off('video/realVideo/streamStart')
+    EventBus.$off('video/realVideo/streamEnd')
+  },
+
   mounted () {
     // 设备上线
     EventBus.$on('video/realVideo/streamStart', info => {
@@ -183,6 +188,11 @@ const videoMixin = {
           dept.children.push(info)
           dept.deviceCountTotal += 1
           dept.deviceCountOnline += 1
+          if (info.deviceTypeCode === 'WRJ') {
+            this.droneDevArray.push(info)
+          } else if (info.deviceTypeCode === 'GDJK') {
+            this.cameraDevArray.push(info)
+          }
         }
         // 找出所有父节点,然后计算deviceCountTotal和deviceCountOnline
         const nodeList = []
