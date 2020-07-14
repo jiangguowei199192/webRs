@@ -116,6 +116,7 @@
                   @next-click="next"
                 ></el-pagination>
               </div>
+              <div class="download" />
               <img :src="fullScreen" @click.stop="dialogVisible=true" />
             </div>
           </div>
@@ -1124,6 +1125,19 @@ export default {
           }
         }
       }
+
+      .download {
+        display: inline-block;
+        margin-right: 18px;
+        width: 28px;
+        height: 25px;
+        background: url("../../assets/images/download.png") no-repeat;
+        cursor: pointer;
+      }
+
+      .download:active {
+        background: url("../../assets/images/download-press.png") no-repeat;
+      }
     }
   }
 
@@ -1135,27 +1149,26 @@ export default {
   }
 }
 
-  //修改弹框样式
-  .el-dialog__wrapper {
-    overflow: visible;
-    /deep/.el-dialog {
-      .el-dialog__header {
-        display: none;
-      }
-      .el-dialog__body {
-        display: flex;
-        flex-wrap: wrap;
-        height: 100%;
-        padding: 0 15px;
-        > div {
-          // cursor: pointer;
-          margin-right: 19px;
-          margin-bottom: 20px;
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
-        }
+//修改弹框样式
+.el-dialog__wrapper {
+  overflow: visible;
+  /deep/.el-dialog {
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      display: flex;
+      flex-wrap: wrap;
+      height: 100%;
+      padding: 0 15px;
+      > div {
+        // cursor: pointer;
+        margin-right: 19px;
+        margin-bottom: 20px;
+        background: url(../../assets/images/video.png) no-repeat center center;
+        background-color: #00497c;
       }
     }
   }
-
+}
 </style>

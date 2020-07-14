@@ -86,7 +86,9 @@ const videoMixin = {
      * @param {Bool} isDisable 是否禁用
      */
     setTreeNodeDisabled (isDisable, id) {
-      const span = document.querySelector('#liveVideo' + id).parentElement
+      const node = document.querySelector('#liveVideo' + id)
+      if (node == null) return
+      const span = node.parentElement
       if (isDisable) {
         span.setAttribute('class', 'disabled')
         span.parentElement.parentElement.style.pointerEvents = 'none'
@@ -100,6 +102,33 @@ const videoMixin = {
         span.parentElement.parentElement.style.opacity = ''
         span.parentElement.parentElement.style.color = ''
       }
+    },
+
+    /**
+     * 根据id，找出所有父节点
+     * @param {object} tree 树data
+     * @param {String} id 节点id
+     * @param {Array} findNodes 父节点数组
+     */
+    findParentNodes (tree, id, findNodes = []) {
+      if (!tree) return []
+      for (var i = 0; i < tree.length; i++) {
+        var item = tree[i]
+        findNodes.push(item)
+        if (item.id === id) {
+          findNodes.pop()
+          return findNodes
+        }
+        if (item.children) {
+          const findChildren = this.findParentNodes(item.children, id, findNodes)
+          if (findChildren.length) {
+            return findChildren
+          }
+        }
+        findNodes.pop()
+      }
+
+      return []
     },
 
     /**
@@ -122,7 +151,8 @@ const videoMixin = {
         var device = dept.children.find(c => c.id === info.id)
         if (device !== undefined) {
           var count = isOnline === true ? 1 : -1
-          dept.deviceCountOnline += count
+          count += dept.deviceCountOnline
+          this.$set(dept, 'deviceCountOnline', count)
           // 设备已存在
           for (var a in info) {
             // 拷贝属性
@@ -154,12 +184,29 @@ const videoMixin = {
           dept.deviceCountTotal += 1
           dept.deviceCountOnline += 1
         }
+        // 找出所有父节点,然后计算deviceCountTotal和deviceCountOnline
+        const nodeList = []
+        this.findParentNodes(node.children, dept.id, nodeList)
+        if (nodeList.length > 0) { nodeList.splice(0, 0, node) }
+        for (var i = nodeList.length - 1; i >= 0; i--) {
+          const item = nodeList[i]
+          if (item.children) {
+            var total = 0
+            var online = 0
+            item.children.forEach(c => {
+              total += c.deviceCountTotal
+              online += c.deviceCountOnline
+            })
+            item.deviceCountTotal = total
+            item.deviceCountOnline = online
+          }
+        }
       }
     },
 
     /**
      * 根据id查找树节点
-     * @param {String} id 节点is
+     * @param {String} id 节点id
      */
     findTreeNodeByID (tree, id) {
       var findResult = ''

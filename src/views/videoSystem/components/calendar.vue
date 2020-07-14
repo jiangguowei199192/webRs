@@ -33,20 +33,23 @@
       <div class="title">
         <span>图片</span>
       </div>
-      <!-- <div class="picList">
-        <template v-for="(item,index) in 6">
-          <div></div>
+      <div class="picList">
+        <template v-for="(item,index) in picArray">
+          <div :style="{background: 'url(' +item.url +') no-repeat'}" :key="index"></div>
         </template>
-      </div> -->
+      </div>
     </div>
-    <!-- <el-dialog :visible.sync="picDlgVisible" width="790px" :fullscreen="true">
+    <el-dialog :visible.sync="picDlgVisible">
       <div class="picContainer2">
         <div class="pic"></div>
         <div>
           <span>说明:</span>
+          <el-input v-model="describe" placeholder="请输入图片说明"></el-input>
+          <button @click="closeDlg">取消</button>
+          <button class="btn-confirm" @click="addDescribe">确定</button>
         </div>
       </div>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -56,8 +59,10 @@ export default {
   data () {
     return {
       showDate: new Date(),
-      dateInfo: { curYear: '', curMonth: '' }
-      // picDlgVisible: false // 图片弹窗
+      dateInfo: { curYear: '', curMonth: '' },
+      picDlgVisible: false, // 图片弹窗
+      describe: '', // 图片描述
+      picArray: []
     }
   },
 
@@ -83,6 +88,7 @@ export default {
     const divs = document.querySelectorAll('.el-calendar-day')
     for (let i = 0; i < divs.length; i++) {
       divs[i].addEventListener('click', function (event) {
+        // that.picDlgVisible = true
         // 如果当前正在回放，阻止事件冒泡
         if (that.isStopPlayerFirst()) {
           event.stopPropagation()
@@ -93,6 +99,22 @@ export default {
   },
 
   methods: {
+
+    /**
+     * 关闭对话框
+     */
+    closeDlg () {
+      this.picDlgVisible = false
+      this.describe = ''
+    },
+
+    /**
+     * 添加图片描述
+     */
+    addDescribe () {
+      this.picDlgVisible = false
+    },
+
     /**
      * 获取当前显示的年
      */
@@ -235,8 +257,77 @@ export default {
 }
 
 .picContainer2 {
-  height: 428px;
-  background-color: #00497c;
+  height: 803px;
+  height: 549px;
+  background: url(../../../assets/images/picture-box.png) no-repeat;
+  padding: 26px 30px;
+  div:nth-child(1) {
+    width: 743px;
+    height: 428px;
+    background: violet;
+  }
+
+  div:nth-child(2) {
+    margin-top: 20px;
+    span {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 1);
+    }
+    button {
+      cursor: pointer;
+      width: 87px;
+      height: 32px;
+      border: 1px solid rgba(30, 176, 252, 1);
+      border-radius: 4px;
+      font-size: 16px;
+      background-color: transparent;
+      color: rgba(30, 176, 252, 1);
+      margin-left: 20px;
+    }
+
+    //按钮按下
+    button:active {
+      opacity: 0.5;
+    }
+
+    //去掉按钮点击出现的边框
+    button:focus {
+      outline: none;
+    }
+
+    .btn-confirm {
+      background: rgba(30, 176, 252, 1);
+      color: #fff;
+    }
+  }
+}
+
+/deep/.el-input {
+  margin-left: 15px;
+  margin-right: 60px;
+  display: inline-block;
+  width: 410px;
+}
+
+/deep/.el-input__inner {
+  background-color: transparent;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid rgba(153, 153, 153, 1);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 1);
+}
+
+/deep/ .el-dialog__body {
+  padding: 0px;
+}
+
+/deep/ .el-dialog__header {
+  display: none;
+}
+
+/deep/ .el-dialog {
+  background: transparent;
 }
 
 /* for Chrome */
@@ -259,8 +350,8 @@ export default {
       width: 190px;
       height: 107px;
       //background: url(../../assets/images/video.png) no-repeat;
-      //background-size: 100% 100%;
-      background-color: #00497c;
+      background-size: 100% 100%;
+      //background-color: #00497c;
       margin-bottom: 10px;
     }
   }
