@@ -100,7 +100,7 @@
               <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
               <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
               <img :src="photoClicked?photoSelected:photo" @click.stop="photoClicked=true" />
-              <img :src="mapClicked?mapSelected:map" @click.stop="mapClicked=true" />
+              <img :src="mapClicked?mapSelected:map" @click.stop="mapClicked=true;$router.push({name:'deviceMap'})" />
             </div>
             <div class="rightTool">
               <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />

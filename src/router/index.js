@@ -30,6 +30,11 @@ const routes = [{
     component: () => import('../views/videoSystem/fireAlarm')
   },
   {
+    path: '/deviceMap',
+    name: 'deviceMap',
+    component: () => import('../views/videoSystem/deviceMap')
+  },
+  {
     path: '/playback',
     name: 'playbackSystem',
     component: () => import('../views/videoSystem/playback')
