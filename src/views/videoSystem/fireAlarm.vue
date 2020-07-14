@@ -276,7 +276,7 @@ export default {
           }
           .info {
             overflow-y: auto;
-            max-height:480px;
+            max-height:460px;
             > div.list {
               width: 350px;
               height: 92px;

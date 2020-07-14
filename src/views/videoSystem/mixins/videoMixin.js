@@ -10,6 +10,9 @@ const videoMixin = {
       filterDevice: '', // 设备名称
       treeData: [], // 设备tree数据
       onlineArray: [], // 在线设备列表
+      cameraDevArray: [], // 所有摄像头设备列表
+      droneDevArray: [], // 所有无人机设备列表
+      fireWarningArray: [], // 今日火情列表
       ninePalace: require('../../../assets/images/9.png'),
       fourPalace: require('../../../assets/images/4.png'),
       onePalace: require('../../../assets/images/1.png'),
