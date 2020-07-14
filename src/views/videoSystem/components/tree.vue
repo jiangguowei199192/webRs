@@ -121,6 +121,18 @@ export default {
     // 获得选中的节点的key
     checkedKeys: function (data) {
       alert(JSON.stringify(this.$refs.tree.getCheckedKeys()))
+    },
+    // 给span.disabled 父节点添加样式
+    addParentDisabled () {
+      const spans = document.querySelectorAll('span.disabled')
+      for (let i = 0; i < spans.length; i++) {
+        spans[i].parentElement.parentElement.style.pointerEvents = 'none'
+        spans[i].parentElement.parentElement.style.cursor = 'not-allowed'
+        spans[i].parentElement.parentElement.style.opacity = '0.5'
+        // spans[i].parentElement.style.cursor =
+        //     'not-allowed'
+        spans[i].parentElement.parentElement.style.color = '#007291'
+      }
     }
     // 点击子节点播放或关闭视频
     // showLiveVideo (data, $event) {
@@ -148,15 +160,7 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-      const divs = document.querySelectorAll('span.disabled')
-      for (let i = 0; i < divs.length; i++) {
-        divs[i].parentElement.parentElement.style.pointerEvents = 'none'
-        divs[i].parentElement.parentElement.style.cursor = 'not-allowed'
-        divs[i].parentElement.parentElement.style.opacity = '0.5'
-        // divs[i].parentElement.style.cursor =
-        //     'not-allowed'
-        divs[i].parentElement.parentElement.style.color = '#007291'
-      }
+      this.addParentDisabled()
     })
   }
 }
