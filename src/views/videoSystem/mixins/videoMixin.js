@@ -237,6 +237,11 @@ const videoMixin = {
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
             data[i].children.push(d)
+            if (d.deviceTypeCode === 'WRJ') {
+              this.droneDevArray.push(d)
+            } else if (d.deviceTypeCode === 'GDJK') {
+              this.cameraDevArray.push(d)
+            }
             if (d.onlineStatus === 'online' && d.children.length > 0) {
               this.onlineArray.push(d)
             }
@@ -315,6 +320,8 @@ const videoMixin = {
           this.setDeviceTreeNodeID(this.treeData)
 
           // console.log(this.onlineArray)
+          // console.log(this.cameraDevArray)
+          // console.log(this.droneDevArray)
         }
       })
     }

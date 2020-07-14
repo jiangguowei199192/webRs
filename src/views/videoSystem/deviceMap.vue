@@ -57,7 +57,7 @@
           <div class="deviceMapBox">
             <div class="title">设备地图</div>
             <div class="container">
-              <gMap ref="gduMap" handleType="devicemap" :bShowBasic="true" :bShowMeasure="true"></gMap>
+              <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="true"></gMap>
             </div>
           </div>
         </div>

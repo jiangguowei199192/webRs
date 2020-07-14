@@ -17,7 +17,8 @@
         v-on:keyup.delete="resetChooseAddr"
         :placeholder="placeHolder"
       />
-      <div class="inputSearch" @click.stop="searchAddrs(filterText,true)" />
+      <div class="inputSearch"
+        @click.stop="searchAddrs(filterText,true)"/>
       <div
         class="inputFunc"
         @click.stop="routeOrCloseFunc"
@@ -201,6 +202,11 @@ export default {
   },
 
   props: {
+    // 为false时，不根据浏览器自动定位；为true时，根据浏览器定位用户当前位置。
+    bAutoLocate: {
+      type: Boolean,
+      default: true
+    },
     // 操作类型 areaNew - 新建区域
     handleType: {
       type: String,
@@ -286,8 +292,10 @@ export default {
       this.map2D.markerLayerManager.baseUrl = localStorage.ftpBaseUrl
       this.$emit('eventMapLoaded')
 
-      this.map2D.geoLocation(this.curLocationCB)
-      this.map2D.addAutocomplete(this.initSearchBox)
+      if (this.bAutoLocate) {
+        this.map2D.geoLocation(this.curLocationCB) // 根据浏览器自动定位当前位置
+      }
+      this.map2D.addAutocomplete(this.initSearchBox) // 初始化高德地图搜索提示功能输入框
 
       this.map2D.searchLayerManager.select()
       this.map2D.searchLayerManager.selectMarkerEvent.addEventListener(
@@ -877,7 +885,7 @@ export default {
   }
   .searchCtrl {
     position: absolute;
-    width: 400px;
+    //width: 400px;
     height: 32px;
     background-color: white;
     left: 15px;
@@ -892,7 +900,8 @@ export default {
       height: 32px;
       border-width: 0px;
       border-radius: 4px;
-      padding: 0px 66px 0px 5px;
+      padding-left: 5px;
+      padding-right: 66px; // 调整搜索提示框宽度与路线图标对齐
       background-color: white;
       outline: none;
     }
@@ -929,25 +938,6 @@ export default {
     .inputFunc_close {
       background-color: white;
       background-image: url("../../../public/assets/images/search_close.png");
-    }
-  }
-  .searchBox {
-    position: absolute;
-    height: 34px;
-    width: 400px;
-    left: 15px;
-    top: 15px;
-    border-radius: 4px;
-    .appendBtn {
-      width: 40px;
-    }
-    .appendBtn:hover {
-      color: rgb(63, 107, 165);
-      opacity: 50%;
-    }
-    .appendBtn:active {
-      color: rgb(63, 107, 165);
-      opacity: 1;
     }
   }
   .searchResult {
