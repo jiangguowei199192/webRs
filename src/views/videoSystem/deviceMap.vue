@@ -57,7 +57,7 @@
           <div class="deviceMapBox">
             <div class="title">设备地图</div>
             <div class="container">
-              <div class="map"></div>
+              <gMap ref="gduMap" handleType="devicemap" :bShowBasic="true" :bShowMeasure="true"></gMap>
             </div>
           </div>
         </div>
@@ -236,7 +236,7 @@ export default {
     .deviceMapBox {
       // display: flex;
       // justify-content: space-between;
-      margin-right: 64px;
+      margin-right: 24px;
       > .title {
         width: 202px;
         height: 45px;
@@ -246,6 +246,7 @@ export default {
         margin-bottom: 20px;
       }
       .container {
+        height: 785px;
         position: relative;
         /* --- 改变滚动条样式 --- */
         .info::-webkit-scrollbar {

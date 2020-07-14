@@ -57,7 +57,7 @@
           <div class="fireAlarmBox">
             <div class="title">火点火情</div>
             <div class="container">
-              <div class="map"></div>
+              <gMap ref="gduMap" handleType="firewarning" :bShowBasic="true" :bShowMeasure="true"></gMap>
               <div class="todayFire">
                 <div class="title">今日火情警报[2/3]</div>
                 <div class="info">
@@ -247,7 +247,7 @@ export default {
     .fireAlarmBox {
       // display: flex;
       // justify-content: space-between;
-      margin-right: 64px;
+      margin-right: 24px;
       > .title {
         width: 202px;
         height: 45px;
@@ -258,13 +258,16 @@ export default {
       }
       .container {
         position: relative;
+        height: 785px;
         .todayFire {
+          position: absolute;
+          top: 100px;
+          left: 10px;
           box-sizing: border-box;
           width: 392px;
           height: 557px;
           padding: 20px;
           background: url(../../assets/images/fire-box.png) no-repeat;
-          margin-left: 56px;
 
           .title {
             padding-bottom: 10px;
@@ -272,8 +275,8 @@ export default {
             margin-bottom:20px;
           }
           .info {
-             overflow-y: auto;
-             max-height:480px;
+            overflow-y: auto;
+            max-height:480px;
             > div.list {
               width: 350px;
               height: 92px;
