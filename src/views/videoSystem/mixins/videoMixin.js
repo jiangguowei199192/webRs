@@ -1,8 +1,8 @@
 import { api } from '@/api/videoSystem/realVideo'
+import { EventBus } from '@/utils/eventBus.js'
 const videoMixin = {
   data () {
     return {
-      idStart: 0,
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       isOnline: true, // 默认展示在线设备 true在线 false全部
@@ -33,6 +33,24 @@ const videoMixin = {
     }
   },
 
+  created () {
+    this.getAllDeptDevices()
+  },
+
+  mounted () {
+    // 设备上线
+    EventBus.$on('video/realVideo/streamStart', info => {
+      this.deviceOnlineOrOffline(true, info)
+      this.updateOnlineArray(true, info)
+    })
+
+    // 设备下线
+    EventBus.$on('video/realVideo/streamEnd', info => {
+      this.deviceOnlineOrOffline(false, info)
+      this.updateOnlineArray(false, info)
+    })
+  },
+
   methods: {
     closeLeftNav (type) {
       this.showLeft = type !== 1
@@ -40,15 +58,123 @@ const videoMixin = {
     closeRightInfo (type) {
       this.showRight = type !== 1
     },
-    // 点击按钮
-    // changeStatus (type, index) {
-    //   if (type === 1) {
-    //     this.listArray[index].visibleIsClick = true
-    //   } else {
-    //     this.listArray[index].infraredIsclick = true
-    //   }
-    //   this.selectedIndex = index
-    // },
+
+    /**
+     * 刷新在线设备列表
+     * @param {Bool} isOnline 上线/下线
+     * @param {Object} info 设备信息
+     */
+    updateOnlineArray (isOnline, info) {
+      delete info.deptCode
+      info = this.formatData(info)
+      var device = this.onlineArray.find(c => c.id === info.id)
+      // 设备已存在
+      if (device !== undefined) {
+        var index = this.onlineArray.indexOf(device)
+        if (isOnline) { this.onlineArray[index] = info } else this.onlineArray.splice(index, 1)
+      } else if (isOnline) {
+        // 设备不存在，新设备上线
+        this.onlineArray.push(info)
+      }
+    },
+
+    /**
+     * 设置树节点是否禁用
+     * @param {Bool} isDisable 是否禁用
+     */
+    setTreeNodeDisabled (isDisable, id) {
+      const span = document.querySelector('#liveVideo' + id).parentElement
+      if (isDisable) {
+        span.setAttribute('class', 'disabled')
+        span.parentElement.parentElement.style.pointerEvents = 'none'
+        span.parentElement.parentElement.style.cursor = 'not-allowed'
+        span.parentElement.parentElement.style.opacity = '0.5'
+        span.parentElement.parentElement.style.color = '#007291'
+      } else {
+        span.setAttribute('class', '')
+        span.parentElement.parentElement.style.pointerEvents = ''
+        span.parentElement.parentElement.style.cursor = ''
+        span.parentElement.parentElement.style.opacity = ''
+        span.parentElement.parentElement.style.color = ''
+      }
+    },
+
+    /**
+     * 设备上下线
+     * @param {Bool} isOnline 上线/下线
+     * @param {Object} info 设备信息
+     */
+    deviceOnlineOrOffline (isOnline, info) {
+      if (this.treeData.length === 0) return
+      var deptCode = info.deptCode
+      delete info.deptCode
+      info = this.formatData(info)
+
+      var node = this.treeData.find(c => c.deviceTypeCode === info.deviceTypeCode)
+      if (node === undefined) return
+      // 先找设备所在组织
+      var dept = this.findTreeNodeByID(node.children, deptCode)
+      // 组织存在
+      if (dept) {
+        var device = dept.children.find(c => c.id === info.id)
+        if (device !== undefined) {
+          var count = isOnline === true ? 1 : -1
+          dept.deviceCountOnline += count
+          // 设备已存在
+          for (var a in info) {
+            // 拷贝属性
+            if (a !== 'children' && Object.prototype.hasOwnProperty.call(device, a)) {
+              device[a] = info[a]
+            }
+          }
+          // 拷贝children数组的属性
+          if (info.children && info.children.length > 0) {
+            info.children.forEach(item => {
+              Reflect.set(item, 'deviceTypeCode', info.deviceTypeCode)
+              Reflect.set(item, 'onlineStatus', info.onlineStatus)
+              var child = device.children.find(i => i.id === item.id)
+              if (child !== undefined) {
+                // 拷贝属性
+                for (var b in item) {
+                  // 拷贝属性
+                  if (Object.prototype.hasOwnProperty.call(child, b)) {
+                    child[b] = item[b]
+                  }
+                }
+                this.setTreeNodeDisabled(!isOnline, child.id)
+              } else device.children.push(item)
+            })
+          }
+        } else if (isOnline) {
+          // 设备不存在，新设备上线
+          dept.children.push(info)
+          dept.deviceCountTotal += 1
+          dept.deviceCountOnline += 1
+        }
+      }
+    },
+
+    /**
+     * 根据id查找树节点
+     * @param {String} id 节点is
+     */
+    findTreeNodeByID (tree, id) {
+      var findResult = ''
+      if (tree === null) return findResult
+      for (var i = 0; i < tree.length; i++) {
+        var node = tree[i]
+        if (id === node.id) {
+          findResult = node
+          return findResult
+        }
+        if (node.children) {
+          findResult = this.findTreeNodeByID(node.children, id)
+          if (findResult) {
+            return findResult
+          }
+        }
+      }
+    },
 
     /**
      * 递归解析设备
@@ -61,7 +187,7 @@ const videoMixin = {
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
             data[i].children.push(d)
-            if (d.children.length > 0) {
+            if (d.onlineStatus === 'online' && d.children.length > 0) {
               this.onlineArray.push(d)
             }
           })
@@ -72,12 +198,21 @@ const videoMixin = {
     },
 
     /**
+     * 修改属性名称
+     */
+    formatData (data) {
+      data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
+      data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
+      data = JSON.parse(JSON.stringify(data).replace(/deptCode|deviceCode|streamCode/g, 'id'))
+      return data
+    },
+
+    /**
      * 设置设备树节点的ID
      */
     setDeviceTreeNodeID (tree) {
       if (tree == null) return
       for (var i = 0; i < tree.length; i++) {
-        // Reflect.set(tree[i], 'id', this.idStart)
         // 添加onlineStatus和deviceTypeCode属性
         if (!Object.prototype.hasOwnProperty.call(tree[i], 'onlineStatus')) {
           if (Object.prototype.hasOwnProperty.call(tree[i], 'deviceCountOnline')) {
@@ -92,8 +227,7 @@ const videoMixin = {
             })
           }
         }
-        this.idStart += 1
-        this.setDeviceTreeNodeID(tree[i].children, this.idStart)
+        this.setDeviceTreeNodeID(tree[i].children)
       }
     },
 
@@ -114,9 +248,7 @@ const videoMixin = {
             }
           })
           // 修改属性名称
-          data = JSON.parse(JSON.stringify(data).replace(/deviceTypeName|deptName|deviceName|streamName/g, 'label'))
-          data = JSON.parse(JSON.stringify(data).replace(/streamList|subDept/g, 'children'))
-          data = JSON.parse(JSON.stringify(data).replace(/deptCode|deviceCode|streamCode/g, 'id'))
+          data = this.formatData(data)
           data.forEach(p => {
             p = JSON.parse(JSON.stringify(p).replace('deviceList', 'children'))
             p.children = this.parseDeviceList(p.children)
@@ -132,7 +264,7 @@ const videoMixin = {
           })
           this.setDeviceTreeNodeID(this.treeData)
 
-          console.log(this.onlineArray)
+          // console.log(this.onlineArray)
         }
       })
     }

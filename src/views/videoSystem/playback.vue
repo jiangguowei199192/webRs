@@ -37,8 +37,8 @@
                 <el-button
                   v-for="(list,index2) in item.children"
                   :key="index2"
-                  :class="{visible:list.label==='可见光',infrared:list.label==='红外光'}"
-                  :style="{backgroundColor:list.isSelected?'rgba(14,90,148,1)':''}"
+                  :class="{visible:!list.isSelected,visibleSelected:list.isSelected}"
+                  :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                 >{{list.label}}</el-button>
                 <!-- <el-button
@@ -138,7 +138,14 @@
         ></Calendar>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" :fullscreen="true" tabindex="1" id="d1">
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="100%"
+      :fullscreen="true"
+      tabindex="1"
+      id="d1"
+      class="fullDlg"
+    >
       <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
       <div
         v-for="(item,index) in curVideosArray"
@@ -194,7 +201,6 @@ export default {
 
   created () {
     this.init()
-    this.getAllDeptDevices()
     const me = this
     window.onresize = function () {
       if (me.dialogVisible) {
@@ -842,8 +848,15 @@ export default {
      * 设置在线设备的liveicon
      */
     setOnlineItemLiveIcon (isPlay, index) {
-      if (isPlay) { Reflect.set(this.onlineArray[index], 'isPlay', isPlay) } else {
-        if (Object.prototype.hasOwnProperty.call(this.onlineArray[index], 'isPlay')) {
+      if (isPlay) {
+        Reflect.set(this.onlineArray[index], 'isPlay', isPlay)
+      } else {
+        if (
+          Object.prototype.hasOwnProperty.call(
+            this.onlineArray[index],
+            'isPlay'
+          )
+        ) {
           delete this.onlineArray[index].isPlay
         }
       }
@@ -1008,8 +1021,9 @@ export default {
       button.visible {
         background: url(../../assets/images/visible.png) no-repeat 4px center;
       }
-      button.infrared {
-        background: url(../../assets/images/infrared.png) no-repeat 4px center;
+      button.visibleSelected {
+        background: url(../../assets/images/visible_selected.png) no-repeat 4px
+          center;
       }
     }
   }
@@ -1121,26 +1135,27 @@ export default {
   }
 }
 
-// 修改弹框样式
-.el-dialog__wrapper {
-  overflow: visible;
-  /deep/.el-dialog {
-    .el-dialog__header {
-      display: none;
-    }
-    .el-dialog__body {
-      display: flex;
-      flex-wrap: wrap;
-      height: 100%;
-      padding: 0 15px;
-      > div {
-        // cursor: pointer;
-        margin-right: 19px;
-        margin-bottom: 20px;
-        background: url(../../assets/images/video.png) no-repeat center center;
-        background-color: #00497c;
+  //修改弹框样式
+  .el-dialog__wrapper {
+    overflow: visible;
+    /deep/.el-dialog {
+      .el-dialog__header {
+        display: none;
+      }
+      .el-dialog__body {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+        padding: 0 15px;
+        > div {
+          // cursor: pointer;
+          margin-right: 19px;
+          margin-bottom: 20px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
+        }
       }
     }
   }
-}
+
 </style>

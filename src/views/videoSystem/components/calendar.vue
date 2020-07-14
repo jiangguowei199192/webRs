@@ -29,6 +29,24 @@
       <span></span>
       <span>查找</span>
     </div>-->
+    <div class="picContainer">
+      <div class="title">
+        <span>图片</span>
+      </div>
+      <!-- <div class="picList">
+        <template v-for="(item,index) in 6">
+          <div></div>
+        </template>
+      </div> -->
+    </div>
+    <!-- <el-dialog :visible.sync="picDlgVisible" width="790px" :fullscreen="true">
+      <div class="picContainer2">
+        <div class="pic"></div>
+        <div>
+          <span>说明:</span>
+        </div>
+      </div>
+    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -39,6 +57,7 @@ export default {
     return {
       showDate: new Date(),
       dateInfo: { curYear: '', curMonth: '' }
+      // picDlgVisible: false // 图片弹窗
     }
   },
 
@@ -212,6 +231,38 @@ export default {
     color: white;
     line-height: 45px;
     margin-left: 30px;
+  }
+}
+
+.picContainer2 {
+  height: 428px;
+  background-color: #00497c;
+}
+
+/* for Chrome */
+.picList::-webkit-scrollbar {
+  display: none;
+}
+
+.picContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 30px;
+  .picList {
+    margin-top: 30px;
+    position: relative;
+    left: 40px;
+    height: 351px;
+    overflow-y: scroll;
+
+    > div {
+      width: 190px;
+      height: 107px;
+      //background: url(../../assets/images/video.png) no-repeat;
+      //background-size: 100% 100%;
+      background-color: #00497c;
+      margin-bottom: 10px;
+    }
   }
 }
 

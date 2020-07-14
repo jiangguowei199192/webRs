@@ -57,7 +57,7 @@
 <script>
 import { getTime } from '@/utils/date'
 import amapApi from '@/axios/amapapis'
-
+import MqttService from '@/utils/mqttService'
 export default {
   name: 'Home',
   data () {
@@ -99,6 +99,9 @@ export default {
       this.timeObj = getTime()
     }, 1000)
     this.init()
+    // 通过构造函数，创建mqtt连接
+    // eslint-disable-next-line no-unused-vars
+    var mqtt = new MqttService()
   },
   methods: {
     getTime,

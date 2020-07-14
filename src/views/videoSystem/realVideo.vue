@@ -740,7 +740,6 @@ export default {
   },
   created () {
     this.init()
-    this.getAllDeptDevices()
 
     const me = this
     window.onresize = function () {
