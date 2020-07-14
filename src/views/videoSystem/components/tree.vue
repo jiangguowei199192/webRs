@@ -172,7 +172,7 @@ export default {
   font-family: Source Han Sans CN;
   font-weight: bold;
   margin-top: 24px;
-  height: 750px;
+  max-height: 750px;
   width: 248px;
   overflow-y: auto;
   overflow-x: auto;
@@ -249,6 +249,9 @@ export default {
   // }
   /deep/ .el-tree-node:focus > .el-tree-node__content {
     background-color: transparent;
+  }
+  /deep/.el-tree__empty-block{
+    display: none;
   }
 }
 /* --- 改变滚动条样式 --- */
