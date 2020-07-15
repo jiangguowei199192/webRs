@@ -89,7 +89,13 @@
               :class="{active:curVideoIndex===index}"
             >
               <!-- <div > -->
-              <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
+              <VideoWall
+                :videoInfo="item"
+                :key="index"
+                ref="playerCtrl"
+                v-if="item.streamUrl"
+                @fullScreen="getVideoInfo"
+              ></VideoWall>
               <!-- </div> -->
             </div>
           </div>
@@ -100,7 +106,10 @@
               <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
               <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
               <img :src="photoClicked?photoSelected:photo" @click.stop="photoClicked=true" />
-              <img :src="mapClicked?mapSelected:map" @click.stop="mapClicked=true;$router.push({name:'deviceMap'})" />
+              <img
+                :src="mapClicked?mapSelected:map"
+                @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"
+              />
             </div>
             <div class="rightTool">
               <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />
@@ -234,6 +243,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
       // filterText: '', // 节点过滤文字
       palace: 9, // 默认选中9宫格
@@ -292,6 +302,7 @@ export default {
     // 点击在线设备中红外光或可见光
     playDeviceVideo (item, list, index1, index2) {
       const curData = Object.assign({}, list, {
+        isShowOperate: false,
         deviceCode: item.id,
         deviceAddress: item.deviceAddress,
         deviceBrand: item.deviceBrand,
@@ -546,7 +557,10 @@ export default {
         }
       } else {
         for (let i = 0; i < bs.length; i++) {
-          if (!JSON.parse(bs[i].getAttribute('obj')).children && JSON.parse(bs[i].getAttribute('obj')).onlineStatus === 'online') {
+          if (
+            !JSON.parse(bs[i].getAttribute('obj')).children &&
+            JSON.parse(bs[i].getAttribute('obj')).onlineStatus === 'online'
+          ) {
             if (!this.isPlayAll) {
               bs[i].parentElement.setAttribute('class', 'liveIcon')
               this.totalVideosArray.push(JSON.parse(bs[i].getAttribute('obj')))
@@ -719,12 +733,30 @@ export default {
     // 检查全屏
     checkFull () {
       let isFull =
-        document.fullscreenEnabled ||
         window.fullScreen ||
         document.webkitIsFullScreen ||
         document.msFullscreenEnabled
       if (isFull === undefined) isFull = false
       return isFull
+    },
+    // 双击视频时给显示操作按钮
+    getVideoInfo (curScreenInfo) {
+      this.curScreenInfo = curScreenInfo
+      console.log(curScreenInfo.id)
+      setTimeout(() => {
+        if (this.checkFull() && !curScreenInfo.isShowOperate) {
+          this.totalVideosArray.forEach((item, index) => {
+            if (item.id === curScreenInfo.id) {
+              this.$set(this.totalVideosArray[index], 'isShowOperate', true)
+            }
+          })
+          this.curVideosArray.forEach((item, index) => {
+            if (item.id === curScreenInfo.id) {
+              this.$set(this.curVideosArray[index], 'isShowOperate', true)
+            }
+          })
+        }
+      }, 300)
     },
     init () {
       // 初始加载9个空元素
@@ -749,13 +781,21 @@ export default {
           document.getElementById('d1').focus()
         }
       }
+      if (!me.checkFull() && me.curScreenInfo.id) {
+        me.totalVideosArray.forEach((item, index) => {
+          if (item.id === me.curScreenInfo.id) {
+            me.totalVideosArray[index].isShowOperate = false
+          }
+        })
+        me.curVideosArray.forEach((item, index) => {
+          if (item.id === me.curScreenInfo.id) {
+            me.totalVideosArray[index].isShowOperate = false
+          }
+        })
+        me.curScreenInfo = {}
+      }
     }
   }
-  // watch: {
-  //   filterDevice (val) {
-  //     this.$refs.tree.$refs.tree.filter(val)
-  //   }
-  // }
 }
 </script>
 <style lang="less" scoped>

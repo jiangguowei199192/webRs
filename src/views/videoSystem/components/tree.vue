@@ -72,6 +72,7 @@ export default {
         if (this.isLive) {
           // 直播
           const obj = {
+            isShowOperate: false,
             deviceCode: $event.parent.data.id,
             deviceAddress: $event.parent.data.deviceAddress,
             deviceBrand: $event.parent.data.deviceBrand,
@@ -171,7 +172,7 @@ export default {
   font-size: 18px;
   font-family: Source Han Sans CN;
   font-weight: bold;
-  margin-top: 24px;
+  // margin-top: 24px;
   max-height: 750px;
   width: 248px;
   overflow-y: auto;
