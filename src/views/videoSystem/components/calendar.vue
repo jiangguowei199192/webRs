@@ -39,7 +39,7 @@
         </template>
       </div>
     </div>
-    <el-dialog :visible.sync="picDlgVisible">
+    <el-dialog :visible.sync="picDlgVisible" width="803px">
       <div class="picContainer2">
         <div class="pic"></div>
         <div>
@@ -99,7 +99,6 @@ export default {
   },
 
   methods: {
-
     /**
      * 关闭对话框
      */
@@ -256,48 +255,60 @@ export default {
   }
 }
 
-.picContainer2 {
-  height: 803px;
-  height: 549px;
-  background: url(../../../assets/images/picture-box.png) no-repeat;
-  padding: 26px 30px;
-  div:nth-child(1) {
-    width: 743px;
-    height: 428px;
-    background: violet;
-  }
-
-  div:nth-child(2) {
-    margin-top: 20px;
-    span {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 1);
+.el-dialog__wrapper {
+  /deep/.el-dialog {
+    .el-dialog__header {
+      display: none;
     }
-    button {
-      cursor: pointer;
-      width: 87px;
-      height: 32px;
-      border: 1px solid rgba(30, 176, 252, 1);
-      border-radius: 4px;
-      font-size: 16px;
-      background-color: transparent;
-      color: rgba(30, 176, 252, 1);
-      margin-left: 20px;
-    }
+     background: transparent;
+    .el-dialog__body {
+      display: inline-block;
+      padding: 0px;
+      width: 100%;
+      height: 549px;
+      background: url(../../../assets/images/picture-box.png) no-repeat;
+      .picContainer2 {
+        padding: 26px 30px;
+        div:nth-child(1) {
+          width: 743px;
+          height: 428px;
+          background: violet;
+        }
 
-    //按钮按下
-    button:active {
-      opacity: 0.5;
-    }
+        div:nth-child(2) {
+          margin-top: 20px;
+          span {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 1);
+          }
+          button {
+            cursor: pointer;
+            width: 87px;
+            height: 32px;
+            border: 1px solid rgba(30, 176, 252, 1);
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: transparent;
+            color: rgba(30, 176, 252, 1);
+            margin-left: 20px;
+          }
 
-    //去掉按钮点击出现的边框
-    button:focus {
-      outline: none;
-    }
+          //按钮按下
+          button:active {
+            opacity: 0.5;
+          }
 
-    .btn-confirm {
-      background: rgba(30, 176, 252, 1);
-      color: #fff;
+          //去掉按钮点击出现的边框
+          button:focus {
+            outline: none;
+          }
+
+          .btn-confirm {
+            background: rgba(30, 176, 252, 1);
+            color: #fff;
+          }
+        }
+      }
     }
   }
 }
@@ -316,18 +327,6 @@ export default {
   border-bottom: 1px solid rgba(153, 153, 153, 1);
   font-size: 15px;
   color: rgba(255, 255, 255, 1);
-}
-
-/deep/ .el-dialog__body {
-  padding: 0px;
-}
-
-/deep/ .el-dialog__header {
-  display: none;
-}
-
-/deep/ .el-dialog {
-  background: transparent;
 }
 
 /* for Chrome */

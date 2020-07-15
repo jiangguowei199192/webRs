@@ -41,12 +41,6 @@
                   :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                 >{{list.label}}</el-button>
-                <!-- <el-button
-                    :class="{infrared:list.label==='可见光'}"
-                    :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
-                    @click.stop="changeStatus(2,index)"
-                >{{list.label}}</el-button>-->
-                <!-- </div> -->
               </div>
             </div>
           </template>
@@ -116,7 +110,7 @@
                   @next-click="next"
                 ></el-pagination>
               </div>
-              <div class="download" />
+              <div class="download" @click="download" />
               <img :src="fullScreen" @click.stop="dialogVisible=true" />
             </div>
           </div>
@@ -157,6 +151,18 @@
       </div>
       <!-- </div> -->
     </el-dialog>
+    <el-dialog :visible.sync="downloadDlgVisible" class="downloadDlg" width="803px">
+      <div class="downloadContainer">
+        <div class="title">
+          <span>视频列表</span>
+        </div>
+        <div>
+          <img src="../../assets/images/download-pic.png" />
+          <span>下载</span>
+        </div>
+        <div @click="downloadDlgVisible = false"></div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -168,7 +174,7 @@ import Tree from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
 export default {
-  name: 'videoContainer',
+  name: 'playbackContainer',
   components: {
     VideoMain,
     Calendar,
@@ -181,6 +187,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      downloadDlgVisible: false, // 下载弹窗
       selectedIndex: 200, // 激活在线设备 初始值200，不激活
       dialogVisible: false, // 全屏弹窗
       curPlayer: '', // 当前播放对象
@@ -936,6 +943,14 @@ export default {
         this.stop = require('../../assets/images/stop-disable.png')
         this.play = require('../../assets/images/play-disable.png')
       }
+    },
+
+    /**
+     * 下载回放视频
+     */
+    download () {
+      if (this.records.length === 0) return
+      this.downloadDlgVisible = true
     }
   }
 }
@@ -1057,6 +1072,7 @@ export default {
     }
   }
   .videoList {
+    min-height: 710px;
     display: flex;
     flex-wrap: wrap;
     .videoItem {
@@ -1149,13 +1165,16 @@ export default {
   }
 }
 
+/deep/.el-dialog {
+  .el-dialog__header {
+    display: none;
+  }
+}
+
 //修改弹框样式
-.el-dialog__wrapper {
+.fullDlg.el-dialog__wrapper {
   overflow: visible;
   /deep/.el-dialog {
-    .el-dialog__header {
-      display: none;
-    }
     .el-dialog__body {
       display: flex;
       flex-wrap: wrap;
@@ -1167,6 +1186,62 @@ export default {
         margin-bottom: 20px;
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
+      }
+    }
+  }
+}
+.downloadDlg.el-dialog__wrapper {
+  /deep/.el-dialog {
+    background: transparent;
+    .el-dialog__body {
+      display: inline-block;
+      padding: 0px;
+      width: 100%;
+      height: 359px;
+      background: url(../../assets/images/download-box.png) no-repeat;
+      .downloadContainer {
+        padding: 20px;
+        div:nth-child(1) {
+          display: inline-block;
+          background: url(../../assets/images/header-bg.png) no-repeat;
+          width: 202px;
+          height: 45px;
+          span {
+            font-size: 18px;
+            color: white;
+            line-height: 45px;
+            margin-left: 30px;
+          }
+        }
+        div:nth-child(2) {
+          cursor: pointer;
+          position: absolute;
+          left: 637px;
+          display: inline-block;
+          width: 112px;
+          height: 32px;
+          background: url(../../assets/images/downloag-bg.png) no-repeat;
+          padding: 0px 0px 0px 17px;
+          span {
+            font-size: 14px;
+            color: white;
+            line-height: 32px;
+            margin-left: 7px;
+          }
+        }
+        div:nth-child(2):active {
+          background: url(../../assets/images/downloag-bg-press.png) no-repeat;
+        }
+        div:nth-child(3) {
+          cursor: pointer;
+          position: absolute;
+          top: 28px;
+          left: 757px;
+          display: inline-block;
+          width: 18px;
+          height: 18px;
+          background: url(../../assets/images/close.png) no-repeat;
+        }
       }
     }
   }
