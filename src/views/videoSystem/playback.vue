@@ -216,6 +216,7 @@
             ></el-table-column>
           </el-table>
           <el-pagination
+            class="tablePagination"
             popper-class="pageSelect"
             :page-size="downloadPageSize"
             layout="total, sizes, prev, pager, next"
@@ -1413,89 +1414,6 @@ export default {
           height: 18px;
           background: url(../../assets/images/close.png) no-repeat;
         }
-
-        /deep/.el-pagination {
-          margin-top: 10px;
-          .el-pagination__sizes {
-            margin: -2px 10px 0 0;
-          }
-
-          span {
-            color: #fff;
-            font-size: 13px;
-          }
-
-          .el-pager .more::before {
-            line-height: 24px;
-          }
-
-          .el-pager li {
-            border: 1px solid rgba(60, 154, 206, 1);
-            border-radius: 4px;
-            width: 24px;
-            height: 24px;
-            background: transparent;
-            text-align: center;
-            line-height: 24px;
-            color: rgba(60, 154, 206, 1);
-            font-size: 13px;
-            padding: 0px;
-            min-width: 24px;
-            margin-right: 10px;
-          }
-          .el-pager li.active {
-            background: rgba(60, 154, 206, 1);
-            color: #fff;
-          }
-          .btn-prev {
-            margin-right: 10px;
-          }
-
-          button {
-            padding: 0px !important;
-            background-color: transparent;
-            min-width: 24px;
-            height: 24px;
-            i {
-              border: 1px solid rgba(60, 154, 206, 1);
-              border-radius: 4px;
-              width: 22px;
-              height: 22px;
-              background: transparent;
-              text-align: center;
-              line-height: 22px;
-              color: rgba(60, 154, 206, 1);
-              font-size: 16px;
-              padding: 0px;
-            }
-          }
-          button:active {
-            i {
-              background: rgba(60, 154, 206, 1);
-              color: #fff;
-            }
-          }
-          button[disabled] {
-            i {
-              background: transparent;
-              color: rgba(60, 154, 206, 1);
-            }
-          }
-
-          .el-input__inner {
-            border-radius: 0px;
-            width: 100px;
-            height: 24px;
-            border: 1px solid rgba(54, 143, 187, 1);
-            padding: 0px 30px 0px 10px;
-            background: transparent;
-            color: rgba(54, 143, 187, 1);
-          }
-
-          .el-input__icon {
-            color: rgba(54, 143, 187, 1);
-          }
-        }
       }
     }
   }
@@ -1507,6 +1425,19 @@ export default {
 }
 
 .el-table {
+  /* --- 改变滚动条样式 --- */
+  ::-webkit-scrollbar {
+    width: 17px;
+  }
+  /* --- 滚动条里面的滚动块 --- */
+  /deep/ ::-webkit-scrollbar-thumb {
+    background: #1c9ed7;
+  }
+  /* --- 滚动条里面轨道 --- */
+  ::-webkit-scrollbar-track {
+    background: rgba(30, 176, 252, 0.3);
+  }
+
   margin-top: 15px;
   color: rgba(255, 255, 255, 1);
   font-size: 14px;
