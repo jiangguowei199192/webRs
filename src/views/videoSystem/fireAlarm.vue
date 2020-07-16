@@ -123,7 +123,7 @@ export default {
     }
   },
   created () {
-    this.getAllDeptDevices()
+    // this.getAllDeptDevices()
   }
 }
 </script>
