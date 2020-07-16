@@ -172,7 +172,7 @@ export default {
   font-size: 18px;
   font-family: Source Han Sans CN;
   font-weight: bold;
-  // margin-top: 24px;
+  margin-top: 20px;
   max-height: 750px;
   width: 248px;
   overflow-y: auto;
