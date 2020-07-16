@@ -113,26 +113,26 @@ export default {
     leftBoxDidSelectedItem: function (id) {
       // console.log(id);
       for (let i = 0; i < this.leftItemData.length; i++) {
-        const group = this.leftItemData[i];
+        const group = this.leftItemData[i]
         for (let j = 0; j < group.info.length; j++) {
-          const item = group.info[j];
+          const item = group.info[j]
           if (item.id === id) {
-            item.selected = true;
+            item.selected = true
           } else {
-            item.selected = false;
+            item.selected = false
           }
         }
       }
       if (id === 0) {
-        document.getElementById('idRightItemUserSetting').scrollIntoView();
+        document.getElementById('idRightItemUserSetting').scrollIntoView()
       } else if (id === 1) {
-        document.getElementById('idRightItemUserPermission').scrollIntoView();
+        document.getElementById('idRightItemUserPermission').scrollIntoView()
       } else if (id === 2) {
-        document.getElementById('idRightItemVideoServe').scrollIntoView();
+        document.getElementById('idRightItemVideoServe').scrollIntoView()
       } else if (id === 3) {
-        document.getElementById('idRightItemSmartFunction').scrollIntoView();
+        document.getElementById('idRightItemSmartFunction').scrollIntoView()
       } else if (id === 4) {
-        document.getElementById('idRightItemMapServe').scrollIntoView();
+        document.getElementById('idRightItemMapServe').scrollIntoView()
       }
     }
   },

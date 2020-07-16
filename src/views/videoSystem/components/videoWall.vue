@@ -16,7 +16,7 @@
         <span></span>
         <span>{{videoInfo.parentLabel}}</span>
       </div>
-      <div class="fullScreen" v-show="videoInfo.isShowOperate||false" >
+      <div class="fullScreen" v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false" >
         <div class="deviceInfo">
           <div class="deviceTitle">云台</div>
           <div class="operate">
@@ -138,7 +138,7 @@ export default {
       if (player.isFullscreen()) {
         player.exitFullscreen()
       } else player.requestFullscreen()
-      this.$emit('fullScreen', this.videoInfo)
+      this.$emit('fullScreenChange', this.videoInfo)
     },
 
     /**
@@ -263,22 +263,6 @@ export default {
         default:
           break
       }
-    },
-    // 点击云台操作按钮
-    changeViewVideo (params) {
-      debugger
-      this.$axios
-        .get(
-          'api/ptz/' +
-            this.curSelectedVideo.deviceCode +
-            '/' +
-            this.curSelectedVideo.id
-        )
-        .then(res => {
-          if (res && res.data && res.data.code === 0) {
-            debugger
-          }
-        })
     }
   },
   created () {
