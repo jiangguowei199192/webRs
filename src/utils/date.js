@@ -6,22 +6,62 @@ export function getTime () {
   let weekday = date.getDay()// 调取周几;
   // 转换星期数值
   switch (weekday) {
-    case 0:weekday = '日'
+    case 0: weekday = '日'
       break
-    case 1:weekday = '一'
+    case 1: weekday = '一'
       break
-    case 2:weekday = '二'
+    case 2: weekday = '二'
       break
-    case 3:weekday = '三'
+    case 3: weekday = '三'
       break
-    case 4:weekday = '四'
+    case 4: weekday = '四'
       break
-    case 5:weekday = '五'
+    case 5: weekday = '五'
       break
-    case 6:weekday = '六'
+    case 6: weekday = '六'
       break
   }
   // setInterval(getTime, 1000)
   // 返回时间拼接 年月日 星期
   return { year: year, month: month, day: day, weekday: '星期' + weekday }
+}
+
+/**
+     * 将秒数转换为时分秒格式
+     * @param {Integer}} value 秒
+     */
+export function formatSeconds (value) {
+  var sTime = parseInt(value) // 秒
+  var mTime = 0 // 分
+  var hTime = 0 //
+
+  if (sTime > 60) {
+    // 获取分钟，除以60取整数，得到整数分钟
+    mTime = parseInt(sTime / 60)
+    // 获取秒数，秒数取佘，得到整数秒数
+    sTime = parseInt(sTime % 60)
+    // 如果分钟大于60，将分钟转换成小时
+    if (mTime > 60) {
+      // 获取小时，获取分钟除以60，得到整数小时
+      hTime = parseInt(mTime / 60)
+      // 获取小时后取佘的分，获取分钟除以60取佘的分
+      mTime = parseInt(mTime % 60)
+    }
+  }
+  var result =
+    formatMinutes(hTime) +
+    ':' +
+    formatMinutes(mTime) +
+    ':' +
+    formatMinutes(sTime)
+  return result
+}
+
+/**
+     * 格式化时间
+     * @param {Integer}} minutes 时间
+     */
+export function formatMinutes (minutes) {
+  if (minutes < 10) return '0' + minutes.toString()
+  else return minutes.toString()
 }

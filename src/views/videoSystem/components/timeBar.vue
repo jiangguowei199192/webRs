@@ -36,6 +36,7 @@
   </div>
 </template>
 <script>
+import { formatSeconds } from '@/utils/date'
 export default {
   data () {
     return {
@@ -93,15 +94,6 @@ export default {
     },
 
     /**
-     * 格式化时间
-     * @param {Integer}} minutes 时间
-     */
-    formatMinutes (minutes) {
-      if (minutes < 10) return '0' + minutes.toString()
-      else return minutes.toString()
-    },
-
-    /**
      * 跳转到X小时
      * @param {Integer}} hour 小时
      */
@@ -114,44 +106,8 @@ export default {
      * @param {Integer}} minute 分钟
      */
     toHourMinute (minutes) {
-      // var hour = Math.floor(minutes / 60)
-      // var minute = Math.floor(minutes % 60)
-      // hour = this.formatMinutes(hour)
-      // minute = this.formatMinutes(minute)
-      // this.$emit('update:curTime', hour + ':' + minute)
-
-      this.formatSeconds(minutes * 60)
-    },
-
-    /**
-     * 将秒数转换为时分秒格式
-     * @param {Integer}} value 秒
-     */
-    formatSeconds (value) {
-      var sTime = parseInt(value) // 秒
-      var mTime = 0 // 分
-      var hTime = 0 //
-
-      if (sTime > 60) {
-        // 获取分钟，除以60取整数，得到整数分钟
-        mTime = parseInt(sTime / 60)
-        // 获取秒数，秒数取佘，得到整数秒数
-        sTime = parseInt(sTime % 60)
-        // 如果分钟大于60，将分钟转换成小时
-        if (mTime > 60) {
-          // 获取小时，获取分钟除以60，得到整数小时
-          hTime = parseInt(mTime / 60)
-          // 获取小时后取佘的分，获取分钟除以60取佘的分
-          mTime = parseInt(mTime % 60)
-        }
-      }
-      var result =
-        this.formatMinutes(hTime) +
-        ':' +
-        this.formatMinutes(mTime) +
-        ':' +
-        this.formatMinutes(sTime)
-      this.$emit('update:curTime', result)
+      const time = formatSeconds(minutes * 60)
+      this.$emit('update:curTime', time)
     },
 
     /**

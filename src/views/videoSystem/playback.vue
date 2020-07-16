@@ -156,11 +156,76 @@
         <div class="title">
           <span>视频列表</span>
         </div>
-        <div>
+        <div class="downloadBtn" @click="downloadMp4">
           <img src="../../assets/images/download-pic.png" />
           <span>下载</span>
         </div>
-        <div @click="downloadDlgVisible = false"></div>
+        <div class="close" @click="downloadDlgVisible = false;radio = -1"></div>
+        <div>
+          <el-table
+            @row-click="ClickTableRow"
+            :data="curPageRecord"
+            stripe
+            empty-text="no data"
+            tooltip-effect="light"
+            height="216px"
+          >
+            <el-table-column label width="33" align="center" :resizable="false">
+              <template slot-scope="scope">
+                <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
+              </template>
+            </el-table-column>
+            <el-table-column label="序号" type="index" align="center" min-width="7%"></el-table-column>
+            <el-table-column
+              label="文件名"
+              prop="fileName"
+              align="center"
+              :show-overflow-tooltip="true"
+              min-width="16%"
+            ></el-table-column>
+            <el-table-column
+              label="文件大小"
+              prop="fileSize"
+              align="center"
+              :show-overflow-tooltip="true"
+              min-width="15%"
+              :formatter="formatFileSize"
+            ></el-table-column>
+            <el-table-column
+              label="开始时间"
+              prop="start"
+              :formatter="formatFileStart"
+              align="center"
+              :show-overflow-tooltip="true"
+              min-width="22%"
+            ></el-table-column>
+            <el-table-column
+              label="结束时间"
+              prop="start"
+              align="center"
+              :formatter="formatFileEnd"
+              :show-overflow-tooltip="true"
+              min-width="22%"
+            ></el-table-column>
+            <el-table-column
+              label="所属设备"
+              prop="deviceName"
+              align="center"
+              :show-overflow-tooltip="true"
+              min-width="18%"
+            ></el-table-column>
+          </el-table>
+          <el-pagination
+            popper-class="pageSelect"
+            :page-size="downloadPageSize"
+            layout="total, sizes, prev, pager, next"
+            :page-sizes="[5, 10, 20]"
+            :total="records.length"
+            :current-page.sync="curRecordPage"
+            @current-change="currentRecordPageChange"
+            @size-change="downloadPageSizeChange"
+          ></el-pagination>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -173,6 +238,7 @@ import TimeBar from './components/timeBar'
 import Tree from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
+import { formatSeconds } from '@/utils/date'
 export default {
   name: 'playbackContainer',
   components: {
@@ -187,6 +253,10 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      curRecordPage: 1,
+      curPageRecord: [], // 当前页显示的回放数据
+      radio: -1,
+      downloadPageSize: 5, // 下载每页显示个数
       downloadDlgVisible: false, // 下载弹窗
       selectedIndex: 200, // 激活在线设备 初始值200，不激活
       dialogVisible: false, // 全屏弹窗
@@ -221,6 +291,98 @@ export default {
   },
 
   methods: {
+    /**
+     * 回放当前页数改变
+     */
+    currentRecordPageChange (val) {
+      this.curRecordPage = val
+      this.curPageRecord = this.sliceRecordList(this.curRecordPage)
+    },
+
+    /**
+     * 获取回放总页数
+     */
+    getRecordTotalPageCount () {
+      var tPageNum =
+        this.records.length % this.downloadPageSize > 0
+          ? parseInt(this.records.length / this.downloadPageSize) + 1
+          : parseInt(this.records.length / this.downloadPageSize)
+      if (tPageNum === 0) tPageNum = 1
+      return tPageNum
+    },
+
+    /**
+     * 获取当前页码的回放列表
+     */
+    sliceRecordList (curPage) {
+      var tPageNum = this.getRecordTotalPageCount()
+      if (curPage > tPageNum) return []
+      var start = (curPage - 1) * this.downloadPageSize
+      if (curPage === tPageNum) {
+        return this.records.slice(start)
+      } else {
+        var end = start + this.downloadPageSize
+        return this.records.slice(start, end)
+      }
+    },
+
+    /**
+     * 下载回放视频
+     */
+    downloadMp4 () {
+      if (this.radio === -1) return
+      const item = this.records[this.radio]
+      var url = item.url
+      const eleLink = document.createElement('a')
+      eleLink.download = url
+      eleLink.style.display = 'none'
+      eleLink.href = url
+      document.body.appendChild(eleLink)
+      eleLink.click()
+      document.body.removeChild(eleLink)
+    },
+
+    /**
+     * 下载每页显示条数改变
+     */
+    downloadPageSizeChange (val) {
+      this.downloadPageSize = val
+      this.curRecordPage = 1
+      this.curPageRecord = this.sliceRecordList(this.curRecordPage)
+    },
+
+    /**
+     * 点击表格行
+     */
+    ClickTableRow (row) {
+      this.radio = this.records.indexOf(row)
+    },
+
+    /**
+     * 格式化文件大小
+     */
+    formatFileSize (row, column) {
+      const size = row.fileSize / (1024 * 1024)
+      return Math.ceil(size) + 'M'
+    },
+
+    /**
+     * 格式化文件开始时间
+     */
+    formatFileStart (row, column) {
+      const start = row.date + ' ' + formatSeconds(row.start * 60)
+      return start
+    },
+
+    /**
+     * 格式化文件结束时间
+     */
+    formatFileEnd (row, column) {
+      const end =
+        row.date + ' ' + formatSeconds(row.start * 60 + row.duration * 60)
+      return end
+    },
+
     init () {
       // 初始加载9个空元素
       this.totalVideosArray = []
@@ -464,21 +626,27 @@ export default {
           var rs = res.data
           if (rs && rs.code === 0) {
             rs.data.paths.forEach(p => {
-              var date = new Date(p.start_time * 1000)
+              var d = new Date(p.start_time * 1000)
               var start =
-                date.getHours() * 60 +
-                date.getMinutes() +
-                date.getSeconds() / 60
+                d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60
               var index = rs.data.rootPath.indexOf('/record')
               var url = ''
               if (index !== -1) {
                 url =
-                  'http://116.85.50.50:8888' +
+                  'http://172.16.63.158:9999' +
                   rs.data.rootPath.substring(index) +
                   p.file_name
               }
-
-              var r = { duration: p.time_len / 60, start: start, url: url }
+              const device = this.curNode.parentLabel.split('-')[0]
+              var r = {
+                duration: p.time_len / 60,
+                start: start,
+                url: url,
+                fileName: p.file_name,
+                fileSize: p.file_size,
+                deviceName: device,
+                date: date
+              }
               this.records.push(r)
               if (this.records.length > 0) {
                 this.playbarEnable(true)
@@ -950,7 +1118,9 @@ export default {
      */
     download () {
       if (this.records.length === 0) return
+      this.curRecordPage = 1
       this.downloadDlgVisible = true
+      this.curPageRecord = this.sliceRecordList(this.curRecordPage)
     }
   }
 }
@@ -1190,6 +1360,7 @@ export default {
     }
   }
 }
+
 .downloadDlg.el-dialog__wrapper {
   /deep/.el-dialog {
     background: transparent;
@@ -1201,7 +1372,7 @@ export default {
       background: url(../../assets/images/download-box.png) no-repeat;
       .downloadContainer {
         padding: 20px;
-        div:nth-child(1) {
+        .title {
           display: inline-block;
           background: url(../../assets/images/header-bg.png) no-repeat;
           width: 202px;
@@ -1213,7 +1384,7 @@ export default {
             margin-left: 30px;
           }
         }
-        div:nth-child(2) {
+        .downloadBtn {
           cursor: pointer;
           position: absolute;
           left: 637px;
@@ -1229,10 +1400,10 @@ export default {
             margin-left: 7px;
           }
         }
-        div:nth-child(2):active {
+        .downloadBtn:active {
           background: url(../../assets/images/downloag-bg-press.png) no-repeat;
         }
-        div:nth-child(3) {
+        .close {
           cursor: pointer;
           position: absolute;
           top: 28px;
@@ -1242,8 +1413,150 @@ export default {
           height: 18px;
           background: url(../../assets/images/close.png) no-repeat;
         }
+
+        /deep/.el-pagination {
+          margin-top: 10px;
+          .el-pagination__sizes {
+            margin: -2px 10px 0 0;
+          }
+
+          span {
+            color: #fff;
+            font-size: 13px;
+          }
+
+          .el-pager .more::before {
+            line-height: 24px;
+          }
+
+          .el-pager li {
+            border: 1px solid rgba(60, 154, 206, 1);
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            text-align: center;
+            line-height: 24px;
+            color: rgba(60, 154, 206, 1);
+            font-size: 13px;
+            padding: 0px;
+            min-width: 24px;
+            margin-right: 10px;
+          }
+          .el-pager li.active {
+            background: rgba(60, 154, 206, 1);
+            color: #fff;
+          }
+          .btn-prev {
+            margin-right: 10px;
+          }
+
+          button {
+            padding: 0px !important;
+            background-color: transparent;
+            min-width: 24px;
+            height: 24px;
+            i {
+              border: 1px solid rgba(60, 154, 206, 1);
+              border-radius: 4px;
+              width: 22px;
+              height: 22px;
+              background: transparent;
+              text-align: center;
+              line-height: 22px;
+              color: rgba(60, 154, 206, 1);
+              font-size: 16px;
+              padding: 0px;
+            }
+          }
+          button:active {
+            i {
+              background: rgba(60, 154, 206, 1);
+              color: #fff;
+            }
+          }
+          button[disabled] {
+            i {
+              background: transparent;
+              color: rgba(60, 154, 206, 1);
+            }
+          }
+
+          .el-input__inner {
+            border-radius: 0px;
+            width: 100px;
+            height: 24px;
+            border: 1px solid rgba(54, 143, 187, 1);
+            padding: 0px 30px 0px 10px;
+            background: transparent;
+            color: rgba(54, 143, 187, 1);
+          }
+
+          .el-input__icon {
+            color: rgba(54, 143, 187, 1);
+          }
+        }
       }
     }
   }
+}
+
+/* 删除表格下横线 */
+.el-table::before {
+  height: 0px;
+}
+
+.el-table {
+  margin-top: 15px;
+  color: rgba(255, 255, 255, 1);
+  font-size: 14px;
+  background-color: transparent;
+  /* 表格表头样式 */
+  /deep/.el-table__header-wrapper th {
+    color: rgba(255, 255, 255, 1);
+    font-size: 14px;
+    height: 26px;
+    padding: 0;
+    background-color: rgba(54, 143, 187, 1);
+  }
+
+  /* 表格每行高度*/
+  /deep/.el-table__body td {
+    height: 38px;
+    padding: 0;
+  }
+
+  /deep/.el-table__body tr {
+    background-color: rgba(51, 105, 132, 1);
+  }
+
+  /* 鼠标hover每行的样式*/
+  /deep/.el-table__body tr:hover > td {
+    background-color: rgba(51, 105, 132, 1);
+  }
+
+  /deep/td,
+  /deep/th {
+    border: none;
+  }
+
+  //单选框样式
+  /deep/ .el-radio__inner {
+    border: 1px solid rgba(255, 255, 255, 1);
+    background: transparent;
+  }
+
+  //单选框选中样式
+  /deep/ .el-radio__input.is-checked .el-radio__inner::after {
+    width: 7px;
+    height: 7px;
+    border-radius: 100%;
+    background-color: rgba(255, 255, 255, 1);
+  }
+}
+
+/* 修改偶数行颜色*/
+/deep/.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: rgba(54, 143, 187, 1);
 }
 </style>

@@ -30,3 +30,28 @@
   margin: 0px;
   padding: 0px 10px;
 }
+
+//回放视频下载弹窗中，分页组件的页面数选择下拉框的样式
+.el-select-dropdown.pageSelect {
+  border: 1px solid rgba(54, 143, 187, 1);
+  background-color: #0f283c ;
+
+  .el-select-dropdown__item {
+    color: rgba(54, 143, 187, 1);
+    height: 24px;
+    line-height: 24px;
+  }
+
+  .el-select-dropdown__item.selected {
+    color: #fff;
+  }
+
+  .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+    background-color: transparent;
+  }
+
+  .popper__arrow {
+    display: none !important;
+  }
+}
+
