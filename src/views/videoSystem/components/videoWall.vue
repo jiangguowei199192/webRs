@@ -24,37 +24,37 @@
               <div
                 v-for="(item,index) in 9"
                 :key="index"
-                @click.stop="changeCurVideo(index)"
-                :class="{active:activeCurIcon===index}"
+                 @mousedown="startChange(index)"
+                  @mouseup="stopChange()"
               ></div>
             </div>
             <div class="btns">
-              <div>
-                <span :class="{active:zoom==1}" @click="zoom=1">+</span>
-                <b>变倍</b>
-                <span :class="{active:zoom==2}" @click="zoom=2">-</span>
-              </div>
-              <div>
-                <span :class="{active:zoomLens==1}" @click="zoomLens=1">+</span>
-                <b>变焦</b>
-                <span :class="{active:zoomLens==2}" @click="zoomLens=2">-</span>
-              </div>
-              <div>
-                <span :class="{active:zoomGuang==1}" @click="zoomGuang=1">+</span>
-                <b>光圈</b>
-                <span :class="{active:zoomGuang==2}" @click="zoomGuang=2">-</span>
-              </div>
+             <div>
+                  <span @mousedown="startChange(1000,true)" @mouseup="stopChange">+</span>
+                  <b>变倍</b>
+                  <span @mousedown="startChange(1001,true)" @mouseup="stopChange">-</span>
+                </div>
+                <div>
+                  <span @mousedown="startFocusLris(1002)" @mouseup="stopFocusLris">+</span>
+                  <b>变焦</b>
+                  <span @mousedown="startFocusLris(1003)" @mouseup="stopFocusLris">-</span>
+                </div>
+                <div>
+                  <span @mousedown="startFocusLris(1004)" @mouseup="stopFocusLris">+</span>
+                  <b>光圈</b>
+                  <span @mousedown="startFocusLris(1005)" @mouseup="stopFocusLris">-</span>
+                </div>
             </div>
             <div class="slider">
-              <span class="demonstration">步速</span>
-              <el-slider
-                v-model="value2"
-                :min="1"
-                :max="8"
-                style="width:91px;margin-left:16px;margin-right:8px;"
-              ></el-slider>
-              <span>{{value2}}</span>
-            </div>
+                <span class="demonstration">步速</span>
+                <el-slider
+                  v-model="step"
+                  :min="1"
+                  :max="20"
+                  style="width:91px;margin-left:16px;margin-right:8px;"
+                ></el-slider>
+                <span>{{step}}</span>
+              </div>
           </div>
         </div>
       </div>
@@ -68,11 +68,21 @@ export default {
     return {
       curTime: 0,
       curUrl: '',
-      value2: 4, // 步速值
       activeCurIcon: '', // 默认选中云台的图标
-      zoom: 0, // 变倍
-      zoomLens: 0, // 变焦
-      zoomGuang: 0 // 变光
+      zoomSpeed: 0, // 变倍
+      focusSpeed: 0, // 变焦
+      lrisSpeed: 0, // 光圈
+      step: 10, // 步速值
+      recordNums: {
+        leftUp: 0,
+        up: 0,
+        rightUp: 0,
+        left: 0,
+        right: 0,
+        leftDowm: 0,
+        down: 0,
+        rightDown: 0
+      }
 
     }
   },
@@ -221,47 +231,239 @@ export default {
       if (isFull === undefined) isFull = false
       return isFull
     },
-    // 点击云台图标按钮，控制当前视频
-    changeCurVideo (index) {
-      console.log('当前选中' + this.curSelectedVideo)
-      debugger
-      this.activeCurIcon = index
+    // 清除其它按钮的记录次数
+    clearRecord (curKey) {
+      for (const key in this.recordNums) {
+        if (key !== curKey) {
+          this.recordNums[key] = 0
+        }
+      }
+    },
+    // 按钮和变倍的鼠标按下事件
+    startChange (index, isInOut = false) {
+      // debugger
       const params = {}
-      switch (index) {
-        case 0:
-          params.leftRight = 1
-          params.upDown = 1
-          this.changeViewVideo(params)
-          break
-        case 1:
-          params.upDown = 1
-          break
-        case 2:
-          params.leftRight = 2
-          params.upDown = 1
-          break
-        case 3:
-          params.leftRight = 1
-          break
-        case 4:
-          params.leftRight = 1
-          break
-        case 5:
-          params.leftRight = 2
-          break
-        case 6:
-          params.leftRight = 1
-          params.upDown = 2
-          break
-        case 7:
-          params.upDown = 2
-          break
-        case 8:
-          params.leftRight = 2
-          params.upDown = 2
-          break
-        default:
-          break
+      if (!isInOut) {
+        switch (index) {
+          case 0:
+            ++this.recordNums.leftUp
+            this.clearRecord('leftUp')
+            // 左上
+            params.leftRight = 1
+            params.upDown = 1
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.leftUp > 255
+                ? 255
+                : this.step * this.recordNums.leftUp
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideo(1, params)
+            break
+          case 1:
+            ++this.recordNums.up
+            this.clearRecord('up')
+            // 上移
+            params.upDown = 1
+            params.leftRight = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.up > 255
+                ? 255
+                : this.step * this.recordNums.up
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideo(1, params)
+            break
+          case 2:
+            ++this.recordNums.rightUp
+            this.clearRecord('rightUp')
+            // 右上
+            params.leftRight = 2
+            params.upDown = 1
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.rightUp > 255
+                ? 255
+                : this.step * this.recordNums.rightUp
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideo(1, params)
+            break
+          case 3:
+            ++this.recordNums.left
+            this.clearRecord('left')
+            // 左
+            params.leftRight = 1
+            params.upDown = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.left > 255
+                ? 255
+                : this.step * this.recordNums.left
+            params.zoomSpeed = 0
+            this.changeViewVideo(1, params)
+            console.dir(params)
+            break
+          case 4:
+            break
+          case 5:
+            ++this.recordNums.right
+            this.clearRecord('right')
+            // 右
+            params.leftRight = 2
+            params.upDown = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.right > 255
+                ? 255
+                : this.step * this.recordNums.right
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideo(1, params)
+            break
+          case 6:
+            ++this.recordNums.leftDown
+            this.clearRecord('leftDown')
+            // 左下
+            params.leftRight = 1
+            params.upDown = 2
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.leftDown > 255
+                ? 255
+                : this.step * this.recordNums.leftDown
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideo(1, params)
+            break
+          case 7:
+            ++this.recordNums.down
+            this.clearRecord('down')
+            // 下
+            params.upDown = 2
+            params.leftRight = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.down > 255
+                ? 255
+                : this.step * this.recordNums.down
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideo(1, params)
+            break
+          case 8:
+            ++this.recordNums.rightDown
+            this.clearRecord('rightDown')
+            // 右下
+            params.leftRight = 2
+            params.upDown = 2
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.rightDown > 255
+                ? 255
+                : this.step * this.recordNums.rightDown
+            params.zoomSpeed = 0
+            this.changeViewVideo(1, params)
+            console.dir(params)
+            break
+          default:
+            break
+        }
+      } else {
+        // 变倍
+        params.leftRight = 0
+        params.upDown = 0
+        params.moveSpeed = 0
+
+        if (index === 1000) {
+          params.inOut = 2
+          params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
+        } else {
+          params.inOut = 1
+          params.zoomSpeed = this.zoomSpeed-- < 0 ? 0 : this.zoomSpeed
+        }
+        this.changeViewVideo(1, params)
+        console.log(params)
+      }
+    },
+    // 按钮和变倍的鼠标弹起停止控制
+    stopChange () {
+      const params = {}
+      params.leftRight = 0
+      params.upDown = 0
+      params.inOut = 0
+      params.moveSpeed = 0
+      params.zoomSpeed = 0
+      console.log('停止')
+      console.dir(params)
+      this.changeViewVideo(1, params)
+    },
+    // 变焦和光圈鼠标按下事件
+    startFocusLris (type) {
+      const params = {}
+      if (type === 1002) {
+        params.focus = 2
+        params.focusSpeed = this.focusSpeed++ > 255 ? 255 : this.focusSpeed
+        params.lris = 0
+        params.lrisSpeed = 0
+      } else if (type === 1003) {
+        params.focus = 1
+        params.focusSpeed = this.focusSpeed-- < 0 ? 0 : this.focusSpeed
+        params.lris = 0
+        params.lrisSpeed = 0
+      } else if (type === 1004) {
+        params.lris = 2
+        params.lrisSpeed = this.lrisSpeed++ > 255 ? 255 : this.lrisSpeed
+        params.focus = 0
+        params.focusSpeed = 0
+      } else if (type === 1005) {
+        params.lris = 1
+        params.lrisSpeed = this.lrisSpeed-- < 0 ? 0 : this.lrisSpeed
+        params.focus = 0
+        params.focusSpeed = 0
+      }
+      console.log(params)
+      this.changeViewVideo(2, params)
+    },
+    // 变焦和光圈鼠标松开事件
+    stopFocusLris () {
+      const params = {
+        lris: 0,
+        lrisSpeed: 0,
+        focus: 0,
+        focusSpeed: 0
+      }
+      this.changeViewVideo(2, params)
+    },
+    // 云台操作按钮的请求
+    changeViewVideo (type, params) {
+      if (type === 1) {
+        this.$axios
+          .post(
+            'api/ptz/' +
+            this.videoInfo.deviceCode +
+            '/' +
+            this.videoInfo.id, params
+          )
+          .then(res => {
+            if (res && res.data && res.data.code === 0) {
+              console.log('控制成功了')
+            }
+          })
+      } else {
+        this.$axios
+          .post(
+            'api/fi/' +
+            this.videoInfo.deviceCode +
+            '/' +
+            this.videoInfo.id, params
+          )
+          .then(res => {
+            if (res && res.data && res.data.code === 0) {
+              console.log('控制成功了')
+            }
+          })
       }
     }
   },
@@ -333,21 +535,21 @@ export default {
         div:nth-child(1) {
           background: url(../../../assets/images/device/7.png) no-repeat;
         }
-        div:nth-child(1).active {
+        div:nth-child(1):hover{
           background: url(../../../assets/images/device/7_selected.png)
             no-repeat;
         }
         div:nth-child(2) {
           background: url(../../../assets/images/device/8.png) no-repeat;
         }
-        div:nth-child(2).active {
+        div:nth-child(2):hover {
           background: url(../../../assets/images/device/8_selected.png)
             no-repeat;
         }
         div:nth-child(3) {
           background: url(../../../assets/images/device/9.png) no-repeat;
         }
-        div:nth-child(3).active {
+        div:nth-child(3):hover {
           background: url(../../../assets/images/device/9_selected.png)
             no-repeat;
         }
@@ -355,7 +557,7 @@ export default {
           margin-right: 10px;
           background: url(../../../assets/images/device/4.png) no-repeat;
         }
-        div:nth-child(4).active {
+        div:nth-child(4):hover{
           background: url(../../../assets/images/device/4_selected.png)
             no-repeat;
         }
@@ -368,35 +570,35 @@ export default {
           margin-right: 10px;
           background: url(../../../assets/images/device/5.png) no-repeat;
         }
-        div:nth-child(5).active {
+        div:nth-child(5):hover {
           background: url(../../../assets/images/device/5_selected.png)
             no-repeat;
         }
         div:nth-child(6) {
           background: url(../../../assets/images/device/6.png) no-repeat;
         }
-        div:nth-child(6).active {
+        div:nth-child(6):hover {
           background: url(../../../assets/images/device/6_selected.png)
             no-repeat;
         }
         div:nth-child(7) {
           background: url(../../../assets/images/device/1.png) no-repeat;
         }
-        div:nth-child(7).active {
+        div:nth-child(7):hover {
           background: url(../../../assets/images/device/1_selected.png)
             no-repeat;
         }
         div:nth-child(8) {
           background: url(../../../assets/images/device/2.png) no-repeat;
         }
-        div:nth-child(8).active {
+        div:nth-child(8):hover{
           background: url(../../../assets/images/device/2_selected.png)
             no-repeat;
         }
         div:nth-child(9) {
           background: url(../../../assets/images/device/3.png) no-repeat;
         }
-        div:nth-child(9).active {
+        div:nth-child(9):hover {
           background: url(../../../assets/images/device/3_selected.png)
             no-repeat;
         }
@@ -436,17 +638,17 @@ export default {
             left: -15px;
             color: #1ca1dc;
           }
-          span.active {
-            background: linear-gradient(
-              90deg,
-              rgb(32, 72, 105) 0%,
-              rgb(32, 72, 105) 100%
-            );
-          }
-          span:nth-child(1).active:after {
+          // span.active {
+          //   background: linear-gradient(
+          //     90deg,
+          //     rgb(32, 72, 105) 0%,
+          //     rgb(32, 72, 105) 100%
+          //   );
+          // }
+          span:nth-child(1):hover:after {
             content: "";
           }
-          span:nth-child(3).active:before {
+          span:nth-child(3):hover:before {
             content: "";
           }
         }

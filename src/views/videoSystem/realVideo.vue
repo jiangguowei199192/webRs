@@ -266,7 +266,7 @@ export default {
         left: 0,
         right: 0,
         leftDowm: 0,
-        dowm: 0,
+        down: 0,
         rightDown: 0
       },
       isPlayAll: false, // 是否播放所有 控制预览全部
@@ -371,7 +371,6 @@ export default {
     },
     // 按钮和变倍的鼠标按下事件
     startChange (index, isInOut = false) {
-      // debugger
       const params = {}
       if (!isInOut) {
         switch (index) {
@@ -468,7 +467,7 @@ export default {
             this.changeViewVideo(1, params)
             break
           case 7:
-            ++this.recordNums.dowm
+            ++this.recordNums.down
             this.clearRecord('down')
             // 下
             params.upDown = 2
@@ -548,7 +547,6 @@ export default {
         params.focus = 0
         params.focusSpeed = 0
       } else if (type === 1005) {
-        debugger
         params.lris = 1
         params.lrisSpeed = this.lrisSpeed-- < 0 ? 0 : this.lrisSpeed
         params.focus = 0
@@ -936,7 +934,6 @@ export default {
     },
     // 双击视频时给显示操作按钮
     getVideoInfo (curScreenInfo) {
-      debugger
       this.curScreenInfo = curScreenInfo
       console.log(curScreenInfo.id)
       setTimeout(() => {
