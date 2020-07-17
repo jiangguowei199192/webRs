@@ -265,10 +265,11 @@ const videoMixin = {
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
             data[i].children.push(d)
+            const tmpData = JSON.parse(JSON.stringify(d))
             if (d.deviceTypeCode === 'WRJ') {
-              this.droneDevArray.push(d)
+              this.droneDevArray.push(tmpData)
             } else if (d.deviceTypeCode === 'GDJK') {
-              this.cameraDevArray.push(d)
+              this.cameraDevArray.push(tmpData)
             }
             if (d.onlineStatus === 'online' && d.children.length > 0) {
               this.onlineArray.push(d)
