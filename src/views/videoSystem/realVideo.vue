@@ -510,7 +510,8 @@ export default {
           params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
         } else {
           params.inOut = 1
-          params.zoomSpeed = this.zoomSpeed-- < 0 ? 0 : this.zoomSpeed
+          this.zoomSpeed--
+          params.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
         }
         this.changeViewVideo(1, params)
         console.log(params)
@@ -538,7 +539,8 @@ export default {
         params.lrisSpeed = 0
       } else if (type === 1003) {
         params.focus = 1
-        params.focusSpeed = this.focusSpeed-- < 0 ? 0 : this.focusSpeed
+        this.focusSpeed--
+        params.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
         params.lris = 0
         params.lrisSpeed = 0
       } else if (type === 1004) {
@@ -548,7 +550,8 @@ export default {
         params.focusSpeed = 0
       } else if (type === 1005) {
         params.lris = 1
-        params.lrisSpeed = this.lrisSpeed-- < 0 ? 0 : this.lrisSpeed
+        this.lrisSpeed--
+        params.lrisSpeed = this.lrisSpeed < 0 ? 0 : this.lrisSpeed
         params.focus = 0
         params.focusSpeed = 0
       }
