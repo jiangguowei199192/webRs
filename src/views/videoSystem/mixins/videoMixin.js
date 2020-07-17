@@ -76,6 +76,13 @@ const videoMixin = {
       delete info.deptCode
       info = this.formatData(info)
       var device = this.onlineArray.find(c => c.id === info.id)
+
+      if (info.children && info.children.length > 0) {
+        info.children.forEach(item => {
+          Reflect.set(item, 'deviceTypeCode', info.deviceTypeCode)
+          Reflect.set(item, 'onlineStatus', info.onlineStatus)
+        })
+      }
       // 设备已存在
       if (device !== undefined) {
         var index = this.onlineArray.indexOf(device)
