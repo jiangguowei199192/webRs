@@ -2,7 +2,7 @@
   <div class="baseBox">
     <div class="title">{{itemData.headerTitle}}</div>
     <div class="table">
-      <div v-for="item in itemData.items" :key="item.id" :class="item.id ? 'otherItem' : 'firstItem' ">
+      <div v-for="(item, index) in itemData.items" :key="index" :class="index ? 'otherItem' : 'firstItem' ">
         <SettingRightItem v-bind:data="item"></SettingRightItem>
       </div>
     </div>

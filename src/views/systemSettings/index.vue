@@ -1,16 +1,44 @@
 <template>
   <div>
     <div class="leftBox">
-      <SettingLeftItem v-for="data in leftItemData" :key="data.headerTitle" v-bind:itemData="data" v-on:leftBoxDidSelectedItem="leftBoxDidSelectedItem"></SettingLeftItem>
+      <SettingLeftItem
+        v-for="data in leftItemData"
+        :key="data.headerTitle"
+        v-bind:itemData="data"
+        v-on:leftBoxDidSelectedItem="leftBoxDidSelectedItem"
+      ></SettingLeftItem>
     </div>
     <div class="rightBox">
       <div class="rightBoxBase">
-        <SettingRightTable id="idRightItemUserSetting" style="margin-top: 44px;" v-bind:itemData="rightItemUserSetting"></SettingRightTable>
-        <SettingRightTable id="idRightItemUserPermission" style="margin-top: 44px;" v-bind:itemData="rightItemUserPermission"></SettingRightTable>
-        <SettingRightTable id="idRightItemVideoServe" style="margin-top: 44px;" v-bind:itemData="rightItemVideoServe"></SettingRightTable>
-        <SettingRightTable id="idRightItemSmartFunction" style="margin-top: 44px;" v-bind:itemData="rightItemSmartFunction"></SettingRightTable>
-        <SettingRightTable id="idRightItemMapServe" style="margin-top: 44px;" v-bind:itemData="rightItemMapServe"></SettingRightTable>
-        <div style="height: 500px;"></div>
+        <div v-if="isShow">
+          <SettingRightTable
+            id="idRightItemUserSetting"
+            style="margin-top: 44px;"
+            v-bind:itemData="rightItemUserSetting"
+          ></SettingRightTable>
+          <SettingRightTable
+            id="idRightItemUserPermission"
+            style="margin-top: 44px;"
+            v-bind:itemData="rightItemUserPermission"
+          ></SettingRightTable>
+          <SettingRightTable
+            id="idRightItemVideoServe"
+            style="margin-top: 44px;"
+            v-bind:itemData="rightItemVideoServe"
+          ></SettingRightTable>
+          <SettingRightTable
+            id="idRightItemSmartFunction"
+            style="margin-top: 44px;"
+            v-bind:itemData="rightItemSmartFunction"
+          ></SettingRightTable>
+          <SettingRightTable
+            id="idRightItemMapServe"
+            style="margin-top: 44px;"
+            v-bind:itemData="rightItemMapServe"
+          ></SettingRightTable>
+          <div style="height: 500px;"></div>
+        </div>
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -24,6 +52,7 @@ export default {
   name: 'settings',
   data () {
     return {
+      isShow: true,
       leftItemData: [
         {
           headerTitle: '账号设置',
@@ -74,69 +103,143 @@ export default {
       rightItemUserSetting: {
         headerTitle: '账号设置',
         items: [
-          { id: 0, title: '陈处长', subTitle: '12345678900', type: 'RightItemType_MyInfo' },
-          { id: 1, title: '补充信息', type: 'RightItemType_Title' }
+          {
+            id: 0,
+            title: '陈处长',
+            subTitle: '12345678900',
+            text: '',
+            type: 'RightItemType_MyInfo'
+          },
+          {
+            id: 1,
+            title: '补充信息',
+            subTitle: '',
+            text: '所属机构、职务/岗位',
+            type: 'RightItemType_SubTitle'
+          }
         ]
       },
       rightItemUserPermission: {
         headerTitle: '用户权限',
         items: [
-          { id: 0, title: '用户管理', type: 'RightItemType_Title' },
-          { id: 1, title: '角色权限管理', type: 'RightItemType_Title' },
-          { id: 2, title: '组织管理', type: 'RightItemType_Title' }
+          {
+            id: 2,
+            title: '用户管理',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          },
+          {
+            id: 3,
+            title: '角色权限管理',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          },
+          {
+            id: 4,
+            title: '组织管理',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          }
         ]
       },
       rightItemVideoServe: {
         headerTitle: '视频服务',
         items: [
-          { id: 0, title: '视频接入管理', type: 'RightItemType_Title' }
+          {
+            id: 5,
+            title: '视频接入管理',
+            subTitle: '',
+            text: '已接入0台设备',
+            type: 'RightItemType_SubTitle'
+          }
         ]
       },
       rightItemSmartFunction: {
         headerTitle: '智能功能管理',
         items: [
-          { id: 0, title: '火情报警', type: 'RightItemType_Title' },
-          { id: 1, title: '火情地图', type: 'RightItemType_Title' }
+          {
+            id: 6,
+            title: '火情报警',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          },
+          {
+            id: 7,
+            title: '火情地图',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          }
         ]
       },
       rightItemMapServe: {
         headerTitle: '地图服务',
         items: [
-          { id: 0, title: '地图中心点、层级设置', type: 'RightItemType_Title' },
-          { id: 1, title: '地图切换', type: 'RightItemType_Title' },
-          { id: 2, title: '图层管理', type: 'RightItemType_Title' }
+          {
+            id: 8,
+            title: '地图中心点、层级设置',
+            subTitle: '',
+            text: '武汉市 888.888888,88.88888 13级',
+            type: 'RightItemType_SubTitle'
+          },
+          {
+            id: 9,
+            title: '地图切换',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          },
+          {
+            id: 10,
+            title: '图层管理',
+            subTitle: '',
+            text: '已添加0类图层',
+            type: 'RightItemType_SubTitle'
+          }
         ]
       }
     }
   },
   methods: {
     leftBoxDidSelectedItem: function (id) {
-      // console.log(id);
+      // console.log(id)
       for (let i = 0; i < this.leftItemData.length; i++) {
-        const group = this.leftItemData[i];
+        const group = this.leftItemData[i]
         for (let j = 0; j < group.info.length; j++) {
-          const item = group.info[j];
+          const item = group.info[j]
           if (item.id === id) {
-            item.selected = true;
+            item.selected = true
           } else {
-            item.selected = false;
+            item.selected = false
           }
         }
       }
       if (id === 0) {
-        document.getElementById('idRightItemUserSetting').scrollIntoView();
+        document.getElementById('idRightItemUserSetting').scrollIntoView()
       } else if (id === 1) {
-        document.getElementById('idRightItemUserPermission').scrollIntoView();
+        document.getElementById('idRightItemUserPermission').scrollIntoView()
       } else if (id === 2) {
-        document.getElementById('idRightItemVideoServe').scrollIntoView();
+        document.getElementById('idRightItemVideoServe').scrollIntoView()
       } else if (id === 3) {
-        document.getElementById('idRightItemSmartFunction').scrollIntoView();
+        document.getElementById('idRightItemSmartFunction').scrollIntoView()
       } else if (id === 4) {
-        document.getElementById('idRightItemMapServe').scrollIntoView();
+        document.getElementById('idRightItemMapServe').scrollIntoView()
       }
     }
   },
-  created () {
+  created () {},
+  watch: {
+    $route (to, from) {
+      if (to.path === '/systemSettings') {
+        this.isShow = true
+      } else {
+        this.isShow = false
+      }
+    }
   },
   components: {
     SettingLeftItem,
@@ -147,18 +250,22 @@ export default {
 
 <style lang="scss" scoped>
 .leftBox {
+  float: left;
   width: 283px;
   height: 899px;
-  float: left;
-  background: url('../../assets/images/Setting/setting-leftBox.png') no-repeat;
+  background: url("../../assets/images/Setting/setting-leftBox.png") no-repeat;
   background-size: 100% 100%;
 }
 .rightBox {
-  width: 80%;
+  position: absolute;
+  top: 390px;
+  right: 20px;
+  bottom: 0;
+  left: 323px;
+  margin: auto;
+  width: auto;
   height: 899px;
-  float: left;
-  margin-left: 40px;
-  background: url('../../assets/images/Setting/setting-rightBox.png') no-repeat;
+  background: url("../../assets/images/Setting/setting-rightBox.png") no-repeat;
   background-size: 100% 100%;
   .rightBoxBase {
     height: 879px;

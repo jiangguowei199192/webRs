@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
 const originalPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push (location) {
+VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 
@@ -73,7 +73,24 @@ const routes = [{
   {
     path: '/systemSettings',
     name: 'systemSettings',
-    component: () => import('../views/systemSettings')
+    component: () => import('../views/systemSettings'),
+    children: [
+      {
+        path: '/systemSettings/organizationManagement',
+        name: 'organizationManagement',
+        component: () => import('../views/systemSettings/organizationManagement')
+      },
+      {
+        path: '/systemSettings/userManagement',
+        name: 'userManagement',
+        component: () => import('../views/systemSettings/userManagement')
+      },
+      {
+        path: '/systemSettings/rolePermissionManagement',
+        name: 'rolePermissionManagement',
+        component: () => import('../views/systemSettings/rolePermissionManagement')
+      }
+    ]
   }
   ]
 }
@@ -84,7 +101,7 @@ const router = new VueRouter({
   base: process.env.publicPath,
   routes,
   // 记录滚动条的坐标
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     } else {
