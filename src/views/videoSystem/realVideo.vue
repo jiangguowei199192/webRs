@@ -574,9 +574,10 @@ export default {
         this.$axios
           .post(
             'api/ptz/' +
-            this.curSelectedVideo.deviceCode +
-            '/' +
-            this.curSelectedVideo.id, params
+              this.curSelectedVideo.deviceCode +
+              '/' +
+              this.curSelectedVideo.id,
+            params
           )
           .then(res => {
             if (res && res.data && res.data.code === 0) {
@@ -587,9 +588,10 @@ export default {
         this.$axios
           .post(
             'api/fi/' +
-            this.curSelectedVideo.deviceCode +
-            '/' +
-            this.curSelectedVideo.id, params
+              this.curSelectedVideo.deviceCode +
+              '/' +
+              this.curSelectedVideo.id,
+            params
           )
           .then(res => {
             if (res && res.data && res.data.code === 0) {
@@ -963,6 +965,22 @@ export default {
       this.curVideosArray = this.totalVideosArray.slice(
         0,
         this.showVideoPageSize
+      )
+    },
+    // 设备下线
+    deviceOffline (device) {
+      console.log(this.totalVideosArray)
+      if (device.id === this.curSelectedVideo.deviceCode) {
+        this.curSelectedVideo = {}
+      }
+      this.totalVideosArray.forEach((item, index) => {
+        if (item.deviceCode === device.id) {
+          this.totalVideosArray.splice(index, 1, '')
+        }
+      })
+      this.curVideosArray = this.totalVideosArray.slice(
+        (this.currentPage - 1) * this.showVideoPageSize,
+        this.currentPage * this.showVideoPageSize
       )
     }
   },
