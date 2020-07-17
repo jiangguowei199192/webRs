@@ -107,6 +107,7 @@ const videoMixin = {
         span.parentElement.parentElement.style.cursor = 'not-allowed'
         span.parentElement.parentElement.style.opacity = '0.5'
         span.parentElement.parentElement.style.color = '#007291'
+        span.parentElement.parentElement.parentElement.classList.remove('is-current')
       } else {
         span.setAttribute('class', '')
         span.parentElement.parentElement.style.pointerEvents = ''
@@ -190,6 +191,7 @@ const videoMixin = {
               } else device.children.push(item)
             })
           }
+          if (!isOnline) { this.deviceOffline(device) }
         } else if (isOnline) {
           // 设备不存在，新设备上线
           dept.children.push(info)

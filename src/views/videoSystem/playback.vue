@@ -269,7 +269,6 @@ export default {
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
-      curDevice: '0', // 当前选中设备
       curNode: '', // 当前选中设备树节点
       stop: require('../../assets/images/stop-disable.png'),
       play: require('../../assets/images/play-disable.png'),
@@ -432,6 +431,33 @@ export default {
     },
 
     /**
+     * 设备离线
+     * @param {device} device 设备信息
+     */
+    deviceOffline (device) {
+      if (this.curPlayer && this.curPlayer.treeNode.pID === device.id) {
+        // 如果当前播放对象，下线了
+        this.stopPlayRecord()
+        this.selectedIndex = 200
+        this.records = []
+        this.recordData = []
+      } else if (device.children && device.children.length > 0) {
+        // 视频墙中视频对象，下线
+        device.children.forEach(item => {
+          var video = this.totalVideosArray.find(v => v !== '' && v.id === item.id)
+          if (video !== undefined) {
+            var index = this.totalVideosArray.indexOf(video)
+            if (index !== -1) { this.totalVideosArray[index] = '' }
+          }
+        })
+        this.curVideosArray = this.totalVideosArray.slice(
+          (this.currentPage - 1) * this.showVideoPageSize,
+          this.currentPage * this.showVideoPageSize
+        )
+      }
+    },
+
+    /**
      * 设置当前播放对象
      */
     setCurrentPlayerObject (player) {
@@ -488,6 +514,7 @@ export default {
     playDeviceVideo (item, list, index1, index2) {
       this.selectedIndex = index1
       this.curNode = this.onlineArray[index1].children[index2]
+      this.curNode.pID = this.onlineArray[index1].id
       this.curNode.parentLabel =
         this.onlineArray[index1].label +
         '-' +
@@ -570,19 +597,12 @@ export default {
     getSelectedData (data, pData) {
       this.curNode = data
       this.curNode.parentLabel = pData.label + '-' + this.curNode.label
+      this.curNode.pID = pData.id
       var player = this.totalVideosArray.find(v => v.id === data.id)
       if (player === undefined) {
         player = ''
       }
       this.setCurrentPlayerObject(player)
-    },
-
-    /**
-     * 修改选中设备
-     */
-    changeSelectDevice (id, index) {
-      this.curDevice = id
-      this.selectedIndex = index
     },
 
     /**
@@ -932,7 +952,8 @@ export default {
       if (index !== -1) {
         this.totalVideosArray[index] = ''
         // 去掉黄色边框
-        if (index === this.curVideoIndex) this.curVideoIndex = 1000
+        index = this.curVideosArray.indexOf(player)
+        if (index !== -1 && index === this.curVideoIndex) this.curVideoIndex = 1000
       }
       this.curVideosArray = this.totalVideosArray.slice(
         (this.currentPage - 1) * this.showVideoPageSize,
@@ -1288,8 +1309,8 @@ export default {
       .pagination {
         display: inline-block;
         position: relative;
-        top: -10px;
-        margin-right: 20px;
+        top: -12px;
+        margin-right: 6px;
         /deep/.el-pagination {
           button {
             background-color: transparent !important;
