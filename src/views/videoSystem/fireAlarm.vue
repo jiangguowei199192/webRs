@@ -149,7 +149,6 @@ export default {
     }
   },
   created () {
-    // this.getAllDeptDevices()
     EventBus.$on('GetAllDeptDevices_Done', bFlag => {
       this.initMap()
     })

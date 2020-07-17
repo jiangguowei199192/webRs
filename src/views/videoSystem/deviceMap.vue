@@ -57,7 +57,7 @@
           <div class="deviceMapBox">
             <div class="title">设备地图</div>
             <div class="container">
-              <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="true"></gMap>
+              <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="false"></gMap>
             </div>
           </div>
         </div>
@@ -69,6 +69,7 @@
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'deviceMap',
   components: {
@@ -103,17 +104,47 @@ export default {
     },
     // 点击在线设备
     showDevicePoint (item, index) {
-      debugger
+      this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
+      this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
+      this.$refs.gduMap.map2D.devFireWarningLayerManager.resetSelectedFeature()
+      if (item.deviceTypeCode === 'GDJK') {
+        this.$refs.gduMap.map2D.devCameraLayerManager.selectFeatureByID(item)
+      } else if (item.deviceTypeCode === 'WRJ') {
+        this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
+      }
+      this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
       this.selectedIndex = index
     },
     // 查看设备地图
     viewDeviceMap (curDeviceInfo) {
       debugger
+    },
+    initMap () {
+      if (this.$refs.gduMap !== undefined &&
+          this.$refs.gduMap.map2D !== undefined) {
+        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
+        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
+      }
+    },
+    updateDeviceStatus (info) {
+      if (this.$refs.gduMap !== undefined &&
+          this.$refs.gduMap.map2D !== undefined) {
+        if (info.deviceTypeCode === 'GDJK') {
+          this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
+        } else if (info.deviceTypeCode === 'WRJ') {
+          this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
+        }
+      }
     }
+  },
+  created () {
+    EventBus.$on('GetAllDeptDevices_Done', bFlag => {
+      this.initMap()
+    })
+    EventBus.$on('UpdateDeviceOnlineStatus', info => {
+      this.updateDeviceStatus(info)
+    })
   }
-  // created () {
-  //   this.getAllDeptDevices()
-  // }
 }
 </script>
 <style lang="less" scoped>
