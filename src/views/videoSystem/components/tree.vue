@@ -230,7 +230,7 @@ export default {
     }
     span.liveIcon {
       padding-right: 35px;
-      background: url(../../../assets/images/onlive.png) no-repeat right center;
+      background: url(../../../assets/images/onlive.png) no-repeat right 7px;
     }
   }
   /deep/.el-tree--highlight-current
