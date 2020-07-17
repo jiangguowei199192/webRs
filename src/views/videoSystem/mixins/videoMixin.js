@@ -145,6 +145,14 @@ const videoMixin = {
     },
 
     /**
+     * 设备离线
+     * @param {device} device 设备信息
+     */
+    deviceOffline (device) {
+
+    },
+
+    /**
      * 设备上下线
      * @param {Bool} isOnline 上线/下线
      * @param {Object} info 设备信息
