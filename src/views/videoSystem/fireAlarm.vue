@@ -131,16 +131,20 @@ export default {
       debugger
     },
     initMap () {
-      if (this.$refs.gduMap.map2D !== undefined) {
+      if (this.$refs.gduMap !== undefined &&
+          this.$refs.gduMap.map2D !== undefined) {
         this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
         this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
       }
     },
     updateDeviceStatus (info) {
-      if (info.deviceTypeCode === 'GDJK') {
-        this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
-      } else if (info.deviceTypeCode === 'WRJ') {
-        this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
+      if (this.$refs.gduMap !== undefined &&
+          this.$refs.gduMap.map2D !== undefined) {
+        if (info.deviceTypeCode === 'GDJK') {
+          this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
+        } else if (info.deviceTypeCode === 'WRJ') {
+          this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
+        }
       }
     }
   },
