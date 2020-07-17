@@ -539,6 +539,29 @@
   justify-content: space-around;
 }
 
+/*详情弹窗倒立小三角样式*/
+.invertedTriangle:after, .invertedTriangle:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  margin-top: -6px;
+}
+.invertedTriangle:after {
+  border-top-color: #1EB0FC;
+  border-width: 10px;
+  left: 50%;
+  margin-left: -10px;
+}
+.invertedTriangle:before {
+  border-top-color: #1EB0FC;
+  border-width: 11px;
+  left: 50%;
+  margin-left: -11px;
+}
 /*设备详情样式*/
 .devDetail {
   position: relative;
