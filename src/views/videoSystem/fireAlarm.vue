@@ -115,7 +115,15 @@ export default {
     },
     // 点击在线设备中红外光或可见光
     showFirePoint (item, index) {
-      debugger
+      this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
+      this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
+      this.$refs.gduMap.map2D.devFireWarningLayerManager.resetSelectedFeature()
+      if (item.deviceTypeCode === 'GDJK') {
+        this.$refs.gduMap.map2D.devCameraLayerManager.selectFeatureByID(item)
+      } else if (item.deviceTypeCode === 'WRJ') {
+        this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
+      }
+      this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
       this.selectedIndex = index
     },
     // 查看设备地图
@@ -123,14 +131,26 @@ export default {
       debugger
     },
     initMap () {
-      this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
-      this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
+      if (this.$refs.gduMap.map2D !== undefined) {
+        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
+        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
+      }
+    },
+    updateDeviceStatus (info) {
+      if (info.deviceTypeCode === 'GDJK') {
+        this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
+      } else if (info.deviceTypeCode === 'WRJ') {
+        this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
+      }
     }
   },
   created () {
     // this.getAllDeptDevices()
     EventBus.$on('GetAllDeptDevices_Done', bFlag => {
       this.initMap()
+    })
+    EventBus.$on('UpdateDeviceOnlineStatus', info => {
+      this.updateDeviceStatus(info)
     })
   }
 }

@@ -75,6 +75,7 @@ const videoMixin = {
     updateOnlineArray (isOnline, info) {
       delete info.deptCode
       info = this.formatData(info)
+      EventBus.$emit('UpdateDeviceOnlineStatus', info)
       var device = this.onlineArray.find(c => c.id === info.id)
 
       if (info.children && info.children.length > 0) {
