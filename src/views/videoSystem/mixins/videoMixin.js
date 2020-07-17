@@ -332,6 +332,7 @@ const videoMixin = {
           // console.log(this.onlineArray)
           // console.log(this.cameraDevArray)
           // console.log(this.droneDevArray)
+          EventBus.$emit('GetAllDeptDevices_Done', true)
         }
       })
     }

@@ -57,7 +57,7 @@
           <div class="fireAlarmBox">
             <div class="title">火点火情</div>
             <div class="container">
-              <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="true"></gMap>
+              <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="false"></gMap>
               <div class="todayFire">
                 <div class="title">今日火情警报[2/3]</div>
                 <div class="info">
@@ -80,6 +80,7 @@
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'fireAlarm',
   components: {
@@ -120,10 +121,17 @@ export default {
     // 查看设备地图
     viewDeviceMap (curDeviceInfo) {
       debugger
+    },
+    initMap () {
+      this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
+      this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
     }
   },
   created () {
     // this.getAllDeptDevices()
+    EventBus.$on('GetAllDeptDevices_Done', bFlag => {
+      this.initMap()
+    })
   }
 }
 </script>

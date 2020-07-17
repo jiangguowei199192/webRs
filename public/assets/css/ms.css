@@ -400,7 +400,7 @@
   border-radius: 50%;
   color: white;
   background-color: red;
-  padding: 0 4px;
+  padding: 0 7px;
   cursor: pointer;
 }
 
@@ -537,4 +537,177 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+/*设备详情样式*/
+.devDetail {
+  position: relative;
+  width: 432px;
+  height: 237px;
+  background-image: url('../images/device-box.png');
+  color: white;
+}
+.titleInfo {
+  position: absolute;
+  box-sizing: border-box;
+  width: 202px;
+  height: 45px;
+  background: url(../images/info-title.png) no-repeat;
+  line-height: 45px;
+  padding-left: 35px;
+  top: 15px;
+  left: 14px;
+  font-size: 18px;
+}
+.typeImg {
+  position: absolute;
+  box-sizing: border-box;
+  width: 141px;
+  height: 142px;
+  top: 70px;
+  left: 20px;
+}
+.devName {
+  position: absolute;
+  top: 70px;
+  left: 185px;
+}
+.devNameValue {
+  position: absolute;
+  top: 70px;
+  left: 260px;
+}
+.devCode {
+  position: absolute;
+  top: 100px;
+  left: 185px;
+}
+.devCodeValue {
+  position: absolute;
+  top: 100px;
+  left: 260px;
+}
+.devBrand {
+  position: absolute;
+  top: 130px;
+  left: 185px;
+}
+.devBrandValue {
+  position: absolute;
+  top: 130px;
+  left: 260px;
+}
+.devStatus {
+  position: absolute;
+  top: 160px;
+  left: 185px;
+}
+.devStatusValue {
+  position: absolute;
+  top: 160px;
+  left: 260px;
+}
+.devAddr {
+  position: absolute;
+  top: 190px;
+  left: 185px;
+}
+.devAddrValue {
+  position: absolute;
+  top: 190px;
+  left: 260px;
+}
+
+/*火点详情样式*/
+.fireDetail {
+  position: relative;
+  width: 632px;
+  height: 359px;
+  background-image: url('../images/fire-box.png');
+  color: white;
+}
+.fireTime {
+  position: absolute;
+  top: 70px;
+  left: 38px;
+}
+.fireTimeValue {
+  position: absolute;
+  top: 70px;
+  left: 80px;
+}
+.fireAddr {
+  position: absolute;
+  top: 70px;
+  left: 283px;
+}
+.fireAddrValue {
+  position: absolute;
+  top: 70px;
+  left: 325px;
+}
+.fireDev {
+  position: absolute;
+  top: 100px;
+  left: 38px;
+}
+.fireDevValue {
+  position: absolute;
+  top: 100px;
+  left: 115px;
+}
+.fireLonLat {
+  position: absolute;
+  top: 100px;
+  left: 283px;
+}
+.fireLonLatValue {
+  position: absolute;
+  top: 100px;
+  left: 325px;
+}
+.copyBtn {
+  position: absolute;
+  top: 100px;
+  left: 502px;
+  background:rgba(30,176,252,1);
+  color:rgba(255,255,255,1);
+}
+.leftImg {
+  top: 140px;
+  left: 50px;
+  background-color: rgba(0, 128, 128, 0.3);
+}
+.rightImg {
+  top: 140px;
+  left: 341px;
+  background-color: rgba(128, 128, 0, 0.3);
+}
+.imgCommon {
+  position: absolute;
+  width: 241px;
+  height: 165px;
+  cursor: pointer;
+}
+.misreportBtn {
+  position: absolute;
+  top: 320px;
+  left: 400px;
+  color:rgba(30,176,252,1);
+}
+.confirmBtn {
+  position: absolute;
+  top: 320px;
+  left: 502px;
+  background:rgba(30,176,252,1);
+  color:rgba(255,255,255,1);
+}
+.btnCommon {
+  width: 87px;
+  height: 20px;
+  border:1px solid rgba(30,176,252,1);
+  border-radius:4px;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
 }
