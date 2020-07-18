@@ -128,6 +128,7 @@
           ref="calendarCtrl"
           @dateChangeEvent="dateChange"
           :markData="recordData"
+          :snapList="snapList"
           :player="curPlayer"
           @searchRecordEvent="searchRecord"
         ></Calendar>
@@ -259,7 +260,6 @@ export default {
       radio: -1,
       downloadPageSize: 5, // 下载每页显示个数
       downloadDlgVisible: false, // 下载弹窗
-      selectedIndex: 200, // 激活在线设备 初始值200，不激活
       dialogVisible: false, // 全屏弹窗
       curPlayer: '', // 当前播放对象
       curTime: '00:00:00', // 当前播放时间
@@ -273,7 +273,8 @@ export default {
       stop: require('../../assets/images/stop-disable.png'),
       play: require('../../assets/images/play-disable.png'),
       pause: require('../../assets/images/pause.png'),
-      records: [] // timeBar上的回放记录
+      records: [], // timeBar上的回放记录
+      snapList: [] // 抓图列表
     }
   },
 
@@ -435,19 +436,27 @@ export default {
      * @param {device} device 设备信息
      */
     deviceOffline (device) {
-      if (this.curPlayer && this.curPlayer.treeNode.pID === device.id) {
-        // 如果当前播放对象，下线了
-        this.stopPlayRecord()
+      if (this.curNode.pID === device.id) {
         this.selectedIndex = 200
         this.records = []
         this.recordData = []
+        this.curNode = ''
+      }
+
+      if (this.curPlayer && this.curPlayer.treeNode.pID === device.id) {
+        // 如果当前播放对象，下线了
+        this.stopPlayRecord()
       } else if (device.children && device.children.length > 0) {
         // 视频墙中视频对象，下线
         device.children.forEach(item => {
-          var video = this.totalVideosArray.find(v => v !== '' && v.id === item.id)
+          var video = this.totalVideosArray.find(
+            v => v !== '' && v.id === item.id
+          )
           if (video !== undefined) {
             var index = this.totalVideosArray.indexOf(video)
-            if (index !== -1) { this.totalVideosArray[index] = '' }
+            if (index !== -1) {
+              this.totalVideosArray[index] = ''
+            }
           }
         })
         this.curVideosArray = this.totalVideosArray.slice(
@@ -628,6 +637,26 @@ export default {
     },
 
     /**
+     * 获取抓图列表
+     * @param {String} date 日期信息 YYMMDD
+     */
+    getSnapList (date) {
+      this.snapList = []
+      var timestamp = new Date(date + ' 00:00:00').getTime()
+      this.$axios
+        .get(api.getSnapList, {
+          deviceCode: '',
+          date: timestamp
+        })
+        .then(res => {
+          var rs = res.data
+          if (rs && rs.code === 0) {
+            this.snapList = rs.data
+          }
+        })
+    },
+
+    /**
      * 搜索回放mp4文件
      * @param {String} date 日期信息 YYMMDD
      */
@@ -635,6 +664,7 @@ export default {
       if (!this.curNode) return
       this.records = []
       this.playbarEnable(false)
+      // this.getSnapList(date)
       this.$axios
         .post(api.getMp4RecordFile, {
           vhost: '__defaultVhost_ ',
@@ -953,7 +983,7 @@ export default {
         this.totalVideosArray[index] = ''
         // 去掉黄色边框
         index = this.curVideosArray.indexOf(player)
-        if (index !== -1 && index === this.curVideoIndex) this.curVideoIndex = 1000
+        if (index !== -1 && index === this.curVideoIndex) { this.curVideoIndex = 1000 }
       }
       this.curVideosArray = this.totalVideosArray.slice(
         (this.currentPage - 1) * this.showVideoPageSize,

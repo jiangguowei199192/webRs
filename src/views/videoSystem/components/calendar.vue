@@ -34,8 +34,8 @@
         <span>图片</span>
       </div>
       <div class="picList">
-        <template v-for="(item,index) in picArray">
-          <div :style="{background: 'url(' +item.url +') no-repeat'}" :key="index"></div>
+        <template v-for="(item,index) in snapList">
+          <div :style="{background: 'url(' +item.filePath +') no-repeat'}" :key="index" @dblclick="showSnapDlg(item)"></div>
         </template>
       </div>
     </div>
@@ -54,6 +54,7 @@
 </template>
 <script>
 import { Message } from 'element-ui'
+import { api } from '@/api/videoSystem/videoRecord.js'
 var that
 export default {
   data () {
@@ -62,12 +63,16 @@ export default {
       dateInfo: { curYear: '', curMonth: '' },
       picDlgVisible: false, // 图片弹窗
       describe: '', // 图片描述
-      picArray: []
+      curSnap: ''
     }
   },
 
   props: {
     markData: {
+      type: Array,
+      default: () => []
+    },
+    snapList: {
       type: Array,
       default: () => []
     },
@@ -108,10 +113,31 @@ export default {
     },
 
     /**
+     * 显示抓图对话框
+     * @param {Object} snap 抓图信息
+     */
+    showSnapDlg (snap) {
+      this.picDlgVisible = true
+      this.curSnap = snap
+      this.describe = snap.fileName
+    },
+
+    /**
      * 添加图片描述
      */
     addDescribe () {
       this.picDlgVisible = false
+      this.$axios
+        .post(api.updateSnap, {
+          id: this.curSnap.id,
+          fileName: this.describe
+        })
+        .then(res => {
+          var rs = res.data
+          if (rs && rs.code === 0) {
+
+          }
+        })
     },
 
     /**
