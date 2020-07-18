@@ -62,7 +62,8 @@
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
                 <div class="info">
                   <div class="list" v-for="(item,index) in fireWarningArray" :key="index"
-                      :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}">
+                      :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
+                      @click.stop="selectFireWarningHandler(item,index)">
                     <div class="address">
                       <div>{{item.alarmTime}} <a>{{item.deviceName}}</a> </div>
                       <p>{{item.alarmAddress}}</p>
@@ -165,6 +166,17 @@ export default {
           this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
         }
       }
+    },
+    selectFireWarningHandler (item, index) {
+      const tmpMap = this.$refs.gduMap.map2D
+      tmpMap.devFireWarningLayerManager.selectFeatureByID(item)
+      tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
+      const mapCenter = tmpMap._map.getView().getCenter()
+      const tmpCenter = tmpMap._map.getPixelFromCoordinate(mapCenter)
+      const newx = tmpCenter[0] - 100
+      const newy = tmpCenter[1] - 120
+      const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
+      tmpMap.zoomToCenter(newCenter[0], newCenter[1])
     },
     callbackCopyCoordinate (info) {
       this.copyCoordinate = info.alarmLongitude + ',' + info.alarmLatitude
