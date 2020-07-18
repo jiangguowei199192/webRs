@@ -59,12 +59,13 @@
             <div class="container">
               <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="false"></gMap>
               <div class="todayFire">
-                <div class="title">今日火情警报[2/3]</div>
+                <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
                 <div class="info">
-                  <div class="list" v-for="(item,index) in 9" :key="index">
+                  <div class="list" v-for="(item,index) in fireWarningArray" :key="index"
+                      :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}">
                     <div class="address">
-                      <div>2020-04-30 10:06:53 <a>胜利农场</a> </div>
-                      <p>湖北省武汉市江夏区郑店街道上屋许96号</p>
+                      <div>{{item.alarmTime}} <a>{{item.deviceName}}</a> </div>
+                      <p>{{item.alarmAddress}}</p>
                     </div>
                   </div>
                 </div>
@@ -74,12 +75,20 @@
         </div>
       </div>
     </videoMain>
+    <span
+      ref="copyText"
+      v-clipboard:copy="copyCoordinate"
+      v-clipboard:success="onCopyOK"
+      v-clipboard:error="onCopyErr"
+      style="display:none;"
+    />
   </div>
 </template>
 <script>
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
+import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'fireAlarm',
@@ -90,7 +99,8 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
-      isShowRight: false
+      isShowRight: false,
+      copyCoordinate: ''
     }
   },
   methods: {
@@ -130,11 +140,20 @@ export default {
     viewDeviceMap (curDeviceInfo) {
       debugger
     },
-    initMap () {
+    initMapDevices () {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
+        this.$refs.gduMap.map2D.devCameraLayerManager.clear()
         this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
+        this.$refs.gduMap.map2D.devDroneLayerManager.clear()
         this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
+      }
+    },
+    initMapFireWarnings () {
+      if (this.$refs.gduMap !== undefined &&
+          this.$refs.gduMap.map2D !== undefined) {
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.clear()
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.fireWarningArray)
       }
     },
     updateDeviceStatus (info) {
@@ -146,15 +165,85 @@ export default {
           this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
         }
       }
+    },
+    callbackCopyCoordinate (info) {
+      this.copyCoordinate = info.alarmLongitude + ',' + info.alarmLatitude
+      this.$nextTick(() => {
+        this.$refs.copyText.click()
+      })
+    },
+    onCopyOK (e) {
+      console.log(e)
+    },
+    onCopyErr (e) {
+      console.log(e)
+    },
+    callbackLeftImg (info) {
+      console.log(info)
+    },
+    callbackMidImg (info) {
+      console.log(info)
+    },
+    callbackRightImg (info) {
+      console.log(info)
+    },
+    callbackMistaken (info) {
+      const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
+      this.$axios.post(tmpPost).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          var fire = this.fireWarningArray.find(c => c.id === info.id)
+          if (fire !== undefined) {
+            var index = this.fireWarningArray.indexOf(fire)
+            this.fireWarningArray.splice(index, 1)
+            this.fireTotalNum--
+          }
+        }
+      })
+    },
+    callbackConfirmed (info) {
+      const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
+      this.$axios.post(tmpPost).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          var fire = this.fireWarningArray.find(c => c.id === info.id)
+          if (fire !== undefined) {
+            fire.bConfirmed = true
+            fire.alarmStatus = info.alarmStatus
+            this.fireConfirmedNum++
+          }
+        }
+      })
     }
   },
   created () {
     EventBus.$on('GetAllDeptDevices_Done', bFlag => {
-      this.initMap()
+      this.initMapDevices()
+    })
+    EventBus.$on('getFireAlarmInfos_Done', bFlag => {
+      this.initMapFireWarnings()
     })
     EventBus.$on('UpdateDeviceOnlineStatus', info => {
       this.updateDeviceStatus(info)
     })
+  },
+  mounted () {
+    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupCopyBtnClickEvent.addEventListener(
+      this.callbackCopyCoordinate
+    )
+    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupLeftImgClickEvent.addEventListener(
+      this.callbackLeftImg
+    )
+    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupOneImgClickEvent.addEventListener(
+      this.callbackMidImg
+    )
+    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupRightImgClickEvent.addEventListener(
+      this.callbackRightImg
+    )
+    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupMisreportBtnClickEvent.addEventListener(
+      this.callbackMistaken
+    )
+    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupConfirmBtnClickEvent.addEventListener(
+      this.callbackConfirmed
+    )
   }
 }
 </script>
@@ -311,8 +400,6 @@ export default {
             > div.list {
               width: 350px;
               height: 92px;
-              background: url(../../assets/images/fire-wait-confirm.png)
-                no-repeat;
               margin-bottom: 20px;
               cursor: pointer;
               div.address{
@@ -321,6 +408,12 @@ export default {
                     margin-top:11px;
                   }
               }
+            }
+            .unConfirmedItem {
+              background: url(../../assets/images/fire-wait-confirm.png) no-repeat;
+            }
+            .confirmedItem {
+              background: url(../../assets/images/fire-confirm.png) no-repeat;
             }
           }
         }

@@ -1,4 +1,5 @@
 import { api } from '@/api/videoSystem/realVideo'
+import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { EventBus } from '@/utils/eventBus.js'
 const videoMixin = {
   data () {
@@ -13,6 +14,8 @@ const videoMixin = {
       cameraDevArray: [], // 所有摄像头设备列表
       droneDevArray: [], // 所有无人机设备列表
       fireWarningArray: [], // 今日火情列表
+      fireConfirmedNum: 0,
+      fireTotalNum: 0,
       ninePalace: require('../../../assets/images/9.png'),
       fourPalace: require('../../../assets/images/4.png'),
       onePalace: require('../../../assets/images/1.png'),
@@ -38,6 +41,7 @@ const videoMixin = {
 
   created () {
     this.getAllDeptDevices()
+    this.getFireAlarmInfos()
   },
 
   beforeDestroy () {
@@ -354,6 +358,28 @@ const videoMixin = {
           // console.log(this.cameraDevArray)
           // console.log(this.droneDevArray)
           EventBus.$emit('GetAllDeptDevices_Done', true)
+        }
+      })
+    },
+
+    getFireAlarmInfos () {
+      this.fireWarningArray = []
+      this.$axios.get(fireApi.getFireAlarmInfos).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          const tmpData = res.data.data
+          tmpData.forEach(fire => {
+            if (fire.alarmStatus !== 'mistaken') {
+              fire.bConfirmed = false
+              if (fire.alarmStatus === 'confirmed') {
+                fire.bConfirmed = true
+                this.fireConfirmedNum++
+              }
+              fire.alarmTime = fire.alarmTime.split('.')[0].replace('T', ' ')
+              this.fireWarningArray.push(fire)
+            }
+          })
+          this.fireTotalNum = this.fireWarningArray.length
+          EventBus.$emit('getFireAlarmInfos_Done', true)
         }
       })
     }

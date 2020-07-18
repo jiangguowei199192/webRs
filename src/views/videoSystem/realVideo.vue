@@ -76,7 +76,7 @@
               <div class="warning" @click.stop="$router.push({name:'fireAlarm'})">
                 <img :src="firePic" alt />
                 监控报警
-                <b>3</b>个
+                <b>{{ fireTotalNum }}</b>个
               </div>
             </div>
           </div>
