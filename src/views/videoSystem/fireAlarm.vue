@@ -168,6 +168,8 @@ export default {
       }
     },
     selectFireWarningHandler (item, index) {
+      this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
+      this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
       const tmpMap = this.$refs.gduMap.map2D
       tmpMap.devFireWarningLayerManager.selectFeatureByID(item)
       tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
