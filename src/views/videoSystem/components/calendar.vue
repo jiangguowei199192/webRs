@@ -35,13 +35,19 @@
       </div>
       <div class="picList">
         <template v-for="(item,index) in snapList">
-          <div :style="{background: 'url(' +item.filePath +') no-repeat'}" :key="index" @dblclick="showSnapDlg(item)"></div>
+          <div
+            :style="{background: 'url(http://172.16.63.108:22222' +item.filePath +') no-repeat'}"
+            :key="index"
+            @dblclick="showSnapDlg(item)"
+          ></div>
         </template>
       </div>
     </div>
     <el-dialog :visible.sync="picDlgVisible" width="803px">
       <div class="picContainer2">
-        <div class="pic"></div>
+        <div
+          :style="{background: 'url(http://172.16.63.108:22222' +curSnap.filePath +') no-repeat'}"
+        ></div>
         <div>
           <span>说明:</span>
           <el-input v-model="describe" placeholder="请输入图片说明"></el-input>
@@ -135,7 +141,8 @@ export default {
         .then(res => {
           var rs = res.data
           if (rs && rs.code === 0) {
-
+            var snap = this.snapList.find(s => s.id === this.curSnap.id)
+            if (snap !== undefined) snap.fileName = this.describe
           }
         })
     },
@@ -286,7 +293,7 @@ export default {
     .el-dialog__header {
       display: none;
     }
-     background: transparent;
+    background: transparent;
     .el-dialog__body {
       display: inline-block;
       padding: 0px;
@@ -298,7 +305,7 @@ export default {
         div:nth-child(1) {
           width: 743px;
           height: 428px;
-          background: violet;
+          background-size: 100% 100% !important;
         }
 
         div:nth-child(2) {
@@ -374,9 +381,7 @@ export default {
     > div {
       width: 190px;
       height: 107px;
-      //background: url(../../assets/images/video.png) no-repeat;
-      background-size: 100% 100%;
-      //background-color: #00497c;
+      background-size: 100% 100% !important;
       margin-bottom: 10px;
     }
   }

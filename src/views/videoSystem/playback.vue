@@ -12,14 +12,14 @@
             <div :class="{active:isOnline}" @click.stop="changeOnlineOrAll(true)">在线</div>
             <div :class="{active:!isOnline}" @click.stop="changeOnlineOrAll(false)">全部</div>
           </div>
-          <div class="search">
+          <!-- <div class="search">
             <el-input
               type="text"
               v-model.trim="filterDevice"
               placeholder="请输入设备名称"
               suffix-icon="el-icon-search"
             ></el-input>
-          </div>
+          </div> -->
           <!-- 默认展示已选部分 -->
           <template v-if="isOnline">
             <div
@@ -457,7 +457,6 @@ export default {
           this.currentPage * this.showVideoPageSize
         )
       }
-      // debugger
       if (this.curNode.pID === device.id) {
         this.selectedIndex = 200
         this.records = []
@@ -645,8 +644,10 @@ export default {
       var timestamp = new Date(date + ' 00:00:00').getTime()
       this.$axios
         .get(api.getSnapList, {
-          deviceCode: '',
-          date: timestamp
+          params: {
+            deviceCode: null,
+            date: timestamp
+          }
         })
         .then(res => {
           var rs = res.data
@@ -664,7 +665,7 @@ export default {
       if (!this.curNode) return
       this.records = []
       this.playbarEnable(false)
-      // this.getSnapList(date)
+      this.getSnapList(date)
       this.$axios
         .post(api.getMp4RecordFile, {
           vhost: '__defaultVhost_ ',
