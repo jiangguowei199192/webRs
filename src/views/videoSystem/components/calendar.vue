@@ -36,7 +36,7 @@
       <div class="picList">
         <template v-for="(item,index) in snapList">
           <div
-            :style="{background: 'url(http://172.16.63.108:22222' +item.filePath +') no-repeat'}"
+            :style="{background: 'url(http://172.16.63.158:22222' +item.filePath +') no-repeat'}"
             :key="index"
             @dblclick="showSnapDlg(item)"
           ></div>
@@ -46,7 +46,7 @@
     <el-dialog :visible.sync="picDlgVisible" width="803px">
       <div class="picContainer2">
         <div
-          :style="{background: 'url(http://172.16.63.108:22222' +curSnap.filePath +') no-repeat'}"
+          :style="{background: 'url(http://172.16.63.158:22222' +curSnap.filePath +') no-repeat'}"
         ></div>
         <div>
           <span>说明:</span>

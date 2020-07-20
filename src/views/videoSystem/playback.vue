@@ -462,6 +462,7 @@ export default {
         this.records = []
         this.recordData = []
         this.curNode = ''
+        this.snapList = []
       }
     },
 
