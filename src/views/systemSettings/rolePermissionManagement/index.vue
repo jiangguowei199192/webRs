@@ -31,7 +31,7 @@ export default {
     border: solid 1px #39a4dd;
     font-size: 18px;
     color: #ffffff;
-    background-color: rgba($color: #000000, $alpha: 0.1);
+    background-color: transparent;
     outline: none;
     display: block;
   }
