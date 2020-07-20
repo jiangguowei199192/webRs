@@ -104,7 +104,6 @@ export default {
     var mqtt = new MqttService()
   },
   methods: {
-    getTime,
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
@@ -148,7 +147,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .home {
-  background: url(../assets/images/bakcground.png) no-repeat;
+  background: url(../assets/images/bg.png) no-repeat;
   background-size: 100% 100%;
   .el-header {
     margin-top: 36px;
@@ -157,7 +156,9 @@ export default {
   }
   .box {
     display: flex;
-    justify-content: space-between;
+     // 临时显示菜单
+    // justify-content: space-between;
+    justify-content: center;
     font-size: 24px;
     font-weight: 500;
     .list {
@@ -170,8 +171,11 @@ export default {
         position: absolute;
         z-index: 999;
         width: 300px;
-        left: -30px;
-        padding-top: 30px;
+         // 临时显示菜单
+        // left: -30px;
+        // padding-top: 30px;
+        left: -75px;
+        padding-top: 33px;
         display: none;
         .el-button {
           width: 140px;
@@ -202,7 +206,8 @@ export default {
       height: 66px;
       line-height: 66px;
       text-align: center;
-      // padding-top: 11px;
+       // 临时显示菜单 添加
+      margin:0 43px;
       font-size: 36px;
       font-weight: bold;
       margin-top: -13px;
@@ -217,6 +222,13 @@ export default {
     }
     div.list:nth-child(n + 5) .active {
       background: url(../assets/images/selected-right.png) no-repeat !important;
+    }
+    // 临时显示菜单
+    div.list{
+      display: none;
+    }
+    div.list:nth-child(2),div.list:nth-child(4),div.list:nth-child(7){
+      display: block;
     }
   }
   .cur {
