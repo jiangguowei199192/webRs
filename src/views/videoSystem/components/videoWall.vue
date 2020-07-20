@@ -572,6 +572,7 @@ export default {
           // left: -5px;
           margin-right: 10px;
           background: url(../../../assets/images/device/5.png) no-repeat;
+          visibility: hidden;
         }
         div:nth-child(5):hover {
           background: url(../../../assets/images/device/5_selected.png)
