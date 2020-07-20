@@ -15,7 +15,7 @@
               v-for="(item,index) in onlineArray"
               :key="index"
               :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
-              @click.stop="selectDeviceItem(item,index)"
+              @click.stop="selectOnlineDeviceItem(item,index)"
             >
               <p>
                 <span class="area">{{item.label}}</span>
@@ -66,7 +66,7 @@
                       @click.stop="selectFireWarningHandler(item,index)">
                     <div class="address">
                       <div>{{item.alarmTime}}</div>
-                      <div class="devNameBox" @click.stop="showDeviceVideo(item)">
+                      <div class="devNameBox" @click.stop="gotoDeviceDetail(item)">
                         <img class="devIcon" src="../../assets/images/high_point.png"/>
                         <div class="devName divEllipsis" :title="item.deviceName">{{item.deviceName}}</div>
                       </div>
@@ -87,6 +87,14 @@
       v-clipboard:error="onCopyErr"
       style="display:none;"
     />
+    <el-dialog custom-class="el-dialog-custom"
+      :visible.sync="imgDialogVisible"
+      :show-close="false"
+      type="primary"
+      @click.native="closeImgDialog"
+      center>
+        <img class="dialogImg" :src="imgSrc">
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -106,7 +114,9 @@ export default {
   data () {
     return {
       isShowRight: false,
-      copyCoordinate: ''
+      copyCoordinate: '',
+      imgDialogVisible: false,
+      imgSrc: ''
     }
   },
   methods: {
@@ -142,7 +152,7 @@ export default {
       this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
     },
     // 点击在线设备中红外光或可见光
-    selectDeviceItem (item, index) {
+    selectOnlineDeviceItem (item, index) {
       this.showDeviceDetailInfo(item)
       this.selectedIndex = index
     },
@@ -193,12 +203,23 @@ export default {
       const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
       tmpMap.zoomToCenter(newCenter[0], newCenter[1])
     },
-    // 跳转到摄像头视频监控
-    showDeviceVideo (item) {
-      console.log(item)
+    // 跳转到设备详情
+    gotoDeviceDetail (item) {
+      this.cameraDevArray.forEach(dev => {
+        if (dev.id === item.deviceCode) {
+          this.showDeviceDetailInfo(dev)
+          return null
+        }
+      })
+      this.droneDevArray.forEach(dev => {
+        if (dev.id === item.deviceCode) {
+          this.showDeviceDetailInfo(dev)
+          return null
+        }
+      })
     },
     // 火情报警弹窗中点击复制坐标回调函数
-    callbackCopyCoordinate (info) {
+    copyCoordinateCB (info) {
       this.copyCoordinate = info.alarmLongitude + ',' + info.alarmLatitude
       this.$nextTick(() => {
         this.$refs.copyText.click()
@@ -217,17 +238,33 @@ export default {
     onCopyErr (e) {
       console.log(e)
     },
+    // 关闭图片展示窗口
+    closeImgDialog () {
+      this.imgDialogVisible = false
+    },
+    // 点击详情中的图片后详情会关闭，使用此延迟将其再显示出来。
+    delayShowFireDetailInfo (info) {
+      setTimeout(() => {
+        this.selectFireWarningHandler(info)
+      }, 500)
+    },
     // 火情报警弹窗中点击左侧图片(火情图片数组中第一张图片)回调事件
     callbackLeftImg (info) {
-      console.log(info)
+      this.imgSrc = info.alarmPicList[0].picPath
+      this.imgDialogVisible = true
+      this.delayShowFireDetailInfo(info)
     },
     // 火情报警弹窗中点击中间图片(火情图片数组中第一张图片)回调事件
     callbackMidImg (info) {
-      console.log(info)
+      this.imgSrc = info.alarmPicList[0].picPath
+      this.imgDialogVisible = true
+      this.delayShowFireDetailInfo(info)
     },
     // 火情报警弹窗中点击右侧图片(火情图片数组中第二张图片)回调事件
     callbackRightImg (info) {
-      console.log(info)
+      this.imgSrc = info.alarmPicList[1].picPath
+      this.imgDialogVisible = true
+      this.delayShowFireDetailInfo(info)
     },
     // 火情报警弹窗中点击误报按钮回调事件
     callbackMistaken (info) {
@@ -271,7 +308,7 @@ export default {
   },
   mounted () {
     this.$refs.gduMap.map2D.devFireWarningLayerManager.popupCopyBtnClickEvent.addEventListener(
-      this.callbackCopyCoordinate
+      this.copyCoordinateCB
     )
     this.$refs.gduMap.map2D.devFireWarningLayerManager.popupLeftImgClickEvent.addEventListener(
       this.callbackLeftImg
@@ -510,6 +547,10 @@ export default {
         }
       }
     }
+  }
+  .dialogImg {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

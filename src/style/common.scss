@@ -139,3 +139,15 @@
   }
 }
 
+// 火点火情页面图片显示弹窗样式
+.el-dialog-custom {
+  width: 1080px;
+  .el-dialog__header {
+    display: none;
+  }
+  .el-dialog__body {
+    width: 1080px;
+    height: 720px;
+    padding: 0px;
+  }
+}
