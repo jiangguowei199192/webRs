@@ -65,7 +65,11 @@
                       :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
                       @click.stop="selectFireWarningHandler(item,index)">
                     <div class="address">
-                      <div>{{item.alarmTime}} <a>{{item.deviceName}}</a> </div>
+                      <div>{{item.alarmTime}}</div>
+                      <div class="devNameBox" @click.stop="showDeviceVideo(item)">
+                        <img class="devIcon" src="../../assets/images/high_point.png"/>
+                        <div class="devName divEllipsis" :title="item.deviceName">{{item.deviceName}}</div>
+                      </div>
                       <div class="alarmAddr divEllipsis" :title="item.alarmAddress">{{item.alarmAddress}}</div>
                     </div>
                   </div>
@@ -146,6 +150,7 @@ export default {
     clickAnDeviceItem (curDeviceInfo) {
       this.showDeviceDetailInfo(curDeviceInfo)
     },
+    // 加载显示高点设备、无人机位置标记
     initMapDevices () {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
@@ -155,6 +160,7 @@ export default {
         this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
       }
     },
+    // 加载火情警报位置标记
     initMapFireWarnings () {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
@@ -162,6 +168,7 @@ export default {
         this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.fireWarningArray)
       }
     },
+    // 高点设备、无人机状态更新(地图标记)
     updateDeviceStatus (info) {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
@@ -172,6 +179,7 @@ export default {
         }
       }
     },
+    // 点击火情报警列表处理事件
     selectFireWarningHandler (item, index) {
       this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
@@ -185,6 +193,11 @@ export default {
       const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
       tmpMap.zoomToCenter(newCenter[0], newCenter[1])
     },
+    // 跳转到摄像头视频监控
+    showDeviceVideo (item) {
+      console.log(item)
+    },
+    // 火情报警弹窗中点击复制坐标回调函数
     callbackCopyCoordinate (info) {
       this.copyCoordinate = info.alarmLongitude + ',' + info.alarmLatitude
       this.$nextTick(() => {
@@ -196,21 +209,27 @@ export default {
         })
       })
     },
+    // 复制坐标成功回调
     onCopyOK (e) {
       console.log(e)
     },
+    // 复制坐标异常回调
     onCopyErr (e) {
       console.log(e)
     },
+    // 火情报警弹窗中点击左侧图片(火情图片数组中第一张图片)回调事件
     callbackLeftImg (info) {
       console.log(info)
     },
+    // 火情报警弹窗中点击中间图片(火情图片数组中第一张图片)回调事件
     callbackMidImg (info) {
       console.log(info)
     },
+    // 火情报警弹窗中点击右侧图片(火情图片数组中第二张图片)回调事件
     callbackRightImg (info) {
       console.log(info)
     },
+    // 火情报警弹窗中点击误报按钮回调事件
     callbackMistaken (info) {
       const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
@@ -224,6 +243,7 @@ export default {
         }
       })
     },
+    // 火情报警弹窗中点击确认按钮回调事件
     callbackConfirmed (info) {
       const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
@@ -416,18 +436,43 @@ export default {
           .title {
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(30, 176, 252, 1);
-            margin-bottom:20px;
+            margin-bottom:15px;
           }
           .info {
             overflow-y: auto;
             max-height:460px;
             > div.list {
+              position: relative;
               width: 350px;
               height: 92px;
-              margin-bottom: 20px;
+              margin-bottom: 18px;
               cursor: pointer;
               div.address{
                   padding:20px 0 17px 27px;
+                  .devNameBox {
+                    position: absolute;
+                    top: 14px;
+                    left: 190px;
+                    width: 104px;
+                    height: 24px;
+                    background-color: #1eb0fc;
+                    border:1px solid rgba(30,176,252,1);
+                    border-radius:4px;
+                    .devIcon {
+                      position: absolute;
+                      top: 6px;
+                      left: 4px;
+                      width: 16px;
+                      height: 11px;
+                    }
+                    .devName {
+                      position: absolute;
+                      top: 1px;
+                      left: 25px;
+                      width: 80px;
+                      color: #FEFEFE;
+                    }
+                  }
                   .alarmAddr {
                     height: 43px;
                     line-height: 43px;
