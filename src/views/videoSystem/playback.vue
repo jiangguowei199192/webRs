@@ -436,13 +436,6 @@ export default {
      * @param {device} device 设备信息
      */
     deviceOffline (device) {
-      if (this.curNode.pID === device.id) {
-        this.selectedIndex = 200
-        this.records = []
-        this.recordData = []
-        this.curNode = ''
-      }
-
       if (this.curPlayer && this.curPlayer.treeNode.pID === device.id) {
         // 如果当前播放对象，下线了
         this.stopPlayRecord()
@@ -463,6 +456,13 @@ export default {
           (this.currentPage - 1) * this.showVideoPageSize,
           this.currentPage * this.showVideoPageSize
         )
+      }
+      // debugger
+      if (this.curNode.pID === device.id) {
+        this.selectedIndex = 200
+        this.records = []
+        this.recordData = []
+        this.curNode = ''
       }
     },
 
