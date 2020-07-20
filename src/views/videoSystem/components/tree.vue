@@ -56,6 +56,12 @@ export default {
     // 点击树节点
     handleNodeClick (data, $event) {
       // console.log($event.parent.data)
+      const parentData = $event.parent.data
+      if (data._bIsDevice === true) {
+        this.$emit('clickAnDeviceItem', data)
+      } else if (parentData._bIsDevice === true) {
+        this.$emit('clickAnDeviceItem', parentData)
+      }
       debugger
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)

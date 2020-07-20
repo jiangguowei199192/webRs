@@ -268,13 +268,14 @@ const videoMixin = {
         if (data[i].deviceList && !data[i].children) { data[i].children = [] }
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
+            d._bIsDevice = true
             data[i].children.push(d)
-            const tmpData = JSON.parse(JSON.stringify(d))
             if (d.onlineStatus === 'online' && d.children.length > 0) {
               this.onlineArray.push(d)
             } else {
-              tmpData.onlineStatus = 'offline'
+              d.onlineStatus = 'offline'
             }
+            const tmpData = JSON.parse(JSON.stringify(d))
             if (tmpData.deviceTypeCode === 'WRJ') {
               this.droneDevArray.push(tmpData)
             } else if (tmpData.deviceTypeCode === 'GDJK') {
@@ -362,6 +363,7 @@ const videoMixin = {
       })
     },
 
+    /** 获取今日火情警报信息 */
     getFireAlarmInfos () {
       this.fireWarningArray = []
       this.$axios.get(fireApi.getFireAlarmInfos).then(res => {

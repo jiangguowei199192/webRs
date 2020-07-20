@@ -15,7 +15,7 @@
               v-for="(item,index) in onlineArray"
               :key="index"
               :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
-              @click.stop="showFirePoint(item,index)"
+              @click.stop="selectDeviceItem(item,index)"
             >
               <p>
                 <span class="area">{{item.label}}</span>
@@ -43,7 +43,7 @@
               :treeData="treeData"
               ref="tree"
               :isLiveTree="false"
-              @selectedDevice="viewDeviceMap"
+              @clickAnDeviceItem="clickAnDeviceItem"
             ></tree-data>
           </template>
           <div
@@ -66,7 +66,7 @@
                       @click.stop="selectFireWarningHandler(item,index)">
                     <div class="address">
                       <div>{{item.alarmTime}} <a>{{item.deviceName}}</a> </div>
-                      <p>{{item.alarmAddress}}</p>
+                      <div class="alarmAddr divEllipsis" :title="item.alarmAddress">{{item.alarmAddress}}</div>
                     </div>
                   </div>
                 </div>
@@ -91,6 +91,7 @@ import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { EventBus } from '@/utils/eventBus.js'
+import { Message } from 'element-ui'
 export default {
   name: 'fireAlarm',
   components: {
@@ -124,8 +125,8 @@ export default {
         })
       }
     },
-    // 点击在线设备中红外光或可见光
-    showFirePoint (item, index) {
+    // 定位地图中设备位置
+    showDeviceDetailInfo (item) {
       this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devFireWarningLayerManager.resetSelectedFeature()
@@ -135,11 +136,15 @@ export default {
         this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
       }
       this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
+    },
+    // 点击在线设备中红外光或可见光
+    selectDeviceItem (item, index) {
+      this.showDeviceDetailInfo(item)
       this.selectedIndex = index
     },
-    // 查看设备地图
-    viewDeviceMap (curDeviceInfo) {
-      debugger
+    // 点击全部设备列表中设备项
+    clickAnDeviceItem (curDeviceInfo) {
+      this.showDeviceDetailInfo(curDeviceInfo)
     },
     initMapDevices () {
       if (this.$refs.gduMap !== undefined &&
@@ -184,6 +189,11 @@ export default {
       this.copyCoordinate = info.alarmLongitude + ',' + info.alarmLatitude
       this.$nextTick(() => {
         this.$refs.copyText.click()
+        Message({
+          message: '坐标已复制!',
+          type: 'info',
+          duration: 3 * 1000
+        })
       })
     },
     onCopyOK (e) {
@@ -418,8 +428,10 @@ export default {
               cursor: pointer;
               div.address{
                   padding:20px 0 17px 27px;
-                  >p{
-                    margin-top:11px;
+                  .alarmAddr {
+                    height: 43px;
+                    line-height: 43px;
+                    width: 300px;
                   }
               }
             }
