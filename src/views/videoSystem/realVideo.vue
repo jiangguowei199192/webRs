@@ -971,6 +971,9 @@ export default {
     deviceOffline (device) {
       console.log(this.totalVideosArray)
       if (device.id === this.curSelectedVideo.deviceCode) {
+        if (this.isOnline) {
+          this.selectedIndex = 200
+        }
         this.curSelectedVideo = {}
       }
       this.totalVideosArray.forEach((item, index) => {
