@@ -152,6 +152,9 @@ export default {
     EventBus.$on('UpdateDeviceOnlineStatus', info => {
       this.updateDeviceStatus(info)
     })
+  },
+  mounted () {
+    this.$refs.gduMap.showLayer('fire', false)
   }
 }
 </script>

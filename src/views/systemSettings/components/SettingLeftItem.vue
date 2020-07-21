@@ -25,7 +25,7 @@ export default {
   methods: {
     itemClicked: function (id) {
       // console.log(id);
-      this.$emit("leftBoxDidSelectedItem", id);
+      this.$emit('leftBoxDidSelectedItem', id)
     }
   }
 }
