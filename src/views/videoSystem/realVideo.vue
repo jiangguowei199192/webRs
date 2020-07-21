@@ -76,7 +76,7 @@
               <div class="warning" @click.stop="$router.push({name:'fireAlarm'})">
                 <img :src="firePic" alt />
                 监控报警
-                <b>{{ fireTotalNum }}</b>个
+                <b>{{ fireWarningArray.length }}</b>个
               </div>
             </div>
           </div>
@@ -105,10 +105,18 @@
               <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" />
               <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
               <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
-              <img :src="photoClicked?photoSelected:photo" @click.stop="photoClicked=true" />
+              <img :src="photoClicked?photoSelected:photo" @click.stop="showImg" />
               <img
                 :src="mapClicked?mapSelected:map"
                 @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"
+              />
+              <!-- 用于显示截取的图片 -->
+              <img
+                src="@/assets/images/satellite_map.png"
+                alt
+                id="pic"
+                v-if="showCutImg"
+                @click.stop="cutDialogVisible=true"
               />
             </div>
             <div class="rightTool">
@@ -225,6 +233,27 @@
       </div>
       <!-- </div> -->
     </el-dialog>
+    <el-dialog
+      :visible.sync="cutDialogVisible"
+      class="cutDialog"
+      :close-on-click-modal="false"
+      :show-close="false"
+      :before-close="clearRemark"
+    >
+      <img src="@/assets/images/satellite_map.png" width="743px" height="428px" alt />
+      <span slot="footer" class="dialog-footer">
+        <div class="remark">
+          <div class="replain">
+            <span>说明：</span>
+            <el-input v-model.trim="remark" placeholder="请输入" :maxlength="27"></el-input>
+          </div>
+          <div>
+            <el-button @click="cutDialogVisible = false;remark=''" style="width:87px;">取 消</el-button>
+            <el-button type="primary" @click.stop="confirm" style="width:87px;">确 定</el-button>
+          </div>
+        </div>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -252,7 +281,10 @@ export default {
       lrisSpeed: 0, // 光圈
       mapClicked: false, // 设备地图
       photoClicked: false, // 拍照
+      showCutImg: false,
       dialogVisible: false, // 全屏弹窗
+      cutDialogVisible: false, // 抓取弹窗
+      remark: '', // 说明文字
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
@@ -349,15 +381,17 @@ export default {
           'isSelected',
           false
         )
-        const result = this.onlineArray[index1].children.some(child => {
-          return child.isSelected === true
-        })
+        // const result = this.onlineArray[index1].children.some(child => {
+        //   return child.isSelected === true
+        // })
         // 只要有一个被选中
-        if (result) {
-          this.selectedIndex = index1
-        } else {
-          this.selectedIndex = 200
-        }
+        // if (result) {
+        //   this.selectedIndex = index1
+        // } else {
+        //   this.selectedIndex = 200
+        // }
+        // 只要有关闭，则不选中任何 和树结构保持一致
+        this.selectedIndex = 200
         this.playOrClose(2, curData)
       }
     },
@@ -985,6 +1019,83 @@ export default {
         (this.currentPage - 1) * this.showVideoPageSize,
         this.currentPage * this.showVideoPageSize
       )
+    },
+    // 点击抓取，显示抓拍图片
+    showImg () {
+      if (Object.keys(this.curSelectedVideo).length === 0) {
+        this.$message.warning('请先选择设备！')
+        return
+      }
+      // 显示抓取的图片
+      // const params = {
+      //   deviceCode: this.curSelectedVideo.deviceCode,
+      //   channelId: this.curSelectedVideo.id
+      // }
+      // this.$axios.get(url, params).then(res => {
+      //   if (res && res.data && res.data.code === 0) {
+      //     this.photoClicked = true
+      //     this.showCutImg = true
+      //     this.cutImgUrl = res.data.data
+      //     this.$message.success('抓取成功！')
+      //   }
+      // })
+      this.photoClicked = true
+      this.showCutImg = true
+      setTimeout(() => {
+        this.showCutImg = false
+      }, 5000)
+      // this.$nextTick(() => {
+      //   this.moveElement('pic', 140, -215)
+      // })
+    },
+    // 点击确定按钮
+    confirm () {
+      // 防止此时设备下线
+      if (Object.keys(this.curSelectedVideo).length === 0) {
+        this.$message.warning('请先选择设备！')
+      }
+      // const params = {
+      //   deviceCode: this.curSelectedVideo.deviceCode,
+      //   channelId: this.curSelectedVideo.id,
+      //   remark: this.remark
+      // }
+      // this.$axios.get(url, params).then(res => {
+      //   if (res && res.data && res.data.code === 0) {
+      //     this.cutDialogVisible = false
+      //     this.clearRemark()
+      //   }
+      // })
+    },
+    // 关闭抓取弹框之前
+    clearRemark () {
+      this.remark = ''
+    },
+    moveElement (elementID, finalX, finalY) {
+      console.log(finalX, finalY)
+
+      const timer = setInterval(() => {
+        const elem = document.getElementById(elementID)
+        let xpos = parseInt(elem.offsetLeft - 22)
+        let ypos = parseInt(elem.offsetTop)
+        console.log(xpos, ypos)
+        if (xpos === finalX && ypos === finalY) {
+          clearInterval(timer)
+        }
+        if (xpos < finalX) {
+          xpos++
+        }
+        if (xpos > finalX) {
+          xpos--
+        }
+        if (ypos < finalY) {
+          ypos++
+        }
+        if (ypos > finalY) {
+          ypos--
+        }
+        elem.style.left = xpos + 'px'
+        elem.style.top = ypos + 'px'
+      }, 5)
     }
   },
   created () {
@@ -1443,6 +1554,19 @@ export default {
           }
         }
       }
+      .leftTool {
+        #pic {
+          width: 200px;
+          height: 200px;
+          position: absolute;
+          z-index: 1000;
+          top: -200px;
+          left: 150px;
+          // top: -470px;
+          // left: 410px; 动画
+          transition: all linear;
+        }
+      }
     }
   }
   // 全屏弹框
@@ -1468,7 +1592,7 @@ export default {
   // }
 }
 // 修改弹框样式
-.el-dialog__wrapper {
+#d1.el-dialog__wrapper {
   overflow: visible;
   /deep/.el-dialog {
     .el-dialog__header {
@@ -1485,6 +1609,52 @@ export default {
         margin-bottom: 20px;
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
+      }
+    }
+  }
+}
+.cutDialog {
+  background: rgba(0, 0, 0, 0.6);
+  /deep/.el-dialog {
+    width: 803px;
+    height: 549px;
+    background: url(../../assets/images/dialog-bg.png) no-repeat;
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      padding: 26px 30px;
+    }
+    .el-dialog__footer {
+      padding: 0 30px;
+      .remark {
+        display: flex;
+        justify-content: space-between;
+        .replain {
+          text-align: left;
+          span {
+            color: #fff;
+          }
+          .el-input {
+            width: 410px;
+            .el-input__inner {
+              color: #fff;
+              border: none;
+              border-bottom: 1px solid rgb(153, 153, 153);
+              background: transparent;
+            }
+            input::-webkit-input-placeholder {
+              color: #999;
+            }
+          }
+        }
+        .el-button--default {
+          background: transparent;
+          color: rgba(30, 176, 252, 1);
+        }
+        .el-button--primary {
+          background: #1eb0fc;
+        }
       }
     }
   }
