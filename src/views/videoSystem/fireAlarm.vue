@@ -145,8 +145,10 @@ export default {
       this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devFireWarningLayerManager.resetSelectedFeature()
       if (item.deviceTypeCode === 'GDJK') {
+        this.$refs.gduMap.showLayer('high', true)
         this.$refs.gduMap.map2D.devCameraLayerManager.selectFeatureByID(item)
       } else if (item.deviceTypeCode === 'WRJ') {
+        this.$refs.gduMap.showLayer('drone', true)
         this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
       }
       this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
@@ -191,6 +193,7 @@ export default {
     },
     // 点击火情报警列表处理事件
     selectFireWarningHandler (item, index) {
+      this.$refs.gduMap.showLayer('fire', true)
       this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
       const tmpMap = this.$refs.gduMap.map2D

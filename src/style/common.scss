@@ -151,3 +151,26 @@
     padding: 0px;
   }
 }
+
+// 地图底图选择弹窗样式
+.el-popover-custom {
+  padding: 10px 12px 4px 12px;
+  background-color: #00000066;
+  border: none;
+  .popper__arrow {
+    display: none;
+  }
+}
+.el-popover-custom:after {
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  left: 100%;
+  top: 50%;
+  margin-top: -10px;
+  border-left-color: #00000066;
+  border-width: 10px;
+}

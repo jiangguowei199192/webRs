@@ -113,6 +113,65 @@
           <div class="mapTypeContainer">
             <div style="height:45px;position: relative;">
               <div
+                class="mapImg layerHigh"
+                :class="{mapSelBorder:bShowHighPoint}"
+                @click="showLayer('high',!bShowHighPoint)"
+              ><img class="layer_selected"
+                v-show="bShowHighPoint"
+                src="../../assets/images/layer_selected.png"/>
+              </div>
+            </div>
+            <span
+              class="mapTypeName"
+              :class="{mapSelText:bShowHighPoint}"
+            >高点监控</span>
+          </div>
+          <div class="mapInterval">
+            <div class="intervalLine"></div>
+          </div>
+          <div class="mapTypeContainer">
+            <div style="height:45px;position: relative;">
+              <div
+                class="mapImg layerDrone"
+                :class="{mapSelBorder:bShowDrone}"
+                @click="showLayer('drone',!bShowDrone)"
+              ><img class="layer_selected"
+                v-show="bShowDrone"
+                src="../../assets/images/layer_selected.png"/>
+              </div>
+            </div>
+            <span
+              class="mapTypeName"
+              :class="{mapSelText:bShowDrone}"
+            >无人机</span>
+          </div>
+          <div class="mapInterval">
+            <div class="intervalLine"></div>
+          </div>
+          <div class="mapTypeContainer">
+            <div style="height:45px;position: relative;">
+              <div
+                class="mapImg layerFire"
+                :class="{mapSelBorder:bShowFire}"
+                @click="showLayer('fire',!bShowFire)"
+              ><img class="layer_selected"
+                v-show="bShowFire"
+                src="../../assets/images/layer_selected.png"/>
+              </div>
+            </div>
+            <span
+              class="mapTypeName"
+              :class="{mapSelText:bShowFire}"
+            >火点</span>
+          </div>
+        </div>
+        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickSelMap"></div>
+      </el-popover>
+      <el-popover placement="left" trigger="click" popper-class="el-popover-custom">
+        <div class="mapPopover">
+          <div class="mapTypeContainer">
+            <div style="height:45px;position: relative;">
+              <div
                 class="mapImg mapNormal"
                 :class="{mapSelBorder:(mapTypeCur == 3 || mapTypeCur == 6)}"
                 @click="changeBasicMap(2)"
@@ -156,15 +215,15 @@
             >混合地图</span>
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelMap" v-if="bShowSelMap" @click="clickSelMap"></div>
+        <div slot="reference" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickSelMap"></div>
       </el-popover>
-      <div class="yDivBtn btnLocator" @click="clickLocator"></div>
-      <div class="yDivBtn btnZoomIn" @click="clickZoomIn"></div>
-      <div class="yDivBtn btnZoomOut" @click="clickZoomOut"></div>
+      <div class="yDivBtn btnLocator btnActive" @click="clickLocator"></div>
+      <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
+      <div class="yDivBtn btnZoomOut btnActive" @click="clickZoomOut"></div>
     </div>
     <div class="lonLatTools disable-user-select" v-if="bShowAllTools && bShowLonLat">
-      <span style="margin:0px 15px;">{{mouseLat}}&#176;{{latFlag}}</span>
       <span style="margin:0px 15px;">{{mouseLon}}&#176;{{lonFlag}}</span>
+      <span style="margin:0px 15px;">{{mouseLat}}&#176;{{latFlag}}</span>
     </div>
   </div>
 </template>
@@ -216,7 +275,10 @@ export default {
       latFlag: 'E',
       mapTypeBasic: 1,
       mapTypeIndex: 0,
-      mapTypeCur: 1
+      mapTypeCur: 1,
+      bShowHighPoint: true,
+      bShowDrone: true,
+      bShowFire: true
     }
   },
 
@@ -256,7 +318,12 @@ export default {
       type: Boolean,
       default: false
     },
-    // 是否显示地图切换
+    // 是否显示图层切换
+    bShowSelLayer: {
+      type: Boolean,
+      default: true
+    },
+    // 是否显示底图切换
     bShowSelMap: {
       type: Boolean,
       default: true
@@ -831,6 +898,20 @@ export default {
       this.map2D.measureTool.start()
     },
 
+    // 显示、隐藏图层
+    showLayer (layerFlag, bShow) {
+      if (layerFlag === 'high') {
+        this.bShowHighPoint = bShow
+        this.map2D.devCameraLayerManager.setLayerVisible(bShow)
+      } else if (layerFlag === 'drone') {
+        this.bShowDrone = bShow
+        this.map2D.devDroneLayerManager.setLayerVisible(bShow)
+      } else if (layerFlag === 'fire') {
+        this.bShowFire = bShow
+        this.map2D.devFireWarningLayerManager.setLayerVisible(bShow)
+      }
+    },
+
     // 点击切换地图类型
     clickSelMap () {
       // do...
@@ -952,6 +1033,15 @@ export default {
       background-size: 100% 100%;
       cursor: pointer;
     }
+    .layerHigh {
+      background-image: url("../../assets/images/type_high.png");
+    }
+    .layerDrone {
+      background-image: url("../../assets/images/type_drone.png");
+    }
+    .layerFire {
+      background-image: url("../../assets/images/type_fire.png");
+    }
     .mapNormal {
       background-image: url("../../assets/images/normal_map.png");
     }
@@ -967,10 +1057,14 @@ export default {
       pointer-events: none;
     }
     .mapSelBorder {
-      border: 1px #ffa030 solid;
+      border: 1px #1EB0FC solid;
     }
     .mapSelText {
-      color: #ffa030;
+      color: #1EB0FC;
+    }
+    .layer_selected {
+      height: 45px;
+      width: 45px;
     }
   }
 }
@@ -1228,29 +1322,23 @@ export default {
     width: 30px;
     right: 15px;
     bottom: 45px;
+    .btnActive:active {
+      opacity: 0.8;
+    }
+    .btnSelLayer {
+      background-image: url("../../assets/images/layer_select.png");
+    }
     .btnSelMap {
       background-image: url("../../assets/images/map_change.png");
-    }
-    .btnSelMap:active {
-      background-image: url("../../assets/images/map_change_press.png");
     }
     .btnLocator {
       background-image: url("../../assets/images/map_locator.png");
     }
-    .btnLocator:active {
-      background-image: url("../../assets/images/map_locator_press.png");
-    }
     .btnZoomIn {
       background-image: url("../../assets/images/zoomin.png");
     }
-    .btnZoomIn:active {
-      background-image: url("../../assets/images/zoomin_press.png");
-    }
     .btnZoomOut {
       background-image: url("../../assets/images/zoomout.png");
-    }
-    .btnZoomOut:active {
-      background-image: url("../../assets/images/zoomout_press.png");
     }
   }
   .lonLatTools {

@@ -15,7 +15,7 @@
               v-for="(item,index) in onlineArray"
               :key="index"
               :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
-              @click.stop="showDevicePoint(item,index)"
+              @click.stop="selectOnlineDeviceItem(item,index)"
             >
               <p>
                 <span class="area">{{item.label}}</span>
@@ -43,7 +43,7 @@
               :treeData="treeData"
               ref="tree"
               :isLiveTree="false"
-              @selectedDevice="viewDeviceMap"
+              @clickAnDeviceItem="clickAnDeviceItem"
             ></tree-data>
           </template>
           <div
@@ -102,30 +102,38 @@ export default {
         })
       }
     },
-    // 点击在线设备
-    showDevicePoint (item, index) {
+    // 定位地图中设备位置
+    showDeviceDetailInfo (item) {
       this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
       this.$refs.gduMap.map2D.devFireWarningLayerManager.resetSelectedFeature()
       if (item.deviceTypeCode === 'GDJK') {
+        this.$refs.gduMap.showLayer('high', true)
         this.$refs.gduMap.map2D.devCameraLayerManager.selectFeatureByID(item)
       } else if (item.deviceTypeCode === 'WRJ') {
+        this.$refs.gduMap.showLayer('drone', true)
         this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
       }
       this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
+    },
+    // 点击在线设备中红外光或可见光
+    selectOnlineDeviceItem (item, index) {
+      this.showDeviceDetailInfo(item)
       this.selectedIndex = index
     },
-    // 查看设备地图
-    viewDeviceMap (curDeviceInfo) {
-      debugger
+    // 点击全部设备列表中设备项
+    clickAnDeviceItem (curDeviceInfo) {
+      this.showDeviceDetailInfo(curDeviceInfo)
     },
-    initMap () {
+    // 加载显示高点设备、无人机位置标记
+    initMapDevices () {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
         this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
         this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
       }
     },
+    // 高点设备、无人机状态更新(地图标记)
     updateDeviceStatus (info) {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
@@ -139,7 +147,7 @@ export default {
   },
   created () {
     EventBus.$on('GetAllDeptDevices_Done', bFlag => {
-      this.initMap()
+      this.initMapDevices()
     })
     EventBus.$on('UpdateDeviceOnlineStatus', info => {
       this.updateDeviceStatus(info)
