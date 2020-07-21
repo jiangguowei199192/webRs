@@ -3,46 +3,65 @@
   <div class="login">
     <div class="content">
       <div class="title">消防救援现场指挥系统</div>
-      <!-- <div class="username"></div> -->
-      <el-input placeholder="用户名" prefix-icon="el-icon-user" v-model="username" class="username" size="small"></el-input>
-      <!-- <div class="username password"></div> -->
-      <el-input placeholder="密码" prefix-icon="el-icon-lock" show-password v-model="password" class="username password" size="small"></el-input>
+      <el-input placeholder="用户名" prefix-icon="el-icon-user" v-model="loginInfo.username" class="username" size="small"></el-input>
+      <el-input
+        placeholder="密码"
+        prefix-icon="el-icon-lock"
+        show-password
+        v-model="loginInfo.password"
+        class="username password"
+        size="small"
+        @keyup.enter.native="jumpToMain">
+      </el-input>
       <div class="checkDiv">
         <el-checkbox v-model="checked" class="check">记住密码</el-checkbox>
         <el-button type="text" size="mini" class="forgot" @click="dialogVisible = true">忘记密码？</el-button>
       </div>
       <el-button class="loginBtn" @click="jumpToMain">登 录</el-button>
-      <el-dialog title="忘记密码" :visible.sync="dialogVisible" width="30%">
-        <span>这是一段信息</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-        </span>
-      </el-dialog>
     </div>
+    <el-dialog
+      title="忘记密码"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <span>普通用户请联系管理员重置密码</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </div>
 </template>
 
 <script>
-import { api } from '@/api/login'
+import { loginApi } from '@/api/login'
 export default {
   name: 'login',
   data () {
     return {
-      username: '',
-      password: '',
+      loginInfo: {
+        username: '',
+        password: ''
+      },
       checked: true,
       dialogVisible: false
     }
   },
   methods: {
-    jumpToMain () {
-      this.$router.push({ path: '/videoSystem' })
+    async jumpToMain () {
+      var info = {
+        username: this.loginInfo.username,
+        password: this.$md5(this.loginInfo.password)
+      }
+      this.$axios.post(loginApi.login, info).then(res => {
+        if (res.data.code === 0) {
+          sessionStorage.setItem('token', res.data.data.access_token)
+          this.$router.push({ path: '/videoSystem' })
+        }
+      })
     }
   },
   created () {
-    this.$axios.post(api.getAreaAxios, { tifFileId1: 1321123 }).then(res => {
+    this.$axios.post(loginApi.getAreaAxios, { tifFileId1: 1321123 }).then(res => {
       if (res) {
         debugger
       }
@@ -53,6 +72,7 @@ export default {
 
 <style lang="scss" scoped>
   .login {
+    width: 100%;
     height: 1084px;
     background: url(../../assets/images/Login/login-bg.png) no-repeat;
     background-size: 100% 100%;

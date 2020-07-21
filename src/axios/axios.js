@@ -3,6 +3,7 @@ import qs from 'qs'
 import {
   Message
 } from 'element-ui'
+import { loginApi } from '@/api/login'
 // 创建 axios 实例
 const service = axios.create({
   baseURL: process.env.NODE_ENV === 'development' ? 'http://172.16.63.194:8850' : 'http://111.47.13.103:50017/gdu/', // 请求前缀
@@ -16,7 +17,11 @@ service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencod
 
 // 添加请求拦截器
 service.interceptors.request.use((config) => {
-  if (config.url === '/index/api/getMp4RecordFile') { config.baseURL = 'http://172.16.63.158:9999' } else {
+  if (config.url === '/index/api/getMp4RecordFile') {
+    config.baseURL = 'http://172.16.63.158:9999'
+  } else if (config.url === loginApi.login || config.url === loginApi.logout) {
+    config.baseURL = 'http://172.16.63.194:8850'
+  } else {
     const token = sessionStorage.getItem('token') || 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiLmma7lrpnml6DkurrmnLoiLCJhdXRob3JpdGllcyI6WyIxMDAxIl0sImp0aSI6IjdiZDA3ZTRhLTdmMzktNGRkMS05YmE4LTRlOWFmMGU3MzBkZSIsImNsaWVudF9pZCI6ImZtcyIsInNjb3BlIjpbImFsbCJdfQ.Yj6g6nlx5tucOUoXB88krHPuv7HFnZO5hp0ScFy6NXDmg6w3mOwOf3rVM_I9N2ReW6zfCkwdaVRxefYqDrJoh87xogknEuqJmR3zV4EKNMbhIIHcUz_5OT0_8jwLQezNzG08UQmqGDTRxDsxWzVIDvMXPZ-aTgjs2ySgYm0NS2V7rr6SzstcLjjQxX0FYLd9YTu5i-cGnnB6BWXMPwwJ-ClCmCDOLPnUqpml7-Jdk0k6igC4pjyoZ1N4jV5foe26Fz_kzHeKviD05phiZyGF0qDo1fi6ijRKgUyoUS3uA3o4NGL1nJLeiz9SO27-qKWLrJ9Kkj-KBkS8OmwIk9zssQ'
 
     config.headers.Authorization = token
