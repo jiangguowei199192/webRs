@@ -112,6 +112,13 @@ export default {
           },
           {
             id: 1,
+            title: '头像',
+            subTitle: '',
+            text: '',
+            type: 'RightItemType_Title'
+          },
+          {
+            id: 2,
             title: '补充信息',
             subTitle: '',
             text: '所属机构、职务/岗位',
@@ -123,21 +130,21 @@ export default {
         headerTitle: '用户权限',
         items: [
           {
-            id: 2,
+            id: 10,
             title: '用户管理',
             subTitle: '',
             text: '',
             type: 'RightItemType_Title'
           },
           {
-            id: 3,
+            id: 11,
             title: '角色权限管理',
             subTitle: '',
             text: '',
             type: 'RightItemType_Title'
           },
           {
-            id: 4,
+            id: 12,
             title: '组织管理',
             subTitle: '',
             text: '',
@@ -149,7 +156,7 @@ export default {
         headerTitle: '视频服务',
         items: [
           {
-            id: 5,
+            id: 20,
             title: '视频接入管理',
             subTitle: '',
             text: '已接入0台设备',
@@ -161,14 +168,14 @@ export default {
         headerTitle: '智能功能管理',
         items: [
           {
-            id: 6,
+            id: 30,
             title: '火情报警',
             subTitle: '',
             text: '',
             type: 'RightItemType_Title'
           },
           {
-            id: 7,
+            id: 31,
             title: '火情地图',
             subTitle: '',
             text: '',
@@ -180,21 +187,21 @@ export default {
         headerTitle: '地图服务',
         items: [
           {
-            id: 8,
+            id: 40,
             title: '地图中心点、层级设置',
             subTitle: '',
             text: '武汉市 888.888888,88.88888 13级',
             type: 'RightItemType_SubTitle'
           },
           {
-            id: 9,
+            id: 41,
             title: '地图切换',
             subTitle: '',
             text: '',
             type: 'RightItemType_Title'
           },
           {
-            id: 10,
+            id: 42,
             title: '图层管理',
             subTitle: '',
             text: '已添加0类图层',
@@ -258,7 +265,7 @@ export default {
 }
 .rightBox {
   position: absolute;
-  top: 390px;
+  top: 315px;
   right: 20px;
   bottom: 0;
   left: 323px;

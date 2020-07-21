@@ -347,7 +347,6 @@ export default {
       width: 760px;
       height: 598px;
       margin: 58px auto 20px auto;
-      // background-color: lightblue;
     }
   }
   .el-table::before {

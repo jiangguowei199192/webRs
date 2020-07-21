@@ -45,11 +45,11 @@ export default {
   },
   methods: {
     clicked: function () {
-      if (this.data.id === 2) {
+      if (this.data.id === 10) {
         this.$router.push({ path: '/systemSettings/userManagement' })
-      } else if (this.data.id === 3) {
+      } else if (this.data.id === 11) {
         this.$router.push({ path: '/systemSettings/rolePermissionManagement' })
-      } else if (this.data.id === 4) {
+      } else if (this.data.id === 12) {
         this.$router.push({ path: '/systemSettings/organizationManagement' })
       }
     }
