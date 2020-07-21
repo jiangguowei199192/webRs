@@ -5,7 +5,22 @@
       :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
       @dblclick="dblClickMap"
     ></div>
-    <div class="searchCtrl">
+    <div class="simpleSearchCtrl" v-if="bShowAllTools && bShowSimpleSearchTools">
+      <input
+        class="simpleInputText"
+        id="_simpleAddrSearch"
+        v-model="simpleFilterText"
+        type="text"
+        autocomplete="off"
+        value
+        v-on:keyup.enter="simpleSearchAddrs(simpleFilterText,false)"
+        v-on:keyup.delete="simpleResetChooseAddr"
+        :placeholder="simplePlaceHolder"
+      />
+      <div class="simpleInputSearch"
+        @click.stop="simpleSearchAddrs(simpleFilterText,true)"/>
+    </div>
+    <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
       <input
         class="inputText"
         id="_addrSearch"
@@ -164,6 +179,7 @@ export default {
   },
   data () {
     return {
+      simpleAutoTips: null,
       autoTips: null,
       autoStartTips: null,
       startPoi: null,
@@ -175,7 +191,9 @@ export default {
       endText: null,
       endFeature: null,
       endHolder: '请输入终点地址',
+      simpleFilterText: '',
       filterText: '',
+      simplePlaceHolder: '请输入地点或经纬度',
       placeHolder: '请输入目的地',
       titelTel: '电话: ',
       bRouteOrClose: true, // true:route,false:close
@@ -184,6 +202,7 @@ export default {
       bShowPaln: false,
       addrResults: null,
       lastResults: null,
+      simpleChooseAddr: null,
       chooseAddr: null,
       locale: 'zh',
       measureType: 0,
@@ -216,6 +235,16 @@ export default {
     bShowAllTools: {
       type: Boolean,
       default: true
+    },
+    // 简易搜索框(火情警报、设备地图页面会用到)
+    bShowSimpleSearchTools: {
+      type: Boolean,
+      default: false
+    },
+    // 复杂搜索框(包含路线规划功能，消防地图页面会用到)
+    bShowSearchTools: {
+      type: Boolean,
+      default: false
     },
     // 控制是否显示测量的两个按钮
     bShowMeasure: {
@@ -378,78 +407,155 @@ export default {
 
     // 初始化搜索提示框
     initSearchBox () {
-      // 输入提示
-      var autoOptions = {
-        input: '_addrSearch'
-      }
-      // eslint-disable-next-line
-      this.autoTips = new AMap.Autocomplete(autoOptions);
-      // eslint-disable-next-line
-      AMap.event.addListener(this.autoTips, "select", select); // 注册监听，当选中某条记录时会触发
       var that = this
-      function select (e) {
-        that.bShowPaln = false
-        AMapHelper.getPoiDetail({ id: e.poi.id })
-          .then(res => {
-            that.chooseAddr = null
-            if (res.data.status === '1') {
-              that.updateSearchResults(res.data.pois)
-            }
-          })
-          .catch(err => {
-            console.log('AMapHelper.getPoiDetail Err : ' + err)
-          })
-
-        if (
-          e.poi.location.lng !== undefined &&
-          e.poi.location.lat !== undefined
-        ) {
-          that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
-        }
-      }
-      // eslint-disable-next-line
-      AMap.event.addListener(this.autoTips, "choose", choose); // 注册监听，当选中某条记录时会触发
-      function choose (e) {
-        that.chooseAddr = e
-        that.filterText = e.poi.name
+      if (this.bShowSimpleSearchTools) {
+        // eslint-disable-next-line
+        this.simpleAutoTips = new AMap.Autocomplete({ input: "_simpleAddrSearch" })
+        // eslint-disable-next-line
+        AMap.event.addListener(this.simpleAutoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+          if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+            that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
+          }
+        })
+        // eslint-disable-next-line
+        AMap.event.addListener(this.simpleAutoTips, "choose", (e) => { // 注册监听，当选中某条记录时会触发
+          that.simpleChooseAddr = e
+          that.simpleFilterText = e.poi.name
+        })
       }
 
-      // Init start POI
-      // eslint-disable-next-line
-      this.autoStartTips = new AMap.Autocomplete({ input: "_pointStart" });
-      // eslint-disable-next-line
-      AMap.event.addListener(this.autoStartTips, "select", selectStart); // 注册监听，当选中某条记录时会触发
-      function selectStart (e) {
-        if (
-          e.poi.location.lng !== undefined &&
-          e.poi.location.lat !== undefined
-        ) {
-          e.poi._lon = e.poi.location.lng
-          e.poi._lat = e.poi.location.lat
-          that.mapMoveTo(e.poi._lon, e.poi._lat, false)
-          that.map2D.setZoom(16)
-          that.addRoutePoint(e.poi, true)
-        }
+      if (this.bShowSearchTools) {
+        // 输入提示
+        // eslint-disable-next-line
+        this.autoTips = new AMap.Autocomplete({ input: "_addrSearch" })
+        // eslint-disable-next-line
+        AMap.event.addListener(this.autoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+          that.bShowPaln = false
+          AMapHelper.getPoiDetail({ id: e.poi.id })
+            .then(res => {
+              that.chooseAddr = null
+              if (res.data.status === '1') {
+                that.updateSearchResults(res.data.pois)
+              }
+            })
+            .catch(err => {
+              console.log('AMapHelper.getPoiDetail Err : ' + err)
+            })
+
+          if (
+            e.poi.location.lng !== undefined &&
+            e.poi.location.lat !== undefined
+          ) {
+            that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
+          }
+        })
+        // eslint-disable-next-line
+        AMap.event.addListener(this.autoTips, "choose", (e) => { // 注册监听，当选中某条记录时会触发
+          that.chooseAddr = e
+          that.filterText = e.poi.name
+        })
+
+        // Init start POI
+        // eslint-disable-next-line
+        this.autoStartTips = new AMap.Autocomplete({ input: "_pointStart" });
+        // eslint-disable-next-line
+        AMap.event.addListener(this.autoStartTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+          if (
+            e.poi.location.lng !== undefined &&
+            e.poi.location.lat !== undefined
+          ) {
+            e.poi._lon = e.poi.location.lng
+            e.poi._lat = e.poi.location.lat
+            that.mapMoveTo(e.poi._lon, e.poi._lat, false)
+            that.map2D.setZoom(16)
+            that.addRoutePoint(e.poi, true)
+          }
+        })
+
+        // Init end POI
+        // eslint-disable-next-line
+        this.autoEndTips = new AMap.Autocomplete({ input: "_pointEnd" });
+        // eslint-disable-next-line
+        AMap.event.addListener(this.autoEndTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+          if (
+            e.poi.location.lng !== undefined &&
+            e.poi.location.lat !== undefined
+          ) {
+            e.poi._lon = e.poi.location.lng
+            e.poi._lat = e.poi.location.lat
+            that.mapMoveTo(e.poi._lon, e.poi._lat, false)
+            that.map2D.setZoom(16)
+            that.addRoutePoint(e.poi, false)
+          }
+        })
       }
 
-      // Init end POI
-      // eslint-disable-next-line
-      this.autoEndTips = new AMap.Autocomplete({ input: "_pointEnd" });
-      // eslint-disable-next-line
-      AMap.event.addListener(this.autoEndTips, "select", selectEnd); // 注册监听，当选中某条记录时会触发
-      function selectEnd (e) {
-        if (
-          e.poi.location.lng !== undefined &&
-          e.poi.location.lat !== undefined
-        ) {
-          e.poi._lon = e.poi.location.lng
-          e.poi._lat = e.poi.location.lat
-          that.mapMoveTo(e.poi._lon, e.poi._lat, false)
-          that.map2D.setZoom(16)
-          that.addRoutePoint(e.poi, false)
-        }
-      }
       console.log('initSearchBox ...... OK')
+    },
+
+    // 删除搜索框中文字事件处理
+    async simpleSearchAddrs (addrStr, bDetail) {
+      if (this.simpleChooseAddr != null && bDetail !== true) {
+        return
+      }
+      this.simpleAutoTips.Ub.style.visibility = 'hidden'
+
+      const strs = addrStr.split(',')
+      if (strs.length === 2) {
+        try {
+          if (!String.prototype.trim) {
+            // eslint-disable-next-line
+            String.prototype.trim = function () {
+              return this.replace(/^\s*|\s*$/g, '')
+            }
+          }
+          strs[0] = strs[0].trim()
+          strs[1] = strs[1].trim()
+          // eslint-disable-next-line
+          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,6})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,6}|180)$/
+          // eslint-disable-next-line
+          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,6}|90\.0{0,6}|[0-8]?\d{1}|90)$/
+          if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
+            const tmpLon = parseFloat(strs[0])
+            const tmpLat = parseFloat(strs[1])
+            this.mapMoveTo(tmpLon, tmpLat, false)
+            return
+          } else if (lonreg.test(strs[1]) && latreg.test(strs[0])) {
+            const tmpLon = parseFloat(strs[1])
+            const tmpLat = parseFloat(strs[0])
+            this.mapMoveTo(tmpLon, tmpLat, false)
+            return
+          }
+        } catch (error) {
+          console.log('LonLat Reg exception : ' + error)
+        }
+      }
+
+      const that = this
+      AMapHelper.getTips({ keywords: addrStr })
+        .then(res => {
+          if (res.data.status === '1') {
+            const tmpTips = res.data.tips
+            tmpTips.forEach(tip => {
+              try {
+                const tmpStrs = tip.location.split(',')
+                const tmpLon = parseFloat(tmpStrs[0])
+                const tmpLat = parseFloat(tmpStrs[1])
+                that.mapMoveTo(tmpLon, tmpLat, false)
+                return null
+              } catch (error) {
+                console.log('tmpTips.forEach exception : ' + error)
+              }
+            })
+          }
+        })
+        .catch(err => {
+          console.log('AMapHelper.getTips Err : ' + err)
+        })
+    },
+    // 删除搜索框中文字事件处理
+    simpleResetChooseAddr () {
+      this.simpleChooseAddr = null
     },
 
     // 根据输入搜索位置信息
@@ -882,6 +988,43 @@ export default {
   }
   .areaCursor {
     cursor: url("../../assets/images/m_area.png") 3 2, auto;
+  }
+  .simpleSearchCtrl {
+    position: absolute;
+    //width: 400px;
+    height: 32px;
+    background-color: white;
+    left: 15px;
+    top: 15px;
+    border-radius: 4px;
+    border: 0px solid transparent;
+    .simpleInputText {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 360px;
+      height: 32px;
+      border-width: 0px;
+      border-radius: 4px;
+      padding-left: 5px;
+      padding-right: 34px; // 调整搜索提示框宽度与路线图标对齐
+      background-color: white;
+      outline: none;
+    }
+    .simpleInputSearch {
+      position: absolute;
+      left: 368px;
+      top: 0px;
+      height: 32px;
+      width: 32px;
+      border-width: 0px;
+      border: 0px solid transparent;
+      cursor: pointer;
+      padding: 0px;
+      margin: 0px;
+      //border-left: 1px solid gray;
+      background-image: url("../../../public/assets/images/addrSearch.png");
+    }
   }
   .searchCtrl {
     position: absolute;

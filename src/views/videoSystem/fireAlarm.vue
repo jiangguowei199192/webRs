@@ -57,7 +57,7 @@
           <div class="fireAlarmBox">
             <div class="title">火点火情</div>
             <div class="container">
-              <gMap ref="gduMap" handleType="devMap" :bShowBasic="true" :bShowMeasure="false"></gMap>
+              <gMap ref="gduMap" handleType="devMap" :bShowSimpleSearchTools="true" :bShowBasic="true" :bShowMeasure="false"></gMap>
               <div class="todayFire">
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
                 <div class="info">

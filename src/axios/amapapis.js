@@ -43,6 +43,10 @@ const getPoiDetail = params => {
   return client.get('place/detail', { params: params })
 }
 
+const getTips = params => {
+  return client.get('assistant/inputtips', { params: params })
+}
+
 const getLocation = params => {
   return client.get('ip', { params: params })
 }
@@ -55,4 +59,4 @@ const getRoutes = params => {
   return client.get('direction/driving', { params: params })
 }
 
-export default { getPOIs, getPoiDetail, getLocation, getWeather, getRoutes }
+export default { getPOIs, getPoiDetail, getTips, getLocation, getWeather, getRoutes }
