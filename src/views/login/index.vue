@@ -9,9 +9,16 @@
       <el-input placeholder="密码" prefix-icon="el-icon-lock" show-password v-model="password" class="username password" size="small"></el-input>
       <div class="checkDiv">
         <el-checkbox v-model="checked" class="check">记住密码</el-checkbox>
-        <el-button type="text" size="mini" class="forgot">忘记密码？</el-button>
+        <el-button type="text" size="mini" class="forgot" @click="dialogVisible = true">忘记密码？</el-button>
       </div>
       <el-button class="loginBtn" @click="jumpToMain">登 录</el-button>
+      <el-dialog title="忘记密码" :visible.sync="dialogVisible" width="30%">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </div>
@@ -26,10 +33,7 @@ export default {
       username: '',
       password: '',
       checked: true,
-      ruleForm: {
-        mobile: '',
-        code: ''
-      }
+      dialogVisible: false
     }
   },
   methods: {
@@ -116,7 +120,7 @@ export default {
     background-color: transparent;
     border: 0;
     color: white;
-    margin-left: 30px;
+    width: 330px;
   }
   /deep/ .el-checkbox__label {
     font-size: 16px;
