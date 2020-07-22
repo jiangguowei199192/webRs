@@ -119,7 +119,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // debugger
-  const token = sessionStorage.getItem('token') || 'token'
+  const token = sessionStorage.getItem('token')
   const notNeedToLogin = ['login', 'register', 'forgetPass']
   if (notNeedToLogin.indexOf(to.name) > -1) {
     next()

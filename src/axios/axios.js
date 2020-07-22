@@ -39,6 +39,7 @@ service.interceptors.response.use(
   (response) => {
     if (response.data.code !== 0) {
       Notification({
+        title: '错误',
         message: response.data.msg,
         type: 'error',
         duration: 5 * 1000
@@ -50,6 +51,7 @@ service.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       Notification({
+        title: '错误',
         message: '暂未授权，请先登录后再访问！',
         type: 'error',
         duration: 5 * 1000
@@ -58,6 +60,7 @@ service.interceptors.response.use(
       return
     }
     Notification({
+      title: '错误',
       message: error.response || '请求无响应，网络出错啦！',
       type: 'error',
       duration: 5 * 1000

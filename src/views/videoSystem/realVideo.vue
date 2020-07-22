@@ -1023,7 +1023,7 @@ export default {
     // 点击抓取，显示抓拍图片
     showImg () {
       if (Object.keys(this.curSelectedVideo).length === 0) {
-        this.$notify.warning('请先选择设备！')
+        this.$notify.warning({ title: '警告', message: '请先选择设备！' })
         return
       }
       // 显示抓取的图片
@@ -1036,7 +1036,7 @@ export default {
       //     this.photoClicked = true
       //     this.showCutImg = true
       //     this.cutImgUrl = res.data.data
-      //     this.$notify.success('抓取成功！')
+      //     this.$notify.success({ title: '成功', message: '抓取成功！' })
       //   }
       // })
       this.photoClicked = true
@@ -1052,7 +1052,7 @@ export default {
     confirm () {
       // 防止此时设备下线
       if (Object.keys(this.curSelectedVideo).length === 0) {
-        this.$notify.warning('请先选择设备！')
+        this.$notify.warning({ title: '警告', message: '请先选择设备！' })
       }
       // const params = {
       //   deviceCode: this.curSelectedVideo.deviceCode,
