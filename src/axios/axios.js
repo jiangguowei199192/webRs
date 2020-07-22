@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 import {
-  Message
+  Notification
 } from 'element-ui'
 // 创建 axios 实例
 const service = axios.create({
@@ -38,7 +38,7 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use(
   (response) => {
     if (response.data.code !== 0) {
-      Message({
+      Notification({
         message: response.data.msg,
         type: 'error',
         duration: 5 * 1000
@@ -52,10 +52,10 @@ service.interceptors.response.use(
     //   window.location.href = '/login'
     //   return
     // }
-    Message({
+    Notification({
       message: error.response || '请求无响应，网络出错啦！',
       type: 'error',
-      duration: 5 * 1000
+      duration: 5 * 100000
     })
   }
 )
