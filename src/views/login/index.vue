@@ -3,11 +3,22 @@
   <div class="login">
     <div class="content">
       <div class="title">消防救援现场指挥系统</div>
-      <el-input placeholder="用户名" prefix-icon="el-icon-user" v-model="loginInfo.username" class="username" size="small"></el-input>
+      <el-input
+        placeholder="用户名"
+        auto-complete="new-password"
+        clearable
+        prefix-icon="el-icon-user"
+        v-model="loginInfo.username"
+        class="username"
+        size="small">
+      </el-input>
       <el-input
         placeholder="密码"
+        :type="passwordInputType"
+        @focus="changePasswordInputType"
+        auto-complete="new-password"
+        clearable
         prefix-icon="el-icon-lock"
-        show-password
         v-model="loginInfo.password"
         class="username password"
         size="small"
@@ -38,6 +49,7 @@ export default {
   name: 'login',
   data () {
     return {
+      passwordInputType: 'text',
       loginInfo: {
         username: '',
         password: ''
@@ -47,7 +59,14 @@ export default {
     }
   },
   methods: {
+    changePasswordInputType () {
+      this.passwordInputType = 'password'
+    },
     async jumpToMain () {
+      if (this.loginInfo.username.length <= 0 || this.loginInfo.password.length <= 0) {
+        this.$message.error('请输入用户名和密码')
+        return
+      }
       var info = {
         username: this.loginInfo.username,
         password: this.$md5(this.loginInfo.password)
@@ -146,15 +165,15 @@ export default {
   //   box-shadow: 0 0 0px 1000px transparent inset !important;
   //   background-color: transparent;
   // }
-  /deep/ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
-    box-shadow: 0 0 0px 1000px transparent inset !important;
-    // -webkit-text-fill-color: #ededed !important;
-    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-    background-color: transparent;
-    background-image: none;
-    transition: background-color 50000s ease-in-out 0s;
-    color: white;
-  }
+  // /deep/ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+  //   box-shadow: 0 0 0px 1000px transparent inset !important;
+  //   // -webkit-text-fill-color: #ededed !important;
+  //   -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  //   background-color: transparent;
+  //   background-image: none;
+  //   transition: background-color 50000s ease-in-out 0s;
+  //   color: white;
+  // }
 
   /deep/ .el-checkbox__label {
     font-size: 16px;
