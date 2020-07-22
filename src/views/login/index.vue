@@ -54,7 +54,7 @@ export default {
       }
       this.$axios.post(loginApi.login, info).then(res => {
         if (res.data.code === 0) {
-          sessionStorage.setItem('token', res.data.data.access_token)
+          sessionStorage.setItem('token', 'Bearer ' + res.data.data.access_token)
           this.$router.push({ path: '/videoSystem' })
         }
       })
@@ -138,6 +138,24 @@ export default {
     color: white;
     width: 330px;
   }
+  // /deep/ input:-webkit-autofill, select:-webkit-autofill {
+  //   box-shadow: 0 0 0px 1000px transparent inset !important;
+  //   background-color: transparent;
+  // }
+  // /deep/ input:-internal-autofill-selected {
+  //   box-shadow: 0 0 0px 1000px transparent inset !important;
+  //   background-color: transparent;
+  // }
+  /deep/ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+    // -webkit-text-fill-color: #ededed !important;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    background-color: transparent;
+    background-image: none;
+    transition: background-color 50000s ease-in-out 0s;
+    color: white;
+  }
+
   /deep/ .el-checkbox__label {
     font-size: 16px;
   }
