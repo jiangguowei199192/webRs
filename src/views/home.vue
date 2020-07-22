@@ -35,12 +35,14 @@
             <span class="extra">{{timeObj.day}}</span> 日
             <span class="extra">{{timeObj.weekday}}</span>
             <span class="curCity extra">{{curCity}}</span>
-            天气：
+            <template v-if="weatherReport">
+            <span>天气：</span>
             <span class="extra">{{weatherReport.weather}}</span>
             <span class="extra">
               {{weatherReport.temperature}}
               <i>。</i>
             </span>
+            </template>
           </div>
         </div>
       </el-header>
