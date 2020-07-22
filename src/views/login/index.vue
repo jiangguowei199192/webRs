@@ -61,11 +61,7 @@ export default {
     }
   },
   created () {
-    this.$axios.post(loginApi.getAreaAxios, { tifFileId1: 1321123 }).then(res => {
-      if (res) {
-        debugger
-      }
-    })
+
   }
 }
 </script>
