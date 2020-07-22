@@ -1,5 +1,5 @@
 export const fireApi = {
-  getFireAlarmInfos: '/cloud-video/deviceAlarm', // ²éÑ¯½ñÈÕ¾¯±¨
-  // getFireAlarmInfos: '/cloud-video/deviceAlarm/list', // ²âÊÔ½Ó¿Ú£¬¿ÉÒÔ°´Ê±¼ä¶Î²éÑ¯ËùÓĞ¾¯±¨
+  getFireAlarmInfos: '/cloud-video/deviceAlarm', // æŸ¥è¯¢ä»Šæ—¥ç«æƒ…è­¦æŠ¥æ¥å£
+  // getFireAlarmInfos: '/cloud-video/deviceAlarm/list', // æ ¹æ®æŒ‡å®šæ—¶é—´æ®µæŸ¥è¯¢ç«æƒ…è­¦æŠ¥åˆ—è¡¨
   confirmFireAlarmInfo: '/cloud-video/deviceAlarm/status'
 }
