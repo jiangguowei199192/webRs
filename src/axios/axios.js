@@ -48,14 +48,19 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    // if (error.response && error.response.status === 401) {
-    //   window.location.href = '/login'
-    //   return
-    // }
+    if (error.response && error.response.status === 401) {
+      Notification({
+        message: '权限不够，请先登录后再访问！',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      window.location.href = '/login'
+      return
+    }
     Notification({
       message: error.response || '请求无响应，网络出错啦！',
       type: 'error',
-      duration: 5 * 100000
+      duration: 5 * 1000
     })
   }
 )
