@@ -20,10 +20,10 @@ service.interceptors.request.use((config) => {
     config.baseURL = 'http://172.16.63.158:9999'
   }
   let token = ''
-  if (config.url !== '/fms-auth-center/login') {
+  if (config.url !== '/fms-auth-center/login' && config.url !== '/index/api/getMp4RecordFile') {
     token = sessionStorage.getItem('token')
+    config.headers.Authorization = token
   }
-  config.headers.Authorization = token
   // 判断请求方式是否为POST，进行转换格式
   config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
   return config
@@ -49,16 +49,16 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      Notification({
-        title: '错误',
-        message: '暂未授权，请先登录后再访问！',
-        type: 'error',
-        duration: 5 * 1000
-      })
-      window.location.href = '/login'
-      return
-    }
+    // if (error.response && error.response.status === 401) {
+    //   Notification({
+    //     title: '错误',
+    //     message: '暂未授权，请先登录后再访问！',
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   })
+    //   window.location.href = '/login'
+    //   return
+    // }
     Notification({
       title: '错误',
       message: error.response || '请求无响应，网络出错啦！',
