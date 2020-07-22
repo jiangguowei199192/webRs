@@ -18,7 +18,8 @@
         :placeholder="simplePlaceHolder"
       />
       <div class="simpleInputSearch"
-        @click.stop="simpleSearchAddrs(simpleFilterText,true)"/>
+        @click.stop="simpleSearchAddrs(simpleFilterText,true)">
+        <img class="simpleIcon" src="../../assets/images/simpleAddrSearch.png"/></div>
     </div>
     <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
       <input
@@ -1096,28 +1097,34 @@ export default {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 360px;
+      width: 325px;
       height: 32px;
       border-width: 0px;
       border-radius: 4px;
       padding-left: 5px;
-      padding-right: 34px; // 调整搜索提示框宽度与路线图标对齐
+      padding-right: 54px; // 调整搜索提示框宽度与路线图标对齐
       background-color: white;
       outline: none;
     }
     .simpleInputSearch {
       position: absolute;
-      left: 368px;
+      left: 337px;
       top: 0px;
       height: 32px;
-      width: 32px;
+      width: 48px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
       margin: 0px;
       //border-left: 1px solid gray;
-      background-image: url("../../../public/assets/images/addrSearch.png");
+      background-color: #144683;
+      .simpleIcon {
+        margin-left: 8px;
+      }
+    }
+    .simpleInputSearch:active {
+      opacity: 0.9;
     }
   }
   .searchCtrl {
