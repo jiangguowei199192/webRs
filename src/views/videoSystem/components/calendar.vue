@@ -59,7 +59,6 @@
   </div>
 </template>
 <script>
-import { Message } from 'element-ui'
 import { api } from '@/api/videoSystem/videoRecord.js'
 var that
 export default {
@@ -222,12 +221,7 @@ export default {
      */
     isStopPlayerFirst () {
       if (this.player) {
-        Message({
-          message: '请先停止当前回放',
-          type: 'info',
-          duration: 3 * 1000
-        })
-
+        this.$notify.warning({ title: '警告', message: '请先停止当前回放' })
         return true
       }
 
