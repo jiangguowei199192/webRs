@@ -16,6 +16,7 @@
         placeholder="密码"
         :type="passwordInputType"
         @focus="changePasswordInputType"
+        @input.native="changePasswordInputType"
         auto-complete="new-password"
         clearable
         prefix-icon="el-icon-lock"
@@ -60,7 +61,11 @@ export default {
   },
   methods: {
     changePasswordInputType () {
-      this.passwordInputType = 'password'
+      if (this.loginInfo.password.length > 0) {
+        this.passwordInputType = 'password'
+      } else {
+        this.passwordInputType = 'text'
+      }
     },
     async jumpToMain () {
       if (this.loginInfo.username.length <= 0 || this.loginInfo.password.length <= 0) {
@@ -73,14 +78,36 @@ export default {
       }
       this.$axios.post(loginApi.login, info).then(res => {
         if (res.data.code === 0) {
+          if (this.checked) { // 记住密码
+            localStorage.setItem('username', this.loginInfo.username)
+            localStorage.setItem('password', this.loginInfo.password)
+            localStorage.setItem('time', Math.round((new Date()) / 1000))
+          } else {
+            localStorage.removeItem('username')
+            localStorage.removeItem('password')
+            localStorage.removeItem('time')
+          }
           sessionStorage.setItem('token', 'Bearer ' + res.data.data.access_token)
           this.$router.push({ path: '/videoSystem' })
         }
       })
     }
   },
-  created () {
-
+  created () {},
+  mounted () {
+    var oldTime = localStorage.getItem('time')
+    if (oldTime) {
+      var currentTime = Math.round((new Date()) / 1000) // 当前时间戳，单位秒
+      if ((currentTime - oldTime) >= 1209600) { // 超过14天清除账号密码
+        localStorage.removeItem('username')
+        localStorage.removeItem('password')
+        localStorage.removeItem('time')
+      } else {
+        this.loginInfo.username = localStorage.getItem('username')
+        this.loginInfo.password = localStorage.getItem('password')
+        this.changePasswordInputType()
+      }
+    }
   }
 }
 </script>
@@ -165,15 +192,14 @@ export default {
   //   box-shadow: 0 0 0px 1000px transparent inset !important;
   //   background-color: transparent;
   // }
-  // /deep/ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
-  //   box-shadow: 0 0 0px 1000px transparent inset !important;
-  //   // -webkit-text-fill-color: #ededed !important;
-  //   -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-  //   background-color: transparent;
-  //   background-image: none;
-  //   transition: background-color 50000s ease-in-out 0s;
-  //   color: white;
-  // }
+  /deep/ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+    -webkit-text-fill-color: white !important;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    background-color: transparent;
+    background-image: none;
+    transition: background-color 50000s ease-in-out 0s;
+  }
 
   /deep/ .el-checkbox__label {
     font-size: 16px;
