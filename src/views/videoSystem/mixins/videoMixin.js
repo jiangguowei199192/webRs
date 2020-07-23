@@ -13,7 +13,9 @@ const videoMixin = {
       onlineArray: [], // 在线设备列表
       cameraDevArray: [], // 所有摄像头设备列表
       droneDevArray: [], // 所有无人机设备列表
-      fireWarningArray: [], // 今日火情列表
+      alarmThread: null, // 轮询查询火情
+      totalFireWarningsArray: [], // 今日火情列表
+      newFireWarningArray: [], // 查询过滤出新增火情
       fireConfirmedNum: 0,
       fireTotalNum: 0,
       ninePalace: require('../../../assets/images/9.png'),
@@ -47,6 +49,7 @@ const videoMixin = {
   beforeDestroy () {
     EventBus.$off('video/realVideo/streamStart')
     EventBus.$off('video/realVideo/streamEnd')
+    this.stopGetFireAlarmsThread()
   },
 
   mounted () {
@@ -61,6 +64,8 @@ const videoMixin = {
       this.deviceOnlineOrOffline(false, info)
       this.updateOnlineArray(false, info)
     })
+
+    this.startGetFireAlarmsThread()
   },
 
   methods: {
@@ -365,25 +370,51 @@ const videoMixin = {
 
     /** 获取今日火情警报信息 */
     getFireAlarmInfos () {
-      this.fireWarningArray = []
+      this.newFireWarningArray = []
       this.$axios.get(fireApi.getFireAlarmInfos).then(res => {
         if (res && res.data && res.data.code === 0) {
           const tmpData = res.data.data
           tmpData.forEach(fire => {
             if (fire.alarmStatus !== 'mistaken') {
-              fire.bConfirmed = false
-              if (fire.alarmStatus === 'confirmed') {
-                fire.bConfirmed = true
-                this.fireConfirmedNum++
+              let bFound = false
+              for (let i = 0; i < this.totalFireWarningsArray.length; i++) {
+                if (this.totalFireWarningsArray[i].id === fire.id) {
+                  bFound = true
+                  break
+                }
               }
-              fire.alarmTime = fire.alarmTime.split('.')[0].replace('T', ' ')
-              this.fireWarningArray.push(fire)
+              if (!bFound) {
+                console.log('bFound:' + fire)
+                fire.bConfirmed = false
+                if (fire.alarmStatus === 'confirmed') {
+                  fire.bConfirmed = true
+                  this.fireConfirmedNum++
+                }
+                if (fire.alarmTime !== null) {
+                  fire.alarmTime = fire.alarmTime.split('.')[0].replace('T', ' ')
+                }
+                this.totalFireWarningsArray.push(fire)
+                this.newFireWarningArray.push(fire)
+              }
             }
           })
-          this.fireTotalNum = this.fireWarningArray.length
+          this.fireTotalNum = this.totalFireWarningsArray.length
           EventBus.$emit('getFireAlarmInfos_Done', true)
         }
       })
+    },
+    /** 定时查询火情警报信息 */
+    startGetFireAlarmsThread () {
+      this.stopGetFireAlarmsThread()
+      this.alarmThread = setInterval(() => {
+        this.getFireAlarmInfos()
+      }, 10000)
+    },
+    stopGetFireAlarmsThread () {
+      if (this.alarmThread != null) {
+        clearInterval(this.alarmThread)
+        this.alarmThread = null
+      }
     }
   }
 }

@@ -61,7 +61,7 @@
               <div class="todayFire">
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
                 <div class="info">
-                  <div class="list" v-for="(item,index) in fireWarningArray" :key="index"
+                  <div class="list" v-for="(item,index) in totalFireWarningsArray" :key="index"
                       :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
                       @click.stop="selectFireWarningHandler(item,index)">
                     <div class="address">
@@ -173,11 +173,10 @@ export default {
       }
     },
     // 加载火情警报位置标记
-    initMapFireWarnings () {
+    markNewFireWarnings () {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.clear()
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.fireWarningArray)
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.newFireWarningArray)
       }
     },
     // 高点设备、无人机状态更新(地图标记)
@@ -274,10 +273,10 @@ export default {
       const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
         if (res && res.data && res.data.code === 0) {
-          var fire = this.fireWarningArray.find(c => c.id === info.id)
+          var fire = this.totalFireWarningsArray.find(c => c.id === info.id)
           if (fire !== undefined) {
-            var index = this.fireWarningArray.indexOf(fire)
-            this.fireWarningArray.splice(index, 1)
+            var index = this.totalFireWarningsArray.indexOf(fire)
+            this.totalFireWarningsArray.splice(index, 1)
             this.fireTotalNum--
           }
         }
@@ -288,7 +287,7 @@ export default {
       const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
         if (res && res.data && res.data.code === 0) {
-          var fire = this.fireWarningArray.find(c => c.id === info.id)
+          var fire = this.totalFireWarningsArray.find(c => c.id === info.id)
           if (fire !== undefined) {
             fire.bConfirmed = true
             fire.alarmStatus = info.alarmStatus
@@ -303,7 +302,7 @@ export default {
       this.initMapDevices()
     })
     EventBus.$on('getFireAlarmInfos_Done', bFlag => {
-      this.initMapFireWarnings()
+      this.markNewFireWarnings()
     })
     EventBus.$on('UpdateDeviceOnlineStatus', info => {
       this.updateDeviceStatus(info)
