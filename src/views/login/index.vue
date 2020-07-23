@@ -184,14 +184,6 @@ export default {
     color: white;
     width: 330px;
   }
-  // /deep/ input:-webkit-autofill, select:-webkit-autofill {
-  //   box-shadow: 0 0 0px 1000px transparent inset !important;
-  //   background-color: transparent;
-  // }
-  // /deep/ input:-internal-autofill-selected {
-  //   box-shadow: 0 0 0px 1000px transparent inset !important;
-  //   background-color: transparent;
-  // }
   /deep/ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     box-shadow: 0 0 0px 1000px transparent inset !important;
     -webkit-text-fill-color: white !important;
