@@ -35,9 +35,16 @@
       title="忘记密码"
       :visible.sync="dialogVisible"
       width="30%">
-      <span>普通用户请联系管理员重置密码</span>
+      <p><span>普通用户请联系管理员重置密码。</span></p>
+      <p>
+        <span>管理员请登录系统所在的服务器，创建 'c:\zhc\tmp\reset_5f0d6451c203f.txt' 文件。</span>
+      </p>
+      <p>
+        <span>注意：</span>
+      </p>
+      <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogVisible = false">刷 新</el-button>
       </span>
     </el-dialog>
   </div>
