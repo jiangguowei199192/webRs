@@ -49,16 +49,16 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    // if (error.response && error.response.status === 401) {
-    //   Notification({
-    //     title: '错误',
-    //     message: '暂未授权，请先登录后再访问！',
-    //     type: 'error',
-    //     duration: 5 * 1000
-    //   })
-    //   window.location.href = '/login'
-    //   return
-    // }
+    if (error.response && error.response.status === 401) {
+      Notification({
+        title: '错误',
+        message: '暂未授权，请先登录后再访问！',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      window.location.href = '/login'
+      return
+    }
     Notification({
       title: '错误',
       message: error.response || '请求无响应，网络出错啦！',
