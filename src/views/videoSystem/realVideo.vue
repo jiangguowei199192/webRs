@@ -112,7 +112,7 @@
               />
               <!-- 用于显示截取的图片 -->
               <img
-                src="@/assets/images/satellite_map.png"
+                :src="'http://172.16.63.158:22222' +cutImgUrl"
                 alt
                 id="pic"
                 v-if="showCutImg"
@@ -240,7 +240,7 @@
       :show-close="false"
       :before-close="clearRemark"
     >
-      <img src="@/assets/images/satellite_map.png" width="743px" height="428px" alt />
+      <img  :src="'http://172.16.63.158:22222' +cutImgUrl" width="743px" height="428px" alt />
       <span slot="footer" class="dialog-footer">
         <div class="remark">
           <div class="replain">
@@ -261,7 +261,7 @@ import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
-// import { api } from '@/api/videoSystem/realVideo'
+import { api } from '@/api/videoSystem/realVideo'
 export default {
   name: 'videoContainer',
   components: {
@@ -282,6 +282,7 @@ export default {
       mapClicked: false, // 设备地图
       photoClicked: false, // 拍照
       showCutImg: false,
+      cutImgUrl: '', // 显示抓取的图片
       dialogVisible: false, // 全屏弹窗
       cutDialogVisible: false, // 抓取弹窗
       remark: '', // 说明文字
@@ -1027,20 +1028,18 @@ export default {
         return
       }
       // 显示抓取的图片
-      // const params = {
-      //   deviceCode: this.curSelectedVideo.deviceCode,
-      //   channelId: this.curSelectedVideo.id
-      // }
-      // this.$axios.get(url, params).then(res => {
-      //   if (res && res.data && res.data.code === 0) {
-      //     this.photoClicked = true
-      //     this.showCutImg = true
-      //     this.cutImgUrl = res.data.data
-      //     this.$notify.success({ title: '成功', message: '抓取成功！' })
-      //   }
-      // })
-      this.photoClicked = true
-      this.showCutImg = true
+      const params = {
+        deviceCode: this.curSelectedVideo.deviceCode,
+        channleId: this.curSelectedVideo.id
+      }
+      this.$axios.post(api.deviceSnap, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.photoClicked = true
+          this.showCutImg = true
+          this.cutImgUrl = res.data.data.imgPath
+          this.$notify.success({ title: '成功', message: '抓取成功！' })
+        }
+      })
       setTimeout(() => {
         this.showCutImg = false
       }, 5000)
@@ -1054,17 +1053,19 @@ export default {
       if (Object.keys(this.curSelectedVideo).length === 0) {
         this.$notify.warning({ title: '警告', message: '请先选择设备！' })
       }
-      // const params = {
-      //   deviceCode: this.curSelectedVideo.deviceCode,
-      //   channelId: this.curSelectedVideo.id,
-      //   remark: this.remark
-      // }
-      // this.$axios.get(url, params).then(res => {
-      //   if (res && res.data && res.data.code === 0) {
-      //     this.cutDialogVisible = false
-      //     this.clearRemark()
-      //   }
-      // })
+      const params = {
+        deviceCode: this.curSelectedVideo.deviceCode,
+        filePath: this.cutImgUrl,
+        channelId: this.curSelectedVideo.id,
+        remark: this.remark
+      }
+      this.$axios.post(api.deviceAdd, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.$notify.success({ title: '成功', message: '添加说明成功！' })
+          this.cutDialogVisible = false
+          this.clearRemark()
+        }
+      })
     },
     // 关闭抓取弹框之前
     clearRemark () {
