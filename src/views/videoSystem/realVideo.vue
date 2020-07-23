@@ -262,6 +262,7 @@ import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
+
 export default {
   name: 'videoContainer',
   components: {
@@ -1124,6 +1125,8 @@ export default {
         me.curScreenInfo = {}
       }
     }
+  },
+  mounted () {
   }
 }
 </script>

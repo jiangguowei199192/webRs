@@ -1,6 +1,7 @@
 import { api } from '@/api/videoSystem/realVideo'
 import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { EventBus } from '@/utils/eventBus.js'
+import { timeFormat } from '@/utils/date'
 const videoMixin = {
   data () {
     return {
@@ -47,6 +48,7 @@ const videoMixin = {
   beforeDestroy () {
     EventBus.$off('video/realVideo/streamStart')
     EventBus.$off('video/realVideo/streamEnd')
+    EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
   },
 
   mounted () {
@@ -60,6 +62,17 @@ const videoMixin = {
     EventBus.$on('video/realVideo/streamEnd', info => {
       this.deviceOnlineOrOffline(false, info)
       this.updateOnlineArray(false, info)
+    })
+    //  监听火情火点
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+      this.$notify.warning({ title: '警告', message: '监听到火情火点！' })
+      if (info.alarmStatus !== 'mistaken') {
+        info.bConfirmed = false
+        info.alarmTime = timeFormat(info.alarmTime)
+        this.fireWarningArray.push(info)
+        this.fireTotalNum = this.fireWarningArray.length
+        EventBus.$emit('getFireAlarmInfos_Done', true)
+      }
     })
   },
 
@@ -376,7 +389,7 @@ const videoMixin = {
                 fire.bConfirmed = true
                 this.fireConfirmedNum++
               }
-              fire.alarmTime = fire.alarmTime.split('.')[0].replace('T', ' ')
+              fire.alarmTime = timeFormat(fire.alarmTime)
               this.fireWarningArray.push(fire)
             }
           })

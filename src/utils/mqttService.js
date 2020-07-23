@@ -36,6 +36,8 @@ var mqttService;
       // 订阅设备上下线主题
       instance.client.subscribe('video/realVideo/streamStart')
       instance.client.subscribe('video/realVideo/streamEnd')
+      // 订阅火情火点
+      instance.client.subscribe('video/deviceIid/channleID/datalink/firewarning')
     }
 
     // mqtt client失去连接后的callback
@@ -100,7 +102,7 @@ var mqttService;
         'pc_' +
         new Date().getTime().toString()
       // eslint-disable-next-line no-undef
-      instance.client = new Paho.Client('120.24.12.64', 2883, '/gduMqtt', clientID)
+      instance.client = new Paho.Client('172.16.63.148', 2883, '/gduMqtt', clientID)
       // instance.client.trace = onTrace
       instance.client.startTrace()
       // set callback handlers
