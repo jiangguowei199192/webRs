@@ -478,6 +478,7 @@ export default {
             margin-bottom:15px;
           }
           .info {
+            overflow-x: hidden;
             overflow-y: auto;
             max-height:460px;
             > div.list {
