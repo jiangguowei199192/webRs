@@ -9,9 +9,18 @@
         <el-input v-model="searchInput" class="searchInput">
           <template slot="prepend">用户名：</template>
         </el-input>
-        <button type="button" class="more" @click="more()">
-          <img :src="moreImg">
-        </button>
+        <el-popover
+          placement="right"
+          width="150"
+          trigger="click"
+          popper-class="el-popover-more">
+          <div style="text-align: center;">
+            <el-button class="popoverBtn" @click="userAdd">新增用户</el-button>
+            <el-button class="popoverBtn" @click="userEdit">修改用户</el-button>
+            <el-button class="popoverBtn" @click="userDelete">删除用户</el-button>
+          </div>
+          <button slot="reference" type="button" class="more"><img :src="moreImg"></button>
+        </el-popover>
         <button type="button" class="more" @click="download()">
           <img :src="downloadImg">
         </button>
@@ -151,8 +160,14 @@ export default {
     download () {
       console.log('download')
     },
-    more () {
-      console.log('more')
+    userAdd () {
+      console.log('userAdd')
+    },
+    userEdit () {
+      console.log('userEdit')
+    },
+    userDelete () {
+      console.log('userDelete')
     }
   }
 }
@@ -183,7 +198,6 @@ export default {
     .searchInput {
       width: 253px;
       margin: 21px 0px 0px 20px;
-      // background-color: transparent;
     }
     .more {
       width: 25px;
@@ -266,5 +280,13 @@ export default {
   /* 修改偶数行颜色*/
   /deep/.el-table--striped .el-table__body tr.el-table__row--striped td {
     background-color: rgba(54, 143, 187, 1);
+  }
+
+  .popoverBtn {
+    background: transparent;
+    color: white;
+    border: 0;
+    margin-left: 0px;
+    border-radius: 0px;
   }
 </style>

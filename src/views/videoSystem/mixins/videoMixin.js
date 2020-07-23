@@ -14,6 +14,11 @@ const videoMixin = {
       onlineArray: [], // 在线设备列表
       cameraDevArray: [], // 所有摄像头设备列表
       droneDevArray: [], // 所有无人机设备列表
+      // alarmThread: null, // 轮询查询火情
+      // totalFireWarningsArray: [], // 今日火情列表
+      // newFireWarningArray: [], // 查询过滤出新增火情
+      // fireConfirmedNum: 0,
+      // fireTotalNum: 0,
       fireWarningArray: [], // 今日火情列表
       fireConfirmedNum: 0,
       fireTotalNum: 0,
@@ -397,6 +402,19 @@ const videoMixin = {
           EventBus.$emit('getFireAlarmInfos_Done', true)
         }
       })
+    },
+    /** 定时查询火情警报信息 */
+    startGetFireAlarmsThread () {
+      this.stopGetFireAlarmsThread()
+      this.alarmThread = setInterval(() => {
+        this.getFireAlarmInfos()
+      }, 10000)
+    },
+    stopGetFireAlarmsThread () {
+      if (this.alarmThread != null) {
+        clearInterval(this.alarmThread)
+        this.alarmThread = null
+      }
     }
   }
 }
