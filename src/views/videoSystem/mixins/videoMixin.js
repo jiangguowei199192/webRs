@@ -14,11 +14,6 @@ const videoMixin = {
       onlineArray: [], // 在线设备列表
       cameraDevArray: [], // 所有摄像头设备列表
       droneDevArray: [], // 所有无人机设备列表
-      // alarmThread: null, // 轮询查询火情
-      // totalFireWarningsArray: [], // 今日火情列表
-      // newFireWarningArray: [], // 查询过滤出新增火情
-      // fireConfirmedNum: 0,
-      // fireTotalNum: 0,
       fireWarningArray: [], // 今日火情列表
       fireConfirmedNum: 0,
       fireTotalNum: 0,
@@ -74,14 +69,21 @@ const videoMixin = {
       if (info.alarmStatus !== 'mistaken') {
         info.bConfirmed = false
         info.alarmTime = timeFormat(info.alarmTime)
+        this.handlingAlarmImgUrl(info)
         this.fireWarningArray.push(info)
         this.fireTotalNum = this.fireWarningArray.length
-        EventBus.$emit('getFireAlarmInfos_Done', true)
+        EventBus.$emit('getFireAlarmInfos_New', info)
       }
     })
   },
 
   methods: {
+    handlingAlarmImgUrl (fire) {
+      fire.alarmPicList.forEach(img => {
+        img.picPath = 'http://172.16.63.158:22222' + img.picPath
+      })
+    },
+
     closeLeftNav (type) {
       this.showLeft = type !== 1
     },
@@ -395,6 +397,7 @@ const videoMixin = {
                 this.fireConfirmedNum++
               }
               fire.alarmTime = timeFormat(fire.alarmTime)
+              this.handlingAlarmImgUrl(fire)
               this.fireWarningArray.push(fire)
             }
           })
@@ -402,19 +405,6 @@ const videoMixin = {
           EventBus.$emit('getFireAlarmInfos_Done', true)
         }
       })
-    },
-    /** 定时查询火情警报信息 */
-    startGetFireAlarmsThread () {
-      this.stopGetFireAlarmsThread()
-      this.alarmThread = setInterval(() => {
-        this.getFireAlarmInfos()
-      }, 10000)
-    },
-    stopGetFireAlarmsThread () {
-      if (this.alarmThread != null) {
-        clearInterval(this.alarmThread)
-        this.alarmThread = null
-      }
     }
   }
 }

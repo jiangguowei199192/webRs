@@ -61,7 +61,7 @@
               <div class="todayFire">
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
                 <div class="info">
-                  <div class="list" v-for="(item,index) in totalFireWarningsArray" :key="index"
+                  <div class="list" v-for="(item,index) in fireWarningArray" :key="index"
                       :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
                       @click.stop="selectFireWarningHandler(item,index)">
                     <div class="address">
@@ -173,10 +173,17 @@ export default {
       }
     },
     // 加载火情警报位置标记
-    markNewFireWarnings () {
+    markFireWarnings () {
       if (this.$refs.gduMap !== undefined &&
           this.$refs.gduMap.map2D !== undefined) {
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.newFireWarningArray)
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.fireWarningArray)
+      }
+    },
+    // 新增火情警报
+    addNewFireWarning (fire) {
+      if (this.$refs.gduMap !== undefined &&
+          this.$refs.gduMap.map2D !== undefined) {
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.addOrUpdateFireWarning(fire)
       }
     },
     // 高点设备、无人机状态更新(地图标记)
@@ -273,10 +280,10 @@ export default {
       const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
         if (res && res.data && res.data.code === 0) {
-          var fire = this.totalFireWarningsArray.find(c => c.id === info.id)
+          var fire = this.fireWarningArray.find(c => c.id === info.id)
           if (fire !== undefined) {
-            var index = this.totalFireWarningsArray.indexOf(fire)
-            this.totalFireWarningsArray.splice(index, 1)
+            var index = this.fireWarningArray.indexOf(fire)
+            this.fireWarningArray.splice(index, 1)
             this.fireTotalNum--
           }
         }
@@ -287,7 +294,7 @@ export default {
       const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
         if (res && res.data && res.data.code === 0) {
-          var fire = this.totalFireWarningsArray.find(c => c.id === info.id)
+          var fire = this.fireWarningArray.find(c => c.id === info.id)
           if (fire !== undefined) {
             fire.bConfirmed = true
             fire.alarmStatus = info.alarmStatus
@@ -302,7 +309,10 @@ export default {
       this.initMapDevices()
     })
     EventBus.$on('getFireAlarmInfos_Done', bFlag => {
-      this.markNewFireWarnings()
+      this.markFireWarnings()
+    })
+    EventBus.$on('getFireAlarmInfos_New', fire => {
+      this.addNewFireWarning(fire)
     })
     EventBus.$on('UpdateDeviceOnlineStatus', info => {
       this.updateDeviceStatus(info)
@@ -469,7 +479,7 @@ export default {
           box-sizing: border-box;
           width: 392px;
           height: 557px;
-          padding: 20px;
+          padding: 15px;
           background: url(../../assets/images/fire-box.png) no-repeat;
 
           .title {
@@ -530,12 +540,12 @@ export default {
         }
         /* --- 改变滚动条样式 --- */
         .info::-webkit-scrollbar {
-          width: 10px;
+          width: 8px;
         }
 
         /* --- 滚动条里面的滚动块 --- */
         .info::-webkit-scrollbar-thumb {
-          border-radius: 10px;
+          border-radius: 8px;
           box-shadow: inset 0 0 5px #096090;
           background: #096090;
         }
@@ -543,7 +553,7 @@ export default {
         /* --- 滚动条里面轨道 --- */
         .info::-webkit-scrollbar-track {
           box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-          border-radius: 10px;
+          border-radius: 8px;
           background: #096090;
           /* border: none;
           background: none; */
