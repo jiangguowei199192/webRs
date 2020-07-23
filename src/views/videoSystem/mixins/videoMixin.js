@@ -384,7 +384,6 @@ const videoMixin = {
                 }
               }
               if (!bFound) {
-                console.log('bFound:' + fire)
                 fire.bConfirmed = false
                 if (fire.alarmStatus === 'confirmed') {
                   fire.bConfirmed = true
