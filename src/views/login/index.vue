@@ -46,6 +46,9 @@
 
 <script>
 import { loginApi } from '@/api/login'
+import {
+  Notification
+} from 'element-ui'
 export default {
   name: 'login',
   data () {
@@ -69,7 +72,13 @@ export default {
     },
     async jumpToMain () {
       if (this.loginInfo.username.length <= 0 || this.loginInfo.password.length <= 0) {
-        this.$message.error('请输入用户名和密码')
+        // this.$message.error('请输入用户名和密码')
+        Notification({
+          title: '错误',
+          message: '请输入用户名和密码',
+          type: 'error',
+          duration: 5 * 1000
+        })
         return
       }
       var info = {
