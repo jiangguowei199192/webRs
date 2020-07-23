@@ -692,10 +692,10 @@ export default {
         }
       } else {
         // 2.关闭视频 如果关闭的是显示的视频
-        if (curTreeData.id === this.curSelectedVideo.id) {
-          this.curSelectedVideo = {}
-          this.curVideoIndex = 1000
-        }
+        // if (curTreeData.id === this.curSelectedVideo.id) {
+        this.curSelectedVideo = {}
+        this.curVideoIndex = 1000
+        // }
         let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {
