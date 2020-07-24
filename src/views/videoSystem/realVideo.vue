@@ -299,7 +299,7 @@ export default {
         rightUp: 0,
         left: 0,
         right: 0,
-        leftDowm: 0,
+        leftDown: 0,
         down: 0,
         rightDown: 0
       },
@@ -540,14 +540,14 @@ export default {
         params.leftRight = 0
         params.upDown = 0
         params.moveSpeed = 0
-
         if (index === 1000) {
           params.inOut = 2
           params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
         } else {
           params.inOut = 1
           this.zoomSpeed--
-          params.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
+          this.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
+          params.zoomSpeed = this.zoomSpeed
         }
         this.changeViewVideo(1, params)
         console.log(params)
@@ -576,7 +576,8 @@ export default {
       } else if (type === 1003) {
         params.focus = 1
         this.focusSpeed--
-        params.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
+        this.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
+        params.focusSpeed = this.focusSpeed
         params.lris = 0
         params.lrisSpeed = 0
       } else if (type === 1004) {
@@ -587,7 +588,8 @@ export default {
       } else if (type === 1005) {
         params.lris = 1
         this.lrisSpeed--
-        params.lrisSpeed = this.lrisSpeed < 0 ? 0 : this.lrisSpeed
+        this.lrisSpeed = this.lrisSpeed < 0 ? 0 : this.lrisSpeed
+        params.lrisSpeed = this.lrisSpeed
         params.focus = 0
         params.focusSpeed = 0
       }
@@ -610,9 +612,9 @@ export default {
         this.$axios
           .post(
             '/api/ptz/' +
-              this.curSelectedVideo.deviceCode +
+             '34020000001320000003' +
               '/' +
-              this.curSelectedVideo.id,
+              '34020000001310000004',
             params
           )
           .then(res => {
