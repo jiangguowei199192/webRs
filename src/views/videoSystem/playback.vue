@@ -633,6 +633,8 @@ export default {
           if (rs && rs.code === 0) {
             this.recordData = rs.data.paths
           }
+        }).catch(err => {
+          console.log('getMp4RecordFile Err : ' + err)
         })
     },
 
@@ -706,6 +708,8 @@ export default {
               }
             })
           }
+        }).catch(err => {
+          console.log('getMp4RecordFile Err : ' + err)
         })
     },
     // 切换每屏显示的个数
