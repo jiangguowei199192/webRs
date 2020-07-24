@@ -269,16 +269,14 @@ width: 10px;
 /* --- 滚动条里面的滚动块 --- */
 .tree::-webkit-scrollbar-thumb {
 border-radius: 10px;
-box-shadow: inset 0 0 5px #096090;
-background: #096090;
+box-shadow: inset 0 0 5px rgb(0,180,255);
+background: rgba(0,180,255,0.2);
 }
 
 /* --- 滚动条里面轨道 --- */
 .tree::-webkit-scrollbar-track {
 box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 border-radius: 10px;background: #096090;
-/* border: none;
-background: none; */
 }
 
 </style>

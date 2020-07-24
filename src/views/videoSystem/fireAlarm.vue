@@ -57,20 +57,36 @@
           <div class="fireAlarmBox">
             <div class="title">火点火情</div>
             <div class="container">
-              <gMap ref="gduMap" handleType="devMap" :bShowSimpleSearchTools="true" :bShowBasic="true" :bShowMeasure="false"></gMap>
+              <gMap
+                ref="gduMap"
+                handleType="devMap"
+                :bShowSimpleSearchTools="true"
+                :bShowBasic="true"
+                :bShowMeasure="false"
+              ></gMap>
               <div class="todayFire">
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
                 <div class="info">
-                  <div class="list" v-for="(item,index) in fireWarningArray" :key="index"
-                      :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
-                      @click.stop="selectFireWarningHandler(item,index)">
+                  <div
+                    class="list"
+                    v-for="(item,index) in fireWarningArray"
+                    :key="index"
+                    :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
+                    @click.stop="selectFireWarningHandler(item,index)"
+                  >
                     <div class="address">
                       <div>{{item.alarmTime}}</div>
                       <div class="devNameBox" @click.stop="gotoDeviceDetail(item)">
-                        <img class="devIcon" src="../../assets/images/high_point.png"/>
-                        <div class="devName divEllipsis" :title="item.deviceName">{{item.deviceName}}</div>
+                        <img class="devIcon" src="../../assets/images/high_point.png" />
+                        <div
+                          class="devName divEllipsis"
+                          :title="item.deviceName"
+                        >{{item.deviceName}}</div>
                       </div>
-                      <div class="alarmAddr divEllipsis" :title="item.alarmAddress">{{item.alarmAddress}}</div>
+                      <div
+                        class="alarmAddr divEllipsis"
+                        :title="item.alarmAddress"
+                      >{{item.alarmAddress}}</div>
                     </div>
                   </div>
                 </div>
@@ -87,13 +103,15 @@
       v-clipboard:error="onCopyErr"
       style="display:none;"
     />
-    <el-dialog custom-class="el-dialog-custom"
+    <el-dialog
+      custom-class="el-dialog-custom"
       :visible.sync="imgDialogVisible"
       :show-close="false"
       type="primary"
       @click.native="closeImgDialog"
-      center>
-        <img class="dialogImg" :src="imgSrc">
+      center
+    >
+      <img class="dialogImg" :src="imgSrc" />
     </el-dialog>
   </div>
 </template>
@@ -151,7 +169,10 @@ export default {
         this.$refs.gduMap.showLayer('drone', true)
         this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
       }
-      this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
+      this.$refs.gduMap.map2D.zoomToCenter(
+        item.deviceLongitude,
+        item.deviceLatitude
+      )
     },
     // 点击在线设备中红外光或可见光
     selectOnlineDeviceItem (item, index) {
@@ -164,32 +185,48 @@ export default {
     },
     // 加载显示高点设备、无人机位置标记
     initMapDevices () {
-      if (this.$refs.gduMap !== undefined &&
-          this.$refs.gduMap.map2D !== undefined) {
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
         this.$refs.gduMap.map2D.devCameraLayerManager.clear()
-        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
+        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(
+          this.cameraDevArray
+        )
         this.$refs.gduMap.map2D.devDroneLayerManager.clear()
-        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
+        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(
+          this.droneDevArray
+        )
       }
     },
     // 加载火情警报位置标记
     markFireWarnings () {
-      if (this.$refs.gduMap !== undefined &&
-          this.$refs.gduMap.map2D !== undefined) {
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(this.fireWarningArray)
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(
+          this.fireWarningArray
+        )
       }
     },
     // 新增火情警报
     addNewFireWarning (fire) {
-      if (this.$refs.gduMap !== undefined &&
-          this.$refs.gduMap.map2D !== undefined) {
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.addOrUpdateFireWarning(fire)
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.addOrUpdateFireWarning(
+          fire
+        )
       }
     },
     // 高点设备、无人机状态更新(地图标记)
     updateDeviceStatus (info) {
-      if (this.$refs.gduMap !== undefined &&
-          this.$refs.gduMap.map2D !== undefined) {
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
         if (info.deviceTypeCode === 'GDJK') {
           this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
         } else if (info.deviceTypeCode === 'WRJ') {
@@ -277,7 +314,8 @@ export default {
     },
     // 火情报警弹窗中点击误报按钮回调事件
     callbackMistaken (info) {
-      const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
+      const tmpPost =
+        fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
         if (res && res.data && res.data.code === 0) {
           var fire = this.fireWarningArray.find(c => c.id === info.id)
@@ -291,7 +329,8 @@ export default {
     },
     // 火情报警弹窗中点击确认按钮回调事件
     callbackConfirmed (info) {
-      const tmpPost = fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
+      const tmpPost =
+        fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
       this.$axios.post(tmpPost).then(res => {
         if (res && res.data && res.data.code === 0) {
           var fire = this.fireWarningArray.find(c => c.id === info.id)
@@ -485,53 +524,54 @@ export default {
           .title {
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(30, 176, 252, 1);
-            margin-bottom:15px;
+            margin-bottom: 15px;
           }
           .info {
             overflow-x: hidden;
             overflow-y: auto;
-            max-height:460px;
+            max-height: 460px;
             > div.list {
               position: relative;
               width: 350px;
               height: 92px;
               margin-bottom: 18px;
               cursor: pointer;
-              div.address{
-                  padding:20px 0 17px 27px;
-                  .devNameBox {
+              div.address {
+                padding: 20px 0 17px 27px;
+                .devNameBox {
+                  position: absolute;
+                  top: 14px;
+                  left: 190px;
+                  width: 104px;
+                  height: 24px;
+                  background-color: #1eb0fc;
+                  border: 1px solid rgba(30, 176, 252, 1);
+                  border-radius: 4px;
+                  .devIcon {
                     position: absolute;
-                    top: 14px;
-                    left: 190px;
-                    width: 104px;
-                    height: 24px;
-                    background-color: #1eb0fc;
-                    border:1px solid rgba(30,176,252,1);
-                    border-radius:4px;
-                    .devIcon {
-                      position: absolute;
-                      top: 6px;
-                      left: 4px;
-                      width: 16px;
-                      height: 11px;
-                    }
-                    .devName {
-                      position: absolute;
-                      top: 1px;
-                      left: 25px;
-                      width: 80px;
-                      color: #FEFEFE;
-                    }
+                    top: 6px;
+                    left: 4px;
+                    width: 16px;
+                    height: 11px;
                   }
-                  .alarmAddr {
-                    height: 43px;
-                    line-height: 43px;
-                    width: 300px;
+                  .devName {
+                    position: absolute;
+                    top: 1px;
+                    left: 25px;
+                    width: 80px;
+                    color: #fefefe;
                   }
+                }
+                .alarmAddr {
+                  height: 43px;
+                  line-height: 43px;
+                  width: 300px;
+                }
               }
             }
             .unConfirmedItem {
-              background: url(../../assets/images/fire-wait-confirm.png) no-repeat;
+              background: url(../../assets/images/fire-wait-confirm.png)
+                no-repeat;
             }
             .confirmedItem {
               background: url(../../assets/images/fire-confirm.png) no-repeat;
@@ -540,23 +580,21 @@ export default {
         }
         /* --- 改变滚动条样式 --- */
         .info::-webkit-scrollbar {
-          width: 8px;
+          width: 10px;
         }
 
         /* --- 滚动条里面的滚动块 --- */
         .info::-webkit-scrollbar-thumb {
-          border-radius: 8px;
-          box-shadow: inset 0 0 5px #096090;
-          background: #096090;
+          border-radius: 10px;
+          box-shadow: inset 0 0 5px rgb(0, 180, 255);
+          background: rgba(0, 180, 255, 0.2);
         }
 
         /* --- 滚动条里面轨道 --- */
         .info::-webkit-scrollbar-track {
           box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-          border-radius: 8px;
+          border-radius: 10px;
           background: #096090;
-          /* border: none;
-          background: none; */
         }
       }
     }
