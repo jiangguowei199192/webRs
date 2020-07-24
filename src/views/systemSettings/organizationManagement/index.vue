@@ -31,7 +31,7 @@
                   <el-button
                     size="mini"
                     type="danger"
-                    @click="handleDelete(scope.$index, scope.row)"
+                    @click="deleteClick(scope.$index, scope.row)"
                     style="width: 55px;">移除</el-button>
                 </template>
               </el-table-column>
@@ -46,6 +46,33 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      title="添加用户"
+      :visible.sync="showAddUser"
+      width="30%">
+      <el-form ref="addUserFormRef" :model="addUserForm" label-width="80px" :rules="addUserRules">
+        <el-form-item label="选择用户" prop="user">
+          <el-select v-model="addUserForm.user" multiple placeholder="请添加用户">
+            <el-option v-for="item in userOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="addUserConfirm" style="float: right;">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="showDeleteTip"
+      width="30%">
+      是否从系统管理员角色中移除用户 {{ radio >= 0 ? tableData[radio].userName : '' }}
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="showDeleteTip = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -85,108 +112,6 @@ export default {
               ]
             }
           ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            {
-              label: '二级 3-1',
-              children: [
-                { label: '三级 3-1-1' }
-              ]
-            },
-            {
-              label: '二级 3-2',
-              children: [
-                { label: '三级 3-2-1' }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            {
-              label: '二级 3-1',
-              children: [
-                { label: '三级 3-1-1' }
-              ]
-            },
-            {
-              label: '二级 3-2',
-              children: [
-                { label: '三级 3-2-1' }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            {
-              label: '二级 3-1',
-              children: [
-                { label: '三级 3-1-1' }
-              ]
-            },
-            {
-              label: '二级 3-2',
-              children: [
-                { label: '三级 3-2-1' }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            {
-              label: '二级 3-1',
-              children: [
-                { label: '三级 3-1-1' }
-              ]
-            },
-            {
-              label: '二级 3-2',
-              children: [
-                { label: '三级 3-2-1' }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            {
-              label: '二级 3-1',
-              children: [
-                { label: '三级 3-1-1' }
-              ]
-            },
-            {
-              label: '二级 3-2',
-              children: [
-                { label: '三级 3-2-1' }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            {
-              label: '二级 3-1',
-              children: [
-                { label: '三级 3-1-1' }
-              ]
-            },
-            {
-              label: '二级 3-2',
-              children: [
-                { label: '三级 3-2-1' }
-              ]
-            }
-          ]
         }
       ],
       defaultProps: {
@@ -200,76 +125,61 @@ export default {
       radio: -1,
       tableData: [ // 测试数据
         {
-          userName: '王小虎',
+          userName: '王小虎1',
           position: '队长',
           phoneNumber: '88888888888',
           department: '炊事班',
           selected: true
         },
         {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
+          userName: '王小虎2',
           position: '队长',
           phoneNumber: '88888888888',
           department: '炊事班',
           selected: true
         }
-      ]
+      ],
+      showAddUser: false,
+      addUserForm: {
+        user: []
+      },
+      addUserRules: {
+        user: [
+          { required: true, message: '请添加用户' }
+        ]
+      },
+      userOptions: [
+        { value: 'val1', label: 'lab1' },
+        { value: 'val2', label: 'lab2' },
+        { value: 'val3', label: 'lab3' },
+        { value: 'val4', label: 'lab4' },
+        { value: 'val5', label: 'lab5' }
+      ],
+      showDeleteTip: false
     }
   },
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
+    // 点击添加用户
     addUser () {
-      console.log('添加用户')
+      this.showAddUser = true
     },
-    /**
-     * 点击表格行
-     */
+    // 添加用户-保存
+    addUserConfirm () {
+      this.$refs.addUserFormRef.validate(async valid => {
+        if (!valid) return
+        this.showAddUser = false
+      })
+    },
+    // 点击表格行
     ClickTableRow (row) {
       this.radio = this.tableData.indexOf(row)
+    },
+    // 移除用户
+    deleteClick (index, row) {
+      this.showDeleteTip = true
     },
     renderContent (h, { node, data, store }) {
       return (
