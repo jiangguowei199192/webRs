@@ -15,9 +15,12 @@ const service = axios.create({
 service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 
 // 添加请求拦截器
+
 service.interceptors.request.use((config) => {
   if (config.url === '/index/api/getMp4RecordFile') {
     config.baseURL = 'http://172.16.63.158:9999'
+  } else if (config.url.indexOf('/api/fi') !== -1) {
+    config.baseURL = 'http://172.16.63.158:8888'
   }
   let token = ''
   if (config.url !== '/fms-auth-center/login' && config.url !== '/index/api/getMp4RecordFile') {

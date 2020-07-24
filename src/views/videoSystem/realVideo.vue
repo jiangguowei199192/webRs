@@ -609,7 +609,7 @@ export default {
       if (type === 1) {
         this.$axios
           .post(
-            'api/ptz/' +
+            '/api/ptz/' +
               this.curSelectedVideo.deviceCode +
               '/' +
               this.curSelectedVideo.id,
@@ -623,7 +623,7 @@ export default {
       } else {
         this.$axios
           .post(
-            'api/fi/' +
+            '/api/fi/' +
               this.curSelectedVideo.deviceCode +
               '/' +
               this.curSelectedVideo.id,

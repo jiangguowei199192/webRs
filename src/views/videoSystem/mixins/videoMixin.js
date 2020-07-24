@@ -65,7 +65,7 @@ const videoMixin = {
     })
     //  监听火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
-      this.$notify.warning({ title: '警告', message: '监听到火情火点！' })
+      this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       if (info.alarmStatus !== 'mistaken') {
         info.bConfirmed = false
         info.alarmTime = timeFormat(info.alarmTime)
@@ -74,6 +74,7 @@ const videoMixin = {
         this.fireTotalNum = this.fireWarningArray.length
         EventBus.$emit('getFireAlarmInfos_New', info)
       }
+      // this.getFireAlarmInfos()
     })
   },
 
