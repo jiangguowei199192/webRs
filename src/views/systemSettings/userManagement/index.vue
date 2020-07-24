@@ -13,7 +13,8 @@
           placement="right"
           width="150"
           trigger="click"
-          popper-class="el-popover-more">
+          popper-class="el-popover-more"
+          v-model="showMorePopover">
           <div style="text-align: center;">
             <el-button class="popoverBtn" @click="userAdd">新增用户</el-button>
             <el-button class="popoverBtn" @click="userEdit">修改用户</el-button>
@@ -37,16 +38,22 @@
                 <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="用户" prop="userName"></el-table-column>
-            <el-table-column align="center" label="职位" prop="position"></el-table-column>
-            <el-table-column align="center" label="手机号" prop="phoneNumber"></el-table-column>
+            <el-table-column align="center" label="用户名" prop="userName"></el-table-column>
+            <el-table-column align="center" label="用户姓名" prop="name"></el-table-column>
             <el-table-column align="center" label="所属部门" prop="department"></el-table-column>
+            <el-table-column align="center" label="职务" prop="position"></el-table-column>
+            <el-table-column align="center" label="所属组织" prop="organization"></el-table-column>
+            <el-table-column align="center" label="激活">
+              <template slot-scope="scope">
+                <el-switch v-model="tableData[scope.$index].active"></el-switch>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)"
+                  @click="resetPasswordClick(scope.$index, scope.row)"
                   style="width: 80px;">重置密码</el-button>
               </template>
             </el-table-column>
@@ -60,10 +67,75 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      :title="newUserTitle"
+      :visible.sync="showNewUser"
+      width="30%">
+      <el-form ref="newUserFormRef" :model="newUserForm" label-width="80px" :rules="newUserRules">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="newUserForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="用户姓名" prop="name">
+          <el-input v-model="newUserForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="newUserForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="newUserForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="职务">
+          <el-select v-model="newUserForm.job" placeholder="请选择职务">
+            <el-option label="职务一" value="1"></el-option>
+            <el-option label="职务二" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属组织">
+          <el-select v-model="newUserForm.organizations" multiple placeholder="请选择组织">
+            <el-option v-for="item in organizationOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="激活">
+          <el-switch v-model="newUserForm.active"></el-switch>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio-group v-model="newUserForm.six">
+            <el-radio label="男"></el-radio>
+            <el-radio label="女"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="初始密码">
+          <el-input v-model="newUserForm.password"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="newUserConfirm" style="float: right;">保存</el-button>
+          <!-- <el-button>取消</el-button> -->
+        </el-form-item>
+      </el-form>
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="showNewUser = false">刷 新</el-button>
+      </span> -->
+    </el-dialog>
+
+    <el-dialog
+      title="重置密码"
+      :visible.sync="showResetPassword"
+      width="30%">
+      <el-form ref="resetPasswordFormRef" :model="resetPasswordForm" label-width="80px" :rules="resetPasswordRules">
+        <el-form-item label="新密码" prop="password">
+          <el-input v-model="resetPasswordForm.password" placeholder="请输入重置密码"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="resetPasswordConfirm" style="float: right;">保存</el-button>
+          <!-- <el-button>取消</el-button> -->
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { Notification } from 'element-ui'
 export default {
   created () {
     this.pageData.total = this.tableData.length
@@ -76,67 +148,82 @@ export default {
       downloadImg: require('../../../assets/images/Setting/setting-download.png'),
       searchImg: require('../../../assets/images/Setting/setting-search.png'),
       refreshImg: require('../../../assets/images/Setting/setting-refresh.png'),
+      showMorePopover: false, // 展示更多弹窗
+      showNewUser: false, // 新建用户弹窗
+      showResetPassword: false, // 重置密码弹窗
       pageData: {
         total: 0,
         pageSize: 4
+      },
+      newUserTitle: '',
+      newUserForm: {
+        username: '',
+        name: '',
+        phone: '',
+        email: '',
+        job: '',
+        active: true,
+        six: '',
+        password: '',
+        organizations: []
+      },
+      organizationOptions: [
+        { value: 'val1', label: 'lab1' },
+        { value: 'val2', label: 'lab2' },
+        { value: 'val3', label: 'lab3' },
+        { value: 'val4', label: 'lab4' },
+        { value: 'val5', label: 'lab5' }
+      ],
+      newUserRules: {
+        username: [
+          { required: true, message: '请输入用户名' }
+        ],
+        name: [
+          { required: true, message: '请输入姓名' }
+        ],
+        phone: [
+          { required: true, message: '请输入手机号' }
+        ]
+      },
+      resetPasswordForm: {
+        password: ''
+      },
+      resetPasswordRules: {
+        password: [
+          { required: true, message: '请输入密码' }
+        ]
       },
       radio: -1,
       tableData: [ // 测试数据
         {
           userName: '王小虎',
           position: '队长',
-          phoneNumber: '88888888888',
           department: '炊事班',
-          selected: true
+          active: true
         },
         {
           userName: '王小虎',
           position: '队长',
-          phoneNumber: '88888888888',
           department: '炊事班',
-          selected: true
+          active: true
         },
         {
           userName: '王小虎',
           position: '队长',
-          phoneNumber: '88888888888',
           department: '炊事班',
-          selected: true
+          active: true
         },
         {
           userName: '王小虎',
           position: '队长',
-          phoneNumber: '88888888888',
           department: '炊事班',
-          selected: true
+          active: true
         },
         {
           userName: '王小虎',
           position: '队长',
-          phoneNumber: '88888888888',
           department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          phoneNumber: '88888888888',
-          department: '炊事班',
-          selected: true
+          active: true
         }
       ]
     }
@@ -151,6 +238,10 @@ export default {
     ClickTableRow (row) {
       this.radio = this.tableData.indexOf(row)
     },
+    resetPasswordClick (index, row) {
+      // this.tableData[index]
+      this.showResetPassword = true
+    },
     search () {
       console.log('search')
     },
@@ -161,13 +252,47 @@ export default {
       console.log('download')
     },
     userAdd () {
-      console.log('userAdd')
+      this.showMorePopover = false
+      this.showNewUser = true
+      this.newUserTitle = '新增用户'
     },
     userEdit () {
-      console.log('userEdit')
+      this.showMorePopover = false
+      if (this.radio < 0) {
+        Notification({
+          title: '提示',
+          message: '请选择用户',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return ''
+      }
+      this.showNewUser = true
+      this.newUserTitle = '修改用户'
     },
     userDelete () {
-      console.log('userDelete')
+      this.showMorePopover = false
+      if (this.radio < 0) {
+        Notification({
+          title: '提示',
+          message: '请选择用户',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return ''
+      }
+    },
+    newUserConfirm () {
+      this.$refs.newUserFormRef.validate(async valid => {
+        if (!valid) return
+        this.showNewUser = false
+      })
+    },
+    resetPasswordConfirm () {
+      this.$refs.resetPasswordFormRef.validate(async valid => {
+        if (!valid) return
+        this.showResetPassword = false
+      })
     }
   }
 }
@@ -198,6 +323,22 @@ export default {
     .searchInput {
       width: 253px;
       margin: 21px 0px 0px 20px;
+      /deep/ .el-input__inner {
+        background-color: transparent;
+        font-size: 12px;
+        color: white;
+        border-radius: 0;
+        border: 0;
+        border-bottom: solid 1px #368fbb;
+      }
+      /deep/ .el-input-group__prepend {
+        background-color: transparent;
+        font-size: 12px;
+        color: white;
+        border-radius: 0;
+        border: 0;
+        border-bottom: solid 1px #368fbb;
+      }
     }
     .more {
       width: 25px;
@@ -212,24 +353,6 @@ export default {
       width: 760px;
       height: 598px;
       margin: 12px auto 20px auto;
-    }
-  }
-  .el-input {
-    /deep/ .el-input__inner {
-      background-color: transparent;
-      font-size: 12px;
-      color: white;
-      border-radius: 0;
-      border: 0;
-      border-bottom: solid 1px #368fbb;
-    }
-    /deep/ .el-input-group__prepend {
-      background-color: transparent;
-      font-size: 12px;
-      color: white;
-      border-radius: 0;
-      border: 0;
-      border-bottom: solid 1px #368fbb;
     }
   }
   .el-table::before {
