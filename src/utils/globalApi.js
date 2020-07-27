@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
   }).catch((error) => { console.log(error) })
 } else {
   baseUrl = 'http://172.16.63.148:8850'
-  getMp4RecordFile = 'http://172.16.63.29:9999'
+  getMp4RecordFile = 'http://172.16.63.158:9999'
   apiFiAndPtz = 'http://172.16.63.29:8888'
   picUrl = 'http://172.16.63.158:22222'
 }

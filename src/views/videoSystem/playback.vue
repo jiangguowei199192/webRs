@@ -241,6 +241,7 @@ import Tree from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
 import { formatSeconds } from '@/utils/date'
+import globalApi from '@/utils/globalApi'
 export default {
   name: 'playbackContainer',
   components: {
@@ -688,7 +689,7 @@ export default {
               var url = ''
               if (index !== -1) {
                 url =
-                  'http://172.16.63.158:9999' +
+                  globalApi.getMp4RecordFile +
                   rs.data.rootPath.substring(index) +
                   p.file_name
               }

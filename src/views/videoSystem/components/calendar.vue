@@ -36,7 +36,7 @@
       <div class="picList">
         <template v-for="(item,index) in snapList">
           <div
-            :style="{background: 'url(http://172.16.63.158:22222' +item.filePath +') no-repeat'}"
+            :style="{background: 'url('+ serverUrl +item.filePath +') no-repeat'}"
             :key="index"
             @dblclick="showSnapDlg(item)"
           ></div>
@@ -46,7 +46,7 @@
     <el-dialog :visible.sync="picDlgVisible" width="803px">
       <div class="picContainer2">
         <div
-          :style="{background: 'url(http://172.16.63.158:22222' +curSnap.filePath +') no-repeat'}"
+          :style="{background: 'url('+ serverUrl + curSnap.filePath +') no-repeat'}"
         ></div>
         <div>
           <span>说明:</span>
@@ -60,6 +60,7 @@
 </template>
 <script>
 import { api } from '@/api/videoSystem/videoRecord.js'
+import globalApi from '@/utils/globalApi'
 var that
 export default {
   data () {
@@ -68,7 +69,8 @@ export default {
       dateInfo: { curYear: '', curMonth: '' },
       picDlgVisible: false, // 图片弹窗
       describe: '', // 图片描述
-      curSnap: ''
+      curSnap: '',
+      serverUrl: globalApi.picUrl
     }
   },
 

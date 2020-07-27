@@ -3,11 +3,11 @@
 // 让打包的时候输出可配置的文件
 const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
-  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.29:9999', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222' }
+  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.158:9999', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222' }
   return JSON.stringify(cfgJson)
 }
 module.exports = {
-  publicPath: '/',
+  publicPath: '/webFS',
   // outputDir: 在npm run build时 生成文件的目录 type:string, default:'dist'
   /*
     构建多页面模式的应用程序.每个“页面”都应该有一个相应的JavaScript条目文件。该值应该是一
