@@ -102,13 +102,14 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" />
-              <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" />
-              <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
-              <img :src="photoClicked?photoSelected:photo" @click.stop="showImg" />
+              <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" title="9宫格"/>
+              <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" title="4宫格"/>
+              <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" title="1宫格" />
+              <img :src="photoClicked?photoSelected:photo" @click.stop="showImg" title="抓取" />
               <img
                 :src="mapClicked?mapSelected:map"
                 @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"
+                title="设备地图"
               />
               <!-- 用于显示截取的图片 -->
               <img
@@ -120,7 +121,7 @@
               />
             </div>
             <div class="rightTool">
-              <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />
+              <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" :title="!isPlayAll?'全部预览':'取消预览'"/>
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
@@ -134,6 +135,7 @@
 
               <img
                 :src="!dialogVisible?fullScreen:fullScreenSelected"
+                :title="!dialogVisible?'全屏':'取消全屏'"
                 @click.stop="dialogVisible=true"
               />
             </div>
@@ -759,9 +761,9 @@ export default {
       if (this.isOnline) {
         const divs = document.querySelectorAll('.leftContainer > div.list')
         if (!this.isPlayAll) {
-          // for (let i = 0; i < divs.length; i++) {
-          //   divs[0].classList.add('selected')
-          // }
+          for (let i = 0; i < divs.length; i++) {
+            divs[i].classList.remove('selected')
+          }
           this.onlineArray.forEach(item => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
