@@ -1,6 +1,11 @@
 
-// vue.config.js 配置说明
 // 这里只列一部分，具体配置惨考文档啊
+// 让打包的时候输出可配置的文件
+const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
+const createServerConfig = function (compilation) {
+  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.29:9999', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222' }
+  return JSON.stringify(cfgJson)
+}
 module.exports = {
   publicPath: '/',
   // outputDir: 在npm run build时 生成文件的目录 type:string, default:'dist'
@@ -46,5 +51,17 @@ module.exports = {
         changeOrigin: true
       }
     } // 配置多个代理
+  },
+  configureWebpack: {
+    plugins: [
+      // 让打包的时候输入可配置的文件
+      new GenerateAssetPlugin({
+        filename: 'serverconfig.json',
+        fn: (compilation, cb) => {
+          cb(null, createServerConfig(compilation))
+        },
+        extraFiles: []
+      })
+    ]
   }
 }
