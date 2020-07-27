@@ -1,16 +1,19 @@
-import Vue from 'vue'
+// import Vue from 'vue'
+import axios from 'axios'
 let baseUrl = ''
 let getMp4RecordFile = ''
 let apiFiAndPtz = ''
 let picUrl = ''
+async function getApi () {
+  const result = await axios.get('/webFs/serverconfig.json')
+  baseUrl = result.data.baseUrl
+  getMp4RecordFile = result.data.getMp4RecordFile
+  apiFiAndPtz = result.data.apiFiAndPtz
+  picUrl = result.data.picUrl
+}
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
-  Vue.$axios.get('serverconfig.json').then((result) => {
-    baseUrl = result.body.baseUrl
-    getMp4RecordFile = result.body.getMp4RecordFile
-    apiFiAndPtz = result.body.apiFiAndPtz
-    picUrl = result.body.picUrl
-  }).catch((error) => { console.log(error) })
+  getApi()
 } else {
   baseUrl = 'http://172.16.63.148:8850'
   getMp4RecordFile = 'http://172.16.63.158:9999'

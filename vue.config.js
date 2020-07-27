@@ -7,7 +7,7 @@ const createServerConfig = function (compilation) {
   return JSON.stringify(cfgJson)
 }
 module.exports = {
-  publicPath: '/webFS',
+  publicPath: '/webFs',
   // outputDir: 在npm run build时 生成文件的目录 type:string, default:'dist'
   /*
     构建多页面模式的应用程序.每个“页面”都应该有一个相应的JavaScript条目文件。该值应该是一
