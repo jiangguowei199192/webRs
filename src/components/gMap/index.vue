@@ -407,6 +407,8 @@ export default {
     curLocationCB (lon, lat) {
       this.lon = lon
       this.lat = lat
+      this.map2D.setZoom(16)
+      this.map2D.zoomToCenter(lon, lat)
     },
 
     // 点击气泡弹窗中图标按钮事件回调
