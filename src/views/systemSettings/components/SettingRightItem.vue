@@ -110,8 +110,12 @@ export default {
         this.$router.push({ path: '/systemSettings/organizationManagement' })
       } else if (this.data.id === 2) { // 补充信息
         this.showExtraInfo = true
-      } else if (this.data.id === 1) {
+      } else if (this.data.id === 1) { // 上传头像
         this.showUploadIcon = true
+      } else if (this.data.id === 31) { // 火情地图
+        this.$router.push({ path: '/systemSettings/fireMap' })
+      } else if (this.data.id === 30) { // 火情报警
+        this.$router.push({ path: '/systemSettings/firePolice' })
       }
     },
     // 补充信息-保存
