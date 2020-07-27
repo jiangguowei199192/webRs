@@ -80,9 +80,11 @@ const videoMixin = {
 
   methods: {
     handlingAlarmImgUrl (fire) {
-      fire.alarmPicList.forEach(img => {
-        img.picPath = 'http://172.16.63.158:22222' + img.picPath
-      })
+      if (fire.alarmPicList && fire.alarmPicList.length > 0) {
+        fire.alarmPicList.forEach(img => {
+          img.picPath = 'http://172.16.63.158:22222' + img.picPath
+        })
+      }
     },
 
     closeLeftNav (type) {

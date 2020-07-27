@@ -1270,6 +1270,7 @@ export default {
         min-height: 90px;
         ul {
           padding-left: 24px;
+          padding-right: 5px;
           li {
             // text-align: justify;
             word-break: break-all;
