@@ -55,7 +55,9 @@
       <div slot="center">
         <div class="video">
           <div class="fireAlarmBox">
-            <div class="title">火点火情</div>
+             <div class="title">
+              <img src="@/assets/images/back.png" @click.stop="$router.go(-1)" />火点火情
+            </div>
             <div class="container">
               <gMap
                 ref="gduMap"
@@ -501,12 +503,21 @@ export default {
       // justify-content: space-between;
       margin-right: 24px;
       > .title {
-        width: 202px;
-        height: 45px;
-        background: url(../../assets/images/device/info-title.png) no-repeat;
-        line-height: 45px;
-        padding-left: 30px;
+         width: 128px;
+        height: 36px;
+        border: 1px solid rgba(57, 164, 221, 1);
+        text-align: center;
+        // width: 202px;
+        // height: 45px;
+        // background: url(../../assets/images/device/info-title.png) no-repeat;
+        line-height: 36px;
+        // padding-left: 30px;
         margin-bottom: 20px;
+         img {
+          margin-right: 10px;
+          cursor: pointer;
+          vertical-align: middle;
+        }
       }
       .container {
         position: relative;

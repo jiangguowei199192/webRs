@@ -55,9 +55,17 @@
       <div slot="center">
         <div class="video">
           <div class="deviceMapBox">
-            <div class="title">设备地图</div>
+            <div class="title">
+              <img src="@/assets/images/back.png" @click.stop="$router.go(-1)" />设备地图
+            </div>
             <div class="container">
-              <gMap ref="gduMap" handleType="devMap" :bShowSimpleSearchTools="true" :bShowBasic="true" :bShowMeasure="false"></gMap>
+              <gMap
+                ref="gduMap"
+                handleType="devMap"
+                :bShowSimpleSearchTools="true"
+                :bShowBasic="true"
+                :bShowMeasure="false"
+              ></gMap>
             </div>
           </div>
         </div>
@@ -114,7 +122,10 @@ export default {
         this.$refs.gduMap.showLayer('drone', true)
         this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
       }
-      this.$refs.gduMap.map2D.zoomToCenter(item.deviceLongitude, item.deviceLatitude)
+      this.$refs.gduMap.map2D.zoomToCenter(
+        item.deviceLongitude,
+        item.deviceLatitude
+      )
     },
     // 点击在线设备中红外光或可见光
     selectOnlineDeviceItem (item, index) {
@@ -127,16 +138,24 @@ export default {
     },
     // 加载显示高点设备、无人机位置标记
     initMapDevices () {
-      if (this.$refs.gduMap !== undefined &&
-          this.$refs.gduMap.map2D !== undefined) {
-        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(this.cameraDevArray)
-        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(this.droneDevArray)
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
+        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(
+          this.cameraDevArray
+        )
+        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(
+          this.droneDevArray
+        )
       }
     },
     // 高点设备、无人机状态更新(地图标记)
     updateDeviceStatus (info) {
-      if (this.$refs.gduMap !== undefined &&
-          this.$refs.gduMap.map2D !== undefined) {
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
         if (info.deviceTypeCode === 'GDJK') {
           this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
         } else if (info.deviceTypeCode === 'WRJ') {
@@ -280,36 +299,25 @@ export default {
       // justify-content: space-between;
       margin-right: 24px;
       > .title {
-        width: 202px;
-        height: 45px;
-        background: url(../../assets/images/device/info-title.png) no-repeat;
-        line-height: 45px;
-        padding-left: 30px;
+        width: 128px;
+        height: 36px;
+        border: 1px solid rgba(57, 164, 221, 1);
+        text-align: center;
+        // width: 202px;
+        // height: 45px;
+        // background: url(../../assets/images/device/info-title.png) no-repeat;
+        line-height: 36px;
+        // padding-left: 30px;
         margin-bottom: 20px;
+        img {
+          margin-right: 10px;
+          cursor: pointer;
+          vertical-align: middle;
+        }
       }
       .container {
         height: 785px;
         position: relative;
-        /* --- 改变滚动条样式 --- */
-        .info::-webkit-scrollbar {
-          width: 10px;
-        }
-
-        /* --- 滚动条里面的滚动块 --- */
-        .info::-webkit-scrollbar-thumb {
-          border-radius: 10px;
-          box-shadow: inset 0 0 5px #096090;
-          background: #096090;
-        }
-
-        /* --- 滚动条里面轨道 --- */
-        .info::-webkit-scrollbar-track {
-          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-          border-radius: 10px;
-          background: #096090;
-          /* border: none;
-          background: none; */
-        }
       }
     }
   }
