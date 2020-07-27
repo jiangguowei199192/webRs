@@ -1,10 +1,11 @@
+import Vue from 'vue'
 let baseUrl = ''
 let getMp4RecordFile = ''
 let apiFiAndPtz = ''
 let picUrl = ''
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
-  this.$http.get('serverconfig.json').then((result) => {
+  Vue.$axios.get('serverconfig.json').then((result) => {
     baseUrl = result.body.baseUrl
     getMp4RecordFile = result.body.getMp4RecordFile
     apiFiAndPtz = result.body.apiFiAndPtz
