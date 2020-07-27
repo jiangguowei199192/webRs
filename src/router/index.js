@@ -96,6 +96,16 @@ const routes = [
             path: '/systemSettings/rolePermissionManagement',
             name: 'rolePermissionManagement',
             component: () => import('../views/systemSettings/rolePermissionManagement')
+          },
+          {
+            path: '/systemSettings/fireMap',
+            name: 'fireMap',
+            component: () => import('../views/systemSettings/fireMap')
+          },
+          {
+            path: '/systemSettings/firePolice',
+            name: 'firePolice',
+            component: () => import('../views/systemSettings/firePolice')
           }
         ]
       }
