@@ -1,7 +1,5 @@
 import { api } from '@/api/videoSystem/realVideo'
-import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { EventBus } from '@/utils/eventBus.js'
-import { timeFormat } from '@/utils/date'
 const videoMixin = {
   data () {
     return {
@@ -14,9 +12,6 @@ const videoMixin = {
       onlineArray: [], // 在线设备列表
       cameraDevArray: [], // 所有摄像头设备列表
       droneDevArray: [], // 所有无人机设备列表
-      fireWarningArray: [], // 今日火情列表
-      fireConfirmedNum: 0,
-      fireTotalNum: 0,
       ninePalace: require('../../../assets/images/9.png'),
       fourPalace: require('../../../assets/images/4.png'),
       onePalace: require('../../../assets/images/1.png'),
@@ -41,14 +36,28 @@ const videoMixin = {
   },
 
   created () {
+    if (this.bShowMarkersInMap) {
+      // 监控设备获取完毕事件
+      EventBus.$on('GetAllDeptDevices_Done', bFlag => {
+        this.initMapDevices()
+      })
+      // 监控设备状态更新事件
+      EventBus.$on('UpdateDeviceOnlineStatus', info => {
+        this.updateDeviceStatus(info)
+      })
+    }
+
+    // 获取摄像头、无人机设备
     this.getAllDeptDevices()
-    this.getFireAlarmInfos()
   },
 
   beforeDestroy () {
     EventBus.$off('streamStart')
     EventBus.$off('streamEnd')
-    EventBus.$off('getFireAlarm')
+    if (this.bShowMarkersInMap) {
+      EventBus.$off('GetAllDeptDevices_Done')
+      EventBus.$off('UpdateDeviceOnlineStatus')
+    }
   },
 
   mounted () {
@@ -63,29 +72,9 @@ const videoMixin = {
       this.deviceOnlineOrOffline(false, info)
       this.updateOnlineArray(false, info)
     })
-    //  监听火情火点
-    EventBus.$on('getFireAlarm', info => {
-      if (info.alarmStatus !== 'mistaken') {
-        info.bConfirmed = false
-        info.alarmTime = timeFormat(info.alarmTime)
-        this.handlingAlarmImgUrl(info)
-        this.fireWarningArray.push(info)
-        this.fireTotalNum = this.fireWarningArray.length
-        EventBus.$emit('getFireAlarmInfos_New', info)
-      }
-      // this.getFireAlarmInfos()
-    })
   },
 
   methods: {
-    handlingAlarmImgUrl (fire) {
-      if (fire.alarmPicList && fire.alarmPicList.length > 0) {
-        fire.alarmPicList.forEach(img => {
-          img.picPath = 'http://172.16.63.158:22222' + img.picPath
-        })
-      }
-    },
-
     closeLeftNav (type) {
       this.showLeft = type !== 1
     },
@@ -384,27 +373,47 @@ const videoMixin = {
         }
       })
     },
-
-    /** 获取今日火情警报信息 */
-    getFireAlarmInfos () {
-      this.fireWarningArray = []
-      this.$axios.get(fireApi.getFireAlarmInfos).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          const tmpData = res.data.data
-          tmpData.forEach(fire => {
-            if (fire.alarmStatus !== 'mistaken') {
-              fire.bConfirmed = false
-              if (fire.alarmStatus === 'confirmed') {
-                fire.bConfirmed = true
-                this.fireConfirmedNum++
-              }
-              fire.alarmTime = timeFormat(fire.alarmTime)
-              this.handlingAlarmImgUrl(fire)
-              this.fireWarningArray.push(fire)
-            }
-          })
-          this.fireTotalNum = this.fireWarningArray.length
-          EventBus.$emit('getFireAlarmInfos_Done', true)
+    // 加载显示高点设备、无人机位置标记
+    initMapDevices () {
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
+        this.$refs.gduMap.map2D.devCameraLayerManager.clear()
+        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(
+          this.cameraDevArray
+        )
+        this.$refs.gduMap.map2D.devDroneLayerManager.clear()
+        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(
+          this.droneDevArray
+        )
+      }
+    },
+    // 高点设备、无人机状态更新(地图标记)
+    updateDeviceStatus (info) {
+      if (
+        this.$refs.gduMap !== undefined &&
+        this.$refs.gduMap.map2D !== undefined
+      ) {
+        if (info.deviceTypeCode === 'GDJK') {
+          this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
+        } else if (info.deviceTypeCode === 'WRJ') {
+          this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
+        }
+      }
+    },
+    // 跳转到设备详情
+    gotoDeviceDetail (item) {
+      this.cameraDevArray.forEach(dev => {
+        if (dev.id === item.deviceCode) {
+          this.showDeviceDetailInfo(dev)
+          return null
+        }
+      })
+      this.droneDevArray.forEach(dev => {
+        if (dev.id === item.deviceCode) {
+          this.showDeviceDetailInfo(dev)
+          return null
         }
       })
     }

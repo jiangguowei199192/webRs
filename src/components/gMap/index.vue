@@ -378,6 +378,7 @@ export default {
       var pathName = window.document.location.pathname
       var pos = curWwwPath.indexOf(pathName)
       var tmpRoot = curWwwPath.substring(0, pos)
+      tmpRoot += this.$router.options.base
       return tmpRoot
     },
     // 创建地图组件

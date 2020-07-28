@@ -262,6 +262,7 @@
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
+import fireMixin from '../../utils/fireMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
@@ -273,7 +274,6 @@ export default {
     TreeData,
     VideoWall
   },
-  mixins: [videoMixin],
   data () {
     return {
       picUrl: globalApi.picUrl, // 图片前缀
@@ -309,9 +309,11 @@ export default {
       },
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
-      operateIconplay: true // 云台默认开始的按钮
+      operateIconplay: true, // 云台默认开始的按钮
+      bRealTimeFireWarning: true // 实时更新火情警报个数
     }
   },
+  mixins: [videoMixin, fireMixin],
   methods: {
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {

@@ -121,24 +121,21 @@
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
-import { fireApi } from '@/api/videoSystem/fireAlarm'
-import { EventBus } from '@/utils/eventBus.js'
-import { Message } from 'element-ui'
+import fireMixin from '../../utils/fireMixin'
 export default {
   name: 'fireAlarm',
   components: {
     VideoMain,
     TreeData
   },
-  mixins: [videoMixin],
   data () {
     return {
       isShowRight: false,
-      copyCoordinate: '',
-      imgDialogVisible: false,
-      imgSrc: ''
+      bShowMarkersInMap: true, // 在地图中加载显示设备、火情标记
+      bRealTimeFireWarning: true // 实时更新火情警报个数
     }
   },
+  mixins: [videoMixin, fireMixin],
   methods: {
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
@@ -184,200 +181,7 @@ export default {
     // 点击全部设备列表中设备项
     clickAnDeviceItem (curDeviceInfo) {
       this.showDeviceDetailInfo(curDeviceInfo)
-    },
-    // 加载显示高点设备、无人机位置标记
-    initMapDevices () {
-      if (
-        this.$refs.gduMap !== undefined &&
-        this.$refs.gduMap.map2D !== undefined
-      ) {
-        this.$refs.gduMap.map2D.devCameraLayerManager.clear()
-        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(
-          this.cameraDevArray
-        )
-        this.$refs.gduMap.map2D.devDroneLayerManager.clear()
-        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(
-          this.droneDevArray
-        )
-      }
-    },
-    // 加载火情警报位置标记
-    markFireWarnings () {
-      if (
-        this.$refs.gduMap !== undefined &&
-        this.$refs.gduMap.map2D !== undefined
-      ) {
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(
-          this.fireWarningArray
-        )
-      }
-    },
-    // 新增火情警报
-    addNewFireWarning (fire) {
-      if (
-        this.$refs.gduMap !== undefined &&
-        this.$refs.gduMap.map2D !== undefined
-      ) {
-        this.$refs.gduMap.map2D.devFireWarningLayerManager.addOrUpdateFireWarning(
-          fire
-        )
-      }
-    },
-    // 高点设备、无人机状态更新(地图标记)
-    updateDeviceStatus (info) {
-      if (
-        this.$refs.gduMap !== undefined &&
-        this.$refs.gduMap.map2D !== undefined
-      ) {
-        if (info.deviceTypeCode === 'GDJK') {
-          this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
-        } else if (info.deviceTypeCode === 'WRJ') {
-          this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
-        }
-      }
-    },
-    // 点击火情报警列表处理事件
-    selectFireWarningHandler (item, index) {
-      this.$refs.gduMap.showLayer('fire', true)
-      this.$refs.gduMap.map2D.devCameraLayerManager.resetSelectedFeature()
-      this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
-      const tmpMap = this.$refs.gduMap.map2D
-      tmpMap.devFireWarningLayerManager.selectFeatureByID(item)
-      tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
-      const mapCenter = tmpMap._map.getView().getCenter()
-      const tmpCenter = tmpMap._map.getPixelFromCoordinate(mapCenter)
-      const newx = tmpCenter[0] - 100
-      const newy = tmpCenter[1] - 120
-      const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
-      tmpMap.zoomToCenter(newCenter[0], newCenter[1])
-    },
-    // 跳转到设备详情
-    gotoDeviceDetail (item) {
-      this.cameraDevArray.forEach(dev => {
-        if (dev.id === item.deviceCode) {
-          this.showDeviceDetailInfo(dev)
-          return null
-        }
-      })
-      this.droneDevArray.forEach(dev => {
-        if (dev.id === item.deviceCode) {
-          this.showDeviceDetailInfo(dev)
-          return null
-        }
-      })
-    },
-    // 火情报警弹窗中点击复制坐标回调函数
-    copyCoordinateCB (info) {
-      this.copyCoordinate = info.alarmLongitude + ',' + info.alarmLatitude
-      this.$nextTick(() => {
-        this.$refs.copyText.click()
-        Message({
-          message: '坐标已复制!',
-          type: 'info',
-          duration: 3 * 1000
-        })
-      })
-    },
-    // 复制坐标成功回调
-    onCopyOK (e) {
-      console.log(e)
-    },
-    // 复制坐标异常回调
-    onCopyErr (e) {
-      console.log(e)
-    },
-    // 关闭图片展示窗口
-    closeImgDialog () {
-      this.imgDialogVisible = false
-    },
-    // 点击详情中的图片后详情会关闭，使用此延迟将其再显示出来。
-    delayShowFireDetailInfo (info) {
-      setTimeout(() => {
-        this.selectFireWarningHandler(info)
-      }, 500)
-    },
-    // 火情报警弹窗中点击左侧图片(火情图片数组中第一张图片)回调事件
-    callbackLeftImg (info) {
-      this.imgSrc = info.alarmPicList[0].picPath
-      this.imgDialogVisible = true
-      this.delayShowFireDetailInfo(info)
-    },
-    // 火情报警弹窗中点击中间图片(火情图片数组中第一张图片)回调事件
-    callbackMidImg (info) {
-      this.imgSrc = info.alarmPicList[0].picPath
-      this.imgDialogVisible = true
-      this.delayShowFireDetailInfo(info)
-    },
-    // 火情报警弹窗中点击右侧图片(火情图片数组中第二张图片)回调事件
-    callbackRightImg (info) {
-      this.imgSrc = info.alarmPicList[1].picPath
-      this.imgDialogVisible = true
-      this.delayShowFireDetailInfo(info)
-    },
-    // 火情报警弹窗中点击误报按钮回调事件
-    callbackMistaken (info) {
-      const tmpPost =
-        fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
-      this.$axios.post(tmpPost).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          var fire = this.fireWarningArray.find(c => c.id === info.id)
-          if (fire !== undefined) {
-            var index = this.fireWarningArray.indexOf(fire)
-            this.fireWarningArray.splice(index, 1)
-            this.fireTotalNum--
-          }
-        }
-      })
-    },
-    // 火情报警弹窗中点击确认按钮回调事件
-    callbackConfirmed (info) {
-      const tmpPost =
-        fireApi.confirmFireAlarmInfo + '/' + info.id + '/' + info.alarmStatus
-      this.$axios.post(tmpPost).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          var fire = this.fireWarningArray.find(c => c.id === info.id)
-          if (fire !== undefined) {
-            fire.bConfirmed = true
-            fire.alarmStatus = info.alarmStatus
-            this.fireConfirmedNum++
-          }
-        }
-      })
     }
-  },
-  created () {
-    EventBus.$on('GetAllDeptDevices_Done', bFlag => {
-      this.initMapDevices()
-    })
-    EventBus.$on('getFireAlarmInfos_Done', bFlag => {
-      this.markFireWarnings()
-    })
-    EventBus.$on('getFireAlarmInfos_New', fire => {
-      this.addNewFireWarning(fire)
-    })
-    EventBus.$on('UpdateDeviceOnlineStatus', info => {
-      this.updateDeviceStatus(info)
-    })
-  },
-  mounted () {
-    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupCopyBtnClickEvent.addEventListener(
-      this.copyCoordinateCB
-    )
-    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupLeftImgClickEvent.addEventListener(
-      this.callbackLeftImg
-    )
-    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupOneImgClickEvent.addEventListener(
-      this.callbackMidImg
-    )
-    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupRightImgClickEvent.addEventListener(
-      this.callbackRightImg
-    )
-    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupMisreportBtnClickEvent.addEventListener(
-      this.callbackMistaken
-    )
-    this.$refs.gduMap.map2D.devFireWarningLayerManager.popupConfirmBtnClickEvent.addEventListener(
-      this.callbackConfirmed
-    )
   }
 }
 </script>

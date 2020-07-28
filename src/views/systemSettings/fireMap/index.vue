@@ -18,18 +18,37 @@
         </div>
       </div>
     </div>
+    <span
+      ref="copyText"
+      v-clipboard:copy="copyCoordinate"
+      v-clipboard:success="onCopyOK"
+      v-clipboard:error="onCopyErr"
+      style="display:none;"
+    />
+    <el-dialog
+      custom-class="el-dialog-custom"
+      :visible.sync="imgDialogVisible"
+      :show-close="false"
+      type="primary"
+      @click.native="closeImgDialog"
+      center
+    >
+      <img class="dialogImg" :src="imgSrc" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import videoMixin from '../../videoSystem/mixins/videoMixin'
+import fireMixin from '../../../utils/fireMixin'
 export default {
-  mixins: [videoMixin],
   data () {
     return {
-      backImg: require('../../../assets/images/Setting/setting-back.png')
+      backImg: require('../../../assets/images/Setting/setting-back.png'),
+      bShowMarkersInMap: true // 在地图中加载显示设备、火情标记
     }
   },
+  mixins: [videoMixin, fireMixin],
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
@@ -68,5 +87,9 @@ export default {
     .mapArea {
       height: 622px;
     }
+  }
+  .dialogImg {
+    width: 100%;
+    height: 100%;
   }
 </style>
