@@ -1,14 +1,15 @@
 
-// 这里只列一部分，具体配置惨考文档啊
 // 让打包的时候输出可配置的文件
+const webpack = require('webpack')
 const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
   const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.158:9999', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222' }
   return JSON.stringify(cfgJson)
 }
+// 这里只列一部分，具体配置惨考文档啊
 module.exports = {
-  publicPath: '/webFs',
-  // outputDir: 在npm run build时 生成文件的目录 type:string, default:'dist'
+  publicPath: '/webFs/',
+  outputDir: 'webFs', // 在npm run build时 生成文件的目录 type:string, default:'dist'
   /*
     构建多页面模式的应用程序.每个“页面”都应该有一个相应的JavaScript条目文件。该值应该是一
     个对象，其中键是条目的名称，而该值要么是指定其条目、模板和文件名的对象，要么是指定其条目
@@ -61,6 +62,11 @@ module.exports = {
           cb(null, createServerConfig(compilation))
         },
         extraFiles: []
+      }),
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'windows.jQuery': 'jquery'
       })
     ]
   }

@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from './axios/axios'
+import $ from 'jquery'
 import ElementUI from 'element-ui'
 import gMap from '@/components/gMap'
 import VueClipboard from 'vue-clipboard2'
@@ -21,6 +22,7 @@ Vue.component('gMap', gMap)
 Vue.use(VueClipboard)
 
 Vue.prototype.$axios = axios
+Vue.prototype.$ = $
 Vue.config.productionTip = false
 Vue.prototype.$md5 = md5
 

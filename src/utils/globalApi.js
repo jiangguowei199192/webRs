@@ -1,19 +1,26 @@
-// import Vue from 'vue'
-import axios from 'axios'
+
 let baseUrl = ''
 let getMp4RecordFile = ''
 let apiFiAndPtz = ''
 let picUrl = ''
-async function getApi () {
-  const result = await axios.get('/webFs/serverconfig.json')
-  baseUrl = result.data.baseUrl
-  getMp4RecordFile = result.data.getMp4RecordFile
-  apiFiAndPtz = result.data.apiFiAndPtz
-  picUrl = result.data.picUrl
-}
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
-  getApi()
+  this.$.ajax({
+    async: false, // fasle表示同步请求，true表示异步请求
+    type: 'get',
+    dataType: 'json',
+    url: '/webFs/serverConfig.json', // 请求地址
+    success: function (res) { // 请求成功
+      console.log(res)
+      baseUrl = res.baseUrl
+      getMp4RecordFile = res.getMp4RecordFile
+      apiFiAndPtz = res.getMp4RecordFile
+      picUrl = res.picUrl
+    },
+    error: function (err) { // 请求失败，包含具体的错误信息
+      console.log(err)
+    }
+  })
 } else {
   baseUrl = 'http://172.16.63.148:8850'
   getMp4RecordFile = 'http://172.16.63.158:9999'
