@@ -5,13 +5,26 @@
         <img :src="backImg">
         火情地图
       </button>
-      <div class="rightBox"></div>
+      <div class="rightBox">
+        <div class="selArea">开始时间。。。结束时间。。。</div>
+        <div class="mapArea">
+          <gMap
+            ref="gduMap"
+            handleType="devMap"
+            :bShowSimpleSearchTools="true"
+            :bShowBasic="true"
+            :bShowMeasure="false"
+          ></gMap>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import videoMixin from '../../videoSystem/mixins/videoMixin'
 export default {
+  mixins: [videoMixin],
   data () {
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png')
@@ -45,7 +58,15 @@ export default {
     width: 796px;
     height: 682px;
     border: solid 2px #39a4dd;
-    border-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     margin: 30px auto 0 auto;
+    .selArea {
+      height: 60px;
+      line-height: 60px;
+    }
+    .mapArea {
+      height: 622px;
+    }
   }
 </style>

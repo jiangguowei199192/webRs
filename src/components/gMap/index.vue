@@ -373,14 +373,22 @@ export default {
   },
 
   methods: {
+    getRootUrl () {
+      var curWwwPath = window.document.location.href
+      var pathName = window.document.location.pathname
+      var pos = curWwwPath.indexOf(pathName)
+      var tmpRoot = curWwwPath.substring(0, pos)
+      return tmpRoot
+    },
     // 创建地图组件
     createMap () {
+      const rootUrl = this.getRootUrl()
       this.mapTypeCur = this.mapTypeBasic + this.mapTypeIndex
       // eslint-disable-next-line
       this.map2D = new D2.Map2D({
         containerId: 'mapContainer',
         baseLayerType: this.mapTypeCur,
-        serverBaseUrl: './'
+        serverBaseUrl: rootUrl
       })
       this.setPositionFormatCB()
       this.map2D.setMinZoom(this.minZoom)
