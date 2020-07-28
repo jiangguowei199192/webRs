@@ -62,7 +62,6 @@ export default {
   mixins: [videoMixin, fireMixin],
   watch: {
     dateRange (newValue, oldValue) {
-      console.log(newValue)
       if (newValue == null) {
         this.fireWarningArray = []
         this.markFireWarnings()
