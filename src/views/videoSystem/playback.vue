@@ -625,7 +625,7 @@ export default {
         .post(api.getMp4RecordFile, {
           vhost: '__defaultVhost_ ',
           app: 'live',
-          stream: 'yaochen',
+          stream: this.curNode.id,
           period: date,
           secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
         })
@@ -649,7 +649,8 @@ export default {
       this.$axios
         .get(api.getSnapList, {
           params: {
-            deviceCode: null,
+            // deviceCode: null,
+            channelId: this.curNode.id,
             date: timestamp
           }
         })
@@ -674,7 +675,7 @@ export default {
         .post(api.getMp4RecordFile, {
           vhost: '__defaultVhost_ ',
           app: 'live',
-          stream: 'yaochen',
+          stream: this.curNode.id,
           period: date,
           secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
         })
