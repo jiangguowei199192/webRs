@@ -109,12 +109,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="newUserConfirm" style="float: right;">保存</el-button>
-          <!-- <el-button>取消</el-button> -->
         </el-form-item>
       </el-form>
-      <!-- <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showNewUser = false">刷 新</el-button>
-      </span> -->
     </el-dialog>
 
     <el-dialog
@@ -127,7 +123,6 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="resetPasswordConfirm" style="float: right;">保存</el-button>
-          <!-- <el-button>取消</el-button> -->
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -232,9 +227,7 @@ export default {
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
-    /**
-     * 点击表格行
-     */
+    // 点击表格行
     ClickTableRow (row) {
       this.radio = this.tableData.indexOf(row)
     },
