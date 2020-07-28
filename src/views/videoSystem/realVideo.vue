@@ -113,7 +113,7 @@
               />
               <!-- 用于显示截取的图片 -->
               <img
-                :src="'http://172.16.63.158:22222' +cutImgUrl"
+                :src="`${picUrl}${cutImgUrl}`"
                 alt
                 id="pic"
                 v-if="showCutImg"
@@ -242,7 +242,7 @@
       :show-close="false"
       :before-close="clearRemark"
     >
-      <img  :src="'http://172.16.63.158:22222' +cutImgUrl" width="743px" height="428px" alt />
+      <img  :src="`${picUrl}${cutImgUrl}`" width="743px" height="428px" alt />
       <span slot="footer" class="dialog-footer">
         <div class="remark">
           <div class="replain">
@@ -264,6 +264,7 @@ import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
+import globalApi from '../../utils/globalApi'
 
 export default {
   name: 'videoContainer',
@@ -275,6 +276,7 @@ export default {
   mixins: [videoMixin],
   data () {
     return {
+      picUrl: globalApi.picUrl, // 图片前缀
       curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
       // filterText: '', // 节点过滤文字
