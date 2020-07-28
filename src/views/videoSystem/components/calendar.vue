@@ -38,16 +38,14 @@
           <div
             :style="{background: 'url('+ serverUrl +item.filePath +') no-repeat'}"
             :key="index"
-            @dblclick="showSnapDlg(item)"
+            @click="showSnapDlg(item)"
           ></div>
         </template>
       </div>
     </div>
-    <el-dialog :visible.sync="picDlgVisible" width="803px">
+    <el-dialog :visible.sync="picDlgVisible" width="803px" class="editDlg">
       <div class="picContainer2">
-        <div
-          :style="{background: 'url('+ serverUrl + curSnap.filePath +') no-repeat'}"
-        ></div>
+        <div :style="{background: 'url('+ serverUrl + curSnap.filePath +') no-repeat'}" @click="showBigImage"></div>
         <div>
           <span>说明:</span>
           <el-input v-model="describe" placeholder="请输入图片说明"></el-input>
@@ -55,6 +53,16 @@
           <button class="btn-confirm" @click="addDescribe">确定</button>
         </div>
       </div>
+    </el-dialog>
+    <el-dialog
+      custom-class="el-dialog-custom"
+      :visible.sync="imgDialogVisible"
+      :show-close="false"
+      type="primary"
+      @click.native="imgDialogVisible = false"
+      center
+    >
+      <img class="dialogImg" :src="imgSrc" />
     </el-dialog>
   </div>
 </template>
@@ -68,9 +76,11 @@ export default {
       showDate: new Date(),
       dateInfo: { curYear: '', curMonth: '' },
       picDlgVisible: false, // 图片弹窗
+      imgDialogVisible: false,
       describe: '', // 图片描述
       curSnap: '',
-      serverUrl: globalApi.picUrl
+      serverUrl: globalApi.picUrl,
+      imgSrc: ''
     }
   },
 
@@ -117,6 +127,14 @@ export default {
     closeDlg () {
       this.picDlgVisible = false
       this.describe = ''
+    },
+
+    /**
+     * 显示放大图片对话框
+     */
+    showBigImage () {
+      this.imgDialogVisible = true
+      this.imgSrc = this.serverUrl + this.curSnap.filePath
     },
 
     /**
@@ -284,7 +302,7 @@ export default {
   }
 }
 
-.el-dialog__wrapper {
+.editDlg.el-dialog__wrapper {
   /deep/.el-dialog {
     .el-dialog__header {
       display: none;
@@ -433,6 +451,11 @@ export default {
     position: relative;
     left: 56px;
   }
+}
+
+.dialogImg {
+  width: 100%;
+  height: 100%;
 }
 
 /deep/.el-calendar {
