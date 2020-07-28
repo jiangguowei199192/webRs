@@ -100,8 +100,7 @@ export default {
     width: 796px;
     height: 682px;
     border: solid 2px #39a4dd;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-radius: 10px;
     margin: 30px auto 0 auto;
     .selArea {
       height: 60px;
@@ -120,7 +119,8 @@ export default {
       }
     }
     .mapArea {
-      height: 622px;
+      margin: 0px 15px;
+      height: 610px;
     }
   }
   .dialogImg {

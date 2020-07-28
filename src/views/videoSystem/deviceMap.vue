@@ -78,7 +78,6 @@
 import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
-// import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'deviceMap',
   components: {
