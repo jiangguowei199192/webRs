@@ -14,9 +14,15 @@
         <span :class="{disabled:data.onlineStatus==='offline'&&!data.children}">
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
-          <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">{{ node.label }}<a v-if="!isNaN(data.deviceCountTotal)">[{{data.deviceCountOnline}}/{{data.deviceCountTotal}}]</a>
+          <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">
+            {{ node.label }}
+            <a
+              v-if="!isNaN(data.deviceCountTotal)"
+            >[{{data.deviceCountOnline}}/{{data.deviceCountTotal}}]</a>
           </i>
-          <b :obj="JSON.stringify(Object.assign({},data,{deviceAddress:node.parent.data.deviceAddress,deviceBrand:node.parent.data.deviceBrand,parentLabel:node.parent.data.label, labelTotal:node.parent.data.label+ '-' + data.label}))" ></b>
+          <b
+            :obj="JSON.stringify(Object.assign({},data,{deviceAddress:node.parent.data.deviceAddress,deviceBrand:node.parent.data.deviceBrand,parentLabel:node.parent.data.label, labelTotal:node.parent.data.label+ '-' + data.label}))"
+          ></b>
         </span>
       </span>
     </el-tree>
@@ -66,7 +72,7 @@ export default {
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)
           .parentElement
-          // 下线设备点击时移除激活的样式
+        // 下线设备点击时移除激活的样式
         if (data.onlineStatus === 'offline') {
           this.$nextTick(() => {
             curSpan.parentElement.parentElement.parentElement.classList.remove(
@@ -196,27 +202,30 @@ export default {
       .el-tree-node__expand-icon.is-leaf {
         color: transparent;
       }
+      .el-tree-node__children {
+        overflow: visible;
+      }
     }
   }
   .custom-tree-node {
     > span {
       i {
         font-style: normal;
-        position:relative;
+        position: relative;
       }
-      i.extra{
-        font-size:14px;
-        color:#FFF464;
+      i.extra {
+        font-size: 14px;
+        color: #fff464;
       }
-      i.extra::before{
-        position:absolute;
-        top:7px;
-        left:-13px;
-        content:'.';
-        width:6px;
-        height:6px;
-        background:#FFF464;
-        border-radius:50%;
+      i.extra::before {
+        position: absolute;
+        top: 7px;
+        left: -13px;
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: #fff464;
+        border-radius: 50%;
       }
       span {
         display: inline-block;
@@ -242,14 +251,13 @@ export default {
   /deep/.el-tree--highlight-current
     .el-tree-node.is-current
     > .el-tree-node__content {
-    background:rgba(0,180,255,0.43)!important;
-
+    background: rgba(0, 180, 255, 0.43) !important;
   }
   /deep/.el-tree-node__content {
-    height:30px;
+    height: 30px;
   }
   /deep/.el-tree-node__content:hover {
-    background:rgba(0,180,255,0.2);
+    background: rgba(0, 180, 255, 0.2);
   }
   // /deep/.custom-tree-node{
   //   padding-left:3px;
@@ -257,26 +265,26 @@ export default {
   /deep/ .el-tree-node:focus > .el-tree-node__content {
     background-color: transparent;
   }
-  /deep/.el-tree__empty-block{
+  /deep/.el-tree__empty-block {
     display: none;
   }
 }
 /* --- 改变滚动条样式 --- */
 .tree::-webkit-scrollbar {
-width: 10px;
+  width: 10px;
 }
 
 /* --- 滚动条里面的滚动块 --- */
 .tree::-webkit-scrollbar-thumb {
-border-radius: 10px;
-box-shadow: inset 0 0 5px rgb(0,180,255);
-background: rgba(0,180,255,0.2);
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgb(0, 180, 255);
+  background: rgba(0, 180, 255, 0.2);
 }
 
 /* --- 滚动条里面轨道 --- */
 .tree::-webkit-scrollbar-track {
-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-border-radius: 10px;background: #096090;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background: #096090;
 }
-
 </style>
