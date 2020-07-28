@@ -46,26 +46,25 @@ const videoMixin = {
   },
 
   beforeDestroy () {
-    EventBus.$off('video/realVideo/streamStart')
-    EventBus.$off('video/realVideo/streamEnd')
-    EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
+    EventBus.$off('streamStart')
+    EventBus.$off('streamEnd')
+    EventBus.$off('getFireAlarm')
   },
 
   mounted () {
     // 设备上线
-    EventBus.$on('video/realVideo/streamStart', info => {
+    EventBus.$on('streamStart', info => {
       this.deviceOnlineOrOffline(true, info)
       this.updateOnlineArray(true, info)
     })
 
     // 设备下线
-    EventBus.$on('video/realVideo/streamEnd', info => {
+    EventBus.$on('streamEnd', info => {
       this.deviceOnlineOrOffline(false, info)
       this.updateOnlineArray(false, info)
     })
     //  监听火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
-      this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+    EventBus.$on('getFireAlarm', info => {
       if (info.alarmStatus !== 'mistaken') {
         info.bConfirmed = false
         info.alarmTime = timeFormat(info.alarmTime)

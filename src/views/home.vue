@@ -60,6 +60,7 @@
 import { getTime } from '@/utils/date'
 import amapApi from '@/axios/amapapis'
 import MqttService from '@/utils/mqttService'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'Home',
   data () {
@@ -94,6 +95,20 @@ export default {
       ],
       curActive: 1 // 激活实时视频还是回放视频 1实时 2回放
     }
+  },
+  created () {
+    EventBus.$on('video/realVideo/streamStart', info => {
+      this.$notify.success({ title: '提示', message: '设备上线！' })
+      EventBus.$emit('streamStart', info)
+    })
+    EventBus.$on('video/realVideo/streamEnd', info => {
+      this.$notify.success({ title: '提示', message: '设备下线！' })
+      EventBus.$emit('streamEnd', info)
+    })
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+      this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+      EventBus.$emit('getFireAlarm', info)
+    })
   },
   mounted () {
     this.jumpTo(this.isActive)
