@@ -1,11 +1,16 @@
 
 // 让打包的时候输出可配置的文件
 const webpack = require('webpack')
+const path = require('path')
+function resolve (dir) {
+  return path.join(__dirname, dir)
+}
 const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
-  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.158:9999', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222' }
+  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.158:9999', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222', mqttServer: '172.16.63.148', mqttPort: 2883 }
   return JSON.stringify(cfgJson)
 }
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 // 这里只列一部分，具体配置惨考文档啊
 module.exports = {
   publicPath: '/webFs/',
@@ -67,7 +72,17 @@ module.exports = {
         $: 'jquery',
         jQuery: 'jquery',
         'windows.jQuery': 'jquery'
-      })
+      }),
+      new CopyWebpackPlugin(
+        {
+          patterns: [
+            {
+              from: path.resolve(__dirname, './WEB-INF'),
+              to: 'WEB-INF'
+            }
+          ]
+        }
+      )
     ]
   }
 }

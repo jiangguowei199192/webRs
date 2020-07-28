@@ -5,8 +5,6 @@ import {
   Notification
 } from 'element-ui'
 // 创建 axios 实例
-console.log('11111111111')
-console.log(globalApi.baseUrl)
 const service = axios.create({
   baseURL: globalApi.baseUrl, // 请求前缀
   timeout: 10000, // 请求超时时间

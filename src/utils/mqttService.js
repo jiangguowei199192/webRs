@@ -1,4 +1,5 @@
 import { EventBus } from '@/utils/eventBus.js'
+import globalApi from '@/utils/globalApi'
 var mqttService;
 (function () {
   var instance
@@ -102,7 +103,7 @@ var mqttService;
         'pc_' +
         new Date().getTime().toString()
       // eslint-disable-next-line no-undef
-      instance.client = new Paho.Client('172.16.63.148', 2883, '/gduMqtt', clientID)
+      instance.client = new Paho.Client(globalApi.mqttServer, globalApi.mqttPort, '/gduMqtt', clientID)
       // instance.client.trace = onTrace
       instance.client.startTrace()
       // set callback handlers
