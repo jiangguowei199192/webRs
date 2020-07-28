@@ -65,6 +65,7 @@
                 :bShowSimpleSearchTools="true"
                 :bShowBasic="true"
                 :bShowMeasure="false"
+                :bAutoLocate="false"
               ></gMap>
               <div class="todayFire">
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
