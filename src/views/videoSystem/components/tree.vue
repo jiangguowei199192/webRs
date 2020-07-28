@@ -185,7 +185,7 @@ export default {
   font-family: Source Han Sans CN;
   font-weight: bold;
   margin-top: 20px;
-  max-height: 750px;
+  height: 750px;
   width: 248px;
   overflow-y: auto;
   overflow-x: auto;
@@ -286,5 +286,8 @@ export default {
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   background: #096090;
+}
+.tree::-webkit-scrollbar-corner{
+  background: transparent
 }
 </style>
