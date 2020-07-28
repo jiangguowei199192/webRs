@@ -10,8 +10,8 @@
       :filter-node-method="filterNode"
       @node-click="handleNodeClick"
     >
-      <span class="custom-tree-node" slot-scope="{ node,data }">
-        <span :class="{disabled:data.onlineStatus==='offline'&&!data.children}">
+      <span class="custom-tree-node" slot-scope="{ node,data }" >
+        <span :class="{disabled:data.onlineStatus==='offline'&&!data.children}" :title="!isNaN(data.deviceCountTotal)?`${node.label}[${data.deviceCountOnline}/${data.deviceCountTotal}]`:`${node.label}`">
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">
@@ -195,6 +195,8 @@ export default {
     .el-tree-node {
       .el-tree-node__content {
         line-height: 30px;
+         white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .el-tree-node__expand-icon {
         color: #23cefd;
@@ -202,9 +204,10 @@ export default {
       .el-tree-node__expand-icon.is-leaf {
         color: transparent;
       }
-      .el-tree-node__children {
-        overflow: visible;
-      }
+      // .el-tree-node__children {
+      //   white-space: nowrap;
+      //   text-overflow: ellipsis;
+      // }
     }
   }
   .custom-tree-node {
@@ -212,6 +215,11 @@ export default {
       i {
         font-style: normal;
         position: relative;
+        max-width:155px;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       i.extra {
         font-size: 14px;
@@ -231,16 +239,18 @@ export default {
         display: inline-block;
         width: 35px;
         height: 30px;
-        vertical-align: middle;
+        // vertical-align: middle;
       }
       span.unmanned {
+            position: relative;
+    top: 2px;
         background: url(../../../assets/images/noman.png) no-repeat center
           center;
       }
       span.highdevice {
         background: url(../../../assets/images/high.png) no-repeat center center;
         position: relative;
-        top: -2px;
+        top: 1px;
       }
     }
     span.liveIcon {
