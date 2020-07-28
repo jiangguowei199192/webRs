@@ -118,10 +118,10 @@ const fireMixin = {
       })
     },
     /** 获取指定时间段内火情警报信息 */
-    getDurationFireAlarmInfos () {
+    getDurationFireAlarmInfos (begin, end) {
       this.fireWarningArray = []
-      const tmpDuration = { timeBegin: null, timeEnd: null }
-      this.$axios.get(fireApi.getDurationFireAlarmInfos, tmpDuration).then(res => {
+      const tmpDuration = { timeBegin: begin, timeEnd: end }
+      this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: tmpDuration }).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.handlingFireWarningData(res.data.data)
         }
@@ -134,6 +134,7 @@ const fireMixin = {
         this.$refs.gduMap !== undefined &&
         this.$refs.gduMap.map2D !== undefined
       ) {
+        this.$refs.gduMap.map2D.devFireWarningLayerManager.clear()
         this.$refs.gduMap.map2D.devFireWarningLayerManager.addFireWarnings(
           this.fireWarningArray
         )

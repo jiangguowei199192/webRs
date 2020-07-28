@@ -6,7 +6,16 @@
         火情地图
       </button>
       <div class="rightBox">
-        <div class="selArea">开始时间。。。结束时间。。。</div>
+        <div class="selArea">
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            class="datePickerStyle">
+          </el-date-picker>
+        </div>
         <div class="mapArea">
           <gMap
             ref="gduMap"
@@ -14,6 +23,7 @@
             :bShowSimpleSearchTools="true"
             :bShowBasic="true"
             :bShowMeasure="false"
+            :bAutoLocate="false"
           ></gMap>
         </div>
       </div>
@@ -45,10 +55,24 @@ export default {
   data () {
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
-      bShowMarkersInMap: true // 在地图中加载显示设备、火情标记
+      bShowMarkersInMap: true, // 在地图中加载显示设备、火情标记
+      dateRange: ''
     }
   },
   mixins: [videoMixin, fireMixin],
+  watch: {
+    dateRange (newValue, oldValue) {
+      console.log(newValue)
+      if (newValue == null) {
+        this.fireWarningArray = []
+        this.markFireWarnings()
+      } else {
+        const tmpBegin = newValue[0].getTime()
+        const tmpEnd = newValue[1].getTime() + 24 * 60 * 60 * 1000
+        this.getDurationFireAlarmInfos(tmpBegin, tmpEnd)
+      }
+    }
+  },
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
@@ -83,6 +107,18 @@ export default {
     .selArea {
       height: 60px;
       line-height: 60px;
+      padding-left: 15px;
+      .datePickerStyle {
+        background-color: transparent;
+        border-color: #39a4dd;
+      }
+      /deep/.el-date-editor .el-range-input {
+        color: white;
+        background: transparent;
+      }
+      /deep/.el-range-separator {
+        color: white;
+      }
     }
     .mapArea {
       height: 622px;

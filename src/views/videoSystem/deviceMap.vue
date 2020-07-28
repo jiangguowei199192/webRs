@@ -65,6 +65,7 @@
                 :bShowSimpleSearchTools="true"
                 :bShowBasic="true"
                 :bShowMeasure="false"
+                :bAutoLocate="false"
               ></gMap>
             </div>
           </div>
@@ -84,12 +85,13 @@ export default {
     VideoMain,
     TreeData
   },
-  mixins: [videoMixin],
   data () {
     return {
-      isShowRight: false
+      isShowRight: false,
+      bShowMarkersInMap: true
     }
   },
+  mixins: [videoMixin],
   methods: {
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
@@ -135,42 +137,7 @@ export default {
     // 点击全部设备列表中设备项
     clickAnDeviceItem (curDeviceInfo) {
       this.showDeviceDetailInfo(curDeviceInfo)
-    },
-    // 加载显示高点设备、无人机位置标记
-    initMapDevices () {
-      if (
-        this.$refs.gduMap !== undefined &&
-        this.$refs.gduMap.map2D !== undefined
-      ) {
-        this.$refs.gduMap.map2D.devCameraLayerManager.addDevices(
-          this.cameraDevArray
-        )
-        this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(
-          this.droneDevArray
-        )
-      }
-    },
-    // 高点设备、无人机状态更新(地图标记)
-    updateDeviceStatus (info) {
-      if (
-        this.$refs.gduMap !== undefined &&
-        this.$refs.gduMap.map2D !== undefined
-      ) {
-        if (info.deviceTypeCode === 'GDJK') {
-          this.$refs.gduMap.map2D.devCameraLayerManager.addOrUpdateDevice(info)
-        } else if (info.deviceTypeCode === 'WRJ') {
-          this.$refs.gduMap.map2D.devDroneLayerManager.addOrUpdateDevice(info)
-        }
-      }
     }
-  },
-  created () {
-    EventBus.$on('GetAllDeptDevices_Done', bFlag => {
-      this.initMapDevices()
-    })
-    EventBus.$on('UpdateDeviceOnlineStatus', info => {
-      this.updateDeviceStatus(info)
-    })
   },
   mounted () {
     this.$refs.gduMap.showLayer('fire', false)

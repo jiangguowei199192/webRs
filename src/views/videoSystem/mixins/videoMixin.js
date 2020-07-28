@@ -373,6 +373,52 @@ const videoMixin = {
         }
       })
     },
+    // 计算设备分布最小包含矩形区域
+    getArea (area, lon, lat) {
+      if (lon > area.maxLon) area.maxLon = lon
+      if (lat > area.maxLat) area.maxLat = lat
+      if (lon < area.minLon) area.minLon = lon
+      if (lat < area.minLat) area.minLat = lat
+
+      area.centerLon = (area.maxLon + area.minLon) / 2
+      area.centerLat = (area.maxLat + area.minLat) / 2
+    },
+    // 计算合适显示层级与位置
+    autoLocator () {
+      const devNum = this.cameraDevArray.length + this.droneDevArray.length
+      if (devNum > 1) {
+        const tmpArea = {
+          maxLon: -180,
+          maxLat: -90,
+          minLon: 180,
+          minLat: 90,
+          centerLon: 0,
+          centerLat: 0
+        }
+        this.cameraDevArray.forEach(dev => {
+          this.getArea(tmpArea, dev.deviceLongitude, dev.deviceLatitude)
+        })
+        this.droneDevArray.forEach(dev => {
+          this.getArea(tmpArea, dev.deviceLongitude, dev.deviceLatitude)
+        })
+        this.$refs.gduMap.map2D.zoomToExtent(tmpArea.minLon, tmpArea.minLat, tmpArea.maxLon, tmpArea.maxLat)
+        this.$refs.gduMap.map2D.zoomOut()
+        this.$refs.gduMap.lon = tmpArea.centerLon
+        this.$refs.gduMap.lat = tmpArea.centerLat
+      } else if (devNum === 1) {
+        let tmpLon = 110.200431
+        let tmpLat = 32.751584
+        if (this.cameraDevArray.length === 1) {
+          tmpLon = this.cameraDevArray[0].deviceLongitude
+          tmpLat = this.cameraDevArray[0].deviceLatitude
+        } else {
+          tmpLon = this.droneDevArray[0].deviceLongitude
+          tmpLat = this.droneDevArray[0].deviceLatitude
+        }
+        this.$refs.gduMap.mapMoveTo(tmpLon, tmpLat)
+        this.$refs.gduMap.map2D.setZoom(13)
+      }
+    },
     // 加载显示高点设备、无人机位置标记
     initMapDevices () {
       if (
@@ -387,6 +433,8 @@ const videoMixin = {
         this.$refs.gduMap.map2D.devDroneLayerManager.addDevices(
           this.droneDevArray
         )
+
+        this.autoLocator()
       }
     },
     // 高点设备、无人机状态更新(地图标记)
