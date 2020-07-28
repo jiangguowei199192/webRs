@@ -1,15 +1,16 @@
 
+import $ from 'jquery'
 let baseUrl = ''
 let getMp4RecordFile = ''
 let apiFiAndPtz = ''
 let picUrl = ''
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
-  this.$.ajax({
+  $.ajax({
     async: false, // fasle表示同步请求，true表示异步请求
     type: 'get',
     dataType: 'json',
-    url: '/webFs/serverConfig.json', // 请求地址
+    url: '/webFs/serverconfig.json', // 请求地址
     success: function (res) { // 请求成功
       console.log(res)
       baseUrl = res.baseUrl
