@@ -186,7 +186,7 @@ export default {
 .tree {
   font-size: 18px;
   font-family: Source Han Sans CN;
-  font-weight: bold;
+  // font-weight: bold;
   margin-top: 20px;
   height: 750px;
   width: 248px;
@@ -215,6 +215,7 @@ export default {
   }
   .custom-tree-node {
     > span {
+      // content:attr(data-title);
       i {
         font-style: normal;
         position: relative;

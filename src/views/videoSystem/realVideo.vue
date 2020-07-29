@@ -686,6 +686,19 @@ export default {
                 .parentElement.parentElement.parentElement.parentElement.classList.remove(
                   'is-current'
                 )
+            } else {
+              debugger
+              this.onlineArray.forEach((list, index1) => {
+                list.children.forEach((child, index2) => {
+                  if (child.id === this.curVideosArray[this.curVideoIndex].id) {
+                    this.$set(
+                      this.onlineArray[index1].children[index2],
+                      'isSelected',
+                      false
+                    )
+                  }
+                })
+              })
             }
           }
           // 防止有分页的情况

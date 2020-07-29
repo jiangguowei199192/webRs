@@ -256,7 +256,8 @@ export default {
     div.empty {
       position: relative;
       min-height: 60px;
-      text-align: center;
+      // text-align: center;
+      padding-left: 90px;
       width: 100%;
       height: 100%;
       color: #909399;
