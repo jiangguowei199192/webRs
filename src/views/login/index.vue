@@ -34,17 +34,18 @@
     <el-dialog
       title="忘记密码"
       :visible.sync="dialogVisible"
-      width="30%">
+      width="30%"
+      class="dialogStyle">
       <p><span>普通用户请联系管理员重置密码。</span></p>
-      <p>
+      <!-- <p>
         <span>管理员请登录系统所在的服务器，创建 'c:\zhc\tmp\reset_5f0d6451c203f.txt' 文件。</span>
       </p>
       <p>
         <span>注意：</span>
       </p>
-      <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p>
+      <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p> -->
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">刷 新</el-button>
+        <el-button type="primary" @click="dialogVisible = false" class="trueBtn">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -225,5 +226,37 @@ export default {
   }
   /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
     color: white;
+  }
+
+  .dialogStyle {
+    min-width: 1500px;
+    /deep/.el-dialog__header {
+      background-color: #39a4dd;
+    }
+    /deep/.el-dialog__title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    /deep/.el-dialog__body {
+      background-color: #336984;
+    }
+    /deep/.el-dialog__footer {
+      background-color: #336984;
+    }
+    /deep/.el-icon-close:before {
+      color: white;
+    }
+    .trueBtn {
+      background-color: #1eb0fc;
+      font-size: 14px;
+      color: white;
+      width: 66px;
+      height: 30px;
+      padding: 0;
+    }
+    span {
+      color: white;
+    }
   }
 </style>
