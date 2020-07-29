@@ -68,17 +68,17 @@
           :rules="[{ required: true, message: '请输入' + item.title }]">
           <el-input v-model="item.input"></el-input>
         </el-form-item> -->
-        <el-form-item prop="userName" label="登录名">
-          <el-input v-model="myInfoForm.userName"></el-input>
+        <el-form-item prop="useraccount" label="登录名">
+          <el-input v-model="myInfoForm.useraccount"></el-input>
         </el-form-item>
-        <el-form-item prop="realName" label="真实姓名">
-          <el-input v-model="myInfoForm.realName" style="width: 208px;"></el-input>
+        <el-form-item prop="username" label="真实姓名">
+          <el-input v-model="myInfoForm.username" style="width: 208px;"></el-input>
           <el-select :popper-append-to-body="false" v-model="realNameSelect" class="selectStyle" popper-class="select-popper">
             <el-option v-for="item in realNameSelectOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="phone" label="手机">
-          <el-input v-model="myInfoForm.phone"></el-input>
+        <el-form-item prop="mobile" label="手机">
+          <el-input v-model="myInfoForm.mobile"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="myInfoConfirm" style="float: right;" class="trueBtn">保存</el-button>
@@ -132,14 +132,14 @@ export default {
         input: ''
       },
       myInfoForm: {
-        userName: '',
-        realName: '',
-        phone: ''
+        useraccount: '',
+        username: '',
+        mobile: ''
       },
       myInfoRules: {
-        userName: [{ required: true, message: '请输入登录名' }],
-        realName: [{ required: true, message: '请输入真实姓名' }],
-        phone: [{ required: true, message: '请输入手机号' }]
+        useraccount: [{ required: true, message: '请输入登录名' }],
+        username: [{ required: true, message: '请输入真实姓名' }],
+        mobile: [{ required: true, message: '请输入手机号' }]
       },
       // myInfoForm: {
       //   domains: [
@@ -301,7 +301,32 @@ export default {
       // return
       this.$refs.myInfoFormRef.validate(async valid => {
         if (!valid) return
-        this.showMyInfo = false
+        this.updateUser()
+      })
+    },
+    async updateUser () {
+      var kj = 0
+      if (this.realNameSelect === 'realNameSelectOptions1') {
+        kj = 0
+      } else if (this.realNameSelect === 'realNameSelectOptions2') {
+        kj = 1
+      }
+      var param = {
+        useraccount: this.myInfoForm.useraccount,
+        username: this.myInfoForm.username,
+        mobile: this.myInfoForm.mobile,
+        kejian: kj
+      }
+      this.$axios.post(globalApi.updateUser, param).then(res => {
+        if (res.data.code === 0) {
+          this.showMyInfo = false
+          Notification({
+            title: '提示',
+            message: '更新成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+        }
       })
     }
   }
