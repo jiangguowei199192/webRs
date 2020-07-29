@@ -204,9 +204,16 @@ export default {
       width: 230px;
       color: #23cefd;
       background: #1a3e68;
-      text-align: center;
-      div {
+      // text-align: center;
+      div{
         width: 104px;
+        box-sizing: border-box;
+      }
+      div:nth-child(1){
+        padding-left:30px
+      }
+      div:nth-child(2){
+         padding-left:20px
       }
       div.active {
         width: 126px !important;
@@ -216,6 +223,7 @@ export default {
         background: url(../../assets/images/left.png) no-repeat;
       }
       div:nth-child(2).active {
+        padding-left:42px;
         background: url(../../assets/images/right.png) no-repeat;
       }
     }

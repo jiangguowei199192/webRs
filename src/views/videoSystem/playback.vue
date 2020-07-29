@@ -19,7 +19,7 @@
               placeholder="请输入设备名称"
               suffix-icon="el-icon-search"
             ></el-input>
-          </div> -->
+          </div>-->
           <!-- 默认展示已选部分 -->
           <template v-if="isOnline">
             <div
@@ -634,7 +634,8 @@ export default {
           if (rs && rs.code === 0) {
             this.recordData = rs.data.paths
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           console.log('getMp4RecordFile Err : ' + err)
         })
     },
@@ -710,7 +711,8 @@ export default {
               }
             })
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           console.log('getMp4RecordFile Err : ' + err)
         })
     },
@@ -991,7 +993,9 @@ export default {
         this.totalVideosArray[index] = ''
         // 去掉黄色边框
         index = this.curVideosArray.indexOf(player)
-        if (index !== -1 && index === this.curVideoIndex) { this.curVideoIndex = 1000 }
+        if (index !== -1 && index === this.curVideoIndex) {
+          this.curVideoIndex = 1000
+        }
       }
       this.curVideosArray = this.totalVideosArray.slice(
         (this.currentPage - 1) * this.showVideoPageSize,
@@ -1198,11 +1202,19 @@ export default {
     cursor: pointer;
     height: 34px;
     line-height: 34px;
+    width: 230px;
     color: #23cefd;
     background: #1a3e68;
-    text-align: center;
+    // text-align: center;
     div {
       width: 104px;
+      box-sizing: border-box;
+    }
+    div:nth-child(1) {
+      padding-left: 30px;
+    }
+    div:nth-child(2) {
+      padding-left: 20px;
     }
     div.active {
       width: 126px !important;
@@ -1212,6 +1224,7 @@ export default {
       background: url(../../assets/images/left.png) no-repeat;
     }
     div:nth-child(2).active {
+      padding-left: 42px;
       background: url(../../assets/images/right.png) no-repeat;
     }
   }
