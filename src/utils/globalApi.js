@@ -6,7 +6,7 @@ let apiFiAndPtz = ''
 let picUrl = ''
 let mqttServer = ''
 let mqttPort = ''
-let imageUrl = 'http://120.24.12.64'
+let imageUrl = ''
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
   $.ajax({
@@ -22,6 +22,7 @@ if (process.env.NODE_ENV === 'production') {
       picUrl = res.picUrl
       mqttServer = res.mqttServer
       mqttPort = res.mqttPort
+      imageUrl = res.imageUrl
     },
     error: function (err) { // 请求失败，包含具体的错误信息
       console.log(err)
@@ -34,6 +35,7 @@ if (process.env.NODE_ENV === 'production') {
   picUrl = 'http://172.16.63.158:22222'
   mqttServer = '172.16.63.148'
   mqttPort = 2883
+  imageUrl = 'http://120.24.12.64'
 }
 export default {
   baseUrl,
