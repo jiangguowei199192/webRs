@@ -60,6 +60,9 @@ export default {
     }
   },
   mixins: [videoMixin, fireMixin],
+  mounted () {
+    this.bAutoMove = false
+  },
   watch: {
     dateRange (newValue, oldValue) {
       if (newValue == null) {

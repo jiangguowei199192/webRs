@@ -9,6 +9,7 @@ const fireMixin = {
       fireWarningArray: [], // 今日火情列表
       fireConfirmedNum: 0,
       fireTotalNum: 0,
+      bAutoMove: true,
       copyCoordinate: '',
       imgDialogVisible: false,
       imgSrc: ''
@@ -158,13 +159,15 @@ const fireMixin = {
       this.$refs.gduMap.map2D.devDroneLayerManager.resetSelectedFeature()
       const tmpMap = this.$refs.gduMap.map2D
       tmpMap.devFireWarningLayerManager.selectFeatureByID(item)
-      tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
-      const mapCenter = tmpMap._map.getView().getCenter()
-      const tmpCenter = tmpMap._map.getPixelFromCoordinate(mapCenter)
-      const newx = tmpCenter[0] - 100
-      const newy = tmpCenter[1] - 120
-      const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
-      tmpMap.zoomToCenter(newCenter[0], newCenter[1])
+      if (this.bAutoMove) {
+        tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
+        const mapCenter = tmpMap._map.getView().getCenter()
+        const tmpCenter = tmpMap._map.getPixelFromCoordinate(mapCenter)
+        const newx = tmpCenter[0] - 100
+        const newy = tmpCenter[1] - 120
+        const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
+        tmpMap.zoomToCenter(newCenter[0], newCenter[1])
+      }
     },
     // 火情报警弹窗中点击复制坐标回调函数
     copyCoordinateCB (info) {
