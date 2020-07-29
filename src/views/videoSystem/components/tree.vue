@@ -10,8 +10,11 @@
       :filter-node-method="filterNode"
       @node-click="handleNodeClick"
     >
-      <span class="custom-tree-node" slot-scope="{ node,data }" >
-        <span :class="{disabled:data.onlineStatus==='offline'&&!data.children}" :title="!isNaN(data.deviceCountTotal)?`${node.label}[${data.deviceCountOnline}/${data.deviceCountTotal}]`:`${node.label}`">
+      <span class="custom-tree-node" slot-scope="{ node,data }">
+        <span
+          :class="{disabled:data.onlineStatus==='offline'&&!data.children}"
+          :title="!isNaN(data.deviceCountTotal)?`${node.label}[${data.deviceCountOnline}/${data.deviceCountTotal}]`:`${node.label}`"
+        >
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">
@@ -195,7 +198,7 @@ export default {
     .el-tree-node {
       .el-tree-node__content {
         line-height: 30px;
-         white-space: nowrap;
+        white-space: nowrap;
         text-overflow: ellipsis;
       }
       .el-tree-node__expand-icon {
@@ -242,8 +245,8 @@ export default {
         vertical-align: middle;
       }
       span.unmanned {
-            position: relative;
-    top: 1px;
+        position: relative;
+        top: 1px;
         background: url(../../../assets/images/noman.png) no-repeat center
           center;
       }
@@ -297,7 +300,7 @@ export default {
   border-radius: 10px;
   background: #096090;
 }
-.tree::-webkit-scrollbar-corner{
-  background: transparent
+.tree::-webkit-scrollbar-corner {
+  background: transparent;
 }
 </style>
