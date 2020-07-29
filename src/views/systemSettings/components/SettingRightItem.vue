@@ -98,12 +98,15 @@ export default {
     data: {
       type: Object,
       required: true
+    },
+    userDetail: {
+      type: Object,
+      required: false
     }
   },
   data () {
     return {
-      userDetail: '',
-      headerImg: '',
+      headerImg: globalApi.imageUrl + this.userDetail.headImg,
 
       showExtraInfo: false,
       extraInfoForm: {
@@ -180,8 +183,6 @@ export default {
       subTitle.style.display = 'block'
       subTitle.style.margin = '43px 0px 0px -150px'
       icon.style.margin = '28px 25px 0px 0px'
-      this.userDetail = JSON.parse(sessionStorage.getItem('userDetail'))
-      this.headerImg = globalApi.imageUrl + this.userDetail.headImg
     } else if (this.data.type === 'RightItemType_SubTitle') {
       // text.style.display = 'inline-block'
     }
@@ -251,7 +252,7 @@ export default {
       var urlCreator = window.URL || window.webkitURL
       this.imageUrl = urlCreator.createObjectURL(file.raw)
     },
-    // 上传头像
+    // 上传头像-保存
     async submitUpload () {
       const formData = new FormData()
       formData.append('id', this.userDetail.id)
@@ -259,6 +260,7 @@ export default {
       this.$axios.post(loginApi.updateHeadImg, formData).then(res => {
         if (res.data.code === 0) {
           this.showUploadIcon = false
+          this.$emit('refreshData')
           Notification({
             title: '提示',
             message: '头像上传成功',
