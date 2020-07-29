@@ -251,7 +251,7 @@ export default {
       var urlCreator = window.URL || window.webkitURL
       this.imageUrl = urlCreator.createObjectURL(file.raw)
     },
-    // 上传头像
+    // 上传头像-保存
     async submitUpload () {
       const formData = new FormData()
       formData.append('id', this.userDetail.id)
@@ -259,6 +259,7 @@ export default {
       this.$axios.post(loginApi.updateHeadImg, formData).then(res => {
         if (res.data.code === 0) {
           this.showUploadIcon = false
+          this.$emit('refreshData')
           Notification({
             title: '提示',
             message: '头像上传成功',

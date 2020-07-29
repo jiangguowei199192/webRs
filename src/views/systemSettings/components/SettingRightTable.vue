@@ -3,7 +3,7 @@
     <div class="title">{{itemData.headerTitle}}</div>
     <div class="table">
       <div v-for="(item, index) in itemData.items" :key="index" :class="index ? 'otherItem' : 'firstItem' ">
-        <SettingRightItem v-bind:data="item"></SettingRightItem>
+        <SettingRightItem v-bind:data="item" v-on:refreshData="refreshData"></SettingRightItem>
       </div>
     </div>
   </div>
@@ -20,6 +20,11 @@ export default {
     itemData: {
       type: Object,
       required: true
+    }
+  },
+  methods: {
+    refreshData () {
+      this.$emit('refreshData')
     }
   }
 }

@@ -15,8 +15,10 @@
             id="idRightItemUserSetting"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserSetting"
+            v-on:refreshData="getUserDetail"
           ></SettingRightTable>
-          <SettingRightTable
+          <!-- 第一版不开放 -->
+          <!-- <SettingRightTable
             id="idRightItemUserPermission"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
@@ -25,17 +27,18 @@
             id="idRightItemVideoServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemVideoServe"
-          ></SettingRightTable>
+          ></SettingRightTable> -->
           <SettingRightTable
             id="idRightItemSmartFunction"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemSmartFunction"
           ></SettingRightTable>
-          <SettingRightTable
+          <!-- 第一版不开放 -->
+          <!-- <SettingRightTable
             id="idRightItemMapServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemMapServe"
-          ></SettingRightTable>
+          ></SettingRightTable> -->
           <div style="height: 500px;"></div>
         </div>
         <router-view></router-view>
@@ -70,34 +73,36 @@ export default {
         {
           headerTitle: '高级',
           info: [
-            {
-              id: 1,
-              title: '用户权限',
-              normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
-              selected: false
-            },
-            {
-              id: 2,
-              title: '视频服务',
-              normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
-              selected: false
-            },
+            // 第一版不开放
+            // {
+            //   id: 1,
+            //   title: '用户权限',
+            //   normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
+            //   selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
+            //   selected: false
+            // },
+            // {
+            //   id: 2,
+            //   title: '视频服务',
+            //   normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
+            //   selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
+            //   selected: false
+            // },
             {
               id: 3,
               title: '智能功能管理',
               normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
               selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
               selected: false
-            },
-            {
-              id: 4,
-              title: '地图服务',
-              normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
-              selected: false
             }
+            // 第一版不开放
+            // {
+            //   id: 4,
+            //   title: '地图服务',
+            //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
+            //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
+            //   selected: false
+            // }
           ]
         }
       ],
@@ -236,17 +241,18 @@ export default {
           }
         }
       }
-      if (id === 0) {
-        document.getElementById('idRightItemUserSetting').scrollIntoView()
-      } else if (id === 1) {
-        document.getElementById('idRightItemUserPermission').scrollIntoView()
-      } else if (id === 2) {
-        document.getElementById('idRightItemVideoServe').scrollIntoView()
-      } else if (id === 3) {
-        document.getElementById('idRightItemSmartFunction').scrollIntoView()
-      } else if (id === 4) {
-        document.getElementById('idRightItemMapServe').scrollIntoView()
-      }
+      // 第一版不开放
+      // if (id === 0) {
+      //   document.getElementById('idRightItemUserSetting').scrollIntoView()
+      // } else if (id === 1) {
+      //   document.getElementById('idRightItemUserPermission').scrollIntoView()
+      // } else if (id === 2) {
+      //   document.getElementById('idRightItemVideoServe').scrollIntoView()
+      // } else if (id === 3) {
+      //   document.getElementById('idRightItemSmartFunction').scrollIntoView()
+      // } else if (id === 4) {
+      //   document.getElementById('idRightItemMapServe').scrollIntoView()
+      // }
     }
   },
   created () {
@@ -270,6 +276,7 @@ export default {
 
 <style lang="scss" scoped>
 .leftBox {
+  cursor: default;
   float: left;
   width: 283px;
   height: 899px;
@@ -277,6 +284,7 @@ export default {
   background-size: 100% 100%;
 }
 .rightBox {
+  cursor: default;
   position: absolute;
   top: 315px;
   right: 20px;
