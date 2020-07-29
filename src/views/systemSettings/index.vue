@@ -8,13 +8,14 @@
         v-on:leftBoxDidSelectedItem="leftBoxDidSelectedItem"
       ></SettingLeftItem>
     </div>
-    <div class="rightBox">
+    <div class="rightBox" v-if="userDetail">
       <div class="rightBoxBase">
         <div v-if="isShow">
           <SettingRightTable
             id="idRightItemUserSetting"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserSetting"
+            v-bind:userDetail="userDetail"
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
@@ -32,6 +33,7 @@
             id="idRightItemSmartFunction"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemSmartFunction"
+            v-bind:userDetail="userDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
           <!-- <SettingRightTable
@@ -39,7 +41,7 @@
             style="margin-top: 44px;"
             v-bind:itemData="rightItemMapServe"
           ></SettingRightTable> -->
-          <div style="height: 500px;"></div>
+          <!-- <div style="height: 500px;"></div> -->
         </div>
         <router-view></router-view>
       </div>
@@ -56,6 +58,7 @@ export default {
   name: 'settings',
   data () {
     return {
+      userDetail: '',
       isShow: true,
       leftItemData: [
         {
@@ -222,7 +225,7 @@ export default {
     async getUserDetail () {
       this.$axios.post(loginApi.getUserDetail).then(res => {
         if (res.data.code === 0) {
-          sessionStorage.setItem('userDetail', JSON.stringify(res.data.data))
+          this.userDetail = res.data.data
           this.rightItemUserSetting.items[0].title = res.data.data.username
           this.rightItemUserSetting.items[0].subTitle = res.data.data.mobile
         }

@@ -98,12 +98,15 @@ export default {
     data: {
       type: Object,
       required: true
+    },
+    userDetail: {
+      type: Object,
+      required: false
     }
   },
   data () {
     return {
-      userDetail: '',
-      headerImg: '',
+      headerImg: globalApi.imageUrl + this.userDetail.headImg,
 
       showExtraInfo: false,
       extraInfoForm: {
@@ -180,8 +183,6 @@ export default {
       subTitle.style.display = 'block'
       subTitle.style.margin = '43px 0px 0px -150px'
       icon.style.margin = '28px 25px 0px 0px'
-      this.userDetail = JSON.parse(sessionStorage.getItem('userDetail'))
-      this.headerImg = globalApi.imageUrl + this.userDetail.headImg
     } else if (this.data.type === 'RightItemType_SubTitle') {
       // text.style.display = 'inline-block'
     }
