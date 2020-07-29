@@ -47,6 +47,7 @@
 <script>
 import SettingLeftItem from './components/SettingLeftItem.vue'
 import SettingRightTable from './components/SettingRightTable.vue'
+import { loginApi } from '@/api/login'
 
 export default {
   name: 'settings',
@@ -105,8 +106,8 @@ export default {
         items: [
           {
             id: 0,
-            title: '陈处长',
-            subTitle: '12345678900',
+            title: '',
+            subTitle: '',
             text: '',
             type: 'RightItemType_MyInfo'
           },
@@ -212,6 +213,16 @@ export default {
     }
   },
   methods: {
+    // 获取用户详情
+    async getUserDetail () {
+      this.$axios.post(loginApi.getUserDetail).then(res => {
+        if (res.data.code === 0) {
+          sessionStorage.setItem('userDetail', JSON.stringify(res.data.data))
+          this.rightItemUserSetting.items[0].title = res.data.data.username
+          this.rightItemUserSetting.items[0].subTitle = res.data.data.mobile
+        }
+      })
+    },
     leftBoxDidSelectedItem: function (id) {
       // console.log(id)
       for (let i = 0; i < this.leftItemData.length; i++) {
@@ -238,7 +249,9 @@ export default {
       }
     }
   },
-  created () {},
+  created () {
+    this.getUserDetail()
+  },
   watch: {
     $route (to, from) {
       if (to.path === '/systemSettings') {

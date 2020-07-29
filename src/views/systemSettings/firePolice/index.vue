@@ -26,7 +26,7 @@
             <el-table-column align="center" label="报警时间" prop="policeTime"></el-table-column>
             <el-table-column align="center" label="报警地点" prop="address"></el-table-column>
             <el-table-column align="center" label="类型" prop="type"></el-table-column>
-            <el-table-column align="center" label="报警图片" prop="image"></el-table-column>
+            <!-- <el-table-column align="center" label="报警图片" prop="image"></el-table-column> -->
             <el-table-column align="center" label="报警设备" prop="equipment"></el-table-column>
             <el-table-column align="center" label="状态" prop="status"></el-table-column>
             <el-table-column align="center" label="确认时间" prop="confirmTime"></el-table-column>
@@ -109,13 +109,13 @@ export default {
       radio: -1,
       tableData: [ // 测试数据
         {
-          policeTime: '2020-6-3 09:09:09',
+          policeTime: '2020-6-3 \n 09:09:09',
           address: '武汉市洪山区黄龙山南路6号',
           type: '火警',
           image: '',
           equipment: '高点1号',
           status: '确认',
-          confirmTime: '2020-6-3 09:10:10'
+          confirmTime: '2020-6-3 \n 09:10:10'
         }
       ],
       pageData: {
@@ -240,6 +240,9 @@ export default {
   /* 修改偶数行颜色*/
   /deep/.el-table--striped .el-table__body tr.el-table__row--striped td {
     background-color: rgba(54, 143, 187, 1);
+  }
+  /deep/.el-table .cell {
+    white-space: pre-line;
   }
 
   .dialogStyle {

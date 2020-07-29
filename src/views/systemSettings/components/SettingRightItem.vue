@@ -2,7 +2,7 @@
   <div>
     <div class="base" id="background" @click="clicked">
       <el-avatar :size="40" class="img" id="img">
-        <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
+        <img :src="headerImg">
       </el-avatar>
       <div class="title" id="title">{{data.title}}</div>
       <div class="subTitle" id="subTitle">{{data.subTitle}}</div>
@@ -13,16 +13,17 @@
     <el-dialog
       title="补充信息"
       :visible.sync="showExtraInfo"
-      width="30%">
+      width="30%"
+      class="dialogStyle">
       <el-form ref="extraInfoRef" :model="extraInfoForm" :rules="extraInfoRules">
-        <el-form-item prop="company">
-          <el-input v-model="extraInfoForm.company" placeholder="公司/组织/所属机构"></el-input>
+        <el-form-item prop="deptCode">
+          <el-input v-model="extraInfoForm.deptCode" placeholder="公司/组织/所属机构"></el-input>
         </el-form-item>
-        <el-form-item prop="job">
-          <el-input v-model="extraInfoForm.job" placeholder="职务/岗位"></el-input>
+        <el-form-item prop="roleCode">
+          <el-input v-model="extraInfoForm.roleCode" placeholder="职务/岗位"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="extraInfoConfirm" style="float: right;">保存</el-button>
+          <el-button type="primary" @click="extraInfoConfirm" style="float: right;" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -30,30 +31,68 @@
     <el-dialog
       title="头像"
       :visible.sync="showUploadIcon"
-      width="30%">
+      width="30%"
+      class="dialogStyle">
       <div style="text-align: center;">
         <el-upload
           class="avatar-uploader"
+          ref="uploadImage"
           action=""
           :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload">
+          :auto-upload="false"
+          accept="image/*"
+          :on-change="onUploadChange"
+          >
           <img v-if="imageUrl" :src="imageUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <div>
-          <span>请选择jpg、gif格式，小于2M的图片（使用高质量图片，可生成高清头像）</span>
+          <span style="color: white;">请选择jpg、gif格式，小于2M的图片（使用高质量图片，可生成高清头像）</span>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showUploadIcon = false">保 存</el-button>
+        <el-button type="primary" @click="submitUpload" class="trueBtn">保 存</el-button>
       </span>
+    </el-dialog>
+
+    <el-dialog
+      title="我的信息"
+      :visible.sync="showMyInfo"
+      width="30%"
+      class="dialogStyle">
+      <el-form ref="myInfoFormRef" :model="myInfoForm" label-width="80px" :rules="myInfoRules">
+        <!-- <el-form-item
+          v-for="(item, index) in myInfoForm.domains" :key="index"
+          :label="item.title"
+          :prop="'domains.' + index + '.input'"
+          :rules="[{ required: true, message: '请输入' + item.title }]">
+          <el-input v-model="item.input"></el-input>
+        </el-form-item> -->
+        <el-form-item prop="userName" label="登录名">
+          <el-input v-model="myInfoForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item prop="realName" label="真实姓名">
+          <el-input v-model="myInfoForm.realName" style="width: 208px;"></el-input>
+          <el-select :popper-append-to-body="false" v-model="realNameSelect" class="selectStyle" popper-class="select-popper">
+            <el-option v-for="item in realNameSelectOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="phone" label="手机">
+          <el-input v-model="myInfoForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="myInfoConfirm" style="float: right;" class="trueBtn">保存</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
 
   </div>
 </template>
 
 <script>
+import { Notification } from 'element-ui'
+import { loginApi } from '@/api/login'
+import globalApi from '../../../utils/globalApi'
 export default {
   props: {
     data: {
@@ -63,21 +102,67 @@ export default {
   },
   data () {
     return {
+      userDetail: '',
+      headerImg: '',
+
       showExtraInfo: false,
       extraInfoForm: {
-        company: '',
-        job: ''
+        deptCode: '',
+        roleCode: ''
       },
       extraInfoRules: {
-        company: [
+        deptCode: [
           { required: true, message: '请输入组织' }
         ],
-        job: [
+        roleCode: [
           { required: true, message: '请输入职务' }
         ]
       },
+
       showUploadIcon: false,
-      imageUrl: ''
+      imageUrl: '',
+      imageFile: '',
+
+      showMyInfo: false,
+      authCodeItem: {
+        title: '验证码',
+        input: ''
+      },
+      myInfoForm: {
+        userName: '',
+        realName: '',
+        phone: ''
+      },
+      myInfoRules: {
+        userName: [{ required: true, message: '请输入登录名' }],
+        realName: [{ required: true, message: '请输入真实姓名' }],
+        phone: [{ required: true, message: '请输入手机号' }]
+      },
+      // myInfoForm: {
+      //   domains: [
+      //     {
+      //       title: '登录名',
+      //       input: ''
+      //     },
+      //     {
+      //       title: '真实姓名',
+      //       input: ''
+      //     },
+      //     {
+      //       title: '手机',
+      //       input: ''
+      //     },
+      //     {
+      //       title: '验证码',
+      //       input: ''
+      //     }
+      //   ]
+      // }
+      realNameSelect: 'realNameSelectOptions1',
+      realNameSelectOptions: [
+        { label: '仅自己可见', value: 'realNameSelectOptions1' },
+        { label: '所有人可见', value: 'realNameSelectOptions2' }
+      ]
     }
   },
   mounted () {
@@ -95,6 +180,8 @@ export default {
       subTitle.style.display = 'block'
       subTitle.style.margin = '43px 0px 0px -150px'
       icon.style.margin = '28px 25px 0px 0px'
+      this.userDetail = JSON.parse(sessionStorage.getItem('userDetail'))
+      this.headerImg = globalApi.imageUrl + this.userDetail.headImg
     } else if (this.data.type === 'RightItemType_SubTitle') {
       // text.style.display = 'inline-block'
     }
@@ -112,6 +199,8 @@ export default {
         this.showExtraInfo = true
       } else if (this.data.id === 1) { // 上传头像
         this.showUploadIcon = true
+      } else if (this.data.id === 0) { // 我的信息
+        this.showMyInfo = true
       } else if (this.data.id === 31) { // 火情地图
         this.$router.push({ path: '/systemSettings/fireMap' })
       } else if (this.data.id === 30) { // 火情报警
@@ -119,26 +208,99 @@ export default {
       }
     },
     // 补充信息-保存
-    extraInfoConfirm () {
+    async extraInfoConfirm () {
       this.$refs.extraInfoRef.validate(async valid => {
         if (!valid) return
-        this.showExtraInfo = false
+        this.$axios.post(globalApi.updateUser, this.extraInfoForm).then(res => {
+          // if (res.data.code === 0) {
+          //   this.showExtraInfo = false
+          //   return
+          // }
+          // Notification({
+          //   title: '提示',
+          //   message: '头像上传失败',
+          //   type: 'warning',
+          //   duration: 5 * 1000
+          // })
+        })
       })
     },
-    handleAvatarSuccess (res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
+    // 上传头像前的处理
+    onUploadChange (file) {
+      const isJPG = (file.raw.type === 'image/jpeg' || file.raw.type === 'image/png' || file.raw.type === 'image/gif')
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        Notification({
+          title: '提示',
+          message: '图片格式错误',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return false
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        Notification({
+          title: '提示',
+          message: '图片大小不能超过2MB',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return false
       }
-      return isJPG && isLt2M
+      this.imageFile = file.raw
+      var urlCreator = window.URL || window.webkitURL
+      this.imageUrl = urlCreator.createObjectURL(file.raw)
+    },
+    // 上传头像
+    async submitUpload () {
+      const formData = new FormData()
+      formData.append('id', this.userDetail.id)
+      formData.append('file', this.imageFile)
+      this.$axios.post(loginApi.updateHeadImg, formData).then(res => {
+        if (res.data.code === 0) {
+          this.showUploadIcon = false
+          Notification({
+            title: '提示',
+            message: '头像上传成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          return
+        }
+        Notification({
+          title: '提示',
+          message: '头像上传失败',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+      })
+    },
+    // 我的信息-保存
+    myInfoConfirm () {
+      // var domains = this.myInfoForm.domains
+      // 删除验证码
+      // for (let index = 0; index < domains.length; index++) {
+      //   const element = domains[index]
+      //   if (element.title === '验证码') {
+      //     domains.splice(index, 1)
+      //   }
+      // }
+      // 添加验证码
+      // var authCodeExist = false
+      // for (let index = 0; index < domains.length; index++) {
+      //   const element = domains[index]
+      //   if (element.title === '验证码') {
+      //     authCodeExist = true
+      //   }
+      // }
+      // if (!authCodeExist) {
+      //   domains.push(this.authCodeItem)
+      // }
+      // return
+      this.$refs.myInfoFormRef.validate(async valid => {
+        if (!valid) return
+        this.showMyInfo = false
+      })
     }
   }
 }
@@ -202,5 +364,71 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+  }
+
+  .dialogStyle {
+    min-width: 1500px;
+    /deep/.el-dialog__header {
+      background-color: #39a4dd;
+    }
+    /deep/.el-dialog__title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    /deep/.el-dialog__body {
+      background-color: #336984;
+    }
+    /deep/.el-dialog__footer {
+      background-color: #336984;
+    }
+    /deep/.el-icon-close:before {
+      color: white;
+    }
+    .trueBtn {
+      background-color: #1eb0fc;
+      font-size: 14px;
+      color: white;
+      width: 66px;
+      height: 30px;
+      padding: 0;
+    }
+    /deep/.el-input__inner {
+      color: white;
+      background-color: #3688b1;
+      border: none;
+    }
+    /deep/.el-form-item__label {
+      color: white;
+    }
+  }
+  .selectStyle {
+    width: 110px;
+    float: right;
+    /deep/.el-input__inner {
+      font-size: 12px;
+    }
+  }
+  /deep/.select-popper {
+    background-color: #3688b1;
+    font-size: 12px;
+    color: white;
+    border: none;
+    .el-select-dropdown__item.selected {
+      background-color: #3688b1;
+    }
+    .el-select-dropdown__item {
+      font-size: 12px;
+      color: white;
+    }
+    .el-select-dropdown__item.hover {
+      background-color: #3688b1;
+    }
+    .popper__arrow {
+      border-bottom-color: #3688b1;
+    }
+    .popper__arrow::after {
+      border-bottom-color: #3688b1;
+    }
   }
 </style>

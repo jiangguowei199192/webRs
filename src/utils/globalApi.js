@@ -6,6 +6,7 @@ let apiFiAndPtz = ''
 let picUrl = ''
 let mqttServer = ''
 let mqttPort = ''
+let imageUrl = 'http://120.24.12.64'
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
   $.ajax({
@@ -40,5 +41,6 @@ export default {
   apiFiAndPtz,
   picUrl,
   mqttServer,
-  mqttPort
+  mqttPort,
+  imageUrl
 }
