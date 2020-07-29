@@ -215,11 +215,11 @@ export default {
       i {
         font-style: normal;
         position: relative;
-        max-width:155px;
-        display: inline-block;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        // max-width:155px;
+        // display: inline-block;
+        // overflow: hidden;
+        // white-space: nowrap;
+        // text-overflow: ellipsis;
       }
       i.extra {
         font-size: 14px;
@@ -239,18 +239,18 @@ export default {
         display: inline-block;
         width: 35px;
         height: 30px;
-        // vertical-align: middle;
+        vertical-align: middle;
       }
       span.unmanned {
             position: relative;
-    top: 2px;
+    top: 1px;
         background: url(../../../assets/images/noman.png) no-repeat center
           center;
       }
       span.highdevice {
         background: url(../../../assets/images/high.png) no-repeat center center;
         position: relative;
-        top: 1px;
+        top: -1px;
       }
     }
     span.liveIcon {
