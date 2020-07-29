@@ -55,7 +55,7 @@
       <div slot="center">
         <div class="video">
           <div class="fireAlarmBox">
-             <div class="title">
+            <div class="title">
               <img src="@/assets/images/back.png" @click.stop="$router.go(-1)" />火点火情
             </div>
             <div class="container">
