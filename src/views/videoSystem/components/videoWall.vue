@@ -130,12 +130,17 @@ export default {
      * @param {jumpSeconds} url 快进的秒数
      */
     jumpRecord (url, jump, jumpSeconds) {
-      this.pause()
-      this.changeVideoUrl(url)
-      if (jump === true) {
-        setTimeout(() => {
-          this.jumpToSeconds(jumpSeconds)
-        }, 2000)
+      if (this.curUrl === url) {
+        jumpSeconds = jump === true ? jumpSeconds : 0
+        this.jumpToSeconds(jumpSeconds)
+      } else {
+        this.pause()
+        this.changeVideoUrl(url)
+        if (jump === true) {
+          setTimeout(() => {
+            this.jumpToSeconds(jumpSeconds)
+          }, 10)
+        }
       }
     },
 

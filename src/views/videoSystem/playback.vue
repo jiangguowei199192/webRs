@@ -1018,7 +1018,7 @@ export default {
           }
         }
       } else {
-        var r = this.findRecordByTime()
+        var r = this.findRecordByTime(this.records)
         if (r === undefined) return
         var seconds = r.record.start * 60
         if (r.jump === true) seconds += r.jumpSeconds
@@ -1123,13 +1123,13 @@ export default {
     /**
      * 根据时间找回放记录
      */
-    findRecordByTime () {
-      if (this.records.length === 0) return undefined
+    findRecordByTime (records) {
+      if (records === '' || records.length === 0) return undefined
 
       var arry = this.curTime.split(':')
       var time =
         parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
-      var r = this.records.find(
+      var r = records.find(
         x => x.start <= time && x.start + x.duration >= time
       )
       // 是否需要跳转
@@ -1140,7 +1140,7 @@ export default {
         jump = true
         jumpSeconds = (time - r.start) * 60
       } else {
-        r = this.records.find(x => x.start > time)
+        r = records.find(x => x.start > time)
       }
 
       if (r === undefined) return undefined
@@ -1153,11 +1153,11 @@ export default {
      */
     jump () {
       if (this.curPlayer.isPlay === true) {
-        var r = this.findRecordByTime()
+        var r = this.findRecordByTime(this.curPlayer.records)
         if (r !== undefined) {
           var ctrl = this.findVideoControl()
           if (ctrl !== undefined) {
-            ctrl.changeVideoUrl(r.record.url, r.jump, r.jumpSeconds)
+            ctrl.jumpRecord(r.record.url, r.jump, r.jumpSeconds)
           }
         }
       }
