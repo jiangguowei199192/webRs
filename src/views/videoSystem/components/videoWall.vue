@@ -124,6 +124,10 @@ export default {
       this.$emit('update:videoInfo', videoInfo)
     },
 
+    getCurrentTime () {
+      this.$refs.playerCtrl.player.getCurrentTime()
+    },
+
     /**
      * 跳转回放记录
      * @param {String} url 跳转记录的url

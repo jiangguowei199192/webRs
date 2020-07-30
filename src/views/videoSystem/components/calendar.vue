@@ -144,7 +144,7 @@ export default {
     showSnapDlg (snap) {
       this.picDlgVisible = true
       this.curSnap = snap
-      this.describe = snap.fileName
+      this.describe = snap.remark
     },
 
     /**
@@ -155,7 +155,7 @@ export default {
       this.$axios
         .post(api.updateSnap, {
           id: this.curSnap.id,
-          fileName: this.describe
+          remark: this.describe
         })
         .then(res => {
           var rs = res.data
