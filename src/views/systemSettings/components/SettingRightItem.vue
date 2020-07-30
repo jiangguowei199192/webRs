@@ -68,8 +68,8 @@
           :rules="[{ required: true, message: '请输入' + item.title }]">
           <el-input v-model="item.input"></el-input>
         </el-form-item> -->
-        <el-form-item prop="useraccount" label="登录名">
-          <el-input v-model="myInfoForm.useraccount"></el-input>
+        <el-form-item label="登录名">
+          <el-input v-model="userDetail.useraccount" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item prop="username" label="真实姓名">
           <el-input v-model="myInfoForm.username" style="width: 208px;"></el-input>
@@ -132,12 +132,12 @@ export default {
         input: ''
       },
       myInfoForm: {
-        useraccount: '',
+        // useraccount: '',
         username: '',
         mobile: ''
       },
       myInfoRules: {
-        useraccount: [{ required: true, message: '请输入登录名' }],
+        // useraccount: [{ required: true, message: '请输入登录名' }],
         username: [{ required: true, message: '请输入真实姓名' }],
         mobile: [{ required: true, message: '请输入手机号' }]
       },
@@ -214,12 +214,13 @@ export default {
         if (!valid) return
         var param = {
           id: this.userDetail.id,
-          orgName: encodeURI(this.extraInfoForm.orgName),
-          jobDesc: encodeURI(this.extraInfoForm.jobDesc)
+          orgName: this.extraInfoForm.orgName,
+          jobDesc: this.extraInfoForm.jobDesc
         }
         this.$axios.post(loginApi.updateUser, param).then(res => {
           if (res.data.code === 0) {
             this.showExtraInfo = false
+            this.$emit('refreshData')
             Notification({
               title: '提示',
               message: '用户修改成功',
@@ -290,54 +291,40 @@ export default {
     },
     // 我的信息-保存
     myInfoConfirm () {
-      // var domains = this.myInfoForm.domains
-      // 删除验证码
-      // for (let index = 0; index < domains.length; index++) {
-      //   const element = domains[index]
-      //   if (element.title === '验证码') {
-      //     domains.splice(index, 1)
-      //   }
-      // }
-      // 添加验证码
-      // var authCodeExist = false
-      // for (let index = 0; index < domains.length; index++) {
-      //   const element = domains[index]
-      //   if (element.title === '验证码') {
-      //     authCodeExist = true
-      //   }
-      // }
-      // if (!authCodeExist) {
-      //   domains.push(this.authCodeItem)
-      // }
-      // return
       this.$refs.myInfoFormRef.validate(async valid => {
         if (!valid) return
-        this.updateUser()
-      })
-    },
-    async updateUser () {
-      var kj = 0
-      if (this.realNameSelect === 'realNameSelectOptions1') {
-        kj = 0
-      } else if (this.realNameSelect === 'realNameSelectOptions2') {
-        kj = 1
-      }
-      var param = {
-        useraccount: this.myInfoForm.useraccount,
-        username: this.myInfoForm.username,
-        mobile: this.myInfoForm.mobile,
-        kejian: kj
-      }
-      this.$axios.post(globalApi.updateUser, param).then(res => {
-        if (res.data.code === 0) {
-          this.showMyInfo = false
+
+        var visible = 0
+        if (this.realNameSelect === 'realNameSelectOptions1') {
+          visible = 0
+        } else if (this.realNameSelect === 'realNameSelectOptions2') {
+          visible = 1
+        }
+        var param = {
+          id: this.userDetail.id,
+          // useraccount: this.myInfoForm.useraccount,
+          username: this.myInfoForm.username,
+          mobile: this.myInfoForm.mobile,
+          userNameVisible: visible
+        }
+        this.$axios.post(loginApi.updateUser, param).then(res => {
+          if (res.data.code === 0) {
+            this.showMyInfo = false
+            this.$emit('refreshData')
+            Notification({
+              title: '提示',
+              message: '更新成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+          }
           Notification({
             title: '提示',
-            message: '更新成功',
-            type: 'success',
+            message: '更新失败',
+            type: 'warning',
             duration: 5 * 1000
           })
-        }
+        })
       })
     }
   }

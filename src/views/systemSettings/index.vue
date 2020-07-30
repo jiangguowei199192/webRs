@@ -137,7 +137,7 @@ export default {
             id: 2,
             title: '补充信息',
             subTitle: '',
-            text: '所属机构、职务/岗位',
+            text: '',
             type: 'RightItemType_SubTitle'
           }
         ]
@@ -235,8 +235,13 @@ export default {
       this.$axios.post(loginApi.getUserDetail).then(res => {
         if (res.data.code === 0) {
           this.userDetail = res.data.data
-          this.rightItemUserSetting.items[0].title = res.data.data.username
-          this.rightItemUserSetting.items[0].subTitle = res.data.data.mobile
+          if (this.userDetail.username) {
+            this.rightItemUserSetting.items[0].title = this.userDetail.username
+          } else {
+            this.rightItemUserSetting.items[0].title = this.userDetail.useraccount
+          }
+          this.rightItemUserSetting.items[0].subTitle = this.userDetail.mobile
+          this.rightItemUserSetting.items[2].text = this.userDetail.orgName + '、' + this.userDetail.jobDesc
         }
       })
     },
