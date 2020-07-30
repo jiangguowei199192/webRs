@@ -310,7 +310,8 @@ export default {
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
       operateIconplay: true, // 云台默认开始的按钮
-      bRealTimeFireWarning: true // 实时更新火情警报个数
+      bRealTimeFireWarning: true, // 实时更新火情警报个数
+      imgId: '' // 保存抓取图片id
     }
   },
   mixins: [videoMixin, fireMixin],
@@ -1065,9 +1066,10 @@ export default {
       }
       this.$axios.post(api.deviceSnap, params).then(res => {
         if (res && res.data && res.data.code === 0) {
-          this.photoClicked = true
+          // this.photoClicked = true
           this.showCutImg = true
-          this.cutImgUrl = res.data.data.imgPath
+          this.imgId = res.data.data.id
+          this.cutImgUrl = res.data.data.filePath
           this.$notify.success({ title: '成功', message: '抓取成功！' })
         }
       })
@@ -1085,12 +1087,13 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择设备！' })
       }
       const params = {
+        id: this.imgId,
         deviceCode: this.curSelectedVideo.deviceCode,
         filePath: this.cutImgUrl,
         channelId: this.curSelectedVideo.id,
         remark: this.remark
       }
-      this.$axios.post(api.deviceAdd, params).then(res => {
+      this.$axios.post(api.deviceUpdate, params).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.$notify.success({ title: '成功', message: '添加说明成功！' })
           this.cutDialogVisible = false
