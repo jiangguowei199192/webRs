@@ -417,6 +417,12 @@ export default {
         this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
         this.initOnlineArray()
       }
+      // 更新时间轴指针的位置
+      this.timeupdate(0)
+      this.records = []
+      this.recordData = []
+      this.curNode = ''
+      this.snapList = []
       this.currentPage = 1 // 默认第1页
       this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
       this.curVideoIndex = 1000
