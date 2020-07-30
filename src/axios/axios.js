@@ -30,9 +30,12 @@ service.interceptors.request.use((config) => {
     token = sessionStorage.getItem('token')
     config.headers.Authorization = token
   }
-  if (config.url !== '/cloud-fms/sysuser/updateHeadImg') {
+  if (config.url !== '/cloud-fms/sysuser/updateHeadImg' && config.url !== '/cloud-fms/sysuser/updateUser') {
     // 判断请求方式是否为POST，进行转换格式
     config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
+  }
+  if (config.url === '/cloud-fms/sysuser/updateUser') {
+    config.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
   }
   return config
 },
