@@ -1,12 +1,18 @@
 <template>
   <div>
     <div class="leftBox">
-      <SettingLeftItem
-        v-for="data in leftItemData"
-        :key="data.headerTitle"
-        v-bind:itemData="data"
-        v-on:leftBoxDidSelectedItem="leftBoxDidSelectedItem"
-      ></SettingLeftItem>
+      <div style="height: 800px;">
+        <SettingLeftItem
+          v-for="data in leftItemData"
+          :key="data.headerTitle"
+          v-bind:itemData="data"
+          v-on:leftBoxDidSelectedItem="leftBoxDidSelectedItem"
+        ></SettingLeftItem>
+      </div>
+      <button type="button" class="logoutBtn" @click="logoutClick">
+        <img :src="logoutIcon">
+        退出登录
+      </button>
     </div>
     <div class="rightBox" v-if="userDetail">
       <div class="rightBoxBase">
@@ -53,6 +59,7 @@
 import SettingLeftItem from './components/SettingLeftItem.vue'
 import SettingRightTable from './components/SettingRightTable.vue'
 import { loginApi } from '@/api/login'
+// import globalApi from '../../utils/globalApi'
 
 export default {
   name: 'settings',
@@ -217,7 +224,9 @@ export default {
             type: 'RightItemType_SubTitle'
           }
         ]
-      }
+      },
+
+      logoutIcon: require('../../assets/images/Login/logout-Icon.png')
     }
   },
   methods: {
@@ -231,6 +240,7 @@ export default {
         }
       })
     },
+    // 点击左侧边栏的item
     leftBoxDidSelectedItem: function (id) {
       // console.log(id)
       for (let i = 0; i < this.leftItemData.length; i++) {
@@ -256,6 +266,17 @@ export default {
       // } else if (id === 4) {
       //   document.getElementById('idRightItemMapServe').scrollIntoView()
       // }
+    },
+    async logoutClick () {
+      console.log('logoutClick:' + this.userDetail.id)
+      this.$axios.post(loginApi.logout, { userId: this.userDetail.id }).then(res => {
+        if (res.data.code === 0) {
+          // 清除本地数据
+          sessionStorage.removeItem('token')
+          // 跳转到登录
+          window.location.href = '/login'
+        }
+      })
     }
   },
   created () {
@@ -303,5 +324,17 @@ export default {
     margin: 10px 10px 10px 10px;
     overflow-y: scroll;
   }
+}
+.logoutBtn {
+  width: 112px;
+  height: 30px;
+  border: solid 1px #39a4dd;
+  font-size: 18px;
+  color: #85cfe8;
+  background-color: transparent;
+  outline: none;
+  display: block;
+  margin-left: 30px;
+  margin-top: 10px;
 }
 </style>
