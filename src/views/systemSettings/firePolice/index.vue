@@ -17,38 +17,26 @@
           </el-date-picker>
         </div>
         <div class="tableBox">
-          <el-table @row-click="ClickTableRow" :data="tableData" stripe empty-text="no data" tooltip-effect="light">
+          <el-table v-if="firePoliceList" @row-click="ClickTableRow" :data="firePoliceList" stripe empty-text="no data" tooltip-effect="light">
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
                 <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="报警时间" prop="policeTime"></el-table-column>
-            <el-table-column align="center" label="报警地点" prop="address"></el-table-column>
-            <el-table-column align="center" label="类型" prop="type"></el-table-column>
+            <el-table-column align="center" label="报警时间" prop="alarmTime"></el-table-column>
+            <el-table-column align="center" label="报警地点" prop="alarmAddress"></el-table-column>
+            <el-table-column align="center" label="类型" prop="alarmTypeCode"></el-table-column>
             <!-- <el-table-column align="center" label="报警图片" prop="image"></el-table-column> -->
-            <el-table-column align="center" label="报警设备" prop="equipment"></el-table-column>
-            <el-table-column align="center" label="状态" prop="status"></el-table-column>
-            <el-table-column align="center" label="确认时间" prop="confirmTime"></el-table-column>
-            <!-- <el-table-column align="center" label="激活">
-              <template slot-scope="scope">
-                <el-switch v-model="tableData[scope.$index].active"></el-switch>
-              </template>
-            </el-table-column> -->
+            <el-table-column align="center" label="报警设备" prop="deviceName"></el-table-column>
+            <el-table-column align="center" label="状态" prop="alarmStatus"></el-table-column>
+            <el-table-column align="center" label="确认时间" prop="updateTime"></el-table-column>
           </el-table>
-        </div>
-        <div class="pageStyle">
-          <el-pagination
-            class="tablePagination"
-            popper-class="pageSelect"
-            :total="pageData.total"
-            :page-size="pageData.pageSize"
-            layout="total, prev, pager, next, jumper"></el-pagination>
         </div>
       </div>
     </div>
 
     <el-dialog
+      v-if="fireDetailInfo"
       title="火情详情"
       :visible.sync="showFireDetail"
       width="30%"
@@ -56,15 +44,15 @@
       <div class="fireDetailDialogContent">
         <div class="textDiv1">
           <div class="textDiv2">接警时间：</div>
-          <div class="textDiv3">123</div>
+          <div class="textDiv3">{{ fireDetailInfo.alarmTime }}</div>
         </div>
         <div class="textDiv1">
           <div class="textDiv2">类型：</div>
-          <div class="textDiv3">123</div>
+          <div class="textDiv3">{{ fireDetailInfo.alarmTypeCode }}</div>
         </div>
         <div class="textDiv1">
           <div class="textDiv2">报警设备：</div>
-          <div class="textDiv3">123</div>
+          <div class="textDiv3">{{ fireDetailInfo.deviceName }}</div>
         </div>
         <div>
           <div class="textDiv4">报警图片</div>
@@ -74,7 +62,7 @@
           </div>
         </div>
         <div>
-          <div class="textDiv6">报警地点：XXXXXXXXXX</div>
+          <div class="textDiv6">报警地点：{{ fireDetailInfo.alarmAddress }}</div>
           <div class="textDiv5">
             <div style="width: 395px; height: 147px; background-color: gray; margin:6px 8px 5px 7px;">
               <gMap
@@ -83,6 +71,7 @@
                 :bShowSimpleSearchTools="false"
                 :bShowBasic="false"
                 :bShowMeasure="false"
+                :bAutoLocate="false"
               ></gMap>
             </div>
           </div>
@@ -98,34 +87,28 @@
 </template>
 
 <script>
+import { fireApi } from '@/api/videoSystem/fireAlarm.js'
+import globalApi from '@/utils/globalApi'
 export default {
   created () {
-    this.pageData.total = this.tableData.length
+    this.getFirePoliceList()
   },
   data () {
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
+      firePoliceList: [],
       date1: '',
       radio: -1,
-      tableData: [ // 测试数据
-        {
-          policeTime: '2020-6-3 \n 09:09:09',
-          address: '武汉市洪山区黄龙山南路6号',
-          type: '火警',
-          image: '',
-          equipment: '高点1号',
-          status: '确认',
-          confirmTime: '2020-6-3 \n 09:10:10'
-        }
-      ],
-      pageData: {
-        total: 0,
-        pageSize: 4
-      },
       showFireDetail: false,
       fireDetailInfo: {
-        image1: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        image2: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+        alarmTime: 0,
+        alarmTypeCode: '',
+        deviceName: '',
+        alarmAddress: '',
+        alarmStatus: '',
+        updateTime: 0,
+        image1: '',
+        image2: ''
       }
     }
   },
@@ -133,10 +116,52 @@ export default {
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
+    // 获取火情列表
+    async getFirePoliceList () {
+      this.$axios.get(fireApi.getDurationFireAlarmInfos).then(res => {
+        if (res.data.code === 0) {
+          this.firePoliceList = res.data.data
+          var newDate = new Date()
+          for (let index = 0; index < this.firePoliceList.length; index++) {
+            const element = this.firePoliceList[index]
+            // 时间戳转时间
+            newDate.setTime(element.alarmTime)
+            element.alarmTime = newDate.toLocaleString()
+            newDate.setTime(element.updateTime)
+            element.updateTime = newDate.toLocaleString()
+          }
+        }
+      })
+    },
     // 点击表格行
     ClickTableRow (row) {
-      this.radio = this.tableData.indexOf(row)
+      this.radio = this.firePoliceList.indexOf(row)
+
+      var detail = this.firePoliceList[this.radio]
+      // debugger
+      var alarmPicList = detail.alarmPicList
+      // 处理报警图片的地址
+      if (alarmPicList) {
+        if (alarmPicList.length >= 1) {
+          this.fireDetailInfo.image1 = globalApi.imageUrl + alarmPicList[0].picPath
+        }
+        if (alarmPicList.length >= 2) {
+          this.fireDetailInfo.image2 = globalApi.imageUrl + alarmPicList[1].picPath
+        }
+      }
+      this.fireDetailInfo.alarmTime = detail.alarmTime
+      this.fireDetailInfo.alarmTypeCode = detail.alarmTypeCode
+      this.fireDetailInfo.deviceName = detail.deviceName
+      this.fireDetailInfo.alarmAddress = detail.alarmAddress
+      this.fireDetailInfo.alarmStatus = detail.alarmStatus
+      this.fireDetailInfo.updateTime = detail.updateTime
+      // this.$refs.gduMap.map2D.zoomToCenter(
+      //   detail.alarmLongitude,
+      //   detail.alarmLatitude
+      // )
       this.showFireDetail = true
+
+      console.log('image1:' + this.fireDetailInfo.image1)
     },
     // 确认、误报
     confirmFireDetail (isTrue) {
@@ -187,10 +212,6 @@ export default {
   .tableBox {
     width: 760px;
     margin: 12px auto 20px auto;
-  }
-  .pageStyle {
-    width: 760px;
-    margin: 0 auto 0 auto;
   }
   .el-table::before {
     height: 0px;
