@@ -71,12 +71,13 @@ export default {
       } else if (parentData._bIsDevice === true) {
         this.$emit('clickAnDeviceItem', parentData)
       }
-      debugger
+      // debugger
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)
           .parentElement
         // 下线设备点击时移除激活的样式
-        if (data.onlineStatus === 'offline') {
+        // 回放时，离线设备依赖可以点击，进行回放操作
+        if (data.onlineStatus === 'offline' && this.isLive) {
           this.$nextTick(() => {
             curSpan.parentElement.parentElement.parentElement.classList.remove(
               'is-current'
@@ -142,8 +143,11 @@ export default {
     addParentDisabled () {
       const spans = document.querySelectorAll('span.disabled')
       for (let i = 0; i < spans.length; i++) {
-        spans[i].parentElement.parentElement.style.pointerEvents = 'none'
-        spans[i].parentElement.parentElement.style.cursor = 'not-allowed'
+        // 回放时，离线设备依赖可以点击，进行回放操作
+        if (this.isLive) {
+          spans[i].parentElement.parentElement.style.pointerEvents = 'none'
+          spans[i].parentElement.parentElement.style.cursor = 'not-allowed'
+        }
         spans[i].parentElement.parentElement.style.opacity = '0.5'
         // spans[i].parentElement.style.cursor =
         //     'not-allowed'

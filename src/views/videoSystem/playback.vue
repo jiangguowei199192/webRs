@@ -279,6 +279,10 @@ export default {
     }
   },
 
+  beforeCreate () {
+    this.isLive = false
+  },
+
   created () {
     this.init()
     const me = this
@@ -437,6 +441,8 @@ export default {
      * @param {device} device 设备信息
      */
     deviceOffline (device) {
+      // 如果展示全部设备，则不处理
+      if (!this.isOnline) return
       if (this.curPlayer && this.curPlayer.treeNode.pID === device.id) {
         // 如果当前播放对象，下线了
         this.stopPlayRecord()
@@ -1077,9 +1083,9 @@ export default {
      */
     setTreeNodeLiveIcon (isPlay, id) {
       const curSpan = document.getElementById('liveVideo' + id).parentElement
-      if (isPlay && !curSpan.getAttribute('class')) {
+      if (isPlay) {
         curSpan.setAttribute('class', 'liveIcon')
-      } else if (!isPlay) {
+      } else {
         curSpan.setAttribute('class', '')
       }
     },

@@ -3,6 +3,7 @@ import { EventBus } from '@/utils/eventBus.js'
 const videoMixin = {
   data () {
     return {
+      isLive: true, // 是否是实时页面
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
       isOnline: true, // 默认展示在线设备 true在线 false全部
@@ -119,11 +120,14 @@ const videoMixin = {
       const span = node.parentElement
       if (isDisable) {
         span.setAttribute('class', 'disabled')
-        span.parentElement.parentElement.style.pointerEvents = 'none'
-        span.parentElement.parentElement.style.cursor = 'not-allowed'
+        // 回放时，离线设备依赖可以点击，进行回放操作
+        if (this.isLive) {
+          span.parentElement.parentElement.style.pointerEvents = 'none'
+          span.parentElement.parentElement.style.cursor = 'not-allowed'
+          span.parentElement.parentElement.parentElement.classList.remove('is-current')
+        }
         span.parentElement.parentElement.style.opacity = '0.5'
         span.parentElement.parentElement.style.color = '#007291'
-        span.parentElement.parentElement.parentElement.classList.remove('is-current')
       } else {
         span.setAttribute('class', '')
         span.parentElement.parentElement.style.pointerEvents = ''
