@@ -16,11 +16,11 @@
       width="30%"
       class="dialogStyle">
       <el-form ref="extraInfoRef" :model="extraInfoForm" :rules="extraInfoRules">
-        <el-form-item prop="deptCode">
-          <el-input v-model="extraInfoForm.deptCode" placeholder="公司/组织/所属机构"></el-input>
+        <el-form-item prop="orgName">
+          <el-input v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input>
         </el-form-item>
-        <el-form-item prop="roleCode">
-          <el-input v-model="extraInfoForm.roleCode" placeholder="职务/岗位"></el-input>
+        <el-form-item prop="jobDesc">
+          <el-input v-model="extraInfoForm.jobDesc" placeholder="职务/岗位"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="extraInfoConfirm" style="float: right;" class="trueBtn">保存</el-button>
@@ -110,14 +110,14 @@ export default {
 
       showExtraInfo: false,
       extraInfoForm: {
-        deptCode: '',
-        roleCode: ''
+        orgName: '',
+        jobDesc: ''
       },
       extraInfoRules: {
-        deptCode: [
+        orgName: [
           { required: true, message: '请输入组织' }
         ],
-        roleCode: [
+        jobDesc: [
           { required: true, message: '请输入职务' }
         ]
       },
@@ -212,17 +212,28 @@ export default {
     async extraInfoConfirm () {
       this.$refs.extraInfoRef.validate(async valid => {
         if (!valid) return
-        this.$axios.post(globalApi.updateUser, this.extraInfoForm).then(res => {
-          // if (res.data.code === 0) {
-          //   this.showExtraInfo = false
-          //   return
-          // }
-          // Notification({
-          //   title: '提示',
-          //   message: '头像上传失败',
-          //   type: 'warning',
-          //   duration: 5 * 1000
-          // })
+        var param = {
+          id: this.userDetail.id,
+          orgName: encodeURI(this.extraInfoForm.orgName),
+          jobDesc: encodeURI(this.extraInfoForm.jobDesc)
+        }
+        this.$axios.post(loginApi.updateUser, param).then(res => {
+          if (res.data.code === 0) {
+            this.showExtraInfo = false
+            Notification({
+              title: '提示',
+              message: '用户修改成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            return
+          }
+          Notification({
+            title: '提示',
+            message: '用户修改失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
         })
       })
     },
