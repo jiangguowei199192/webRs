@@ -136,7 +136,7 @@
               <img
                 :src="!dialogVisible?fullScreen:fullScreenSelected"
                 :title="!dialogVisible?'全屏':'取消全屏'"
-                @click.stop="dialogVisible=true"
+                @click.stop="openDialog()"
               />
             </div>
           </div>
@@ -729,6 +729,15 @@ export default {
           (this.currentPage - 1) * this.showVideoPageSize,
           this.currentPage * this.showVideoPageSize
         )
+        let n = 0
+        this.curVideosArray.forEach(item => {
+          if (item) {
+            n = 1
+          }
+        })
+        if (n === 0) {
+          this.isPlayAll = false
+        }
       }
     },
     // 点击当前视频
@@ -1119,17 +1128,35 @@ export default {
         elem.style.left = xpos + 'px'
         elem.style.top = ypos + 'px'
       }, 5)
+    },
+    openDialog () {
+      this.dialogVisible = true
+      setTimeout(() => {
+        this.$notify({
+          title: '提示',
+          message: '按esc键可以关闭',
+          type: 'info',
+          duration: 1000000
+        })
+      }, 500)
     }
   },
   created () {
+    // this.$notify({
+    //   title: '成功',
+    //   message: '这是一条成功的提示消息',
+    //   type: 'success',
+    //   duration: 50000
+    // })
     this.init()
-
     const me = this
     window.onresize = function () {
+      debugger
       if (me.dialogVisible) {
         if (me.checkFull()) {
           // 要执行的动作
           document.getElementById('d1').focus()
+          console.log(1111)
         }
       }
       if (!me.checkFull() && me.curScreenInfo.id) {
@@ -1157,9 +1184,9 @@ export default {
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;
-    font-size: 18px;
+    font-size: 16px;
     font-family: Source Han Sans CN;
-    font-weight: bold;
+    // font-weight: bold;
 
     div.tab {
       display: flex;
@@ -1637,6 +1664,7 @@ export default {
       flex-wrap: wrap;
       height: 100%;
       padding: 0 15px;
+      background: url(../../assets/images/bg.png) no-repeat;
       > div {
         // cursor: pointer;
         margin-right: 19px;
