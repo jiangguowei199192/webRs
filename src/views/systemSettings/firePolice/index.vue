@@ -13,7 +13,8 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            class="datePickerStyle">
+            class="datePickerStyle"
+            @change="dateSearch">
           </el-date-picker>
         </div>
         <div class="tableBox">
@@ -25,7 +26,7 @@
             </el-table-column>
             <el-table-column align="center" label="报警时间" prop="alarmTime"></el-table-column>
             <el-table-column align="center" label="报警地点" prop="alarmAddress"></el-table-column>
-            <el-table-column align="center" label="类型" prop="alarmTypeCode"></el-table-column>
+            <el-table-column align="center" label="类型" prop="alarmTypeName"></el-table-column>
             <!-- <el-table-column align="center" label="报警图片" prop="image"></el-table-column> -->
             <el-table-column align="center" label="报警设备" prop="deviceName"></el-table-column>
             <el-table-column align="center" label="状态" prop="alarmStatus"></el-table-column>
@@ -48,7 +49,7 @@
         </div>
         <div class="textDiv1">
           <div class="textDiv2">类型：</div>
-          <div class="textDiv3">{{ fireDetailInfo.alarmTypeCode }}</div>
+          <div class="textDiv3">{{ fireDetailInfo.alarmTypeName }}</div>
         </div>
         <div class="textDiv1">
           <div class="textDiv2">报警设备：</div>
@@ -71,6 +72,7 @@
                 :bShowSimpleSearchTools="false"
                 :bShowBasic="false"
                 :bShowMeasure="false"
+                :bShowLonLat="false"
                 :bAutoLocate="false"
               ></gMap>
             </div>
@@ -78,8 +80,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmFireDetail(true)" class="trueBtn">确 认</el-button>
-        <el-button @click="confirmFireDetail(false)" class="falseBtn">误 报</el-button>
+        <el-button type="primary" @click="confirmFireDetail('confirmed')" class="trueBtn">确 认</el-button>
+        <el-button @click="confirmFireDetail('mistaken')" class="falseBtn">误 报</el-button>
       </span>
     </el-dialog>
 
@@ -91,18 +93,19 @@ import { fireApi } from '@/api/videoSystem/fireAlarm.js'
 import globalApi from '@/utils/globalApi'
 export default {
   created () {
-    this.getFirePoliceList()
+    this.getFirePoliceList('', '')
   },
   data () {
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
       firePoliceList: [],
-      date1: '',
+      date1: [],
       radio: -1,
       showFireDetail: false,
       fireDetailInfo: {
+        id: 0,
         alarmTime: 0,
-        alarmTypeCode: '',
+        alarmTypeName: '',
         deviceName: '',
         alarmAddress: '',
         alarmStatus: '',
@@ -117,8 +120,12 @@ export default {
       this.$router.push({ path: '/systemSettings' })
     },
     // 获取火情列表
-    async getFirePoliceList () {
-      this.$axios.get(fireApi.getDurationFireAlarmInfos).then(res => {
+    async getFirePoliceList (timeBegin, timeEnd) {
+      var param = {
+        timeBegin: timeBegin,
+        timeEnd: timeEnd
+      }
+      this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: param }).then(res => {
         if (res.data.code === 0) {
           this.firePoliceList = res.data.data
           var newDate = new Date()
@@ -138,34 +145,61 @@ export default {
       this.radio = this.firePoliceList.indexOf(row)
 
       var detail = this.firePoliceList[this.radio]
-      // debugger
       var alarmPicList = detail.alarmPicList
       // 处理报警图片的地址
       if (alarmPicList) {
         if (alarmPicList.length >= 1) {
-          this.fireDetailInfo.image1 = globalApi.imageUrl + alarmPicList[0].picPath
+          this.fireDetailInfo.image1 = globalApi.picUrl + alarmPicList[0].picPath
         }
         if (alarmPicList.length >= 2) {
-          this.fireDetailInfo.image2 = globalApi.imageUrl + alarmPicList[1].picPath
+          this.fireDetailInfo.image2 = globalApi.picUrl + alarmPicList[1].picPath
         }
       }
       this.fireDetailInfo.alarmTime = detail.alarmTime
-      this.fireDetailInfo.alarmTypeCode = detail.alarmTypeCode
+      this.fireDetailInfo.alarmTypeName = detail.alarmTypeName
       this.fireDetailInfo.deviceName = detail.deviceName
       this.fireDetailInfo.alarmAddress = detail.alarmAddress
       this.fireDetailInfo.alarmStatus = detail.alarmStatus
       this.fireDetailInfo.updateTime = detail.updateTime
-      // this.$refs.gduMap.map2D.zoomToCenter(
-      //   detail.alarmLongitude,
-      //   detail.alarmLatitude
-      // )
+      this.fireDetailInfo.id = detail.id
       this.showFireDetail = true
 
-      console.log('image1:' + this.fireDetailInfo.image1)
+      const p = this
+      setTimeout(() => {
+        p.$refs.gduMap.map2D.zoomToCenter(
+          detail.alarmLongitude,
+          detail.alarmLatitude
+        )
+      }, 1000)
     },
     // 确认、误报
     confirmFireDetail (isTrue) {
-      console.log(isTrue)
+      this.$axios.post(fireApi.confirmFireAlarmInfo + '/' + this.fireDetailInfo.id + '/' + isTrue).then(res => {
+        if (res.data.code === 0) {
+          this.showFireDetail = false
+        } else {
+          Notification({
+            title: '提示',
+            message: '操作失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+        }
+      })
+    },
+    // 日期搜索
+    dateSearch () {
+      if (this.date1) {
+        var beginDate = new Date(this.date1[0])
+        var beginTime = beginDate.getTime()
+        var endDate = new Date(this.date1[1])
+        var endTime = endDate.getTime()
+        console.log(beginTime)
+        console.log(endTime)
+        this.getFirePoliceList(beginTime, endTime)
+      } else {
+        this.getFirePoliceList('', '')
+      }
     }
   }
 }
