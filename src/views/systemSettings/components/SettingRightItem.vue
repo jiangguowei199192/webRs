@@ -132,12 +132,10 @@ export default {
         input: ''
       },
       myInfoForm: {
-        // useraccount: '',
         username: '',
         mobile: ''
       },
       myInfoRules: {
-        // useraccount: [{ required: true, message: '请输入登录名' }],
         username: [{ required: true, message: '请输入真实姓名' }],
         mobile: [{ required: true, message: '请输入手机号' }]
       },
@@ -302,7 +300,6 @@ export default {
         }
         var param = {
           id: this.userDetail.id,
-          // useraccount: this.myInfoForm.useraccount,
           username: this.myInfoForm.username,
           mobile: this.myInfoForm.mobile,
           userNameVisible: visible
