@@ -66,6 +66,7 @@ import LivePlayer from '@liveqing/liveplayer'
 export default {
   data () {
     return {
+      isUpdateTime: true,
       curTime: 0,
       curUrl: '',
       activeCurIcon: '', // 默认选中云台的图标
@@ -100,7 +101,7 @@ export default {
   watch: {
     curTime (val) {
       var r = this.videoInfo.records.find(x => x.url === this.curUrl)
-      if (r !== undefined) {
+      if (r !== undefined && this.isUpdateTime) {
         this.$emit('timeupdateEvent', this.curTime + r.start * 60)
       }
     }
@@ -134,12 +135,14 @@ export default {
         jumpSeconds = jump === true ? jumpSeconds : 0
         this.jumpToSeconds(jumpSeconds)
       } else {
+        this.isUpdateTime = false
         this.pause()
         this.changeVideoUrl(url)
         if (jump === true) {
           setTimeout(() => {
+            this.isUpdateTime = true
             this.jumpToSeconds(jumpSeconds)
-          }, 10)
+          }, 500)
         }
       }
     },
