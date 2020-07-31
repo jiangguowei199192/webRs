@@ -1232,7 +1232,7 @@ export default {
         this.$notify({
           dangerouslyUseHTMLString: true,
           title: '提示',
-          message: '按esc键可以关闭',
+          message: '按esc键可退出全屏',
           type: 'info',
           duration: 1000
         })
