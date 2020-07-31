@@ -306,8 +306,8 @@ export default {
     }
     /* 表格每行高度*/
     /deep/.el-table__body td {
-      // height: 48px;
-      height: 100px;
+      height: 48px;
+      // height: 100px;
       padding: 0;
     }
     /deep/.el-table__body tr {
