@@ -1139,7 +1139,7 @@ export default {
           title: '提示',
           message: '按esc键可以关闭',
           type: 'info',
-          duration: 1000000
+          duration: 1000
         })
       }, 500)
     }
@@ -1213,6 +1213,7 @@ export default {
       div.active {
         width: 126px !important;
         color: #fff;
+        font-weight:bold;
       }
       div:nth-child(1).active {
         background: url(../../assets/images/left.png) no-repeat;
@@ -1304,7 +1305,7 @@ export default {
   .rightContent {
     font-size: 16px;
     font-family: Source Han Sans CN;
-    font-weight: bold;
+    // font-weight: bold;
     color: rgba(255, 255, 255, 1);
     line-height: 14px;
     padding: 15px 10px;
