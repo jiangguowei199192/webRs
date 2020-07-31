@@ -2,7 +2,7 @@
   <div>
     <div class="base" id="background" @click="clicked">
       <el-avatar :size="40" class="img" id="img">
-        <img :src="headerImg">
+        <img :src="data.headerImg">
       </el-avatar>
       <div class="title" id="title">{{data.title}}</div>
       <div class="subTitle" id="subTitle">{{data.subTitle}}</div>
@@ -92,7 +92,6 @@
 <script>
 import { Notification } from 'element-ui'
 import { loginApi } from '@/api/login'
-import globalApi from '../../../utils/globalApi'
 export default {
   props: {
     data: {
@@ -106,8 +105,6 @@ export default {
   },
   data () {
     return {
-      headerImg: globalApi.imageUrl + this.userDetail.headImg,
-
       showExtraInfo: false,
       extraInfoForm: {
         orgName: '',
@@ -314,6 +311,7 @@ export default {
               type: 'success',
               duration: 5 * 1000
             })
+            return
           }
           Notification({
             title: '提示',

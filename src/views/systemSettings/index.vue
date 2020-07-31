@@ -59,7 +59,7 @@
 import SettingLeftItem from './components/SettingLeftItem.vue'
 import SettingRightTable from './components/SettingRightTable.vue'
 import { loginApi } from '@/api/login'
-// import globalApi from '../../utils/globalApi'
+import globalApi from '../../utils/globalApi'
 
 export default {
   name: 'settings',
@@ -124,6 +124,7 @@ export default {
             title: '',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_MyInfo'
           },
           {
@@ -131,6 +132,7 @@ export default {
             title: '头像',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           },
           {
@@ -138,6 +140,7 @@ export default {
             title: '补充信息',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_SubTitle'
           }
         ]
@@ -150,6 +153,7 @@ export default {
             title: '用户管理',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           },
           {
@@ -157,6 +161,7 @@ export default {
             title: '角色权限管理',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           },
           {
@@ -164,6 +169,7 @@ export default {
             title: '组织管理',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           }
         ]
@@ -176,6 +182,7 @@ export default {
             title: '视频接入管理',
             subTitle: '',
             text: '已接入0台设备',
+            headerImg: '',
             type: 'RightItemType_SubTitle'
           }
         ]
@@ -188,6 +195,7 @@ export default {
             title: '火情报警',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           },
           {
@@ -195,6 +203,7 @@ export default {
             title: '火情地图',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           }
         ]
@@ -207,6 +216,7 @@ export default {
             title: '地图中心点、层级设置',
             subTitle: '',
             text: '武汉市 888.888888,88.88888 13级',
+            headerImg: '',
             type: 'RightItemType_SubTitle'
           },
           {
@@ -214,6 +224,7 @@ export default {
             title: '地图切换',
             subTitle: '',
             text: '',
+            headerImg: '',
             type: 'RightItemType_Title'
           },
           {
@@ -221,6 +232,7 @@ export default {
             title: '图层管理',
             subTitle: '',
             text: '已添加0类图层',
+            headerImg: '',
             type: 'RightItemType_SubTitle'
           }
         ]
@@ -241,6 +253,7 @@ export default {
             this.rightItemUserSetting.items[0].title = this.userDetail.useraccount
           }
           this.rightItemUserSetting.items[0].subTitle = this.userDetail.mobile
+          this.rightItemUserSetting.items[0].headerImg = globalApi.imageUrl + this.userDetail.headImg
           this.rightItemUserSetting.items[2].text = this.userDetail.orgName + '、' + this.userDetail.jobDesc
         }
       })
