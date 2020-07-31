@@ -100,7 +100,7 @@
               <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
             </div>
             <div class="rightTool">
-              <div class="pagination">
+              <!-- <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
                   layout="prev,pager, next"
@@ -109,7 +109,7 @@
                   @prev-click="pre"
                   @next-click="next"
                 ></el-pagination>
-              </div>
+              </div>-->
               <div class="download" @click="download" />
               <img :src="fullScreen" @click.stop="dialogVisible=true" />
             </div>
@@ -134,7 +134,7 @@
         ></Calendar>
       </div>
     </VideoMain>
-    <el-dialog
+    <!-- <el-dialog
       :visible.sync="dialogVisible"
       width="100%"
       :fullscreen="true"
@@ -142,7 +142,6 @@
       id="d1"
       class="fullDlg"
     >
-      <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
       <div
         v-for="(item,index) in curVideosArray"
         :key="index"
@@ -150,8 +149,18 @@
       >
         <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
       </div>
-      <!-- </div> -->
-    </el-dialog>
+    </el-dialog>-->
+    <div class="fullContainer" v-show="dialogVisible" id="d1">
+      <div
+        :style="machineStatusStyle(showVideoPageSize)"
+        v-for="(item,index) in curVideosArray"
+        :key="index"
+      >
+        <div :style="machineStatusStyle3(showVideoPageSize)">
+          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
+        </div>
+      </div>
+    </div>
     <el-dialog :visible.sync="downloadDlgVisible" class="downloadDlg" width="803px">
       <div class="downloadContainer">
         <div class="title">
@@ -294,6 +303,14 @@ export default {
         }
       }
     }
+    // 监听键盘按键事件
+    this.$nextTick(function () {
+      document.addEventListener('keyup', function (e) {
+        if (e.keyCode === 27) {
+          me.dialogVisible = false
+        }
+      })
+    })
   },
 
   methods: {
@@ -392,7 +409,7 @@ export default {
     init () {
       // 初始加载9个空元素
       this.totalVideosArray = []
-      for (let i = 0; i < 9; i++) {
+      for (let i = 0; i < this.showVideoPageSize; i++) {
         this.totalVideosArray.push('')
       }
       this.curVideosArray = this.totalVideosArray.slice(
@@ -535,6 +552,11 @@ export default {
      */
     playDeviceVideo (item, list, index1, index2) {
       this.selectedIndex = index1
+      if (
+        this.curNode &&
+        this.curNode.id === this.onlineArray[index1].children[index2].id
+      ) { return }
+
       this.curNode = this.onlineArray[index1].children[index2]
       this.curNode.pID = this.onlineArray[index1].id
       this.curNode.parentLabel =
@@ -586,14 +608,10 @@ export default {
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
+      if (this.curVideoIndex === index) return
       this.curVideoIndex = index
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[index]) {
-        var i = this.totalVideosArray.indexOf(curVideo)
-        if (i !== -1) {
-          this.setCurrentPlayerObject(this.totalVideosArray[i])
-        }
-        this.curNode = this.curPlayer.treeNode
         if (this.isOnline) {
           this.activeOnlineArrayItem(curVideo.id)
         } else {
@@ -610,6 +628,10 @@ export default {
               'is-current'
             )
         }
+        if (this.curNode && this.curNode.id === curVideo.id) return
+
+        this.curNode = this.curVideosArray[index].treeNode
+        this.setCurrentPlayerObject(this.curVideosArray[index])
       }
     },
 
@@ -617,6 +639,7 @@ export default {
      * 获取子组件传递过来的数据
      */
     getSelectedData (data, pData) {
+      if (this.curNode && this.curNode.id === data.id) return
       this.curNode = data
       this.curNode.parentLabel = pData.label + '-' + this.curNode.label
       this.curNode.pID = pData.id
@@ -730,58 +753,55 @@ export default {
     },
     // 切换每屏显示的个数
     changeVideosType (n) {
-      this.currentPage = 1
-      this.curVideoIndex = 1000
-      this.showVideoPageSize = n
-      // 将有数据的视频放到前面
-      const newTotalVideosArray = []
-      this.totalVideosArray.forEach(item => {
-        if (item) {
-          newTotalVideosArray.push(item)
-        }
-      })
-      for (
-        let i = 0;
-        i < this.totalVideosArray.length - newTotalVideosArray.length;
-        i++
-      ) {
-        newTotalVideosArray.push('')
-      }
-      this.totalVideosArray = newTotalVideosArray
-      // 在总数据中获取实际有视频的数据
-      const result = this.totalVideosArray.filter(item => item !== '')
-      console.log(result)
-      // 1.如果有视频小于每屏的展示数据（包含没有的情况）
-      if (result.length <= n) {
-        // 1.1由大变小
-        if (this.totalVideosArray.length >= n) {
-          this.curVideosArray = this.totalVideosArray.slice(0, n)
-          // 此操作过滤掉不要的空元素
-          this.totalVideosArray = this.totalVideosArray.slice(0, n)
-        } else {
-          // 1.2由小变大
-          const j = this.totalVideosArray.length
-          for (let i = 0; i < n - j; i++) {
-            this.totalVideosArray.push('')
-          }
-          this.curVideosArray = this.totalVideosArray.slice(0, n)
-        }
-      } else {
-        // 2.如果实际视频并且大于每屏的展示数据
-        // 过滤掉本身数据中空元素
-        this.totalVideosArray = this.totalVideosArray.filter(
-          item => item !== ''
-        )
-        this.curVideosArray = this.totalVideosArray.slice(0, n)
-        console.log(this.curVideosArray)
-      }
-      if (this.curVideosArray[0]) {
-        this.activeFirstTree()
-      }
-    },
+      // this.currentPage = 1
+      // this.curVideoIndex = 1000
+      // this.showVideoPageSize = n
+      // // 将有数据的视频放到前面
+      // const newTotalVideosArray = []
+      // this.totalVideosArray.forEach(item => {
+      //   if (item) {
+      //     newTotalVideosArray.push(item)
+      //   }
+      // })
+      // for (
+      //   let i = 0;
+      //   i < this.totalVideosArray.length - newTotalVideosArray.length;
+      //   i++
+      // ) {
+      //   newTotalVideosArray.push('')
+      // }
+      // this.totalVideosArray = newTotalVideosArray
+      // // 在总数据中获取实际有视频的数据
+      // const result = this.totalVideosArray.filter(item => item !== '')
+      // console.log(result)
+      // // 1.如果有视频小于每屏的展示数据（包含没有的情况）
+      // if (result.length <= n) {
+      //   // 1.1由大变小
+      //   if (this.totalVideosArray.length >= n) {
+      //     this.curVideosArray = this.totalVideosArray.slice(0, n)
+      //     // 此操作过滤掉不要的空元素
+      //     this.totalVideosArray = this.totalVideosArray.slice(0, n)
+      //   } else {
+      //     // 1.2由小变大
+      //     const j = this.totalVideosArray.length
+      //     for (let i = 0; i < n - j; i++) {
+      //       this.totalVideosArray.push('')
+      //     }
+      //     this.curVideosArray = this.totalVideosArray.slice(0, n)
+      //   }
+      // } else {
+      //   // 2.如果实际视频并且大于每屏的展示数据
+      //   // 过滤掉本身数据中空元素
+      //   this.totalVideosArray = this.totalVideosArray.filter(
+      //     item => item !== ''
+      //   )
+      //   this.curVideosArray = this.totalVideosArray.slice(0, n)
+      //   console.log(this.curVideosArray)
+      // }
+      // if (this.curVideosArray[0]) {
+      //   this.activeFirstTree()
+      // }
 
-    // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
-    activeFirstTree () {
       if (this.isOnline) {
         // 清除所有的在线设备播放样式
         this.onlineArray.forEach(item => {
@@ -789,58 +809,85 @@ export default {
             delete item.isPlay
           }
         })
-        this.activeOnlineArrayItem(this.curVideosArray[0].id)
-        this.setOnlineItemLiveIcon(true, this.selectedIndex)
       } else {
-        const divs = document.querySelectorAll('.el-tree-node')
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].classList.remove('is-current')
-        }
-        document
-          .querySelector('#liveVideo' + this.curVideosArray[0].id)
-          .parentElement.parentElement.parentElement.parentElement.classList.add(
-            'is-current'
-          )
+        const bs = document.querySelectorAll(
+          '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
+        )
+        bs.forEach(item => {
+          item.parentElement.setAttribute('class', '')
+        })
       }
+
+      this.currentPage = 1
+      this.curVideoIndex = 1000
+      this.showVideoPageSize = n
+      this.init()
+      // 更新时间轴指针的位置
+      this.timeupdate(0)
+      this.curPlayer = ''
     },
 
-    // 上一页
-    pre (cpage) {
-      // 始终截取当前页需要的数据
-      this.curVideoIndex = 1000
-      // const divs = document.querySelectorAll('.el-tree-node')
-      // for (let i = 0; i < divs.length; i++) {
-      //   divs[i].classList.remove('is-current')
-      // }
-      this.curVideosArray = this.totalVideosArray.slice(
-        (cpage - 1) * this.showVideoPageSize,
-        cpage * this.showVideoPageSize
-      )
-      this.activeFirstTree()
-    },
-    // 下一页
-    next (cpage) {
-      // 清掉之前的选中状态
-      this.curVideoIndex = 1000
-      // const divs = document.querySelectorAll('.el-tree-node')
-      // for (let i = 0; i < divs.length; i++) {
-      //   divs[i].classList.remove('is-current')
-      // }
-      if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
-        const j = this.totalVideosArray.length
-        // 若不够，数据则补位空格
-        for (let i = 0; i < cpage * this.showVideoPageSize - j; i++) {
-          this.totalVideosArray.push('')
-        }
-      }
-      console.log(this.totalVideosArray.length)
-      this.curVideosArray = this.totalVideosArray.slice(
-        (cpage - 1) * this.showVideoPageSize,
-        cpage * this.showVideoPageSize
-      )
-      this.activeFirstTree()
-      console.log(cpage, this.curVideosArray.length)
-    },
+    // // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
+    // activeFirstTree () {
+    //   if (this.isOnline) {
+    //     // 清除所有的在线设备播放样式
+    //     this.onlineArray.forEach(item => {
+    //       if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+    //         delete item.isPlay
+    //       }
+    //     })
+    //     this.activeOnlineArrayItem(this.curVideosArray[0].id)
+    //     this.setOnlineItemLiveIcon(true, this.selectedIndex)
+    //   } else {
+    //     const divs = document.querySelectorAll('.el-tree-node')
+    //     for (let i = 0; i < divs.length; i++) {
+    //       divs[i].classList.remove('is-current')
+    //     }
+    //     document
+    //       .querySelector('#liveVideo' + this.curVideosArray[0].id)
+    //       .parentElement.parentElement.parentElement.parentElement.classList.add(
+    //         'is-current'
+    //       )
+    //   }
+    // },
+
+    // // 上一页
+    // pre (cpage) {
+    //   // 始终截取当前页需要的数据
+    //   this.curVideoIndex = 1000
+    //   // const divs = document.querySelectorAll('.el-tree-node')
+    //   // for (let i = 0; i < divs.length; i++) {
+    //   //   divs[i].classList.remove('is-current')
+    //   // }
+    //   this.curVideosArray = this.totalVideosArray.slice(
+    //     (cpage - 1) * this.showVideoPageSize,
+    //     cpage * this.showVideoPageSize
+    //   )
+    //   this.activeFirstTree()
+    // },
+    // // 下一页
+    // next (cpage) {
+    //   // 清掉之前的选中状态
+    //   this.curVideoIndex = 1000
+    //   // const divs = document.querySelectorAll('.el-tree-node')
+    //   // for (let i = 0; i < divs.length; i++) {
+    //   //   divs[i].classList.remove('is-current')
+    //   // }
+    //   if (cpage * this.showVideoPageSize > this.totalVideosArray.length) {
+    //     const j = this.totalVideosArray.length
+    //     // 若不够，数据则补位空格
+    //     for (let i = 0; i < cpage * this.showVideoPageSize - j; i++) {
+    //       this.totalVideosArray.push('')
+    //     }
+    //   }
+    //   console.log(this.totalVideosArray.length)
+    //   this.curVideosArray = this.totalVideosArray.slice(
+    //     (cpage - 1) * this.showVideoPageSize,
+    //     cpage * this.showVideoPageSize
+    //   )
+    //   this.activeFirstTree()
+    //   console.log(cpage, this.curVideosArray.length)
+    // },
 
     // 动态渲染9个空元素
     machineStatusStyle (n) {
@@ -891,23 +938,25 @@ export default {
 
     // 动态渲染9个空元素
     machineStatusStyle3 (n) {
+      const dom = document.querySelector('.fullContainer')
+      if (!dom) return
+      let h = dom.clientHeight || document.body.clientHeight
+      console.log(h)
+      const marginBottom = 10
       if (n === 9) {
+        h = (h - 3 * marginBottom) / 3
         return {
-          width: '31%',
-          height: '31%'
-          // marginLeft: '10px'
+          height: h + 'px'
         }
       } else if (n === 4) {
+        h = (h - 2 * marginBottom) / 2
         return {
-          width: '48%',
-          height: '48%'
-          // marginLeft: '10px'
+          height: h + 'px'
         }
       } else if (n === 1) {
+        h = h - 1 * marginBottom
         return {
-          width: '99%',
-          height: '99%'
-          // marginLeft: '10px'
+          height: h + 'px'
         }
       }
     },
@@ -924,10 +973,62 @@ export default {
     },
 
     /**
+     * 替换视频墙中某个视频
+     * @param {Number} index 视频索引
+     */
+    replaceVideo (index, jumpInfo) {
+      // 若指定位置之前有元素，去掉其激活的样式
+      if (this.curVideosArray[index]) {
+        if (this.isOnline) {
+          // 去掉前个在线设备的播放样式
+          for (var j = 0; j < this.onlineArray.length; j++) {
+            var item = this.onlineArray[j]
+            if (item.children && item.children.length > 0) {
+              var c = item.children.find(
+                i => i.id === this.curVideosArray[index].id
+              )
+              if (c !== undefined) {
+                if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
+                  delete item.isPlay
+                }
+                break
+              }
+            }
+          }
+        } else {
+          document
+            .querySelector('#liveVideo' + this.curVideosArray[index].id)
+            .parentElement.setAttribute('class', '')
+          document
+            .querySelector('#liveVideo' + this.curVideosArray[index].id)
+            .parentElement.parentElement.parentElement.parentElement.classList.remove(
+              'is-current'
+            )
+        }
+        this.curVideosArray[index].streamUrl = ''
+      }
+      var i = index + this.showVideoPageSize * (this.currentPage - 1)
+      this.totalVideosArray.splice(i, 1, this.curPlayer)
+      const me = this
+      setTimeout(() => {
+        me.curVideosArray = me.totalVideosArray.slice(
+          (me.currentPage - 1) * me.showVideoPageSize,
+          me.currentPage * me.showVideoPageSize
+        )
+        me.curVideoIndex = 1000
+        if (jumpInfo.jump === true) {
+          this.$nextTick(() => {
+            this.jumpToSeconds(jumpInfo.jumpSeconds)
+          })
+        }
+      }, 500)
+    },
+
+    /**
      * 添加Player
      * @param {Object} player
      */
-    addPlayer (player) {
+    addPlayer (player, jumpInfo) {
       this.curPlayer = player
       // 1.1默认位置添加
       if (this.curVideoIndex === 1000) {
@@ -939,59 +1040,19 @@ export default {
             (this.currentPage - 1) * this.showVideoPageSize,
             this.currentPage * this.showVideoPageSize
           )
+          if (jumpInfo.jump === true) {
+            this.$nextTick(() => {
+              this.jumpToSeconds(jumpInfo.jumpSeconds)
+            })
+          }
         } else {
-          // 若没有空元素，则追加
-          this.totalVideosArray.push(player)
-          // this.curVideosArray = this.totalVideosArray.slice(
-          //   0,
-          //   this.showVideoPageSize
-          // )
-          this.next(++this.currentPage)
+          // 若没有空元素，则替换第一个
+          this.replaceVideo(0, jumpInfo)
         }
       } else {
         // 1.2指定位置添加
         // 若指定位置之前有元素，去掉其激活的样式
-        if (this.curVideosArray[this.curVideoIndex]) {
-          if (this.isOnline) {
-            // 去掉前个在线设备的播放样式
-            for (var j = 0; j < this.onlineArray.length; j++) {
-              var item = this.onlineArray[j]
-              if (item.children && item.children.length > 0) {
-                var c = item.children.find(
-                  i => i.id === this.curVideosArray[this.curVideoIndex].id
-                )
-                if (c !== undefined) {
-                  if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
-                    delete item.isPlay
-                  }
-                  break
-                }
-              }
-            }
-          } else {
-            document
-              .querySelector(
-                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-              )
-              .parentElement.setAttribute('class', '')
-            document
-              .querySelector(
-                '#liveVideo' + this.curVideosArray[this.curVideoIndex].id
-              )
-              .parentElement.parentElement.parentElement.parentElement.classList.remove(
-                'is-current'
-              )
-          }
-          this.curVideosArray[this.curVideoIndex].streamUrl = ''
-        }
-        var index =
-          this.curVideoIndex + this.showVideoPageSize * (this.currentPage - 1)
-        this.totalVideosArray.splice(index, 1, player)
-        const me = this
-        setTimeout(() => {
-          me.curVideosArray[me.curVideoIndex] = me.curPlayer
-          me.curVideoIndex = 1000
-        }, 500)
+        this.replaceVideo(this.curVideoIndex, jumpInfo)
       }
     },
 
@@ -1035,22 +1096,25 @@ export default {
         var seconds = r.record.start * 60
         if (r.jump === true) seconds += r.jumpSeconds
         this.timeupdate(seconds)
-        this.addPlayer({
-          treeNode: this.curNode,
-          id: this.curNode.id,
-          streamUrl: r.record.url,
-          isLive: false,
-          records: this.records,
-          timeupdate: true,
-          isPlay: true,
-          curTime: this.curTime,
-          parentLabel: this.curNode.parentLabel
-        })
-        if (r.jump === true) {
-          this.$nextTick(() => {
-            this.jumpToSeconds(r.jumpSeconds)
-          })
-        }
+        this.addPlayer(
+          {
+            treeNode: this.curNode,
+            id: this.curNode.id,
+            streamUrl: r.record.url,
+            isLive: false,
+            records: this.records,
+            timeupdate: true,
+            isPlay: true,
+            curTime: this.curTime,
+            parentLabel: this.curNode.parentLabel
+          },
+          r
+        )
+        // if (r.jump === true) {
+        //   this.$nextTick(() => {
+        //     this.jumpToSeconds(r.jumpSeconds)
+        //   })
+        // }
       }
 
       if (this.isOnline) {
@@ -1369,33 +1433,33 @@ export default {
 
     .rightTool {
       margin-right: 20px;
-      .pagination {
-        display: inline-block;
-        position: relative;
-        top: -12px;
-        margin-right: 6px;
-        /deep/.el-pagination {
-          button {
-            background-color: transparent !important;
-            i {
-              width: 20px;
-              height: 20px;
-              border-radius: 50%;
-              background: #23cefd;
-              text-align: center;
-              line-height: 20px;
-              color: #000;
-            }
-          }
+      // .pagination {
+      //   display: inline-block;
+      //   position: relative;
+      //   top: -12px;
+      //   margin-right: 6px;
+      //   /deep/.el-pagination {
+      //     button {
+      //       background-color: transparent !important;
+      //       i {
+      //         width: 20px;
+      //         height: 20px;
+      //         border-radius: 50%;
+      //         background: #23cefd;
+      //         text-align: center;
+      //         line-height: 20px;
+      //         color: #000;
+      //       }
+      //     }
 
-          button[disabled] {
-            i {
-              background: #999;
-              color: #2d506f;
-            }
-          }
-        }
-      }
+      //     button[disabled] {
+      //       i {
+      //         background: #999;
+      //         color: #2d506f;
+      //       }
+      //     }
+      //   }
+      // }
 
       .download {
         display: inline-block;
@@ -1427,20 +1491,74 @@ export default {
 }
 
 //修改弹框样式
-.fullDlg.el-dialog__wrapper {
+// .fullDlg.el-dialog__wrapper {
+//   overflow: visible;
+//   /deep/.el-dialog {
+//     .el-dialog__body {
+//       display: flex;
+//       flex-wrap: wrap;
+//       height: 100%;
+//       padding: 0 15px;
+//       > div {
+//         // cursor: pointer;
+//         margin-right: 19px;
+//         margin-bottom: 20px;
+//         background: url(../../assets/images/video.png) no-repeat center center;
+//         background-color: #00497c;
+//       }
+//     }
+//   }
+// }
+
+// 全屏弹框
+.fullContainer {
+  position: fixed;
+  top: 0;
+  // right: 0;
+  left: 0;
+  // bottom: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: visible;
+  // padding: 20px 30px;
+  background: url(../../assets/images/bg.png) no-repeat;
+  > div {
+    div {
+      cursor: pointer;
+      margin-right: 10px;
+      // margin-bottom: 20px;
+      background: url(../../assets/images/video.png) no-repeat center center;
+      background-color: #00497c;
+    }
+  }
+}
+
+// 修改弹框样式
+#d1.el-dialog__wrapper {
   overflow: visible;
   /deep/.el-dialog {
+    .el-dialog__header {
+      display: none;
+    }
     .el-dialog__body {
       display: flex;
       flex-wrap: wrap;
       height: 100%;
       padding: 0 15px;
+      background: url(../../assets/images/bg.png) no-repeat;
       > div {
-        // cursor: pointer;
-        margin-right: 19px;
-        margin-bottom: 20px;
-        background: url(../../assets/images/video.png) no-repeat center center;
-        background-color: #00497c;
+        div {
+          // cursor: pointer;
+          height: 100%;
+          margin-right: 19px;
+          // margin-bottom: 20px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
+        }
       }
     }
   }
