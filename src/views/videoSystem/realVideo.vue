@@ -111,7 +111,7 @@
                   :key="index"
                   v-if="item.streamUrl"
                   ref="videoCtrl"
-                  @fullScreenChange="getVideoInfo"
+                  @screenchange="getVideoInfo"
                 ></VideoWall>
               </div>
             </div>
@@ -272,7 +272,7 @@
         :key="index"
       >
         <div :style="machineStatusStyle2(2,showVideoPageSize)">
-          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
+          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"   @screenchange="getVideoInfo"></VideoWall>
         </div>
       </div>
     </div>
@@ -1070,6 +1070,7 @@ export default {
     },
     // 双击视频时给显示操作按钮
     getVideoInfo (curScreenInfo) {
+      debugger
       this.curScreenInfo = curScreenInfo
       console.log(curScreenInfo.id)
       setTimeout(() => {
@@ -1486,11 +1487,13 @@ export default {
             width: 64px;
             height: 64px;
             position: relative;
+            margin-left: 2px;
             top: -7px;
             // left: -5px;
             margin-right: 10px;
             background: url(../../assets/images/device/5.png) no-repeat;
             cursor: text;
+            margin-bottom:5px;
           }
           // div:nth-child(5):hover {
           //   background: url(../../assets/images/device/5_selected.png) no-repeat;

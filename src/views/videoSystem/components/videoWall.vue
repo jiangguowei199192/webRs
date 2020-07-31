@@ -155,8 +155,9 @@ export default {
       var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
         player.exitFullscreen()
-      } else player.requestFullscreen()
-      this.$emit('fullScreenChange', this.videoInfo)
+      } else { player.requestFullscreen() }
+      debugger
+      this.$emit('screenchange', this.videoInfo)
     },
 
     /**
@@ -577,18 +578,20 @@ export default {
         }
         div:nth-child(5) {
           width: 64px;
-          height: 64px;
-          position: relative;
-          top: -7px;
-          // left: -5px;
-          margin-right: 10px;
-          background: url(../../../assets/images/device/5.png) no-repeat;
-          visibility: hidden;
+            height: 64px;
+            position: relative;
+            margin-left: 2px;
+            top: -7px;
+            // left: -5px;
+            margin-right: 10px;
+            background: url(../../../assets/images/device/5.png) no-repeat;
+            cursor: text;
+            margin-bottom:5px;
         }
-        div:nth-child(5):hover {
-          background: url(../../../assets/images/device/5_selected.png)
-            no-repeat;
-        }
+        // div:nth-child(5):hover {
+        //   background: url(../../../assets/images/device/5_selected.png)
+        //     no-repeat;
+        // }
         div:nth-child(6) {
           background: url(../../../assets/images/device/6.png) no-repeat;
         }
