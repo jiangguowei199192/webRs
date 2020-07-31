@@ -102,7 +102,6 @@
               :style="machineStatusStyle1(showVideoPageSize)"
             >
               <div
-                class="videoItem"
                 @click.stop="operateCurVideo(item,index)"
                 :class="{active:curVideoIndex===index}"
                 :style="machineStatusStyle2(1,showVideoPageSize)"
@@ -1235,7 +1234,7 @@ export default {
           title: '提示',
           message: '按esc键可以关闭',
           type: 'info',
-          duration: 2000
+          duration: 1000
         })
       }, 500)
     }
@@ -1658,10 +1657,11 @@ export default {
         background-color: #00497c;
         cursor: pointer;
         }
-      }
-      > div.active {
+        > div.active {
         border: 2px solid rgba(255, 244, 100, 1);
       }
+      }
+
     }
     .tools {
       position: absolute;
@@ -1761,75 +1761,75 @@ export default {
   }
 }
 // 修改弹框样式
-#d1.el-dialog__wrapper {
-  overflow: visible;
-  /deep/.el-dialog {
-    .el-dialog__header {
-      display: none;
-    }
-    .el-dialog__body {
-      display: flex;
-      flex-wrap: wrap;
-      height: 100%;
-      padding: 0 15px;
-      background: url(../../assets/images/bg.png) no-repeat;
-      > div {
-        div {
-          // cursor: pointer;
-          height: 100%;
-          margin-right: 19px;
-          // margin-bottom: 20px;
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
-        }
-      }
-    }
-  }
-}
-// .cutDialog {
-//   background: rgba(0, 0, 0, 0.6);
+// #d1.el-dialog__wrapper {
+//   overflow: visible;
 //   /deep/.el-dialog {
-//     width: 803px;
-//     height: 549px;
-//     background: url(../../assets/images/dialog-bg.png) no-repeat;
 //     .el-dialog__header {
 //       display: none;
 //     }
 //     .el-dialog__body {
-//       padding: 26px 30px;
-//     }
-//     .el-dialog__footer {
-//       padding: 0 30px;
-//       .remark {
-//         display: flex;
-//         justify-content: space-between;
-//         .replain {
-//           text-align: left;
-//           span {
-//             color: #fff;
-//           }
-//           .el-input {
-//             width: 410px;
-//             .el-input__inner {
-//               color: #fff;
-//               border: none;
-//               border-bottom: 1px solid rgb(153, 153, 153);
-//               background: transparent;
-//             }
-//             input::-webkit-input-placeholder {
-//               color: #999;
-//             }
-//           }
-//         }
-//         .el-button--default {
-//           background: transparent;
-//           color: rgba(30, 176, 252, 1);
-//         }
-//         .el-button--primary {
-//           background: #1eb0fc;
+//       display: flex;
+//       flex-wrap: wrap;
+//       height: 100%;
+//       padding: 0 15px;
+//       background: url(../../assets/images/bg.png) no-repeat;
+//       > div {
+//         div {
+//           // cursor: pointer;
+//           height: 100%;
+//           margin-right: 19px;
+//           // margin-bottom: 20px;
+//           background: url(../../assets/images/video.png) no-repeat center center;
+//           background-color: #00497c;
 //         }
 //       }
 //     }
 //   }
 // }
+.cutDialog {
+  background: rgba(0, 0, 0, 0.6);
+  /deep/.el-dialog {
+    width: 803px;
+    height: 549px;
+    background: url(../../assets/images/dialog-bg.png) no-repeat;
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      padding: 26px 30px;
+    }
+    .el-dialog__footer {
+      padding: 0 30px;
+      .remark {
+        display: flex;
+        justify-content: space-between;
+        .replain {
+          text-align: left;
+          span {
+            color: #fff;
+          }
+          .el-input {
+            width: 410px;
+            .el-input__inner {
+              color: #fff;
+              border: none;
+              border-bottom: 1px solid rgb(153, 153, 153);
+              background: transparent;
+            }
+            input::-webkit-input-placeholder {
+              color: #999;
+            }
+          }
+        }
+        .el-button--default {
+          background: transparent;
+          color: rgba(30, 176, 252, 1);
+        }
+        .el-button--primary {
+          background: #1eb0fc;
+        }
+      }
+    }
+  }
+}
 </style>
