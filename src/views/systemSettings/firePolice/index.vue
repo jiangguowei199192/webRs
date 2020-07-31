@@ -18,7 +18,7 @@
           </el-date-picker>
         </div>
         <div class="tableBox">
-          <el-table v-if="firePoliceList" @row-click="ClickTableRow" :data="firePoliceList" stripe empty-text="no data" tooltip-effect="light">
+          <el-table v-if="firePoliceList" @row-click="ClickTableRow" :data="firePoliceList" stripe empty-text="no data" tooltip-effect="light" height="600px">
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
                 <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
@@ -306,7 +306,8 @@ export default {
     }
     /* 表格每行高度*/
     /deep/.el-table__body td {
-      height: 48px;
+      // height: 48px;
+      height: 100px;
       padding: 0;
     }
     /deep/.el-table__body tr {
