@@ -102,9 +102,21 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)" title="9宫格"/>
-              <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)" title="4宫格"/>
-              <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" title="1宫格" />
+              <img
+                :src="palace==9?nineSelectedPalace:ninePalace"
+                @click.stop="changeVideosType(9)"
+                title="9宫格"
+              />
+              <img
+                :src="palace==4?fourSelectedPalace:fourPalace"
+                @click.stop="changeVideosType(4)"
+                title="4宫格"
+              />
+              <img
+                :src="palace==1?oneSelectedPalace:onePalace"
+                @click.stop="changeVideosType(1)"
+                title="1宫格"
+              />
               <img :src="photoClicked?photoSelected:photo" @click.stop="showImg" title="抓取" />
               <img
                 :src="mapClicked?mapSelected:map"
@@ -121,7 +133,11 @@
               />
             </div>
             <div class="rightTool">
-              <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" :title="!isPlayAll?'全部预览':'取消预览'"/>
+              <img
+                :src="!isPlayAll?playAll:closeAll"
+                @click.stop="playAllVideos"
+                :title="!isPlayAll?'全部预览':'取消预览'"
+              />
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
@@ -224,17 +240,26 @@
         </div>
       </div>
     </VideoMain>
-    <el-dialog :visible.sync="dialogVisible" width="100%" :fullscreen="true" tabindex="1" id="d1">
-      <!-- <div class="fullContainer" v-if="dialogVisible" id="d1"> -->
+    <!-- <el-dialog
+      :visible.sync="dialogVisible"
+      width="100%"
+      :fullscreen="true"
+      tabindex="1"
+      id="d1"
+      class="fullScreenDialog"
+    >-->
+    <div class="fullContainer" v-show="dialogVisible" id="d1">
       <div
+        :style="machineStatusStyle1(showVideoPageSize)"
         v-for="(item,index) in curVideosArray"
         :key="index"
-        :style="machineStatusStyle(showVideoPageSize)"
       >
-        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
+        <div :style="machineStatusStyle2(showVideoPageSize)">
+          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
+        </div>
       </div>
-      <!-- </div> -->
-    </el-dialog>
+    </div>
+    <!-- </el-dialog> -->
     <el-dialog
       :visible.sync="cutDialogVisible"
       class="cutDialog"
@@ -242,7 +267,7 @@
       :show-close="false"
       :before-close="clearRemark"
     >
-      <img  :src="`${picUrl}${cutImgUrl}`" width="743px" height="428px" alt />
+      <img :src="`${picUrl}${cutImgUrl}`" width="743px" height="428px" alt />
       <span slot="footer" class="dialog-footer">
         <div class="remark">
           <div class="replain">
@@ -619,10 +644,7 @@ export default {
       if (type === 1) {
         this.$axios
           .post(
-            '/api/ptz/' +
-             '34020000001320000003' +
-              '/' +
-              '34020000001310000004',
+            '/api/ptz/' + '34020000001320000003' + '/' + '34020000001310000004',
             params
           )
           .then(res => {
@@ -996,6 +1018,52 @@ export default {
         }
       }
     },
+    // 动态渲染9个容器
+    machineStatusStyle1 (n) {
+      if (n === 9) {
+        return {
+          width: '33.33%',
+          height: '33.33%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 4) {
+        return {
+          width: '50%',
+          height: '50%'
+          // marginLeft: '10px'
+        }
+      } else if (n === 1) {
+        return {
+          width: '100%',
+          height: '100%'
+          // marginLeft: '10px'
+        }
+      }
+    },
+    // 动态渲染9个空元素
+    machineStatusStyle2 (n) {
+      const dom = document.querySelector('.fullContainer')
+      if (!dom) return
+      let h = dom.clientHeight || document.body.clientHeight
+      console.log(h)
+      const marginBottom = 10
+      if (n === 9) {
+        h = (h - 3 * marginBottom) / 3
+        return {
+          height: h + 'px'
+        }
+      } else if (n === 4) {
+        h = (h - 2 * marginBottom) / 2
+        return {
+          height: h + 'px'
+        }
+      } else if (n === 1) {
+        h = h - 1 * marginBottom
+        return {
+          height: h + 'px'
+        }
+      }
+    },
     // 检查全屏
     checkFull () {
       let isFull =
@@ -1072,7 +1140,11 @@ export default {
           this.showCutImg = true
           this.imgId = res.data.data.id
           this.cutImgUrl = res.data.data.filePath
-          this.$notify.success({ title: '成功', message: '抓取成功！', duration: 800 })
+          this.$notify.success({
+            title: '成功',
+            message: '抓取成功！',
+            duration: 800
+          })
         }
       })
       setTimeout(() => {
@@ -1163,21 +1235,16 @@ export default {
       this.dialogVisible = true
       setTimeout(() => {
         this.$notify({
+          dangerouslyUseHTMLString: true,
           title: '提示',
           message: '按esc键可以关闭',
           type: 'info',
-          duration: 1000
+          duration: 2000
         })
       }, 500)
     }
   },
   created () {
-    // this.$notify({
-    //   title: '成功',
-    //   message: '这是一条成功的提示消息',
-    //   type: 'success',
-    //   duration: 50000
-    // })
     this.init()
     const me = this
     window.onresize = function () {
@@ -1202,9 +1269,17 @@ export default {
         me.curScreenInfo = {}
       }
     }
+    // 监听键盘按键事件
+    const self = this
+    this.$nextTick(function () {
+      document.addEventListener('keyup', function (e) {
+        if (e.keyCode === 27) {
+          self.dialogVisible = false
+        }
+      })
+    })
   },
-  mounted () {
-  }
+  mounted () {}
 }
 </script>
 <style lang="less" scoped>
@@ -1226,26 +1301,26 @@ export default {
       color: #23cefd;
       background: #1a3e68;
       // text-align: center;
-      div{
+      div {
         width: 104px;
         box-sizing: border-box;
       }
-      div:nth-child(1){
-        padding-left:30px
+      div:nth-child(1) {
+        padding-left: 30px;
       }
-      div:nth-child(2){
-         padding-left:20px
+      div:nth-child(2) {
+        padding-left: 20px;
       }
       div.active {
         width: 126px !important;
         color: #fff;
-        font-weight:bold;
+        font-weight: bold;
       }
       div:nth-child(1).active {
         background: url(../../assets/images/left.png) no-repeat;
       }
       div:nth-child(2).active {
-        padding-left:42px;
+        padding-left: 42px;
         background: url(../../assets/images/right.png) no-repeat;
       }
     }
@@ -1420,7 +1495,7 @@ export default {
             // left: -5px;
             margin-right: 10px;
             background: url(../../assets/images/device/5.png) no-repeat;
-            cursor:text;
+            cursor: text;
           }
           // div:nth-child(5):hover {
           //   background: url(../../assets/images/device/5_selected.png) no-repeat;
@@ -1661,26 +1736,31 @@ export default {
     }
   }
   // 全屏弹框
-  // .fullContainer {
-  //   position: fixed;
-  //   top: 0;
-  //   right: 0;
-  //   left: 0;
-  //   bottom: 0;
-  //   z-index: 10000;
-  //   background: #fff;
-  //   display: flex;
-  //   flex-wrap: wrap;
-  //   overflow: visible;
-  //   padding: 20px 30px;
-  //   > div {
-  //     // cursor: pointer;
-  //     margin-right: 19px;
-  //     margin-bottom: 20px;
-  //     background: url(../../assets/images/video.png) no-repeat center center;
-  //     background-color: #00497c;
-  //   }
-  // }
+  .fullContainer {
+    position: fixed;
+    top: 0;
+    // right: 0;
+    left: 0;
+    // bottom: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+    background: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: visible;
+    // padding: 20px 30px;
+    background: url(../../assets/images/bg.png) no-repeat;
+    > div {
+      div {
+        cursor: pointer;
+        margin-right: 10px;
+        // margin-bottom: 20px;
+        background: url(../../assets/images/video.png) no-repeat center center;
+        background-color: #00497c;
+      }
+    }
+  }
 }
 // 修改弹框样式
 #d1.el-dialog__wrapper {
@@ -1696,59 +1776,62 @@ export default {
       padding: 0 15px;
       background: url(../../assets/images/bg.png) no-repeat;
       > div {
-        // cursor: pointer;
-        margin-right: 19px;
-        margin-bottom: 20px;
-        background: url(../../assets/images/video.png) no-repeat center center;
-        background-color: #00497c;
-      }
-    }
-  }
-}
-.cutDialog {
-  background: rgba(0, 0, 0, 0.6);
-  /deep/.el-dialog {
-    width: 803px;
-    height: 549px;
-    background: url(../../assets/images/dialog-bg.png) no-repeat;
-    .el-dialog__header {
-      display: none;
-    }
-    .el-dialog__body {
-      padding: 26px 30px;
-    }
-    .el-dialog__footer {
-      padding: 0 30px;
-      .remark {
-        display: flex;
-        justify-content: space-between;
-        .replain {
-          text-align: left;
-          span {
-            color: #fff;
-          }
-          .el-input {
-            width: 410px;
-            .el-input__inner {
-              color: #fff;
-              border: none;
-              border-bottom: 1px solid rgb(153, 153, 153);
-              background: transparent;
-            }
-            input::-webkit-input-placeholder {
-              color: #999;
-            }
-          }
-        }
-        .el-button--default {
-          background: transparent;
-          color: rgba(30, 176, 252, 1);
-        }
-        .el-button--primary {
-          background: #1eb0fc;
+        div {
+          // cursor: pointer;
+          height: 100%;
+          margin-right: 19px;
+          // margin-bottom: 20px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
         }
       }
     }
   }
 }
+// .cutDialog {
+//   background: rgba(0, 0, 0, 0.6);
+//   /deep/.el-dialog {
+//     width: 803px;
+//     height: 549px;
+//     background: url(../../assets/images/dialog-bg.png) no-repeat;
+//     .el-dialog__header {
+//       display: none;
+//     }
+//     .el-dialog__body {
+//       padding: 26px 30px;
+//     }
+//     .el-dialog__footer {
+//       padding: 0 30px;
+//       .remark {
+//         display: flex;
+//         justify-content: space-between;
+//         .replain {
+//           text-align: left;
+//           span {
+//             color: #fff;
+//           }
+//           .el-input {
+//             width: 410px;
+//             .el-input__inner {
+//               color: #fff;
+//               border: none;
+//               border-bottom: 1px solid rgb(153, 153, 153);
+//               background: transparent;
+//             }
+//             input::-webkit-input-placeholder {
+//               color: #999;
+//             }
+//           }
+//         }
+//         .el-button--default {
+//           background: transparent;
+//           color: rgba(30, 176, 252, 1);
+//         }
+//         .el-button--primary {
+//           background: #1eb0fc;
+//         }
+//       }
+//     }
+//   }
+// }
 </style>
