@@ -81,14 +81,13 @@
             </div>
           </div>
           <div class="videoList">
-            <div
+            <!-- <div
               v-for="(item,index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
               @click.stop="operateCurVideo(item,index)"
               :class="{active:curVideoIndex===index}"
             >
-              <!-- <div > -->
               <VideoWall
                 :videoInfo="item"
                 :key="index"
@@ -96,7 +95,26 @@
                 v-if="item.streamUrl"
                 @fullScreenChange="getVideoInfo"
               ></VideoWall>
-              <!-- </div> -->
+            </div> -->
+                        <div
+              v-for="(item,index) in curVideosArray"
+              :key="index"
+              :style="machineStatusStyle1(showVideoPageSize)"
+            >
+              <div
+                class="videoItem"
+                @click.stop="operateCurVideo(item,index)"
+                :class="{active:curVideoIndex===index}"
+                :style="machineStatusStyle2(1,showVideoPageSize)"
+              >
+                <VideoWall
+                  :videoInfo.sync="item"
+                  :key="index"
+                  v-if="item.streamUrl"
+                  ref="videoCtrl"
+                  @fullScreenChange="getVideoInfo"
+                ></VideoWall>
+              </div>
             </div>
           </div>
           <!-- 下面按钮部分 -->
@@ -254,7 +272,7 @@
         v-for="(item,index) in curVideosArray"
         :key="index"
       >
-        <div :style="machineStatusStyle2(showVideoPageSize)">
+        <div :style="machineStatusStyle2(2,showVideoPageSize)">
           <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
         </div>
       </div>
@@ -996,56 +1014,34 @@ export default {
       this.activeFirstTree()
       console.log(cpage, this.curVideosArray.length)
     },
-    // 动态渲染9个空元素
-    machineStatusStyle (n) {
-      if (n === 9) {
-        return {
-          width: '31%',
-          height: '31%'
-          // marginLeft: '10px'
-        }
-      } else if (n === 4) {
-        return {
-          width: '48%',
-          height: '48%'
-          // marginLeft: '10px'
-        }
-      } else if (n === 1) {
-        return {
-          width: '99%',
-          height: '99%'
-          // marginLeft: '10px'
-        }
-      }
-    },
     // 动态渲染9个容器
     machineStatusStyle1 (n) {
       if (n === 9) {
         return {
           width: '33.33%',
           height: '33.33%'
-          // marginLeft: '10px'
         }
       } else if (n === 4) {
         return {
           width: '50%',
           height: '50%'
-          // marginLeft: '10px'
         }
       } else if (n === 1) {
         return {
           width: '100%',
           height: '100%'
-          // marginLeft: '10px'
         }
       }
     },
-    // 动态渲染9个空元素
-    machineStatusStyle2 (n) {
-      const dom = document.querySelector('.fullContainer')
+    machineStatusStyle2 (type, n) {
+      let dom = ''
+      if (type === 1) {
+        dom = document.querySelector('.videoList')
+      } else {
+        dom = document.querySelector('.fullContainer')
+      }
       if (!dom) return
-      let h = dom.clientHeight || document.body.clientHeight
-      console.log(h)
+      let h = type === 1 ? dom.clientHeight : document.body.clientHeight
       const marginBottom = 10
       if (n === 9) {
         h = (h - 3 * marginBottom) / 3
@@ -1610,7 +1606,7 @@ export default {
   }
   .video {
     box-sizing: border-box;
-    padding: 21px 0px 21px 21px;
+    padding: 21px 13px 0px 23px;
     // position: relative;
     .box {
       display: flex;
@@ -1651,15 +1647,17 @@ export default {
       display: flex;
       flex-wrap: wrap;
       height: 710px;
-      > div {
+      > div  {
+        div{
         box-sizing: border-box;
-        height: 223px;
+        // height: 223px;
 
-        margin-right: 19px;
-        margin-bottom: 20px;
+        margin-right: 10px;
+        margin-bottom: 10px;
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
         cursor: pointer;
+        }
       }
       > div.active {
         border: 2px solid rgba(255, 244, 100, 1);
