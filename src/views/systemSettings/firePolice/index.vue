@@ -225,6 +225,7 @@ export default {
       this.$axios.post(fireApi.confirmFireAlarmInfo + '/' + this.fireDetailInfo.id + '/' + isTrue).then(res => {
         if (res.data.code === 0) {
           this.showFireDetail = false
+          this.getFirePoliceList('', '')
         } else {
           Notification({
             title: '提示',
@@ -280,6 +281,9 @@ export default {
     .datePickerStyle {
       background-color: transparent;
       border-color: #39a4dd;
+      // /deep/.el-date-range-picker__content.is-left {
+      //   background-color: red;
+      // }
     }
     /deep/.el-date-editor .el-range-input {
       color: white;
