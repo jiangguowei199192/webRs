@@ -266,6 +266,7 @@ import fireMixin from '../../utils/fireMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
+import { throttle } from '../../utils/public.js'
 
 export default {
   name: 'videoContainer',
@@ -1054,11 +1055,12 @@ export default {
       )
     },
     // 点击抓取，显示抓拍图片
-    showImg () {
+    showImg: throttle(function () {
       if (Object.keys(this.curSelectedVideo).length === 0) {
         this.$notify.warning({ title: '警告', message: '请先选择设备！' })
         return
       }
+
       // 显示抓取的图片
       const params = {
         deviceCode: this.curSelectedVideo.deviceCode,
@@ -1070,16 +1072,41 @@ export default {
           this.showCutImg = true
           this.imgId = res.data.data.id
           this.cutImgUrl = res.data.data.filePath
-          this.$notify.success({ title: '成功', message: '抓取成功！' })
+          this.$notify.success({ title: '成功', message: '抓取成功！', duration: 800 })
         }
       })
       setTimeout(() => {
         this.showCutImg = false
-      }, 5000)
-      // this.$nextTick(() => {
-      //   this.moveElement('pic', 140, -215)
-      // })
-    },
+      }, 6000)
+    }, 1000),
+
+    // showImg () {
+    //   if (Object.keys(this.curSelectedVideo).length === 0) {
+    //     this.$notify.warning({ title: '警告', message: '请先选择设备！' })
+    //     return
+    //   }
+
+    //   // 显示抓取的图片
+    //   const params = {
+    //     deviceCode: this.curSelectedVideo.deviceCode,
+    //     channleId: this.curSelectedVideo.id
+    //   }
+    //   this.$axios.post(api.deviceSnap, params).then(res => {
+    //     if (res && res.data && res.data.code === 0) {
+    //       // this.photoClicked = true
+    //       this.showCutImg = true
+    //       this.imgId = res.data.data.id
+    //       this.cutImgUrl = res.data.data.filePath
+    //       this.$notify.success({ title: '成功', message: '抓取成功！' })
+    //     }
+    //   })
+    //   setTimeout(() => {
+    //     this.showCutImg = false
+    //   }, 5000)
+    //   // this.$nextTick(() => {
+    //   //   this.moveElement('pic', 140, -215)
+    //   // })
+    // },
     // 点击确定按钮
     confirm () {
       // 防止此时设备下线
@@ -1154,7 +1181,6 @@ export default {
     this.init()
     const me = this
     window.onresize = function () {
-      debugger
       if (me.dialogVisible) {
         if (me.checkFull()) {
           // 要执行的动作
@@ -1394,11 +1420,11 @@ export default {
             // left: -5px;
             margin-right: 10px;
             background: url(../../assets/images/device/5.png) no-repeat;
-            visibility: hidden;
+            cursor:text;
           }
-          div:nth-child(5):hover {
-            background: url(../../assets/images/device/5_selected.png) no-repeat;
-          }
+          // div:nth-child(5):hover {
+          //   background: url(../../assets/images/device/5_selected.png) no-repeat;
+          // }
           div:nth-child(6) {
             background: url(../../assets/images/device/6.png) no-repeat;
           }
