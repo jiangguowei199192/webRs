@@ -152,8 +152,12 @@ export default {
           for (let index = 0; index < this.firePoliceList.length; index++) {
             const element = this.firePoliceList[index]
             // 时间戳转时间
-            element.alarmTime = this.dateFormat(element.alarmTime)
-            element.updateTime = this.dateFormat(element.updateTime)
+            if (element.alarmTime) {
+              element.alarmTime = this.dateFormat(element.alarmTime)
+            }
+            if (element.updateTime) {
+              element.updateTime = this.dateFormat(element.updateTime)
+            }
             // 状态码转中文
             if (element.alarmStatus === 'confirmed') {
               element.alarmStatus = '确认'
