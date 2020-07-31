@@ -425,4 +425,25 @@ export default {
       margin-top: 10px;
     }
   }
+
+  /* --- 改变滚动条样式 --- */
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  /* --- 滚动条里面的滚动块 --- */
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgb(0, 180, 255);
+    background: rgba(0, 180, 255, 0.2);
+  }
+  /* --- 滚动条里面轨道 --- */
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    // border-radius: 10px;
+    background: #096090;
+  }
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-corner {
+    background: #096090;
+  }
 </style>

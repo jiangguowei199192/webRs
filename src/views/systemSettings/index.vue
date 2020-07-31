@@ -340,7 +340,7 @@ export default {
   .rightBoxBase {
     height: 879px;
     margin: 10px 10px 10px 10px;
-    overflow-y: scroll;
+    // overflow-y: scroll; // 第一版不开放
   }
 }
 .logoutBtn {
