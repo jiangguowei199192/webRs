@@ -156,7 +156,6 @@ export default {
       if (player.isFullscreen()) {
         player.exitFullscreen()
       } else { player.requestFullscreen() }
-      debugger
       this.$emit('screenchange', this.videoInfo)
     },
 
