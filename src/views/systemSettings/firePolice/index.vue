@@ -24,13 +24,28 @@
                 <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="报警时间" prop="alarmTime"></el-table-column>
-            <el-table-column align="center" label="报警地点" prop="alarmAddress"></el-table-column>
+            <el-table-column align="center" label="报警时间" prop="alarmTime" width="180px"></el-table-column>
+            <el-table-column :show-overflow-tooltip="true" align="center" label="报警地点" prop="alarmAddress" width="200px" title="alarmAddress">
+              <template slot-scope="scope">
+                <div style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{ scope.row.alarmAddress }}</div>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="类型" prop="alarmTypeName"></el-table-column>
-            <!-- <el-table-column align="center" label="报警图片" prop="image"></el-table-column> -->
-            <el-table-column align="center" label="报警设备" prop="deviceName"></el-table-column>
+            <el-table-column align="center" label="报警图片" prop="alarmPicList" width="100px">
+              <template slot-scope="scope">
+                <el-image fit="fill" :src="scope.row.alarmPicList[0].picPath" style="width: 30px; height: 30px; margin-top: 7px;">
+                  <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
+                  <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
+                </el-image>
+                <el-image fit="fill" :src="scope.row.alarmPicList[1].picPath" style="width: 30px; height: 30px; margin-left: 10px;">
+                  <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
+                  <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
+                </el-image>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="报警设备" prop="deviceName" width="200px"></el-table-column>
             <el-table-column align="center" label="状态" prop="alarmStatus"></el-table-column>
-            <el-table-column align="center" label="确认时间" prop="updateTime"></el-table-column>
+            <el-table-column align="center" label="确认时间" prop="updateTime" width="180px"></el-table-column>
           </el-table>
         </div>
       </div>
@@ -58,8 +73,14 @@
         <div>
           <div class="textDiv4">报警图片</div>
           <div class="textDiv5">
-            <el-image fit="fill" :lazy="true" :src="fireDetailInfo.image1" style="width: 196px; height: 151px; margin-top: 3px; margin-left: 5px;"></el-image>
-            <el-image fit="fill" :lazy="true" :src="fireDetailInfo.image2" style="width: 196px; height: 151px; margin-top: 3px; margin-left: 5px;"></el-image>
+            <el-image fit="fill" :src="fireDetailInfo.image1" style="width: 196px; height: 151px; margin-top: 3px; margin-left: 5px;">
+              <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
+              <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
+            </el-image>
+            <el-image fit="fill" :src="fireDetailInfo.image2" style="width: 196px; height: 151px; margin-top: 3px; margin-left: 5px;">
+              <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
+              <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
+            </el-image>
           </div>
         </div>
         <div>
@@ -128,33 +149,56 @@ export default {
       this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: param }).then(res => {
         if (res.data.code === 0) {
           this.firePoliceList = res.data.data
-          var newDate = new Date()
           for (let index = 0; index < this.firePoliceList.length; index++) {
             const element = this.firePoliceList[index]
             // 时间戳转时间
-            newDate.setTime(element.alarmTime)
-            element.alarmTime = newDate.toLocaleString()
-            newDate.setTime(element.updateTime)
-            element.updateTime = newDate.toLocaleString()
+            element.alarmTime = this.dateFormat(element.alarmTime)
+            element.updateTime = this.dateFormat(element.updateTime)
+            // 状态码转中文
+            if (element.alarmStatus === 'confirmed') {
+              element.alarmStatus = '确认'
+            } else if (element.alarmStatus === 'mistaken') {
+              element.alarmStatus = '误报'
+            }
+            // 图片URL添加baseURL
+            for (let picIndex = 0; picIndex < element.alarmPicList.length; picIndex++) {
+              const pic = element.alarmPicList[picIndex]
+              pic.picPath = globalApi.picUrl + pic.picPath
+            }
           }
         }
       })
+    },
+    Appendzero (obj) {
+      if (obj < 10) {
+        return '0' + obj
+      } else {
+        return obj
+      }
+    },
+    dateFormat (timestamp) {
+      var date = new Date(timestamp)
+      var M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+      var dateFormat = date.getFullYear() + '/' + M + '/' + this.Appendzero(date.getDate()) + ' ' + this.Appendzero(date.getHours()) + ':' + this.Appendzero(date.getMinutes()) + ':' + this.Appendzero(date.getSeconds())
+      return dateFormat
     },
     // 点击表格行
     ClickTableRow (row) {
       this.radio = this.firePoliceList.indexOf(row)
 
       var detail = this.firePoliceList[this.radio]
-      var alarmPicList = detail.alarmPicList
+      // var alarmPicList = detail.alarmPicList
       // 处理报警图片的地址
-      if (alarmPicList) {
-        if (alarmPicList.length >= 1) {
-          this.fireDetailInfo.image1 = globalApi.picUrl + alarmPicList[0].picPath
-        }
-        if (alarmPicList.length >= 2) {
-          this.fireDetailInfo.image2 = globalApi.picUrl + alarmPicList[1].picPath
-        }
-      }
+      // if (alarmPicList) {
+      //   if (alarmPicList.length >= 1) {
+      //     this.fireDetailInfo.image1 = alarmPicList[0].picPath
+      //   }
+      //   if (alarmPicList.length >= 2) {
+      //     this.fireDetailInfo.image2 = alarmPicList[1].picPath
+      //   }
+      // }
+      this.fireDetailInfo.image1 = detail.alarmPicList[0].picPath
+      this.fireDetailInfo.image2 = detail.alarmPicList[1].picPath
       this.fireDetailInfo.alarmTime = detail.alarmTime
       this.fireDetailInfo.alarmTypeName = detail.alarmTypeName
       this.fireDetailInfo.deviceName = detail.deviceName
@@ -194,8 +238,6 @@ export default {
         var beginTime = beginDate.getTime()
         var endDate = new Date(this.date1[1])
         var endTime = endDate.getTime()
-        console.log(beginTime)
-        console.log(endTime)
         this.getFirePoliceList(beginTime, endTime)
       } else {
         this.getFirePoliceList('', '')
@@ -264,7 +306,7 @@ export default {
     }
     /* 表格每行高度*/
     /deep/.el-table__body td {
-      height: 38px;
+      height: 48px;
       padding: 0;
     }
     /deep/.el-table__body tr {
