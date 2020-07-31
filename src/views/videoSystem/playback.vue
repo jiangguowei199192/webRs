@@ -502,7 +502,9 @@ export default {
     setCurrentPlayerObject (player) {
       if (player.id !== this.curPlayer.id) {
         if (this.curPlayer) {
+          // 需要记录时间轴上的时间，和播放的时间
           this.curPlayer.curTime = this.curTime
+          if (this.curPlayer.isPlay) { this.curPlayer.playTime = this.curTime }
           // 取消订阅进度更新事件
           var ctrl = this.findVideoControl()
           if (ctrl !== undefined) {
@@ -941,7 +943,7 @@ export default {
       const dom = document.querySelector('.fullContainer')
       if (!dom) return
       let h = dom.clientHeight || document.body.clientHeight
-      console.log(h)
+      // console.log(h)
       const marginBottom = 10
       if (n === 9) {
         h = (h - 3 * marginBottom) / 3
@@ -1011,10 +1013,8 @@ export default {
       this.totalVideosArray.splice(i, 1, this.curPlayer)
       const me = this
       setTimeout(() => {
-        me.curVideosArray = me.totalVideosArray.slice(
-          (me.currentPage - 1) * me.showVideoPageSize,
-          me.currentPage * me.showVideoPageSize
-        )
+        // 解决用v-for数据更新后视图并没更新解决
+        me.curVideosArray.splice(i, 1, me.curPlayer)
         me.curVideoIndex = 1000
         if (jumpInfo.jump === true) {
           this.$nextTick(() => {
@@ -1070,10 +1070,8 @@ export default {
           this.curVideoIndex = 1000
         }
       }
-      this.curVideosArray = this.totalVideosArray.slice(
-        (this.currentPage - 1) * this.showVideoPageSize,
-        this.currentPage * this.showVideoPageSize
-      )
+      // 解决用v-for数据更新后视图并没更新解决
+      this.curVideosArray.splice(index, 1, '')
       this.curPlayer = ''
     },
 
@@ -1082,16 +1080,24 @@ export default {
      */
     playRecord () {
       // 如果当前有播放对象
+      let r = ''
       if (this.curPlayer) {
         if (this.curPlayer.isPlay === false) {
           var ctrl = this.findVideoControl()
           if (ctrl !== undefined) {
             ctrl.play()
             this.curPlayer.isPlay = true
+            // 判断是否需要跳转播放
+            if (this.curPlayer.playTime !== this.curPlayer.curTime) {
+              r = this.findRecordByTime(this.curPlayer.records)
+              if (r !== undefined) {
+                ctrl.jumpRecord(r.record.url, r.jump, r.jumpSeconds)
+              }
+            }
           }
         }
       } else {
-        var r = this.findRecordByTime(this.records)
+        r = this.findRecordByTime(this.records)
         if (r === undefined) return
         var seconds = r.record.start * 60
         if (r.jump === true) seconds += r.jumpSeconds
@@ -1105,16 +1111,12 @@ export default {
             records: this.records,
             timeupdate: true,
             isPlay: true,
-            curTime: this.curTime,
+            curTime: this.curTime, // 时间轴上的时间
+            playTime: this.curTime, // 播放的时间
             parentLabel: this.curNode.parentLabel
           },
           r
         )
-        // if (r.jump === true) {
-        //   this.$nextTick(() => {
-        //     this.jumpToSeconds(r.jumpSeconds)
-        //   })
-        // }
       }
 
       if (this.isOnline) {
@@ -1130,6 +1132,9 @@ export default {
       if (ctrl !== undefined) {
         ctrl.pause()
         this.curPlayer.isPlay = false
+        // 记录当前时间轴上时间
+        this.curPlayer.curTime = this.curTime
+        this.curPlayer.playTime = this.curTime
       }
     },
 
@@ -1228,6 +1233,8 @@ export default {
      * 跳转播放
      */
     jump () {
+      if (!this.curPlayer) return
+
       if (this.curPlayer.isPlay === true) {
         var r = this.findRecordByTime(this.curPlayer.records)
         if (r !== undefined) {
@@ -1236,6 +1243,8 @@ export default {
             ctrl.jumpRecord(r.record.url, r.jump, r.jumpSeconds)
           }
         }
+      } else {
+        this.curPlayer.curTime = this.curTime
       }
     },
 
