@@ -284,7 +284,8 @@ export default {
       play: require('../../assets/images/play-disable.png'),
       pause: require('../../assets/images/pause.png'),
       records: [], // timeBar上的回放记录
-      snapList: [] // 抓图列表
+      snapList: [], // 抓图列表
+      curCalendar: '' // 当前日历时间 YYYY-MM-DD
     }
   },
 
@@ -443,6 +444,7 @@ export default {
       this.currentPage = 1 // 默认第1页
       this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
       this.curVideoIndex = 1000
+      this.curPlayer = ''
       this.init()
     },
 
@@ -529,8 +531,14 @@ export default {
         }
       }
       // 查询回放记录
-      this.dateChange(this.$refs.calendarCtrl.getYYMM())
-      this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
+      // 设置日历
+      if (this.curPlayer.calendar && this.curPlayer.calendar !== this.curCalendar) {
+        // setDate函数，若日历日期改变，会触发查询回放记录
+        this.$refs.calendarCtrl.setDate(this.curPlayer.calendar)
+      } else {
+        this.dateChange(this.$refs.calendarCtrl.getYYMM())
+        this.searchRecord(this.$refs.calendarCtrl.getYYMMDD())
+      }
     },
 
     /**
@@ -610,7 +618,8 @@ export default {
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
-      if (this.curVideoIndex === index) return
+      if (this.curVideoIndex === index && !curVideo && curVideo.id === this.curPlayer.id) return
+
       this.curVideoIndex = index
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[index]) {
@@ -705,6 +714,7 @@ export default {
      * @param {String} date 日期信息 YYMMDD
      */
     searchRecord (date) {
+      this.curCalendar = date
       if (!this.curNode) return
       this.records = []
       this.playbarEnable(false)
@@ -1113,6 +1123,7 @@ export default {
             isPlay: true,
             curTime: this.curTime, // 时间轴上的时间
             playTime: this.curTime, // 播放的时间
+            calendar: this.curCalendar, // 回放日期
             parentLabel: this.curNode.parentLabel
           },
           r

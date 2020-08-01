@@ -167,6 +167,14 @@ export default {
     },
 
     /**
+     * 设置日期
+     * @param {String} data //YYYY-MM-DD
+     */
+    setDate (date) {
+      this.showDate = new Date(date + ' 08:00:00')
+    },
+
+    /**
      * 获取当前显示的年
      */
     getYear () {
@@ -174,6 +182,7 @@ export default {
       year = year < 2000 ? year + 1900 : year
       year = year.toString().substr(2, 2)
       var month = this.showDate.getMonth() + 1
+      var day = this.showDate.getDate()
 
       if (year !== this.dateInfo.curYear || month !== this.dateInfo.curMonth) {
         this.$emit(
@@ -182,9 +191,11 @@ export default {
           this.getYYMMDD()
         )
       }
-      this.$emit('searchRecordEvent', this.getYYMMDD())
+
+      if (day !== this.dateInfo.curDay) { this.$emit('searchRecordEvent', this.getYYMMDD()) }
       this.dateInfo.curYear = year
       this.dateInfo.curMonth = month
+      this.dateInfo.curDay = day
     },
 
     /**
