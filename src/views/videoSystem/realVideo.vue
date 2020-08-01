@@ -158,7 +158,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev,pager, next"
+                  layout="prev,next"
                   :total="totalVideosArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
@@ -265,13 +265,13 @@
       id="d1"
       class="fullScreenDialog"
     >-->
-    <div class="fullContainer" v-show="dialogVisible" id="d1">
+    <div class="fullContainer" v-show="dialogVisible" id="d1" ref="fullContainer">
       <div
         :style="machineStatusStyle1(showVideoPageSize)"
         v-for="(item,index) in curVideosArray"
         :key="index"
       >
-        <div :style="machineStatusStyle2(2,showVideoPageSize)">
+        <div :style="machineStatusStyle3(showVideoPageSize)" @click="fulllIndex=index"  :class="{active:fulllIndex==index}" >
           <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"   @screenchange="getVideoInfo"></VideoWall>
         </div>
       </div>
@@ -354,7 +354,8 @@ export default {
       curSelectedVideo: {}, // 当前选中
       operateIconplay: true, // 云台默认开始的按钮
       bRealTimeFireWarning: true, // 实时更新火情警报个数
-      imgId: '' // 保存抓取图片id
+      imgId: '', // 保存抓取图片id
+      fulllIndex: 1000 // 全屏选中的index
     }
   },
   mixins: [videoMixin, fireMixin],
@@ -1036,11 +1037,35 @@ export default {
       let dom = ''
       if (type === 1) {
         dom = document.querySelector('.videoList')
-      } else {
+      } /* else {
         dom = document.querySelector('.fullContainer')
-      }
+      } */
       if (!dom) return
-      let h = type === 1 ? dom.clientHeight : document.body.clientHeight
+      console.log('视频区域高度' + dom.clientHeight)
+      let h = type === 1 ? dom.clientHeight : this.clientHeight
+      const marginBottom = 10
+      if (n === 9) {
+        h = (h - 3 * marginBottom) / 3
+        return {
+          height: h + 'px'
+        }
+      } else if (n === 4) {
+        h = (h - 2 * marginBottom) / 2
+        return {
+          height: h + 'px'
+        }
+      } else if (n === 1) {
+        h = h - 1 * marginBottom
+        return {
+          height: h + 'px'
+        }
+      }
+    },
+    machineStatusStyle3 (n) {
+      const dom = document.querySelector('.fullContainer')
+      if (!dom) return
+      let h = this.clientHeight
+      console.log('视频区域高度' + h)
       const marginBottom = 10
       if (n === 9) {
         h = (h - 3 * marginBottom) / 3
@@ -1070,7 +1095,6 @@ export default {
     },
     // 双击视频时给显示操作按钮
     getVideoInfo (curScreenInfo) {
-      debugger
       this.curScreenInfo = curScreenInfo
       console.log(curScreenInfo.id)
       setTimeout(() => {
@@ -1266,16 +1290,19 @@ export default {
       }
     }
     // 监听键盘按键事件
-    const self = this
+
     this.$nextTick(function () {
       document.addEventListener('keyup', function (e) {
         if (e.keyCode === 27) {
-          self.dialogVisible = false
+          me.dialogVisible = false
+          me.fulllIndex = 1000
         }
       })
     })
   },
-  mounted () {}
+  mounted () {
+    this.clientHeight = document.body.clientHeight
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -1685,7 +1712,7 @@ export default {
           cursor: pointer;
         }
         img:nth-child(n + 4) {
-          margin-left: 22px;
+          // margin-left: 22px;
           margin-right: 0;
         }
         img:nth-child(4) {
@@ -1693,13 +1720,14 @@ export default {
         }
       }
       .rightTool {
-        margin-right: 90px;
+        margin-right: 70px;
         .pagination {
           display: inline-block;
           position: relative;
-          top: -10px;
-          margin-right: 20px;
+          top: -12px;
+          margin-right: 5px;
           /deep/.el-pagination {
+            padding:0;
             button {
               background-color: transparent !important;
               i {
@@ -1711,6 +1739,9 @@ export default {
                 line-height: 20px;
                 color: #1c638b;
               }
+            }
+            button.btn-next,button.btn-prev{
+              padding:0;
             }
             button[disabled] {
               i {
@@ -1740,8 +1771,8 @@ export default {
   .fullContainer {
     position: fixed;
     top: 0;
-    // right: 0;
-    left: 0;
+    right: 0;
+    // left: 0;
     // bottom: 0;
     height: 100%;
     width: 100%;
@@ -1754,11 +1785,15 @@ export default {
     background: url(../../assets/images/bg.png) no-repeat;
     > div {
       div {
+        box-sizing: border-box;
         cursor: pointer;
         margin-right: 10px;
-        // margin-bottom: 20px;
+        margin-bottom: 10px;
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
+      }
+      div.active{
+        border:2px solid  #fff464
       }
     }
   }
