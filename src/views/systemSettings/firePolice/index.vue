@@ -256,6 +256,47 @@ export default {
 }
 </script>
 
+<style lang="scss">
+  .el-picker-panel {
+    // background: #3688b1;
+    // color: white;
+    // border: none;
+    // border-color: #39a4dd;
+    width: 350px;
+    height: 230px;
+  }
+  // .el-date-table td.in-range div,
+  // .el-date-table td.in-range div:hover,
+  // .el-date-table.is-week-mode .el-date-table__row.current div,
+  // .el-date-table.is-week-mode .el-date-table__row:hover div {
+  //   background-color: transparent;
+  // }
+  // .el-popper[x-placement^=bottom] .popper__arrow::after {
+  //   border-bottom-color: #3688b1;
+  // }
+  .el-date-range-picker__content {
+    width: 175px;
+  }
+  .el-date-range-picker__header {
+    height: 15px;
+    margin: 0;
+  }
+  .el-date-range-picker__header div {
+    font-size: 10px;
+  }
+  .el-date-range-picker__content .el-date-range-picker__header div {
+    margin: 0;
+  }
+  .el-date-table td,
+  .el-date-table td div {
+    height: 15px;
+  }
+  .el-date-table td span {
+    width: 20px;
+    height: 20px;
+  }
+</style>
+
 <style lang="scss" scoped>
   .back {
     width: 170px;
@@ -285,9 +326,6 @@ export default {
     .datePickerStyle {
       background-color: transparent;
       border-color: #39a4dd;
-      // /deep/.el-date-range-picker__content.is-left {
-      //   background-color: red;
-      // }
     }
     /deep/.el-date-editor .el-range-input {
       color: white;
@@ -318,8 +356,7 @@ export default {
     }
     /* 表格每行高度*/
     /deep/.el-table__body td {
-      height: 48px;
-      // height: 100px;
+      height: 38px;
       padding: 0;
     }
     /deep/.el-table__body tr {
