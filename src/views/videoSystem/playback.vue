@@ -249,7 +249,7 @@ import TimeBar from './components/timeBar'
 import Tree from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import VideoWall from './components/videoWall'
-import { formatSeconds } from '@/utils/date'
+import { timeFormat } from '@/utils/date'
 import globalApi from '@/utils/globalApi'
 export default {
   name: 'playbackContainer',
@@ -397,20 +397,29 @@ export default {
     },
 
     /**
+     * 格式化文件时间
+     */
+    formatFileDate (date, seconds) {
+      var d = new Date(date + ' 00:00:00')
+      var timestamp = d.getTime()
+      d.setTime(timestamp + 1000 * seconds)
+      return timeFormat(d.getTime())
+    },
+
+    /**
      * 格式化文件开始时间
      */
     formatFileStart (row, column) {
-      const start = row.date + ' ' + formatSeconds(row.start * 60)
-      return start
+      var seconds = row.start * 60
+      return this.formatFileDate(row.date, seconds)
     },
 
     /**
      * 格式化文件结束时间
      */
     formatFileEnd (row, column) {
-      const end =
-        row.date + ' ' + formatSeconds(row.start * 60 + row.duration * 60)
-      return end
+      var seconds = row.start * 60 + row.duration * 60
+      return this.formatFileDate(row.date, seconds)
     },
 
     init () {
