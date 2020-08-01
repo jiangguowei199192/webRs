@@ -100,10 +100,31 @@ const videoMixin = {
           Reflect.set(item, 'onlineStatus', info.onlineStatus)
         })
       }
+      if (!info.children) Reflect.set(info, 'children', [])
+
       // 设备已存在
       if (device !== undefined) {
-        var index = this.onlineArray.indexOf(device)
-        if (isOnline) { this.onlineArray[index] = info } else this.onlineArray.splice(index, 1)
+        if (info.children && info.children.length > 0) {
+          info.children.forEach(item => {
+            var stream = device.children.find(c => c.id === item.id)
+            if (stream !== undefined) {
+              // 通道存在
+              var i = device.children.indexOf(stream)
+              // 通道上线
+              if (isOnline) { device.children.splice(i, 1, item) } else {
+                device.children.splice(i, 1)
+                // 如果设备下通道都不存在，移除该设备
+                if (device.children.length === 0) {
+                  var j = this.onlineArray.indexOf(device)
+                  this.onlineArray.splice(j, 1)
+                }
+              }
+            } else if (isOnline) {
+              // 通道不存在，新通道上线
+              device.children.push(item)
+            }
+          })
+        }
       } else if (isOnline) {
         // 设备不存在，新设备上线
         this.onlineArray.push(info)
