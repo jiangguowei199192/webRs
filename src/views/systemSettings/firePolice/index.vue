@@ -100,7 +100,7 @@
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" v-show="fireDetailInfo.showConfirm">
         <el-button type="primary" @click="confirmFireDetail('confirmed')" class="trueBtn">确 认</el-button>
         <el-button @click="confirmFireDetail('mistaken')" class="falseBtn">误 报</el-button>
       </span>
@@ -132,7 +132,8 @@ export default {
         alarmStatus: '',
         updateTime: 0,
         image1: '',
-        image2: ''
+        image2: '',
+        showConfirm: true
       }
     }
   },
@@ -210,6 +211,9 @@ export default {
       this.fireDetailInfo.alarmStatus = detail.alarmStatus
       this.fireDetailInfo.updateTime = detail.updateTime
       this.fireDetailInfo.id = detail.id
+      if (detail.alarmStatus === '确认' || detail.alarmStatus === '误报') {
+        this.fireDetailInfo.showConfirm = false
+      }
       this.showFireDetail = true
 
       const p = this
