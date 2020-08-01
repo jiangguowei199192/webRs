@@ -156,7 +156,7 @@
         v-for="(item,index) in curVideosArray"
         :key="index"
       >
-        <div :style="machineStatusStyle3(showVideoPageSize)">
+        <div :style="machineStatusStyle3(showVideoPageSize)" :class="{active:fulllIndex==index}" @click="fulllIndex=index">
           <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
         </div>
       </div>
@@ -285,7 +285,8 @@ export default {
       pause: require('../../assets/images/pause.png'),
       records: [], // timeBar上的回放记录
       snapList: [], // 抓图列表
-      curCalendar: '' // 当前日历时间 YYYY-MM-DD
+      curCalendar: '', // 当前日历时间 YYYY-MM-DD
+      fulllIndex: 1000 // 全屏选中的index
     }
   },
 
@@ -309,9 +310,14 @@ export default {
       document.addEventListener('keyup', function (e) {
         if (e.keyCode === 27) {
           me.dialogVisible = false
+          me.fulllIndex = 1000
         }
       })
     })
+  },
+
+  mounted () {
+    this.clientHeight = document.body.clientHeight
   },
 
   methods: {
@@ -952,8 +958,8 @@ export default {
     machineStatusStyle3 (n) {
       const dom = document.querySelector('.fullContainer')
       if (!dom) return
-      let h = dom.clientHeight || document.body.clientHeight
-      // console.log(h)
+      let h = this.clientHeight
+      // console.log('视频区域高度' + h)
       const marginBottom = 10
       if (n === 9) {
         h = (h - 3 * marginBottom) / 3
@@ -1554,6 +1560,9 @@ export default {
       background: url(../../assets/images/video.png) no-repeat center center;
       background-color: #00497c;
     }
+     div.active{
+        border:2px solid  #fff464
+      }
   }
 }
 
