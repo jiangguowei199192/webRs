@@ -1040,7 +1040,6 @@ export default {
         dom = document.querySelector('.fullContainer')
       } */
       if (!dom) return
-      console.log('视频区域高度' + dom.clientHeight)
       let h = type === 1 ? dom.clientHeight : this.clientHeight
       const marginBottom = 10
       if (n === 9) {
@@ -1064,7 +1063,6 @@ export default {
       const dom = document.querySelector('.fullContainer')
       if (!dom) return
       let h = this.clientHeight
-      console.log('视频区域高度' + h)
       const marginBottom = 10
       if (n === 9) {
         h = (h - 3 * marginBottom) / 3
@@ -1181,34 +1179,6 @@ export default {
         this.showCutImg = false
       }, 6000)
     }, 1000),
-
-    // showImg () {
-    //   if (Object.keys(this.curSelectedVideo).length === 0) {
-    //     this.$notify.warning({ title: '警告', message: '请先选择设备！' })
-    //     return
-    //   }
-
-    //   // 显示抓取的图片
-    //   const params = {
-    //     deviceCode: this.curSelectedVideo.deviceCode,
-    //     channleId: this.curSelectedVideo.id
-    //   }
-    //   this.$axios.post(api.deviceSnap, params).then(res => {
-    //     if (res && res.data && res.data.code === 0) {
-    //       // this.photoClicked = true
-    //       this.showCutImg = true
-    //       this.imgId = res.data.data.id
-    //       this.cutImgUrl = res.data.data.filePath
-    //       this.$notify.success({ title: '成功', message: '抓取成功！' })
-    //     }
-    //   })
-    //   setTimeout(() => {
-    //     this.showCutImg = false
-    //   }, 5000)
-    //   // this.$nextTick(() => {
-    //   //   this.moveElement('pic', 140, -215)
-    //   // })
-    // },
     // 点击确定按钮
     confirm () {
       // 防止此时设备下线
@@ -1261,6 +1231,7 @@ export default {
         elem.style.top = ypos + 'px'
       }, 5)
     },
+    // 全屏显示视频页面
     openDialog () {
       this.dialogVisible = true
       setTimeout(() => {
@@ -1284,85 +1255,25 @@ export default {
           if (me.checkFull()) {
           // 要执行的动作
             document.getElementById('d1').focus()
-            // this.totalVideosArray.forEach((item, index) => {
-            //   if (item) {
-            //     this.$set(this.totalVideosArray[index], 'isShowOperate', false)
-            //   }
-            // })
-            // this.curVideosArray.forEach((item, index) => {
-            //   if (item) {
-            //     this.$set(this.curVideosArray[index], 'isShowOperate', false)
-            //   }
-            // })
           }
         }
         if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
-          // this.$nextTick(() => {
           me.totalVideosArray.forEach((item, index) => {
-            // if (item.id) {
-            //   if (item.id === me.curScreenInfo.id) {
-            // me.totalVideosArray[index].isShowOperate = false
             if (item) {
               me.$set(me.totalVideosArray[index], 'isShowOperate', false)
             }
-            // }
-            // }
           })
           me.curVideosArray.forEach((item, index) => {
-            // if (item.id) {
-            //   if (item.id === me.curScreenInfo.id) {
-            // me.totalVideosArray[index].isShowOperate = false
             if (item) {
               me.$set(me.totalVideosArray[index], 'isShowOperate', false)
             }
-            //   }
-            // }
           })
-          // })
-
-          // me.totalVideosArray.forEach((item, index) => {
-          //   me.$set(me.totalVideosArray[index], 'isShowOperate', false)
-          // })
-          // me.curVideosArray.forEach((item, index) => {
-          //   me.$set(me.curVideosArray[index], 'isShowOperate', false)
-          // })
           if (me.curScreenInfo.id) {
             me.curScreenInfo = {}
           }
         }
       }
     )
-    // window.onresize = function () {
-    //   debugger
-    //   if (me.dialogVisible) {
-    //     if (me.checkFull()) {
-    //       // 要执行的动作
-    //       document.getElementById('d1').focus()
-    //       console.log(1111)
-    //     }
-    //   }
-    //   if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
-    //     me.totalVideosArray.forEach((item, index) => {
-    //       if (item.id === me.curScreenInfo.id) {
-    //         me.totalVideosArray[index].isShowOperate = false
-    //       }
-    //     })
-    //     me.curVideosArray.forEach((item, index) => {
-    //       if (item.id === me.curScreenInfo.id) {
-    //         me.totalVideosArray[index].isShowOperate = false
-    //       }
-    //     })
-    //     // me.totalVideosArray.forEach((item, index) => {
-    //     //   me.$set(me.totalVideosArray[index], 'isShowOperate', false)
-    //     // })
-    //     // me.curVideosArray.forEach((item, index) => {
-    //     //   me.$set(me.curVideosArray[index], 'isShowOperate', false)
-    //     // })
-    //     if (me.curScreenInfo.id) {
-    //       me.curScreenInfo = {}
-    //     }
-    //   }
-    // }
     // 监听键盘按键事件
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
@@ -1371,12 +1282,12 @@ export default {
         me.fulllIndex = 1000
         me.totalVideosArray.forEach((item, index) => {
           if (item) {
-            this.$set(this.totalVideosArray[index], 'isShowOperate', false)
+            me.$set(me.totalVideosArray[index], 'isShowOperate', false)
           }
         })
         me.curVideosArray.forEach((item, index) => {
           if (item) {
-            this.$set(this.curVideosArray[index], 'isShowOperate', false)
+            me.$set(me.curVideosArray[index], 'isShowOperate', false)
           }
         })
       }
