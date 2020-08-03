@@ -45,7 +45,10 @@
     </div>
     <el-dialog :visible.sync="picDlgVisible" width="803px" class="editDlg">
       <div class="picContainer2">
-        <div :style="{background: 'url('+ serverUrl + curSnap.filePath +') no-repeat'}" @click="showBigImage"></div>
+        <div
+          :style="{background: 'url('+ serverUrl + curSnap.filePath +') no-repeat'}"
+          @click="showBigImage"
+        ></div>
         <div>
           <span>说明:</span>
           <el-input v-model="describe" placeholder="请输入图片说明"></el-input>
@@ -192,7 +195,9 @@ export default {
         )
       }
 
-      if (day !== this.dateInfo.curDay) { this.$emit('searchRecordEvent', this.getYYMMDD()) }
+      if (day !== this.dateInfo.curDay) {
+        this.$emit('searchRecordEvent', this.getYYMMDD())
+      }
       this.dateInfo.curYear = year
       this.dateInfo.curMonth = month
       this.dateInfo.curDay = day
@@ -331,6 +336,7 @@ export default {
           width: 743px;
           height: 428px;
           background-size: 100% 100% !important;
+          cursor: pointer;
         }
 
         div:nth-child(2) {
@@ -404,6 +410,7 @@ export default {
     overflow-y: scroll;
 
     > div {
+      cursor: pointer;
       width: 190px;
       height: 107px;
       background-size: 100% 100% !important;
@@ -467,6 +474,7 @@ export default {
 .dialogImg {
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 
 /deep/.el-calendar {
