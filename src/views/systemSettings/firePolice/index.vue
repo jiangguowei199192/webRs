@@ -18,7 +18,7 @@
           </el-date-picker>
         </div>
         <div class="tableBox">
-          <el-table v-if="firePoliceList" @row-click="ClickTableRow" :data="firePoliceList" stripe empty-text="no data" tooltip-effect="light" height="600px">
+          <el-table v-if="firePoliceList" @row-click="ClickTableRow" :data="firePoliceList" stripe empty-text="no data" tooltip-effect="light">
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
                 <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
@@ -32,12 +32,12 @@
             </el-table-column>
             <el-table-column align="center" label="类型" prop="alarmTypeName"></el-table-column>
             <el-table-column align="center" label="报警图片" prop="alarmPicList" width="100px">
-              <template slot-scope="scope">
-                <el-image fit="fill" :src="scope.row.alarmPicList[0].picPath" style="width: 30px; height: 30px; margin-top: 7px;">
+              <template slot-scope="scope" v-if="firePoliceList.alarmPicList">
+                <el-image fit="fill" v-if="scope.row.alarmPicList[0]" :src="scope.row.alarmPicList[0].picPath" style="width: 30px; height: 30px; margin-top: 7px;">
                   <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
                   <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
                 </el-image>
-                <el-image fit="fill" :src="scope.row.alarmPicList[1].picPath" style="width: 30px; height: 30px; margin-left: 10px;">
+                <el-image fit="fill" v-if="scope.row.alarmPicList[1]" :src="scope.row.alarmPicList[1].picPath" style="width: 30px; height: 30px; margin-left: 10px;">
                   <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
                   <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
                 </el-image>
@@ -47,6 +47,14 @@
             <el-table-column align="center" label="状态" prop="alarmStatus"></el-table-column>
             <el-table-column align="center" label="确认时间" prop="updateTime" width="180px"></el-table-column>
           </el-table>
+          <el-pagination
+            class="tablePagination"
+            popper-class="pageSelect"
+            :total="pageData.total"
+            :page-size="pageData.pageSize"
+            :current-page.sync="pageData.currentPage"
+            layout="total, prev, pager, next, jumper"
+            @current-change="currentPageChange"></el-pagination>
         </div>
       </div>
     </div>
@@ -114,7 +122,7 @@ import { fireApi } from '@/api/videoSystem/fireAlarm.js'
 import globalApi from '@/utils/globalApi'
 export default {
   created () {
-    this.getFirePoliceList('', '')
+    this.getFirePoliceList()
   },
   data () {
     return {
@@ -122,6 +130,11 @@ export default {
       firePoliceList: [],
       date1: [],
       radio: -1,
+      pageData: {
+        total: 0, // 总条目数
+        pageSize: 13, // 每页显示条目个数
+        currentPage: 0 // 当前页
+      },
       showFireDetail: false,
       fireDetailInfo: {
         id: 0,
@@ -142,14 +155,17 @@ export default {
       this.$router.push({ path: '/systemSettings' })
     },
     // 获取火情列表
-    async getFirePoliceList (timeBegin, timeEnd) {
+    async getFirePoliceList (timeBegin, timeEnd, currentPage, alarmAddress) {
       var param = {
         timeBegin: timeBegin,
-        timeEnd: timeEnd
+        timeEnd: timeEnd,
+        currentPage: currentPage,
+        pageSize: this.pageData.pageSize,
+        alarmAddress: alarmAddress
       }
       this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: param }).then(res => {
-        if (res.data.code === 0) {
-          this.firePoliceList = res.data.data
+        if (res && res.data && res.data.code === 0) {
+          this.firePoliceList = res.data.data.data
           for (let index = 0; index < this.firePoliceList.length; index++) {
             const element = this.firePoliceList[index]
             // 时间戳转时间
@@ -166,11 +182,15 @@ export default {
               element.alarmStatus = '误报'
             }
             // 图片URL添加baseURL
-            for (let picIndex = 0; picIndex < element.alarmPicList.length; picIndex++) {
-              const pic = element.alarmPicList[picIndex]
-              pic.picPath = globalApi.picUrl + pic.picPath
+            if (element.alarmPicList) {
+              for (let picIndex = 0; picIndex < element.alarmPicList.length; picIndex++) {
+                const pic = element.alarmPicList[picIndex]
+                pic.picPath = globalApi.picUrl + pic.picPath
+              }
             }
           }
+
+          this.pageData.total = res.data.data.paginator.totalCount
         }
       })
     },
@@ -190,20 +210,11 @@ export default {
     // 点击表格行
     ClickTableRow (row) {
       this.radio = this.firePoliceList.indexOf(row)
-
       var detail = this.firePoliceList[this.radio]
-      // var alarmPicList = detail.alarmPicList
-      // 处理报警图片的地址
-      // if (alarmPicList) {
-      //   if (alarmPicList.length >= 1) {
-      //     this.fireDetailInfo.image1 = alarmPicList[0].picPath
-      //   }
-      //   if (alarmPicList.length >= 2) {
-      //     this.fireDetailInfo.image2 = alarmPicList[1].picPath
-      //   }
-      // }
-      this.fireDetailInfo.image1 = detail.alarmPicList[0].picPath
-      this.fireDetailInfo.image2 = detail.alarmPicList[1].picPath
+      if (detail.alarmPicList) {
+        this.fireDetailInfo.image1 = detail.alarmPicList[0].picPath
+        this.fireDetailInfo.image2 = detail.alarmPicList[1].picPath
+      }
       this.fireDetailInfo.alarmTime = detail.alarmTime
       this.fireDetailInfo.alarmTypeName = detail.alarmTypeName
       this.fireDetailInfo.deviceName = detail.deviceName
@@ -229,7 +240,7 @@ export default {
       this.$axios.post(fireApi.confirmFireAlarmInfo + '/' + this.fireDetailInfo.id + '/' + isTrue).then(res => {
         if (res.data.code === 0) {
           this.showFireDetail = false
-          this.getFirePoliceList('', '')
+          this.getFirePoliceList()
         } else {
           Notification({
             title: '提示',
@@ -249,8 +260,13 @@ export default {
         var endTime = endDate.getTime()
         this.getFirePoliceList(beginTime, endTime)
       } else {
-        this.getFirePoliceList('', '')
+        this.getFirePoliceList()
       }
+    },
+    // 分页页数改变
+    currentPageChange () {
+      console.log(this.pageData.currentPage)
+      this.getFirePoliceList('', '', this.pageData.currentPage, '')
     }
   }
 }
@@ -337,7 +353,10 @@ export default {
   }
   .tableBox {
     width: 760px;
+    height: 600px;
     margin: 12px auto 20px auto;
+    // background: red;
+    overflow: hidden;
   }
   .el-table::before {
     height: 0px;

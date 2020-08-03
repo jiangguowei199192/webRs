@@ -212,7 +212,7 @@ export default {
           orgName: this.extraInfoForm.orgName,
           jobDesc: this.extraInfoForm.jobDesc
         }
-        this.$axios.post(loginApi.updateUser, param).then(res => {
+        this.$axios.post(loginApi.updateUser, param, { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }).then(res => {
           if (res.data.code === 0) {
             this.showExtraInfo = false
             this.$emit('refreshData')
@@ -301,7 +301,7 @@ export default {
           mobile: this.myInfoForm.mobile,
           userNameVisible: visible
         }
-        this.$axios.post(loginApi.updateUser, param).then(res => {
+        this.$axios.post(loginApi.updateUser, param, { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }).then(res => {
           if (res.data.code === 0) {
             this.showMyInfo = false
             this.$emit('refreshData')

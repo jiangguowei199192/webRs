@@ -35,7 +35,8 @@ if (process.env.NODE_ENV === 'production') {
   picUrl = 'http://172.16.63.158:22222'
   mqttServer = '172.16.63.148'
   mqttPort = 2883
-  imageUrl = 'http://120.24.12.64'
+  // imageUrl = 'http://120.24.12.64'
+  imageUrl = 'http://172.16.63.148'
 }
 export default {
   baseUrl,
