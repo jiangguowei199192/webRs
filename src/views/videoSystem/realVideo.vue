@@ -1,5 +1,5 @@
 <template>
-  <div class="videoContainer">
+  <div class="videoContainer" onLoad="" onResize=""  >
     <VideoMain
       :showLeft="showLeft"
       :showRight="showRight"
@@ -729,7 +729,6 @@ export default {
                   'is-current'
                 )
             } else {
-              debugger
               this.onlineArray.forEach((list, index1) => {
                 list.children.forEach((child, index2) => {
                   if (child.id === this.curVideosArray[this.curVideoIndex].id) {
@@ -1096,7 +1095,7 @@ export default {
     // 双击视频时给显示操作按钮
     getVideoInfo (curScreenInfo) {
       this.curScreenInfo = curScreenInfo
-      console.log(curScreenInfo.id)
+      console.log('进来了' + curScreenInfo.id)
       setTimeout(() => {
         if (this.checkFull() && !curScreenInfo.isShowOperate) {
           this.totalVideosArray.forEach((item, index) => {
@@ -1109,8 +1108,19 @@ export default {
               this.$set(this.curVideosArray[index], 'isShowOperate', true)
             }
           })
+        } else {
+          this.totalVideosArray.forEach((item, index) => {
+            if (item.id === curScreenInfo.id) {
+              this.$set(this.totalVideosArray[index], 'isShowOperate', false)
+            }
+          })
+          this.curVideosArray.forEach((item, index) => {
+            if (item.id === curScreenInfo.id) {
+              this.$set(this.curVideosArray[index], 'isShowOperate', false)
+            }
+          })
         }
-      }, 300)
+      }, 200)
     },
     init () {
       // 初始加载9个空元素
@@ -1267,37 +1277,109 @@ export default {
   created () {
     this.init()
     const me = this
-    window.onresize = function () {
-      if (me.dialogVisible) {
-        if (me.checkFull()) {
+    window.addEventListener(
+      'resize',
+      () => {
+        if (me.dialogVisible) {
+          if (me.checkFull()) {
           // 要执行的动作
-          document.getElementById('d1').focus()
-          console.log(1111)
+            document.getElementById('d1').focus()
+            // this.totalVideosArray.forEach((item, index) => {
+            //   if (item) {
+            //     this.$set(this.totalVideosArray[index], 'isShowOperate', false)
+            //   }
+            // })
+            // this.curVideosArray.forEach((item, index) => {
+            //   if (item) {
+            //     this.$set(this.curVideosArray[index], 'isShowOperate', false)
+            //   }
+            // })
+          }
+        }
+        if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
+          // this.$nextTick(() => {
+          me.totalVideosArray.forEach((item, index) => {
+            // if (item.id) {
+            //   if (item.id === me.curScreenInfo.id) {
+            // me.totalVideosArray[index].isShowOperate = false
+            if (item) {
+              me.$set(me.totalVideosArray[index], 'isShowOperate', false)
+            }
+            // }
+            // }
+          })
+          me.curVideosArray.forEach((item, index) => {
+            // if (item.id) {
+            //   if (item.id === me.curScreenInfo.id) {
+            // me.totalVideosArray[index].isShowOperate = false
+            if (item) {
+              me.$set(me.totalVideosArray[index], 'isShowOperate', false)
+            }
+            //   }
+            // }
+          })
+          // })
+
+          // me.totalVideosArray.forEach((item, index) => {
+          //   me.$set(me.totalVideosArray[index], 'isShowOperate', false)
+          // })
+          // me.curVideosArray.forEach((item, index) => {
+          //   me.$set(me.curVideosArray[index], 'isShowOperate', false)
+          // })
+          if (me.curScreenInfo.id) {
+            me.curScreenInfo = {}
+          }
         }
       }
-      if (!me.checkFull() && me.curScreenInfo.id) {
+    )
+    // window.onresize = function () {
+    //   debugger
+    //   if (me.dialogVisible) {
+    //     if (me.checkFull()) {
+    //       // 要执行的动作
+    //       document.getElementById('d1').focus()
+    //       console.log(1111)
+    //     }
+    //   }
+    //   if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
+    //     me.totalVideosArray.forEach((item, index) => {
+    //       if (item.id === me.curScreenInfo.id) {
+    //         me.totalVideosArray[index].isShowOperate = false
+    //       }
+    //     })
+    //     me.curVideosArray.forEach((item, index) => {
+    //       if (item.id === me.curScreenInfo.id) {
+    //         me.totalVideosArray[index].isShowOperate = false
+    //       }
+    //     })
+    //     // me.totalVideosArray.forEach((item, index) => {
+    //     //   me.$set(me.totalVideosArray[index], 'isShowOperate', false)
+    //     // })
+    //     // me.curVideosArray.forEach((item, index) => {
+    //     //   me.$set(me.curVideosArray[index], 'isShowOperate', false)
+    //     // })
+    //     if (me.curScreenInfo.id) {
+    //       me.curScreenInfo = {}
+    //     }
+    //   }
+    // }
+    // 监听键盘按键事件
+    document.addEventListener('keyup', function (e) {
+      if (e.keyCode === 27) {
+        // 这一步只能监听到全屏页面的esc 视频中的esc监听不到
+        me.dialogVisible = false
+        me.fulllIndex = 1000
         me.totalVideosArray.forEach((item, index) => {
-          if (item.id === me.curScreenInfo.id) {
-            me.totalVideosArray[index].isShowOperate = false
+          if (item) {
+            this.$set(this.totalVideosArray[index], 'isShowOperate', false)
           }
         })
         me.curVideosArray.forEach((item, index) => {
-          if (item.id === me.curScreenInfo.id) {
-            me.totalVideosArray[index].isShowOperate = false
+          if (item) {
+            this.$set(this.curVideosArray[index], 'isShowOperate', false)
           }
         })
-        me.curScreenInfo = {}
       }
-    }
-    // 监听键盘按键事件
-
-    this.$nextTick(function () {
-      document.addEventListener('keyup', function (e) {
-        if (e.keyCode === 27) {
-          me.dialogVisible = false
-          me.fulllIndex = 1000
-        }
-      })
     })
   },
   mounted () {
