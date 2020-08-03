@@ -361,7 +361,7 @@ export default {
      */
     downloadMp4 () {
       if (this.radio === -1) return
-      const item = this.records[this.radio]
+      const item = this.curPageRecord[this.radio]
       var url = item.url
       const eleLink = document.createElement('a')
       eleLink.download = url
@@ -1250,7 +1250,11 @@ export default {
         r = records.find(x => x.start > time)
       }
 
-      if (r === undefined) return undefined
+      if (r === undefined) {
+        r = records[records.length - 1]
+        jump = true
+        jumpSeconds = r.duration * 60
+      }
 
       return { record: r, jump: jump, jumpSeconds: jumpSeconds }
     },

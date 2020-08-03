@@ -161,7 +161,7 @@ export default {
           var rs = res.data
           if (rs && rs.code === 0) {
             var snap = this.snapList.find(s => s.id === this.curSnap.id)
-            if (snap !== undefined) snap.fileName = this.describe
+            if (snap !== undefined) snap.remark = this.describe
           }
         })
     },

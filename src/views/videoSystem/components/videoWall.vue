@@ -66,6 +66,7 @@ import LivePlayer from '@liveqing/liveplayer'
 export default {
   data () {
     return {
+      isSub: false, // 是否监听播放进度改变
       isUpdateTime: true,
       curTime: 0,
       curUrl: '',
@@ -135,11 +136,13 @@ export default {
         jumpSeconds = jump === true ? jumpSeconds : 0
         this.jumpToSeconds(jumpSeconds)
       } else {
-        this.isUpdateTime = false
+        // 如果需要跳转url,且需要快进，则暂停更新进度
+        if (jump === true) { this.isUpdateTime = false }
         this.pause()
         this.changeVideoUrl(url)
         if (jump === true) {
           setTimeout(() => {
+            // 恢复更新进度
             this.isUpdateTime = true
             this.jumpToSeconds(jumpSeconds)
           }, 500)
@@ -188,7 +191,11 @@ export default {
             var url = this.videoInfo.records[index + 1].url
             console.log('继续播放下一个记录:' + url)
             this.changeVideoUrl(url)
-          } else console.log(this.curUrl + '----最后一个回放记录播放完毕')
+          } else {
+            console.log(this.curUrl + '----最后一个回放记录播放完毕')
+            // 将时间轴跳到24点
+            if (this.isSub) { this.$emit('timeupdateEvent', 24 * 60 * 60) }
+          }
         }
       }
     },
@@ -215,6 +222,7 @@ export default {
      * 订阅更新进度事件
      */
     subTimeupdate (isSub) {
+      this.isSub = isSub
       if (isSub === true) {
         // 防止回放视频已经播放完毕，没有触发timeupdate事件，而导致时间没有更新
         this.curTime = Math.floor(this.$refs.playerCtrl.player.currentTime())
