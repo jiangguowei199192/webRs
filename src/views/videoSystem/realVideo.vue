@@ -1,5 +1,5 @@
 <template>
-  <div class="videoContainer" onLoad="" onResize=""  >
+  <div class="videoContainer" onload onresize>
     <VideoMain
       :showLeft="showLeft"
       :showRight="showRight"
@@ -95,8 +95,8 @@
                 v-if="item.streamUrl"
                 @fullScreenChange="getVideoInfo"
               ></VideoWall>
-            </div> -->
-                        <div
+            </div>-->
+            <div
               v-for="(item,index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle1(showVideoPageSize)"
@@ -222,10 +222,11 @@
                   v-for="(item,index) in 9"
                   :key="index"
                   @mousedown="startChange(index)"
-                  @mouseup="stopChange()"
+                  @mouseup="stopChange"
                 ></div>
               </div>
-              <div class="btns">
+              <!-- 国标 -->
+              <!-- <div class="btns">
                 <div>
                   <span @mousedown="startChange(1000,true)" @mouseup="stopChange">+</span>
                   <b>变倍</b>
@@ -241,13 +242,31 @@
                   <b>光圈</b>
                   <span @mousedown="startFocusLris(1005)" @mouseup="stopFocusLris">-</span>
                 </div>
+              </div>-->
+              <!-- sdk -->
+              <div class="btns">
+                <div>
+                  <span @mousedown="startChange(1000)" @mouseup="stopChange(1000)">+</span>
+                  <b>变倍</b>
+                  <span @mousedown="startChange(1001)" @mouseup="stopChange(1001)">-</span>
+                </div>
+                <div>
+                  <span @mousedown="startChange(1002)" @mouseup="stopChange(1002)">+</span>
+                  <b>变焦</b>
+                  <span @mousedown="startChange(1003)" @mouseup="stopChange(1003)">-</span>
+                </div>
+                <div>
+                  <span @mousedown="startChange(1004)" @mouseup="stopChange(1004)">+</span>
+                  <b>光圈</b>
+                  <span @mousedown="startChange(1005)" @mouseup="stopChange(1005)">-</span>
+                </div>
               </div>
               <div class="slider">
                 <span class="demonstration">步速</span>
                 <el-slider
                   v-model="step"
                   :min="1"
-                  :max="20"
+                  :max="8"
                   style="width:91px;margin-left:16px;margin-right:8px;"
                 ></el-slider>
                 <span>{{step}}</span>
@@ -271,8 +290,18 @@
         v-for="(item,index) in curVideosArray"
         :key="index"
       >
-        <div :style="machineStatusStyle3(showVideoPageSize)" @click="fulllIndex=index"  :class="{active:fulllIndex==index}" >
-          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"   @screenchange="getVideoInfo"></VideoWall>
+        <div
+          :style="machineStatusStyle3(showVideoPageSize)"
+          @click="fulllIndex=index"
+          :class="{active:fulllIndex==index}"
+        >
+          <VideoWall
+            :videoInfo="item"
+            :key="index"
+            ref="playerCtrl"
+            v-if="item.streamUrl"
+            @screenchange="getVideoInfo"
+          ></VideoWall>
         </div>
       </div>
     </div>
@@ -339,7 +368,7 @@ export default {
       curVideosArray: [], // 当前展示的数据
       showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
-      step: 10, // 步速值
+      step: 4, // 步速值
       recordNums: {
         leftUp: 0,
         up: 0,
@@ -348,12 +377,17 @@ export default {
         right: 0,
         leftDown: 0,
         down: 0,
-        rightDown: 0
+        rightDown: 0,
+        zoomAdd: 0,
+        zoomMinus: 0,
+        focusAdd: 0,
+        focusMinus: 0,
+        lrisAdd: 0,
+        lrisMinus: 0
+
       },
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
-      operateIconplay: true, // 云台默认开始的按钮
-      bRealTimeFireWarning: true, // 实时更新火情警报个数
       imgId: '', // 保存抓取图片id
       fulllIndex: 1000 // 全屏选中的index
     }
@@ -457,234 +491,444 @@ export default {
       }
     },
     // 按钮和变倍的鼠标按下事件
-    startChange (index, isInOut = false) {
-      const params = {}
-      if (!isInOut) {
-        switch (index) {
-          case 0:
-            ++this.recordNums.leftUp
-            this.clearRecord('leftUp')
-            // 左上
-            params.leftRight = 1
-            params.upDown = 1
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.leftUp > 255
-                ? 255
+    // startChange (index, isInOut = false) {
+    //   const params = {}
+    //   if (!isInOut) {
+    //     switch (index) {
+    //       case 0:
+    //         ++this.recordNums.leftUp
+    //         this.clearRecord('leftUp')
+    //         // 左上
+    //         params.leftRight = 1
+    //         params.upDown = 1
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.leftUp > 255
+    //             ? 255
+    //             : this.step * this.recordNums.leftUp
+    //         params.zoomSpeed = 0
+    //         console.dir(params)
+    //         this.changeViewVideo(1, params)
+    //         break
+    //       case 1:
+    //         ++this.recordNums.up
+    //         this.clearRecord('up')
+    //         // 上移
+    //         params.upDown = 1
+    //         params.leftRight = 0
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.up > 255
+    //             ? 255
+    //             : this.step * this.recordNums.up
+    //         params.zoomSpeed = 0
+    //         console.dir(params)
+    //         this.changeViewVideo(1, params)
+    //         break
+    //       case 2:
+    //         ++this.recordNums.rightUp
+    //         this.clearRecord('rightUp')
+    //         // 右上
+    //         params.leftRight = 2
+    //         params.upDown = 1
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.rightUp > 255
+    //             ? 255
+    //             : this.step * this.recordNums.rightUp
+    //         params.zoomSpeed = 0
+    //         console.dir(params)
+    //         this.changeViewVideo(1, params)
+    //         break
+    //       case 3:
+    //         ++this.recordNums.left
+    //         this.clearRecord('left')
+    //         // 左
+    //         params.leftRight = 1
+    //         params.upDown = 0
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.left > 255
+    //             ? 255
+    //             : this.step * this.recordNums.left
+    //         params.zoomSpeed = 0
+    //         this.changeViewVideo(1, params)
+    //         console.dir(params)
+    //         break
+    //       case 4:
+    //         break
+    //       case 5:
+    //         ++this.recordNums.right
+    //         this.clearRecord('right')
+    //         // 右
+    //         params.leftRight = 2
+    //         params.upDown = 0
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.right > 255
+    //             ? 255
+    //             : this.step * this.recordNums.right
+    //         params.zoomSpeed = 0
+    //         console.dir(params)
+    //         this.changeViewVideo(1, params)
+    //         break
+    //       case 6:
+    //         ++this.recordNums.leftDown
+    //         this.clearRecord('leftDown')
+    //         // 左下
+    //         params.leftRight = 1
+    //         params.upDown = 2
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.leftDown > 255
+    //             ? 255
+    //             : this.step * this.recordNums.leftDown
+    //         params.zoomSpeed = 0
+    //         console.dir(params)
+    //         this.changeViewVideo(1, params)
+    //         break
+    //       case 7:
+    //         ++this.recordNums.down
+    //         this.clearRecord('down')
+    //         // 下
+    //         params.upDown = 2
+    //         params.leftRight = 0
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.down > 255
+    //             ? 255
+    //             : this.step * this.recordNums.down
+    //         params.zoomSpeed = 0
+    //         console.dir(params)
+    //         this.changeViewVideo(1, params)
+    //         break
+    //       case 8:
+    //         ++this.recordNums.rightDown
+    //         this.clearRecord('rightDown')
+    //         // 右下
+    //         params.leftRight = 2
+    //         params.upDown = 2
+    //         params.inOut = 0
+    //         params.moveSpeed =
+    //           this.step * this.recordNums.rightDown > 255
+    //             ? 255
+    //             : this.step * this.recordNums.rightDown
+    //         params.zoomSpeed = 0
+    //         this.changeViewVideo(1, params)
+    //         console.dir(params)
+    //         break
+    //       default:
+    //         break
+    //     }
+    //   } else {
+    //     // 变倍
+    //     params.leftRight = 0
+    //     params.upDown = 0
+    //     params.moveSpeed = 0
+    //     if (index === 1000) {
+    //       params.inOut = 2
+    //       params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
+    //     } else {
+    //       params.inOut = 1
+    //       this.zoomSpeed--
+    //       this.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
+    //       params.zoomSpeed = this.zoomSpeed
+    //     }
+    //     this.changeViewVideo(1, params)
+    //     console.log(params)
+    //   }
+    // },
+    // 按钮和变倍的鼠标弹起停止控制
+    // stopChange () {
+    //   const params = {}
+    //   params.leftRight = 0
+    //   params.upDown = 0
+    //   params.inOut = 0
+    //   params.moveSpeed = 0
+    //   params.zoomSpeed = 0
+    //   console.log('停止')
+    //   console.dir(params)
+    //   this.changeViewVideo(1, params)
+    // },
+    // 变焦和光圈鼠标按下事件
+    // startFocusLris (type) {
+    //   const params = {}
+    //   if (type === 1002) {
+    //     params.focus = 2
+    //     params.focusSpeed = this.focusSpeed++ > 255 ? 255 : this.focusSpeed
+    //     params.lris = 0
+    //     params.lrisSpeed = 0
+    //   } else if (type === 1003) {
+    //     params.focus = 1
+    //     this.focusSpeed--
+    //     this.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
+    //     params.focusSpeed = this.focusSpeed
+    //     params.lris = 0
+    //     params.lrisSpeed = 0
+    //   } else if (type === 1004) {
+    //     params.lris = 2
+    //     params.lrisSpeed = this.lrisSpeed++ > 255 ? 255 : this.lrisSpeed
+    //     params.focus = 0
+    //     params.focusSpeed = 0
+    //   } else if (type === 1005) {
+    //     params.lris = 1
+    //     this.lrisSpeed--
+    //     this.lrisSpeed = this.lrisSpeed < 0 ? 0 : this.lrisSpeed
+    //     params.lrisSpeed = this.lrisSpeed
+    //     params.focus = 0
+    //     params.focusSpeed = 0
+    //   }
+    //   console.log(params)
+    //   this.changeViewVideo(2, params)
+    // },
+    // 变焦和光圈鼠标松开事件
+    // stopFocusLris () {
+    //   const params = {
+    //     lris: 0,
+    //     lrisSpeed: 0,
+    //     focus: 0,
+    //     focusSpeed: 0
+    //   }
+    //   this.changeViewVideo(2, params)
+    // },
+    // 云台操作按钮的请求
+    // changeViewVideo (type, params) {
+    //   if (type === 1) {
+    //     this.$axios
+    //       .post(
+    //         '/api/ptz/' + '34020000001320000003' + '/' + '34020000001310000004',
+    //         params
+    //       )
+    //       .then(res => {
+    //         if (res && res.data && res.data.code === 0) {
+    //           console.log('控制成功了')
+    //         }
+    //       })
+    //   } else {
+    //     this.$axios
+    //       .post(
+    //         '/api/fi/' +
+    //           this.curSelectedVideo.deviceCode +
+    //           '/' +
+    //           this.curSelectedVideo.id,
+    //         params
+    //       )
+    //       .then(res => {
+    //         if (res && res.data && res.data.code === 0) {
+    //           console.log('控制成功了')
+    //         }
+    //       })
+    //   }
+    // },
+    startChange (index) {
+      const params = {
+        device_id: this.curSelectedVideo.deviceCode,
+        channel_id: this.curSelectedVideo.id
+      }
+      switch (index) {
+        case 0:
+          ++this.recordNums.leftUp
+          this.clearRecord('leftUp')
+          // 左上
+          params.cmd_type = 31
+          params.step =
+              this.step * this.recordNums.leftUp > 8
+                ? 8
                 : this.step * this.recordNums.leftUp
-            params.zoomSpeed = 0
-            console.dir(params)
-            this.changeViewVideo(1, params)
-            break
-          case 1:
-            ++this.recordNums.up
-            this.clearRecord('up')
-            // 上移
-            params.upDown = 1
-            params.leftRight = 0
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.up > 255
-                ? 255
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1:
+          ++this.recordNums.up
+          this.clearRecord('up')
+          // 上移
+          params.cmd_type = 0
+          params.step =
+              this.step * this.recordNums.up > 8
+                ? 8
                 : this.step * this.recordNums.up
-            params.zoomSpeed = 0
-            console.dir(params)
-            this.changeViewVideo(1, params)
-            break
-          case 2:
-            ++this.recordNums.rightUp
-            this.clearRecord('rightUp')
-            // 右上
-            params.leftRight = 2
-            params.upDown = 1
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.rightUp > 255
-                ? 255
-                : this.step * this.recordNums.rightUp
-            params.zoomSpeed = 0
-            console.dir(params)
-            this.changeViewVideo(1, params)
-            break
-          case 3:
-            ++this.recordNums.left
-            this.clearRecord('left')
-            // 左
-            params.leftRight = 1
-            params.upDown = 0
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.left > 255
-                ? 255
-                : this.step * this.recordNums.left
-            params.zoomSpeed = 0
-            this.changeViewVideo(1, params)
-            console.dir(params)
-            break
-          case 4:
-            break
-          case 5:
-            ++this.recordNums.right
-            this.clearRecord('right')
-            // 右
-            params.leftRight = 2
-            params.upDown = 0
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.right > 255
-                ? 255
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 2:
+          ++this.recordNums.up
+          this.clearRecord('up')
+          // 上移
+          params.cmd_type = 32
+          params.step =
+              this.step * this.recordNums.up > 8
+                ? 8
+                : this.step * this.recordNums.up
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 3:
+          ++this.recordNums.left
+          this.clearRecord('left')
+          // 左移
+          params.cmd_type = 2
+          params.step =
+              this.step * this.recordNums.up > 8
+                ? 8
+                : this.step * this.recordNums.up
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 4:
+          break
+        case 5:
+          ++this.recordNums.right
+          this.clearRecord('right')
+          // 右移
+          params.cmd_type = 3
+          params.step =
+              this.step * this.recordNums.right > 8
+                ? 8
                 : this.step * this.recordNums.right
-            params.zoomSpeed = 0
-            console.dir(params)
-            this.changeViewVideo(1, params)
-            break
-          case 6:
-            ++this.recordNums.leftDown
-            this.clearRecord('leftDown')
-            // 左下
-            params.leftRight = 1
-            params.upDown = 2
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.leftDown > 255
-                ? 255
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 6:
+          ++this.recordNums.leftDown
+          this.clearRecord('leftDown')
+          // 左下
+          params.cmd_type = 33
+          params.step =
+              this.step * this.recordNums.leftDown > 8
+                ? 8
                 : this.step * this.recordNums.leftDown
-            params.zoomSpeed = 0
-            console.dir(params)
-            this.changeViewVideo(1, params)
-            break
-          case 7:
-            ++this.recordNums.down
-            this.clearRecord('down')
-            // 下
-            params.upDown = 2
-            params.leftRight = 0
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.down > 255
-                ? 255
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 7:
+          ++this.recordNums.down
+          this.clearRecord('down')
+          // 下
+          params.cmd_type = 1
+          params.step =
+              this.step * this.recordNums.down > 8
+                ? 8
                 : this.step * this.recordNums.down
-            params.zoomSpeed = 0
-            console.dir(params)
-            this.changeViewVideo(1, params)
-            break
-          case 8:
-            ++this.recordNums.rightDown
-            this.clearRecord('rightDown')
-            // 右下
-            params.leftRight = 2
-            params.upDown = 2
-            params.inOut = 0
-            params.moveSpeed =
-              this.step * this.recordNums.rightDown > 255
-                ? 255
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 8:
+          ++this.recordNums.rightDown
+          this.clearRecord('rightDown')
+          // 右下
+          params.cmd_type = 34
+          params.step =
+              this.step * this.recordNums.rightDown > 8
+                ? 8
                 : this.step * this.recordNums.rightDown
-            params.zoomSpeed = 0
-            this.changeViewVideo(1, params)
-            console.dir(params)
-            break
-          default:
-            break
-        }
-      } else {
-        // 变倍
-        params.leftRight = 0
-        params.upDown = 0
-        params.moveSpeed = 0
-        if (index === 1000) {
-          params.inOut = 2
-          params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
-        } else {
-          params.inOut = 1
-          this.zoomSpeed--
-          this.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
-          params.zoomSpeed = this.zoomSpeed
-        }
-        this.changeViewVideo(1, params)
-        console.log(params)
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1000:
+          ++this.recordNums.zoomAdd
+          this.clearRecord('zoomAdd')
+          // 变倍+
+          params.cmd_type = 4
+          params.step =
+              this.step * this.recordNums.zoomAdd > 8
+                ? 8
+                : this.step * this.recordNums.zoomAdd
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1001:
+          ++this.recordNums.zoomMinus
+          this.clearRecord('zoomMinus')
+          // 变倍+
+          params.cmd_type = 4
+          params.step =
+              this.step * this.recordNums.zoomMinus > 8
+                ? 8
+                : this.step * this.recordNums.zoomMinus
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1002:
+          ++this.recordNums.focusAdd
+          this.clearRecord('focusAdd')
+          // 变焦+
+          params.cmd_type = 4
+          params.step =
+              this.step * this.recordNums.focusAdd > 8
+                ? 8
+                : this.step * this.recordNums.focusAdd
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1003:
+          ++this.recordNums.focusMinus
+          this.clearRecord('focusMinus')
+          // 变焦+
+          params.cmd_type = 4
+          params.step =
+              this.step * this.recordNums.focusMinus > 8
+                ? 8
+                : this.step * this.recordNums.focusMinus
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1004:
+          ++this.recordNums.lrisAdd
+          this.clearRecord('lrisAdd')
+          // 变焦+
+          params.cmd_type = 4
+          params.step =
+              this.step * this.recordNums.lrisAdd > 8
+                ? 8
+                : this.step * this.recordNums.lrisAdd
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
+        case 1005:
+          ++this.recordNums.lrisMinus
+          this.clearRecord('lrisMinus')
+          // 变焦+
+          params.cmd_type = 4
+          params.step =
+              this.step * this.recordNums.lrisMinus > 8
+                ? 8
+                : this.step * this.recordNums.lrisMinus
+          params.stop = 0
+          console.dir(params)
+          this.changeViewVideo(params)
+          break
       }
     },
-    // 按钮和变倍的鼠标弹起停止控制
     stopChange () {
-      const params = {}
-      params.leftRight = 0
-      params.upDown = 0
-      params.inOut = 0
-      params.moveSpeed = 0
-      params.zoomSpeed = 0
-      console.log('停止')
-      console.dir(params)
-      this.changeViewVideo(1, params)
-    },
-    // 变焦和光圈鼠标按下事件
-    startFocusLris (type) {
-      const params = {}
-      if (type === 1002) {
-        params.focus = 2
-        params.focusSpeed = this.focusSpeed++ > 255 ? 255 : this.focusSpeed
-        params.lris = 0
-        params.lrisSpeed = 0
-      } else if (type === 1003) {
-        params.focus = 1
-        this.focusSpeed--
-        this.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
-        params.focusSpeed = this.focusSpeed
-        params.lris = 0
-        params.lrisSpeed = 0
-      } else if (type === 1004) {
-        params.lris = 2
-        params.lrisSpeed = this.lrisSpeed++ > 255 ? 255 : this.lrisSpeed
-        params.focus = 0
-        params.focusSpeed = 0
-      } else if (type === 1005) {
-        params.lris = 1
-        this.lrisSpeed--
-        this.lrisSpeed = this.lrisSpeed < 0 ? 0 : this.lrisSpeed
-        params.lrisSpeed = this.lrisSpeed
-        params.focus = 0
-        params.focusSpeed = 0
+      const params = {
+        device_id: this.curSelectedVideo.deviceCode,
+        channel_id: this.curSelectedVideo.id,
+        stop: 1,
+        step: 0,
+        cmd_type: 0
       }
       console.log(params)
-      this.changeViewVideo(2, params)
+      this.changeViewVideo(params)
     },
-    // 变焦和光圈鼠标松开事件
-    stopFocusLris () {
-      const params = {
-        lris: 0,
-        lrisSpeed: 0,
-        focus: 0,
-        focusSpeed: 0
-      }
-      this.changeViewVideo(2, params)
-    },
-    // 云台操作按钮的请求
-    changeViewVideo (type, params) {
-      if (type === 1) {
-        this.$axios
-          .post(
-            '/api/ptz/' + '34020000001320000003' + '/' + '34020000001310000004',
-            params
-          )
-          .then(res => {
-            if (res && res.data && res.data.code === 0) {
-              console.log('控制成功了')
-            }
-          })
-      } else {
-        this.$axios
-          .post(
-            '/api/fi/' +
-              this.curSelectedVideo.deviceCode +
-              '/' +
-              this.curSelectedVideo.id,
-            params
-          )
-          .then(res => {
-            if (res && res.data && res.data.code === 0) {
-              console.log('控制成功了')
-            }
-          })
-      }
+    changeViewVideo (params) {
+      this.$axios.post('/index/api/ptzConrol', params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          debugger
+        }
+      })
     },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
@@ -1517,7 +1761,7 @@ export default {
             margin-right: 10px;
             background: url(../../assets/images/device/5.png) no-repeat;
             cursor: text;
-            margin-bottom:5px;
+            margin-bottom: 5px;
           }
           // div:nth-child(5):hover {
           //   background: url(../../assets/images/device/5_selected.png) no-repeat;
@@ -1673,22 +1917,21 @@ export default {
       display: flex;
       flex-wrap: wrap;
       height: 710px;
-      > div  {
-        div{
-        box-sizing: border-box;
-        // height: 223px;
+      > div {
+        div {
+          box-sizing: border-box;
+          // height: 223px;
 
-        margin-right: 10px;
-        margin-bottom: 10px;
-        background: url(../../assets/images/video.png) no-repeat center center;
-        background-color: #00497c;
-        cursor: pointer;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
+          cursor: pointer;
         }
         > div.active {
-        border: 2px solid rgba(255, 244, 100, 1);
+          border: 2px solid rgba(255, 244, 100, 1);
+        }
       }
-      }
-
     }
     .tools {
       position: absolute;
@@ -1724,7 +1967,7 @@ export default {
           top: -12px;
           margin-right: 5px;
           /deep/.el-pagination {
-            padding:0;
+            padding: 0;
             button {
               background-color: transparent !important;
               i {
@@ -1737,8 +1980,9 @@ export default {
                 color: #1c638b;
               }
             }
-            button.btn-next,button.btn-prev{
-              padding:0;
+            button.btn-next,
+            button.btn-prev {
+              padding: 0;
             }
             button[disabled] {
               i {
@@ -1789,8 +2033,8 @@ export default {
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
       }
-      div.active{
-        border:2px solid  #fff464
+      div.active {
+        border: 2px solid #fff464;
       }
     }
   }

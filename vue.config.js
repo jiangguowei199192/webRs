@@ -7,7 +7,7 @@ function resolve (dir) {
 }
 const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
-  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.158:8888', apiFiAndPtz: 'http://172.16.63.29:8888', picUrl: 'http://172.16.63.158:22222', mqttServer: '172.16.63.148', mqttPort: 2883 }
+  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', getMp4RecordFile: 'http://172.16.63.158:8888', picUrl: 'http://172.16.63.158:22222', mqttServer: '172.16.63.148', mqttPort: 2883 }
   return JSON.stringify(cfgJson)
 }
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -47,12 +47,12 @@ module.exports = {
 
   devServer: {
     port: 8080, // 端口号
-    host: '0.0.0.0', // localhost
+    host: 'localhost', // localhost
     https: false, // https:{type:Boolean}
     open: true, // 配置自动启动浏览器
     proxy: {
-      '/api': {
-        target: 'http://172.16.63.148:8850',
+      '/index': {
+        target: 'http://172.16.63.158:22222',
         ws: true,
         changeOrigin: true
       }
