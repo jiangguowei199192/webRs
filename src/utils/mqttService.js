@@ -34,9 +34,11 @@ var mqttService;
       instance.isConnect = true
       instance.failTimes = 0
 
-      // 订阅设备上下线主题
+      // 订阅设备上下线和通道上下线主题
       instance.client.subscribe('video/realVideo/streamStart')
       instance.client.subscribe('video/realVideo/streamEnd')
+      instance.client.subscribe('video/device/online')
+      instance.client.subscribe('video/device/offline')
       // 订阅火情火点
       instance.client.subscribe('video/deviceIid/channleID/datalink/firewarning')
     }
@@ -53,7 +55,7 @@ var mqttService;
 
     // mqtt 消息到来的callback
     var onMessageArrived = function (message) {
-      console.log('onMessageArrived:' + message.payloadString)
+      console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       // console.log(message);
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)

@@ -97,12 +97,20 @@ export default {
     }
   },
   created () {
-    EventBus.$on('video/realVideo/streamStart', info => {
+    // 设备上线
+    EventBus.$on('video/device/online', info => {
       this.$notify.success({ title: '提示', message: '设备上线！' })
+    })
+    // 设备下线
+    EventBus.$on('video/device/offline', info => {
+      this.$notify.success({ title: '提示', message: '设备下线！' })
+    })
+    // 通道上线
+    EventBus.$on('video/realVideo/streamStart', info => {
       EventBus.$emit('streamStart', info)
     })
+    // 通道下线
     EventBus.$on('video/realVideo/streamEnd', info => {
-      this.$notify.success({ title: '提示', message: '设备下线！' })
       EventBus.$emit('streamEnd', info)
     })
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
