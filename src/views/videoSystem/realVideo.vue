@@ -308,7 +308,7 @@ import fireMixin from '../../utils/fireMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
-import { throttle } from '../../utils/public.js'
+import { debounce } from '../../utils/public.js'
 
 export default {
   name: 'videoContainer',
@@ -1059,6 +1059,7 @@ export default {
         }
       }
     },
+    // 计算里面容器的高度
     machineStatusStyle3 (n) {
       const dom = document.querySelector('.fullContainer')
       if (!dom) return
@@ -1090,7 +1091,7 @@ export default {
       if (isFull === undefined) isFull = false
       return isFull
     },
-    // 双击视频时给显示操作按钮
+    // 双击视频时给显示操作按钮（视频列表及全屏页面公用此方法）
     getVideoInfo (curScreenInfo) {
       this.curScreenInfo = curScreenInfo
       console.log('进来了' + curScreenInfo.id)
@@ -1151,7 +1152,7 @@ export default {
       )
     },
     // 点击抓取，显示抓拍图片
-    showImg: throttle(function () {
+    showImg: debounce(function () {
       if (Object.keys(this.curSelectedVideo).length === 0) {
         this.$notify.warning({ title: '警告', message: '请先选择设备！' })
         return
@@ -1173,12 +1174,15 @@ export default {
             message: '抓取成功！',
             duration: 800
           })
+          // this.$nextTick(() => {
+          //   this.moveElement('pic', 140, -215)
+          // })
+          setTimeout(() => {
+            this.showCutImg = false
+          }, 6000)
         }
       })
-      setTimeout(() => {
-        this.showCutImg = false
-      }, 6000)
-    }, 1000),
+    }, 500),
     // 点击确定按钮
     confirm () {
       // 防止此时设备下线
