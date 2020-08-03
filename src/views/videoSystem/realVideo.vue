@@ -1858,7 +1858,7 @@ export default {
     // bottom: 0;
     height: 100%;
     width: 100%;
-    z-index: 1000;
+    z-index: 100000;
     background: #fff;
     display: flex;
     flex-wrap: wrap;
