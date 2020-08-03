@@ -20,8 +20,8 @@ service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencod
 service.interceptors.request.use((config) => {
   if (config.url === '/index/api/getMp4RecordFile') {
     config.baseURL = globalApi.getMp4RecordFile
-  } else if (config.url.indexOf('/api/fi') !== -1 || config.url.indexOf('/api/ptz') !== -1) {
-    config.baseURL = globalApi.apiFiAndPtz
+  } else if (config.url.indexOf('/index/api/ptzConrol') !== -1) {
+    config.baseURL = globalApi.picUrl
   }
   let token = ''
   if (config.url !== '/fms-auth-center/login' && config.url !== '/index/api/getMp4RecordFile') {
