@@ -27,7 +27,7 @@ const fireMixin = {
     if (this.bRealTimeFireWarning) {
       // 实时监控火情火点
       EventBus.$on('getFireAlarm', info => {
-        this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+        // this.$notify.warning({ title: '警告', message: '发现火点火情！' })
         if (info.alarmStatus !== 'mistaken') {
           info.bConfirmed = false
           info.alarmTime = timeFormat(info.alarmTime)
