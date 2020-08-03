@@ -340,7 +340,7 @@ export default {
   .rightBoxBase {
     height: 879px;
     margin: 10px 10px 10px 10px;
-    // overflow-y: scroll; // 第一版不开放
+    overflow: auto;
   }
 }
 .logoutBtn {
@@ -355,4 +355,25 @@ export default {
   margin-left: 30px;
   margin-top: 10px;
 }
+
+/* --- 改变滚动条样式 --- */
+  /deep/ ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  /* --- 滚动条里面的滚动块 --- */
+  /deep/ ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgb(0, 180, 255);
+    background: rgba(0, 180, 255, 0.2);
+  }
+  /* --- 滚动条里面轨道 --- */
+  /deep/ ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    // border-radius: 10px;
+    background: #096090;
+  }
+  /deep/ ::-webkit-scrollbar-corner {
+    background: #096090;
+  }
 </style>

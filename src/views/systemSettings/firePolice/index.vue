@@ -13,6 +13,7 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :default-time="['00:00:00', '23:59:59']"
             class="datePickerStyle"
             @change="dateSearch">
           </el-date-picker>
@@ -32,12 +33,12 @@
             </el-table-column>
             <el-table-column align="center" label="类型" prop="alarmTypeName"></el-table-column>
             <el-table-column align="center" label="报警图片" prop="alarmPicList" width="100px">
-              <template slot-scope="scope" v-if="firePoliceList.alarmPicList">
-                <el-image fit="fill" v-if="scope.row.alarmPicList[0]" :src="scope.row.alarmPicList[0].picPath" style="width: 30px; height: 30px; margin-top: 7px;">
+              <template slot-scope="scope">
+                <el-image fit="fill" :src="scope.row.alarmPicList[0].picPath" style="width: 30px; height: 30px; margin-top: 7px;">
                   <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
                   <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
                 </el-image>
-                <el-image fit="fill" v-if="scope.row.alarmPicList[1]" :src="scope.row.alarmPicList[1].picPath" style="width: 30px; height: 30px; margin-left: 10px;">
+                <el-image fit="fill" :src="scope.row.alarmPicList[1].picPath" style="width: 30px; height: 30px; margin-left: 10px;">
                   <div slot="placeholder"></div> <!-- 图片未加载时的占位内容 -->
                   <div slot="error"></div> <!-- 图片加载失败时的占位内容 -->
                 </el-image>
@@ -132,8 +133,11 @@ export default {
       radio: -1,
       pageData: {
         total: 0, // 总条目数
-        pageSize: 13, // 每页显示条目个数
-        currentPage: 0 // 当前页
+        pageSize: 10, // 每页显示条目个数
+        currentPage: 1, // 当前页
+        beginTime: '',
+        endTime: '',
+        alarmAddress: ''
       },
       showFireDetail: false,
       fireDetailInfo: {
@@ -155,13 +159,13 @@ export default {
       this.$router.push({ path: '/systemSettings' })
     },
     // 获取火情列表
-    async getFirePoliceList (timeBegin, timeEnd, currentPage, alarmAddress) {
+    async getFirePoliceList () {
       var param = {
-        timeBegin: timeBegin,
-        timeEnd: timeEnd,
-        currentPage: currentPage,
+        timeBegin: this.pageData.beginTime,
+        timeEnd: this.pageData.endTime,
+        currentPage: this.pageData.currentPage,
         pageSize: this.pageData.pageSize,
-        alarmAddress: alarmAddress
+        alarmAddress: this.pageData.alarmAddress
       }
       this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: param }).then(res => {
         if (res && res.data && res.data.code === 0) {
@@ -180,13 +184,23 @@ export default {
               element.alarmStatus = '确认'
             } else if (element.alarmStatus === 'mistaken') {
               element.alarmStatus = '误报'
+            } else {
+              element.alarmStatus = ''
             }
             // 图片URL添加baseURL
             if (element.alarmPicList) {
-              for (let picIndex = 0; picIndex < element.alarmPicList.length; picIndex++) {
-                const pic = element.alarmPicList[picIndex]
-                pic.picPath = globalApi.picUrl + pic.picPath
+              if (element.alarmPicList.length === 1) { // 只有一张图片
+                element.alarmPicList[0].picPath = globalApi.picUrl + element.alarmPicList[0].picPath
+                element.alarmPicList[1] = { picPath: '' }
+              } else { // 两张和两张以上
+                for (let picIndex = 0; picIndex < element.alarmPicList.length; picIndex++) {
+                  const pic = element.alarmPicList[picIndex]
+                  pic.picPath = globalApi.picUrl + pic.picPath
+                }
               }
+            } else { // 没有图片
+              element.alarmPicList[0] = { picPath: '' }
+              element.alarmPicList[1] = { picPath: '' }
             }
           }
 
@@ -224,6 +238,8 @@ export default {
       this.fireDetailInfo.id = detail.id
       if (detail.alarmStatus === '确认' || detail.alarmStatus === '误报') {
         this.fireDetailInfo.showConfirm = false
+      } else {
+        this.fireDetailInfo.showConfirm = true
       }
       this.showFireDetail = true
 
@@ -254,19 +270,25 @@ export default {
     // 日期搜索
     dateSearch () {
       if (this.date1) {
+        this.pageData.currentPage = 1
         var beginDate = new Date(this.date1[0])
         var beginTime = beginDate.getTime()
         var endDate = new Date(this.date1[1])
         var endTime = endDate.getTime()
-        this.getFirePoliceList(beginTime, endTime)
+        this.pageData.beginTime = beginTime
+        this.pageData.endTime = endTime
+        this.getFirePoliceList()
       } else {
         this.getFirePoliceList()
       }
     },
     // 分页页数改变
     currentPageChange () {
-      console.log(this.pageData.currentPage)
-      this.getFirePoliceList('', '', this.pageData.currentPage, '')
+      this.getFirePoliceList()
+    },
+    // 地址搜索
+    addressSearchChange () {
+      this.getFirePoliceList()
     }
   }
 }
@@ -274,22 +296,9 @@ export default {
 
 <style lang="scss">
   .el-picker-panel {
-    // background: #3688b1;
-    // color: white;
-    // border: none;
-    // border-color: #39a4dd;
     width: 350px;
     height: 230px;
   }
-  // .el-date-table td.in-range div,
-  // .el-date-table td.in-range div:hover,
-  // .el-date-table.is-week-mode .el-date-table__row.current div,
-  // .el-date-table.is-week-mode .el-date-table__row:hover div {
-  //   background-color: transparent;
-  // }
-  // .el-popper[x-placement^=bottom] .popper__arrow::after {
-  //   border-bottom-color: #3688b1;
-  // }
   .el-date-range-picker__content {
     width: 175px;
   }
