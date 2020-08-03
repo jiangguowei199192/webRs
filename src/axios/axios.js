@@ -32,9 +32,9 @@ service.interceptors.request.use((config) => {
     // 判断请求方式是否为POST，进行转换格式
     config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
   }
-  if (config.url === '/cloud-fms/sysuser/updateUser') {
-    config.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
-  }
+  // if (config.url === '/cloud-fms/sysuser/updateUser') {
+  //   config.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
+  // }
   return config
 },
 (error) => {

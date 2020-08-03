@@ -132,13 +132,17 @@ export default {
      * @param {jumpSeconds} url 快进的秒数
      */
     jumpRecord (url, jump, jumpSeconds) {
+      // 获取暂停状态
+      var isPause = this.$refs.playerCtrl.player.paused()
       if (this.curUrl === url) {
-        jumpSeconds = jump === true ? jumpSeconds : 0
+        jumpSeconds = jump === true ? jumpSeconds : 1
+        // 防止当前视频播放完后，livePlayer变成暂停状态
+        if (isPause) { this.play() }
         this.jumpToSeconds(jumpSeconds)
       } else {
         // 如果需要跳转url,且需要快进，则暂停更新进度
         if (jump === true) { this.isUpdateTime = false }
-        this.pause()
+        if (!isPause) { this.pause() }
         this.changeVideoUrl(url)
         if (jump === true) {
           setTimeout(() => {
