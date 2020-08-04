@@ -82,7 +82,7 @@ export default {
       imgDialogVisible: false,
       describe: '', // 图片描述
       curSnap: '',
-      serverUrl: globalApi.picUrl,
+      serverUrl: globalApi.baseUrl + '/video-service2',
       imgSrc: ''
     }
   },
