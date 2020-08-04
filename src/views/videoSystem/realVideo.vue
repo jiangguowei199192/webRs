@@ -1403,7 +1403,6 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先选择设备！' })
         return
       }
-
       // 显示抓取的图片
       const params = {
         deviceCode: this.curSelectedVideo.deviceCode,
