@@ -18,6 +18,12 @@
             @change="dateSearch"
             popper-class="chooseDateStyle">
           </el-date-picker>
+          <button type="button" class="more" @click="addressSearch()">
+            <img :src="searchImg">
+          </button>
+          <el-input v-model="pageData.alarmAddress" class="searchInput">
+            <template slot="prepend">地点：</template>
+          </el-input>
         </div>
         <div class="tableBox">
           <el-table v-if="firePoliceList" @row-click="ClickTableRow" :data="firePoliceList" stripe empty-text="no data" tooltip-effect="light">
@@ -122,6 +128,7 @@
 <script>
 import { fireApi } from '@/api/videoSystem/fireAlarm.js'
 import globalApi from '@/utils/globalApi'
+import { Notification } from 'element-ui'
 export default {
   created () {
     this.getFirePoliceList()
@@ -152,7 +159,8 @@ export default {
         image1: '',
         image2: '',
         showConfirm: true
-      }
+      },
+      searchImg: require('../../../assets/images/Setting/setting-search.png')
     }
   },
   methods: {
@@ -290,7 +298,17 @@ export default {
       this.getFirePoliceList()
     },
     // 地址搜索
-    addressSearchChange () {
+    addressSearch () {
+      if (this.pageData.alarmAddress.length <= 0) {
+        Notification({
+          title: '提示',
+          message: '请输入地址后查询',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return
+      }
+      this.pageData.currentPage = 1
       this.getFirePoliceList()
     }
   }
@@ -360,9 +378,12 @@ export default {
     /deep/.el-date-editor .el-range-input {
       color: white;
       background: transparent;
+      font-size: 12px;
     }
     /deep/.el-range-separator {
       color: white;
+      font-size: 12px;
+      margin-top: -5px;
     }
   }
   .tableBox {
@@ -523,5 +544,35 @@ export default {
   }
   /deep/ .el-table__body-wrapper::-webkit-scrollbar-corner {
     background: #096090;
+  }
+
+  .searchInput {
+    width: 253px;
+    float: right;
+    /deep/ .el-input__inner {
+      background-color: transparent;
+      font-size: 12px;
+      color: white;
+      border-radius: 0;
+      border: 0;
+      border-bottom: solid 1px #368fbb;
+    }
+    /deep/ .el-input-group__prepend {
+      background-color: transparent;
+      font-size: 12px;
+      color: white;
+      border-radius: 0;
+      border: 0;
+      border-bottom: solid 1px #368fbb;
+    }
+  }
+  .more {
+    width: 25px;
+    height: 25px;
+    background-color: transparent;
+    outline: none;
+    float: right;
+    margin-top: 9px;
+    border: 0;
   }
 </style>
