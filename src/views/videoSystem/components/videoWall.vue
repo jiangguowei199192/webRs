@@ -93,7 +93,7 @@ export default {
       zoomSpeed: 0, // 变倍
       focusSpeed: 0, // 变焦
       lrisSpeed: 0, // 光圈
-      step: 10, // 步速值
+      step: 4, // 步速值
       recordNums: {
         leftUp: 0,
         up: 0,
