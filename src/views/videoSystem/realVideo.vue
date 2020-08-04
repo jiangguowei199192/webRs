@@ -772,9 +772,9 @@ export default {
           // 左移
           params.cmd_type = 2
           params.step =
-              this.step * this.recordNums.up > 8
+              this.step * this.recordNums.left > 8
                 ? 8
-                : this.step * this.recordNums.up
+                : this.step * this.recordNums.left
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
