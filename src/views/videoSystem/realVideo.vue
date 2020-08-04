@@ -188,7 +188,7 @@
                 </li>
                 <li>
                   <span>设备编号：</span>
-                  <span>{{curSelectedVideo.id}}</span>
+                  <span>{{curSelectedVideo.deviceCode}}</span>
                 </li>
                 <li>
                   <span>设备品牌：</span>
