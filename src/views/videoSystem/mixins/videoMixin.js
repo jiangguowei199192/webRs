@@ -313,6 +313,10 @@ const videoMixin = {
             if (d.onlineStatus === 'online' && d.children.length > 0) {
               // 注意需要深拷贝，否则设备下线的时候，当在线设备删除通道的时候，树设备列表的通道也会被删除
               var clone = JSON.parse(JSON.stringify(d))
+              clone.children.forEach(c => {
+                Reflect.set(c, 'onlineStatus', clone.onlineStatus)
+                Reflect.set(c, 'deviceTypeCode', clone.deviceTypeCode)
+              })
               this.onlineArray.push(clone)
             } else {
               d.onlineStatus = 'offline'
