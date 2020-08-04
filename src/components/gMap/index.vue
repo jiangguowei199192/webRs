@@ -108,7 +108,7 @@
         @click="clickArea"
       ></div>
     </div>
-    <div class="basicTools" v-if="bShowAllTools && bShowBasic">
+    <div class="basicTools" :class="{basicToolsBottom:!bShowLonLat}" v-if="bShowAllTools && bShowBasic">
       <el-popover placement="left" trigger="click" popper-class="el-popover-custom">
         <div class="mapPopover">
           <div class="mapTypeContainer">
@@ -1368,6 +1368,9 @@ export default {
     .btnZoomOut {
       background-image: url("../../assets/images/zoomout.png");
     }
+  }
+  .basicToolsBottom {
+    bottom: 15px;
   }
   .lonLatTools {
     position: absolute;
