@@ -109,7 +109,7 @@
           <el-input v-model="newUserForm.password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="newUserConfirm" style="float: right;" class="trueBtn">保存</el-button>
+          <el-button type="primary" @click="newUserConfirm" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -117,13 +117,14 @@
     <el-dialog
       title="重置密码"
       :visible.sync="showResetPassword"
-      width="30%">
+      width="30%"
+      class="dialogStyle">
       <el-form ref="resetPasswordFormRef" :model="resetPasswordForm" label-width="80px" :rules="resetPasswordRules">
         <el-form-item label="新密码" prop="password">
           <el-input v-model="resetPasswordForm.password" placeholder="请输入重置密码"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="resetPasswordConfirm" style="float: right;">保存</el-button>
+          <el-button type="primary" @click="resetPasswordConfirm" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -433,6 +434,7 @@ export default {
       width: 66px;
       height: 30px;
       padding: 0;
+      float: right;
     }
     /deep/.el-input__inner { // 输入框
       color: white;
