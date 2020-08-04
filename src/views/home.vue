@@ -113,6 +113,7 @@ export default {
     EventBus.$on('video/realVideo/streamEnd', info => {
       EventBus.$emit('streamEnd', info)
     })
+    // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
       this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       EventBus.$emit('getFireAlarm', info)

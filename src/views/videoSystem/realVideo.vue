@@ -427,7 +427,13 @@ export default {
         right: 0,
         leftDowm: 0,
         dowm: 0,
-        rightDown: 0
+        rightDown: 0,
+        zoomAdd: 0,
+        zoomMinus: 0,
+        focusAdd: 0,
+        focusMinus: 0,
+        lrisAdd: 0,
+        lrisMinus: 0
       }
       this.step = 4 // 步速值
       this.mapClicked = false // 设备地图
@@ -936,7 +942,6 @@ export default {
     },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
-      debugger
       // 1.添加
       if (type === 1) {
         this.curSelectedVideo = curTreeData

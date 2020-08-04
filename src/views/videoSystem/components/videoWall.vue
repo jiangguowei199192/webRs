@@ -17,15 +17,16 @@
         <span>{{videoInfo.parentLabel}}</span>
       </div>
       <div class="fullScreen" v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false" >
-        <div class="deviceInfo">
+        <div class="deviceInfo" >
           <div class="deviceTitle">云台</div>
-          <div class="operate">
+          <div class="operate" >
             <div class="icons">
               <div
                 v-for="(item,index) in 9"
                 :key="index"
-                 @mousedown="startChange(index)"
+                  @mousedown="startChange(index)"
                   @mouseup="stopChange(index)"
+                  @dblclick.stop="stopEvent"
               ></div>
             </div>
             <!-- <div class="btns">
@@ -48,19 +49,19 @@
               <!-- sdk -->
               <div class="btns">
                 <div>
-                  <span @mousedown="startChange(1000)" @mouseup="stopChange(1000)">+</span>
+                  <span @mousedown="startChange(1000)" @mouseup="stopChange(1000)"  @dblclick.stop="stopEvent">+</span>
                   <b>变倍</b>
-                  <span @mousedown="startChange(1001)" @mouseup="stopChange(1001)">-</span>
+                  <span @mousedown="startChange(1001)" @mouseup="stopChange(1001)" @dblclick.stop="stopEvent">-</span>
                 </div>
                 <div>
-                  <span @mousedown="startChange(1002)" @mouseup="stopChange(1002)">+</span>
+                  <span @mousedown="startChange(1002)" @mouseup="stopChange(1002)" @dblclick.stop="stopEvent">+</span>
                   <b>变焦</b>
-                  <span @mousedown="startChange(1003)" @mouseup="stopChange(1003)">-</span>
+                  <span @mousedown="startChange(1003)" @mouseup="stopChange(1003)" @dblclick.stop="stopEvent">-</span>
                 </div>
                 <div>
-                  <span @mousedown="startChange(1004)" @mouseup="stopChange(1004)">+</span>
+                  <span @mousedown="startChange(1004)" @mouseup="stopChange(1004)" @dblclick.stop="stopEvent">+</span>
                   <b>光圈</b>
-                  <span @mousedown="startChange(1005)" @mouseup="stopChange(1005)">-</span>
+                  <span @mousedown="startChange(1005)" @mouseup="stopChange(1005)" @dblclick.stop="stopEvent">-</span>
                 </div>
               </div>
             <div class="slider">
@@ -141,6 +142,11 @@ export default {
   },
 
   methods: {
+    // 阻止冒泡
+    stopEvent (event) {
+      event.stopPropagation()
+      return false
+    },
     play () {
       this.$refs.playerCtrl.player.play()
     },
