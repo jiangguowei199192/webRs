@@ -24,7 +24,7 @@
             >[{{data.deviceCountOnline}}/{{data.deviceCountTotal}}]</a>
           </i>
           <b
-            :obj="JSON.stringify(Object.assign({},data,{deviceAddress:node.parent.data.deviceAddress,deviceBrand:node.parent.data.deviceBrand,parentLabel:node.parent.data.label, labelTotal:node.parent.data.label+ '-' + data.label}))"
+            :obj="JSON.stringify(Object.assign({},data,{deviceCode:node.parent.data.id,deviceAddress:node.parent.data.deviceAddress,deviceBrand:node.parent.data.deviceBrand,parentLabel:node.parent.data.label, labelTotal:node.parent.data.label+ '-' + data.label}))"
           ></b>
         </span>
       </span>
