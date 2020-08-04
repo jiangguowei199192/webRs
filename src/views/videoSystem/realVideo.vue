@@ -720,6 +720,7 @@ export default {
     //       })
     //   }
     // },
+    // 鼠标按下
     startChange (index) {
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
@@ -912,6 +913,7 @@ export default {
           break
       }
     },
+    // 鼠标松开
     stopChange () {
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
