@@ -191,12 +191,12 @@ export default {
             // 图片URL添加baseURL
             if (element.alarmPicList) {
               if (element.alarmPicList.length === 1) { // 只有一张图片
-                element.alarmPicList[0].picPath = globalApi.picUrl + element.alarmPicList[0].picPath
+                element.alarmPicList[0].picPath = globalApi.baseUrl + '/video-service2' + element.alarmPicList[0].picPath
                 element.alarmPicList[1] = { picPath: '' }
               } else { // 两张和两张以上
                 for (let picIndex = 0; picIndex < element.alarmPicList.length; picIndex++) {
                   const pic = element.alarmPicList[picIndex]
-                  pic.picPath = globalApi.picUrl + pic.picPath
+                  pic.picPath = globalApi.baseUrl + '/video-service2' + pic.picPath
                 }
               }
             } else { // 没有图片
