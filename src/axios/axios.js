@@ -18,10 +18,6 @@ service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencod
 // 添加请求拦截器
 
 service.interceptors.request.use((config) => {
-  if (config.url.indexOf('/api/fi') !== -1 || config.url.indexOf('/api/ptz') !== -1) {
-    // config.baseURL = 'http://172.16.63.29:8888'
-    config.baseURL = globalApi.apiFiAndPtz
-  }
   let token = ''
   if (config.url !== '/fms-auth-center/login') {
     token = sessionStorage.getItem('token')
@@ -31,9 +27,6 @@ service.interceptors.request.use((config) => {
     // 判断请求方式是否为POST，进行转换格式
     config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
   }
-  // if (config.url === '/cloud-fms/sysuser/updateUser') {
-  //   config.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
-  // }
   return config
 },
 (error) => {

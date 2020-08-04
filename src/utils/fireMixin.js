@@ -88,7 +88,7 @@ const fireMixin = {
     handlingAlarmImgUrl (fire) {
       if (fire.alarmPicList && fire.alarmPicList.length > 0) {
         fire.alarmPicList.forEach(img => {
-          img.picPath = globalApi.picUrl + img.picPath
+          img.picPath = globalApi.baseUrl + '/video-service2' + img.picPath
         })
       }
     },

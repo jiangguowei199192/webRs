@@ -348,7 +348,7 @@ export default {
   },
   data () {
     return {
-      picUrl: globalApi.picUrl, // 图片前缀
+      picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
       // filterText: '', // 节点过滤文字
@@ -924,9 +924,9 @@ export default {
       this.changeViewVideo(params)
     },
     changeViewVideo (params) {
-      this.$axios.post('/index/api/ptzConrol', params).then(res => {
+      this.$axios.post('/video-service2/index/api/ptzConrol', params).then(res => {
         if (res && res.data && res.data.code === 0) {
-          debugger
+          console.log('成功！')
         }
       })
     },

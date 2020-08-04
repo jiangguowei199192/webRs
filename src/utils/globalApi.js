@@ -1,8 +1,6 @@
 
 import $ from 'jquery'
 let baseUrl = ''
-let apiFiAndPtz = ''
-let picUrl = ''
 let mqttServer = ''
 let mqttPort = ''
 let imageUrl = ''
@@ -16,8 +14,6 @@ if (process.env.NODE_ENV === 'production') {
     success: function (res) { // 请求成功
       console.log(res)
       baseUrl = res.baseUrl
-      apiFiAndPtz = res.getMp4RecordFile
-      picUrl = res.picUrl
       mqttServer = res.mqttServer
       mqttPort = res.mqttPort
       imageUrl = res.imageUrl
@@ -28,17 +24,12 @@ if (process.env.NODE_ENV === 'production') {
   })
 } else {
   baseUrl = 'http://172.16.63.148:8850'
-  apiFiAndPtz = 'http://172.16.63.29:8888'
-  picUrl = 'http://172.16.63.158:22222'
   mqttServer = '172.16.63.148'
   mqttPort = 2883
-  // imageUrl = 'http://120.24.12.64'
   imageUrl = 'http://172.16.63.148'
 }
 export default {
   baseUrl,
-  apiFiAndPtz,
-  picUrl,
   mqttServer,
   mqttPort,
   imageUrl
