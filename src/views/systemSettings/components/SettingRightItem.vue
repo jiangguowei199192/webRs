@@ -136,26 +136,6 @@ export default {
         username: [{ required: true, message: '请输入真实姓名' }],
         mobile: [{ required: true, message: '请输入手机号' }]
       },
-      // myInfoForm: {
-      //   domains: [
-      //     {
-      //       title: '登录名',
-      //       input: ''
-      //     },
-      //     {
-      //       title: '真实姓名',
-      //       input: ''
-      //     },
-      //     {
-      //       title: '手机',
-      //       input: ''
-      //     },
-      //     {
-      //       title: '验证码',
-      //       input: ''
-      //     }
-      //   ]
-      // }
       realNameSelect: 'realNameSelectOptions1',
       realNameSelectOptions: [
         { label: '仅自己可见', value: 'realNameSelectOptions1' },

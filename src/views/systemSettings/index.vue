@@ -29,6 +29,7 @@
             id="idRightItemUserPermission"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
+            v-bind:userDetail="userDetail"
           ></SettingRightTable>
           <SettingRightTable
             id="idRightItemVideoServe"
@@ -370,7 +371,7 @@ export default {
   /* --- 滚动条里面轨道 --- */
   /deep/ ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    // border-radius: 10px;
+    border-radius: 10px;
     background: #096090;
   }
   /deep/ ::-webkit-scrollbar-corner {
