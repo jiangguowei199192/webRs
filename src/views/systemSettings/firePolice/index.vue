@@ -280,6 +280,8 @@ export default {
         this.pageData.endTime = endTime
         this.getFirePoliceList()
       } else {
+        this.pageData.beginTime = ''
+        this.pageData.endTime = ''
         this.getFirePoliceList()
       }
     },
