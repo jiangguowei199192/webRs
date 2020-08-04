@@ -254,10 +254,10 @@ export default {
 
       const p = this
       setTimeout(() => {
-        p.$refs.gduMap.map2D.zoomToCenter(
-          detail.alarmLongitude,
-          detail.alarmLatitude
-        )
+        p.$refs.gduMap.map2D.zoomToCenter(detail.alarmLongitude, detail.alarmLatitude)
+        // p.$refs.gduMap.map2D.mapMoveTo(detail.alarmLongitude, detail.alarmLatitude)
+        p.$refs.gduMap.map2D.customMarkerLayerManager.addMarker({ lon: detail.alarmLongitude, lat: detail.alarmLatitude })
+        p.$refs.gduMap.map2D.setZoom(16)
       }, 1000)
     },
     // 确认、误报
