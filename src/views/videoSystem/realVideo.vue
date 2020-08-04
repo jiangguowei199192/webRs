@@ -222,7 +222,7 @@
                   v-for="(item,index) in 9"
                   :key="index"
                   @mousedown="startChange(index)"
-                  @mouseup="stopChange"
+                  @mouseup="stopChange(index)"
                 ></div>
               </div>
               <!-- 国标 -->
@@ -731,7 +731,7 @@ export default {
           ++this.recordNums.leftUp
           this.clearRecord('leftUp')
           // 左上
-          params.cmd_type = 31
+          params.cmd_type = 32
           params.step =
               this.step * this.recordNums.leftUp > 8
                 ? 8
@@ -754,14 +754,14 @@ export default {
           this.changeViewVideo(params)
           break
         case 2:
-          ++this.recordNums.up
-          this.clearRecord('up')
-          // 上移
-          params.cmd_type = 32
+          ++this.recordNums.rightUp
+          this.clearRecord('rightUp')
+          // 右上
+          params.cmd_type = 33
           params.step =
-              this.step * this.recordNums.up > 8
+              this.step * this.recordNums.rightUp > 8
                 ? 8
-                : this.step * this.recordNums.up
+                : this.step * this.recordNums.rightUp
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -798,7 +798,7 @@ export default {
           ++this.recordNums.leftDown
           this.clearRecord('leftDown')
           // 左下
-          params.cmd_type = 33
+          params.cmd_type = 34
           params.step =
               this.step * this.recordNums.leftDown > 8
                 ? 8
@@ -824,7 +824,7 @@ export default {
           ++this.recordNums.rightDown
           this.clearRecord('rightDown')
           // 右下
-          params.cmd_type = 34
+          params.cmd_type = 35
           params.step =
               this.step * this.recordNums.rightDown > 8
                 ? 8
@@ -849,8 +849,8 @@ export default {
         case 1001:
           ++this.recordNums.zoomMinus
           this.clearRecord('zoomMinus')
-          // 变倍+
-          params.cmd_type = 4
+          // 变倍-
+          params.cmd_type = 5
           params.step =
               this.step * this.recordNums.zoomMinus > 8
                 ? 8
@@ -863,7 +863,7 @@ export default {
           ++this.recordNums.focusAdd
           this.clearRecord('focusAdd')
           // 变焦+
-          params.cmd_type = 4
+          params.cmd_type = 6
           params.step =
               this.step * this.recordNums.focusAdd > 8
                 ? 8
@@ -875,8 +875,8 @@ export default {
         case 1003:
           ++this.recordNums.focusMinus
           this.clearRecord('focusMinus')
-          // 变焦+
-          params.cmd_type = 4
+          // 变焦-
+          params.cmd_type = 7
           params.step =
               this.step * this.recordNums.focusMinus > 8
                 ? 8
@@ -888,8 +888,8 @@ export default {
         case 1004:
           ++this.recordNums.lrisAdd
           this.clearRecord('lrisAdd')
-          // 变焦+
-          params.cmd_type = 4
+          // 光圈+
+          params.cmd_type = 8
           params.step =
               this.step * this.recordNums.lrisAdd > 8
                 ? 8
@@ -901,8 +901,8 @@ export default {
         case 1005:
           ++this.recordNums.lrisMinus
           this.clearRecord('lrisMinus')
-          // 变焦+
-          params.cmd_type = 4
+          // 光圈-
+          params.cmd_type = 9
           params.step =
               this.step * this.recordNums.lrisMinus > 8
                 ? 8
@@ -914,7 +914,8 @@ export default {
       }
     },
     // 鼠标松开
-    stopChange () {
+    stopChange (index) {
+      if (index === 4) return
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
         channel_id: this.curSelectedVideo.id,
