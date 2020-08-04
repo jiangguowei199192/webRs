@@ -70,7 +70,8 @@
     <el-dialog
       :title="newUserTitle"
       :visible.sync="showNewUser"
-      width="30%">
+      width="30%"
+      class="dialogStyle">
       <el-form ref="newUserFormRef" :model="newUserForm" label-width="80px" :rules="newUserRules">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="newUserForm.username"></el-input>
@@ -85,13 +86,13 @@
           <el-input v-model="newUserForm.email"></el-input>
         </el-form-item>
         <el-form-item label="职务">
-          <el-select v-model="newUserForm.job" placeholder="请选择职务">
+          <el-select :popper-append-to-body="false" v-model="newUserForm.job" placeholder="请选择职务" class="selectStyle" popper-class="select-popper">
             <el-option label="职务一" value="1"></el-option>
             <el-option label="职务二" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="所属组织">
-          <el-select v-model="newUserForm.organizations" multiple placeholder="请选择组织">
+          <el-select :popper-append-to-body="false" v-model="newUserForm.organizations" multiple placeholder="请选择组织" class="selectStyle" popper-class="select-popper">
             <el-option v-for="item in organizationOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -108,7 +109,7 @@
           <el-input v-model="newUserForm.password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="newUserConfirm" style="float: right;">保存</el-button>
+          <el-button type="primary" @click="newUserConfirm" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -116,13 +117,14 @@
     <el-dialog
       title="重置密码"
       :visible.sync="showResetPassword"
-      width="30%">
+      width="30%"
+      class="dialogStyle">
       <el-form ref="resetPasswordFormRef" :model="resetPasswordForm" label-width="80px" :rules="resetPasswordRules">
         <el-form-item label="新密码" prop="password">
           <el-input v-model="resetPasswordForm.password" placeholder="请输入重置密码"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="resetPasswordConfirm" style="float: right;">保存</el-button>
+          <el-button type="primary" @click="resetPasswordConfirm" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -404,5 +406,73 @@ export default {
     border: 0;
     margin-left: 0px;
     border-radius: 0px;
+  }
+
+  .dialogStyle {
+    min-width: 1500px;
+    /deep/.el-dialog__header { // 头部
+      background-color: #39a4dd;
+    }
+    /deep/.el-dialog__title { // 头部-标题
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    /deep/.el-dialog__body { // 内部
+      background-color: #336984;
+    }
+    /deep/.el-dialog__footer { // 尾部
+      background-color: #336984;
+    }
+    /deep/.el-icon-close:before { // 头部-关闭
+      color: white;
+    }
+    .trueBtn { // 按钮
+      background-color: #1eb0fc;
+      font-size: 14px;
+      color: white;
+      width: 66px;
+      height: 30px;
+      padding: 0;
+      float: right;
+    }
+    /deep/.el-input__inner { // 输入框
+      color: white;
+      background-color: #3688b1;
+      border: none;
+    }
+    /deep/.el-form-item__label { // label
+      color: white;
+    }
+    .el-radio {
+      color: white;
+    }
+    .selectStyle { // 下拉框
+      /deep/.el-input__inner {
+        font-size: 12px;
+      }
+      /deep/.select-popper {
+        background-color: #3688b1;
+        font-size: 12px;
+        color: white;
+        border: none;
+        .el-select-dropdown__item.selected {
+          background-color: #3688b1;
+        }
+        .el-select-dropdown__item {
+          font-size: 12px;
+          color: white;
+        }
+        .el-select-dropdown__item.hover {
+          background-color: #3688b1;
+        }
+        .popper__arrow {
+          border-bottom-color: #3688b1;
+        }
+        .popper__arrow::after {
+          border-bottom-color: #3688b1;
+        }
+      }
+    }
   }
 </style>
