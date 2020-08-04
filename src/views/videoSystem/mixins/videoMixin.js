@@ -95,9 +95,11 @@ const videoMixin = {
       var device = this.onlineArray.find(c => c.id === info.id)
 
       if (info.children && info.children.length > 0) {
+        // 通道是否在线
+        var on = isOnline === true ? 'online' : 'offline'
         info.children.forEach(item => {
           Reflect.set(item, 'deviceTypeCode', info.deviceTypeCode)
-          Reflect.set(item, 'onlineStatus', info.onlineStatus)
+          Reflect.set(item, 'onlineStatus', on)
         })
       }
       if (!info.children) Reflect.set(info, 'children', [])
@@ -224,9 +226,11 @@ const videoMixin = {
           }
           // 拷贝children数组的属性
           if (info.children && info.children.length > 0) {
+            // 通道是否在线
+            var on = isOnline === true ? 'online' : 'offline'
             info.children.forEach(item => {
               Reflect.set(item, 'deviceTypeCode', info.deviceTypeCode)
-              Reflect.set(item, 'onlineStatus', info.onlineStatus)
+              Reflect.set(item, 'onlineStatus', on)
               var child = device.children.find(i => i.id === item.id)
               if (child !== undefined) {
                 // 拷贝属性
@@ -307,7 +311,9 @@ const videoMixin = {
             d._bIsDevice = true
             data[i].children.push(d)
             if (d.onlineStatus === 'online' && d.children.length > 0) {
-              this.onlineArray.push(d)
+              // 注意需要深拷贝，否则设备下线的时候，当在线设备删除通道的时候，树设备列表的通道也会被删除
+              var clone = JSON.parse(JSON.stringify(d))
+              this.onlineArray.push(clone)
             } else {
               d.onlineStatus = 'offline'
             }
