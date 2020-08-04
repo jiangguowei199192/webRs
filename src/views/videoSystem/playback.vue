@@ -439,6 +439,7 @@ export default {
      */
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
+      this.getAllDeptDevices()
       this.isOnline = isOnline
       // 如果选择在线设备，则清除所有设备的数据
       if (this.isOnline) {
