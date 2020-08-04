@@ -493,6 +493,7 @@ export default {
         // eslint-disable-next-line
         AMap.event.addListener(this.simpleAutoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
           if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
+            that.addCustomMarker(e.poi.name, e.poi.location.lng, e.poi.location.lat)
             that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
           }
         })
@@ -572,7 +573,13 @@ export default {
       console.log('initSearchBox ...... OK')
     },
 
-    // 删除搜索框中文字事件处理
+    // 添加自定义位置标记
+    addCustomMarker (name, lon, lat) {
+      this.map2D.customMarkerLayerManager.clear()
+      this.map2D.customMarkerLayerManager.addMarker({ name: name, lon: lon, lat: lat, _bWgs2Gcj: false })
+      this.map2D.setZoom(16)
+    },
+    // Enter或点击搜索事件处理
     async simpleSearchAddrs (addrStr, bDetail) {
       if (this.simpleChooseAddr != null && bDetail !== true) {
         return
@@ -597,12 +604,14 @@ export default {
           if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
             const tmpLon = parseFloat(strs[0])
             const tmpLat = parseFloat(strs[1])
+            this.addCustomMarker(addrStr, tmpLon, tmpLat)
             this.mapMoveTo(tmpLon, tmpLat, false)
             return
           } else if (lonreg.test(strs[1]) && latreg.test(strs[0])) {
             const tmpLon = parseFloat(strs[1])
             const tmpLat = parseFloat(strs[0])
             this.mapMoveTo(tmpLon, tmpLat, false)
+            this.addCustomMarker(addrStr, tmpLon, tmpLat)
             return
           }
         } catch (error) {
@@ -615,17 +624,18 @@ export default {
         .then(res => {
           if (res.data.status === '1') {
             const tmpTips = res.data.tips
-            tmpTips.forEach(tip => {
+            for (let index = 0; index < tmpTips.length; index++) {
               try {
-                const tmpStrs = tip.location.split(',')
+                const tmpStrs = tmpTips[index].location.split(',')
                 const tmpLon = parseFloat(tmpStrs[0])
                 const tmpLat = parseFloat(tmpStrs[1])
+                this.addCustomMarker(addrStr, tmpLon, tmpLat)
                 that.mapMoveTo(tmpLon, tmpLat, false)
-                return null
+                break
               } catch (error) {
                 console.log('tmpTips.forEach exception : ' + error)
               }
-            })
+            }
           }
         })
         .catch(err => {

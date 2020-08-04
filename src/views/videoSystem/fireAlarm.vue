@@ -169,6 +169,7 @@ export default {
         this.$refs.gduMap.showLayer('drone', true)
         this.$refs.gduMap.map2D.devDroneLayerManager.selectFeatureByID(item)
       }
+      this.$refs.gduMap.map2D.setZoom(16)
       this.$refs.gduMap.map2D.zoomToCenter(
         item.deviceLongitude,
         item.deviceLatitude

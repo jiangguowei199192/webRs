@@ -160,13 +160,16 @@ const fireMixin = {
       const tmpMap = this.$refs.gduMap.map2D
       tmpMap.devFireWarningLayerManager.selectFeatureByID(item)
       if (this.bAutoMove) {
-        tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
-        const mapCenter = tmpMap._map.getView().getCenter()
-        const tmpCenter = tmpMap._map.getPixelFromCoordinate(mapCenter)
-        const newx = tmpCenter[0] - 100
-        const newy = tmpCenter[1] - 120
-        const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
-        tmpMap.zoomToCenter(newCenter[0], newCenter[1])
+        tmpMap.setZoom(16)
+        setTimeout(() => {
+          tmpMap.zoomToCenter(item.alarmLongitude, item.alarmLatitude)
+          const mapCenter = tmpMap._map.getView().getCenter()
+          const tmpCenter = tmpMap._map.getPixelFromCoordinate(mapCenter)
+          const newx = tmpCenter[0] - 100
+          const newy = tmpCenter[1] - 120
+          const newCenter = tmpMap._map.getCoordinateFromPixel([newx, newy])
+          tmpMap.zoomToCenter(newCenter[0], newCenter[1])
+        }, 10)
       }
     },
     // 火情报警弹窗中点击复制坐标回调函数
