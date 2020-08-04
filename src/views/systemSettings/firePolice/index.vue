@@ -15,7 +15,8 @@
             end-placeholder="结束日期"
             :default-time="['00:00:00', '23:59:59']"
             class="datePickerStyle"
-            @change="dateSearch">
+            @change="dateSearch"
+            popper-class="chooseDateStyle">
           </el-date-picker>
         </div>
         <div class="tableBox">
@@ -279,6 +280,8 @@ export default {
         this.pageData.endTime = endTime
         this.getFirePoliceList()
       } else {
+        this.pageData.beginTime = ''
+        this.pageData.endTime = ''
         this.getFirePoliceList()
       }
     },
@@ -295,30 +298,32 @@ export default {
 </script>
 
 <style lang="scss">
-  .el-picker-panel {
+  .chooseDateStyle.el-picker-panel {
     width: 350px;
     height: 230px;
   }
-  .el-date-range-picker__content {
-    width: 175px;
-  }
-  .el-date-range-picker__header {
-    height: 15px;
-    margin: 0;
-  }
-  .el-date-range-picker__header div {
-    font-size: 10px;
-  }
-  .el-date-range-picker__content .el-date-range-picker__header div {
-    margin: 0;
-  }
-  .el-date-table td,
-  .el-date-table td div {
-    height: 15px;
-  }
-  .el-date-table td span {
-    width: 20px;
-    height: 20px;
+  .chooseDateStyle {
+    .el-date-range-picker__content {
+      width: 175px;
+    }
+    .el-date-range-picker__header {
+      height: 15px;
+      margin: 0;
+    }
+    .el-date-range-picker__header div {
+      font-size: 10px;
+    }
+    .el-date-range-picker__content .el-date-range-picker__header div {
+      margin: 0;
+    }
+    .el-date-table td,
+    .el-date-table td div {
+      height: 15px;
+    }
+    .el-date-table td span {
+      width: 20px;
+      height: 20px;
+    }
   }
 </style>
 
