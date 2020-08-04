@@ -1,14 +1,15 @@
 <template>
   <div class="gduMapMain">
     <div
-      id="mapContainer"
+      :id="mapContainerID"
+      class="mapContainer"
       :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
       @dblclick="dblClickMap"
     ></div>
     <div class="simpleSearchCtrl" v-if="bShowAllTools && bShowSimpleSearchTools">
       <input
         class="simpleInputText"
-        id="_simpleAddrSearch"
+        :id="simpleAddrSearchID"
         v-model="simpleFilterText"
         type="text"
         autocomplete="off"
@@ -24,7 +25,7 @@
     <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
       <input
         class="inputText"
-        id="_addrSearch"
+        :id="addrSearchID"
         v-model="filterText"
         type="text"
         autocomplete="off"
@@ -43,7 +44,7 @@
     </div>
     <div class="routeCtrl disable-user-select" v-show="bShowRouteCtrl">
       <el-input
-        id="_pointStart"
+        :id="pointStartID"
         class="pointInput"
         v-model="startText"
         size="mini"
@@ -60,7 +61,7 @@
         ></el-button>
       </el-input>
       <el-input
-        id="_pointEnd"
+        :id="pointEndID"
         class="pointInput"
         v-model="endText"
         size="mini"
@@ -239,6 +240,11 @@ export default {
   },
   data () {
     return {
+      mapContainerID: null,
+      simpleAddrSearchID: null,
+      addrSearchID: null,
+      pointStartID: null,
+      pointEndID: null,
       simpleAutoTips: null,
       autoTips: null,
       autoStartTips: null,
@@ -350,6 +356,14 @@ export default {
   },
 
   created () {
+    const tmpTime = new Date()
+    const tmpStamp = tmpTime.getTime()
+    this.mapContainerID = 'mapContainer_' + tmpStamp
+    this.simpleAddrSearchID = '_simpleAddrSearch_' + tmpStamp
+    this.addrSearchID = '_addrSearch_' + tmpStamp
+    this.pointStartID = '_pointStart_' + tmpStamp
+    this.pointEndID = '_pointEnd_' + tmpStamp
+
     this.mapTypeBasic = 1
     this.lon = 110.200431
     this.lat = 32.751584
@@ -387,7 +401,7 @@ export default {
       this.mapTypeCur = this.mapTypeBasic + this.mapTypeIndex
       // eslint-disable-next-line
       this.map2D = new D2.Map2D({
-        containerId: 'mapContainer',
+        containerId: this.mapContainerID,
         baseLayerType: this.mapTypeCur,
         serverBaseUrl: rootUrl
       })
@@ -489,7 +503,7 @@ export default {
       var that = this
       if (this.bShowSimpleSearchTools) {
         // eslint-disable-next-line
-        this.simpleAutoTips = new AMap.Autocomplete({ input: "_simpleAddrSearch" })
+        this.simpleAutoTips = new AMap.Autocomplete({ input: this.simpleAddrSearchID })
         // eslint-disable-next-line
         AMap.event.addListener(this.simpleAutoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
           if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
@@ -507,7 +521,7 @@ export default {
       if (this.bShowSearchTools) {
         // 输入提示
         // eslint-disable-next-line
-        this.autoTips = new AMap.Autocomplete({ input: "_addrSearch" })
+        this.autoTips = new AMap.Autocomplete({ input: this.addrSearchID })
         // eslint-disable-next-line
         AMap.event.addListener(this.autoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
           that.bShowPaln = false
@@ -537,7 +551,7 @@ export default {
 
         // Init start POI
         // eslint-disable-next-line
-        this.autoStartTips = new AMap.Autocomplete({ input: "_pointStart" });
+        this.autoStartTips = new AMap.Autocomplete({ input: this.pointStartID });
         // eslint-disable-next-line
         AMap.event.addListener(this.autoStartTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
           if (
@@ -554,7 +568,7 @@ export default {
 
         // Init end POI
         // eslint-disable-next-line
-        this.autoEndTips = new AMap.Autocomplete({ input: "_pointEnd" });
+        this.autoEndTips = new AMap.Autocomplete({ input: this.pointEndID });
         // eslint-disable-next-line
         AMap.event.addListener(this.autoEndTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
           if (
@@ -1095,7 +1109,7 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  #mapContainer {
+  .mapContainer {
     width: 100%;
     height: 100%;
   }

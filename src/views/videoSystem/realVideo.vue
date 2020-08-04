@@ -273,6 +273,20 @@
               </div>
             </div>
           </div>
+          <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='WRJ'">
+            <div class="info">位置</div>
+            <div class="mapBox">
+              <gMap
+                ref="gduMap"
+                handleType="devMap"
+                :bShowSimpleSearchTools="false"
+                :bShowBasic="false"
+                :bShowMeasure="false"
+                :bShowLonLat="false"
+                :bAutoLocate="false"
+              ></gMap>
+            </div>
+          </div>
         </div>
       </div>
     </VideoMain>
@@ -940,11 +954,22 @@ export default {
         }
       })
     },
+    refreshMap (video) {
+      if (video !== undefined && video !== null) {
+        if (video.deviceTypeCode === 'WRJ') {
+          const tmpMap = this.$refs.gduMap.map2D
+          setTimeout(() => {
+            tmpMap._map.updateSize()
+          }, 1)
+        }
+      }
+    },
     // 点击树节点,播放或关闭当前视频
     playOrClose (type, curTreeData) {
       // 1.添加
       if (type === 1) {
         this.curSelectedVideo = curTreeData
+        this.refreshMap(this.curSelectedVideo)
         // 1.1默认位置添加
         if (this.curVideoIndex === 1000) {
           const i = this.totalVideosArray.indexOf('')
@@ -1879,6 +1904,10 @@ export default {
             background-color: #84ddff;
           }
         }
+      }
+      .mapBox {
+        margin: 6px 16px 10px 6px;
+        height: 200px;
       }
     }
   }

@@ -77,6 +77,17 @@
           </div>
         </div>
       </div>
+      <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate" >
+        <gMap
+          ref="gduMap"
+          handleType="devMap"
+          :bShowSimpleSearchTools="false"
+          :bShowBasic="false"
+          :bShowMeasure="false"
+          :bShowLonLat="false"
+          :bAutoLocate="false"
+        ></gMap>
+      </div>
     </LivePlayer>
   </div>
 </template>
@@ -194,6 +205,13 @@ export default {
         player.exitFullscreen()
       } else { player.requestFullscreen() }
       this.$emit('screenchange', this.videoInfo)
+
+      if (this.videoInfo.deviceTypeCode === 'WRJ') {
+        const tmpMap = this.$refs.gduMap.map2D
+        setTimeout(() => {
+          tmpMap._map.updateSize()
+        }, 200)
+      }
     },
 
     /**
@@ -964,5 +982,12 @@ export default {
       }
     }
   }
+}
+.fullScreenMap {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  width: 293px;
+  height: 250px;
 }
 </style>
