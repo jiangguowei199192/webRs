@@ -45,7 +45,6 @@ module.exports = {
   // devServer:{type:Object} 3个属性host,port,https
   // 它支持webPack-dev-server的所有选项
 
-<<<<<<< Updated upstream
   devServer: {
     port: 8080, // 端口号
     host: 'localhost', // localhost
@@ -59,21 +58,6 @@ module.exports = {
       }
     } // 配置多个代理
   },
-=======
-  // devServer: {
-  //   port: 8080, // 端口号
-  //   host: '0.0.0.0', // localhost
-  //   https: false, // https:{type:Boolean}
-  //   open: true, // 配置自动启动浏览器
-  //   proxy: {
-  //     '/api': {
-  //       target: 'http://172.16.63.148:8850',
-  //       ws: true,
-  //       changeOrigin: true
-  //     }
-  //   } // 配置多个代理
-  // },
->>>>>>> Stashed changes
   configureWebpack: {
     plugins: [
       // 让打包的时候输入可配置的文件
