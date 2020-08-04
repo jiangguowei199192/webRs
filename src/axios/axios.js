@@ -18,13 +18,12 @@ service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencod
 // 添加请求拦截器
 
 service.interceptors.request.use((config) => {
-  if (config.url === '/index/api/getMp4RecordFile') {
-    config.baseURL = globalApi.getMp4RecordFile
-  } else if (config.url.indexOf('/index/api/ptzConrol') !== -1) {
-    config.baseURL = globalApi.picUrl
+  if (config.url.indexOf('/api/fi') !== -1 || config.url.indexOf('/api/ptz') !== -1) {
+    // config.baseURL = 'http://172.16.63.29:8888'
+    config.baseURL = globalApi.apiFiAndPtz
   }
   let token = ''
-  if (config.url !== '/fms-auth-center/login' && config.url !== '/index/api/getMp4RecordFile') {
+  if (config.url !== '/fms-auth-center/login') {
     token = sessionStorage.getItem('token')
     config.headers.Authorization = token
   }

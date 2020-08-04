@@ -1,5 +1,5 @@
 export const api = {
-  getMp4RecordFile: '/index/api/getMp4RecordFile',
+  getMp4RecordFile: '/video-service1/index/api/getMp4RecordFile',
   getSnapList: '/cloud-video/deviceSnap/list',
   updateSnap: '/cloud-video/deviceSnap/update'
 }

@@ -753,7 +753,7 @@ export default {
               var url = ''
               if (index !== -1) {
                 url =
-                  globalApi.getMp4RecordFile +
+                  globalApi.baseUrl + '/video-service1' +
                   rs.data.rootPath.substring(index) +
                   p.file_name
               }
