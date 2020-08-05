@@ -158,7 +158,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev,next"
+                  layout="prev,pager,next"
                   :total="totalVideosArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
@@ -968,9 +968,9 @@ export default {
     playOrClose (type, curTreeData) {
       // 1.添加
       if (type === 1) {
-        this.curSelectedVideo = curTreeData
+        this.curSelectedVideo = JSON.parse(JSON.stringify(curTreeData))
         console.log('当前选中', this.curSelectedVideo)
-        // this.refreshMap(this.curSelectedVideo)
+        this.refreshMap(curTreeData)
         // 1.1默认位置添加
         if (this.curVideoIndex === 1000) {
           const i = this.totalVideosArray.indexOf('')
@@ -988,7 +988,8 @@ export default {
             //   0,
             //   this.showVideoPageSize
             // )
-            this.next(++this.currentPage)
+            ++this.currentPage
+            this.next(Math.ceil(this.totalVideosArray.length / this.showVideoPageSize))
           }
         } else {
           // 1.2指定位置添加
@@ -1038,13 +1039,11 @@ export default {
         this.curSelectedVideo = {}
         this.curVideoIndex = 1000
         // }
-        let i = 0
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === curTreeData.id) {
-            i = index
+            this.totalVideosArray.splice(index, 1, '')
           }
         })
-        this.totalVideosArray.splice(i, 1, '')
         this.curVideosArray = this.totalVideosArray.slice(
           (this.currentPage - 1) * this.showVideoPageSize,
           this.currentPage * this.showVideoPageSize
@@ -1238,6 +1237,7 @@ export default {
             'is-current'
           )
       } else {
+        console.log(this.curVideosArray)
         this.onlineArray.forEach((item, index) => {
           if (item.children && item.children.length > 0) {
             item.children.forEach(list => {
@@ -1275,7 +1275,6 @@ export default {
     // 下一页
     next (cpage) {
       // 清掉之前的选中状态
-
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
       // for (let i = 0; i < divs.length; i++) {
@@ -1294,7 +1293,6 @@ export default {
         cpage * this.showVideoPageSize
       )
       this.activeFirstTree()
-      console.log(cpage, this.curVideosArray.length)
     },
     // 动态渲染9个容器
     machineStatusStyle1 (n) {
@@ -1530,7 +1528,6 @@ export default {
     })
   },
   mounted () {
-    this.clientHeight = document.body.clientHeight
   }
 }
 </script>
