@@ -192,7 +192,7 @@ export default {
   font-family: Source Han Sans CN;
   // font-weight: bold;
   margin-top: 20px;
-  height: 750px;
+  max-height: 750px;
   width: 248px;
   overflow-y: auto;
   overflow-x: auto;

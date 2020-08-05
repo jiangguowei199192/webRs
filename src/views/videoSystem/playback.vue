@@ -1320,7 +1320,7 @@ export default {
     line-height: 34px;
     width: 230px;
     color: #23cefd;
-    background: #1a3e68;
+    background: #062C5D;
     // text-align: center;
     div {
       width: 104px;
