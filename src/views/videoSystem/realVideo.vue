@@ -411,7 +411,7 @@ export default {
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
-      this.getAllDeptDevices()
+      // this.getAllDeptDevices()
       this.isOnline = isOnline
       // 如果选择在线设备
       if (this.isOnline) {
