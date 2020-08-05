@@ -61,6 +61,8 @@ import { getTime } from '@/utils/date'
 import amapApi from '@/axios/amapapis'
 import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
+import { loginApi } from '@/api/login'
+const droneOffline = 'gdu/appOutLine'
 export default {
   name: 'Home',
   data () {
@@ -93,7 +95,8 @@ export default {
           content: '系统设置'
         }
       ],
-      curActive: 1 // 激活实时视频还是回放视频 1实时 2回放
+      curActive: 1, // 激活实时视频还是回放视频 1实时 2回放
+      realtimeInfoTopicArray: [] // 需要监听的飞机实时信息主题
     }
   },
   created () {
@@ -118,6 +121,10 @@ export default {
       this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       EventBus.$emit('getFireAlarm', info)
     })
+    // 飞机实时信息
+    EventBus.$on('droneInfos', info => {
+      this.parseDroneRealtimeInfo(info)
+    })
   },
   mounted () {
     this.jumpTo(this.isActive)
@@ -128,6 +135,8 @@ export default {
     // 通过构造函数，创建mqtt连接
     // eslint-disable-next-line no-unused-vars
     var mqtt = new MqttService()
+    // 获取飞机实时信息所需订阅主题
+    this.getRealtimeInfoTopics()
   },
   methods: {
     // 点击激活当前系统
@@ -167,6 +176,42 @@ export default {
           }
         }
       })
+    },
+    // 获取飞机实时信息所需订阅主题
+    getRealtimeInfoTopics () {
+      this.realtimeInfoTopicArray = []
+      const tmpThis = this
+      const tmpAxios = this.$axios
+      this.$axios.get(loginApi.getUserDetail).then(res => {
+        if (res.data.code === 0) {
+          tmpAxios.get(loginApi.getDeptByDeptCode, { params: { deptCode: res.data.data.deptCode } }).then(res2 => {
+            if (res2.data.code === 0) {
+              res2.data.data.forEach((deptCode) => {
+                tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
+              })
+            }
+          }).catch(err2 => {
+            console.log('loginApi.getDeptByDeptCode Err : ' + err2)
+          })
+        }
+      }).catch(err => {
+        console.log('loginApi.getUserDetail Err : ' + err)
+      })
+    },
+    // 解析飞机实时信息(根据主题进行分发)
+    parseDroneRealtimeInfo (msg) {
+      const object = JSON.parse(msg.payloadString)
+      if (droneOffline === msg.topic) {
+        EventBus.$emit('droneOffline', object)
+      } else {
+        const tmpArray = this.realtimeInfoTopicArray
+        for (let i = 0; i < tmpArray.length; i++) {
+          if (msg.topic.indexOf(tmpArray[i]) === 0) {
+            EventBus.$emit('droneRealtimeInfo', object)
+            break
+          }
+        }
+      }
     }
   }
 }

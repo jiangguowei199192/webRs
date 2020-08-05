@@ -41,6 +41,8 @@ var mqttService;
       instance.client.subscribe('video/device/offline')
       // 订阅火情火点
       instance.client.subscribe('video/deviceIid/channleID/datalink/firewarning')
+      // 飞机实时信息
+      instance.client.subscribe('gdu/*')
     }
 
     // mqtt client失去连接后的callback
@@ -59,6 +61,9 @@ var mqttService;
       // console.log(message);
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
+      if (message.topic.substr(0, 4) === 'gdu/') {
+        EventBus.$emit('droneInfos', message)
+      }
     }
 
     // mqtt client连接失败callback
