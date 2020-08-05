@@ -969,7 +969,8 @@ export default {
       // 1.添加
       if (type === 1) {
         this.curSelectedVideo = curTreeData
-        this.refreshMap(this.curSelectedVideo)
+        console.log('当前选中', this.curSelectedVideo)
+        // this.refreshMap(this.curSelectedVideo)
         // 1.1默认位置添加
         if (this.curVideoIndex === 1000) {
           const i = this.totalVideosArray.indexOf('')
@@ -1250,8 +1251,10 @@ export default {
       }
       if (!this.curVideosArray[0]) {
         this.selectedIndex = 200
+      } else {
+        this.curSelectedVideo = this.curVideosArray[0]
       }
-      this.curSelectedVideo = this.curVideosArray[0]
+      // this.curSelectedVideo = this.curVideosArray[0]
     },
     // 上一页
     pre (cpage) {
@@ -1908,7 +1911,7 @@ export default {
       flex-wrap: wrap;
       height: 710px;
       > div {
-        div {
+        >div {
           box-sizing: border-box;
           // height: 223px;
 
