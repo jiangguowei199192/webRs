@@ -158,7 +158,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev,pager,next"
+                  layout="prev,next"
                   :total="totalVideosArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
@@ -1222,6 +1222,8 @@ export default {
       }
       if (this.curVideosArray[0]) {
         this.activeFirstTree()
+      } else {
+        this.curSelectedVideo = {}
       }
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
@@ -1270,7 +1272,11 @@ export default {
         cpage * this.showVideoPageSize
       )
       console.log('当前', this.curVideosArray)
-      this.activeFirstTree()
+      if (this.curVideosArray[0]) {
+        this.activeFirstTree()
+      } else {
+        this.curSelectedVideo = {}
+      }
     },
     // 下一页
     next (cpage) {
