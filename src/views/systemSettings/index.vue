@@ -30,8 +30,8 @@
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
-          ></SettingRightTable>
-          <SettingRightTable
+          ></SettingRightTable> -->
+          <!-- <SettingRightTable
             id="idRightItemVideoServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemVideoServe"
@@ -287,7 +287,6 @@ export default {
       // }
     },
     async logoutClick () {
-      console.log('logoutClick:' + this.userDetail.id)
       this.$axios.post(loginApi.logout, { userId: this.userDetail.id }).then(res => {
         if (res.data.code === 0) {
           // 清除本地数据
