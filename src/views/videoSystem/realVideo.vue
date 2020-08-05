@@ -104,7 +104,7 @@
               <div
                 @click.stop="operateCurVideo(item,index)"
                 :class="{active:curVideoIndex===index}"
-                :style="machineStatusStyle2(1,showVideoPageSize)"
+
               >
                 <VideoWall
                   :videoInfo.sync="item"
@@ -305,7 +305,6 @@
         :key="index"
       >
         <div
-          :style="machineStatusStyle3(showVideoPageSize)"
           @click="fulllIndex=index"
           :class="{active:fulllIndex==index}"
         >
@@ -467,6 +466,7 @@ export default {
         parentLabel: item.label,
         labelTotal: item.label + '-' + list.label
       })
+      console.log(curData)
       if (!this.onlineArray[index1].children[index2].isSelected) {
         // 关闭其它所有的选中状态
         // this.onlineArray.forEach(item => {
@@ -1261,10 +1261,12 @@ export default {
       // for (let i = 0; i < divs.length; i++) {
       //   divs[i].classList.remove('is-current')
       // }
+      console.log('总共', this.totalVideosArray)
       this.curVideosArray = this.totalVideosArray.slice(
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
+      console.log('当前', this.curVideosArray)
       this.activeFirstTree()
     },
     // 下一页
@@ -1307,56 +1309,6 @@ export default {
         return {
           width: '100%',
           height: '100%'
-        }
-      }
-    },
-    machineStatusStyle2 (type, n) {
-      let dom = ''
-      if (type === 1) {
-        dom = document.querySelector('.videoList')
-      } /* else {
-        dom = document.querySelector('.fullContainer')
-      } */
-      if (!dom) return
-      let h = type === 1 ? dom.clientHeight : this.clientHeight
-      const marginBottom = 10
-      if (n === 9) {
-        h = (h - 3 * marginBottom) / 3
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 4) {
-        h = (h - 2 * marginBottom) / 2
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 1) {
-        h = h - 1 * marginBottom
-        return {
-          height: h + 'px'
-        }
-      }
-    },
-    // 计算里面容器的高度
-    machineStatusStyle3 (n) {
-      const dom = document.querySelector('.fullContainer')
-      if (!dom) return
-      let h = this.clientHeight
-      const marginBottom = 10
-      if (n === 9) {
-        h = (h - 3 * marginBottom) / 3
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 4) {
-        h = (h - 2 * marginBottom) / 2
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 1) {
-        h = h - 1 * marginBottom
-        return {
-          height: h + 'px'
         }
       }
     },
@@ -1962,6 +1914,8 @@ export default {
 
           margin-right: 10px;
           margin-bottom: 10px;
+          width:calc(100% - 10px);
+          height:calc(100% - 10px);
           background: url(../../assets/images/video.png) no-repeat center center;
           background-color: #00497c;
           cursor: pointer;
@@ -2068,6 +2022,8 @@ export default {
         cursor: pointer;
         margin-right: 10px;
         margin-bottom: 10px;
+        width:calc(100% - 10px);
+        height:calc(100% - 10px);
         background: url(../../assets/images/video.png) no-repeat center center;
         background-color: #00497c;
       }
