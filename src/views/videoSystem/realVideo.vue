@@ -2020,7 +2020,7 @@ export default {
     // padding: 20px 30px;
     background: url(../../assets/images/bg.png) no-repeat;
     > div {
-      div {
+      >div {
         box-sizing: border-box;
         cursor: pointer;
         margin-right: 10px;
