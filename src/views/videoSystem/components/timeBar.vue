@@ -169,14 +169,14 @@ export default {
 
   .pointer {
     pointer-events: none;
-    display: inline-block;
+    display: flex;
     position: absolute;
     height: 42px;
-    width: 68.05px;
+    width: 70px;
     top: -7px;
+    justify-content:space-between;
+    align-items:center;
     :nth-child(1) {
-      position: relative;
-      top: -16px;
       padding: 1px 3px;
       font-size: 13px;
       font-weight: bold;
