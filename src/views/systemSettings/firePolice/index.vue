@@ -254,11 +254,12 @@ export default {
 
       const p = this
       setTimeout(() => {
-        p.$refs.gduMap.map2D.zoomToCenter(detail.alarmLongitude, detail.alarmLatitude)
-        // p.$refs.gduMap.map2D.mapMoveTo(detail.alarmLongitude, detail.alarmLatitude)
-        p.$refs.gduMap.map2D.customMarkerLayerManager.addMarker({ lon: detail.alarmLongitude, lat: detail.alarmLatitude })
-        p.$refs.gduMap.map2D.setZoom(16)
-      }, 1000)
+        const tmpMap = p.$refs.gduMap.map2D
+        tmpMap._map.updateSize()
+        tmpMap.zoomToCenter(detail.alarmLongitude, detail.alarmLatitude)
+        tmpMap.customMarkerLayerManager.addMarker({ lon: detail.alarmLongitude, lat: detail.alarmLatitude })
+        tmpMap.setZoom(16)
+      }, 500)
     },
     // 确认、误报
     confirmFireDetail (isTrue) {
