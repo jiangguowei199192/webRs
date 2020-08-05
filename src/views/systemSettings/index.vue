@@ -14,8 +14,8 @@
         退出登录
       </button>
     </div>
-    <div class="rightBox" v-if="userDetail">
-      <div class="rightBoxBase">
+    <div class="rightBox">
+      <div class="rightBoxBase" v-if="userDetail">
         <div v-if="isShow">
           <SettingRightTable
             id="idRightItemUserSetting"
@@ -328,13 +328,7 @@ export default {
 }
 .rightBox {
   cursor: default;
-  position: absolute;
-  top: 315px;
-  right: 20px;
-  bottom: 0;
-  left: 323px;
-  margin: auto;
-  width: auto;
+  margin-left: 293px;
   height: 899px;
   background: url("../../assets/images/Setting/setting-rightBox.png") no-repeat;
   background-size: 100% 100%;
