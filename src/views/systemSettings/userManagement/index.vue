@@ -32,20 +32,20 @@
           <img :src="searchImg">
         </button>
         <div class="tableBox">
-          <el-table @row-click="ClickTableRow" :data="tableData" stripe empty-text="no data" tooltip-effect="light">
+          <el-table @row-click="ClickTableRow" :data="userList" stripe empty-text="no data" tooltip-effect="light">
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
                 <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="用户名" prop="userName"></el-table-column>
-            <el-table-column align="center" label="用户姓名" prop="name"></el-table-column>
-            <el-table-column align="center" label="所属部门" prop="department"></el-table-column>
-            <el-table-column align="center" label="职务" prop="position"></el-table-column>
-            <el-table-column align="center" label="所属组织" prop="organization"></el-table-column>
+            <el-table-column align="center" label="用户名" prop="useraccount"></el-table-column>
+            <el-table-column align="center" label="用户姓名" prop="username"></el-table-column>
+            <!-- <el-table-column align="center" label="所属部门" prop="deptName"></el-table-column> -->
+            <el-table-column align="center" label="职务" prop="roleName"></el-table-column>
+            <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
             <el-table-column align="center" label="激活">
               <template slot-scope="scope">
-                <el-switch v-model="tableData[scope.$index].active"></el-switch>
+                <el-switch v-model="userList[scope.$index].status"></el-switch>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -63,10 +63,13 @@
           popper-class="pageSelect"
           :total="pageData.total"
           :page-size="pageData.pageSize"
-          layout="total, prev, pager, next, jumper"></el-pagination>
+          :current-page.sync="pageData.currentPage"
+          layout="total, prev, pager, next, jumper"
+          @current-change="currentPageChange"></el-pagination>
         </div>
       </div>
     </div>
+
     <el-dialog
       :title="newUserTitle"
       :visible.sync="showNewUser"
@@ -133,9 +136,10 @@
 
 <script>
 import { Notification } from 'element-ui'
+import { settingApi } from '@/api/setting'
 export default {
   created () {
-    this.pageData.total = this.tableData.length
+    this.getUserList()
   },
   data () {
     return {
@@ -145,13 +149,19 @@ export default {
       downloadImg: require('../../../assets/images/Setting/setting-download.png'),
       searchImg: require('../../../assets/images/Setting/setting-search.png'),
       refreshImg: require('../../../assets/images/Setting/setting-refresh.png'),
+
       showMorePopover: false, // 展示更多弹窗
       showNewUser: false, // 新建用户弹窗
       showResetPassword: false, // 重置密码弹窗
+
       pageData: {
-        total: 0,
-        pageSize: 4
+        total: 0, // 总条目数
+        pageSize: 10, // 每页显示条目个数
+        currentPage: 1 // 当前页
       },
+
+      userList: [],
+
       newUserTitle: '',
       newUserForm: {
         username: '',
@@ -190,58 +200,57 @@ export default {
           { required: true, message: '请输入密码' }
         ]
       },
-      radio: -1,
-      tableData: [ // 测试数据
-        {
-          userName: '王小虎',
-          position: '队长',
-          department: '炊事班',
-          active: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          department: '炊事班',
-          active: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          department: '炊事班',
-          active: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          department: '炊事班',
-          active: true
-        },
-        {
-          userName: '王小虎',
-          position: '队长',
-          department: '炊事班',
-          active: true
-        }
-      ]
+      radio: -1
     }
   },
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
+    // 获取用户列表
+    getUserList () {
+      var param = {
+        currentPage: this.pageData.currentPage,
+        pageSize: this.pageData.pageSize,
+        useraccount: this.searchInput
+      }
+      this.$axios.post(settingApi.queryUserPage, param).then(res => {
+        if (res.data.code === 0) {
+          this.userList = res.data.data.records
+          this.pageData.total = res.data.data.total
+        }
+      })
+    },
+    // 分页页数改变
+    currentPageChange () {
+      this.getUserList()
+    },
     // 点击表格行
     ClickTableRow (row) {
-      this.radio = this.tableData.indexOf(row)
+      this.radio = this.userList.indexOf(row)
     },
+    // 重置密码
     resetPasswordClick (index, row) {
-      // this.tableData[index]
       this.showResetPassword = true
     },
+    // 搜索
     search () {
-      console.log('search')
+      if (this.searchInput.length <= 0) {
+        Notification({
+          title: '提示',
+          message: '请输入地址后查询',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return
+      }
+      this.pageData.currentPage = 1
+      this.getUserList()
     },
+    // 搜索
     refresh () {
-      console.log('refresh')
+      this.pageData.currentPage = 1
+      this.getUserList()
     },
     download () {
       console.log('download')
