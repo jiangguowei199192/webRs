@@ -404,12 +404,12 @@ export default {
   bottom: 30px;
   .picList {
     margin-top: 30px;
-    position: relative;
-    left: 40px;
     height: 351px;
     overflow-y: scroll;
 
     > div {
+      margin-left:40px;
+      display: inline-block;
       cursor: pointer;
       width: 190px;
       height: 107px;
