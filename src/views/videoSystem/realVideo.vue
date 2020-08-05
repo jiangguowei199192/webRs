@@ -1906,8 +1906,9 @@ export default {
         }
       }
       .mapBox {
-        margin: 6px 16px 10px 6px;
-        height: 200px;
+        margin: 23px 24px 10px 22px;
+        width: 210px;
+        height: 130px;
       }
     }
   }

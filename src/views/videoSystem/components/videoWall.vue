@@ -78,15 +78,18 @@
         </div>
       </div>
       <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate" >
-        <gMap
-          ref="gduMap"
-          handleType="devMap"
-          :bShowSimpleSearchTools="false"
-          :bShowBasic="false"
-          :bShowMeasure="false"
-          :bShowLonLat="false"
-          :bAutoLocate="false"
-        ></gMap>
+        <div class="infoTitle">位置</div>
+        <div class="mapBox">
+          <gMap
+            ref="gduMap"
+            handleType="devMap"
+            :bShowSimpleSearchTools="false"
+            :bShowBasic="false"
+            :bShowMeasure="false"
+            :bShowLonLat="false"
+            :bAutoLocate="false"
+          ></gMap>
+        </div>
       </div>
     </LivePlayer>
   </div>
@@ -985,9 +988,24 @@ export default {
 }
 .fullScreenMap {
   position: absolute;
-  right: 15px;
-  bottom: 15px;
+  right: 30px;
+  bottom: 81px;
   width: 293px;
-  height: 250px;
+  height: 279px;
+  background: url(../../../assets/images/map_box.png) no-repeat;
+  padding: 15px 10px;
+  .infoTitle {
+    padding-left: 35px;
+    width: 202px;
+    height: 45px;
+    background: url(../../../assets/images/device/info-title.png) no-repeat;
+    line-height: 45px;
+  }
+  .mapBox {
+    margin-left: 12px;
+    margin-top: 20px;
+    width: 247px;
+    height: 150px;
+  }
 }
 </style>
