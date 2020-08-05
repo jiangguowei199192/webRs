@@ -57,7 +57,7 @@
             <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
           </div>
           <div class="videoList">
-            <div
+            <!-- <div
               v-for="(item,index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
@@ -67,6 +67,24 @@
                 @click.stop="operateCurVideo(item,index)"
                 :class="{active:curVideoIndex===index}"
                 :style="machineStatusStyle2(showVideoPageSize)"
+              >
+                <VideoWall
+                  :videoInfo.sync="item"
+                  :key="index"
+                  v-if="item.streamUrl"
+                  ref="videoCtrl"
+                  @timeupdateEvent="timeupdate"
+                ></VideoWall>
+              </div>
+            </div> -->
+            <div
+              v-for="(item,index) in curVideosArray"
+              :key="index"
+              :style="machineStatusStyle(showVideoPageSize)"
+            >
+              <div
+                @click.stop="operateCurVideo(item,index)"
+                :class="{active:curVideoIndex===index}"
               >
                 <VideoWall
                   :videoInfo.sync="item"
@@ -134,29 +152,13 @@
         ></Calendar>
       </div>
     </VideoMain>
-    <!-- <el-dialog
-      :visible.sync="dialogVisible"
-      width="100%"
-      :fullscreen="true"
-      tabindex="1"
-      id="d1"
-      class="fullDlg"
-    >
-      <div
-        v-for="(item,index) in curVideosArray"
-        :key="index"
-        :style="machineStatusStyle3(showVideoPageSize)"
-      >
-        <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
-      </div>
-    </el-dialog>-->
     <div class="fullContainer" v-show="dialogVisible" id="d1">
       <div
         :style="machineStatusStyle(showVideoPageSize)"
         v-for="(item,index) in curVideosArray"
         :key="index"
       >
-        <div :style="machineStatusStyle3(showVideoPageSize)" :class="{active:fulllIndex==index}" @click="fulllIndex=index">
+        <div :class="{active:fulllIndex==index}" @click="fulllIndex=index">
           <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
         </div>
       </div>
@@ -439,7 +441,7 @@ export default {
      */
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
-      this.getAllDeptDevices()
+      // this.getAllDeptDevices()
       this.isOnline = isOnline
       // 如果选择在线设备，则清除所有设备的数据
       if (this.isOnline) {
@@ -722,6 +724,8 @@ export default {
           if (rs && rs.code === 0) {
             this.snapList = rs.data
           }
+        }).catch(err => {
+          console.log('getSnapList Err : ' + err)
         })
     },
 
@@ -923,71 +927,68 @@ export default {
         return {
           width: '33.3%',
           height: '33.3%'
-          // marginLeft: '10px'
         }
       } else if (n === 4) {
         return {
           width: '50%',
           height: '50%'
-          // marginLeft: '10px'
         }
       } else if (n === 1) {
         return {
           width: '100%',
           height: '100%'
-          // marginLeft: '10px'
         }
       }
     },
 
     // 动态渲染9个空元素
-    machineStatusStyle2 (n) {
-      var dom = document.querySelector('.videoList')
-      if (!dom) return
-      var h = dom.clientHeight
-      var marginBottom = 10
-      if (n === 9) {
-        h = (h - 3 * marginBottom) / 3
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 4) {
-        h = (h - 2 * marginBottom) / 2
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 1) {
-        h = h - 1 * marginBottom
-        return {
-          height: h + 'px'
-        }
-      }
-    },
+    // machineStatusStyle2 (n) {
+    //   var dom = document.querySelector('.videoList')
+    //   if (!dom) return
+    //   var h = dom.clientHeight
+    //   var marginBottom = 10
+    //   if (n === 9) {
+    //     h = (h - 3 * marginBottom) / 3
+    //     return {
+    //       height: h + 'px'
+    //     }
+    //   } else if (n === 4) {
+    //     h = (h - 2 * marginBottom) / 2
+    //     return {
+    //       height: h + 'px'
+    //     }
+    //   } else if (n === 1) {
+    //     h = h - 1 * marginBottom
+    //     return {
+    //       height: h + 'px'
+    //     }
+    //   }
+    // },
 
     // 动态渲染9个空元素
-    machineStatusStyle3 (n) {
-      const dom = document.querySelector('.fullContainer')
-      if (!dom) return
-      let h = this.clientHeight
-      // console.log('视频区域高度' + h)
-      const marginBottom = 10
-      if (n === 9) {
-        h = (h - 3 * marginBottom) / 3
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 4) {
-        h = (h - 2 * marginBottom) / 2
-        return {
-          height: h + 'px'
-        }
-      } else if (n === 1) {
-        h = h - 1 * marginBottom
-        return {
-          height: h + 'px'
-        }
-      }
-    },
+    // machineStatusStyle3 (n) {
+    //   const dom = document.querySelector('.fullContainer')
+    //   if (!dom) return
+    //   let h = this.clientHeight
+    //   // console.log('视频区域高度' + h)
+    //   const marginBottom = 10
+    //   if (n === 9) {
+    //     h = (h - 3 * marginBottom) / 3
+    //     return {
+    //       height: h + 'px'
+    //     }
+    //   } else if (n === 4) {
+    //     h = (h - 2 * marginBottom) / 2
+    //     return {
+    //       height: h + 'px'
+    //     }
+    //   } else if (n === 1) {
+    //     h = h - 1 * marginBottom
+    //     return {
+    //       height: h + 'px'
+    //     }
+    //   }
+    // },
 
     /**
      * 跳转到XX秒开始播放
@@ -1431,21 +1432,26 @@ export default {
     }
   }
   .videoList {
-    min-height: 710px;
+    height: 710px;
     display: flex;
     flex-wrap: wrap;
-    .videoItem {
-      box-sizing: border-box;
+     > div {
+       > div {
+          box-sizing: border-box;
+          // height: 223px;
 
-      margin-right: 10px;
-      margin-bottom: 10px;
-      background: url(../../assets/images/video.png) no-repeat center center;
-      background-color: #00497c;
-      cursor: pointer;
-    }
-    .videoItem.active {
-      border: 2px solid rgba(255, 244, 100, 1);
-    }
+          margin-right: 10px;
+          margin-bottom: 10px;
+          width:calc(100% - 10px);
+          height:calc(100% - 10px);
+          background: url(../../assets/images/video.png) no-repeat center center;
+          background-color: #00497c;
+          cursor: pointer;
+        }
+        > div.active {
+          border: 2px solid rgba(255, 244, 100, 1);
+        }
+      }
   }
   .tools {
     position: absolute;
@@ -1530,26 +1536,6 @@ export default {
   }
 }
 
-//修改弹框样式
-// .fullDlg.el-dialog__wrapper {
-//   overflow: visible;
-//   /deep/.el-dialog {
-//     .el-dialog__body {
-//       display: flex;
-//       flex-wrap: wrap;
-//       height: 100%;
-//       padding: 0 15px;
-//       > div {
-//         // cursor: pointer;
-//         margin-right: 19px;
-//         margin-bottom: 20px;
-//         background: url(../../assets/images/video.png) no-repeat center center;
-//         background-color: #00497c;
-//       }
-//     }
-//   }
-// }
-
 // 全屏弹框
 .fullContainer {
   position: fixed;
@@ -1566,18 +1552,21 @@ export default {
   overflow: visible;
   // padding: 20px 30px;
   background: url(../../assets/images/bg.png) no-repeat;
-  > div {
-    div {
-      cursor: pointer;
-      margin-right: 10px;
-      // margin-bottom: 20px;
-      background: url(../../assets/images/video.png) no-repeat center center;
-      background-color: #00497c;
-    }
-     div.active{
-        border:2px solid  #fff464
+    > div {
+     > div {
+        box-sizing: border-box;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        width:calc(100% - 10px);
+        height:calc(100% - 10px);
+        background: url(../../assets/images/video.png) no-repeat center center;
+        background-color: #00497c;
       }
-  }
+      div.active {
+        border: 2px solid #fff464;
+      }
+    }
 }
 
 // 修改弹框样式
