@@ -90,8 +90,7 @@
         </el-form-item>
         <el-form-item label="职务">
           <el-select :popper-append-to-body="false" v-model="newUserForm.job" placeholder="请选择职务" class="selectStyle" popper-class="select-popper">
-            <el-option label="职务一" value="1"></el-option>
-            <el-option label="职务二" value="2"></el-option>
+            <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.roleCode"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="所属组织">
@@ -99,7 +98,7 @@
             <el-option v-for="item in organizationOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="激活">
+        <el-form-item label="激活" prop="active">
           <el-switch v-model="newUserForm.active"></el-switch>
         </el-form-item>
         <el-form-item label="性别">
@@ -140,6 +139,7 @@ import { settingApi } from '@/api/setting'
 export default {
   created () {
     this.getUserList()
+    this.getRoleList()
   },
   data () {
     return {
@@ -161,6 +161,7 @@ export default {
       },
 
       userList: [],
+      roleList: [],
 
       newUserTitle: '',
       newUserForm: {
@@ -171,16 +172,9 @@ export default {
         job: '',
         active: true,
         six: '',
-        password: '',
+        password: '123456',
         organizations: []
       },
-      organizationOptions: [
-        { value: 'val1', label: 'lab1' },
-        { value: 'val2', label: 'lab2' },
-        { value: 'val3', label: 'lab3' },
-        { value: 'val4', label: 'lab4' },
-        { value: 'val5', label: 'lab5' }
-      ],
       newUserRules: {
         username: [
           { required: true, message: '请输入用户名' }
@@ -190,8 +184,19 @@ export default {
         ],
         phone: [
           { required: true, message: '请输入手机号' }
+        ],
+        active: [
+          { required: true }
         ]
       },
+
+      organizationOptions: [
+        { value: 'val1', label: 'lab1' },
+        { value: 'val2', label: 'lab2' },
+        { value: 'val3', label: 'lab3' },
+        { value: 'val4', label: 'lab4' },
+        { value: 'val5', label: 'lab5' }
+      ],
       resetPasswordForm: {
         password: ''
       },
@@ -218,6 +223,14 @@ export default {
         if (res.data.code === 0) {
           this.userList = res.data.data.records
           this.pageData.total = res.data.data.total
+        }
+      })
+    },
+    // 获取职务列表
+    getRoleList () {
+      this.$axios.post(settingApi.getRoleList).then(res => {
+        if (res.data.code === 0) {
+          this.roleList = res.data.data
         }
       })
     },
