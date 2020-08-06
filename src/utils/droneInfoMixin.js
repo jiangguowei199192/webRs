@@ -18,11 +18,6 @@ const droneInfoMixin = {
     })
   },
 
-  beforeDestroy () {
-    EventBus.$off('droneOffline')
-    EventBus.$off('droneRealtimeInfo')
-  },
-
   mounted () {
     // 创建飞机轨迹图层
     this.droneTrailLayer = this.$refs.gduMap.map2D.droneLayerManager.addTrailLayer(true)
@@ -64,6 +59,10 @@ const droneInfoMixin = {
     // 飞机实时信息处理
     updateDroneRealtimeInfo (obj) {
       if (obj.snCode === this.curDevCode) {
+        if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
+          return
+        }
+
         if (this.droneInfo === null) {
           this.droneInfo = obj
           this.mapMoveToDronePosition(obj)
