@@ -271,6 +271,7 @@
                 ></el-slider>
                 <span>{{step}}</span>
               </div>
+              <div class="sliderTip">步速值范围为1-8之间</div>
             </div>
           </div>
           <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='WRJ'">
@@ -935,17 +936,83 @@ export default {
       }
     },
     // 鼠标松开
+    // 鼠标松开
     stopChange (index) {
       if (index === 4) return
       const params = {
-        device_id: this.curSelectedVideo.deviceCode,
-        channel_id: this.curSelectedVideo.id,
+        device_id: this.videoInfo.deviceCode,
+        channel_id: this.videoInfo.id,
         stop: 1,
         step: 0,
-        cmd_type: 0
+        cmd_type: ''
       }
+      switch (index) {
+        case 0:
+          // 左上
+          params.cmd_type = 32
+          break
+        case 1:
+          this.clearRecord('up')
+          // 上移
+          params.cmd_type = 0
+          break
+        case 2:
+          ++this.recordNums.rightUp
+          this.clearRecord('rightUp')
+          // 右上
+          params.cmd_type = 33
+          break
+        case 3:
+          // 左移
+          params.cmd_type = 2
+          break
+        case 4:
+          break
+        case 5:
+          // 右移
+          params.cmd_type = 3
+          break
+        case 6:
+          // 左下
+          params.cmd_type = 34
+          break
+        case 7:
+          // 下
+          params.cmd_type = 1
+          break
+        case 8:
+          // 右下
+          params.cmd_type = 35
+          break
+        case 1000:
+          // 变倍+
+          params.cmd_type = 4
+          break
+        case 1001:
+          // 变倍-
+          params.cmd_type = 5
+          break
+        case 1002:
+          // 变焦+
+          params.cmd_type = 6
+          break
+        case 1003:
+          // 变焦-
+          params.cmd_type = 7
+          break
+        case 1004:
+          // 光圈+
+          params.cmd_type = 8
+          break
+        case 1005:
+          // 光圈-
+          params.cmd_type = 9
+          break
+      }
+      console.log(params)
       this.changeViewVideo(params)
     },
+    // 云台操作
     changeViewVideo (params) {
       this.$axios.post('/video-service2/index/api/ptzConrol', params).then(res => {
         if (res && res.data && res.data.code === 0) {
@@ -1663,7 +1730,6 @@ export default {
   .rightContent {
     font-size: 16px;
     font-family: Source Han Sans CN;
-    // font-weight: bold;
     color: rgba(255, 255, 255, 1);
     line-height: 14px;
     padding: 15px 10px;
@@ -1681,7 +1747,7 @@ export default {
     .baseInfo {
       .detail {
         margin-top: 22px;
-        min-height: 90px;
+        height: 230px;
         ul {
           padding-left: 24px;
           padding-right: 5px;
@@ -1702,7 +1768,7 @@ export default {
       }
     }
     .deviceInfo {
-      margin-top: 130px;
+      margin-top: 10px;
       .info {
         padding-left: 50px;
       }
@@ -1711,7 +1777,7 @@ export default {
         .icons {
           display: flex;
           flex-wrap: wrap;
-          padding-left: 48px;
+          padding-left: 24px;
           div {
             width: 48px;
             height: 48px;
@@ -1792,9 +1858,9 @@ export default {
           > div {
             width: 201px;
             height: 37px;
-            line-height: 37px;
+            line-height: 35px;
             text-align: center;
-            margin-left: 39px;
+            margin-left:24px;
             background: rgba(46, 108, 147, 1);
             border: 1px solid rgba(28, 161, 220, 1);
             color: #84ddff;
@@ -1806,18 +1872,21 @@ export default {
               width: 48px;
               font-size: 24px;
               cursor: pointer;
+              position: relative;
             }
             span:nth-child(1):after {
               content: "|";
-              position: relative;
-              left: 15px;
+              position: absolute;
+              left: 45px;
               color: #1ca1dc;
+              top: -2px;
             }
             span:nth-child(3):before {
               content: "|";
-              position: relative;
-              left: -15px;
+              position: absolute;
+              left: -1px;
               color: #1ca1dc;
+              top: -2px;
             }
             span:hover {
               background: linear-gradient(
@@ -1826,17 +1895,17 @@ export default {
                 rgb(32, 72, 105) 100%
               );
             }
-            // span:nth-child(1):hover:after {
-            //   content: "";
-            // }
-            // span:nth-child(3):hover:before {
-            //   content: "";
-            // }
+            span:nth-child(1):hover:after {
+              display:none
+            }
+            span:nth-child(3):hover:before {
+               display:none
+            }
           }
         }
         .slider {
           display: flex;
-          padding-left: 39px;
+          padding-left:24px;
 
           span {
             line-height: 38px;
@@ -1863,6 +1932,13 @@ export default {
           /deep/.el-slider__button {
             background-color: #84ddff;
           }
+        }
+        .sliderTip{
+          font-size:14px;
+          margin-top: 2px;
+          padding-left:50px;
+          color:#fff;
+          opacity: .5;
         }
       }
       .mapBox {
