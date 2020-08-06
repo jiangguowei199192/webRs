@@ -24,18 +24,18 @@ const droneInfoMixin = {
   },
 
   mounted () {
-    // 创建飞机标记图层
-    this.droneMarkerLayer = this.$refs.gduMap.map2D.droneLayerManager.add(true)
     // 创建飞机轨迹图层
     this.droneTrailLayer = this.$refs.gduMap.map2D.droneLayerManager.addTrailLayer(true)
+    // 创建飞机标记图层
+    this.droneMarkerLayer = this.$refs.gduMap.map2D.droneLayerManager.add(true)
   },
 
   methods: {
     // 切换飞机编码
     setDroneDevCode (devCode) {
       if (this.curDevCode !== null) {
+        if (this.curDevCode === devCode) return
         this.delDroneInfo(this.curDevCode)
-        this.curDevCode = null
       }
       this.curDevCode = devCode
       this.droneInfo = null
@@ -66,7 +66,13 @@ const droneInfoMixin = {
       if (obj.snCode === this.curDevCode) {
         if (this.droneInfo === null) {
           this.droneInfo = obj
+          this.mapMoveToDronePosition(obj)
         } else {
+          const tmpOffline = this.droneInfo.offline
+          const tmpTimeout = this.droneInfo.timeout
+          this.droneInfo = obj
+          this.droneInfo.offline = tmpOffline
+          this.droneInfo.timeout = tmpTimeout
           if (this.droneInfo.offline) {
             this.droneInfo.offline = false
             if (this.droneInfo.timeout !== undefined) {
@@ -102,6 +108,15 @@ const droneInfoMixin = {
         devCode,
         this.droneTrailLayer
       )
+    },
+    // 地图移动到飞机初始位置，调整地图层级
+    mapMoveToDronePosition (droneInfo) {
+      var latLng = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([
+        parseFloat(droneInfo.longitude),
+        parseFloat(droneInfo.latitude)
+      ])
+      this.$refs.gduMap.map2D.zoomToCenter(latLng[0], latLng[1])
+      this.$refs.gduMap.map2D.setZoom(10)
     },
     // 更新飞机位置、轨迹航向
     updateDronePosition (droneInfo) {

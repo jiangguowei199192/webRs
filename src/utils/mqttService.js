@@ -42,7 +42,7 @@ var mqttService;
       // 订阅火情火点
       instance.client.subscribe('video/deviceIid/channleID/datalink/firewarning')
       // 飞机实时信息
-      instance.client.subscribe('gdu/*')
+      instance.client.subscribe('gdu/#')
     }
 
     // mqtt client失去连接后的callback
@@ -57,8 +57,7 @@ var mqttService;
 
     // mqtt 消息到来的callback
     var onMessageArrived = function (message) {
-      console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
-      // console.log(message);
+      // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
       if (message.topic.substr(0, 4) === 'gdu/') {
