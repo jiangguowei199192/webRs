@@ -91,7 +91,6 @@ const videoMixin = {
     updateOnlineArray (isOnline, info) {
       delete info.deptCode
       info = this.formatData(info)
-      EventBus.$emit('UpdateDeviceOnlineStatus', info)
       var device = this.onlineArray.find(c => c.id === info.id)
 
       if (info.children && info.children.length > 0) {
@@ -474,6 +473,7 @@ const videoMixin = {
     },
     // 高点设备、无人机状态更新(地图标记)
     updateDeviceStatus (info) {
+      info = this.formatData(info)
       if (
         this.$refs.gduMap !== undefined &&
         this.$refs.gduMap.map2D !== undefined
