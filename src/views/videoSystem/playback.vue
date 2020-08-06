@@ -1310,9 +1310,9 @@ export default {
 .leftContainer {
   box-sizing: border-box;
   padding: 27px 25px 0 28px;
-  font-size: 18px;
+  font-size: 16px;
   font-family: Source Han Sans CN;
-  font-weight: bold;
+  //font-weight: bold;
 
   div.tab {
     display: flex;
@@ -1336,6 +1336,7 @@ export default {
     div.active {
       width: 126px !important;
       color: #fff;
+      font-weight: bold;
     }
     div:nth-child(1).active {
       background: url(../../assets/images/left.png) no-repeat;

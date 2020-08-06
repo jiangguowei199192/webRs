@@ -104,7 +104,6 @@
               <div
                 @click.stop="operateCurVideo(item,index)"
                 :class="{active:curVideoIndex===index}"
-
               >
                 <VideoWall
                   :videoInfo.sync="item"

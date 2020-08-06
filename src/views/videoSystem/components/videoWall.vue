@@ -144,12 +144,21 @@ export default {
     }
   },
 
+  computed: {
+    deviceCode () {
+      return this.videoInfo.deviceCode
+    }
+  },
+
   watch: {
     curTime (val) {
       var r = this.videoInfo.records.find(x => x.url === this.curUrl)
       if (r !== undefined && this.isUpdateTime) {
         this.$emit('timeupdateEvent', this.curTime + r.start * 60)
       }
+    },
+    deviceCode (val) {
+      this.setDroneDevCode(val)
     }
   },
 
