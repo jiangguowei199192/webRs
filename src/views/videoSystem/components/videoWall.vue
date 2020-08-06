@@ -312,7 +312,6 @@ export default {
     },
     // 按钮和变倍的鼠标按下事件
     // startChange (index, isInOut = false) {
-    //   // debugger
     //   const params = {}
     //   if (!isInOut) {
     //     switch (index) {

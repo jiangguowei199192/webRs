@@ -158,7 +158,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev,next"
+                  layout="prev,pager,next"
                   :total="totalVideosArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
@@ -944,13 +944,12 @@ export default {
         step: 0,
         cmd_type: 0
       }
-      console.log(params)
       this.changeViewVideo(params)
     },
     changeViewVideo (params) {
       this.$axios.post('/video-service2/index/api/ptzConrol', params).then(res => {
         if (res && res.data && res.data.code === 0) {
-          console.log('成功！')
+          console.log('操作成功了！')
         }
       })
     },
@@ -988,8 +987,9 @@ export default {
             //   0,
             //   this.showVideoPageSize
             // )
-            ++this.currentPage
-            this.next(Math.ceil(this.totalVideosArray.length / this.showVideoPageSize))
+            // 防止当前播放不在最后一页
+            this.currentPage = Math.ceil(this.totalVideosArray.length / this.showVideoPageSize)
+            this.next(this.currentPage)
           }
         } else {
           // 1.2指定位置添加
@@ -1022,7 +1022,7 @@ export default {
               })
             }
           }
-          // 防止有分页的情况
+          // 防止有分页的情况（分屏之后的curVideoIndex从0开始）
           const index =
             this.curVideoIndex +
             this.showVideoPageSize * (this.currentPage - 1)
@@ -1048,6 +1048,7 @@ export default {
           (this.currentPage - 1) * this.showVideoPageSize,
           this.currentPage * this.showVideoPageSize
         )
+        // 关闭时如果都没有视频了，则显示全部预览按钮
         let n = 0
         this.curVideosArray.forEach(item => {
           if (item) {
@@ -1092,7 +1093,7 @@ export default {
         }
       }
     },
-    // 预览全部
+    // 预览或取消全部
     playAllVideos () {
       const bs = document.querySelectorAll(
         '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
@@ -1195,7 +1196,7 @@ export default {
       this.totalVideosArray = newTotalVideosArray
       // 在总数据中获取实际有视频的数据
       const result = this.totalVideosArray.filter(item => item !== '')
-      console.log(result)
+      // console.log(result)
       // 1.如果有视频小于每屏的展示数据（包含没有的情况）
       if (result.length <= n) {
         // 1.1由大变小
@@ -1444,6 +1445,7 @@ export default {
     clearRemark () {
       this.remark = ''
     },
+    // 移动图片
     moveElement (elementID, finalX, finalY) {
       console.log(finalX, finalY)
 

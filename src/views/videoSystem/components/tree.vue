@@ -71,7 +71,6 @@ export default {
       } else if (parentData._bIsDevice === true) {
         this.$emit('clickAnDeviceItem', parentData)
       }
-      // debugger
       if (!data.children) {
         const curSpan = document.getElementById('liveVideo' + data.id)
           .parentElement
@@ -117,7 +116,6 @@ export default {
               this.$emit('videoChange', 2, curData)
             }
           } else {
-            debugger
             this.$emit('selectedDevice', curData)
           }
         } else {
@@ -135,10 +133,6 @@ export default {
         }
       }
     },
-    // 获得选中的节点的key
-    checkedKeys: function (data) {
-      alert(JSON.stringify(this.$refs.tree.getCheckedKeys()))
-    },
     // 给span.disabled 父节点添加样式
     addParentDisabled () {
       const spans = document.querySelectorAll('span.disabled')
@@ -149,34 +143,9 @@ export default {
           spans[i].parentElement.parentElement.style.cursor = 'not-allowed'
         }
         spans[i].parentElement.parentElement.style.opacity = '0.5'
-        // spans[i].parentElement.style.cursor =
-        //     'not-allowed'
         spans[i].parentElement.parentElement.style.color = '#007291'
       }
     }
-    // 点击子节点播放或关闭视频
-    // showLiveVideo (data, $event) {
-    //   if (!data.children) {
-    //     if (this.isLive) {
-    //       // 若没有，则添加class，并传递当前数据
-    //       if (!$event.currentTarget.getAttribute('class')) {
-    //         $event.currentTarget.setAttribute('class', 'liveIcon')
-    //         $event.currentTarget.parentElement.parentElement.parentElement.classList.add(
-    //           'is-current'
-    //         )
-
-    //         this.$emit('videoChange', 1, data)
-    //       } else {
-    //         $event.currentTarget.setAttribute('class', '')
-    //         $event.currentTarget.parentElement.parentElement.parentElement.classList.remove(
-    //           'is-current'
-    //         )
-
-    //         this.$emit('videoChange', 2, data)
-    //       }
-    //     }
-    //   }
-    // }
   },
   created () {
     this.$nextTick(() => {
