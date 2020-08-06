@@ -174,6 +174,8 @@ export default {
      * @param {String} data //YYYY-MM-DD
      */
     setDate (date) {
+      // 为了保证年月会改变
+      this.dateInfo.curYear = ''
       this.showDate = new Date(date + ' 08:00:00')
     },
 
@@ -186,8 +188,9 @@ export default {
       year = year.toString().substr(2, 2)
       var month = this.showDate.getMonth() + 1
       var day = this.showDate.getDate()
-
+      let yearUpdate = false
       if (year !== this.dateInfo.curYear || month !== this.dateInfo.curMonth) {
+        yearUpdate = true
         this.$emit(
           'dateChangeEvent',
           this.getYYMM(this.showDate),
@@ -195,7 +198,7 @@ export default {
         )
       }
 
-      if (day !== this.dateInfo.curDay) {
+      if (yearUpdate || day !== this.dateInfo.curDay) {
         this.$emit('searchRecordEvent', this.getYYMMDD())
       }
       this.dateInfo.curYear = year
