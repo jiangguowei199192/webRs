@@ -100,6 +100,7 @@
 </template>
 <script>
 import LivePlayer from '@liveqing/liveplayer'
+import droneInfoMixin from '../../../utils/droneInfoMixin'
 export default {
   data () {
     return {
@@ -131,6 +132,8 @@ export default {
     }
   },
 
+  mixins: [droneInfoMixin],
+
   components: {
     LivePlayer
   },
@@ -156,6 +159,7 @@ export default {
       this.subTimeupdate(this.videoInfo.timeupdate)
       this.curUrl = this.videoInfo.streamUrl
     }
+    this.setDroneDevCode(this.videoInfo.deviceCode)
   },
 
   methods: {

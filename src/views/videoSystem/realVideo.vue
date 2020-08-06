@@ -348,6 +348,7 @@ import VideoMain from './components/main'
 import TreeData from './components/tree'
 import videoMixin from './mixins/videoMixin'
 import fireMixin from '../../utils/fireMixin'
+import droneInfoMixin from '../../utils/droneInfoMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
@@ -406,7 +407,7 @@ export default {
       fulllIndex: 1000 // 全屏选中的index
     }
   },
-  mixins: [videoMixin, fireMixin],
+  mixins: [videoMixin, fireMixin, droneInfoMixin],
   methods: {
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
@@ -1023,6 +1024,7 @@ export default {
     refreshMap (video) {
       if (video !== undefined && video !== null) {
         if (video.deviceTypeCode === 'WRJ') {
+          this.setDroneDevCode(video.deviceCode)
           const tmpMap = this.$refs.gduMap.map2D
           setTimeout(() => {
             tmpMap._map.updateSize()
@@ -1130,6 +1132,9 @@ export default {
     // 点击当前视频
     operateCurVideo (curVideo, index) {
       this.curVideoIndex = index
+      if (curVideo.deviceTypeCode === 'WRJ') {
+        this.setDroneDevCode(curVideo.deviceCode)
+      }
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[this.curVideoIndex]) {
         this.curSelectedVideo = curVideo
