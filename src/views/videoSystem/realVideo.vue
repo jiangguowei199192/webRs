@@ -940,8 +940,8 @@ export default {
     stopChange (index) {
       if (index === 4) return
       const params = {
-        device_id: this.videoInfo.deviceCode,
-        channel_id: this.videoInfo.id,
+        device_id: this.curSelectedVideo.deviceCode,
+        channel_id: this.curSelectedVideo.id,
         stop: 1,
         step: 0,
         cmd_type: ''
