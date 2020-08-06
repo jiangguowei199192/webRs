@@ -567,53 +567,33 @@ export default {
       }
       switch (index) {
         case 0:
-          ++this.recordNums.leftUp
-          this.clearRecord('leftUp')
           // 左上
           params.cmd_type = 32
-          params.step =
-            this.step * this.recordNums.leftUp > 8
-              ? 8
-              : this.step * this.recordNums.leftUp
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1:
-          ++this.recordNums.up
-          this.clearRecord('up')
           // 上移
           params.cmd_type = 0
-          params.step =
-            this.step * this.recordNums.up > 8
-              ? 8
-              : this.step * this.recordNums.up
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 2:
-          ++this.recordNums.rightUp
-          this.clearRecord('rightUp')
           // 右上
           params.cmd_type = 33
-          params.step =
-            this.step * this.recordNums.rightUp > 8
-              ? 8
-              : this.step * this.recordNums.rightUp
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 3:
-          ++this.recordNums.left
-          this.clearRecord('left')
           // 左移
           params.cmd_type = 2
-          params.step =
-            this.step * this.recordNums.left > 8
-              ? 8
-              : this.step * this.recordNums.left
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -621,134 +601,86 @@ export default {
         case 4:
           break
         case 5:
-          ++this.recordNums.right
-          this.clearRecord('right')
           // 右移
           params.cmd_type = 3
-          params.step =
-            this.step * this.recordNums.right > 8
-              ? 8
-              : this.step * this.recordNums.right
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 6:
-          ++this.recordNums.leftDown
-          this.clearRecord('leftDown')
           // 左下
           params.cmd_type = 34
-          params.step =
-            this.step * this.recordNums.leftDown > 8
-              ? 8
-              : this.step * this.recordNums.leftDown
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 7:
-          ++this.recordNums.down
-          this.clearRecord('down')
           // 下
           params.cmd_type = 1
-          params.step =
-            this.step * this.recordNums.down > 8
-              ? 8
-              : this.step * this.recordNums.down
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 8:
-          ++this.recordNums.rightDown
-          this.clearRecord('rightDown')
           // 右下
           params.cmd_type = 35
-          params.step =
-            this.step * this.recordNums.rightDown > 8
-              ? 8
-              : this.step * this.recordNums.rightDown
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1000:
-          ++this.recordNums.zoomAdd
-          this.clearRecord('zoomAdd')
           // 变倍+
           params.cmd_type = 4
-          params.step =
-            this.step * this.recordNums.zoomAdd > 8
-              ? 8
-              : this.step * this.recordNums.zoomAdd
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1001:
-          ++this.recordNums.zoomMinus
-          this.clearRecord('zoomMinus')
           // 变倍-
           params.cmd_type = 5
-          params.step =
-            this.step * this.recordNums.zoomMinus > 8
-              ? 8
-              : this.step * this.recordNums.zoomMinus
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1002:
-          ++this.recordNums.focusAdd
-          this.clearRecord('focusAdd')
           // 变焦+
           params.cmd_type = 6
-          params.step =
-            this.step * this.recordNums.focusAdd > 8
-              ? 8
-              : this.step * this.recordNums.focusAdd
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1003:
-          ++this.recordNums.focusMinus
-          this.clearRecord('focusMinus')
           // 变焦-
           params.cmd_type = 7
-          params.step =
-            this.step * this.recordNums.focusMinus > 8
-              ? 8
-              : this.step * this.recordNums.focusMinus
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1004:
-          ++this.recordNums.lrisAdd
-          this.clearRecord('lrisAdd')
           // 光圈+
           params.cmd_type = 8
-          params.step =
-            this.step * this.recordNums.lrisAdd > 8
-              ? 8
-              : this.step * this.recordNums.lrisAdd
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
         case 1005:
-          ++this.recordNums.lrisMinus
-          this.clearRecord('lrisMinus')
           // 光圈-
           params.cmd_type = 9
-          params.step =
-            this.step * this.recordNums.lrisMinus > 8
-              ? 8
-              : this.step * this.recordNums.lrisMinus
+          params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
+          break
+        default:
           break
       }
     },
@@ -768,13 +700,10 @@ export default {
           params.cmd_type = 32
           break
         case 1:
-          this.clearRecord('up')
           // 上移
           params.cmd_type = 0
           break
         case 2:
-          ++this.recordNums.rightUp
-          this.clearRecord('rightUp')
           // 右上
           params.cmd_type = 33
           break
