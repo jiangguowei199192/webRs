@@ -158,7 +158,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev,pager,next"
+                  layout="prev,next"
                   :total="totalVideosArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
