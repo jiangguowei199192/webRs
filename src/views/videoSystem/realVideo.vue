@@ -937,7 +937,6 @@ export default {
       }
     },
     // 鼠标松开
-    // 鼠标松开
     stopChange (index) {
       if (index === 4) return
       const params = {
