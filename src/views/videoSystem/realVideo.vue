@@ -153,7 +153,7 @@
               <img
                 :src="!isPlayAll?playAll:closeAll"
                 @click.stop="playAllVideos"
-                :title="!isPlayAll?'全部预览':'取消预览'"
+                :title="!isPlayAll?'预览全部':'取消预览全部'"
               />
               <div class="pagination">
                 <el-pagination
