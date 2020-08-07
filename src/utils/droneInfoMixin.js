@@ -4,6 +4,7 @@ const droneInfoMixin = {
     return {
       curDevCode: null,
       droneInfo: null,
+      latestDronesInfo: {},
       droneMarkerLayer: null,
       droneTrailLayer: null
     }
@@ -34,6 +35,11 @@ const droneInfoMixin = {
       }
       this.curDevCode = devCode
       this.droneInfo = null
+      if (this.latestDronesInfo[this.curDevCode] !== undefined) {
+        console.log('this.latestDronesInfo :', this.latestDronesInfo[this.curDevCode])
+        this.mapMoveToDronePosition(this.latestDronesInfo[this.curDevCode])
+        this.updateDronePosition(this.latestDronesInfo[this.curDevCode])
+      }
     },
     // 离线状态超时回调
     checkOfflineTimeout (droneInfo) {
@@ -72,6 +78,7 @@ const droneInfoMixin = {
           this.droneInfo = obj
           this.droneInfo.offline = tmpOffline
           this.droneInfo.timeout = tmpTimeout
+          this.latestDronesInfo[this.droneInfo.snCode] = this.droneInfo
           if (this.droneInfo.offline) {
             this.droneInfo.offline = false
             if (this.droneInfo.timeout !== undefined) {

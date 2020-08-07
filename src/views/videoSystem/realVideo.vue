@@ -1871,7 +1871,7 @@ export default {
         }
       }
       .mapBox {
-        margin: 23px 24px 10px 22px;
+        margin: 23px 24px 10px 10px;
         width: 210px;
         height: 130px;
       }
