@@ -10,7 +10,7 @@
         ></SettingLeftItem>
       </div>
       <button type="button" class="logoutBtn" @click="logoutClick">
-        <img :src="logoutIcon">
+        <img :src="logoutIcon" />
         退出登录
       </button>
     </div>
@@ -30,12 +30,12 @@
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
-          ></SettingRightTable> -->
+          ></SettingRightTable>-->
           <!-- <SettingRightTable
             id="idRightItemVideoServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemVideoServe"
-          ></SettingRightTable> -->
+          ></SettingRightTable>-->
           <SettingRightTable
             id="idRightItemSmartFunction"
             style="margin-top: 44px;"
@@ -47,7 +47,7 @@
             id="idRightItemMapServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemMapServe"
-          ></SettingRightTable> -->
+          ></SettingRightTable>-->
           <!-- <div style="height: 500px;"></div> -->
         </div>
         <router-view></router-view>
@@ -245,7 +245,8 @@ export default {
   methods: {
     // 获取用户详情
     async getUserDetail () {
-      this.$axios.post(loginApi.getUserDetail).then(res => {
+      this.$axios.post(loginApi.getUserDetail).then((res) => {
+        // console.log(res)
         if (res.data.code === 0) {
           this.userDetail = res.data.data
           if (this.userDetail.username) {
@@ -254,8 +255,13 @@ export default {
             this.rightItemUserSetting.items[0].title = this.userDetail.useraccount
           }
           this.rightItemUserSetting.items[0].subTitle = this.userDetail.mobile
-          this.rightItemUserSetting.items[0].headerImg = globalApi.imageUrl + this.userDetail.headImg
-          this.rightItemUserSetting.items[2].text = this.userDetail.orgName + '、' + this.userDetail.jobDesc
+          this.rightItemUserSetting.items[0].headerImg =
+            globalApi.imageUrl + this.userDetail.headImg
+          this.rightItemUserSetting.items[2].text =
+            this.userDetail.orgName + '、' + this.userDetail.jobDesc
+
+          localStorage.setItem('userDetail', JSON.stringify(res.data.data))
+          localStorage.setItem('userExtra', JSON.stringify(res.data.extra))
         }
       })
     },
@@ -287,14 +293,16 @@ export default {
       // }
     },
     async logoutClick () {
-      this.$axios.post(loginApi.logout, { userId: this.userDetail.id }).then(res => {
-        if (res.data.code === 0) {
-          // 清除本地数据
-          sessionStorage.removeItem('token')
-          // 跳转到登录
-          window.location.href = '/login'
-        }
-      })
+      this.$axios
+        .post(loginApi.logout, { userId: this.userDetail.id })
+        .then((res) => {
+          if (res.data.code === 0) {
+            // 清除本地数据
+            sessionStorage.removeItem('token')
+            // 跳转到登录
+            window.location.href = '/login'
+          }
+        })
     }
   },
   created () {
@@ -348,26 +356,27 @@ export default {
   display: block;
   margin-left: 30px;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 /* --- 改变滚动条样式 --- */
-  /deep/ ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  /* --- 滚动条里面的滚动块 --- */
-  /deep/ ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    box-shadow: inset 0 0 5px rgb(0, 180, 255);
-    background: rgba(0, 180, 255, 0.2);
-  }
-  /* --- 滚动条里面轨道 --- */
-  /deep/ ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    background: #096090;
-  }
-  /deep/ ::-webkit-scrollbar-corner {
-    background: #096090;
-  }
+/deep/ ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* --- 滚动条里面的滚动块 --- */
+/deep/ ::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgb(0, 180, 255);
+  background: rgba(0, 180, 255, 0.2);
+}
+/* --- 滚动条里面轨道 --- */
+/deep/ ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background: #096090;
+}
+/deep/ ::-webkit-scrollbar-corner {
+  background: #096090;
+}
 </style>
