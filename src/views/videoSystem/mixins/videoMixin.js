@@ -37,17 +37,6 @@ const videoMixin = {
   },
 
   created () {
-    if (this.bShowMarkersInMap) {
-      // 监控设备获取完毕事件
-      EventBus.$on('GetAllDeptDevices_Done', bFlag => {
-        this.initMapDevices()
-      })
-      // 监控设备状态更新事件
-      EventBus.$on('UpdateDeviceOnlineStatus', info => {
-        this.updateDeviceStatus(info)
-      })
-    }
-
     // 获取摄像头、无人机设备
     this.getAllDeptDevices()
   },
@@ -55,23 +44,39 @@ const videoMixin = {
   beforeDestroy () {
     EventBus.$off('streamStart')
     EventBus.$off('streamEnd')
+    EventBus.$off('UpdateDeviceOnlineStatus')
     if (this.bShowMarkersInMap) {
       EventBus.$off('GetAllDeptDevices_Done')
-      EventBus.$off('UpdateDeviceOnlineStatus')
     }
   },
 
   mounted () {
     // 设备上线
     EventBus.$on('streamStart', info => {
+      // 注意deviceOnlineOrOffline函数要在最前面，否则info.deptCode被删除
       this.deviceOnlineOrOffline(true, info)
       this.updateOnlineArray(true, info)
     })
 
     // 设备下线
     EventBus.$on('streamEnd', info => {
+      // 注意deviceOnlineOrOffline函数要在最前面，否则info.deptCode被删除
       this.deviceOnlineOrOffline(false, info)
       this.updateOnlineArray(false, info)
+    })
+
+    if (this.bShowMarkersInMap) {
+      // 监控设备获取完毕事件
+      EventBus.$on('GetAllDeptDevices_Done', bFlag => {
+        this.initMapDevices()
+      })
+    }
+    // 监控设备状态更新事件
+    EventBus.$on('UpdateDeviceOnlineStatus', info => {
+      // 注意updateTreeDeviceStatus函数要在最前面，否则info.deptCode被删除
+      this.updateTreeDeviceStatus(info)
+      this.updateOnlineArrayStatus(info)
+      if (this.bShowMarkersInMap) { this.updateDeviceStatus(info) }
     })
   },
 
@@ -84,7 +89,24 @@ const videoMixin = {
     },
 
     /**
-     * 刷新在线设备列表
+     * 刷新在线设备列表在线状态
+     * @param {Object} info 设备信息
+     */
+    updateOnlineArrayStatus (info) {
+      delete info.deptCode
+      info = this.formatData(info)
+      var device = this.onlineArray.find(c => c.id === info.id)
+      if (device !== undefined) {
+        device.onlineStatus = info.onlineStatus
+        if (device.onlineStatus === 'offline') {
+          var j = this.onlineArray.indexOf(device)
+          this.onlineArray.splice(j, 1)
+        }
+      }
+    },
+
+    /**
+     * 刷新在线设备通道
      * @param {Bool} isOnline 上线/下线
      * @param {Object} info 设备信息
      */
@@ -114,11 +136,6 @@ const videoMixin = {
               // 通道上线
               if (isOnline) { device.children.splice(i, 1, item) } else {
                 device.children.splice(i, 1)
-                // 如果设备下通道都不存在，移除该设备
-                if (device.children.length === 0) {
-                  var j = this.onlineArray.indexOf(device)
-                  this.onlineArray.splice(j, 1)
-                }
               }
             } else if (isOnline) {
               // 通道不存在，新通道上线
@@ -196,7 +213,50 @@ const videoMixin = {
     },
 
     /**
-     * 设备上下线
+     * 刷新设备树在线状态（计算在线设备数量）
+     * @param {Object} info 设备信息
+     */
+    updateTreeDeviceStatus (info) {
+      if (this.treeData.length === 0) return
+      var deptCode = info.deptCode
+      delete info.deptCode
+      info = this.formatData(info)
+      const isOnline = info.onlineStatus === 'online'
+      var node = this.treeData.find(c => c.deviceTypeCode === info.deviceTypeCode)
+      if (node === undefined) return
+      // 先找设备所在组织
+      var dept = this.findTreeNodeByID(node.children, deptCode)
+      // 组织存在
+      if (dept) {
+        var device = dept.children.find(c => c.id === info.id)
+        // 设备存在
+        if (device !== undefined) {
+          var count = isOnline === true ? 1 : -1
+          count += dept.deviceCountOnline
+          this.$set(dept, 'deviceCountOnline', count)
+        }
+        // 找出所有父节点,然后计算deviceCountTotal和deviceCountOnline
+        const nodeList = []
+        this.findParentNodes(node.children, dept.id, nodeList)
+        if (nodeList.length > 0) { nodeList.splice(0, 0, node) }
+        for (var i = nodeList.length - 1; i >= 0; i--) {
+          const item = nodeList[i]
+          if (item.children) {
+            var total = 0
+            var online = 0
+            item.children.forEach(c => {
+              total += c.deviceCountTotal
+              online += c.deviceCountOnline
+            })
+            item.deviceCountTotal = total
+            item.deviceCountOnline = online
+          }
+        }
+      }
+    },
+
+    /**
+     * 通道上下线
      * @param {Bool} isOnline 上线/下线
      * @param {Object} info 设备信息
      */
@@ -214,9 +274,6 @@ const videoMixin = {
       if (dept) {
         var device = dept.children.find(c => c.id === info.id)
         if (device !== undefined) {
-          var count = isOnline === true ? 1 : -1
-          count += dept.deviceCountOnline
-          this.$set(dept, 'deviceCountOnline', count)
           // 设备已存在
           for (var a in info) {
             // 拷贝属性
@@ -248,29 +305,10 @@ const videoMixin = {
         } else if (isOnline) {
           // 设备不存在，新设备上线
           dept.children.push(info)
-          dept.deviceCountTotal += 1
-          dept.deviceCountOnline += 1
           if (info.deviceTypeCode === 'WRJ') {
             this.droneDevArray.push(info)
           } else if (info.deviceTypeCode === 'GDJK') {
             this.cameraDevArray.push(info)
-          }
-        }
-        // 找出所有父节点,然后计算deviceCountTotal和deviceCountOnline
-        const nodeList = []
-        this.findParentNodes(node.children, dept.id, nodeList)
-        if (nodeList.length > 0) { nodeList.splice(0, 0, node) }
-        for (var i = nodeList.length - 1; i >= 0; i--) {
-          const item = nodeList[i]
-          if (item.children) {
-            var total = 0
-            var online = 0
-            item.children.forEach(c => {
-              total += c.deviceCountTotal
-              online += c.deviceCountOnline
-            })
-            item.deviceCountTotal = total
-            item.deviceCountOnline = online
           }
         }
       }

@@ -486,33 +486,34 @@ export default {
     deviceOffline (device) {
       // 如果展示全部设备，则不处理
       if (!this.isOnline) return
-      if (this.curPlayer && this.curPlayer.treeNode.pID === device.id) {
-        // 如果当前播放对象，下线了
-        this.stopPlayRecord()
-      } else if (device.children && device.children.length > 0) {
-        // 视频墙中视频对象，下线
+      if (device.children && device.children.length > 0) {
         device.children.forEach(item => {
-          var video = this.totalVideosArray.find(
-            v => v !== '' && v.id === item.id
-          )
-          if (video !== undefined) {
-            var index = this.totalVideosArray.indexOf(video)
-            if (index !== -1) {
-              this.totalVideosArray[index] = ''
+          // 如果当前播放对象，下线了
+          if (this.curPlayer && this.curPlayer.id === item.id) { this.stopPlayRecord() } else {
+            // 视频墙中视频对象，下线
+            var video = this.totalVideosArray.find(
+              v => v !== '' && v.id === item.id
+            )
+            if (video !== undefined) {
+              var index = this.totalVideosArray.indexOf(video)
+              if (index !== -1) {
+                this.totalVideosArray[index] = ''
+              }
             }
+            this.curVideosArray = this.totalVideosArray.slice(
+              (this.currentPage - 1) * this.showVideoPageSize,
+              this.currentPage * this.showVideoPageSize
+            )
+          }
+
+          if (this.curNode.id === item.id) {
+            this.selectedIndex = 200
+            this.records = []
+            this.recordData = []
+            this.curNode = ''
+            this.snapList = []
           }
         })
-        this.curVideosArray = this.totalVideosArray.slice(
-          (this.currentPage - 1) * this.showVideoPageSize,
-          this.currentPage * this.showVideoPageSize
-        )
-      }
-      if (this.curNode.pID === device.id) {
-        this.selectedIndex = 200
-        this.records = []
-        this.recordData = []
-        this.curNode = ''
-        this.snapList = []
       }
     },
 

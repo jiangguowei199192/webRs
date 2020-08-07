@@ -51,7 +51,7 @@
         ></div>
         <div>
           <span>说明:</span>
-          <el-input v-model="describe" placeholder="请输入图片说明"></el-input>
+          <el-input v-model="describe" placeholder="请输入图片说明" maxlength="50"></el-input>
           <button @click="closeDlg">取消</button>
           <button class="btn-confirm" @click="addDescribe">确定</button>
         </div>

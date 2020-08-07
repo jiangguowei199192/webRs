@@ -62,7 +62,7 @@ var mqttService;
       EventBus.$emit(message.topic, object)
       if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
-      }
+      } else { console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString) }
     }
 
     // mqtt client连接失败callback
