@@ -1865,7 +1865,7 @@ export default {
         .sliderTip{
           font-size:14px;
           margin-top: 2px;
-          padding-left:50px;
+          padding-left:42px;
           color:#fff;
           opacity: .5;
         }
