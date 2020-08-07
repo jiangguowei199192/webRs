@@ -1941,7 +1941,7 @@ export default {
     }
     .tools {
       position: relative;
-      width:  1197px;
+      width:calc(100% - 10px);
       height: 60px;
       background: url(../../assets/images/tool-bar.png) round;
       background-size: 100% 100%;
