@@ -62,6 +62,7 @@ import amapApi from '@/axios/amapapis'
 import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
 import { loginApi } from '@/api/login'
+import globalApi from '../utils/globalApi'
 const droneOffline = 'gdu/appOutLine'
 export default {
   name: 'Home',
@@ -100,6 +101,7 @@ export default {
     }
   },
   created () {
+    this.systems[3].content = globalApi.projectTitle
     // 设备上线
     EventBus.$on('video/device/online', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
