@@ -4,6 +4,7 @@ let baseUrl = ''
 let mqttServer = ''
 let mqttPort = ''
 let projectTitle = ''
+let headImg = ''
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
   $.ajax({
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV === 'production') {
       baseUrl = res.baseUrl
       mqttServer = res.mqttServer
       mqttPort = res.mqttPort
+      headImg = res.headImg
       projectTitle = res.projectTitle
     },
     error: function (err) { // 请求失败，包含具体的错误信息
@@ -26,11 +28,13 @@ if (process.env.NODE_ENV === 'production') {
   baseUrl = 'http://172.16.63.148:8850'
   mqttServer = '172.16.63.148'
   mqttPort = 2883
+  headImg = 'http://172.16.63.148'
   projectTitle = '消防救援现场指挥系统'
 }
 export default {
   baseUrl,
   mqttServer,
   mqttPort,
+  headImg,
   projectTitle
 }

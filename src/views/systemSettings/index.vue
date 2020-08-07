@@ -256,7 +256,7 @@ export default {
           }
           this.rightItemUserSetting.items[0].subTitle = this.userDetail.mobile
           this.rightItemUserSetting.items[0].headerImg =
-            globalApi.imageUrl + this.userDetail.headImg
+            globalApi.headImg + this.userDetail.headImg
           this.rightItemUserSetting.items[2].text =
             this.userDetail.orgName + '、' + this.userDetail.jobDesc
 
