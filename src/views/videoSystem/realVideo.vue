@@ -266,7 +266,7 @@
                   v-model="step"
                   :min="1"
                   :max="8"
-                  style="width:91px;margin-left:16px;margin-right:8px;"
+                  style="width:98px;margin-left:16px;margin-right:16px;"
                 ></el-slider>
                 <span>{{step}}</span>
               </div>
@@ -1664,15 +1664,15 @@ export default {
     font-family: Source Han Sans CN;
     color: rgba(255, 255, 255, 1);
     line-height: 14px;
-    padding: 15px 10px;
+    padding:21px 13px 0px 23px;
     .baseInfo,
     .deviceInfo {
       .info {
         box-sizing: border-box;
-        width: 202px;
-        height: 45px;
+        width: 196px;
+        height: 34px;
         background: url(../../assets/images/device/info-title.png) no-repeat;
-        line-height: 45px;
+        line-height: 34px;
         padding-left: 35px;
       }
     }
@@ -1681,8 +1681,8 @@ export default {
         margin-top: 22px;
         height: 230px;
         ul {
-          padding-left: 24px;
-          padding-right: 5px;
+          padding-left: 15px;
+          padding-right: 22px;
           li {
             // text-align: justify;
             word-break: break-all;
@@ -1701,15 +1701,12 @@ export default {
     }
     .deviceInfo {
       margin-top: 10px;
-      .info {
-        padding-left: 50px;
-      }
       .operate {
         margin-top: 20px;
         .icons {
           display: flex;
           flex-wrap: wrap;
-          padding-left: 24px;
+          padding-left: 20px;
           div {
             width: 48px;
             height: 48px;
@@ -1792,7 +1789,7 @@ export default {
             height: 37px;
             line-height: 35px;
             text-align: center;
-            margin-left:24px;
+            margin-left:10px;
             background: rgba(46, 108, 147, 1);
             border: 1px solid rgba(28, 161, 220, 1);
             color: #84ddff;
@@ -1837,7 +1834,7 @@ export default {
         }
         .slider {
           display: flex;
-          padding-left:24px;
+          padding-left:10px;
 
           span {
             line-height: 38px;
@@ -1887,18 +1884,19 @@ export default {
     .box {
       display: flex;
       justify-content: space-between;
-      margin-right: 64px;
+      margin-right: 10px;
+       margin-bottom: 20px;
       .title {
-        width: 202px;
-        height: 45px;
+        width: 196px;
+        height: 34px;
         background: url(../../assets/images/device/info-title.png) no-repeat;
-        line-height: 45px;
+        line-height: 34px;
         padding-left: 30px;
-        margin-bottom: 20px;
       }
       div.info {
         display: flex;
         font-weight: 400;
+        line-height: 34px;
         color: rgba(132, 221, 255, 1);
         .curSelected {
           margin-right: 70px;
@@ -1942,18 +1940,18 @@ export default {
       }
     }
     .tools {
-      position: absolute;
-      bottom: 25px;
-      width: 95%;
-      height: 71px;
-      background: url(../../assets/images/tool-bar.png) no-repeat;
+      position: relative;
+      width:  1197px;
+      height: 60px;
+      background: url(../../assets/images/tool-bar.png) round;
       background-size: 100% 100%;
       display: flex;
       justify-content: space-between;
+      margin-top:20px;
       .leftTool,
       .rightTool {
         position: relative;
-        top: 22px;
+        top: 16px;
         left: 40px;
         img {
           margin-right: 20px;

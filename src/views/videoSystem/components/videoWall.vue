@@ -73,7 +73,7 @@
                 v-model="step"
                 :min="1"
                 :max="8"
-                style="width:91px;margin-left:16px;margin-right:8px;"
+                style="width:106px;margin-left:16px;margin-right:16px;"
               ></el-slider>
               <span>{{step}}</span>
             </div>
@@ -820,21 +820,22 @@ export default {
   height: 509px;
   background: url(../../../assets/images/full-screen-operate.png) no-repeat;
   .deviceInfo {
+    padding-top:18px;
     .deviceTitle {
       box-sizing: border-box;
       width: 202px;
-      height: 45px;
-      padding-left: 50px;
+      height: 34px;
       background: url(../../../assets/images/device/info-title.png) no-repeat;
-      line-height: 45px;
+      line-height: 34px;
       padding-left: 37px;
+      margin-left:20px;
     }
     .operate {
       margin-top: 20px;
       .icons {
         display: flex;
         flex-wrap: wrap;
-        padding-left: 37px;
+        padding-left: 45px;
         div {
           width: 48px;
           height: 48px;
@@ -1020,9 +1021,9 @@ export default {
   .infoTitle {
     padding-left: 35px;
     width: 202px;
-    height: 45px;
+    height: 34px;
     background: url(../../../assets/images/device/info-title.png) no-repeat;
-    line-height: 45px;
+    line-height: 34px;
   }
   .mapBox {
     margin-left: 12px;
