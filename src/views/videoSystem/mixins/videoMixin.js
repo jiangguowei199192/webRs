@@ -128,6 +128,7 @@ const videoMixin = {
         }
       } else if (isOnline) {
         // 设备不存在，新设备上线
+        info.onlineStatus = 'online'
         this.onlineArray.push(info)
       }
     },
@@ -473,6 +474,7 @@ const videoMixin = {
     },
     // 高点设备、无人机状态更新(地图标记)
     updateDeviceStatus (info) {
+      delete info.deptCode
       info = this.formatData(info)
       if (
         this.$refs.gduMap !== undefined &&
