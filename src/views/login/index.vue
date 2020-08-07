@@ -2,7 +2,7 @@
 <div>
   <div class="login">
     <div class="content">
-      <div class="title">消防救援现场指挥系统</div>
+      <div class="title">{{loginTitle}}</div>
       <el-input
         placeholder="用户名"
         auto-complete="new-password"
@@ -57,10 +57,12 @@ import { loginApi } from '@/api/login'
 import {
   Notification
 } from 'element-ui'
+import globalApi from '../../utils/globalApi'
 export default {
   name: 'login',
   data () {
     return {
+      loginTitle: globalApi.projectTitle || '消防救援现场指挥系统',
       passwordInputType: 'text',
       loginInfo: {
         username: '',
