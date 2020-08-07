@@ -1061,6 +1061,10 @@ export default {
       this.curVideoIndex = index
       if (curVideo.deviceTypeCode === 'WRJ') {
         this.setDroneDevCode(curVideo.deviceCode)
+        const tmpMap = this.$refs.gduMap.map2D
+        setTimeout(() => {
+          tmpMap._map.updateSize()
+        }, 1)
       }
       // 如果不是空白区域，给对应的数结构添加样式
       if (this.curVideosArray[this.curVideoIndex]) {
