@@ -99,10 +99,10 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img
+              <!-- <img
                 :src="showVideoPageSize==9?nineSelectedPalace:ninePalace"
                 @click.stop="changeVideosType(9)"
-              />
+              /> -->
               <img
                 :src="showVideoPageSize==4?fourSelectedPalace:fourPalace"
                 @click.stop="changeVideosType(4)"
@@ -129,7 +129,7 @@
                 ></el-pagination>
               </div>-->
               <div class="download" @click="download" />
-              <img :src="fullScreen" @click.stop="showFullScreen" />
+              <!-- <img :src="fullScreen" @click.stop="showFullScreen" /> -->
             </div>
           </div>
           <TimeBar
@@ -279,7 +279,7 @@ export default {
       currentPage: 1, // 默认第1页
       totalVideosArray: [], // 总共的数据
       curVideosArray: [], // 当前展示的数据
-      showVideoPageSize: 9, // 每屏显示视频的个数 默认9宫格
+      showVideoPageSize: 4, // 每屏显示视频的个数 默认9宫格
       curVideoIndex: 1000,
       curNode: '', // 当前选中设备树节点
       stop: require('../../assets/images/stop-disable.png'),
@@ -460,7 +460,7 @@ export default {
       this.curNode = ''
       this.snapList = []
       this.currentPage = 1 // 默认第1页
-      this.showVideoPageSize = 9 // 每屏显示视频的个数 默认9宫格
+      this.showVideoPageSize = 4 // 每屏显示视频的个数 默认9宫格
       this.curVideoIndex = 1000
       this.curPlayer = ''
       this.init()
