@@ -36,7 +36,6 @@ const droneInfoMixin = {
       this.curDevCode = devCode
       this.droneInfo = null
       if (this.latestDronesInfo[this.curDevCode] !== undefined) {
-        console.log('this.latestDronesInfo :', this.latestDronesInfo[this.curDevCode])
         this.mapMoveToDronePosition(this.latestDronesInfo[this.curDevCode])
         this.updateDronePosition(this.latestDronesInfo[this.curDevCode])
       }
