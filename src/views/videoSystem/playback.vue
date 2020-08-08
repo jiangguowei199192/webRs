@@ -129,7 +129,7 @@
                 ></el-pagination>
               </div>-->
               <div class="download" @click="download" />
-              <img :src="fullScreen" @click.stop="dialogVisible=true" />
+              <img :src="fullScreen" @click.stop="showFullScreen" />
             </div>
           </div>
           <TimeBar
@@ -152,14 +152,14 @@
         ></Calendar>
       </div>
     </VideoMain>
-    <div class="fullContainer" v-show="dialogVisible" id="d1">
+    <div class="fullContainer" v-if="dialogVisible" id="d1">
       <div
         :style="machineStatusStyle(showVideoPageSize)"
         v-for="(item,index) in curVideosArray"
         :key="index"
       >
         <div :class="{active:fulllIndex==index}" @click="fulllIndex=index">
-          <VideoWall :videoInfo="item" :key="index" ref="playerCtrl" v-if="item.streamUrl"></VideoWall>
+          <VideoWall :videoInfo="item" :key="index"  v-if="item.streamUrl" :playbackFullScreen="true"></VideoWall>
         </div>
       </div>
     </div>
@@ -1142,7 +1142,9 @@ export default {
             curTime: this.curTime, // 时间轴上的时间
             playTime: this.curTime, // 播放的时间
             calendar: this.curCalendar, // 回放日期
-            parentLabel: this.curNode.parentLabel
+            parentLabel: this.curNode.parentLabel,
+            seconds: 0, // 播放时间（秒）
+            curUrl: '' // 当前播放url
           },
           r
         )
@@ -1210,6 +1212,18 @@ export default {
           delete this.onlineArray[index].isPlay
         }
       }
+    },
+
+    /**
+     * 全屏
+     */
+    showFullScreen () {
+      this.$refs.videoCtrl.forEach(c => {
+        const info = c.getCurrentInfo()
+        c.videoInfo.seconds = info.seconds
+        c.videoInfo.curUrl = info.curUrl
+      })
+      this.dialogVisible = true
     },
 
     /**
@@ -1426,11 +1440,12 @@ export default {
     justify-content: space-between;
     margin-right: 64px;
     .title {
-      width: 202px;
-      height: 45px;
-      background: url(../../assets/images/device/info-title.png) no-repeat;
-      line-height: 45px;
-      padding-left: 30px;
+        width: 196px;
+        height: 34px;
+        background: url(../../assets/images/device/info-title.png) no-repeat;
+        line-height: 34px;
+        padding-left: 30px;
+        margin-bottom: 11px;
     }
   }
   .videoList {

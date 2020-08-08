@@ -142,7 +142,20 @@ export default {
     // 获取飞机实时信息所需订阅主题
     this.getRealtimeInfoTopics()
   },
+  watch: {
+    // 监听,当路由发生变化的时候执行
+    $route: 'getPath'
+  },
   methods: {
+    // 路由发生变化
+    getPath () {
+      // 激活实时视频还是回放视频 1实时 2回放
+      if (this.$route.path === '/playback') {
+        this.curActive = 2
+      } else if (this.$route.path === '/videoSystem') {
+        this.curActive = 1
+      }
+    },
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
