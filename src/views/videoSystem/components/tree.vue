@@ -37,7 +37,7 @@ export default {
     treeData: {
       type: Array,
       default: () => {
-        return []
+        return [];
       }
     },
     isLive: {
@@ -49,40 +49,40 @@ export default {
       default: true
     }
   },
-  data () {
+  data() {
     return {
       defaultProps: {
-        children: 'children',
-        label: 'label'
+        children: "children",
+        label: "label"
       }
-    }
+    };
   },
   methods: {
-    filterNode (value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
     },
     // 点击树节点
-    handleNodeClick (data, $event) {
+    handleNodeClick(data, $event) {
       // console.log($event.parent.data)
-      const parentData = $event.parent.data
+      const parentData = $event.parent.data;
       if (data._bIsDevice === true) {
-        this.$emit('clickAnDeviceItem', data)
+        this.$emit("clickAnDeviceItem", data);
       } else if (parentData._bIsDevice === true) {
-        this.$emit('clickAnDeviceItem', parentData)
+        this.$emit("clickAnDeviceItem", parentData);
       }
       if (!data.children) {
-        const curSpan = document.getElementById('liveVideo' + data.id)
-          .parentElement
+        const curSpan = document.getElementById("liveVideo" + data.id)
+          .parentElement;
         // 下线设备点击时移除激活的样式
         // 回放时，离线设备依赖可以点击，进行回放操作
-        if (data.onlineStatus === 'offline' && this.isLive) {
+        if (data.onlineStatus === "offline" && this.isLive) {
           this.$nextTick(() => {
             curSpan.parentElement.parentElement.parentElement.classList.remove(
-              'is-current'
-            )
-          })
-          return
+              "is-current"
+            );
+          });
+          return;
         }
         if (this.isLive) {
           // 直播
@@ -92,67 +92,67 @@ export default {
             deviceAddress: $event.parent.data.deviceAddress,
             deviceBrand: $event.parent.data.deviceBrand,
             parentLabel: $event.parent.data.label,
-            labelTotal: $event.parent.data.label + '-' + data.label,
+            labelTotal: $event.parent.data.label + "-" + data.label,
             deviceLatitude: $event.parent.data.deviceLatitude,
             deviceLongitude: $event.parent.data.deviceLongitude
-          }
-          const curData = Object.assign({}, data, obj)
+          };
+          const curData = Object.assign({}, data, obj);
           if (this.isLiveTree) {
-            if (!curSpan.getAttribute('class')) {
-              curSpan.setAttribute('class', 'liveIcon')
+            if (!curSpan.getAttribute("class")) {
+              curSpan.setAttribute("class", "liveIcon");
               curSpan.parentElement.parentElement.parentElement.classList.add(
-                'is-current'
-              )
-              console.log(curData)
-              this.$emit('videoChange', 1, curData)
+                "is-current"
+              );
+              console.log(curData);
+              this.$emit("videoChange", 1, curData);
             } else {
-              curSpan.setAttribute('class', '')
+              curSpan.setAttribute("class", "");
               this.$nextTick(() => {
                 curSpan.parentElement.parentElement.parentElement.classList.remove(
-                  'is-current'
-                )
-              })
+                  "is-current"
+                );
+              });
 
-              this.$emit('videoChange', 2, curData)
+              this.$emit("videoChange", 2, curData);
             }
           } else {
-            this.$emit('selectedDevice', curData)
+            this.$emit("selectedDevice", curData);
           }
         } else {
           // 回放
           // 点击当前视频区域，默认去掉所有激活的样式
-          const divs = document.querySelectorAll('.el-tree-node')
+          const divs = document.querySelectorAll(".el-tree-node");
           for (let i = 0; i < divs.length; i++) {
-            divs[i].classList.remove('is-current')
+            divs[i].classList.remove("is-current");
           }
           // 当前点击节点，添加激活的样式
           curSpan.parentElement.parentElement.parentElement.classList.add(
-            'is-current'
-          )
-          this.$emit('selectedChange', data, $event.parent.data)
+            "is-current"
+          );
+          this.$emit("selectedChange", data, $event.parent.data);
         }
       }
     },
     // 给span.disabled 父节点添加样式
-    addParentDisabled () {
-      const spans = document.querySelectorAll('span.disabled')
+    addParentDisabled() {
+      const spans = document.querySelectorAll("span.disabled");
       for (let i = 0; i < spans.length; i++) {
         // 回放时，离线设备依赖可以点击，进行回放操作
         if (this.isLive) {
-          spans[i].parentElement.parentElement.style.pointerEvents = 'none'
-          spans[i].parentElement.parentElement.style.cursor = 'not-allowed'
+          spans[i].parentElement.parentElement.style.pointerEvents = "none";
+          spans[i].parentElement.parentElement.style.cursor = "not-allowed";
         }
-        spans[i].parentElement.parentElement.style.opacity = '0.5'
-        spans[i].parentElement.parentElement.style.color = '#007291'
+        spans[i].parentElement.parentElement.style.opacity = "0.5";
+        spans[i].parentElement.parentElement.style.color = "#007291";
       }
     }
   },
-  created () {
+  created() {
     this.$nextTick(() => {
-      this.addParentDisabled()
-    })
+      this.addParentDisabled();
+    });
   }
-}
+};
 </script>
 <style lang="less" scoped>
 // 修改树形控件样式
@@ -166,16 +166,18 @@ export default {
   overflow-y: auto;
   overflow-x: auto;
   /deep/.el-tree {
-    color: #23cefd;
+    color:#fff;
     background-color: transparent;
     .el-tree-node {
       .el-tree-node__content {
-        line-height: 30px;
+        line-height: 38px;
         white-space: nowrap;
         text-overflow: ellipsis;
+        padding-right:3px;
       }
       .el-tree-node__expand-icon {
-        color: #23cefd;
+        color: #fff;
+        font-size:18px;
       }
       .el-tree-node__expand-icon.is-leaf {
         color: transparent;
@@ -200,16 +202,16 @@ export default {
       }
       i.extra {
         font-size: 14px;
-        color: #fff464;
+        color: #fff;
       }
       i.extra::before {
         position: absolute;
         top: 7px;
-        left: -13px;
+        left: -15px;
         content: "";
         width: 6px;
         height: 6px;
-        background: #fff464;
+        background: #fff;
         border-radius: 50%;
       }
       span {
@@ -219,6 +221,8 @@ export default {
         vertical-align: middle;
       }
       span.unmanned {
+        font-size:18px;
+        color: #23cefd;
         position: relative;
         top: 1px;
         background: url(../../../assets/images/noman.png) no-repeat center
@@ -229,9 +233,13 @@ export default {
         position: relative;
         top: -1px;
       }
+      span.highdevice + i,span.unmanned+i {
+        font-size:18px;
+        color: #23cefd;
+      }
     }
     span.liveIcon {
-      padding-right: 35px;
+      padding-right: 66px;
       background: url(../../../assets/images/onlive.png) no-repeat right 7px;
     }
   }
@@ -241,7 +249,7 @@ export default {
     background: rgba(0, 180, 255, 0.43) !important;
   }
   /deep/.el-tree-node__content {
-    height: 30px;
+    height: 38px;
   }
   /deep/.el-tree-node__content:hover {
     background: rgba(0, 180, 255, 0.2);
