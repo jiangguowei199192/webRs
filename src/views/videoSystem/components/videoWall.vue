@@ -5,7 +5,7 @@
       :videoUrl="videoInfo.streamUrl"
       :show-custom-button="false"
       :muted="false"
-      :controls="true"
+      :controls="false"
       :autoplay="true"
       oncontextmenu="return false"
       fluent
