@@ -93,6 +93,7 @@ export default {
     background-color: transparent;
     outline: none;
     display: block;
+    cursor: pointer;
   }
   .container {
     width: 1242px;

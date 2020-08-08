@@ -18,11 +18,11 @@
       <el-form ref="extraInfoRef" :model="extraInfoForm" :rules="extraInfoRules">
         <el-form-item prop="orgName">
           <!-- <el-input v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input> -->
-          <el-input v-model="extraInfoForm.orgName" :placeholder="this.userDetail.orgName"></el-input>
+          <el-input class="orgNameInput" v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input>
         </el-form-item>
         <el-form-item prop="jobDesc">
           <!-- <el-input v-model="extraInfoForm.jobDesc" placeholder="职务/岗位"></el-input> -->
-          <el-input v-model="extraInfoForm.jobDesc" :placeholder="this.userDetail.jobDesc"></el-input>
+          <el-input class="jobDescInput" v-model="extraInfoForm.jobDesc" placeholder="职务/岗位"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -100,7 +100,7 @@
 <script>
 import { Notification } from 'element-ui'
 import { loginApi } from '@/api/login'
-import { isNotNull, length, selectvalidator } from '@/utils/validate'
+import { isNotNull, limitLength, selectValidator } from '@/utils/validate'
 
 export default {
   props: {
@@ -117,8 +117,8 @@ export default {
     return {
       showExtraInfo: false,
       extraInfoForm: {
-        orgName: '',
-        jobDesc: ''
+        orgName: this.userDetail.orgName,
+        jobDesc: this.userDetail.jobDesc
       },
       extraInfoRules: {
         orgName: [{ required: true, message: '请输入组织' }],
@@ -140,10 +140,10 @@ export default {
       },
       myInfoRules: {
         username: isNotNull('请输入用户名').concat(
-          length(3, 30).concat(selectvalidator('isAccountValid'))
+          limitLength(1, 10).concat(selectValidator('validateUsername'))
         ),
         mobile: isNotNull('请输入手机号码').concat(
-          selectvalidator('validatePhone')
+          selectValidator('validatePhone')
         )
       },
       realNameSelect: 'realNameSelectOptions1',
@@ -174,6 +174,8 @@ export default {
     // eslint-disable-next-line no-unused-vars
     const userDetail = JSON.parse(localStorage.getItem('userDetail'))
     // console.log(userDetail);
+    // document.querySelector(".orgNameInput").val(this.userDetail.orgName);
+    // document.querySelector(".jobDesc").val(this.userDetail.jobDesc);
   },
   methods: {
     // 点击行
@@ -272,30 +274,26 @@ export default {
       const formData = new FormData()
       formData.append('id', this.userDetail.id)
       formData.append('file', this.imageFile)
-      this.$axios
-        .post(loginApi.updateHeadImg, formData, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        })
-        .then((res) => {
-          // console.log(res)
-          if (res.data.code === 0) {
-            this.showUploadIcon = false
-            this.$emit('refreshData')
-            Notification({
-              title: '提示',
-              message: '头像上传成功',
-              type: 'success',
-              duration: 5 * 1000
-            })
-            return
-          }
+      this.$axios.post(loginApi.updateHeadImg, formData).then((res) => {
+        // console.log(res)
+        if (res.data.code === 0) {
+          this.showUploadIcon = false
+          this.$emit('refreshData')
           Notification({
             title: '提示',
-            message: '头像上传失败',
-            type: 'warning',
+            message: '头像上传成功',
+            type: 'success',
             duration: 5 * 1000
           })
+          return
+        }
+        Notification({
+          title: '提示',
+          message: '头像上传失败',
+          type: 'warning',
+          duration: 5 * 1000
         })
+      })
     },
     // 我的信息-保存
     myInfoConfirm () {

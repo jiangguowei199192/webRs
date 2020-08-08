@@ -44,7 +44,7 @@ export function validateEmail (email) {
 }
 
 // 输入验证器名称
-export function selectvalidator (name) {
+export function selectValidator (name) {
   // eslint-disable-next-line no-eval
   const fn = eval(name)
   const rules = []
@@ -52,10 +52,24 @@ export function selectvalidator (name) {
   return rules
 }
 
+// 验证用户名
+export function validateUsername (rule, value, callback) {
+  const reg = /^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$/
+  if (value === '' || value === undefined || value == null) {
+    callback()
+  } else {
+    if ((!reg.test(value)) && value !== '') {
+      callback(new Error('姓名只包含汉字、数字、字母、下划线且不能以下划线开头结尾'))
+    } else {
+      callback()
+    }
+  }
+}
+
 // 验证长度
-export function length (from, to) {
+export function limitLength (from, to) {
   const rules = []
-  rules.push({ min: from, max: to, message: '长度在' + from + ' 到' + to + '个字符', trigger: 'blur' })
+  rules.push({ min: from, max: to, message: '长度应为' + from + ' 到' + to + '个字符', trigger: 'blur' })
   return rules
 }
 
@@ -82,12 +96,12 @@ export function validateTelphone (rule, value, callback) {
 
 // 是否手机号码
 export function validatePhone (rule, value, callback) {
-  const reg = /^[1][3,4,5,7,8][0-9]{9}$/
+  const reg = /^[1][2,3,4,5,6,7,8][0-9]{9}$/
   if (value === '' || value === undefined || value == null) {
     callback()
   } else {
     if ((!reg.test(value)) && value !== '') {
-      callback(new Error('请输入正确格式的电话号码'))
+      callback(new Error('手机号需以1开头第二位不能为1、9的11位数字'))
     } else {
       callback()
     }

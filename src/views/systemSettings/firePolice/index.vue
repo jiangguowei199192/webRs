@@ -505,6 +505,7 @@ export default {
   overflow: hidden;
   .tablePagination {
     padding-top: 30px;
+    text-align: center;
   }
 }
 .el-table::before {
