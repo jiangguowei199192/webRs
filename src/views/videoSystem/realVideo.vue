@@ -1546,6 +1546,7 @@ export default {
     })
   },
   mounted () {
+    this.bSaveMultiDroneInfos = true
   }
 }
 </script>
