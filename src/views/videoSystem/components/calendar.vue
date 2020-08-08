@@ -404,7 +404,7 @@ export default {
 .picContainer {
   width: 100%;
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
   .picList {
     margin-top: 30px;
     height: 351px;
