@@ -298,7 +298,7 @@
       id="d1"
       class="fullScreenDialog"
     >-->
-    <div class="fullContainer" v-show="dialogVisible" id="d1" ref="fullContainer">
+    <div class="fullContainer" v-if="dialogVisible" id="d1" ref="fullContainer">
       <div
         :style="machineStatusStyle1(showVideoPageSize)"
         v-for="(item,index) in curVideosArray"
