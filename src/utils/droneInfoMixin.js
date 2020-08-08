@@ -65,11 +65,11 @@ const droneInfoMixin = {
     },
     // 飞机实时信息处理
     updateDroneRealtimeInfo (obj) {
-      if (obj.snCode === this.curDevCode) {
-        if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
-          return
-        }
+      if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
+        return
+      }
 
+      if (obj.snCode === this.curDevCode) {
         if (this.droneInfo === null && this.dronesInfos[obj.snCode] === undefined) {
           this.droneInfo = obj
           this.mapMoveToDronePosition(obj)
