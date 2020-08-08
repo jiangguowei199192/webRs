@@ -5,6 +5,8 @@ const droneInfoMixin = {
       curDevCode: null,
       droneInfo: null,
       latestDronesInfo: {},
+      bSaveMultiDroneInfos: false,
+      dronesInfos: {},
       droneMarkerLayer: null,
       droneTrailLayer: null
     }
@@ -24,6 +26,7 @@ const droneInfoMixin = {
     this.droneTrailLayer = this.$refs.gduMap.map2D.droneLayerManager.addTrailLayer(true)
     // 创建飞机标记图层
     this.droneMarkerLayer = this.$refs.gduMap.map2D.droneLayerManager.add(true)
+    this.$refs.gduMap.map2D.setZoom(10)
   },
 
   methods: {
@@ -35,9 +38,8 @@ const droneInfoMixin = {
       }
       this.curDevCode = devCode
       this.droneInfo = null
-      if (this.latestDronesInfo[this.curDevCode] !== undefined) {
-        this.mapMoveToDronePosition(this.latestDronesInfo[this.curDevCode])
-        this.updateDronePosition(this.latestDronesInfo[this.curDevCode])
+      if (this.dronesInfos[this.curDevCode] !== undefined) {
+        this.showDroneRecordsInMap(this.curDevCode, this.dronesInfos[this.curDevCode])
       }
     },
     // 离线状态超时回调
@@ -68,12 +70,16 @@ const droneInfoMixin = {
           return
         }
 
-        if (this.droneInfo === null) {
+        if (this.droneInfo === null && this.dronesInfos[obj.snCode] === undefined) {
           this.droneInfo = obj
           this.mapMoveToDronePosition(obj)
         } else {
-          const tmpOffline = this.droneInfo.offline
-          const tmpTimeout = this.droneInfo.timeout
+          let tmpOffline = false
+          let tmpTimeout
+          if (this.droneInfo !== null) {
+            tmpOffline = this.droneInfo.offline
+            tmpTimeout = this.droneInfo.timeout
+          }
           this.droneInfo = obj
           this.droneInfo.offline = tmpOffline
           this.droneInfo.timeout = tmpTimeout
@@ -88,6 +94,20 @@ const droneInfoMixin = {
           }
         }
         this.updateDronePosition(this.droneInfo)
+      }
+
+      if (this.bSaveMultiDroneInfos) {
+        var lonLat = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([
+          parseFloat(obj.longitude),
+          parseFloat(obj.latitude)
+        ])
+        if (this.dronesInfos[obj.snCode] === undefined) {
+          this.dronesInfos[obj.snCode] = []
+        }
+        const tmpInfo = {}
+        tmpInfo.lonLat = lonLat
+        tmpInfo.angle = (parseFloat(obj.directionAngle) * Math.PI) / 180
+        this.dronesInfos[obj.snCode].push(tmpInfo)
       }
     },
     // 设置飞机在线、离线样式(bOffline为true时表示离线样式)
@@ -116,30 +136,51 @@ const droneInfoMixin = {
     },
     // 地图移动到飞机初始位置，调整地图层级
     mapMoveToDronePosition (droneInfo) {
-      var latLng = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([
+      var lonLat = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([
         parseFloat(droneInfo.longitude),
         parseFloat(droneInfo.latitude)
       ])
-      this.$refs.gduMap.map2D.zoomToCenter(latLng[0], latLng[1])
-      this.$refs.gduMap.map2D.setZoom(10)
+      this.$refs.gduMap.map2D.zoomToCenter(lonLat[0], lonLat[1])
     },
     // 更新飞机位置、轨迹航向
     updateDronePosition (droneInfo) {
-      var latLng = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([
+      var lonLat = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([
         parseFloat(droneInfo.longitude),
         parseFloat(droneInfo.latitude)
       ])
       this.$refs.gduMap.map2D.droneLayerManager.updateDroneMarker(
         droneInfo.snCode,
-        latLng,
+        lonLat,
         (parseFloat(droneInfo.directionAngle) * Math.PI) / 180,
         this.droneMarkerLayer
       )
       this.$refs.gduMap.map2D.droneLayerManager.updateDroneTrail(
         droneInfo.snCode,
-        latLng,
+        lonLat,
         this.droneTrailLayer
       )
+    },
+    // 显示保存的飞机轨迹
+    showDroneRecordsInMap (devCode, oldRecords) {
+      const pointsNum = oldRecords.length
+      const tmpMgr = this.$refs.gduMap.map2D.droneLayerManager
+      for (let i = 0; i < pointsNum; i++) {
+        tmpMgr.updateDroneMarker(
+          devCode,
+          oldRecords[i].lonLat,
+          oldRecords[i].angle,
+          this.droneMarkerLayer
+        )
+        tmpMgr.updateDroneTrail(
+          devCode,
+          oldRecords[i].lonLat,
+          this.droneTrailLayer
+        )
+      }
+      if (pointsNum > 0) {
+        this.$refs.gduMap.map2D.zoomToCenter(oldRecords[pointsNum - 1].lonLat[0],
+          oldRecords[pointsNum - 1].lonLat[1])
+      }
     }
   }
 }
