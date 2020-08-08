@@ -157,7 +157,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
-                  layout="prev,next"
+                  layout="prev,pager,next"
                   :total="totalVideosArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
@@ -972,10 +972,17 @@ export default {
           // 如果有空元素，则替换
           if (i !== -1) {
             this.totalVideosArray.splice(i, 1, curTreeData)
+            // 防止添加的视频不在当前页
+            const startI = Math.floor(i / this.showVideoPageSize)
+            // this.curVideosArray = this.totalVideosArray.slice(
+            //   (this.currentPage - 1) * this.showVideoPageSize,
+            //   this.currentPage * this.showVideoPageSize
+            // )
             this.curVideosArray = this.totalVideosArray.slice(
-              (this.currentPage - 1) * this.showVideoPageSize,
-              this.currentPage * this.showVideoPageSize
+              startI * this.showVideoPageSize,
+              (startI + 1) * this.showVideoPageSize
             )
+            this.currentPage = startI + 1
           } else {
             // 若没有空元素，则追加
             this.totalVideosArray.push(curTreeData)
