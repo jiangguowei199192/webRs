@@ -166,18 +166,18 @@ export default {
   overflow-y: auto;
   overflow-x: auto;
   /deep/.el-tree {
-    color:#fff;
+    color: #fff;
     background-color: transparent;
     .el-tree-node {
       .el-tree-node__content {
         line-height: 38px;
         white-space: nowrap;
         text-overflow: ellipsis;
-        padding-right:3px;
+        padding-right: 3px;
       }
       .el-tree-node__expand-icon {
         color: #fff;
-        font-size:18px;
+        font-size: 18px;
       }
       .el-tree-node__expand-icon.is-leaf {
         color: transparent;
@@ -221,7 +221,7 @@ export default {
         vertical-align: middle;
       }
       span.unmanned {
-        font-size:18px;
+        font-size: 18px;
         color: #23cefd;
         position: relative;
         top: 1px;
@@ -233,8 +233,9 @@ export default {
         position: relative;
         top: -1px;
       }
-      span.highdevice + i,span.unmanned+i {
-        font-size:18px;
+      span.highdevice + i,
+      span.unmanned + i {
+        font-size: 18px;
         color: #23cefd;
       }
     }
