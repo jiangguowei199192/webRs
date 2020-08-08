@@ -300,7 +300,7 @@ export default {
             // 清除本地数据
             sessionStorage.removeItem('token')
             // 跳转到登录
-            window.location.href = '/login'
+            this.$router.push({ path: '/login' })
           }
         })
     }
