@@ -260,7 +260,6 @@ export default {
           this.rightItemUserSetting.items[2].text =
             this.userDetail.orgName + '、' + this.userDetail.jobDesc
           localStorage.setItem('userDetail', JSON.stringify(res.data.data))
-          localStorage.setItem('userExtra', JSON.stringify(res.data.extra))
         }
       })
     },
@@ -292,20 +291,22 @@ export default {
       // }
     },
     async logoutClick () {
-      this.$axios
-        // .post(loginApi.logout, { userId: this.userDetail.id })
-        .post(loginApi.logout, {
-          userId: JSON.parse(localStorage.getItem('userDetail')).id
-        })
-        .then((res) => {
-          console.log(res)
-          if (res.data.code === 0) {
-            // 清除本地数据
-            sessionStorage.removeItem('token')
-            // 跳转到登录
-            this.$router.push({ path: '/login' })
-          }
-        })
+      // this.$axios
+      //   // .post(loginApi.logout, { userId: this.userDetail.id })
+      //   .post(loginApi.logout, {
+      //     userId: JSON.parse(localStorage.getItem("userDetail")).id,
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //     if (res.data.code === 0) {
+      //       // 清除本地数据
+      //       sessionStorage.removeItem("token");
+      //       // 跳转到登录
+      //       this.$router.push({ path: "/login" });
+      //     }
+      //   });
+      sessionStorage.clear()
+      this.$router.push({ path: '/login' })
     }
   },
   created () {

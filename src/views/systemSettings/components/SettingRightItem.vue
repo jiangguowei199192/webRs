@@ -36,7 +36,7 @@
     </el-dialog>
 
     <el-dialog title="头像" :visible.sync="showUploadIcon" width="30%" class="dialogStyle">
-      <div style="text-align: center;">
+      <div style="text-align:center;" class="uploadDiv">
         <el-upload
           class="avatar-uploader"
           ref="uploadImage"
@@ -174,8 +174,6 @@ export default {
     // eslint-disable-next-line no-unused-vars
     const userDetail = JSON.parse(localStorage.getItem('userDetail'))
     // console.log(userDetail);
-    // document.querySelector(".orgNameInput").val(this.userDetail.orgName);
-    // document.querySelector(".jobDesc").val(this.userDetail.jobDesc);
   },
   methods: {
     // 点击行
@@ -271,29 +269,40 @@ export default {
     },
     // 上传头像-保存
     async submitUpload () {
-      const formData = new FormData()
-      formData.append('id', this.userDetail.id)
-      formData.append('file', this.imageFile)
-      this.$axios.post(loginApi.updateHeadImg, formData).then((res) => {
-        // console.log(res)
-        if (res.data.code === 0) {
-          this.showUploadIcon = false
-          this.$emit('refreshData')
+      const uploadDiv = document.querySelector('.uploadDiv')
+      // console.log(uploadDiv);
+      if (uploadDiv.onmousedown) {
+        const formData = new FormData()
+        formData.append('id', this.userDetail.id)
+        formData.append('file', this.imageFile)
+        this.$axios.post(loginApi.updateHeadImg, formData).then((res) => {
+          // console.log(res)
+          if (res.data.code === 0) {
+            this.showUploadIcon = false
+            this.$emit('refreshData')
+            Notification({
+              title: '提示',
+              message: '头像上传成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            return
+          }
           Notification({
             title: '提示',
-            message: '头像上传成功',
-            type: 'success',
+            message: '头像上传失败',
+            type: 'warning',
             duration: 5 * 1000
           })
-          return
-        }
+        })
+      } else {
         Notification({
           title: '提示',
-          message: '头像上传失败',
+          message: '保存前请先上传头像',
           type: 'warning',
           duration: 5 * 1000
         })
-      })
+      }
     },
     // 我的信息-保存
     myInfoConfirm () {
@@ -402,6 +411,13 @@ export default {
 }
 
 .dialogStyle {
+  position: fixed;
+  top: 16%;
+  right: 0;
+  bottom: 0;
+  left: 13%;
+  overflow: auto;
+  margin: 0;
   min-width: 1500px;
   /deep/.el-dialog__header {
     background-color: #39a4dd;
