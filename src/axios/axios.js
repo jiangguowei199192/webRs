@@ -50,14 +50,14 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
+    if (error.response && error.response.status === 1004) {
       Notification({
         title: '错误',
-        message: '暂未授权，请先登录后再访问！',
+        message: '权限过期，请先登录后再访问！',
         type: 'error',
         duration: 5 * 1000
       })
-      window.location.href = '/login'
+      window.location.href = '/webFs/login'
       return
     }
     Notification({
