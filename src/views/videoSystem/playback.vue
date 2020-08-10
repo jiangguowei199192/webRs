@@ -12,16 +12,9 @@
             <div :class="{active:isOnline}" @click.stop="changeOnlineOrAll(true)">在线</div>
             <div :class="{active:!isOnline}" @click.stop="changeOnlineOrAll(false)">全部</div>
           </div>
-          <!-- <div class="search">
-            <el-input
-              type="text"
-              v-model.trim="filterDevice"
-              placeholder="请输入设备名称"
-              suffix-icon="el-icon-search"
-            ></el-input>
-          </div>-->
           <!-- 默认展示已选部分 -->
           <template v-if="isOnline">
+          <div class="onlineList">
             <div
               class="list"
               v-for="(item,index1) in onlineArray"
@@ -43,9 +36,18 @@
                 >{{list.label}}</el-button>
               </div>
             </div>
+          </div>
           </template>
           <!-- 全部部分 -->
           <template v-else>
+            <div class="search">
+              <el-input
+                type="text"
+                v-model.trim="filterDevice"
+                placeholder="请输入设备名称"
+                suffix-icon="el-icon-search"
+              ></el-input>
+            </div>
             <Tree :treeData="treeData" :isLive="false" @selectedChange="getSelectedData" ref="tree"></Tree>
           </template>
         </div>
@@ -1324,7 +1326,7 @@ export default {
 <style lang="less" scoped>
 .leftContainer {
   box-sizing: border-box;
-  padding: 27px 25px 0 28px;
+  padding: 27px 0px 0 28px;
   font-size: 16px;
   font-family: Source Han Sans CN;
   //font-weight: bold;
@@ -1362,19 +1364,47 @@ export default {
     }
   }
   div.search {
-    margin-top: 20px;
-    background: #10203b;
-    /deep/ .el-input__inner {
+      width: 230px;
+      margin-top: 20px;
       background: #10203b;
-      border: 1px solid #1eb0fc;
-      color: #1eb0fc;
+      /deep/ .el-input__inner {
+        background: #10203b;
+        border: 1px solid #1eb0fc;
+        color: #1eb0fc;
+      }
+
+      ::-webkit-input-placeholder {
+        /* WebKit, Blink, Edge */
+        color: #1eb0fc;
+      }
+  }
+
+    div.onlineList{
+      max-height:800px;
+      overflow-y: auto;
+      margin-right:8px;
+    }
+    /* --- 改变滚动条样式 --- */
+    .onlineList::-webkit-scrollbar {
+      width: 10px;
+    }
+    /* --- 滚动条里面的滚动块 --- */
+    .onlineList::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgb(0, 180, 255);
+      background: rgba(0, 180, 255, 0.2);
     }
 
-    ::-webkit-input-placeholder {
-      /* WebKit, Blink, Edge */
-      color: #1eb0fc;
+    /* --- 滚动条里面轨道 --- */
+    .onlineList::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background: #096090;
     }
-  }
+    .onlineList::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
   div.list {
     margin-top: 20px;
     padding-left: 10px;
@@ -1449,7 +1479,7 @@ export default {
     }
   }
   .videoList {
-    height: 710px;
+    height: 700px;
     display: flex;
     flex-wrap: wrap;
      > div {
@@ -1472,10 +1502,10 @@ export default {
   }
   .tools {
     position: absolute;
-    left: 18px;
-    right: 21px;
+    left: 23px;
+    right: 23px;
     bottom: 70px;
-    height: 60px;
+    height: 56px;
     background: url(../../assets/images/tool-bar.png) no-repeat;
     background-size: 100% 100%;
     display: flex;
@@ -1484,7 +1514,7 @@ export default {
     .rightTool,
     .centerTool {
       position: relative;
-      top: 20px;
+      top: 16px;
       img {
         margin-right: 20px;
         cursor: pointer;
