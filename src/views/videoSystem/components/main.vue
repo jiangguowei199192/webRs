@@ -66,9 +66,9 @@ export default {
       width: 25px;
       height: 70px;
       position: absolute;
-      top: 50%;
+      top: 410px;
       cursor: pointer;
-      transform: translateY(-50%);
+      // transform: translateY(-50%);
     }
   }
   .leftNav .iconRight {
@@ -78,7 +78,7 @@ export default {
   }
   .leftNav .iconLeft {
     background: url(../../../assets/images/arrow-left.png) no-repeat;
-    left:-20px;
+    left:-21px;
   }
   .rightInfo .iconRight {
     right: -20px;
@@ -86,23 +86,23 @@ export default {
   }
   .rightInfo .iconLeft {
     background: url(../../../assets/images/arrow-left-info.png) no-repeat;
-    left: -18px;
+    left: -22px;
   }
   .leftNav .left {
-    width: 283px;
-    height: 899px;
+    width: 280px;
+    height: 890px;
     background: url(../../../assets/images/nav-left.png) no-repeat;
   }
   .rightInfo .right {
-    width: 283px;
-    height: 899px;
+    width: 280px;
+    height: 890px;
     background: url(../../../assets/images/nav-right.png) no-repeat;
   }
   .center {
     flex: 1;
     margin: 0 27px;
-     width: 1243px;
-    height: 899px;
+     width: 1240px;
+    height: 890px;
     background: url(../../../assets/images/video-bg.png) no-repeat;
     background-size: 100% 100%;
     position: relative;

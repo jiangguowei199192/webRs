@@ -37,7 +37,7 @@ export default {
     treeData: {
       type: Array,
       default: () => {
-        return [];
+        return []
       }
     },
     isLive: {
@@ -49,40 +49,40 @@ export default {
       default: true
     }
   },
-  data() {
+  data () {
     return {
       defaultProps: {
-        children: "children",
-        label: "label"
+        children: 'children',
+        label: 'label'
       }
-    };
+    }
   },
   methods: {
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+    filterNode (value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
     },
     // 点击树节点
-    handleNodeClick(data, $event) {
+    handleNodeClick (data, $event) {
       // console.log($event.parent.data)
-      const parentData = $event.parent.data;
+      const parentData = $event.parent.data
       if (data._bIsDevice === true) {
-        this.$emit("clickAnDeviceItem", data);
+        this.$emit('clickAnDeviceItem', data)
       } else if (parentData._bIsDevice === true) {
-        this.$emit("clickAnDeviceItem", parentData);
+        this.$emit('clickAnDeviceItem', parentData)
       }
       if (!data.children) {
-        const curSpan = document.getElementById("liveVideo" + data.id)
-          .parentElement;
+        const curSpan = document.getElementById('liveVideo' + data.id)
+          .parentElement
         // 下线设备点击时移除激活的样式
         // 回放时，离线设备依赖可以点击，进行回放操作
-        if (data.onlineStatus === "offline" && this.isLive) {
+        if (data.onlineStatus === 'offline' && this.isLive) {
           this.$nextTick(() => {
             curSpan.parentElement.parentElement.parentElement.classList.remove(
-              "is-current"
-            );
-          });
-          return;
+              'is-current'
+            )
+          })
+          return
         }
         if (this.isLive) {
           // 直播
@@ -92,67 +92,67 @@ export default {
             deviceAddress: $event.parent.data.deviceAddress,
             deviceBrand: $event.parent.data.deviceBrand,
             parentLabel: $event.parent.data.label,
-            labelTotal: $event.parent.data.label + "-" + data.label,
+            labelTotal: $event.parent.data.label + '-' + data.label,
             deviceLatitude: $event.parent.data.deviceLatitude,
             deviceLongitude: $event.parent.data.deviceLongitude
-          };
-          const curData = Object.assign({}, data, obj);
+          }
+          const curData = Object.assign({}, data, obj)
           if (this.isLiveTree) {
-            if (!curSpan.getAttribute("class")) {
-              curSpan.setAttribute("class", "liveIcon");
+            if (!curSpan.getAttribute('class')) {
+              curSpan.setAttribute('class', 'liveIcon')
               curSpan.parentElement.parentElement.parentElement.classList.add(
-                "is-current"
-              );
-              console.log(curData);
-              this.$emit("videoChange", 1, curData);
+                'is-current'
+              )
+              console.log(curData)
+              this.$emit('videoChange', 1, curData)
             } else {
-              curSpan.setAttribute("class", "");
+              curSpan.setAttribute('class', '')
               this.$nextTick(() => {
                 curSpan.parentElement.parentElement.parentElement.classList.remove(
-                  "is-current"
-                );
-              });
+                  'is-current'
+                )
+              })
 
-              this.$emit("videoChange", 2, curData);
+              this.$emit('videoChange', 2, curData)
             }
           } else {
-            this.$emit("selectedDevice", curData);
+            this.$emit('selectedDevice', curData)
           }
         } else {
           // 回放
           // 点击当前视频区域，默认去掉所有激活的样式
-          const divs = document.querySelectorAll(".el-tree-node");
+          const divs = document.querySelectorAll('.el-tree-node')
           for (let i = 0; i < divs.length; i++) {
-            divs[i].classList.remove("is-current");
+            divs[i].classList.remove('is-current')
           }
           // 当前点击节点，添加激活的样式
           curSpan.parentElement.parentElement.parentElement.classList.add(
-            "is-current"
-          );
-          this.$emit("selectedChange", data, $event.parent.data);
+            'is-current'
+          )
+          this.$emit('selectedChange', data, $event.parent.data)
         }
       }
     },
     // 给span.disabled 父节点添加样式
-    addParentDisabled() {
-      const spans = document.querySelectorAll("span.disabled");
+    addParentDisabled () {
+      const spans = document.querySelectorAll('span.disabled')
       for (let i = 0; i < spans.length; i++) {
         // 回放时，离线设备依赖可以点击，进行回放操作
         if (this.isLive) {
-          spans[i].parentElement.parentElement.style.pointerEvents = "none";
-          spans[i].parentElement.parentElement.style.cursor = "not-allowed";
+          spans[i].parentElement.parentElement.style.pointerEvents = 'none'
+          spans[i].parentElement.parentElement.style.cursor = 'not-allowed'
         }
-        spans[i].parentElement.parentElement.style.opacity = "0.5";
-        spans[i].parentElement.parentElement.style.color = "#007291";
+        spans[i].parentElement.parentElement.style.opacity = '0.5'
+        spans[i].parentElement.parentElement.style.color = '#007291'
       }
     }
   },
-  created() {
+  created () {
     this.$nextTick(() => {
-      this.addParentDisabled();
-    });
+      this.addParentDisabled()
+    })
   }
-};
+}
 </script>
 <style lang="less" scoped>
 // 修改树形控件样式
@@ -162,7 +162,8 @@ export default {
   // font-weight: bold;
   margin-top: 20px;
   max-height: 750px;
-  width: 248px;
+  // width: 248px;
+  margin-right: 8px;
   overflow-y: auto;
   overflow-x: auto;
   /deep/.el-tree {
@@ -216,8 +217,8 @@ export default {
       }
       span {
         display: inline-block;
-        width: 35px;
-        height: 30px;
+        width: 22px;
+        height: 22px;
         vertical-align: middle;
       }
       span.unmanned {
