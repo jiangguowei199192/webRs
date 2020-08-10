@@ -1180,10 +1180,15 @@ export default {
           this.totalVideosArray.push('')
         }
       }
-      this.curVideosArray = this.totalVideosArray.slice(
-        0,
-        this.showVideoPageSize
-      )
+      // this.curVideosArray = this.totalVideosArray.slice(
+      //   0,
+      //   this.showVideoPageSize
+      // )
+      for (let i = 0; i < this.showVideoPageSize; i++) {
+        setTimeout(() => {
+          this.curVideosArray.splice(i, 1, this.totalVideosArray[i])
+        }, 300)
+      }
       this.isPlayAll = !this.isPlayAll
     },
     // 切换每屏显示的个数
