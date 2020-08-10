@@ -403,7 +403,8 @@ export default {
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
       imgId: '', // 保存抓取图片id
-      fulllIndex: 1000 // 全屏选中的index
+      fulllIndex: 1000, // 全屏选中的index
+      bRealTimeFireWarning: true
     }
   },
   mixins: [videoMixin, fireMixin, droneInfoMixin],
@@ -1492,7 +1493,7 @@ export default {
           title: '提示',
           message: '按esc键可退出全屏',
           type: 'info',
-          duration: 1000
+          duration: 800
         })
       }, 500)
     }
@@ -2035,7 +2036,7 @@ export default {
     // bottom: 0;
     height: 100%;
     width: 100%;
-    z-index: 100000;
+    z-index: 1000;
     background: #fff;
     display: flex;
     flex-wrap: wrap;
