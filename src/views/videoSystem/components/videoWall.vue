@@ -9,7 +9,7 @@
       :autoplay="true"
       oncontextmenu="return false"
       fluent
-      :live="videoInfo.isLive"
+      :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
       <div class="info">
@@ -168,7 +168,6 @@ export default {
   },
 
   mounted () {
-    this.$refs.playerCtrl.player.on('pause', this.forceToPlay)
     // 如果是回放
     if (this.videoInfo.isLive === false) {
       this.subEnded()
@@ -202,13 +201,6 @@ export default {
   },
 
   methods: {
-    // 切换到其它网页时，播放会被自动暂停，这里监控到暂停事件再强制其继续播放
-    forceToPlay () {
-      // 回放时页切到其它页面播放暂停能够接受，直播时暂停会导致延迟很久，所以直播时强制其继续播放
-      if (this.videoInfo.isLive !== false) {
-        this.$refs.playerCtrl.player.play()
-      }
-    },
     // 阻止冒泡
     stopEvent (event) {
       event.stopPropagation()
