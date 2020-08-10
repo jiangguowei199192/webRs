@@ -59,7 +59,7 @@ export function validateUsername (rule, value, callback) {
     callback()
   } else {
     if ((!reg.test(value)) && value !== '') {
-      callback(new Error('姓名只包含汉字、数字、字母、下划线且不能以下划线开头结尾'))
+      callback(new Error('姓名只包含汉字/数字/字母/下划线且不能以下划线开头结尾'))
     } else {
       callback()
     }
