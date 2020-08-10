@@ -185,15 +185,15 @@
               <ul v-show="Object.keys(curSelectedVideo).length>0">
                 <li>
                   <span>设备名称：</span>
-                  <span>{{curSelectedVideo.parentLabel}}</span>
+                  <span>{{curSelectedVideo.parentLabel||'-'}}</span>
                 </li>
                 <li>
                   <span>设备编号：</span>
-                  <span>{{curSelectedVideo.deviceCode}}</span>
+                  <span>{{curSelectedVideo.deviceCode||'-'}}</span>
                 </li>
                 <li>
                   <span>设备品牌：</span>
-                  <span>{{curSelectedVideo.deviceBrand}}</span>
+                  <span>{{curSelectedVideo.deviceBrand||'-'}}</span>
                 </li>
                 <!-- <li>
                   <span>设备状态：</span>
@@ -201,7 +201,7 @@
                 </li>-->
                 <li>
                   <span>所在地点：</span>
-                  <span>{{curSelectedVideo.deviceAddress}}</span>
+                  <span>{{curSelectedVideo.deviceAddress||'-'}}</span>
                 </li>
               </ul>
             </div>
