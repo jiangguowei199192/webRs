@@ -50,7 +50,7 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response && error.response.status === 1004) {
+    if (error.response && (error.response.status === 1004 || error.response.status === 401)) {
       Notification({
         title: '错误',
         message: '权限过期，请先登录后再访问！',
