@@ -1874,6 +1874,9 @@ export default {
           /deep/.el-slider__button {
             background-color: #84ddff;
           }
+          /deep/.el-slider__button-wrapper{
+            z-index:100
+          }
         }
         .sliderTip{
           font-size:14px;
