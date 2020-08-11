@@ -303,7 +303,7 @@
     <div class="fullContainer" v-if="dialogVisible" id="d1" ref="fullContainer">
       <div
         :style="machineStatusStyle1(showVideoPageSize)"
-        v-for="(item,index) in curVideosArray"
+        v-for="(item,index) in fullVideoArray"
         :key="index"
       >
         <div
@@ -406,6 +406,7 @@ export default {
       curSelectedVideo: {}, // 当前选中
       imgId: '', // 保存抓取图片id
       fulllIndex: 1000, // 全屏选中的index
+      fullVideoArray: [], // 保存全屏时的数据
       bRealTimeFireWarning: true
     }
   },
@@ -1363,6 +1364,7 @@ export default {
               this.$set(this.curVideosArray[index], 'isShowOperate', true)
             }
           })
+          console.log(this.fullVideoArray)
         } else {
           this.totalVideosArray.forEach((item, index) => {
             if (item.id === curScreenInfo.id) {
@@ -1375,7 +1377,7 @@ export default {
             }
           })
         }
-      }, 200)
+      }, 400)
     },
     init () {
       // 初始加载9个空元素
@@ -1494,13 +1496,21 @@ export default {
     // 全屏显示视频页面
     openDialog () {
       this.dialogVisible = true
+      this.fullVideoArray = []
+      // 引用类型与curVideosArray数据保持一致
+      for (let i = 0; i < this.curVideosArray.length; i++) {
+        setTimeout(() => {
+          this.fullVideoArray.push(this.curVideosArray[i])
+        }, 300)
+      }
+      console.log(this.fullVideoArray)
       setTimeout(() => {
         this.$notify({
           dangerouslyUseHTMLString: true,
           title: '提示',
           message: '按esc键可退出全屏',
           type: 'info',
-          duration: 800
+          duration: 1000
         })
       }, 500)
     }
@@ -1525,7 +1535,7 @@ export default {
           })
           me.curVideosArray.forEach((item, index) => {
             if (item) {
-              me.$set(me.totalVideosArray[index], 'isShowOperate', false)
+              me.$set(me.curVideosArray[index], 'isShowOperate', false)
             }
           })
           if (me.curScreenInfo.id) {
