@@ -1066,6 +1066,7 @@ export default {
           this.isPlayAll = false
         }
       }
+      // this.addTitle()
     },
     // 点击当前视频
     operateCurVideo (curVideo, index) {
@@ -1245,6 +1246,7 @@ export default {
       } else {
         this.curSelectedVideo = {}
       }
+      // this.addTitle()
     },
     // 每一次切换屏幕或选择上一页下一页 默认当前显示的视频中第一个对应左边的树激活
     activeFirstTree () {
@@ -1297,6 +1299,7 @@ export default {
       } else {
         this.curSelectedVideo = {}
       }
+      // this.addTitle()
     },
     // 下一页
     next (cpage) {
@@ -1319,6 +1322,7 @@ export default {
         cpage * this.showVideoPageSize
       )
       this.activeFirstTree()
+      // this.addTitle()
     },
     // 动态渲染9个容器
     machineStatusStyle1 (n) {
@@ -1510,9 +1514,26 @@ export default {
           title: '提示',
           message: '按esc键可退出全屏',
           type: 'info',
-          duration: 1000
+          duration: 3000
         })
       }, 500)
+    },
+    // 给分页添加提示（暂时不加）
+    addTitle () {
+      this.$nextTick(() => {
+        const prevBtn = document.querySelector('.el-pagination > .btn-prev')
+        const nextBtn = document.querySelector('.el-pagination > .btn-next')
+        if (!prevBtn.getAttribute('disabled')) {
+          prevBtn.title = `当前页${this.currentPage} / ${(Math.ceil(this.totalVideosArray.length / this.showVideoPageSize))}`
+        } else {
+          prevBtn.removeAttribute('title')
+        }
+        if (!nextBtn.getAttribute('disabled')) {
+          nextBtn.title = `当前页${this.currentPage} / ${(Math.ceil(this.totalVideosArray.length / this.showVideoPageSize))}`
+        } else {
+          nextBtn.removeAttribute('title')
+        }
+      })
     }
   },
   created () {
