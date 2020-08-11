@@ -78,26 +78,11 @@
               <div class="warning" @click.stop="$router.push({name:'fireAlarm'})">
                 <img :src="firePic" alt />
                 监控报警
-                <b>{{ fireTotalNum }}</b>个
+                <b>{{ fireWarningArray.length }}</b>个
               </div>
             </div>
           </div>
-          <div class="videoList">
-            <!-- <div
-              v-for="(item,index) in curVideosArray"
-              :key="index"
-              :style="machineStatusStyle(showVideoPageSize)"
-              @click.stop="operateCurVideo(item,index)"
-              :class="{active:curVideoIndex===index}"
-            >
-              <VideoWall
-                :videoInfo="item"
-                :key="index"
-                ref="playerCtrl"
-                v-if="item.streamUrl"
-                @fullScreenChange="getVideoInfo"
-              ></VideoWall>
-            </div>-->
+          <div class="videoList" ref="fullScreen">
             <div
               v-for="(item,index) in curVideosArray"
               :key="index"
@@ -406,8 +391,7 @@ export default {
       curSelectedVideo: {}, // 当前选中
       imgId: '', // 保存抓取图片id
       fulllIndex: 1000, // 全屏选中的index
-      fullVideoArray: [], // 保存全屏时的数据
-      bRealTimeFireWarning: true
+      fullVideoArray: [] // 保存全屏时的数据
     }
   },
   mixins: [videoMixin, fireMixin, droneInfoMixin],

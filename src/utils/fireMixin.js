@@ -23,23 +23,19 @@ const fireMixin = {
         this.markFireWarnings()
       })
     }
-
-    if (this.bRealTimeFireWarning) {
-      // 实时监控火情火点
-      EventBus.$on('getFireAlarm', info => {
-        if (info.alarmStatus !== 'mistaken') {
-          info.bConfirmed = false
-          info.alarmTime = timeFormat(info.alarmTime)
-          this.handlingAlarmImgUrl(info)
-          this.fireWarningArray.push(info)
-          this.fireTotalNum = this.fireWarningArray.length
-          if (this.bShowMarkersInMap) {
-            this.addNewFireWarning(info)
-          }
+    // 实时监控火情火点
+    EventBus.$on('getFireAlarm', info => {
+      if (info.alarmStatus !== 'mistaken') {
+        info.bConfirmed = false
+        info.alarmTime = timeFormat(info.alarmTime)
+        this.handlingAlarmImgUrl(info)
+        this.fireWarningArray.push(info)
+        this.fireTotalNum = this.fireWarningArray.length
+        if (this.bShowMarkersInMap) {
+          this.addNewFireWarning(info)
         }
-      })
-    }
-
+      }
+    })
     // 获取火情报警信息
     this.getTodayFireAlarmInfos()
   },
