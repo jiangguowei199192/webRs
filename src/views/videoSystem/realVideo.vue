@@ -146,7 +146,7 @@
                 :src="`${picUrl}${cutImgUrl}`"
                 alt
                 id="pic"
-                v-if="showCutImg"
+                v-show="showCutImg"
                 @click.stop="cutDialogVisible=true"
               />
             </div>
@@ -353,7 +353,7 @@ import droneInfoMixin from '../../utils/droneInfoMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
-import { debounce } from '../../utils/public.js'
+import { throttle } from '../../utils/public.js'
 
 export default {
   name: 'videoContainer',
@@ -1414,7 +1414,7 @@ export default {
       )
     },
     // 点击抓取，显示抓拍图片
-    showImg: debounce(function () {
+    showImg: throttle(function () {
       if (Object.keys(this.curSelectedVideo).length === 0) {
         this.$notify.warning({ title: '警告', message: '请先选择设备！' })
         return
@@ -1436,14 +1436,17 @@ export default {
             duration: 800
           })
           // this.$nextTick(() => {
-          //   this.moveElement('pic', 140, -215)
+          // 目的地
+          //   this.moveElement('pic', 150, -200)
           // })
           setTimeout(() => {
+            // document.getElementById('pic').style.left = '410px'
+            // document.getElementById('pic').style.top = '-470px'
             this.showCutImg = false
-          }, 6000)
+          }, 4000)
         }
       })
-    }, 500),
+    }, 4000),
     // 点击确定按钮
     confirm () {
       // 防止此时设备下线
@@ -1472,10 +1475,9 @@ export default {
     // 移动图片
     moveElement (elementID, finalX, finalY) {
       console.log(finalX, finalY)
-
       const timer = setInterval(() => {
         const elem = document.getElementById(elementID)
-        let xpos = parseInt(elem.offsetLeft - 22)
+        let xpos = parseInt(elem.offsetLeft)
         let ypos = parseInt(elem.offsetTop)
         console.log(xpos, ypos)
         if (xpos === finalX && ypos === finalY) {
@@ -1495,7 +1497,7 @@ export default {
         }
         elem.style.left = xpos + 'px'
         elem.style.top = ypos + 'px'
-      }, 5)
+      }, 1)
     },
     // 全屏显示视频页面
     openDialog () {
@@ -2086,8 +2088,9 @@ export default {
           z-index: 1000;
           top: -200px;
           left: 150px;
+          // 动画的位置
           // top: -470px;
-          // left: 410px; 动画
+          // left: 410px;
           transition: all linear;
         }
       }
