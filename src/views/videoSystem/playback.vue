@@ -14,7 +14,7 @@
           </div>
           <!-- 默认展示已选部分 -->
           <template v-if="isOnline">
-          <div class="onlineList">
+          <div class="onlineList webFsScroll">
             <div
               class="list"
               v-for="(item,index1) in onlineArray"
@@ -1384,26 +1384,26 @@ export default {
       overflow-y: auto;
       margin-right:8px;
     }
-    /* --- 改变滚动条样式 --- */
-    .onlineList::-webkit-scrollbar {
-      width: 10px;
-    }
-    /* --- 滚动条里面的滚动块 --- */
-    .onlineList::-webkit-scrollbar-thumb {
-      border-radius: 10px;
-      box-shadow: inset 0 0 5px rgb(0, 180, 255);
-      background: rgba(0, 180, 255, 0.2);
-    }
+    // /* --- 改变滚动条样式 --- */
+    // .onlineList::-webkit-scrollbar {
+    //   width: 10px;
+    // }
+    // /* --- 滚动条里面的滚动块 --- */
+    // .onlineList::-webkit-scrollbar-thumb {
+    //   border-radius: 10px;
+    //   box-shadow: inset 0 0 5px rgb(0, 180, 255);
+    //   background: rgba(0, 180, 255, 0.2);
+    // }
 
-    /* --- 滚动条里面轨道 --- */
-    .onlineList::-webkit-scrollbar-track {
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-      background: #096090;
-    }
-    .onlineList::-webkit-scrollbar-corner {
-      background: transparent;
-    }
+    // /* --- 滚动条里面轨道 --- */
+    // .onlineList::-webkit-scrollbar-track {
+    //   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    //   border-radius: 10px;
+    //   background: #096090;
+    // }
+    // .onlineList::-webkit-scrollbar-corner {
+    //   background: transparent;
+    // }
 
   div.list {
     margin-top: 20px;
