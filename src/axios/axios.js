@@ -45,12 +45,15 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
+      if (response.data.code === 1004) {
+        window.location.href = '/webFs/login'
+      }
     } else {
       return response
     }
   },
   (error) => {
-    if (error.response && (error.response.status === 1004 || error.response.status === 401)) {
+    if (error.response && (error.response.status === 403 || error.response.status === 401)) {
       Notification({
         title: '错误',
         message: '权限过期，请先登录后再访问！',
