@@ -338,7 +338,7 @@ import droneInfoMixin from '../../utils/droneInfoMixin'
 import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
-import { throttle } from '../../utils/public.js'
+import { throttle, debounce } from '../../utils/public.js'
 
 export default {
   name: 'videoContainer',
@@ -731,7 +731,7 @@ export default {
     //   }
     // },
     // 鼠标按下
-    startChange (index) {
+    startChange: debounce(function (index) {
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
         channel_id: this.curSelectedVideo.id
@@ -854,9 +854,9 @@ export default {
         default:
           break
       }
-    },
+    }, 500),
     // 鼠标松开
-    stopChange (index) {
+    stopChange: debounce(function (index) {
       if (index === 4) return
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
@@ -927,7 +927,7 @@ export default {
       }
       console.log(params)
       this.changeViewVideo(params)
-    },
+    }, 500),
     // 云台操作
     changeViewVideo (params) {
       this.$axios.post('/video-service2/index/api/ptzConrol', params).then(res => {
@@ -1093,7 +1093,7 @@ export default {
       }
     },
     // 预览或取消全部
-    playAllVideos () {
+    playAllVideos: debounce(function () {
       const bs = document.querySelectorAll(
         '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
       )
@@ -1176,7 +1176,7 @@ export default {
         }, 300)
       }
       this.isPlayAll = !this.isPlayAll
-    },
+    }, 500),
     // 切换每屏显示的个数
     changeVideosType (n) {
       this.palace = n
@@ -1430,7 +1430,7 @@ export default {
           }, 4000)
         }
       })
-    }, 4000),
+    }, 5000),
     // 点击确定按钮
     confirm () {
       // 防止此时设备下线
