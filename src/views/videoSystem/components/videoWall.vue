@@ -275,7 +275,7 @@ export default {
         const tmpMap = this.$refs.gduMap.map2D
         setTimeout(() => {
           tmpMap._map.updateSize()
-        }, 200)
+        }, 500)
       }
     },
 
