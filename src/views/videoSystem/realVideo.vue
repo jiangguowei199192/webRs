@@ -82,7 +82,7 @@
               </div>
             </div>
           </div>
-          <div class="videoList" ref="fullScreen">
+          <div class="videoList" ref="videoListFullscreenCtrl" :class="{videolistFullscreenStyle:bVideoListFullscreen}">
             <div
               v-for="(item,index) in curVideosArray"
               :key="index"
@@ -391,7 +391,8 @@ export default {
       curSelectedVideo: {}, // 当前选中
       imgId: '', // 保存抓取图片id
       fulllIndex: 1000, // 全屏选中的index
-      fullVideoArray: [] // 保存全屏时的数据
+      fullVideoArray: [], // 保存全屏时的数据
+      bVideoListFullscreen: false // 视频九宫格区域全屏
     }
   },
   mixins: [videoMixin, fireMixin, droneInfoMixin],
@@ -1485,7 +1486,18 @@ export default {
     },
     // 全屏显示视频页面
     openDialog () {
-      this.dialogVisible = true
+      this.bVideoListFullscreen = true
+      this.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
+      setTimeout(() => {
+        this.$notify({
+          dangerouslyUseHTMLString: true,
+          title: '提示',
+          message: '按esc键可退出全屏',
+          type: 'info',
+          duration: 3000
+        })
+      }, 500)
+      /* this.dialogVisible = true
       this.fullVideoArray = []
       // 引用类型与curVideosArray数据保持一致
       for (let i = 0; i < this.curVideosArray.length; i++) {
@@ -1502,7 +1514,7 @@ export default {
           type: 'info',
           duration: 3000
         })
-      }, 500)
+      }, 500) */
     },
     // 给分页添加提示（暂时不加）
     addTitle () {
@@ -1528,6 +1540,9 @@ export default {
     window.addEventListener(
       'resize',
       () => {
+        if (me.bVideoListFullscreen) {
+          me.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
+        }
         if (me.dialogVisible) {
           if (me.checkFull()) {
           // 要执行的动作
@@ -1555,6 +1570,10 @@ export default {
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
         // 这一步只能监听到全屏页面的esc 视频中的esc监听不到
+        if (me.bVideoListFullscreen) {
+          me.$refs.videoListFullscreenCtrl.style.height = '710px'
+          me.bVideoListFullscreen = false
+        }
         me.dialogVisible = false
         me.fulllIndex = 1000
         me.totalVideosArray.forEach((item, index) => {
@@ -2119,6 +2138,17 @@ export default {
 //     }
 //   }
 // }
+.videolistFullscreenStyle {
+  position:fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: visible;
+}
 .cutDialog {
   background: rgba(0, 0, 0, 0.6);
   /deep/.el-dialog {

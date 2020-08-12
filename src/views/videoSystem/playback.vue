@@ -58,7 +58,7 @@
             <div class="title">回放</div>
             <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
           </div>
-          <div class="videoList">
+          <div class="videoList" ref="videoListFullscreenCtrl" :class="{videolistFullscreenStyle:bVideoListFullscreen}">
             <!-- <div
               v-for="(item,index) in curVideosArray"
               :key="index"
@@ -301,14 +301,30 @@ export default {
   created () {
     this.init()
     const me = this
-    window.onresize = function () {
-      if (me.dialogVisible) {
-        if (me.checkFull()) {
-          // 要执行的动作
-          document.getElementById('d1').focus()
+    window.addEventListener(
+      'resize',
+      () => {
+        if (me.bVideoListFullscreen) {
+          me.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
+        }
+        if (me.dialogVisible) {
+          if (me.checkFull()) {
+            // 要执行的动作
+            document.getElementById('d1').focus()
+          }
         }
       }
-    }
+    )
+    // 监听键盘按键事件
+    document.addEventListener('keyup', function (e) {
+      if (e.keyCode === 27) {
+        // 这一步只能监听到全屏页面的esc 视频中的esc监听不到
+        if (me.bVideoListFullscreen) {
+          me.$refs.videoListFullscreenCtrl.style.height = '700px'
+          me.bVideoListFullscreen = false
+        }
+      }
+    })
     // 监听键盘按键事件
     this.$nextTick(function () {
       document.addEventListener('keyup', function (e) {
@@ -1220,12 +1236,23 @@ export default {
      * 全屏
      */
     showFullScreen () {
-      this.$refs.videoCtrl.forEach(c => {
+      this.bVideoListFullscreen = true
+      this.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
+      setTimeout(() => {
+        this.$notify({
+          dangerouslyUseHTMLString: true,
+          title: '提示',
+          message: '按esc键可退出全屏',
+          type: 'info',
+          duration: 3000
+        })
+      }, 500)
+      /* this.$refs.videoCtrl.forEach(c => {
         const info = c.getCurrentInfo()
         c.videoInfo.seconds = info.seconds
         c.videoInfo.curUrl = info.curUrl
       })
-      this.dialogVisible = true
+      this.dialogVisible = true */
     },
 
     /**
@@ -1581,6 +1608,18 @@ export default {
   .el-dialog__header {
     display: none;
   }
+}
+
+.videolistFullscreenStyle {
+  position:fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: visible;
 }
 
 // 全屏弹框
