@@ -71,7 +71,7 @@
               ></gMap>
               <div class="todayFire">
                 <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
-                <div class="info webFsScorll">
+                <div class="info webFsScroll">
                   <div
                     class="list"
                     v-for="(item,index) in fireWarningArray"
