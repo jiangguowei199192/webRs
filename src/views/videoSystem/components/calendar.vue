@@ -396,16 +396,14 @@ export default {
   color: rgba(255, 255, 255, 1);
 }
 
-/* for Chrome */
-.picList::-webkit-scrollbar {
-  display: none;
-}
-
 .picContainer {
   width: 100%;
   position: absolute;
   bottom: 20px;
+  overflow: hidden;
   .picList {
+    //解决ie和谷歌等出现滚动条问题
+    width:calc(100% + 17px);
     margin-top: 30px;
     height: 351px;
     overflow-y: scroll;

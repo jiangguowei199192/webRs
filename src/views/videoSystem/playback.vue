@@ -420,10 +420,14 @@ export default {
      * 格式化文件时间
      */
     formatFileDate (date, seconds) {
-      var d = new Date(date + ' 00:00:00')
-      var timestamp = d.getTime()
-      d.setTime(timestamp + 1000 * seconds)
-      return timeFormat(d.getTime())
+      // 此写法IE下返回NaN
+      // var d = new Date(date + ' 00:00:00')
+      // var timestamp = d.getTime()
+      // d.setTime(timestamp + 1000 * seconds)
+      // return timeFormat(d.getTime())
+      date = date + ' 00:00:00'
+      var timestamp = Date.parse(date.replace(/-/g, '/')) + 1000 * seconds
+      return timeFormat(timestamp)
     },
 
     /**
@@ -729,7 +733,10 @@ export default {
      */
     getSnapList (date) {
       this.snapList = []
-      var timestamp = new Date(date + ' 00:00:00').getTime()
+      // 此写法IE下返回NaN
+      // var timestamp = new Date(date + ' 00:00:00').getTime()
+      date = date + ' 00:00:00'
+      var timestamp = Date.parse(date.replace(/-/g, '/'))
       this.$axios
         .get(api.getSnapList, {
           params: {
