@@ -141,11 +141,6 @@ export default {
   props: {
     videoInfo: {
       default: () => {}
-    },
-    // 回放的全屏模式
-    playbackFullScreen: {
-      type: Boolean,
-      default: false
     }
   },
 
@@ -171,31 +166,8 @@ export default {
     // 如果是回放
     if (this.videoInfo.isLive === false) {
       this.subEnded()
-      // 如果是全屏回放
-      if (this.playbackFullScreen) {
-        this.curUrl = this.videoInfo.curUrl
-        const seconds = this.videoInfo.seconds
-        // 不需要跳转url
-        if (this.curUrl === this.videoInfo.streamUrl) {
-          if (seconds > 2) {
-            setTimeout(() => {
-              this.jumpToSeconds(seconds + 2)
-            }, 2000)
-          }
-        } else {
-          // 如果需要跳转url
-          // this.pause()
-          this.changeVideoUrl(this.curUrl)
-          if (seconds > 2) {
-            setTimeout(() => {
-              this.jumpToSeconds(seconds + 2)
-            }, 2000)
-          }
-        }
-      } else {
-        this.subTimeupdate(this.videoInfo.timeupdate)
-        this.curUrl = this.videoInfo.streamUrl
-      }
+      this.subTimeupdate(this.videoInfo.timeupdate)
+      this.curUrl = this.videoInfo.streamUrl
     }
     this.setDroneDevCode(this.videoInfo.deviceCode)
   },
@@ -212,15 +184,6 @@ export default {
     stopAll () {
       var videoInfo = { srcUrl: '', isLive: true }
       this.$emit('update:videoInfo', videoInfo)
-    },
-
-    /**
-     * 获取播放信息
-     */
-    getCurrentInfo () {
-      const seconds = Math.floor(this.$refs.playerCtrl.player.currentTime())
-      const url = this.curUrl
-      return { seconds: seconds, curUrl: url }
     },
 
     /**

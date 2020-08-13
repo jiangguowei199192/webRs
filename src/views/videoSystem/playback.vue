@@ -58,27 +58,7 @@
             <div class="title">回放</div>
             <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
           </div>
-          <div class="videoList" ref="videoListFullscreenCtrl" :class="{videolistFullscreenStyle:bVideoListFullscreen}">
-            <!-- <div
-              v-for="(item,index) in curVideosArray"
-              :key="index"
-              :style="machineStatusStyle(showVideoPageSize)"
-            >
-              <div
-                class="videoItem"
-                @click.stop="operateCurVideo(item,index)"
-                :class="{active:curVideoIndex===index}"
-                :style="machineStatusStyle2(showVideoPageSize)"
-              >
-                <VideoWall
-                  :videoInfo.sync="item"
-                  :key="index"
-                  v-if="item.streamUrl"
-                  ref="videoCtrl"
-                  @timeupdateEvent="timeupdate"
-                ></VideoWall>
-              </div>
-            </div> -->
+          <div class="videoList" ref="videoListFullscreenCtrl" :class="{videolistFullscreenStyle:dialogVisible}">
             <div
               v-for="(item,index) in curVideosArray"
               :key="index"
@@ -131,7 +111,7 @@
                 ></el-pagination>
               </div>-->
               <div class="download" @click="download" />
-              <!-- <img :src="fullScreen" @click.stop="showFullScreen" /> -->
+              <img :src="fullScreen" @click.stop="showFullScreen" />
             </div>
           </div>
           <TimeBar
@@ -154,7 +134,7 @@
         ></Calendar>
       </div>
     </VideoMain>
-    <div class="fullContainer" v-if="dialogVisible" id="d1">
+    <!-- <div class="fullContainer" v-if="dialogVisible" id="d1">
       <div
         :style="machineStatusStyle(showVideoPageSize)"
         v-for="(item,index) in curVideosArray"
@@ -164,7 +144,7 @@
           <VideoWall :videoInfo="item" :key="index"  v-if="item.streamUrl" :playbackFullScreen="true"></VideoWall>
         </div>
       </div>
-    </div>
+    </div> -->
     <el-dialog :visible.sync="downloadDlgVisible" class="downloadDlg" width="803px">
       <div class="downloadContainer">
         <div class="title">
@@ -289,8 +269,7 @@ export default {
       pause: require('../../assets/images/pause.png'),
       records: [], // timeBar上的回放记录
       snapList: [], // 抓图列表
-      curCalendar: '', // 当前日历时间 YYYY-MM-DD
-      fulllIndex: 1000 // 全屏选中的index
+      curCalendar: '' // 当前日历时间 YYYY-MM-DD
     }
   },
 
@@ -301,38 +280,14 @@ export default {
   created () {
     this.init()
     const me = this
-    window.addEventListener(
-      'resize',
-      () => {
-        if (me.bVideoListFullscreen) {
-          me.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
-        }
-        if (me.dialogVisible) {
-          if (me.checkFull()) {
-            // 要执行的动作
-            document.getElementById('d1').focus()
-          }
-        }
-      }
-    )
     // 监听键盘按键事件
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
         // 这一步只能监听到全屏页面的esc 视频中的esc监听不到
-        if (me.bVideoListFullscreen) {
-          me.$refs.videoListFullscreenCtrl.style.height = '700px'
-          me.bVideoListFullscreen = false
+        if (me.dialogVisible) {
+          me.dialogVisible = false
         }
       }
-    })
-    // 监听键盘按键事件
-    this.$nextTick(function () {
-      document.addEventListener('keyup', function (e) {
-        if (e.keyCode === 27) {
-          me.dialogVisible = false
-          me.fulllIndex = 1000
-        }
-      })
     })
   },
 
@@ -967,55 +922,6 @@ export default {
       }
     },
 
-    // 动态渲染9个空元素
-    // machineStatusStyle2 (n) {
-    //   var dom = document.querySelector('.videoList')
-    //   if (!dom) return
-    //   var h = dom.clientHeight
-    //   var marginBottom = 10
-    //   if (n === 9) {
-    //     h = (h - 3 * marginBottom) / 3
-    //     return {
-    //       height: h + 'px'
-    //     }
-    //   } else if (n === 4) {
-    //     h = (h - 2 * marginBottom) / 2
-    //     return {
-    //       height: h + 'px'
-    //     }
-    //   } else if (n === 1) {
-    //     h = h - 1 * marginBottom
-    //     return {
-    //       height: h + 'px'
-    //     }
-    //   }
-    // },
-
-    // 动态渲染9个空元素
-    // machineStatusStyle3 (n) {
-    //   const dom = document.querySelector('.fullContainer')
-    //   if (!dom) return
-    //   let h = this.clientHeight
-    //   // console.log('视频区域高度' + h)
-    //   const marginBottom = 10
-    //   if (n === 9) {
-    //     h = (h - 3 * marginBottom) / 3
-    //     return {
-    //       height: h + 'px'
-    //     }
-    //   } else if (n === 4) {
-    //     h = (h - 2 * marginBottom) / 2
-    //     return {
-    //       height: h + 'px'
-    //     }
-    //   } else if (n === 1) {
-    //     h = h - 1 * marginBottom
-    //     return {
-    //       height: h + 'px'
-    //     }
-    //   }
-    // },
-
     /**
      * 跳转到XX秒开始播放
      * @param {Number} time xx秒
@@ -1167,9 +1073,7 @@ export default {
             curTime: this.curTime, // 时间轴上的时间
             playTime: this.curTime, // 播放的时间
             calendar: this.curCalendar, // 回放日期
-            parentLabel: this.curNode.parentLabel,
-            seconds: 0, // 播放时间（秒）
-            curUrl: '' // 当前播放url
+            parentLabel: this.curNode.parentLabel
           },
           r
         )
@@ -1243,8 +1147,7 @@ export default {
      * 全屏
      */
     showFullScreen () {
-      this.bVideoListFullscreen = true
-      this.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
+      this.dialogVisible = true
       setTimeout(() => {
         this.$notify({
           dangerouslyUseHTMLString: true,
@@ -1254,12 +1157,6 @@ export default {
           duration: 3000
         })
       }, 500)
-      /* this.$refs.videoCtrl.forEach(c => {
-        const info = c.getCurrentInfo()
-        c.videoInfo.seconds = info.seconds
-        c.videoInfo.curUrl = info.curUrl
-      })
-      this.dialogVisible = true */
     },
 
     /**
@@ -1622,6 +1519,7 @@ export default {
   top: 0;
   right: 0;
   width: 100%;
+  height:100%!important;
   z-index: 1000;
   background: #fff;
   display: flex;
