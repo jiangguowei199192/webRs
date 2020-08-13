@@ -82,7 +82,7 @@
               </div>
             </div>
           </div>
-          <div class="videoList" ref="videoListFullscreenCtrl" :class="{videolistFullscreenStyle:bVideoListFullscreen}">
+          <div class="videoList" ref="videoList" :class="{videolistFullscreen:dialogVisible}">
             <div
               v-for="(item,index) in curVideosArray"
               :key="index"
@@ -277,15 +277,8 @@
         </div>
       </div>
     </VideoMain>
-    <!-- <el-dialog
-      :visible.sync="dialogVisible"
-      width="100%"
-      :fullscreen="true"
-      tabindex="1"
-      id="d1"
-      class="fullScreenDialog"
-    >-->
-    <div class="fullContainer" v-if="dialogVisible" id="d1" ref="fullContainer">
+  <!-- 弃用 -->
+    <!-- <div class="fullContainer" v-if="dialogVisible" id="d1" ref="fullContainer">
       <div
         :style="machineStatusStyle1(showVideoPageSize)"
         v-for="(item,index) in fullVideoArray"
@@ -304,8 +297,8 @@
           ></VideoWall>
         </div>
       </div>
-    </div>
-    <!-- </el-dialog> -->
+    </div> -->
+
     <el-dialog
       :visible.sync="cutDialogVisible"
       class="cutDialog"
@@ -352,7 +345,6 @@ export default {
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
-      // filterText: '', // 节点过滤文字
       palace: 9, // 默认选中9宫格
       zoomSpeed: 0, // 变倍
       focusSpeed: 0, // 变焦
@@ -389,10 +381,7 @@ export default {
       },
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
-      imgId: '', // 保存抓取图片id
-      fulllIndex: 1000, // 全屏选中的index
-      fullVideoArray: [], // 保存全屏时的数据
-      bVideoListFullscreen: false // 视频九宫格区域全屏
+      imgId: '' // 保存抓取图片id
     }
   },
   mixins: [videoMixin, fireMixin, droneInfoMixin],
@@ -1353,7 +1342,6 @@ export default {
               this.$set(this.curVideosArray[index], 'isShowOperate', true)
             }
           })
-          console.log(this.fullVideoArray)
         } else {
           this.totalVideosArray.forEach((item, index) => {
             if (item.id === curScreenInfo.id) {
@@ -1486,8 +1474,8 @@ export default {
     },
     // 全屏显示视频页面
     openDialog () {
-      this.bVideoListFullscreen = true
-      this.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
+      // 添加全屏样式class
+      this.dialogVisible = true
       setTimeout(() => {
         this.$notify({
           dangerouslyUseHTMLString: true,
@@ -1497,24 +1485,6 @@ export default {
           duration: 3000
         })
       }, 500)
-      /* this.dialogVisible = true
-      this.fullVideoArray = []
-      // 引用类型与curVideosArray数据保持一致
-      for (let i = 0; i < this.curVideosArray.length; i++) {
-        setTimeout(() => {
-          this.fullVideoArray.push(this.curVideosArray[i])
-        }, 300)
-      }
-      console.log(this.fullVideoArray)
-      setTimeout(() => {
-        this.$notify({
-          dangerouslyUseHTMLString: true,
-          title: '提示',
-          message: '按esc键可退出全屏',
-          type: 'info',
-          duration: 3000
-        })
-      }, 500) */
     },
     // 给分页添加提示（暂时不加）
     addTitle () {
@@ -1540,15 +1510,6 @@ export default {
     window.addEventListener(
       'resize',
       () => {
-        if (me.bVideoListFullscreen) {
-          me.$refs.videoListFullscreenCtrl.style.height = document.body.clientHeight + 'px'
-        }
-        if (me.dialogVisible) {
-          if (me.checkFull()) {
-          // 要执行的动作
-            document.getElementById('d1').focus()
-          }
-        }
         if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
           me.totalVideosArray.forEach((item, index) => {
             if (item) {
@@ -1570,12 +1531,7 @@ export default {
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
         // 这一步只能监听到全屏页面的esc 视频中的esc监听不到
-        if (me.bVideoListFullscreen) {
-          me.$refs.videoListFullscreenCtrl.style.height = '710px'
-          me.bVideoListFullscreen = false
-        }
         me.dialogVisible = false
-        me.fulllIndex = 1000
         me.totalVideosArray.forEach((item, index) => {
           if (item) {
             me.$set(me.totalVideosArray[index], 'isShowOperate', false)
@@ -2080,69 +2036,44 @@ export default {
     }
   }
   // 全屏弹框
-  .fullContainer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    // left: 0;
-    // bottom: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 1000;
-    background: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    overflow: visible;
-    // padding: 20px 30px;
-    background: url(../../assets/images/bg.png) no-repeat;
-    > div {
-      >div {
-        box-sizing: border-box;
-        cursor: pointer;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        width:calc(100% - 10px);
-        height:calc(100% - 10px);
-        background: url(../../assets/images/video.png) no-repeat center center;
-        background-color: #00497c;
-      }
-      div.active {
-        border: 2px solid #fff464;
-      }
-    }
-  }
+  // .fullContainer {
+  //   position: fixed;
+  //   top: 0;
+  //   right: 0;
+  //   // left: 0;
+  //   // bottom: 0;
+  //   height: 100%;
+  //   width: 100%;
+  //   z-index: 1000;
+  //   background: #fff;
+  //   display: flex;
+  //   flex-wrap: wrap;
+  //   overflow: visible;
+  //   // padding: 20px 30px;
+  //   background: url(../../assets/images/bg.png) no-repeat;
+  //   > div {
+  //     >div {
+  //       box-sizing: border-box;
+  //       cursor: pointer;
+  //       margin-right: 10px;
+  //       margin-bottom: 10px;
+  //       width:calc(100% - 10px);
+  //       height:calc(100% - 10px);
+  //       background: url(../../assets/images/video.png) no-repeat center center;
+  //       background-color: #00497c;
+  //     }
+  //     div.active {
+  //       border: 2px solid #fff464;
+  //     }
+  //   }
+  // }
 }
-// 修改弹框样式
-// #d1.el-dialog__wrapper {
-//   overflow: visible;
-//   /deep/.el-dialog {
-//     .el-dialog__header {
-//       display: none;
-//     }
-//     .el-dialog__body {
-//       display: flex;
-//       flex-wrap: wrap;
-//       height: 100%;
-//       padding: 0 15px;
-//       background: url(../../assets/images/bg.png) no-repeat;
-//       > div {
-//         div {
-//           // cursor: pointer;
-//           height: 100%;
-//           margin-right: 19px;
-//           // margin-bottom: 20px;
-//           background: url(../../assets/images/video.png) no-repeat center center;
-//           background-color: #00497c;
-//         }
-//       }
-//     }
-//   }
-// }
-.videolistFullscreenStyle {
+.videolistFullscreen {
   position:fixed;
   top: 0;
   right: 0;
   width: 100%;
+  height:100% !important;
   z-index: 1000;
   background: #fff;
   display: flex;
