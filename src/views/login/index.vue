@@ -138,6 +138,7 @@ export default {
 
 <style lang="scss" scoped>
 .login {
+  position: relative;
   width: 100%;
   height: 1084px;
   background: url(../../assets/images/Login/login-bg.png) no-repeat;
