@@ -58,7 +58,7 @@
             <div class="title">回放</div>
             <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
           </div>
-          <div class="videoList" ref="videoListFullscreenCtrl" :class="{videolistFullscreenStyle:dialogVisible}">
+          <div class="videoList" :class="{videolistFullscreenStyle:dialogVisible}">
             <div
               v-for="(item,index) in curVideosArray"
               :key="index"
@@ -292,7 +292,7 @@ export default {
   },
 
   mounted () {
-    this.clientHeight = document.body.clientHeight
+
   },
 
   methods: {
