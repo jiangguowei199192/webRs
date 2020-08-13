@@ -146,7 +146,7 @@
       </div>
     </div> -->
     <el-dialog :visible.sync="downloadDlgVisible" class="downloadDlg" width="803px">
-      <div class="downloadContainer">
+      <div class="downloadContainer webFsScroll">
         <div class="title">
           <span>视频列表</span>
         </div>
@@ -1652,7 +1652,7 @@ export default {
 .el-table {
   /* --- 改变滚动条样式 --- */
   ::-webkit-scrollbar {
-    width: 17px;
+   width: 17px;
   }
   /* --- 滚动条里面的滚动块 --- */
   /deep/ ::-webkit-scrollbar-thumb {
@@ -1674,6 +1674,14 @@ export default {
     height: 26px;
     padding: 0;
     background-color: rgba(54, 143, 187, 1);
+  }
+
+   /deep/.el-table__body-wrapper {
+    height: calc(100% - 26px) !important;
+  }
+
+  /deep/.el-table__body{
+    width: 100% !important;
   }
 
   /* 表格每行高度*/
