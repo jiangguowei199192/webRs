@@ -45,7 +45,7 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
-      if (response.data.code === 1004) {
+      if (response.data.code === 401) {
         window.location.href = '/webFs/login'
       }
     } else {
