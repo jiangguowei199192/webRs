@@ -1329,7 +1329,6 @@ export default {
     // 双击视频时给显示操作按钮（视频列表及全屏页面公用此方法）
     getVideoInfo (curScreenInfo) {
       this.curScreenInfo = curScreenInfo
-      console.log('进来了' + curScreenInfo.id)
       setTimeout(() => {
         if (this.checkFull() && !curScreenInfo.isShowOperate) {
           this.totalVideosArray.forEach((item, index) => {
@@ -1369,7 +1368,6 @@ export default {
     },
     // 设备下线
     deviceOffline (device) {
-      console.log(this.totalVideosArray)
       if (device.id === this.curSelectedVideo.deviceCode) {
         if (this.isOnline) {
           this.selectedIndex = 200
@@ -1511,7 +1509,6 @@ export default {
       'resize',
       () => {
         if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
-          console.log('窗口大小改变了')
           me.totalVideosArray.forEach((item, index) => {
             if (item) {
               me.$set(me.totalVideosArray[index], 'isShowOperate', false)
