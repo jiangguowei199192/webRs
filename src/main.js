@@ -14,6 +14,7 @@ import './style/common.less'
 import './style/common.scss'
 import './assets/font/iconfont.css'
 import './style/element.less'
+import '@/utils/dealIE'
 
 import md5 from 'js-md5'
 
