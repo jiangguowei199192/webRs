@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import '@/utils/dealIE'
 import { Notification } from 'element-ui'
 import { loginApi } from '@/api/login'
 import { isNotNull, limitLength, selectValidator } from '@/utils/validate'
