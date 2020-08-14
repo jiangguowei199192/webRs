@@ -122,8 +122,8 @@ export default {
         jobDesc: this.userDetail.jobDesc
       },
       extraInfoRules: {
-        orgName: [{ required: true, message: '请输入组织' }],
-        jobDesc: [{ required: true, message: '请输入职务' }]
+        orgName: isNotNull('请输入组织').concat(limitLength(1, 15)),
+        jobDesc: isNotNull('请输入职务').concat(limitLength(1, 15))
       },
 
       showUploadIcon: false,

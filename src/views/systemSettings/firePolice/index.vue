@@ -563,6 +563,13 @@ export default {
 }
 
 .dialogStyle {
+  position: fixed;
+  // top: 10%;
+  right: 0;
+  bottom: 0;
+  left: 13%;
+  overflow: auto;
+  margin: 0;
   min-width: 1500px;
   /deep/.el-dialog__header {
     background-color: #39a4dd;
