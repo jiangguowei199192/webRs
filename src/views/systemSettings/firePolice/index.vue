@@ -31,6 +31,7 @@
         </div>
         <div class="tableBox">
           <el-table
+            class="webFsScroll"
             v-if="firePoliceList"
             @row-click="ClickTableRow"
             :data="firePoliceList"

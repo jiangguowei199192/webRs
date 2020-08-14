@@ -15,7 +15,7 @@
       </button>
     </div>
     <div class="rightBox">
-      <div class="rightBoxBase" v-if="userDetail">
+      <div class="rightBoxBase webFsScroll" v-if="userDetail">
         <div v-if="isShow">
           <SettingRightTable
             id="idRightItemUserSetting"
