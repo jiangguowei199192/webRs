@@ -1354,7 +1354,7 @@ export default {
             }
           })
         }
-      }, 400)
+      }, 500)
     },
     init () {
       // 初始加载9个空元素
@@ -1511,6 +1511,7 @@ export default {
       'resize',
       () => {
         if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
+          console.log('窗口大小改变了')
           me.totalVideosArray.forEach((item, index) => {
             if (item) {
               me.$set(me.totalVideosArray[index], 'isShowOperate', false)
