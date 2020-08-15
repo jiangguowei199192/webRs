@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top:-5px;">
     <div class="leftBox">
       <div style="height: 800px;">
         <SettingLeftItem
@@ -345,7 +345,8 @@ export default {
   background-size: 100% 100%;
   .rightBoxBase {
     height: 879px;
-    margin: 10px 10px 10px 10px;
+    // margin: 10px 10px 10px 10px;
+    margin: 0 10px 10px 10px;
     overflow: auto;
   }
 }
