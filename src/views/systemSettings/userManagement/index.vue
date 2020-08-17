@@ -45,7 +45,7 @@
             <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
             <el-table-column align="center" label="激活">
               <template slot-scope="scope">
-                <el-switch v-model="userList[scope.$index].status"></el-switch>
+                <el-switch v-model="userList[scope.$index].status" @change="activeChange(scope.$index, scope.row)"></el-switch>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -136,6 +136,7 @@
 <script>
 import { Notification } from 'element-ui'
 import { settingApi } from '@/api/setting'
+import { loginApi } from '@/api/login'
 export default {
   created () {
     this.getUserList()
@@ -222,6 +223,14 @@ export default {
       this.$axios.post(settingApi.queryUserPage, param).then(res => {
         if (res.data.code === 0) {
           this.userList = res.data.data.records
+          for (let index = 0; index < res.data.data.records.length; index++) {
+            const item = res.data.data.records[index]
+            if (item.status === 0) {
+              this.userList[index].status = false
+            } else {
+              this.userList[index].status = true
+            }
+          }
           this.pageData.total = res.data.data.total
         }
       })
@@ -242,10 +251,6 @@ export default {
     ClickTableRow (row) {
       this.radio = this.userList.indexOf(row)
     },
-    // 重置密码
-    resetPasswordClick (index, row) {
-      this.showResetPassword = true
-    },
     // 搜索
     search () {
       if (this.searchInput.length <= 0) {
@@ -265,14 +270,17 @@ export default {
       this.pageData.currentPage = 1
       this.getUserList()
     },
+    // 下载
     download () {
       console.log('download')
     },
+    // 新增用户
     userAdd () {
       this.showMorePopover = false
       this.showNewUser = true
       this.newUserTitle = '新增用户'
     },
+    // 编辑用户
     userEdit () {
       this.showMorePopover = false
       if (this.radio < 0) {
@@ -287,6 +295,7 @@ export default {
       this.showNewUser = true
       this.newUserTitle = '修改用户'
     },
+    // 删除用户
     userDelete () {
       this.showMorePopover = false
       if (this.radio < 0) {
@@ -299,17 +308,57 @@ export default {
         return ''
       }
     },
+    // 新增用户或编辑用户-保存
     newUserConfirm () {
       this.$refs.newUserFormRef.validate(async valid => {
         if (!valid) return
         this.showNewUser = false
       })
     },
+    // 重置密码
+    resetPasswordClick (index, row) {
+      console.log(index + row)
+      this.showResetPassword = true
+    },
+    // 重置密码-保存
     resetPasswordConfirm () {
       this.$refs.resetPasswordFormRef.validate(async valid => {
         if (!valid) return
         this.showResetPassword = false
       })
+    },
+    // 激活
+    async activeChange (index, row) {
+      var param = {
+        id: row.id,
+        status: row.status ? 1 : 0
+      }
+      const p = this
+      this.$axios
+        .post(loginApi.updateUser, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            Notification({
+              title: '提示',
+              message: '用户修改成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            return
+          }
+          Notification({
+            title: '提示',
+            message: '用户修改失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+          p.getUserList()
+        })
+        .catch(function (error) {
+          p.getUserList()
+        })
     }
   }
 }
