@@ -25,17 +25,18 @@
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
-          <!-- <SettingRightTable
+          <SettingRightTable
             id="idRightItemUserPermission"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
-          ></SettingRightTable>-->
-          <!-- <SettingRightTable
+          ></SettingRightTable>
+          <SettingRightTable
             id="idRightItemVideoServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemVideoServe"
-          ></SettingRightTable>-->
+            v-bind:userDetail="userDetail"
+          ></SettingRightTable>
           <SettingRightTable
             id="idRightItemSmartFunction"
             style="margin-top: 44px;"
@@ -43,12 +44,13 @@
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
-          <!-- <SettingRightTable
+          <SettingRightTable
             id="idRightItemMapServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemMapServe"
-          ></SettingRightTable>-->
-          <!-- <div style="height: 500px;"></div> -->
+            v-bind:userDetail="userDetail"
+          ></SettingRightTable>
+          <div style="height: 100px;"></div>
         </div>
         <router-view></router-view>
       </div>
@@ -85,35 +87,35 @@ export default {
           headerTitle: '高级',
           info: [
             // 第一版不开放
-            // {
-            //   id: 1,
-            //   title: '用户权限',
-            //   normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
-            //   selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
-            //   selected: false
-            // },
-            // {
-            //   id: 2,
-            //   title: '视频服务',
-            //   normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
-            //   selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
-            //   selected: false
-            // },
+            {
+              id: 1,
+              title: '用户权限',
+              normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
+              selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
+              selected: false
+            },
+            {
+              id: 2,
+              title: '视频服务',
+              normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
+              selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
+              selected: false
+            },
             {
               id: 3,
               title: '智能功能管理',
               normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
               selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
               selected: false
-            }
+            },
             // 第一版不开放
-            // {
-            //   id: 4,
-            //   title: '地图服务',
-            //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
-            //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
-            //   selected: false
-            // }
+            {
+              id: 4,
+              title: '地图服务',
+              normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
+              selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
+              selected: false
+            }
           ]
         }
       ],
@@ -346,7 +348,8 @@ export default {
   .rightBoxBase {
     height: 879px;
     // margin: 10px 10px 10px 10px;
-    margin: 0 10px 10px 10px;
+    // margin: 0 10px 10px 10px;
+    border: solid 10px transparent;
     overflow: auto;
   }
 }
