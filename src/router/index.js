@@ -46,6 +46,12 @@ const routes = [
         name: 'playbackSystem',
         component: () => import('../views/videoSystem/playback')
       },
+      // 实时拼图
+      {
+        path: '/pintu',
+        name: 'pinTu',
+        component: () => import('../views/videoSystem/pinTu')
+      },
       {
         path: '/decisionSystem',
         name: 'decisionSystem',

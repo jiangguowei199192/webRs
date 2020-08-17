@@ -70,6 +70,7 @@
         <div class="video">
           <div class="box">
             <div class="title">直播</div>
+            <span @click="$router.push({name:'pinTu'})" style="cursor:pointer">实时拼图</span>
             <div class="info">
               <div
                 class="curSelected"
