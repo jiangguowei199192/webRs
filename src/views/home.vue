@@ -313,11 +313,12 @@ export default {
     }
     // 临时显示菜单
     div.list{
-      display: none;
-    }
-    div.list:nth-child(2),div.list:nth-child(4),div.list:nth-child(7){
+      // display: none;
       display: block;
     }
+    // div.list:nth-child(2),div.list:nth-child(4),div.list:nth-child(7){
+    //   display: block;
+    // }
   }
   .cur {
     position: relative;

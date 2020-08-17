@@ -94,9 +94,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="所属组织">
-          <el-select :popper-append-to-body="false" v-model="newUserForm.organizations" multiple placeholder="请选择组织" class="selectStyle" popper-class="select-popper">
+          <!-- <el-select :popper-append-to-body="false" v-model="newUserForm.organizations" multiple placeholder="请选择组织" class="selectStyle" popper-class="select-popper">
             <el-option v-for="item in organizationOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
+          </el-select> -->
+          <el-cascader
+            placeholder="请选择组织"
+            :options="options"
+            :props="{ multiple: true }"
+            filterable></el-cascader>
         </el-form-item>
         <el-form-item label="激活" prop="active">
           <el-switch v-model="newUserForm.active"></el-switch>
@@ -141,6 +146,7 @@ export default {
   created () {
     this.getUserList()
     this.getRoleList()
+    this.getDeptTree()
   },
   data () {
     return {
@@ -163,6 +169,7 @@ export default {
 
       userList: [],
       roleList: [],
+      deptTree: [],
 
       newUserTitle: '',
       newUserForm: {
@@ -214,7 +221,7 @@ export default {
       this.$router.push({ path: '/systemSettings' })
     },
     // 获取用户列表
-    getUserList () {
+    async getUserList () {
       var param = {
         currentPage: this.pageData.currentPage,
         pageSize: this.pageData.pageSize,
@@ -236,13 +243,22 @@ export default {
       })
     },
     // 获取职务列表
-    getRoleList () {
+    async getRoleList () {
       this.$axios.post(settingApi.getRoleList).then(res => {
         if (res.data.code === 0) {
           this.roleList = res.data.data
         }
       })
     },
+    // 获取组织树
+    async getDeptTree () {
+      this.$axios.post(loginApi.getDeptTree).then(res => {
+        if (res.data.code === 0) {
+          this.deptTree = res.data.data
+        }
+      })
+    },
+
     // 分页页数改变
     currentPageChange () {
       this.getUserList()
