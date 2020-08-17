@@ -317,7 +317,6 @@ export default {
     },
     // 重置密码
     resetPasswordClick (index, row) {
-      console.log(index + row)
       this.showResetPassword = true
     },
     // 重置密码-保存
@@ -325,6 +324,31 @@ export default {
       this.$refs.resetPasswordFormRef.validate(async valid => {
         if (!valid) return
         this.showResetPassword = false
+        var param = {
+          id: this.userList[this.radio].id,
+          password: this.$md5(this.resetPasswordForm.password)
+        }
+        this.$axios
+          .post(loginApi.updateUser, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              Notification({
+                title: '提示',
+                message: '用户修改成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
+            Notification({
+              title: '提示',
+              message: '用户修改失败',
+              type: 'warning',
+              duration: 5 * 1000
+            })
+          })
       })
     },
     // 激活
