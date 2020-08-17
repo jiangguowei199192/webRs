@@ -45,7 +45,7 @@
             <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
             <el-table-column align="center" label="激活">
               <template slot-scope="scope">
-                <el-switch v-model="userList[scope.$index].status"></el-switch>
+                <el-switch v-model="userList[scope.$index].status" @change="activeChange(scope.$index, scope.row)"></el-switch>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -94,9 +94,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="所属组织">
-          <el-select :popper-append-to-body="false" v-model="newUserForm.organizations" multiple placeholder="请选择组织" class="selectStyle" popper-class="select-popper">
+          <!-- <el-select :popper-append-to-body="false" v-model="newUserForm.organizations" multiple placeholder="请选择组织" class="selectStyle" popper-class="select-popper">
             <el-option v-for="item in organizationOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
+          </el-select> -->
+          <el-cascader
+            placeholder="请选择组织"
+            :options="options"
+            :props="{ multiple: true }"
+            filterable></el-cascader>
         </el-form-item>
         <el-form-item label="激活" prop="active">
           <el-switch v-model="newUserForm.active"></el-switch>
@@ -136,10 +141,12 @@
 <script>
 import { Notification } from 'element-ui'
 import { settingApi } from '@/api/setting'
+import { loginApi } from '@/api/login'
 export default {
   created () {
     this.getUserList()
     this.getRoleList()
+    this.getDeptTree()
   },
   data () {
     return {
@@ -162,6 +169,7 @@ export default {
 
       userList: [],
       roleList: [],
+      deptTree: [],
 
       newUserTitle: '',
       newUserForm: {
@@ -213,7 +221,7 @@ export default {
       this.$router.push({ path: '/systemSettings' })
     },
     // 获取用户列表
-    getUserList () {
+    async getUserList () {
       var param = {
         currentPage: this.pageData.currentPage,
         pageSize: this.pageData.pageSize,
@@ -222,18 +230,35 @@ export default {
       this.$axios.post(settingApi.queryUserPage, param).then(res => {
         if (res.data.code === 0) {
           this.userList = res.data.data.records
+          for (let index = 0; index < res.data.data.records.length; index++) {
+            const item = res.data.data.records[index]
+            if (item.status === 0) {
+              this.userList[index].status = false
+            } else {
+              this.userList[index].status = true
+            }
+          }
           this.pageData.total = res.data.data.total
         }
       })
     },
     // 获取职务列表
-    getRoleList () {
+    async getRoleList () {
       this.$axios.post(settingApi.getRoleList).then(res => {
         if (res.data.code === 0) {
           this.roleList = res.data.data
         }
       })
     },
+    // 获取组织树
+    async getDeptTree () {
+      this.$axios.post(loginApi.getDeptTree).then(res => {
+        if (res.data.code === 0) {
+          this.deptTree = res.data.data
+        }
+      })
+    },
+
     // 分页页数改变
     currentPageChange () {
       this.getUserList()
@@ -241,10 +266,6 @@ export default {
     // 点击表格行
     ClickTableRow (row) {
       this.radio = this.userList.indexOf(row)
-    },
-    // 重置密码
-    resetPasswordClick (index, row) {
-      this.showResetPassword = true
     },
     // 搜索
     search () {
@@ -265,14 +286,17 @@ export default {
       this.pageData.currentPage = 1
       this.getUserList()
     },
+    // 下载
     download () {
       console.log('download')
     },
+    // 新增用户
     userAdd () {
       this.showMorePopover = false
       this.showNewUser = true
       this.newUserTitle = '新增用户'
     },
+    // 编辑用户
     userEdit () {
       this.showMorePopover = false
       if (this.radio < 0) {
@@ -287,6 +311,7 @@ export default {
       this.showNewUser = true
       this.newUserTitle = '修改用户'
     },
+    // 删除用户
     userDelete () {
       this.showMorePopover = false
       if (this.radio < 0) {
@@ -299,17 +324,81 @@ export default {
         return ''
       }
     },
+    // 新增用户或编辑用户-保存
     newUserConfirm () {
       this.$refs.newUserFormRef.validate(async valid => {
         if (!valid) return
         this.showNewUser = false
       })
     },
+    // 重置密码
+    resetPasswordClick (index, row) {
+      this.showResetPassword = true
+    },
+    // 重置密码-保存
     resetPasswordConfirm () {
       this.$refs.resetPasswordFormRef.validate(async valid => {
         if (!valid) return
         this.showResetPassword = false
+        var param = {
+          id: this.userList[this.radio].id,
+          password: this.$md5(this.resetPasswordForm.password)
+        }
+        this.$axios
+          .post(loginApi.updateUser, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              Notification({
+                title: '提示',
+                message: '用户修改成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
+            Notification({
+              title: '提示',
+              message: '用户修改失败',
+              type: 'warning',
+              duration: 5 * 1000
+            })
+          })
       })
+    },
+    // 激活
+    async activeChange (index, row) {
+      var param = {
+        id: row.id,
+        status: row.status ? 1 : 0
+      }
+      const p = this
+      this.$axios
+        .post(loginApi.updateUser, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            Notification({
+              title: '提示',
+              message: '用户修改成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            return
+          }
+          Notification({
+            title: '提示',
+            message: '用户修改失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+          p.getUserList()
+        })
+        .catch(function (error) {
+          p.getUserList()
+        })
     }
   }
 }
