@@ -22,7 +22,7 @@ const routes = [
     name: 'home',
     component: () => import('../views/home'),
     children: [
-    // 实时视频
+      // 实时视频
       {
         path: '/videoSystem',
         name: 'videoSystem',
@@ -51,6 +51,12 @@ const routes = [
         path: '/pintu',
         name: 'pinTu',
         component: () => import('../views/videoSystem/pinTu')
+      },
+      // 三维部署
+      {
+        path: '/deploy3D',
+        name: 'deploy3D',
+        component: () => import('../views/decisionSystem/deploy3D')
       },
       {
         path: '/decisionSystem',

@@ -1,0 +1,383 @@
+﻿{
+    "serverURL": "http://data.marsgis.cn/",
+    "map3d": {
+        "homeButton": true,
+        "sceneModePicker": true,
+        "navigationHelpButton": true,
+        "infoBox": false,
+        "vrButton": true,
+        "fullscreenButton": true,
+        "geocoder": true,
+        "geocoderConfig": { "citycode": "" },
+        "showRenderLoopErrors": true,
+        "center": { "y": 17.196575, "x": 114.184276, "z": 9377198.4, "heading": 355.1, "pitch": -80.7, "roll": 360 },
+        "minzoom": 1,
+        "maxzoom": 50000000,
+        "style": { "atmosphere": true, "lighting": false, "fog": false, "testTerrain": false },     
+        "contextmenu":true,  
+        "mouseZoom": true,
+        "location": {
+            "fps":true,
+            "format":"<div>经度:{x}</div> <div>纬度:{y}</div> <div>海拔：{z}米</div> <div>方向：{heading}度</div> <div>视高：{height}米</div>",
+            "crs":"degree"
+        },
+        "navigation": {
+          "legend": { "left": "0px", "bottom": "-1px" },
+          "compass": {  "bottom": "280px", "right": "2px" }
+        },
+        "terrain": {
+            "url": "$serverURL$/terrain",
+            "visible": false
+        },
+        "crs": "gcj",
+        "basemaps": [
+            {
+                "name": "谷歌卫星",
+                "type": "group",
+                "crs": "gcj",
+                "icon": "img/basemaps/google_img.png",
+                "layers": [
+                    { "name": "底图", "type": "www_google", "layer": "img_d" },
+                    { "name": "注记", "type": "www_google", "layer": "img_z" }
+                ],
+                "visible": true
+            },
+            {
+                "name": "谷歌电子",
+                "type": "group",
+                "crs": "gcj",
+                "icon": "img/basemaps/google_vec.png",
+                "layers": [
+                    { "name": "底图", "type": "www_google", "layer": "vec_d" },
+                    { "name": "注记", "type": "www_google", "layer": "vec_z" }
+                ]
+            },
+            {
+                "name": "高德卫星",
+                "type": "group",
+                "icon": "img/basemaps/gaode_img.png",
+                "crs": "gcj",
+                "layers": [
+                    { "name": "底图", "type": "www_gaode", "layer": "img_d" },
+                    { "name": "注记", "type": "www_gaode", "layer": "img_z" }
+                ]
+            },
+            {
+                "name": "高德电子",
+                "type": "group",
+                "icon": "img/basemaps/gaode_vec.png",
+                "crs": "gcj",
+                "layers": [
+                    { "name": "底图", "type": "www_gaode", "layer": "vec_d" },
+                    { "name": "注记", "type": "www_gaode", "layer": "vec_z" }
+                ]
+            }
+        ],
+        "operationallayers": [
+            {
+                "id": 50,
+                "name": "辅助图层",
+                "type": "group"
+            },
+            { "pid": 50, "type": "custom_grid", "name": "网格线" },
+            { "pid": 50, "type": "custom_tilecoord", "name": "瓦片信息" },
+            { "pid": 50, "type": "custom_graticule", "name": "经纬网" },
+            {
+                "pid": 50,
+                "name": "实时路况",
+                "type": "www_gaode",
+                "layer": "time",
+                "proxy": "http://data.marsgis.cn/proxy/"
+            },
+
+            {
+                "id": 30,
+                "name": "矢量数据",
+                "type": "group"
+            },
+            {
+                "id": 3030,
+                "pid": 30,
+                "name": "GeoJSON数据",
+                "type": "group"
+            },
+            {
+                "pid": 3030,
+                "type": "geojson",
+                "name": "省界线",
+                "url": "http://data.marsgis.cn/file/geojson/sheng-line.json",
+                "symbol": {
+                    "styleOptions": {
+                        "lineType": "solid",
+                        "color": "#ffffff",
+                        "width": 2,
+                        "opacity": 0.8
+                    }
+                },
+                "visible": false,
+                "flyTo": true
+            },
+            {
+                "pid": 3030,
+                "type": "geojson",
+                "name": "安徽各市",
+                "url": "http://data.marsgis.cn/file/geojson/anhui.json",
+                "symbol": {
+                    "styleOptions": {
+                        "fill": true,
+                        "opacity": 0.5,
+                        "outline": true,
+                        "outlineColor": "#FED976",
+                        "outlineWidth": 3,
+                        "outlineOpacity": 1,
+                        "perPositionHeight": false
+                    }
+                },
+                "popup": "{name}",
+                "visible": false,
+                "flyTo": true
+            },
+            {
+                "id": 3010,
+                "pid": 30,
+                "name": "ArcGIS Feature",
+                "type": "group"
+            },
+            {
+                "pid": 3010,
+                "type": "arcgis_feature",
+                "name": "兴趣点",
+                "url": "http://data.marsgis.cn/arcgis/rest/services/mars/hefei/MapServer/1",
+                "where": " 1=1 ",
+                "minimumLevel": 15,
+                "center": { "y": 31.818396, "x": 117.229083, "z": 2554.4, "heading": 359.2, "pitch": -83.1, "roll": 360 },
+                "symbol": {
+                    "styleOptions": {
+                        "image": "img/marker/mark3.png",
+                        "scale": 1,
+                        "scaleByDistance": true,
+                        "scaleByDistance_far": 20000,
+                        "scaleByDistance_farValue": 0.5,
+                        "scaleByDistance_near": 1000,
+                        "scaleByDistance_nearValue": 1,
+                        "label": {
+                            "text": "{NAME}",
+                            "font_size": 15,
+                            "color": "#ffffff",
+                            "border": true,
+                            "border_color": "#000000",
+                            "pixelOffset": [ 0, -50 ],
+                            "distanceDisplayCondition": true,
+                            "distanceDisplayCondition_far": 2000,
+                            "distanceDisplayCondition_near": 0
+                        }
+                    },
+                    "styleField": "address",
+                    "styleFieldOptions": {
+                        "AB03": { "image": "img/marker/mark1.png" },
+                        "A980": { "image": "img/marker/mark2.png" },
+                        "A900": { "image": "img/marker/mark4.png" }
+                    }
+                },
+                "popup": "名称：{NAME}<br />地址：{address}"
+            },
+
+            {
+                "pid": 3010,
+                "type": "arcgis_feature",
+                "name": "道路",
+                "url": "http://data.marsgis.cn/arcgis/rest/services/mars/hefei/MapServer/28",
+                "minimumLevel": 14,
+                "symbol": {
+                    "styleOptions": {
+                        "color": "#3388ff",
+                        "width": 3
+                    },
+                    "styleField": "NAME",
+                    "styleFieldOptions": {
+                        "祁门路": { "color": "#8744c0", "width": 3 },
+                        "东流路": { "color": "#f7ba2a", "width": 3 },
+                        "翡翠路": { "color": "#20a0ff", "width": 3 },
+                        "岳西路": { "color": "#50bfff", "width": 3 }
+                    }
+                },
+                "popup": "名称：{NAME}",
+                "center": { "y": 31.814176, "x": 117.225362, "z": 5105.3, "heading": 359.2, "pitch": -83.1, "roll": 360 }
+            },
+
+            {
+                "pid": 3010,
+                "type": "arcgis_feature",
+                "name": "建筑物面",
+                "url": "http://data.marsgis.cn/arcgis/rest/services/mars/hefei/MapServer/37",
+                "minimumLevel": 15,
+                "symbol": {
+                    "styleOptions": {
+                        "opacity": 0.5
+                    }
+                },
+                "debuggerTileInfo": false,
+                "center": { "y": 31.816951, "x": 117.22898, "z": 1916.7, "heading": 0.3, "pitch": -78.8, "roll": 0 },
+                "popup": "名称：{NAME}<br />层数：{floor}"
+            },
+            {
+                "id": 3060,
+                "pid": 30,
+                "name": "CZML数据",
+                "type": "group"
+            },
+            {
+                "pid": 3060,
+                "type": "czml",
+                "name": "飞行编队",
+                "url": "http://data.marsgis.cn/file/czml/flight.czml",
+                "popup": "all",
+                "flyTo": true
+            },
+            {
+                "pid": 3060,
+                "type": "czml",
+                "name": "船舶编队",
+                "url": "http://data.marsgis.cn/file/czml/ship.czml",
+                "popup": "all",
+                "flyTo": true
+            },
+            {
+                "id": 3050,
+                "pid": 30,
+                "name": "KML数据",
+                "type": "group"
+            },
+            {
+                "pid": 3050,
+                "type": "kml",
+                "name": "国境线",
+                "url": "http://data.marsgis.cn/file/kml/countryboundary.kml"
+            },
+
+            {
+                "id": 20,
+                "name": "三维模型",
+                "type": "group"
+            },
+            {
+                "id": 2010,
+                "pid": 20,
+                "name": "gltf模型",
+                "type": "group"
+            },
+            {
+                "pid": 2010,
+                "type": "gltf",
+                "name": "风力发电机",
+                "url": "http://data.marsgis.cn/gltf/mars/fengche.gltf",
+                "position": { "x":  117.219071,"y": 31.828783, "z": 39.87},
+                "style":{   "scale": 50,  "heading": -93  },
+                "popup": "示例信息，这是一个风力发电机",
+                "center":{"y":31.821083,"x":117.21832,"z":832.64,"heading":2.3,"pitch":-39.2,"roll":0}
+            },
+            {
+                "pid": 2010,
+                "type": "gltf",
+                "name": "起重车",
+                "url": "http://data.marsgis.cn/gltf/mars/qzcar/GKZY_anim.gltf",                
+                "position": { "x": 117.217458,"y":31.815349, "z": 35.03},
+                "style":{"scale": 2,   "heading": -95, "clampToGround": true} ,
+                "center":{"y":31.815363,"x":117.215958,"z":107.35,"heading":90.7,"pitch":-26.1,"roll":0.2}
+            },
+            {
+                "id": 2040,
+                "pid": 20,
+                "name": "城市建筑白模",
+                "type": "group"
+            },
+            {
+                "id": 204011,
+                "pid": 2040,
+                "type": "3dtiles",
+                "name": "合肥市区",
+                "url": "$serverURL$/3dtiles/jzw-hefei/tileset.json",
+		        "maximumScreenSpaceError": 1,
+                "center": { "y": 31.789851, "x": 117.257623, "z": 6525.6, "heading": 4.9, "pitch": -48.8, "roll": 0 }
+            },
+            {
+                "id": 204012,
+                "pid": 2040,
+                "type": "3dtiles",
+                "name": "上海市区",
+                "url": "$serverURL$/3dtiles/jzw-shanghai/tileset.json",
+                "style":{
+                    "color": {
+                        "conditions": [
+                            ["${floor} >= 300", "rgba(45, 0, 75, 0.5)"],
+                            ["${floor} >= 200", "rgb(102, 71, 151)"],
+                            ["${floor} >= 100", "rgb(170, 162, 204)"],
+                            ["${floor} >= 50", "rgb(224, 226, 238)"],
+                            ["${floor} >= 25", "rgb(252, 230, 200)"],
+                            ["${floor} >= 10", "rgb(248, 176, 87)"],
+                            ["${floor} >= 5", "rgb(198, 106, 11)"],
+                            ["true", "rgb(127, 59, 8)"]
+                        ]
+                    }
+                },
+		        "maximumScreenSpaceError": 1,
+                "center": { "y": 31.257341, "x": 121.466139, "z": 2170.8, "heading": 122.2, "pitch": -31.8, "roll": 0.2 }
+            },
+            {
+                "id": 2020,
+                "pid": 20,
+                "name": "人工建模",
+                "type": "group"
+            },
+
+            {
+                "pid": 2020,
+                "type": "3dtiles",
+                "name": "油田联合站",
+                "url": "$serverURL$/3dtiles/max-ytlhz/tileset.json",
+		        "maximumScreenSpaceError": 2,
+                "offset": { "z": -3.9, "transform": true },
+                "center": { "y": 40.895092, "x": 121.918679, "z": 397.9, "heading": 64, "pitch": -41.4, "roll": 0.2 }
+            },
+            {
+                "pid": 2020, 
+                "type": "3dtiles",
+                "name": "水利闸门",
+                "url": "$serverURL$/3dtiles/max-fsdzm/tileset.json",
+		        "maximumScreenSpaceError": 1,
+                "offset": { "z": 9, "transform": true },
+                "center": { "y": 29.792675, "x": 121.480207, "z": 190.8, "heading": 196.1, "pitch": -49, "roll": 359.9 }
+            },
+            {
+                "id": 2030,
+                "pid": 20,
+                "name": "倾斜摄影",
+                "type": "group"
+            },
+            { 
+                "pid": 2030,
+                "type": "3dtiles",
+                "name": "厂房",
+                "url": "$serverURL$/3dtiles/qx-changfang/tileset.json",
+                "offset": { "z": "-height" },
+		        "maximumScreenSpaceError": 1,
+                "center": { "y": 40.413828, "x": 115.458111, "z": 918.2, "heading": 192.6, "pitch": -64.1, "roll": 359.9 }
+            },
+            { 
+                "pid": 2030,
+                "type": "3dtiles",
+                "name": "县城社区",
+                "url": "$serverURL$/3dtiles/qx-shequ/tileset.json", 
+		        "maximumScreenSpaceError": 2,
+                "maximumMemoryUsage": 8192,
+                "dynamicScreenSpaceError": true,
+                "cullWithChildrenBounds": false,
+                "offset": { "z": -117 },
+                "center": {"y":28.443128,"x":119.482923,"z":216.9,"heading":220.8,"pitch":-29.9,"roll":0.3}
+            }
+        ]
+    }
+
+
+
+}
