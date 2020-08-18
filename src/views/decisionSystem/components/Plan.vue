@@ -2,16 +2,15 @@
   <div>
     <div style="width: 100%;">
       <div class="addressInfo">
-        <div style="height: 70px;">
-          <el-button
+        <div style="height: 98px;">
+          <!-- <el-button
             style="float: right; width: 40px; margin-right: 20px;"
             type="primary"
             icon="el-icon-top-right"
-            @click="goPlanSetting"
             circle
-          ></el-button>
-          <div style="margin-top: 30px; margin-left: 15px; font-size: 15px;">{{address}}</div>
-          <div style="margin-top: 5px; margin-left: 15px; font-size: 12px;">
+          ></el-button> -->
+          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{address}}</div>
+          <div style="margin-top: 16px; margin-left: 22px; font-size: 12px;">
             {{subAddress}}
             <i class="el-icon-warning"></i>
           </div>
@@ -28,31 +27,31 @@
       <el-collapse style="border: none;" v-model="coll_actives">
         <el-collapse-item>
           <template slot="title">
-            <div style="margin-left: 15px;">基本情况说明</div>
+            <div style="margin-left: 22px;">基本情况说明</div>
           </template>
-          <div class="itemContainer">
-            <el-button size="mini" class="basicFactSheetBtn">单位基本情况</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">主要消防设施</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">重点部位情况</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">力量调集情况</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">重点提示</el-button>
+          <div class="itemContainer1">
+            <el-button size="mini" class="basicFactSheetBtn">基本情况</el-button>
+            <el-button size="mini" class="basicFactSheetBtn">供水系统</el-button>
+            <el-button size="mini" class="basicFactSheetBtn">行车路线</el-button>
+            <el-button size="mini" class="basicFactSheetBtn">防火设计</el-button>
+            <el-button size="mini" class="basicFactSheetBtn">重点部位</el-button>
           </div>
         </el-collapse-item>
 
         <el-collapse-item>
           <template slot="title">
-            <div style="margin-left: 15px;">建筑平面图</div>
+            <div style="margin-left: 22px;">建筑平面图</div>
           </template>
-          <div class="itemContainer">
+          <div class="itemContainer1">
             <HorCardList></HorCardList>
           </div>
         </el-collapse-item>
 
         <el-collapse-item>
           <template slot="title">
-            <div style="margin-left: 15px;">作战部署图</div>
+            <div style="margin-left: 22px;">作战部署图</div>
           </template>
-          <div class="itemContainer">
+          <div class="itemContainer2">
             <img
               class="edit_img fl"
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
@@ -63,16 +62,20 @@
 
         <el-collapse-item>
           <template slot="title">
-            <div style="margin-left: 15px;">三维预案</div>
+            <div style="margin-left: 22px;">三维预案</div>
           </template>
-          <div class="itemContainer">
+          <div class="itemContainer2">
             <img
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
-              style="width: 100%; height: 200px; margin-top: 10px;"
+              style="width: 100%; height: 200px;"
+              @click="goto3d"
             />
           </div>
         </el-collapse-item>
       </el-collapse>
+      <div style="height: 50px;">
+        <button type="button" class="editPlanStyle" @click="editPlanClick">预案编辑</button>
+      </div>
     </div>
   </div>
 </template>
@@ -95,14 +98,16 @@ export default {
     HorCardList
   },
   methods: {
-    goPlanSetting: function () {
+    toFightDeploy () {
+      this.$router.push({ path: '/FightDeploy' })
+    },
+    editPlanClick () {
       this.$router.push({
         path: '/PlanSetting'
       })
     },
-
-    toFightDeploy () {
-      this.$router.push({ path: '/FightDeploy' })
+    goto3d () {
+      this.$router.push({ path: '/deploy3D' })
     }
   },
 
@@ -117,12 +122,12 @@ export default {
 <style lang="scss" scoped>
 .addressInfo {
   .addressInfoDetail {
-    margin-left: 15px;
-    margin-right: 15px;
+    margin-left: 22px;
+    margin-right: 22px;
     height: 30px;
     line-height: 30px;
-    border-top: 1px solid rgb(124, 133, 147);
-    font-size: 13px;
+    border-top: 1px solid rgba(237, 237, 237, 0.5);
+    font-size: 12px;
   }
 }
 
@@ -133,13 +138,16 @@ export default {
 .el-button + .el-button {
   margin-left: 0px;
 }
-.itemContainer {
-  margin: 0 15px 0 15px;
-  border-top: 1px solid rgb(124, 133, 147);
+.itemContainer1 {
+  margin: 0 22px 0 22px;
+  border-top: 1px solid rgba(237, 237, 237, 0.5);
+}
+.itemContainer2 {
+  margin: 0 22px 0 22px;
   .edit_img {
     width: 70%;
     height: 140px;
-    margin: 10px 0 10px 35px;
+    margin: 0 0 10px 35px;
   }
   .edit_icon {
     display: block;
@@ -151,15 +159,15 @@ export default {
     text-align: center;
     line-height: 25px;
     cursor: pointer;
-    margin: 122px 0 0 10px;
+    margin: 112px 0 0 10px;
   }
 }
 
 /* 列表样式 */
 /deep/.el-collapse-item__header {
-  border-top: 1px solid rgb(124, 133, 147);
+  border-top: 1px solid rgba(237, 237, 237, 0.5);
   border-bottom: none;
-  background-color: rgba(21, 51, 77, 0.1);
+  background-color: transparent;
   color: white;
 }
 /deep/.el-collapse-item__content {
@@ -167,7 +175,10 @@ export default {
 }
 /deep/.el-collapse-item__wrap {
   border: none;
-  background-color: rgba(21, 51, 77, 0.1);
+  background-color: transparent;
+}
+/deep/.el-icon-arrow-right {
+  margin-right: 22px;
 }
 
 /* --- 改变滚动条样式 --- */
@@ -184,5 +195,19 @@ export default {
   border-radius: 5px;
   box-shadow: inset 0 0 6px rgb(86, 87, 61);//滑块阴影颜色
   background-color: rgba($color: rgb(86, 87, 61), $alpha: 0.2);//滑块背景色
+}
+
+.editPlanStyle {
+  float: right;
+  width: 80px;
+  height: 22px;
+  background-color: transparent;
+  border: solid 1px #1daffb;
+  font-size: 12px;
+  color: #fefefe;
+  line-height: 22px;
+  margin-right: 10px;
+  margin-top: 15px;
+  outline: none;
 }
 </style>

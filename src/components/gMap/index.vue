@@ -1315,7 +1315,7 @@ export default {
   .plan {
     position: absolute;
     width: 400px;
-    max-height: 500px;
+    max-height: 600px;
     left: 15px;
     top: 60px;
     border-radius: 4px;
