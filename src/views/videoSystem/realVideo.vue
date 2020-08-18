@@ -28,7 +28,7 @@
                   v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"
                 ></i>
               </p>
-              <div class="btns">
+              <div class="btns" >
                 <!-- <div > -->
                 <el-button
                   v-for="(list,index2) in item.children"

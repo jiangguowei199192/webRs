@@ -11,16 +11,17 @@
   </div>
 </template>
 <script>
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'pinTu',
   data () {
     return {}
   },
   methods: {
-    showPic () {
+    showPic (url) {
       const tmpMap = this.$refs.gduMap
       tmpMap.map2D._imageLayerManager.add(
-        'http://120.24.12.64:80/fmsUploads/tif_pieces/1585807955811/tilemapresource.xml',
+        url,
         ly => {
           tmpMap.map2D.zoomToLayer(ly)
           const layerExtent = ly.getExtent()
@@ -30,25 +31,18 @@ export default {
           }
         }
       )
-      setTimeout(() => {
-        tmpMap.map2D._imageLayerManager.add(
-          'http://120.24.12.64:80/fmsUploads/tif_pieces/1590685385787/tilemapresource.xml',
-          ly => {
-            tmpMap.map2D.zoomToLayer(ly)
-            const layerExtent = ly.getExtent()
-            if (layerExtent.length === 4) {
-              tmpMap.lon = (layerExtent[0] + layerExtent[2]) / 2
-              tmpMap.lat = (layerExtent[1] + layerExtent[3]) / 2
-            }
-          }
-        )
-      }, 5000)
     }
   },
   mounted () {
     setTimeout(() => {
-      this.showPic()
-    }, 5000)
+      this.showPic('http://172.16.63.148/fmsUploads/tif_pieces/1597717346055/tilemapresource.xml')
+    }, 500)
+
+    EventBus.$on('realMapping/realMappingResult', info => {
+      setTimeout(() => {
+        this.showPic(info.imgUrl)
+      }, 500)
+    })
   }
 }
 </script>
