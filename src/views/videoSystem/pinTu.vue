@@ -7,6 +7,7 @@
       :bAutoLocate="true"
       :bShowBasic="true"
       :bShowMeasure="true"
+      :bShowPaln="false"
     ></gMap>
   </div>
 </template>
@@ -20,22 +21,24 @@ export default {
   methods: {
     showPic (url) {
       const tmpMap = this.$refs.gduMap
-      tmpMap.map2D._imageLayerManager.add(
-        url,
-        ly => {
-          tmpMap.map2D.zoomToLayer(ly)
-          const layerExtent = ly.getExtent()
-          if (layerExtent.length === 4) {
-            tmpMap.lon = (layerExtent[0] + layerExtent[2]) / 2
-            tmpMap.lat = (layerExtent[1] + layerExtent[3]) / 2
+      if (tmpMap && tmpMap.map2D) {
+        tmpMap.map2D._imageLayerManager.add(
+          url,
+          ly => {
+            tmpMap.map2D.zoomToLayer(ly)
+            const layerExtent = ly.getExtent()
+            if (layerExtent.length === 4) {
+              tmpMap.lon = (layerExtent[0] + layerExtent[2]) / 2
+              tmpMap.lat = (layerExtent[1] + layerExtent[3]) / 2
+            }
           }
-        }
-      )
+        )
+      }
     }
   },
   mounted () {
     setTimeout(() => {
-      this.showPic('http://172.16.63.148/fmsUploads/tif_pieces/1597717346055/tilemapresource.xml')
+      this.showPic('http://172.16.63.148/fmsUploads/tif_pieces/1597738049845/tilemapresource.xml')
     }, 500)
 
     EventBus.$on('realMapping/realMappingResult', info => {
