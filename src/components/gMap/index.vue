@@ -265,7 +265,7 @@ export default {
       bRouteOrClose: true, // true:route,false:close
       bShowRouteCtrl: false,
       bShowResult: false,
-      bShowPaln: false,
+      bShowPaln: true,
       addrResults: null,
       lastResults: null,
       simpleChooseAddr: null,
@@ -1319,7 +1319,7 @@ export default {
     left: 15px;
     top: 60px;
     border-radius: 4px;
-    background-color: rgba(21, 51, 77, 0.9);
+    background-color: rgba(17, 29, 58, 0.85);
     overflow-y: auto;
     overflow-x: hidden;
   }
