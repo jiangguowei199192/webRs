@@ -346,6 +346,7 @@ const videoMixin = {
         if (data[i].deviceList && !data[i].children) { data[i].children = [] }
         if (data[i].deviceList.length > 0) {
           data[i].deviceList.forEach(d => {
+            if (!d.children) d.children = []
             d._bIsDevice = true
             data[i].children.push(d)
             if (d.onlineStatus === 'online' && d.children && d.children.length > 0) {
