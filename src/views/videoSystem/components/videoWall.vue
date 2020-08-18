@@ -820,6 +820,7 @@ export default {
   width: 293px;
   height: 509px;
   background: url(../../../assets/images/full-screen-operate.png) no-repeat;
+  cursor: text;
   .deviceInfo {
     padding-top:18px;
     .deviceTitle {
