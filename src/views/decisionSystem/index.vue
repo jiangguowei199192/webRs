@@ -1,6 +1,6 @@
 <template>
   <div class="decision">
-    <gMap ref="gduMap" handleType="search_route" :bShowBasic="true" :bShowMeasure="true"></gMap>
+    <gMap ref="gduMap" handleType="search_route" :bShowSearchTools="true" :bShowBasic="true" :bShowMeasure="false"></gMap>
   </div>
 </template>
 
