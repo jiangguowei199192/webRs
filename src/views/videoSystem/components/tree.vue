@@ -200,6 +200,9 @@ export default {
         // overflow: hidden;
         // white-space: nowrap;
         // text-overflow: ellipsis;
+        a:hover{
+          text-decoration: none;
+        }
       }
       i.extra {
         font-size: 14px;
