@@ -2,7 +2,7 @@
 <!-- 横向卡片列表 -->
   <div class="container">
     <div class="item" v-for="(item, index) in items" :key="index">
-      <img src="http://img4.imgtn.bdimg.com/it/u=3773584324,1413178473&fm=214&gp=0.jpg" style="width: 80px; height: 80px;">
+      <img src="http://img4.imgtn.bdimg.com/it/u=3773584324,1413178473&fm=214&gp=0.jpg" style="width: 100%; height: 100%;">
     </div>
   </div>
 </template>
@@ -23,14 +23,14 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 100%;
-  height: 100px;
+  height: 80px;
   overflow-x: auto;
   white-space: nowrap;
 }
 .item {
   display: inline-block;
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 53px;
   background-color: green;
   margin-right: 10px;
   margin-top: 10px;

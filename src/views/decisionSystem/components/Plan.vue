@@ -67,7 +67,7 @@
           </template>
           <div class="itemContainer">
             <img
-              src="http://img4.imgtn.bdimg.com/it/u=3773584324,1413178473&fm=214&gp=0.jpg"
+              src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
               style="width: 100%; height: 200px; margin-top: 10px;"
             />
           </div>
@@ -96,14 +96,12 @@ export default {
   },
   methods: {
     goPlanSetting: function () {
-      // console.log(666)
       this.$router.push({
         path: '/PlanSetting'
       })
     },
 
     toFightDeploy () {
-      // console.log(355)
       this.$router.push({ path: '/FightDeploy' })
     }
   },
@@ -157,6 +155,7 @@ export default {
   }
 }
 
+/* 列表样式 */
 /deep/.el-collapse-item__header {
   border-top: 1px solid rgb(124, 133, 147);
   border-bottom: none;
@@ -169,5 +168,21 @@ export default {
 /deep/.el-collapse-item__wrap {
   border: none;
   background-color: rgba(21, 51, 77, 0.1);
+}
+
+/* --- 改变滚动条样式 --- */
+/deep/ ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+/deep/ ::-webkit-scrollbar-track {
+  border-radius: 5px;
+  box-shadow: inset 0 0 6px rgba(245, 238, 238, 0);//滑道背阴影颜色
+  background-color: rgba($color: rgb(245, 238, 238), $alpha: 0);//滑道背景色
+}
+/deep/ ::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  box-shadow: inset 0 0 6px rgb(86, 87, 61);//滑块阴影颜色
+  background-color: rgba($color: rgb(86, 87, 61), $alpha: 0.2);//滑块背景色
 }
 </style>
