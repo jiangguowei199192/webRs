@@ -347,8 +347,6 @@ export default {
   background-size: 100% 100%;
   .rightBoxBase {
     height: 879px;
-    // margin: 10px 10px 10px 10px;
-    // margin: 0 10px 10px 10px;
     border: solid 10px transparent;
     overflow: auto;
   }
