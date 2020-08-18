@@ -265,7 +265,7 @@ export default {
       bRouteOrClose: true, // true:route,false:close
       bShowRouteCtrl: false,
       bShowResult: false,
-      bShowPaln: true,
+      bShowPaln: false,
       addrResults: null,
       lastResults: null,
       simpleChooseAddr: null,
