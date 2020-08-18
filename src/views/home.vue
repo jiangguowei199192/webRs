@@ -245,8 +245,8 @@ export default {
   .box {
     display: flex;
      // 临时显示菜单
-    // justify-content: space-between;
-    justify-content: center;
+    justify-content: space-between;
+    // justify-content: center;
     font-size: 24px;
     font-weight: 500;
     .list {
@@ -260,10 +260,10 @@ export default {
         z-index: 999;
         width: 300px;
          // 临时显示菜单
-        // left: -30px;
-        // padding-top: 30px;
-        left: -75px;
-        padding-top: 33px;
+        left: -40px;
+        padding-top: 30px;
+        // left: -75px;
+        // padding-top: 33px;
         display: none;
         .el-button {
           width: 140px;
@@ -295,7 +295,7 @@ export default {
       line-height: 66px;
       text-align: center;
        // 临时显示菜单 添加
-      margin:0 43px;
+      margin:0 9px;
       font-size: 36px;
       font-weight: bold;
       margin-top: -13px;
@@ -311,14 +311,6 @@ export default {
     div.list:nth-child(n + 5) .active {
       background: url(../assets/images/selected-right.png) no-repeat !important;
     }
-    // 临时显示菜单
-    div.list{
-      // display: none;
-      display: block;
-    }
-    // div.list:nth-child(2),div.list:nth-child(4),div.list:nth-child(7){
-    //   display: block;
-    // }
   }
   .cur {
     position: relative;
