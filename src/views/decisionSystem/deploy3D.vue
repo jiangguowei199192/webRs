@@ -1,6 +1,6 @@
 <template>
-  <div class="mapcontainer">
-    <Map :url="configUrl" :widgetUrl="widgetUrl"  @onload="onMapload" />
+  <div class="mapcontainer mars3d">
+    <Map :url="configUrl" :widgetUrl="widgetUrl" @onload="onMapload" />
     <div class="bottom"></div>
     <div class="tabs">
       <div
@@ -29,9 +29,84 @@ export default {
     Map
   },
   methods: {
-
     tabTo (index) {
       this.activeIndex = index
+    },
+
+    /**
+     *  显示隐藏一些按钮
+     */
+    showOrHideViewerBtns () {
+      // 隐藏位置信息状态
+      this.viewer.mars.location.show = false
+      // 隐藏比例尺
+      $('#distanceLegendDiv').hide()
+    },
+    addModel () {
+      var dataSource = new Cesium.CustomDataSource()
+      this.viewer.dataSources.add(dataSource)
+      var position = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 10)
+      var position2 = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 25)
+
+      // 添加实体
+      var entity = dataSource.entities.add({
+        name: '1111111',
+        position: position,
+        model: {
+          uri: 'http://172.16.63.57:9000/mapdata/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+          scale: 1,
+          opacity: 1,
+          clampToGround: true
+        },
+        click: entity => {
+          // 单击回调
+          this.$message({ message: '您单击了：' })
+        }
+      })
+
+      var divpoint1 = new mars3d.DivPoint(this.viewer, {
+        html: ` <div class="labelxfs">
+                  <span></span>
+                  <span>消防栓</span>
+                </div>`,
+        anchor: [-61, 0],
+        position: position2,
+        depthTest: false,
+        // distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+        //   100,
+        //   200000
+        // ), // 按视距距离显示
+        click: function (e) {
+          // 单击后的回调
+          this.$message({ message: '您单击了DIV点' })
+        }
+      })
+
+      // this.viewer.mars.centerPoint(position, {
+      //   radius: 300, // 距离目标点的距离
+      //   pitch: -50, // 相机方向
+      //   duration: 4
+      // })
+      // this.viewer.flyTo(entity)
+
+      var layercfg = {
+        type: '3dtiles',
+        name: '国博',
+        url: 'http://172.16.63.57:9000/mapdata/3dtiles/guobo/Production_1.json',
+        maximumScreenSpaceError: 1,
+        maximumMemoryUsage: 8192,
+        offset: { z: -4 },
+        center: { y: 30.519161, x: 114.237614, z: 1236.59, heading: 194.6, pitch: -48.8, roll: 359.9 },
+        dynamicScreenSpaceError: true,
+        cullWithChildrenBounds: false,
+        luminanceAtZenith: 0.6
+
+      }
+
+      // layercfg.id = 1987
+      layercfg.visible = true
+      layercfg.flyTo = true
+      var layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
     },
 
     /**
@@ -39,10 +114,34 @@ export default {
      */
     onMapload (viewer) {
       this.viewer = viewer
-      // 隐藏位置信息状态
-      viewer.mars.location.show = false
-      // 隐藏比例尺
-      $('#distanceLegendDiv').hide()
+      this.showOrHideViewerBtns()
+      // 设置右键旋转
+      viewer.scene.screenSpaceCameraController.tiltEventTypes = [
+        Cesium.CameraEventType.RIGHT_DRAG,
+        Cesium.CameraEventType.PINCH,
+        {
+          eventType: Cesium.CameraEventType.RIGHT_DRAG,
+          modifier: Cesium.KeyboardEventModifier.CTRL
+        },
+        {
+          eventType: Cesium.CameraEventType.MIDDLE_DRAG,
+          modifier: Cesium.KeyboardEventModifier.CTRL
+        }
+      ]
+
+      // setTimeout(() => {
+      this.addModel()
+      // }, 1000)
+
+      // var drawControl = new mars3d.Draw(viewer, {})
+
+      // drawControl.startDraw({
+      //   type: 'model',
+      //   style: {
+      //     scale: 1,
+      //     modelUrl: 'http://172.16.63.57:9000/mapdata/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf'
+      //   }
+      // })
     }
   },
   created () {}

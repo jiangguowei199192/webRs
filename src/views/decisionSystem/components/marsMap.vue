@@ -84,12 +84,16 @@ export default {
     },
 
     initMars3d (options) {
+      const me = this
       if (this[`viewer${this.mapKey}`]) return
       const viewer = mars3d.createMap({
         id: `marsgis-container${this.mapKey ? `-${this.mapKey}` : ''}`,
         data: options.map3d,
         serverURL: options.serverURL,
-        ...this.options
+        ...this.options,
+        success: function (viewer, jsondata) { // 地图成功加载完成后执行
+          me.$emit('onload', viewer)
+        }
       })
 
       // widget处理
@@ -108,10 +112,10 @@ export default {
 
       Vue.prototype[`$viewer${this.mapKey}`] = viewer
       Vue.prototype.$Cesium = Cesium
-      console.log('>>>>> 地图创建成功 >>>>')
+      console.log('>>>>> 三维地图创建成功 >>>>')
 
       window.viewer = viewer
-      this.$emit('onload', viewer)
+      // this.$emit('onload', viewer)
     },
 
     // 初始化外部静态widget功能（兼容使用传统模式开发的一些widget）
@@ -147,7 +151,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="less">
+<style lang="less" >
 .mars3d-container {
   height: 100%;
   overflow: hidden;
