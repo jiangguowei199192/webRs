@@ -22,7 +22,18 @@
             </div>
             <div style="height: 200px; margin-top: 20px;">
               <div class="coordinatesTitleStyle">地理坐标</div>
-              <div style="width: 376px; height: 198px; background: white; display: inline-block;"></div>
+              <div style="width: 376px; height: 198px; background: white; display: inline-block;">
+                <gMap
+                  ref="gduMap"
+                  handleType="devMap"
+                  :bShowSimpleSearchTools="true"
+                  :bMiniSearchStyle="true"
+                  :bShowBasic="false"
+                  :bShowMeasure="false"
+                  :bAutoLocate="false"
+                  :bShowLonLat="false"
+                ></gMap>
+              </div>
             </div>
             <div>
               <span class="subTitleStyle">联系电话</span>
@@ -91,10 +102,43 @@ export default {
       ]
     }
   },
+  mounted () {
+    const tmpMap = this.$refs.gduMap.map2D
+    tmpMap.clickEvent.addEventListener((lonlat) => {
+      const tmpName = this.companyName === '' ? null : this.companyName
+      tmpMap.customMarkerLayerManager.clear()
+      tmpMap.customMarkerLayerManager.addMarker({ name: tmpName, lon: lonlat[0], lat: lonlat[1], _bWgs2Gcj: false })
+    })
+    this.initBasicInfo()
+  },
   methods: {
     // 增加建筑平面图
     addBuildingImageClick () {
       this.buildingPlan.push({ title: '', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' })
+    },
+    getSelectedLocation () {
+      const tmpMap = this.$refs.gduMap
+      const tmpFs = tmpMap.map2D.customMarkerLayerManager._source.getFeatures()
+      if (tmpFs.length > 0) {
+        return tmpFs[0].getGeometry().getCoordinates()
+      } else {
+        return [tmpMap.lon, tmpMap.lat]
+      }
+    },
+    initBasicInfo () {
+      if (localStorage.selectedAddress !== undefined && localStorage.selectedAddress !== '') {
+        const tP = JSON.parse(localStorage.selectedAddress)
+        localStorage.selectedAddress = ''
+        this.companyName = tP.name
+        this.companyType = tP.type
+        this.companyAddress = tP.address
+        this.companyPhone = tP.tel
+        const tmpMap = this.$refs.gduMap
+        tmpMap.mapMoveTo(tP.lon, tP.lat, false)
+        tmpMap.map2D.customMarkerLayerManager.clear()
+        tmpMap.map2D.customMarkerLayerManager.addMarker({ name: tP.name, lon: tP.lon, lat: tP.lat, _bWgs2Gcj: false })
+        tmpMap.map2D.setZoom(16)
+      }
     }
   }
 }
@@ -180,5 +224,4 @@ export default {
     border-radius: 0;
   }
 }
-
 </style>

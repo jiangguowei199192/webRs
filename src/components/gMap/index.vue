@@ -6,9 +6,12 @@
       :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
       @dblclick="dblClickMap"
     ></div>
-    <div class="simpleSearchCtrl" v-if="bShowAllTools && bShowSimpleSearchTools">
+    <div class="simpleSearchCtrl"
+      :class="{simpleSearchCtrl_Mini:bMiniSearchStyle}"
+      v-if="bShowAllTools && bShowSimpleSearchTools">
       <input
         class="simpleInputText"
+        :class="{simpleInputText_Mini:bMiniSearchStyle}"
         :id="simpleAddrSearchID"
         v-model="simpleFilterText"
         type="text"
@@ -19,8 +22,12 @@
         :placeholder="simplePlaceHolder"
       />
       <div class="simpleInputSearch"
+        :class="{simpleInputSearch_Mini:bMiniSearchStyle}"
         @click.stop="simpleSearchAddrs(simpleFilterText,true)">
-        <img class="simpleIcon" src="../../assets/images/simpleAddrSearch.png"/></div>
+        <img class="simpleIcon"
+          :class="{simpleIcon_Mini:bMiniSearchStyle}"
+          src="../../assets/images/simpleAddrSearch.png"/>
+        </div>
     </div>
     <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
       <input
@@ -310,6 +317,11 @@ export default {
       type: Boolean,
       default: false
     },
+    // 迷你简易搜索框样式
+    bMiniSearchStyle: {
+      type: Boolean,
+      default: false
+    },
     // 复杂搜索框(包含路线规划功能，消防地图页面会用到)
     bShowSearchTools: {
       type: Boolean,
@@ -457,45 +469,51 @@ export default {
         let tmpMaxLat = -90
         let tmpMinLon = 180
         let tmpMinLat = 90
+        const tmpRes = []
         _results.forEach(addr => {
-          tmpIndex += 1
-          addr._index = tmpIndex
-          addr._bHover = false
-          addr._updateHoverCB = this.updateMouseHover
-          if (addr.photos.length > 0) {
-            addr._imgUrl = addr.photos[0].url
-          } else {
-            addr._imgUrl = null
+          if (addr.name !== undefined && addr.address !== undefined) {
+            tmpIndex += 1
+            addr._index = tmpIndex
+            addr._bHover = false
+            addr._updateHoverCB = this.updateMouseHover
+            if (addr.photos.length > 0) {
+              addr._imgUrl = addr.photos[0].url
+            } else {
+              addr._imgUrl = null
+            }
+            if (addr.address != null && !(addr.address instanceof Array)) {
+              addr._addr = addr.address
+            } else {
+              addr._addr = null
+            }
+            const tmpStrs = addr.location.split(',')
+            addr._lon = parseFloat(tmpStrs[0])
+            addr._lat = parseFloat(tmpStrs[1])
+            if (addr._lon > tmpMaxLon) tmpMaxLon = addr._lon
+            if (addr._lat > tmpMaxLat) tmpMaxLat = addr._lat
+            if (addr._lon < tmpMinLon) tmpMinLon = addr._lon
+            if (addr._lat < tmpMinLat) tmpMinLat = addr._lat
+            tmpRes.push(addr)
           }
-          if (addr.address != null && !(addr.address instanceof Array)) {
-            addr._addr = addr.address
-          } else {
-            addr._addr = null
-          }
-          const tmpStrs = addr.location.split(',')
-          addr._lon = parseFloat(tmpStrs[0])
-          addr._lat = parseFloat(tmpStrs[1])
-          if (addr._lon > tmpMaxLon) tmpMaxLon = addr._lon
-          if (addr._lat > tmpMaxLat) tmpMaxLat = addr._lat
-          if (addr._lon < tmpMinLon) tmpMinLon = addr._lon
-          if (addr._lat < tmpMinLat) tmpMinLat = addr._lat
         })
-        this.addrResults = _results
-        this.map2D.searchLayerManager.addSearchAddrs(_results)
-        if (_results.length > 0) {
-          this.bShowResult = true
-          this.bRouteOrClose = false
+        if (tmpRes.length > 0) {
+          this.addrResults = tmpRes
+          this.map2D.searchLayerManager.addSearchAddrs(tmpRes)
+          if (tmpRes.length > 0) {
+            this.bShowResult = true
+            this.bRouteOrClose = false
+          }
+          if (tmpRes.length > 1) {
+            this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+            this.map2D.zoomOut()
+          }
+          return
         }
-        if (_results.length > 1) {
-          this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
-          this.map2D.zoomOut()
-        }
-      } else {
-        this.addrResults = null
-        this.bShowResult = false
-        this.bRouteOrClose = true
-        this.map2D.searchLayerManager.clear()
       }
+      this.addrResults = null
+      this.bShowResult = false
+      this.bRouteOrClose = true
+      this.map2D.searchLayerManager.clear()
     },
 
     // 初始化搜索提示框
@@ -612,9 +630,9 @@ export default {
           strs[0] = strs[0].trim()
           strs[1] = strs[1].trim()
           // eslint-disable-next-line
-          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,6})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,6}|180)$/
+          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/
           // eslint-disable-next-line
-          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,6}|90\.0{0,6}|[0-8]?\d{1}|90)$/
+          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/
           if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
             const tmpLon = parseFloat(strs[0])
             const tmpLat = parseFloat(strs[1])
@@ -685,6 +703,8 @@ export default {
       this.chooseAddr = null
       if (this.filterText === '') {
         this.updateSearchResults(null)
+        this.bShowPaln = false
+        localStorage.selectedAddress = ''
       }
     },
 
@@ -702,6 +722,7 @@ export default {
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
       this.bShowPaln = false
+      localStorage.selectedAddress = ''
     },
 
     // 隐藏导航框
@@ -733,6 +754,8 @@ export default {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
       }
+      const tmpPosition = { name: addr.name, lon: addr._lon, lat: addr._lat, address: addr.address, type: addr.type, tel: addr.tel }
+      localStorage.selectedAddress = JSON.stringify(tmpPosition)
     },
 
     // 在地图中鼠标移入移出标记时回调刷新列表中结果项
@@ -1160,6 +1183,24 @@ export default {
     }
     .simpleInputSearch:active {
       opacity: 0.9;
+    }
+  }
+  .simpleSearchCtrl_Mini {
+    height: 26px;
+    left: 7px;
+    top: 7px;
+    .simpleInputText_Mini {
+      width: 175px;
+      height: 26px;
+      padding-left: 5px;
+      padding-right: 54px; // 调整搜索提示框宽度与路线图标对齐
+    }
+    .simpleInputSearch_Mini {
+      left: 187px;
+      height: 26px;
+      .simpleIcon_Mini {
+        margin-top: -2px;
+      }
     }
   }
   .searchCtrl {
