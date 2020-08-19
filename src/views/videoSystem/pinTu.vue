@@ -13,6 +13,7 @@
 </template>
 <script>
 import { EventBus } from '@/utils/eventBus.js'
+import globalApi from '../../utils/globalApi'
 export default {
   name: 'pinTu',
   data () {
@@ -37,13 +38,14 @@ export default {
     }
   },
   mounted () {
-    setTimeout(() => {
-      this.showPic('http://172.16.63.148/fmsUploads/tif_pieces/1597738049845/tilemapresource.xml')
-    }, 500)
+    // setTimeout(() => {
+    //   this.showPic('http://172.16.63.148/fmsUploads/tif_pieces/1597738049845/tilemapresource.xml')
+    // }, 500)
 
     EventBus.$on('realMapping/realMappingResult', info => {
       setTimeout(() => {
-        this.showPic(info.imgUrl)
+        const imgUrl = `${globalApi.headImg}${info.imgUrl}/tilemapresource.xml`
+        this.showPic(imgUrl)
       }, 500)
     })
   }
