@@ -24,8 +24,9 @@
           {{phoneNumber}}
         </div>
       </div>
-      <el-collapse style="border: none;" v-model="coll_actives">
-        <el-collapse-item>
+
+      <el-collapse style="border: none;" v-model="activeNames">
+        <el-collapse-item name="1">
           <template slot="title">
             <div style="margin-left: 22px;">基本情况说明</div>
           </template>
@@ -38,7 +39,7 @@
           </div>
         </el-collapse-item>
 
-        <el-collapse-item>
+        <el-collapse-item name="2">
           <template slot="title">
             <div style="margin-left: 22px;">建筑平面图</div>
           </template>
@@ -47,7 +48,7 @@
           </div>
         </el-collapse-item>
 
-        <el-collapse-item>
+        <el-collapse-item name="3">
           <template slot="title">
             <div style="margin-left: 22px;">作战部署图</div>
           </template>
@@ -61,7 +62,7 @@
           </div>
         </el-collapse-item>
 
-        <el-collapse-item>
+        <el-collapse-item name="4">
           <template slot="title">
             <div style="margin-left: 22px;">三维预案</div>
           </template>
@@ -92,7 +93,7 @@ export default {
       detailAddress: '武汉市江夏区新技术开发区关山大道XXX',
       phoneNumber: '027-XXXXXXXX',
 
-      coll_actives: [1]
+      activeNames: ['1', '2', '3', '4']
     }
   },
   components: {
@@ -165,11 +166,14 @@ export default {
   // }
 }
 
-/* 列表样式 */
+/* 折叠列表样式 */
 /deep/.el-collapse-item__header {
   border-top: 1px solid rgba(237, 237, 237, 0.5);
   border-bottom: none;
   background-color: transparent;
+  color: white;
+}
+/deep/.el-collapse-item__header.focusing:focus:not(:hover) {
   color: white;
 }
 /deep/.el-collapse-item__content {

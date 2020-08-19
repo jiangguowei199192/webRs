@@ -1,11 +1,14 @@
 <template>
   <div style="width: 250px;">
     <div style="text-align: center;">
-      <span style="color: red;">*</span>
-      <span class="fontStyle1">请上传{{title}}</span>
-      <button type="button" class="exampleStyle">查看示例</button>
+      <el-input v-model="input" class="inputStyle">
+        <i
+          class="el-icon-edit el-input__icon"
+          slot="suffix"
+          style="color: white;">
+        </i>
+      </el-input>
     </div>
-    <!-- <div style="width: 220px; height: 118px; background: white; margin: 26px auto 0 auto;"></div> -->
     <el-upload
       class="uploadStyle"
       ref="uploadImage"
@@ -27,17 +30,18 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      required: false
     },
     subTitle: {
       type: String,
-      required: true
+      required: false
     }
   },
   data () {
     return {
       addImg: require('../../../assets/images/Setting/setting-addImage.png'),
 
+      input: '',
       imageUrl: ''
     }
   },
@@ -76,22 +80,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .fontStyle1 {
-    font-size: 16px;
-    color: white;
-  }
-  .exampleStyle {
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    color: #35b0e6;
-    outline: none;
-  }
   .fontStyle2 {
     width: 220px;
     font-size: 10px;
     color: white;
     margin: 11px auto 0 auto;
+  }
+  .inputStyle {
+    width: 160px;
+    font-size: 16px;
+    /deep/.el-input__inner {
+      background-color: #39a3dd;
+      color: white;
+      border: none;
+    }
   }
 
   .uploadStyle {
