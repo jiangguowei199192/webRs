@@ -87,7 +87,7 @@
       <div class="routeBtn routeClose" @click.stop="closeRouteCtrl"></div>
       <div class="routeBtn routeSwap" @click.stop="swapRoutePoint"></div>
     </div>
-    <div class="searchResult ownScrollStyle" v-show="bShowResult">
+    <div class="searchResult webFsScroll" v-show="bShowResult">
       <div
         class="searchItem"
         v-for="(addr,index) in addrResults"
@@ -103,7 +103,7 @@
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
       </div>
     </div>
-    <plan class="plan ownScrollStyle" v-show="bShowPaln"></plan>
+    <plan class="plan webFsScroll" v-show="bShowPaln"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
