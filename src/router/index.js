@@ -70,9 +70,9 @@ const routes = [
         component: () => import('../views/decisionSystem/PlanSetting')
       },
       {
-        path: '/FightDeploy',
-        name: 'FightDeploy',
-        component: () => import('../views/decisionSystem/FightDeploy')
+        path: '/fightDeploy',
+        name: 'fightDeploy',
+        component: () => import('../views/decisionSystem/fightDeploy')
       },
       {
         path: '/evaluationSystem',

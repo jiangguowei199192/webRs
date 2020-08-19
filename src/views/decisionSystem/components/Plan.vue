@@ -8,7 +8,7 @@
             type="primary"
             icon="el-icon-top-right"
             circle
-          ></el-button> -->
+          ></el-button>-->
           <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{address}}</div>
           <div style="margin-top: 16px; margin-left: 22px; font-size: 12px;">
             {{subAddress}}
@@ -55,8 +55,9 @@
             <img
               class="edit_img fl"
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
+              @click="toFightDeploy"
             />
-            <i class="el-icon-edit-outline edit_icon fl" @click="toFightDeploy()"></i>
+            <!-- <i class="el-icon-edit-outline edit_icon fl" @click="toFightDeploy"></i> -->
           </div>
         </el-collapse-item>
 
@@ -99,7 +100,7 @@ export default {
   },
   methods: {
     toFightDeploy () {
-      this.$router.push({ path: '/FightDeploy' })
+      this.$router.push({ path: '/fightDeploy' })
     },
     editPlanClick () {
       this.$router.push({
@@ -145,22 +146,23 @@ export default {
 .itemContainer2 {
   margin: 0 22px 0 22px;
   .edit_img {
-    width: 70%;
-    height: 140px;
-    margin: 0 0 10px 35px;
-  }
-  .edit_icon {
-    display: block;
-    width: 25px;
-    height: 25px;
-    background-color: #fff;
-    border-radius: 50%;
-    font-size: 18px;
-    text-align: center;
-    line-height: 25px;
+    width: 94%;
+    height: 160px;
+    margin: 0 0 10px 10px;
     cursor: pointer;
-    margin: 112px 0 0 10px;
   }
+  // .edit_icon {
+  //   display: block;
+  //   width: 25px;
+  //   height: 25px;
+  //   background-color: #fff;
+  //   border-radius: 50%;
+  //   font-size: 18px;
+  //   text-align: center;
+  //   line-height: 25px;
+  //   cursor: pointer;
+  //   margin: 112px 0 0 10px;
+  // }
 }
 
 /* 列表样式 */
@@ -188,13 +190,13 @@ export default {
 }
 /deep/ ::-webkit-scrollbar-track {
   border-radius: 5px;
-  box-shadow: inset 0 0 6px rgba(245, 238, 238, 0);//滑道背阴影颜色
-  background-color: rgba($color: rgb(245, 238, 238), $alpha: 0);//滑道背景色
+  box-shadow: inset 0 0 6px rgba(245, 238, 238, 0); //滑道背阴影颜色
+  background-color: rgba($color: rgb(245, 238, 238), $alpha: 0); //滑道背景色
 }
 /deep/ ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  box-shadow: inset 0 0 6px rgb(86, 87, 61);//滑块阴影颜色
-  background-color: rgba($color: rgb(86, 87, 61), $alpha: 0.2);//滑块背景色
+  box-shadow: inset 0 0 6px rgb(86, 87, 61); //滑块阴影颜色
+  background-color: rgba($color: rgb(86, 87, 61), $alpha: 0.2); //滑块背景色
 }
 
 .editPlanStyle {

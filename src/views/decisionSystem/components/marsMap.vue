@@ -53,7 +53,7 @@ export default {
     if (this.mapKey) {
       this.initMars3d(this.options)
     } else {
-      this.getMapConfig(this.url).then(data => {
+      this.getMapConfig(this.url).then((data) => {
         this.initMars3d(data)
       })
     }
@@ -74,10 +74,10 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .get(url)
-          .then(res => {
+          .then((res) => {
             resolve(res.data)
           })
-          .then(error => {
+          .then((error) => {
             reject(error)
           })
       })
@@ -86,6 +86,7 @@ export default {
     initMars3d (options) {
       const me = this
       if (this[`viewer${this.mapKey}`]) return
+      // eslint-disable-next-line no-undef
       const viewer = mars3d.createMap({
         id: `marsgis-container${this.mapKey ? `-${this.mapKey}` : ''}`,
         data: options.map3d,
@@ -97,7 +98,7 @@ export default {
       })
 
       // widget处理
-      this.getMapConfig(this.widgetUrl).then(data => {
+      this.getMapConfig(this.widgetUrl).then((data) => {
         this.initStaticWidget(viewer, data)
       })
 
@@ -111,6 +112,7 @@ export default {
       // 挂载到全局对象下，所有组件通过this.$viewer访问
 
       Vue.prototype[`$viewer${this.mapKey}`] = viewer
+      // eslint-disable-next-line no-undef
       Vue.prototype.$Cesium = Cesium
       console.log('>>>>> 三维地图创建成功 >>>>')
 
@@ -120,12 +122,14 @@ export default {
 
     // 初始化外部静态widget功能（兼容使用传统模式开发的一些widget）
     initStaticWidget (viewer, widget) {
+      // eslint-disable-next-line no-undef
       mars3d.widget.init(viewer, widget)
 
       // 绑定图层管理
       window.bindToLayerControl = function (options) {
         const layer = viewer.mars.addOperationalLayer(options)
 
+        // eslint-disable-next-line no-undef
         const manageLayersWidget = mars3d.widget.getClass(
           'widgets/manageLayers/widget.js'
         )
@@ -138,6 +142,7 @@ export default {
       window.unbindLayerControl = function (layer) {
         viewer.mars.removeOperationalLayer(layer.config.id)
 
+        // eslint-disable-next-line no-undef
         const manageLayersWidget = mars3d.widget.getClass(
           'widgets/manageLayers/widget.js'
         )

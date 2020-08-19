@@ -1,18 +1,22 @@
 <template>
   <div class="container">
     <div class="header">
-      <div class="back fl">
-        <el-button type="primary" size="mini" icon="el-icon-arrow-left" @click="backToPlan()">作战部署</el-button>
-      </div>
-      <div class="caozuo fr">
-        <i class="el-icon-share"></i>
-        <i class="el-icon-printer"></i>
+      <div class="back">
+        <el-button type="primary" size="mini" icon="el-icon-arrow-left" @click="backToPlan">指挥决策</el-button>
       </div>
     </div>
     <div class="main" :style="'height:' + workHeight + 'px;'">
-      <div class="left fl">
+      <div class="content">
         <img src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png" alt />
+      </div>
+      <div class="left">
         <div class="model_edit" :style="'height:' + (this.workHeight - 60) + 'px;'">
+          <div class="edit_menu">
+            <i class="el-icon-delete" title="删除"></i>
+            <i class="el-icon-folder-opened" title="保存"></i>
+            <i class="el-icon-share" title="分享"></i>
+            <i class="el-icon-printer" title="打印"></i>
+          </div>
           <el-select
             placeholder="常用"
             size="mini"
@@ -24,37 +28,38 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            >
-              <el-tooltip
-                effect="light"
-                :content="item.label"
-                placement="bottom-start"
-                visibleArrow="true"
-              >
-                <div class="tooltip_span">{{item.label}}</div>
-              </el-tooltip>
-            </el-option>
+            ></el-option>
           </el-select>
           <div
             class="edit_list ownScrollStyle"
-            :style="'height:' + (this.workHeight - 60 - 45) + 'px;'"
+            :style="'height:' + (this.workHeight - 60 - 110) + 'px;'"
           >
             <ul class="fl">
               <li
                 :style="{ backgroundColor:item.bgColor}"
                 v-for="item in areaList"
                 :key="item.index"
+                draggable="true"
+                @dragstart="drag(item)"
               >{{item.area}}</li>
             </ul>
             <ul class="fr">
-              <li v-for="item in markList" :key="item.index">
-                <img :src="item.imgSrc" alt />
+              <li
+                :style="{ backgroundColor:item.bgColor}"
+                v-for="item in markList"
+                :key="item.index"
+                draggable="true"
+                @dragstart="drag(item)"
+              >
+                <!-- <img :src="item.imgSrc" alt /> -->
+                <i :class="item.icon"></i>
               </li>
             </ul>
           </div>
         </div>
       </div>
-      <div class="right fr">
+      <div class="detail"></div>
+      <div class="right">
         <h3>停靠设置/任务分配</h3>
         <div class="task_list ownScrollStyle" :style="'height:' + (this.workHeight - 60) + 'px;'">
           <div class="list_wrap" v-for="item in arrList" :key="item.index">
@@ -89,8 +94,9 @@
 </template>
 
 <script>
+import { setTimeout } from 'timers'
 export default {
-  name: 'FightDeploy',
+  name: 'fightDeploy',
 
   data () {
     return {
@@ -214,19 +220,21 @@ export default {
     }
 
     var items1 = ['指挥区', '作业区', '集结区', '休整区', '入口']
+    var items2 = [
+      'el-icon-headset',
+      'el-icon-school',
+      'el-icon-sell',
+      'el-icon-trophy',
+      'el-icon-watch'
+    ]
     for (var i = 0; i < 10; i++) {
       this.areaList.push({
         area: items1[Math.floor(Math.random() * items1.length)],
-        bgColor:
-          '#' +
-          Math.random()
-            .toString(16)
-            .substr(2, 6)
-            .toUpperCase()
+        bgColor: '#' + Math.random().toString(16).substr(2, 6).toUpperCase()
       })
       this.markList.push({
-        imgSrc:
-          'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1594636274169&di=fd85ea5d51bbe1ef98add42151180b70&imgtype=0&src=http%3A%2F%2Fn.sinaimg.cn%2Ffront%2F433%2Fw564h669%2F20181027%2FoWtj-hmxrkzx6079521.jpg'
+        icon: items2[Math.floor(Math.random() * items1.length)],
+        bgColor: '#' + Math.random().toString(16).substr(2, 6).toUpperCase()
       })
     }
   },
@@ -260,7 +268,7 @@ export default {
           .querySelector('#app')
           .querySelectorAll('.el-input__inner')
         // console.log(tagTextList)
-        tagTextList.forEach(item => {
+        tagTextList.forEach((item) => {
           item.setAttribute('title', item.value)
         })
       }, 100)
@@ -277,6 +285,10 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+  }
   .header {
     width: 98%;
     height: 50px;
@@ -290,68 +302,87 @@ export default {
         font-size: 14px;
       }
     }
-    .caozuo {
-      margin-right: 20px;
-      display: flex;
-      justify-content: space-between;
-      i {
-        display: block;
-        width: 35px;
-        height: 35px;
-        background-color: rgba(255, 255, 255, 0.8);
-        color: rgb(108, 140, 243);
-        border-radius: 50%;
-        line-height: 35px;
-        font-size: 22px;
-        text-align: center;
-        margin: 8px;
-        cursor: pointer;
-      }
-    }
   }
   .main {
-    display: flex;
-    .left {
-      flex-grow: 1;
+    position: relative;
+    overflow-y: hidden;
+    .content {
       height: 100%;
-      background-color: rgb(197, 238, 184);
-      position: relative;
-      margin-left: 5px;
-      img {
-        width: 100%;
-        height: 100%;
-      }
+    }
+    .left {
+      z-index: 999;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 30px;
       .model_edit {
-        width: 240px;
-        background-color: rgba(255, 255, 255, 0.2);
-        position: absolute;
-        left: 0;
-        top: 30px;
+        width: 255px;
+        background-color: rgba(0, 0, 0, 0.5);
+        .edit_menu {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 0;
+          i {
+            display: block;
+            width: 35px;
+            height: 35px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: rgb(108, 140, 243);
+            border-radius: 50%;
+            line-height: 35px;
+            font-size: 22px;
+            text-align: center;
+            margin: 8px;
+            cursor: pointer;
+          }
+        }
+        /deep/.el-input {
+          width: 232px;
+        }
         .edit_list {
           overflow-y: auto;
-          position: relative;
-          top: 15px;
+          margin-top: 15px;
           ul {
             display: flex;
             justify-content: space-between;
             flex-direction: column;
-            margin: 0 8px;
+            margin: 0 10px;
             li {
-              width: 100px;
-              height: 115px;
+              width: 105px;
+              height: 105px;
               font-size: 14px;
-              line-height: 115px;
+              line-height: 100px;
               text-align: center;
               margin-bottom: 10px;
+              i {
+                display: inline-block;
+                vertical-align: middle;
+                font-size: 34px;
+              }
             }
           }
         }
       }
     }
+    .detail {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
     .right {
+      // display: none;
+      // opacity: (0, 1);
+      // transition: all 2s linear;
+      z-index: 999;
       width: 350px;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(10, 25, 57, 0.9);
+      position: absolute;
+      right: 0;
+      top: 0;
       text-align: center;
       padding-left: 15px;
       h3 {

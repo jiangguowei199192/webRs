@@ -53,12 +53,13 @@ export default {
         name: '1111111',
         position: position,
         model: {
-          uri: 'http://172.16.63.57:9000/mapdata/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+          uri:
+            'http://172.16.63.57:9000/mapdata/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
           scale: 1,
           opacity: 1,
           clampToGround: true
         },
-        click: entity => {
+        click: (entity) => {
           // 单击回调
           this.$message({ message: '您单击了：' })
         }
@@ -96,11 +97,17 @@ export default {
         maximumScreenSpaceError: 1,
         maximumMemoryUsage: 8192,
         offset: { z: -4 },
-        center: { y: 30.519161, x: 114.237614, z: 1236.59, heading: 194.6, pitch: -48.8, roll: 359.9 },
+        center: {
+          y: 30.519161,
+          x: 114.237614,
+          z: 1236.59,
+          heading: 194.6,
+          pitch: -48.8,
+          roll: 359.9
+        },
         dynamicScreenSpaceError: true,
         cullWithChildrenBounds: false,
         luminanceAtZenith: 0.6
-
       }
 
       // layercfg.id = 1987
