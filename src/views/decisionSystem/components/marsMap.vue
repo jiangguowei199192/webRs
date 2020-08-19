@@ -8,7 +8,8 @@
 <script>
 import Vue from 'vue'
 import axios from 'axios'
-
+var Cesium = window.Cesium
+var mars3d = window.mars3d
 export default {
   name: 'CesiumViewer',
 

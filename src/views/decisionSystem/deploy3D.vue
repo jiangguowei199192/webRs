@@ -16,6 +16,9 @@
 <script>
 import Map from './components/marsMap.vue'
 import $ from 'jquery'
+import emergency from '@/assets/images/3d/emergencyshelters.png'
+var Cesium = window.Cesium
+var mars3d = window.mars3d
 export default {
   data () {
     return {
@@ -42,14 +45,16 @@ export default {
       // 隐藏比例尺
       $('#distanceLegendDiv').hide()
     },
+
     addModel () {
       var dataSource = new Cesium.CustomDataSource()
       this.viewer.dataSources.add(dataSource)
       var position = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 10)
       var position2 = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 25)
+      var position3 = Cesium.Cartesian3.fromDegrees(114.238506, 30.508797, 30)
 
       // 添加实体
-      var entity = dataSource.entities.add({
+      dataSource.entities.add({
         name: '1111111',
         position: position,
         model: {
@@ -65,8 +70,42 @@ export default {
         }
       })
 
-      var divpoint1 = new mars3d.DivPoint(this.viewer, {
-        html: ` <div class="labelxfs">
+      const lat = 30.510093
+      let lon = 114.235004
+      const entity = dataSource.entities.add({
+        name: '22222222222',
+        position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
+        model: {
+          uri:
+            'http://172.16.63.57:9000/mapdata/gltf/mars/firedrill/xiaofangche.gltf',
+          scale: 1,
+          opacity: 1,
+          clampToGround: true
+        }
+      })
+
+      setInterval(() => {
+        lon += 0.000001
+        entity.position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
+      }, 1000)
+
+      dataSource.entities.add({
+        name: '避难',
+        position: Cesium.Cartesian3.fromDegrees(114.23724, 30.510647, 25),
+        billboard: {
+          image: emergency,
+          scale: 1,
+          horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+            0.0,
+            1000
+          )
+        }
+      })
+
+      const divpoint1 = new mars3d.DivPoint(this.viewer, {
+        html: ` <div class="label labelxfs">
                   <span></span>
                   <span>消防栓</span>
                 </div>`,
@@ -77,11 +116,26 @@ export default {
         //   100,
         //   200000
         // ), // 按视距距离显示
-        click: function (e) {
-          // 单击后的回调
-          this.$message({ message: '您单击了DIV点' })
+        popup: {
+          html: ` <div class="popup-bg">
+                </div>`,
+          anchor: [0, -70] // 左右、上下的偏移像素值。
         }
       })
+
+      console.log(divpoint1)
+
+      const divpoint2 = new mars3d.DivPoint(this.viewer, {
+        html: ` <div class="label labelbf">
+                  <span></span>
+                  <span>泵房</span>
+                </div>`,
+        anchor: [-61, 0],
+        position: position3,
+        depthTest: false
+      })
+
+      console.log(divpoint2)
 
       // this.viewer.mars.centerPoint(position, {
       //   radius: 300, // 距离目标点的距离
@@ -97,14 +151,7 @@ export default {
         maximumScreenSpaceError: 1,
         maximumMemoryUsage: 8192,
         offset: { z: -4 },
-        center: {
-          y: 30.519161,
-          x: 114.237614,
-          z: 1236.59,
-          heading: 194.6,
-          pitch: -48.8,
-          roll: 359.9
-        },
+        // center: { y: 30.519161, x: 114.237614, z: 1236.59, heading: 194.6, pitch: -48.8, roll: 359.9 },
         dynamicScreenSpaceError: true,
         cullWithChildrenBounds: false,
         luminanceAtZenith: 0.6
@@ -114,6 +161,7 @@ export default {
       layercfg.visible = true
       layercfg.flyTo = true
       var layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
+      layerModel.centerAt()
     },
 
     /**
@@ -136,19 +184,7 @@ export default {
         }
       ]
 
-      // setTimeout(() => {
       this.addModel()
-      // }, 1000)
-
-      // var drawControl = new mars3d.Draw(viewer, {})
-
-      // drawControl.startDraw({
-      //   type: 'model',
-      //   style: {
-      //     scale: 1,
-      //     modelUrl: 'http://172.16.63.57:9000/mapdata/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf'
-      //   }
-      // })
     }
   },
   created () {}
@@ -156,6 +192,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+// /deep/.mars3d-popup-background {
+//     background: none;
+// }
+
+/deep/.mars3d-popup-close-button {
+  display: none;
+}
+
+/deep/.mars3d-popup-content-wrapper {
+    text-align: center;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: none;
+    padding: 0px;
+    text-align: left;
+    border-radius: 3px;
+}
+
 .mapcontainer {
   position: relative;
   height: 890px;
