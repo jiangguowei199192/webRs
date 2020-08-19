@@ -31,7 +31,7 @@
             ></el-option>
           </el-select>
           <div
-            class="edit_list ownScrollStyle"
+            class="edit_list webFsScroll"
             :style="'height:' + (this.workHeight - 60 - 110) + 'px;'"
           >
             <ul class="fl">
@@ -61,7 +61,7 @@
       <div class="detail"></div>
       <div class="right">
         <h3>停靠设置/任务分配</h3>
-        <div class="task_list ownScrollStyle" :style="'height:' + (this.workHeight - 60) + 'px;'">
+        <div class="task_list webFsScroll" :style="'height:' + (this.workHeight - 60) + 'px;'">
           <div class="list_wrap" v-for="item in arrList" :key="item.index">
             <div class="list_left">
               <el-tree

@@ -87,7 +87,7 @@
       <div class="routeBtn routeClose" @click.stop="closeRouteCtrl"></div>
       <div class="routeBtn routeSwap" @click.stop="swapRoutePoint"></div>
     </div>
-    <div class="searchResult ownScrollStyle" v-show="bShowResult">
+    <div class="searchResult webFsScroll" v-show="bShowResult">
       <div
         class="searchItem"
         v-for="(addr,index) in addrResults"
