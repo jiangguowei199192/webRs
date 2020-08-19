@@ -3,67 +3,58 @@
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll">
         <div class="container">
-          <div>
+          <div style="margin-top: 50px;">
             <div>
               <div class="titleArrowStyle"></div>
               <div class="titleStyle">单位基础信息</div>
             </div>
             <div>
               <span class="subTitleStyle">单位名称</span>
-              <el-input v-model="companyName" placeholder="请输入单位名称" class="textInputStyle"></el-input>
+              <el-input v-model="companyName" placeholder="请输入单位名称" class="textInputStyle baseInfoInput"></el-input>
             </div>
             <div>
               <span class="subTitleStyle">单位类型</span>
-              <el-input v-model="companyType" placeholder="请输入单位类型" class="textInputStyle"></el-input>
+              <el-input v-model="companyType" placeholder="请输入单位类型" class="textInputStyle baseInfoInput"></el-input>
             </div>
             <div>
               <span class="subTitleStyle">单位地址</span>
-              <el-input v-model="companyAddress" placeholder="请输入单位地址" class="textInputStyle"></el-input>
+              <el-input v-model="companyAddress" placeholder="请输入单位地址" class="textInputStyle baseInfoInput"></el-input>
             </div>
             <div style="height: 200px; margin-top: 20px;">
-              <div class="coordinatesTitle">地理坐标</div>
-              <div style="width: 300px; height: 200px; background: white; float: left;"></div>
+              <div class="coordinatesTitleStyle">地理坐标</div>
+              <div style="width: 376px; height: 198px; background: white; display: inline-block;"></div>
             </div>
             <div>
               <span class="subTitleStyle">联系电话</span>
-              <el-input v-model="companyPhone" placeholder="请输入联系人电话" class="textInputStyle"></el-input>
-              <el-input v-model="companySubPhone" placeholder="请输入备用电话" class="phoneInput"></el-input>
+              <el-input v-model="companyPhone" placeholder="请输入联系人电话" class="phoneInputStyle1 baseInfoInput"></el-input>
+              <el-input v-model="companySubPhone" placeholder="请输入备用电话" class="phoneInputStyle1 baseInfoInput phoneInputStyle2"></el-input>
             </div>
           </div>
-          <div style="margin-top: 20px; height: 525px;">
+          <div style="margin-top: 50px;">
             <div>
               <div class="titleArrowStyle"></div>
               <div class="titleStyle">基本情况说明</div>
             </div>
-            <div style="margin-top: 20px;">
-              <div class="basicSituation" v-for="(item, index) in basicSituation" :key="index">
+            <div>
+              <div class="basicSituationStyle" v-for="(item, index) in basicSituation" :key="index">
                 <UploadImage v-bind:title="item.title" v-bind:subTitle="item.subTitle"></UploadImage>
               </div>
             </div>
           </div>
-          <div style="margin-top: 20px; height: 285px;">
+          <div style="margin-top: 50px;">
             <div>
               <div class="titleArrowStyle"></div>
               <div class="titleStyle">建筑平面图</div>
             </div>
-            <div style="margin-top: 20px;">
-              <div class="basicSituation" v-for="(item, index) in buildingPlan" :key="index">
-                <UploadImage v-bind:title="item.title" v-bind:subTitle="item.subTitle"></UploadImage>
+            <div>
+              <div class="basicSituationStyle" v-for="(item, index) in buildingPlan" :key="index">
+                <UploadImageMore v-bind:title="item.title" v-bind:subTitle="item.subTitle"></UploadImageMore>
+              </div>
+              <div class="basicSituationStyle addBuildingStyle">
+                <img :src="addImg" @click="addBuildingImageClick">
               </div>
             </div>
           </div>
-          <!-- <div style="margin-top: 20px; height: 280px; background: red">
-            <span style="font-weight: bold;">作战部署图</span>
-            <div style="margin-top: 20px; margin-left: 50px;">
-              <UploadImage v-bind:title="operationalDeployment.title" v-bind:subTitle="operationalDeployment.subTitle"></UploadImage>
-            </div>
-          </div>
-          <div style="margin-top: 20px; height: 280px; background: red">
-            <span style="font-weight: bold;">三维预案</span>
-            <div style="margin-top: 20px; margin-left: 50px;">
-              <UploadImage v-bind:title="threeDPlan.title" v-bind:subTitle="threeDPlan.subTitle"></UploadImage>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -72,10 +63,16 @@
 
 <script>
 import UploadImage from './components/PlanSettingUploadImage.vue'
-
+import UploadImageMore from './components/PlanSettingUploadImageMore.vue'
 export default {
+  components: {
+    UploadImage,
+    UploadImageMore
+  },
   data () {
     return {
+      addImg: require('../../assets/images/Setting/setting-addImage.png'),
+
       companyName: '', // 单位名称
       companyType: '', // 单位类型
       companyAddress: '', // 单位地址
@@ -83,22 +80,22 @@ export default {
       companyPhone: '', // 联系电话
       companySubPhone: '', // 备用电话
       basicSituation: [ // 基本情况说明
-        { title: '《单位基本情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' },
-        { title: '《主要消防设施》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' },
-        { title: '《重点部位情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' },
-        { title: '《力量调度情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' },
-        { title: '《重点提示》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' }
+        { title: '《基本情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { title: '《供水系统》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { title: '《行车路线》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { title: '《防火设计》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { title: '《重点部位》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' }
       ],
       buildingPlan: [
-        { title: '《单位基本情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' },
-        { title: '《重点提示》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' }
-      ],
-      operationalDeployment: { title: '《作战部署图》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过20M' }, // 作战部署
-      threeDPlan: { title: '《三维预案》', subTitle: 'tif单个文件大小不超过1G' }// 三维预案
+        { title: '', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' }
+      ]
     }
   },
-  components: {
-    UploadImage
+  methods: {
+    // 增加建筑平面图
+    addBuildingImageClick () {
+      this.buildingPlan.push({ title: '', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' })
+    }
   }
 }
 </script>
@@ -115,7 +112,7 @@ export default {
     border: solid 10px transparent;
     overflow: auto;
     .container {
-      margin: 58px 271px 58px 271px;
+      margin: 8px 271px 58px 271px;
     }
   }
 }
@@ -140,29 +137,48 @@ export default {
   margin-left: 63px;
   font-size: 16px;
 }
-.coordinatesTitle {
+.coordinatesTitleStyle {
   width: 100px;
   float: left;
   margin-top: 10px;
   margin-left: 63px;
+  font-size: 16px;
 }
 .textInputStyle {
-  width: 300px;
+  width: 376px;
+  height: 38px;
   margin-top: 20px;
+  font-size: 16px;
 }
-.phoneInput {
-  width: 300px;
+.phoneInputStyle1 {
+  width: 176px;
+  height: 38px;
   margin-top: 20px;
+  font-size: 16px;
+}
+.phoneInputStyle2 {
   margin-left: 20px;
 }
-.basicSituation {
-  float: left;
+.basicSituationStyle {
+  display: inline-block;
+  margin-top: 30px;
   margin-left: 50px;
+  // background: olive;
+  vertical-align: middle;
 }
-/deep/.el-input__inner {
-  background-color: transparent;
-  color: white;
-  border-color: #1daffb;
-  border-radius: 0;
+.addBuildingStyle {
+  width: 250px;
+  height: 118px;
+  text-align: center;
 }
+/* 输入框样式 */
+.baseInfoInput {
+  /deep/.el-input__inner {
+    background-color: transparent;
+    color: white;
+    border-color: #1daffb;
+    border-radius: 0;
+  }
+}
+
 </style>
