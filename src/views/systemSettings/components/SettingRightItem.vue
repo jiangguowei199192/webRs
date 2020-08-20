@@ -270,12 +270,10 @@ export default {
     },
     // 上传头像-保存
     async submitUpload () {
-      const uploadDiv = document.querySelector('.uploadDiv')
-      // console.log(uploadDiv);
-      if (uploadDiv.onmousedown) {
-        const formData = new FormData()
-        formData.append('id', this.userDetail.id)
-        formData.append('file', this.imageFile)
+      const formData = new FormData()
+      formData.append('id', this.userDetail.id)
+      formData.append('file', this.imageFile)
+      if (this.imageUrl) {
         this.$axios.post(loginApi.updateHeadImg, formData).then((res) => {
           // console.log(res)
           if (res.data.code === 0) {
