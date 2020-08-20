@@ -10,6 +10,19 @@
         @click.stop="tabTo(index)"
       ></div>
     </div>
+    <div class="plotBox" v-show="showPlotBox">
+      <el-select v-model="plotType" placeholder="请选择" class="select" :popper-append-to-body="false">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+      <div class="models">
+        <div v-for="(item,index) in 10" :key="index"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,23 +30,62 @@
 import Map from './components/marsMap.vue'
 import $ from 'jquery'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
+import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
 export default {
+  // 所有cesium和mars3d对象 都不要绑定到data
   data () {
     return {
       activeIndex: 0,
       configUrl: 'config/config.json',
       widgetUrl: 'config/widget.json',
-      viewer: ''
+      showPlotBox: false,
+      plotType: 0,
+      options: [] // 沙盘绘制选项
     }
   },
   components: {
     Map
   },
+
+  mounted () {
+    this.getPlotData()
+  },
+
   methods: {
     tabTo (index) {
       this.activeIndex = index
+      if (this.activeIndex === 4) {
+        this.showPlotBox = true
+      } else this.showPlotBox = false
+    },
+
+    /**
+     *  获取沙盘绘制数据
+     */
+    getPlotData () {
+      this.options = []
+      axios
+        .get('config/plotlist.json')
+        .then(res => {
+          const data = res.data
+          let i = 0
+          for (var p in data) {
+            const array = data[p]
+            array.forEach(a => {
+              if (a.image.startsWith('$serverURL_gltf$')) {
+                a.image = a.image.replace('$serverURL_gltf$', 'http://172.16.63.57:9000/mapdata')
+              }
+            })
+            const item = { value: i, label: p, list: array }
+            this.options.push(item)
+            i += 1
+          }
+        })
+        .catch(err => {
+          console.log('getPlotData Err : ' + err)
+        })
     },
 
     /**
@@ -196,13 +248,18 @@ export default {
   background: none;
 }
 
+/deep/.cesium-viewer-toolbar {
+  top: 74px;
+  right: 18px;
+}
+
 //popup的倒三角样式
 /deep/.mars3d-popup-tip-container {
-    margin: -20px auto 0;
+  margin: -20px auto 0;
 }
 /deep/.mars3d-popup-tip {
   box-shadow: none;
-  background: #1EB0FC;
+  background: #1eb0fc;
 }
 
 /deep/.mars3d-popup-close-button {
@@ -210,9 +267,8 @@ export default {
 }
 
 /deep/.compass {
-  left:8px;
-  right: 0px !important;
-  top:8px!important;
+  right: 8px !important;
+  top: 8px !important;
 }
 
 /deep/.mars3d-popup-content-wrapper {
@@ -279,6 +335,85 @@ export default {
     }
     div:nth-child(8) {
       background: url(../../assets/images/3d/edit.png) no-repeat;
+    }
+  }
+
+  .plotBox {
+    display: inline-block;
+    position: absolute;
+    background: url(../../assets/images/3d/plot-box.png) no-repeat;
+    width: 290px;
+    height: 706px;
+    left: 38px;
+    top: 50px;
+
+    .models {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 24px;
+      div {
+        background: url(../../assets/images/3d/box.png) no-repeat;
+        width: 114px;
+        height: 114px;
+        margin-right: 12px;
+        margin-bottom: 12px;
+        cursor: pointer;
+      }
+    }
+
+    .select {
+      margin-left: 24px;
+      margin-top: 26px;
+      width: 240px;
+      background: rgba(17, 33, 57, 1);
+      border: 1px solid rgba(29, 175, 251, 1);
+      box-sizing: border-box;
+      /deep/.el-input__inner {
+        background-color: transparent !important;
+        border-radius: 0px;
+        border: none;
+        box-sizing: border-box;
+        color: rgba(30, 175, 251, 1);
+        height: 34px;
+        line-height: 34px;
+      }
+
+      /deep/.el-input .el-select__caret {
+        color: rgba(29, 175, 251, 1);
+      }
+
+      /deep/.el-select-dropdown {
+        border-radius: 4px;
+        background: rgba(17, 33, 57, 1);
+        border: 1px solid rgba(29, 175, 251, 1);
+        box-shadow: none;
+      }
+
+      /deep/.el-select-dropdown__item {
+        height: 27px;
+        line-height: 27px;
+        color: rgba(30, 175, 251, 1);
+      }
+
+      /deep/.el-select-dropdown__item.hover,
+      .el-select-dropdown__item:hover {
+        background-color: transparent;
+      }
+
+      /deep/.el-select-dropdown__item.selected {
+        background: #256592;
+        color: rgba(30, 175, 251, 1);
+      }
+
+      /deep/.el-popper .popper__arrow::after {
+        top: 0px;
+        border-bottom-color: rgba(29, 175, 251, 1);
+      }
+
+      /deep/.el-poppe {
+        margin-left: -2px;
+      }
     }
   }
 }

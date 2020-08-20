@@ -1,0 +1,140 @@
+{
+    "车辆": [
+        {
+            "name": "警车",
+            "image": "$serverURL_gltf$/mars/img/jingche.jpg",
+            "type": "model",
+            "style": {
+                "scale": 3,
+                "modelUrl": "$serverURL_gltf$/mars/jingche/jingche.gltf"
+            }
+        },
+        {
+            "name": "起重车",
+            "image": "$serverURL_gltf$/mars/img/qzcar.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/qzcar/GKZY_anim.gltf"
+            }
+        },
+        {
+            "name": "土方车",
+            "image": "$serverURL_gltf$/mars/img/tufangche.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/car/tufangche.glb"
+            }
+        },
+        {
+            "name": "挖掘机",
+            "image": "$serverURL_gltf$/mars/img/wajueji.jpg",
+            "type": "model",
+            "style": {
+                "scale": 3,
+                "modelUrl": "$serverURL_gltf$/mars/car/wajueji.glb"
+            }
+        },
+        
+        {
+            "name": "小汽车",
+            "image": "$serverURL_gltf$/mars/img/qiche.jpg",
+            "type": "model",
+            "style": {
+                "scale": 0.1,
+                "modelUrl": "$serverURL_gltf$/mars/qiche.gltf"
+            }
+        },
+        {
+            "name": "消防车",
+            "image": "$serverURL_gltf$/mars/img/xiaofangche.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangche.gltf"
+            }
+        },
+        {
+            "name": "消防车2",
+            "image": "$serverURL_gltf$/mars/img/xiaofangche2.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangche2.gltf"
+            }
+        }, 
+        {
+            "name": "小货车",
+            "image": "$serverURL_gltf$/sample/img/CesiumMilkTruck.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/sample/CesiumMilkTruck/CesiumMilkTruck.gltf"
+            }
+        },
+        {
+            "name": "越野车",
+            "image": "$serverURL_gltf$/sample/img/GroundVehicle.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/sample/GroundVehicle/GroundVehicle.glb"
+            }
+        },
+        {
+            "name": "汽车_海关车",
+            "image": "$serverURL_gltf$/imap/img/1564470050852.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/imap/82bd55706595471793aed25081d923d3/gltf/gltf2.gltf"
+            }
+        }
+    ],
+
+    "人物": [
+        {
+            "name": "巡逻人员",
+            "image": "$serverURL_gltf$/mars/img/ren.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/man/ren.glb"
+            }
+        },
+        {
+            "name": "巡逻人员",
+            "image": "$serverURL_gltf$/mars/img/gongren.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/man/gongren.glb"
+            }
+        },
+        {
+            "name": "行人",
+            "image": "$serverURL_gltf$/mars/img/man.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/man/walk.gltf"
+            }
+        },
+        {
+            "name": "消防员",
+            "image": "$serverURL_gltf$/mars/img/xiaofangyuan.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangyuan.glb"
+            }
+        },
+        {
+            "name": "奔跑的消防员",
+            "image": "$serverURL_gltf$/mars/img/xiaofangyuan-run.jpg",
+            "type": "model",
+            "style": {
+                "scale": 2,
+                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangyuan-run.gltf"
+            }
+        },
+        {
+            "name": "步行动画_人",
+            "image": "$serverURL_gltf$/sample/img/CesiumMan.jpg",
+            "type": "model",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/sample/CesiumMan/Cesium_Man.gltf"
+            }
+        }
+    ]
+}
