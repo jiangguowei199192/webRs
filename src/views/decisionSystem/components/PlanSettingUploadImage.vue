@@ -2,10 +2,9 @@
   <div style="width: 250px;">
     <div style="text-align: center;">
       <span style="color: red;">*</span>
-      <span class="fontStyle1">请上传{{title}}</span>
+      <span class="fontStyle1">请上传{{info.title}}</span>
       <button type="button" class="exampleStyle">查看示例</button>
     </div>
-    <!-- <div style="width: 220px; height: 118px; background: white; margin: 26px auto 0 auto;"></div> -->
     <el-upload
       class="uploadStyle"
       ref="uploadImage"
@@ -15,22 +14,18 @@
       accept="image/*"
       :on-change="onUploadChange"
     >
-      <img v-if="imageUrl" :src="imageUrl" class="uploadImageStyle">
-      <img v-else :src="addImg" class="uploadImageStyle">
+      <img v-if="imageUrl" :src="imageUrl" class="uploadImageStyle" />
+      <img v-else :src="addImg" class="uploadImageStyle" />
     </el-upload>
-    <div class="fontStyle2">格式要求：{{subTitle}}</div>
+    <div class="fontStyle2">格式要求：{{info.subTitle}}</div>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    title: {
-      type: String,
-      required: true
-    },
-    subTitle: {
-      type: String,
+    info: {
+      type: Object,
       required: true
     }
   },
@@ -70,37 +65,38 @@ export default {
       // this.imageFile = file.raw
       var urlCreator = window.URL || window.webkitURL
       this.imageUrl = urlCreator.createObjectURL(file.raw)
+      this.$emit('doUploadImage', file.raw, this.info)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .fontStyle1 {
-    font-size: 16px;
-    color: white;
-  }
-  .exampleStyle {
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    color: #35b0e6;
-    outline: none;
-  }
-  .fontStyle2 {
-    width: 220px;
-    font-size: 10px;
-    color: white;
-    margin: 11px auto 0 auto;
-  }
+.fontStyle1 {
+  font-size: 16px;
+  color: white;
+}
+.exampleStyle {
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  color: #35b0e6;
+  outline: none;
+}
+.fontStyle2 {
+  width: 220px;
+  font-size: 10px;
+  color: white;
+  margin: 11px auto 0 auto;
+}
 
-  .uploadStyle {
-    text-align: center;
-  }
-  .uploadImageStyle {
-    width: 220px;
-    height: 118px;
-    display: block;
-    margin-top: 14px;
-  }
+.uploadStyle {
+  text-align: center;
+}
+.uploadImageStyle {
+  width: 220px;
+  height: 118px;
+  display: block;
+  margin-top: 14px;
+}
 </style>

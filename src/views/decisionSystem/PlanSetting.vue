@@ -48,7 +48,10 @@
             </div>
             <div>
               <div class="basicSituationStyle" v-for="(item, index) in basicSituation" :key="index">
-                <UploadImage v-bind:title="item.title" v-bind:subTitle="item.subTitle"></UploadImage>
+                <UploadImage
+                  v-bind:info="item"
+                  v-on:doUploadImage="doUploadImage">
+                </UploadImage>
               </div>
             </div>
           </div>
@@ -75,6 +78,7 @@
 <script>
 import UploadImage from './components/PlanSettingUploadImage.vue'
 import UploadImageMore from './components/PlanSettingUploadImageMore.vue'
+import { settingApi } from '@/api/setting'
 export default {
   components: {
     UploadImage,
@@ -90,14 +94,23 @@ export default {
       companyCoordinates: '', // 地理坐标
       companyPhone: '', // 联系电话
       companySubPhone: '', // 备用电话
+
       basicSituation: [ // 基本情况说明
-        { title: '《基本情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
-        { title: '《供水系统》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
-        { title: '《行车路线》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
-        { title: '《防火设计》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
-        { title: '《重点部位》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' }
+        { id: 'JBQK001', title: '《基本情况》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { id: 'JBQK002', title: '《供水系统》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { id: 'JBQK003', title: '《行车路线》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { id: 'JBQK004', title: '《防火设计》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' },
+        { id: 'JBQK005', title: '《重点部位》', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' }
       ],
-      buildingPlan: [
+      basicSituationPath: { // 上传图片后服务器返回的地址
+        baseInfoPath: '', // 基本情况
+        waterSystemPath: '', // 供水系统
+        driveLinePath: '', // 行车路线
+        fireDesignPath: '', // 防火设计
+        keyPointPath: '' // 重点部位
+      },
+
+      buildingPlan: [ // 建筑平面图
         { title: '', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' }
       ]
     }
@@ -112,10 +125,40 @@ export default {
     this.initBasicInfo()
   },
   methods: {
-    // 增加建筑平面图
+    // 建筑平面图-点击增加
     addBuildingImageClick () {
       this.buildingPlan.push({ title: '', subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M' })
     },
+    // 上传图片
+    async doUploadImage (imageFile, item) {
+      const formData = new FormData()
+      formData.append('picTypeCode', item.id)
+      formData.append('file', imageFile)
+      this.$axios.post(settingApi.baseInfoPicUpload, formData).then((res) => {
+        if (res.data.code === 0) {
+          var receive = res.data.data
+          if (receive.picTypeCode === 'JBQK001') {
+            this.basicSituationPath.baseInfoPath = receive.picPath
+          } else if (receive.picTypeCode === 'JBQK002') {
+            this.basicSituationPath.waterSystemPath = receive.picPath
+          } else if (receive.picTypeCode === 'JBQK003') {
+            this.basicSituationPath.driveLinePath = receive.picPath
+          } else if (receive.picTypeCode === 'JBQK004') {
+            this.basicSituationPath.fireDesignPath = receive.picPath
+          } else if (receive.picTypeCode === 'JBQK005') {
+            this.basicSituationPath.keyPointPath = receive.picPath
+          }
+          return
+        }
+        Notification({
+          title: '提示',
+          message: '头像上传失败',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+      })
+    },
+
     getSelectedLocation () {
       const tmpMap = this.$refs.gduMap
       const tmpFs = tmpMap.map2D.customMarkerLayerManager._source.getFeatures()
