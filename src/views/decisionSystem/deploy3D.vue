@@ -64,7 +64,7 @@ export default {
           opacity: 1,
           clampToGround: true
         },
-        click: (entity) => {
+        click: entity => {
           // 单击回调
           this.$message({ message: '您单击了：' })
         }
@@ -119,7 +119,7 @@ export default {
         popup: {
           html: ` <div class="popup-bg">
                 </div>`,
-          anchor: [0, -70] // 左右、上下的偏移像素值。
+          anchor: [0, -50] // 左右、上下的偏移像素值。
         }
       })
 
@@ -192,23 +192,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/.mars3d-popup-background {
+  background: none;
+}
 
-// /deep/.mars3d-popup-background {
-//     background: none;
-// }
+//popup的倒三角样式
+/deep/.mars3d-popup-tip-container {
+    margin: -20px auto 0;
+}
+/deep/.mars3d-popup-tip {
+  box-shadow: none;
+  background: #1EB0FC;
+}
 
 /deep/.mars3d-popup-close-button {
   display: none;
 }
 
+/deep/.compass {
+  left:8px;
+  right: 0px !important;
+  top:8px!important;
+}
+
 /deep/.mars3d-popup-content-wrapper {
-    text-align: center;
-    max-height: 500px;
-    overflow-y: auto;
-    box-shadow: none;
-    padding: 0px;
-    text-align: left;
-    border-radius: 3px;
+  text-align: center;
+  max-height: 500px;
+  overflow-y: auto;
+  box-shadow: none;
+  padding: 0px;
+  text-align: left;
+  border-radius: 3px;
 }
 
 .mapcontainer {
