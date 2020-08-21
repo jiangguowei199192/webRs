@@ -1,7 +1,7 @@
 <template>
   <div style="width: 250px;">
     <div style="text-align: center;">
-      <span style="color: red;">*</span>
+      <!-- <span style="color: red;">*</span> -->
       <span class="fontStyle1">请上传{{info.title}}</span>
       <button type="button" class="exampleStyle">查看示例</button>
     </div>
@@ -62,7 +62,6 @@ export default {
         })
         return false
       }
-      // this.imageFile = file.raw
       var urlCreator = window.URL || window.webkitURL
       this.imageUrl = urlCreator.createObjectURL(file.raw)
       this.$emit('doUploadImage', file.raw, this.info)
