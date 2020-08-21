@@ -20,9 +20,12 @@
         ></el-option>
       </el-select>
       <div class="models">
-        <div v-for="(item,index) in 10" :key="index"></div>
+        <div v-for="(item,index) in curModels" :key="index" class="outer" @click="startPlot(item)">
+          <div :style="{background: 'url('+ item.image +') no-repeat'}"></div>
+        </div>
       </div>
     </div>
+    <div class="infoBox" v-show="showInfoBox" ref="infobox"></div>
   </div>
 </template>
 
@@ -41,8 +44,10 @@ export default {
       configUrl: 'config/config.json',
       widgetUrl: 'config/widget.json',
       showPlotBox: false,
-      plotType: 0,
-      options: [] // 沙盘绘制选项
+      plotType: '',
+      options: [], // 沙盘绘制选项
+      curModels: [],
+      showInfoBox: false
     }
   },
   components: {
@@ -51,6 +56,22 @@ export default {
 
   mounted () {
     this.getPlotData()
+    document.addEventListener('click', this.closeInfoBox)
+  },
+
+  beforeDestroy () {
+    if (this.drawControl) {
+      this.endPlot()
+    }
+    document.removeEventListener('click', this.closeInfoBox)
+  },
+
+  watch: {
+    plotType (val) {
+      if (this.options.length > 0 && val >= 0 && val < this.options.length) {
+        this.curModels = this.options[val].list
+      }
+    }
   },
 
   methods: {
@@ -59,6 +80,70 @@ export default {
       if (this.activeIndex === 4) {
         this.showPlotBox = true
       } else this.showPlotBox = false
+    },
+
+    /**
+     *  关闭infobox
+     */
+    closeInfoBox (e) {
+      if (
+        this.showInfoBox &&
+        this.$refs.infobox &&
+        !this.$refs.infobox.contains(e.target)
+      ) {
+        this.showInfoBox = false
+      }
+    },
+
+    /**
+     *  获取指定type的默认的标绘样式
+     */
+    getDefStyle: function (type) {
+      return mars3d.draw.util.getDefStyle(type)
+    },
+
+    /**
+     *  开始绘制
+     *@param {Object} item 模型
+     */
+    startPlot (item) {
+      // const me = this
+      if (!this.drawControl) {
+        this.drawControl = new mars3d.Draw(this.viewer, {
+          hasEdit: true,
+          nameTooltip: true,
+          isContinued: false // 是否连续标绘
+        })
+      }
+
+      // 赋值默认样式
+      var defStyle = this.getDefStyle(item.edittype || item.type)
+      if (defStyle) {
+        item.style = item.style || {}
+        for (var i in defStyle) {
+          if (item.style[i] == null) {
+            item.style[i] = defStyle[i]
+          }
+        }
+      }
+
+      // 赋值默认属性
+      item.attr = {
+        id: '',
+        name: '',
+        remark: ''
+      }
+      item.drawShow = true // 绘制时，是否自动隐藏模型，可避免在3dtiles上拾取坐标存在问题。
+
+      this.curDrawItem = item
+      this.drawControl.startDraw(item)
+    },
+
+    /**
+     *  结束绘制、等同双击完成绘制
+     */
+    endPlot () {
+      this.drawControl.endDraw()
     },
 
     /**
@@ -75,11 +160,22 @@ export default {
             const array = data[p]
             array.forEach(a => {
               if (a.image.startsWith('$serverURL_gltf$')) {
-                a.image = a.image.replace('$serverURL_gltf$', 'http://172.16.63.57:9000/mapdata')
+                a.image = a.image.replace(
+                  '$serverURL_gltf$',
+                  'http://172.16.63.57:9000/mapdata/gltf'
+                )
+              }
+
+              if (a.style.modelUrl.startsWith('$serverURL_gltf$')) {
+                a.style.modelUrl = a.style.modelUrl.replace(
+                  '$serverURL_gltf$',
+                  'http://172.16.63.57:9000/mapdata/gltf'
+                )
               }
             })
             const item = { value: i, label: p, list: array }
             this.options.push(item)
+            if (i === 0) this.plotType = i
             i += 1
           }
         })
@@ -177,6 +273,7 @@ export default {
 
       console.log(divpoint1)
 
+      const me = this
       const divpoint2 = new mars3d.DivPoint(this.viewer, {
         html: ` <div class="label labelbf">
                   <span></span>
@@ -184,7 +281,11 @@ export default {
                 </div>`,
         anchor: [-61, 0],
         position: position3,
-        depthTest: false
+        depthTest: false,
+        stopPropagation: true, // 控制是否阻止冒泡
+        click: function (e) {
+          me.showInfoBox = true
+        }
       })
 
       console.log(divpoint2)
@@ -221,6 +322,8 @@ export default {
      */
     onMapload (viewer) {
       this.viewer = viewer
+      // 控制鼠标只取模型上的点，忽略地形上的点的拾取
+      viewer.mars.onlyPickModelPosition = true
       this.showOrHideViewerBtns()
       // 设置右键旋转
       viewer.scene.screenSpaceCameraController.tiltEventTypes = [
@@ -352,13 +455,21 @@ export default {
       display: flex;
       flex-wrap: wrap;
       padding-left: 24px;
-      div {
+      .outer {
         background: url(../../assets/images/3d/box.png) no-repeat;
         width: 114px;
         height: 114px;
         margin-right: 12px;
         margin-bottom: 12px;
+        padding: 7px;
         cursor: pointer;
+        box-sizing: border-box;
+        div {
+          width: 100%;
+          height: 100%;
+          border-radius: 4px;
+          background-size: 100% 100% !important;
+        }
       }
     }
 
@@ -415,6 +526,16 @@ export default {
         margin-left: -2px;
       }
     }
+  }
+
+  .infoBox {
+    bottom: 136px;
+    right: 52px;
+    position: absolute;
+    display: inline-block;
+    width: 256px;
+    height: 413px;
+    background: url(../../assets/images/3d/info-box.png) no-repeat;
   }
 }
 </style>

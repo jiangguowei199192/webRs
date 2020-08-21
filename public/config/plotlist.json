@@ -34,7 +34,6 @@
                 "modelUrl": "$serverURL_gltf$/mars/car/wajueji.glb"
             }
         },
-        
         {
             "name": "小汽车",
             "image": "$serverURL_gltf$/mars/img/qiche.jpg",
@@ -59,7 +58,7 @@
             "style": {
                 "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangche2.gltf"
             }
-        }, 
+        },
         {
             "name": "小货车",
             "image": "$serverURL_gltf$/sample/img/CesiumMilkTruck.jpg",
@@ -77,15 +76,15 @@
             }
         },
         {
-            "name": "汽车_海关车",
-            "image": "$serverURL_gltf$/imap/img/1564470050852.jpg",
+            "name": "摩托车",
+            "image": "$serverURL_gltf$/mars/img/motorcar.jpg",
             "type": "model",
             "style": {
-                "modelUrl": "$serverURL_gltf$/imap/82bd55706595471793aed25081d923d3/gltf/gltf2.gltf"
+                "scale": 0.01,
+                "modelUrl": "$serverURL_gltf$/mars/firedrill/motorcar.glb"
             }
         }
     ],
-
     "人物": [
         {
             "name": "巡逻人员",

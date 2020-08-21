@@ -103,11 +103,11 @@ export default {
         this.initStaticWidget(viewer, data)
       })
 
-      viewer.mars.click = () => {
-        // 触发 document 上的事件
-        document.dispatchEvent(new Event('mousedown'))
-        document.dispatchEvent(new Event('click'))
-      }
+      // viewer.mars.click = () => {
+      //   // 触发 document 上的事件
+      //   document.dispatchEvent(new Event('mousedown'))
+      //   document.dispatchEvent(new Event('click'))
+      // }
       this[`viewer${this.mapKey}`] = viewer
 
       // 挂载到全局对象下，所有组件通过this.$viewer访问

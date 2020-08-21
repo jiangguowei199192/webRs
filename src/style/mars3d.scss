@@ -56,3 +56,13 @@
     height      : 237px;
     background  : url(../../public/assets/images/device-box.png) no-repeat;
   }
+
+  .mars3d .popup-right
+  {
+    right: 52px;
+    position: absolute;
+    display     : inline-block;
+    width       : 341px;
+    height      : 550px;
+    background  : url(../assets/images/3d/info-box.png) no-repeat;
+  }
