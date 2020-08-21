@@ -26,7 +26,8 @@
                   v-for="(list,index2) in item.children"
                   :key="index2"
                   class="visible"
-                >{{list.label}}</el-button>
+                  :title="list.label"
+                >{{list.label.length>3?list.label.slice(0,3)+'..':list.label}}</el-button>
               </div>
             </div>
             </div>
