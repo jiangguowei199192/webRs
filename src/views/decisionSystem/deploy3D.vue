@@ -112,7 +112,7 @@ export default {
         this.drawControl = new mars3d.Draw(this.viewer, {
           hasEdit: true,
           nameTooltip: true,
-          isContinued: false // 是否连续标绘
+          isContinued: true // 是否连续标绘
         })
       }
 
@@ -252,6 +252,7 @@ export default {
         }
       })
 
+      const me = this
       const divpoint1 = new mars3d.DivPoint(this.viewer, {
         html: ` <div class="label labelxfs">
                   <span></span>
@@ -268,12 +269,14 @@ export default {
           html: ` <div class="popup-bg">
                 </div>`,
           anchor: [0, -50] // 左右、上下的偏移像素值。
+        },
+        click: function (e) {
+          me.showInfoBox = false
         }
       })
 
       console.log(divpoint1)
 
-      const me = this
       const divpoint2 = new mars3d.DivPoint(this.viewer, {
         html: ` <div class="label labelbf">
                   <span></span>
