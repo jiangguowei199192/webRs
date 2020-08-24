@@ -33,6 +33,7 @@
 import Map from './components/marsMap.vue'
 import $ from 'jquery'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
+import exit from '@/assets/images/3d/exit.png'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
@@ -112,7 +113,7 @@ export default {
         this.drawControl = new mars3d.Draw(this.viewer, {
           hasEdit: true,
           nameTooltip: true,
-          isContinued: true // 是否连续标绘
+          isContinued: false // 是否连续标绘
         })
       }
 
@@ -252,6 +253,22 @@ export default {
         }
       })
 
+      dataSource.entities.add({
+        name: '紧急出口',
+        position: Cesium.Cartesian3.fromDegrees(114.234825, 30.510722, 12),
+        billboard: {
+          image: exit,
+          scale: 1,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+            0.0,
+            1000
+          )
+        }
+      })
+
       const me = this
       const divpoint1 = new mars3d.DivPoint(this.viewer, {
         html: ` <div class="label labelxfs">
@@ -265,13 +282,25 @@ export default {
         //   100,
         //   200000
         // ), // 按视距距离显示
-        popup: {
-          html: ` <div class="popup-bg">
-                </div>`,
-          anchor: [0, -50] // 左右、上下的偏移像素值。
-        },
-        click: function (e) {
+        // popup: {
+        //   html: ` <div class="popup-bg">
+        //         </div>`,
+        //   anchor: [0, -50] // 左右、上下的偏移像素值。
+        // },
+        click: function (entity) {
           me.showInfoBox = false
+          if (me.viewer.camera.positionCartographic.height > 1000) {
+            me.viewer.mars.popup.close()// 关闭popup
+            var position = entity.position
+            me.viewer.mars.centerPoint(position, {
+              radius: 100, // 距离目标点的距离
+              pitch: -50, // 相机方向
+              duration: 4,
+              complete: function (e) { // 飞行完成回调方法
+                me.viewer.mars.popup.show(entity)// 显示popup
+              }
+            })
+          }
         }
       })
 
@@ -286,7 +315,7 @@ export default {
         position: position3,
         depthTest: false,
         stopPropagation: true, // 控制是否阻止冒泡
-        click: function (e) {
+        click: function (entity) {
           me.showInfoBox = true
         }
       })
