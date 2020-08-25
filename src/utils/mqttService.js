@@ -44,6 +44,8 @@ var mqttService;
       // 订阅实时拼图
       // instance.clinet.subscribe('realMapping/realMappingResult')
       instance.client.subscribe('realMapping/realMappingResult')
+      // 订阅人员识别
+      instance.client.subscribe('video/people/found')
       // 飞机实时信息
       instance.client.subscribe('gdu/#')
     }

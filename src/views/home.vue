@@ -129,6 +129,10 @@ export default {
     EventBus.$on('droneInfos', info => {
       this.parseDroneRealtimeInfo(info)
     })
+    // 人员识别
+    EventBus.$on('video/people/found', info => {
+      this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
+    })
   },
   mounted () {
     this.jumpTo(this.isActive)

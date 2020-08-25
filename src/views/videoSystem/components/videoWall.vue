@@ -16,6 +16,14 @@
         <span></span>
         <span>{{videoInfo.parentLabel}}</span>
       </div>
+      <!-- 人员识别 -->
+      <div class="face" v-if="curFaceArray&&curFaceArray.length>0">
+        <span
+          v-for="(item,index) in curFaceArray[0].positionList"
+          :key="index"
+          :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:394)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:226)+'px',width:item.width+'px',height:item.height+'px'}"
+        ></span>
+      </div>
       <div
         class="fullScreen"
         v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
@@ -96,7 +104,12 @@
           ></gMap>
         </div>
       </div>
-       <div class="fullScreenMark" v-show="showMarkForm" @dblclick="stopEvent" @click.stop="stopEvent">
+      <div
+        class="fullScreenMark"
+        v-show="showMarkForm"
+        @dblclick="stopEvent"
+        @click.stop="stopEvent"
+      >
         <el-form
           :model="ruleForm"
           :rules="rules"
@@ -108,8 +121,16 @@
             <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:350px"></el-input>
           </el-form-item>
           <el-form-item label="标签类型" prop="tagType">
-            <select  v-model="ruleForm.tagType" style="width:350px;height:34px;border-radius: 5px;" placeholder="请选择标签类型" >
-               <option :value="type.id" v-for="(type,index) in tageTypeArray" :key="index">{{type.name}}</option>
+            <select
+              v-model="ruleForm.tagType"
+              style="width:350px;height:34px;border-radius: 5px;"
+              placeholder="请选择标签类型"
+            >
+              <option
+                :value="type.id"
+                v-for="(type,index) in tageTypeArray"
+                :key="index"
+              >{{type.name}}</option>
             </select>
           </el-form-item>
           <el-form-item>
@@ -117,7 +138,6 @@
             <el-button type="primary" @click="resetForm('ruleForm')">取消</el-button>
           </el-form-item>
         </el-form>
-
       </div>
     </LivePlayer>
   </div>
@@ -142,11 +162,16 @@ export default {
           { required: true, message: '请选择标签类型', trigger: 'change,blur' }
         ]
       },
-      tageTypeArray: [{
-        id: 'gongchang', name: '工厂'
-      }, {
-        id: 'jianzhuwu', name: '建筑物'
-      }],
+      tageTypeArray: [
+        {
+          id: 'gongchang',
+          name: '工厂'
+        },
+        {
+          id: 'jianzhuwu',
+          name: '建筑物'
+        }
+      ],
       isSub: false, // 是否监听播放进度改变
       isUpdateTime: true,
       curTime: 0,
@@ -218,9 +243,15 @@ export default {
     var erd = elementResizeDetectorMaker()
     var me = this
     erd.listenTo(this.$refs.playerContainer, function (element) {
-      if (me.isClickFullscreen === true && me.hasClickResizeFullscreen !== true) {
+      if (
+        me.isClickFullscreen === true &&
+        me.hasClickResizeFullscreen !== true
+      ) {
         me.hasClickResizeFullscreen = true
-      } else if (me.isClickFullscreen === true && me.hasClickResizeFullscreen === true) {
+      } else if (
+        me.isClickFullscreen === true &&
+        me.hasClickResizeFullscreen === true
+      ) {
         me.isClickFullscreen = false
         me.hasClickResizeFullscreen = false
         me.videoInfo.isShowOperate = false
@@ -235,7 +266,7 @@ export default {
       console.log(this.ruleForm.tagType)
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
+          console.log('成功')
         } else {
           console.log('error submit!!')
           return false
@@ -902,6 +933,12 @@ export default {
     margin-left: 8px;
   }
 }
+.face{
+   span{
+     position:absolute;
+     background:url(../../../assets/images/person.png) no-repeat
+   }
+ }
 .fullScreen {
   position: absolute;
   right: 30px;
@@ -912,7 +949,7 @@ export default {
   background: url(../../../assets/images/full-screen-operate.png) no-repeat;
   cursor: text;
   .deviceInfo {
-    padding-top:18px;
+    padding-top: 18px;
     .deviceTitle {
       box-sizing: border-box;
       width: 202px;
@@ -920,7 +957,7 @@ export default {
       background: url(../../../assets/images/device/info-title.png) no-repeat;
       line-height: 34px;
       padding-left: 37px;
-      margin-left:20px;
+      margin-left: 20px;
     }
     .operate {
       margin-top: 20px;
@@ -1132,12 +1169,12 @@ export default {
   width: 500px;
   height: 300px;
   background: #00497c;
-  form{
+  form {
     margin-top: 30px;
   }
   .el-button.el-button--primary {
     padding: 0;
-    height:40px!important;
+    height: 40px !important;
     background: #409eff;
   }
 }

@@ -100,6 +100,7 @@
                   v-if="item.streamUrl"
                   ref="videoCtrl"
                   @screenchange="getVideoInfo"
+                  :faceArray="faceArray"
                 ></VideoWall>
               </div>
             </div>
