@@ -1,5 +1,5 @@
 <template>
-  <div class="playerStyle" @dblclick="fullScreen">
+  <div class="playerStyle" @dblclick="fullScreen" ref="playerContainer">
     <LivePlayer
       ref="playerCtrl"
       :videoUrl="videoInfo.streamUrl"
@@ -170,6 +170,21 @@ export default {
       this.curUrl = this.videoInfo.streamUrl
     }
     this.setDroneDevCode(this.videoInfo.deviceCode)
+
+    var elementResizeDetectorMaker = require('element-resize-detector')
+    var erd = elementResizeDetectorMaker()
+    var me = this
+    erd.listenTo(this.$refs.playerContainer, function (element) {
+      if (me.isClickFullscreen === true && me.hasClickResizeFullscreen !== true) {
+        me.hasClickResizeFullscreen = true
+      } else if (me.isClickFullscreen === true && me.hasClickResizeFullscreen === true) {
+        me.isClickFullscreen = false
+        me.hasClickResizeFullscreen = false
+        me.videoInfo.isShowOperate = false
+      } else {
+        me.hasClickResizeFullscreen = false
+      }
+    })
   },
 
   methods: {
@@ -228,8 +243,11 @@ export default {
       // 防止弹出全屏视频对话框后，player为null
       var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
+        this.isClickFullscreen = false
+        this.videoInfo.isShowOperate = false
         player.exitFullscreen()
       } else {
+        this.isClickFullscreen = true
         player.requestFullscreen()
       }
       this.$emit('screenchange', this.videoInfo)
