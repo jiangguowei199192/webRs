@@ -1,5 +1,5 @@
 <template>
-  <div class="playerStyle" @dblclick="fullScreen" ref="playerContainer" @click="addPoint">
+  <div class="playerStyle" @dblclick="fullScreen" @click="addPoint">
     <LivePlayer
       ref="playerCtrl"
       :videoUrl="videoInfo.streamUrl"
@@ -26,7 +26,7 @@
       </div>
       <div
         class="fullScreen"
-        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&hasClickResizeFullscreen===true"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&bIsFullScreen===true"
         @dblclick.stop="stopEvent"
         @click.stop="stopEvent"
       >
@@ -90,7 +90,7 @@
           </div>
         </div>
       </div>
-      <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&hasClickResizeFullscreen===true">
+      <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&bIsFullScreen===true">
         <div class="infoTitle">位置</div>
         <div class="mapBox">
           <gMap
@@ -181,8 +181,7 @@ export default {
       focusSpeed: 0, // 变焦
       lrisSpeed: 0, // 光圈
       step: 4, // 步速值
-      isClickFullscreen: false, // 双击全屏操作标志位
-      hasClickResizeFullscreen: false, // 双击进入全屏时时的标志位
+      bIsFullScreen: false, // 播放器是否全屏
       recordNums: {
         leftUp: 0,
         up: 0,
@@ -252,22 +251,14 @@ export default {
     var erd = elementResizeDetectorMaker()
     var me = this
     this.startTime = new Date()
-    erd.listenTo(this.$refs.playerContainer, function (element) {
-      me.currentTime = new Date()
-      const durTime = me.currentTime - me.startTime
-      // 过滤IE浏览器多次发送尺寸改变事件
-      if (durTime < 200 && me.hasClickResizeFullscreen === true) {
-        return
-      } else {
-        me.startTime = new Date()
-      }
-      if (me.isClickFullscreen === true && me.hasClickResizeFullscreen !== true) {
-        me.startTime = new Date()
-        me.hasClickResizeFullscreen = true
+    erd.listenTo(this.$refs.playerCtrl.player.el_, function (element) {
+      var width = element.offsetWidth
+      var height = element.offsetHeight
+      if (width === window.screen.width && height === window.screen.height) {
+        me.bIsFullScreen = true
         me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
-      } else if (me.isClickFullscreen === true && me.hasClickResizeFullscreen === true) {
-        me.isClickFullscreen = false
-        me.hasClickResizeFullscreen = false
+      } else {
+        me.bIsFullScreen = false
         me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
       }
     })
@@ -358,12 +349,8 @@ export default {
       var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
         this.resetForm('ruleForm')
-        this.isClickFullscreen = false
-        this.hasClickResizeFullscreen = false
         player.exitFullscreen()
-        this.$emit('fullscreenvideo', { info: this.videoInfo, bfull: false })
       } else {
-        this.isClickFullscreen = true
         player.requestFullscreen()
       }
 
