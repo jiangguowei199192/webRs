@@ -18,7 +18,7 @@
       </div>
       <div
         class="fullScreen"
-        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&hasClickResizeFullscreen===true"
         @dblclick.stop="stopEvent"
       >
         <div class="deviceInfo">
@@ -81,7 +81,7 @@
           </div>
         </div>
       </div>
-      <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate">
+      <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&hasClickResizeFullscreen===true">
         <div class="infoTitle">位置</div>
         <div class="mapBox">
           <gMap
@@ -113,6 +113,8 @@ export default {
       focusSpeed: 0, // 变焦
       lrisSpeed: 0, // 光圈
       step: 4, // 步速值
+      isClickFullscreen: false, // 双击全屏操作标志位
+      hasClickResizeFullscreen: false, // 双击进入全屏时时的标志位
       recordNums: {
         leftUp: 0,
         up: 0,
@@ -174,15 +176,24 @@ export default {
     var elementResizeDetectorMaker = require('element-resize-detector')
     var erd = elementResizeDetectorMaker()
     var me = this
+    this.startTime = new Date()
     erd.listenTo(this.$refs.playerContainer, function (element) {
+      me.currentTime = new Date()
+      const durTime = me.currentTime - me.startTime
+      // 过滤IE浏览器多次发送尺寸改变事件
+      if (durTime < 200 && me.hasClickResizeFullscreen === true) {
+        return
+      } else {
+        me.startTime = new Date()
+      }
       if (me.isClickFullscreen === true && me.hasClickResizeFullscreen !== true) {
+        me.startTime = new Date()
         me.hasClickResizeFullscreen = true
+        me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
       } else if (me.isClickFullscreen === true && me.hasClickResizeFullscreen === true) {
         me.isClickFullscreen = false
         me.hasClickResizeFullscreen = false
-        me.videoInfo.isShowOperate = false
-      } else {
-        me.hasClickResizeFullscreen = false
+        me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
       }
     })
   },
@@ -244,13 +255,13 @@ export default {
       var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
         this.isClickFullscreen = false
-        this.videoInfo.isShowOperate = false
+        this.hasClickResizeFullscreen = false
         player.exitFullscreen()
+        this.$emit('fullscreenvideo', { info: this.videoInfo, bfull: false })
       } else {
         this.isClickFullscreen = true
         player.requestFullscreen()
       }
-      this.$emit('screenchange', this.videoInfo)
 
       if (this.videoInfo.deviceTypeCode === 'WRJ') {
         const tmpMap = this.$refs.gduMap.map2D
