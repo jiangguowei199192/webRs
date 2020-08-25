@@ -215,6 +215,13 @@ export default {
   computed: {
     deviceCode () {
       return this.videoInfo.deviceCode
+    },
+    curFaceArray () {
+      if (this.faceArray && this.faceArray.length > 0) {
+        return this.faceArray.filter(
+          item => item.deviceCode === this.videoInfo.deviceCode
+        )
+      } return []
     }
   },
 

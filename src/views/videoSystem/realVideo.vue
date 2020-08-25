@@ -336,6 +336,7 @@ import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
 import { throttle, debounce } from '../../utils/public.js'
 import { EventBus } from '@/utils/eventBus.js'
+import MqttService from '@/utils/mqttService'
 
 export default {
   name: 'videoContainer',
@@ -346,6 +347,7 @@ export default {
   },
   data () {
     return {
+      faceArray: [], // 保存人脸识别数据
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
@@ -945,6 +947,7 @@ export default {
     playOrClose (type, curTreeData) {
       // 1.添加
       if (type === 1) {
+        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, id: curTreeData.id }))
         this.curSelectedVideo = JSON.parse(JSON.stringify(curTreeData))
         console.log('当前选中', this.curSelectedVideo)
         this.refreshMap(curTreeData)
