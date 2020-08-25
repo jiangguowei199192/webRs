@@ -1,5 +1,5 @@
 <template>
-  <div class="playerStyle" @dblclick="fullScreen" ref="playerContainer">
+  <div class="playerStyle" @dblclick="fullScreen" ref="playerContainer" @click="addPoint">
     <LivePlayer
       ref="playerCtrl"
       :videoUrl="videoInfo.streamUrl"
@@ -20,6 +20,7 @@
         class="fullScreen"
         v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
         @dblclick.stop="stopEvent"
+        @click.stop="stopEvent"
       >
         <div class="deviceInfo">
           <div class="deviceTitle">云台</div>
@@ -95,6 +96,29 @@
           ></gMap>
         </div>
       </div>
+       <div class="fullScreenMark" v-show="showMarkForm" @dblclick="stopEvent" @click.stop="stopEvent">
+        <el-form
+          :model="ruleForm"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <el-form-item label="标签名称" prop="tagName">
+            <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:350px"></el-input>
+          </el-form-item>
+          <el-form-item label="标签类型" prop="tagType">
+            <select  v-model="ruleForm.tagType" style="width:350px;height:34px;border-radius: 5px;" placeholder="请选择标签类型" >
+               <option :value="type.id" v-for="(type,index) in tageTypeArray" :key="index">{{type.name}}</option>
+            </select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
+            <el-button type="primary" @click="resetForm('ruleForm')">取消</el-button>
+          </el-form-item>
+        </el-form>
+
+      </div>
     </LivePlayer>
   </div>
 </template>
@@ -104,6 +128,25 @@ import droneInfoMixin from '../../../utils/droneInfoMixin'
 export default {
   data () {
     return {
+      showMarkForm: false,
+      ruleForm: {
+        tagName: '',
+        tagType: ''
+      },
+      rules: {
+        tagName: [
+          { required: true, message: '请输入标签名称', trigger: 'blur' },
+          { min: 2, max: 8, message: '长度在 2 到 8个字符', trigger: 'blur' }
+        ],
+        tagType: [
+          { required: true, message: '请选择标签类型', trigger: 'change,blur' }
+        ]
+      },
+      tageTypeArray: [{
+        id: 'gongchang', name: '工厂'
+      }, {
+        id: 'jianzhuwu', name: '建筑物'
+      }],
       isSub: false, // 是否监听播放进度改变
       isUpdateTime: true,
       curTime: 0,
@@ -188,6 +231,34 @@ export default {
   },
 
   methods: {
+    submitForm (formName) {
+      console.log(this.ruleForm.tagType)
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm (formName) {
+      this.showMarkForm = false
+      this.$refs[formName].resetFields()
+    },
+    addPoint (e) {
+      if (this.checkFull()) {
+        console.log(e.pageX, e.pageY)
+        // this.videoInfo.streamUrl = 'ws://111.47.13.103:40007/live/34020000001310000005.flv'
+        // setTimeout(() => {
+        //   this.$refs.playerCtrl.player.requestFullscreen()
+        // }, 500)
+        if (this.showMarkForm) {
+          return
+        }
+        this.showMarkForm = true
+      }
+    },
     // 阻止冒泡
     stopEvent (event) {
       event.stopPropagation()
@@ -243,6 +314,7 @@ export default {
       // 防止弹出全屏视频对话框后，player为null
       var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
+        this.resetForm('ruleForm')
         this.isClickFullscreen = false
         this.videoInfo.isShowOperate = false
         player.exitFullscreen()
@@ -1050,6 +1122,23 @@ export default {
     margin-top: 20px;
     width: 247px;
     height: 150px;
+  }
+}
+.fullScreenMark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 300px;
+  background: #00497c;
+  form{
+    margin-top: 30px;
+  }
+  .el-button.el-button--primary {
+    padding: 0;
+    height:40px!important;
+    background: #409eff;
   }
 }
 </style>
