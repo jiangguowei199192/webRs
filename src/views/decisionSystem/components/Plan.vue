@@ -58,7 +58,6 @@
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
               @click="toFightDeploy"
             />
-            <!-- <i class="el-icon-edit-outline edit_icon fl" @click="toFightDeploy"></i> -->
           </div>
         </el-collapse-item>
 
@@ -80,7 +79,7 @@
       </div>
     </div>
 
-    <FloorGuide v-bind:isShow="showFloorGuide"></FloorGuide>
+    <FloorGuide ref="floorGuide" v-bind:info="buildingInfos"></FloorGuide>
   </div>
 </template>
 
@@ -96,8 +95,24 @@ export default {
       phoneNumber: '027-XXXXXXXX',
 
       activeNames: ['1', '2', '3', '4'],
-      buildingInfos: [{}, {}, {}, {}, {}],
-      showFloorGuide: false
+
+      buildingInfos: [ // 测试数据
+        { title: '1层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: true },
+        { title: '2层', image: '', selected: false },
+        { title: '3层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: false },
+        { title: '4层', image: '', selected: false },
+        { title: '5层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: false },
+        { title: '6层', image: '', selected: false },
+        { title: '7层', image: '', selected: false },
+        { title: '8层', image: '', selected: false },
+        { title: '9层', image: '', selected: false },
+        { title: '10层', image: '', selected: false },
+        { title: '11层', image: '', selected: false },
+        { title: '12层', image: '', selected: false },
+        { title: '13层', image: '', selected: false },
+        { title: '14层', image: '', selected: false },
+        { title: '15层', image: '', selected: false }
+      ]
     }
   },
   components: {
@@ -118,7 +133,7 @@ export default {
     },
     // 点击建筑平面图
     didClickedBuildingImage (index) {
-      this.showFloorGuide = true
+      this.$refs.floorGuide.show()
     }
   },
 
