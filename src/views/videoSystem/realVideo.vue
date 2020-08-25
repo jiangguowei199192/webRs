@@ -335,6 +335,7 @@ import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
 import { throttle, debounce } from '../../utils/public.js'
+import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   name: 'videoContainer',
@@ -1547,6 +1548,9 @@ export default {
     })
   },
   mounted () {
+    EventBus.$on('faceArrayChange', info => {
+      this.faceArray = info
+    })
     this.bSaveMultiDroneInfos = true
   }
 }
