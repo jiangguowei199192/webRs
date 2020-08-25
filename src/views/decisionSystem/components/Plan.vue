@@ -44,7 +44,7 @@
             <div style="margin-left: 22px;">建筑平面图</div>
           </template>
           <div class="itemContainer1">
-            <HorCardList></HorCardList>
+            <HorCardList v-bind:items="buildingInfos" v-on:didClickedImage="didClickedBuildingImage"></HorCardList>
           </div>
         </el-collapse-item>
 
@@ -58,7 +58,6 @@
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
               @click="toFightDeploy"
             />
-            <!-- <i class="el-icon-edit-outline edit_icon fl" @click="toFightDeploy"></i> -->
           </div>
         </el-collapse-item>
 
@@ -79,12 +78,14 @@
         <button type="button" class="editPlanStyle" @click="editPlanClick">预案编辑</button>
       </div>
     </div>
+
+    <FloorGuide ref="floorGuide" v-bind:info="buildingInfos"></FloorGuide>
   </div>
 </template>
 
 <script>
 import HorCardList from './HorizontalCardList.vue'
-
+import FloorGuide from './FloorGuide'
 export default {
   data () {
     return {
@@ -93,11 +94,30 @@ export default {
       detailAddress: '武汉市江夏区新技术开发区关山大道XXX',
       phoneNumber: '027-XXXXXXXX',
 
-      activeNames: ['1', '2', '3', '4']
+      activeNames: ['1', '2', '3', '4'],
+
+      buildingInfos: [ // 测试数据
+        { title: '1层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: true },
+        { title: '2层', image: '', selected: false },
+        { title: '3层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: false },
+        { title: '4层', image: '', selected: false },
+        { title: '5层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: false },
+        { title: '6层', image: '', selected: false },
+        { title: '7层', image: '', selected: false },
+        { title: '8层', image: '', selected: false },
+        { title: '9层', image: '', selected: false },
+        { title: '10层', image: '', selected: false },
+        { title: '11层', image: '', selected: false },
+        { title: '12层', image: '', selected: false },
+        { title: '13层', image: '', selected: false },
+        { title: '14层', image: '', selected: false },
+        { title: '15层', image: '', selected: false }
+      ]
     }
   },
   components: {
-    HorCardList
+    HorCardList,
+    FloorGuide
   },
   methods: {
     toFightDeploy () {
@@ -110,6 +130,10 @@ export default {
     },
     goto3d () {
       this.$router.push({ path: '/deploy3D' })
+    },
+    // 点击建筑平面图
+    didClickedBuildingImage (index) {
+      this.$refs.floorGuide.show()
     }
   },
 
