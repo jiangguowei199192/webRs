@@ -1,7 +1,7 @@
 <template>
 <!-- 横向卡片列表 -->
   <div class="container webFsScroll">
-    <div class="item" v-for="(item, index) in items" :key="index">
+    <div class="item" v-for="(item, index) in items" :key="index" @click="didClickedImage(index)">
       <img src="http://img4.imgtn.bdimg.com/it/u=3773584324,1413178473&fm=214&gp=0.jpg" style="width: 100%; height: 100%;">
     </div>
   </div>
@@ -9,13 +9,21 @@
 
 <script>
 export default {
+  props: {
+    items: {
+      type: Array,
+      required: true
+    }
+  },
   data () {
     return {
-      items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // 假数据
+
     }
   },
   methods: {
-
+    didClickedImage (index) {
+      this.$emit('didClickedImage', index)
+    }
   }
 }
 </script>

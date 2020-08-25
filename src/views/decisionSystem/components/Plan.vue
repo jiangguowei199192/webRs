@@ -44,7 +44,7 @@
             <div style="margin-left: 22px;">建筑平面图</div>
           </template>
           <div class="itemContainer1">
-            <HorCardList></HorCardList>
+            <HorCardList v-bind:items="buildingInfos" v-on:didClickedImage="didClickedBuildingImage"></HorCardList>
           </div>
         </el-collapse-item>
 
@@ -79,12 +79,14 @@
         <button type="button" class="editPlanStyle" @click="editPlanClick">预案编辑</button>
       </div>
     </div>
+
+    <FloorGuide v-bind:isShow="showFloorGuide"></FloorGuide>
   </div>
 </template>
 
 <script>
 import HorCardList from './HorizontalCardList.vue'
-
+import FloorGuide from './FloorGuide'
 export default {
   data () {
     return {
@@ -93,11 +95,14 @@ export default {
       detailAddress: '武汉市江夏区新技术开发区关山大道XXX',
       phoneNumber: '027-XXXXXXXX',
 
-      activeNames: ['1', '2', '3', '4']
+      activeNames: ['1', '2', '3', '4'],
+      buildingInfos: [{}, {}, {}, {}, {}],
+      showFloorGuide: false
     }
   },
   components: {
-    HorCardList
+    HorCardList,
+    FloorGuide
   },
   methods: {
     toFightDeploy () {
@@ -110,6 +115,10 @@ export default {
     },
     goto3d () {
       this.$router.push({ path: '/deploy3D' })
+    },
+    // 点击建筑平面图
+    didClickedBuildingImage (index) {
+      this.showFloorGuide = true
     }
   },
 
