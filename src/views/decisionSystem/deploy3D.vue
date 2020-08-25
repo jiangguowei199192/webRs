@@ -25,7 +25,24 @@
         </div>
       </div>
     </div>
-    <div class="infoBox" v-show="showInfoBox" ref="infobox"></div>
+    <div class="infoBox" v-show="showInfoBox" ref="infobox">
+      <div class="close" @click="showInfoBox = false" />
+      <img class="img" :src="infoBox.imgSrc" />
+      <span class="title">{{infoBox.label}}</span>
+      <div class="decorate"></div>
+      <div class="detail">
+        <ul>
+          <li>
+            <span>文案：</span>
+            <div></div>
+          </li>
+          <li>
+            <span>文案：</span>
+            <div></div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,10 +50,14 @@
 import Map from './components/marsMap.vue'
 import $ from 'jquery'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
+import xfs from '@/assets/images/3d/xfs.jpg'
+import bf from '@/assets/images/3d/bf.jpg'
 import exit from '@/assets/images/3d/exit.png'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
+var gltfEdit = window.gltfEdit
+let me
 export default {
   // 所有cesium和mars3d对象 都不要绑定到data
   data () {
@@ -48,7 +69,8 @@ export default {
       plotType: '',
       options: [], // 沙盘绘制选项
       curModels: [],
-      showInfoBox: false
+      showInfoBox: false,
+      infoBox: { imgSrc: '' }
     }
   },
   components: {
@@ -104,16 +126,75 @@ export default {
     },
 
     /**
+     *  开始编辑
+     *@param {Object} entity 模型
+     */
+    startEditing (entity) {
+      // 启用编辑
+
+      gltfEdit.activate(entity, me.viewer, {
+        calback: function (result) {}
+      })
+    },
+
+    /**
+     *  停止编辑
+     *@param {Object} entity 模型
+     */
+    stopEditing (entity) {
+      gltfEdit.disable() // 停止编辑
+    },
+
+    /**
      *  开始绘制
      *@param {Object} item 模型
      */
     startPlot (item) {
-      // const me = this
       if (!this.drawControl) {
         this.drawControl = new mars3d.Draw(this.viewer, {
           hasEdit: true,
           nameTooltip: true,
           isContinued: false // 是否连续标绘
+        })
+
+        // 创建完成
+        this.drawControl.on(mars3d.draw.event.DrawCreated, function (e) {
+          var entity = e.entity
+          if (!me.drawControl.isContinued) {
+            me.startEditing(entity)
+          }
+          // console.log('创建完成')
+        })
+
+        // 开始编辑
+        this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
+          var entity = e.entity
+          me.startEditing(entity)
+          // console.log('开始编辑')
+        })
+        //
+        this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
+          me.stopEditing()
+          // console.log('EditMouseMove')
+        })
+
+        // 编辑修改了点
+        this.drawControl.on(mars3d.draw.event.EditMovePoint, function (e) {
+          var entity = e.entity
+          me.startEditing(entity)
+          // console.log('编辑修改了点')
+        })
+
+        // 停止编辑
+        this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
+          me.stopEditing()
+          // console.log('停止编辑')
+        })
+
+        // 删除了对象
+        this.drawControl.on(mars3d.draw.event.Delete, function (e) {
+          me.stopEditing()
+          // console.log('删除了对象')
         })
       }
 
@@ -135,8 +216,7 @@ export default {
         remark: ''
       }
       item.drawShow = true // 绘制时，是否自动隐藏模型，可避免在3dtiles上拾取坐标存在问题。
-
-      this.curDrawItem = item
+      item.noExDragger = true // 去掉辅助编辑的对象
       this.drawControl.startDraw(item)
     },
 
@@ -195,7 +275,26 @@ export default {
       $('#distanceLegendDiv').hide()
     },
 
+    /**
+     *  viewer飞到Entity视角
+     * @param {Object} entity 模型
+     * @param {Object} callback 飞行完成回调方法
+     */
+    flyToEntity (entity, callback) {
+      // if (me.viewer.camera.positionCartographic.height > 500) {
+      this.viewer.mars.popup.close() // 关闭popup
+      var position = entity.position
+      this.viewer.mars.centerPoint(position, {
+        radius: 100, // 距离目标点的距离
+        pitch: -50, // 相机方向
+        duration: 4,
+        complete: callback
+      })
+      // }
+    },
+
     addModel () {
+      me = this
       var dataSource = new Cesium.CustomDataSource()
       this.viewer.dataSources.add(dataSource)
       var position = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 10)
@@ -269,7 +368,6 @@ export default {
         }
       })
 
-      const me = this
       const divpoint1 = new mars3d.DivPoint(this.viewer, {
         html: ` <div class="label labelxfs">
                   <span></span>
@@ -288,19 +386,14 @@ export default {
         //   anchor: [0, -50] // 左右、上下的偏移像素值。
         // },
         click: function (entity) {
+          me.infoBox.imgSrc = xfs
+          me.infoBox.label = '消防栓'
           me.showInfoBox = false
-          if (me.viewer.camera.positionCartographic.height > 1000) {
-            me.viewer.mars.popup.close()// 关闭popup
-            var position = entity.position
-            me.viewer.mars.centerPoint(position, {
-              radius: 100, // 距离目标点的距离
-              pitch: -50, // 相机方向
-              duration: 4,
-              complete: function (e) { // 飞行完成回调方法
-                me.viewer.mars.popup.show(entity)// 显示popup
-              }
-            })
-          }
+          me.flyToEntity(entity, function (e) {
+            // 飞行完成回调方法
+            me.showInfoBox = true
+            // me.viewer.mars.popup.show(entity)// 显示popup
+          })
         }
       })
 
@@ -316,18 +409,18 @@ export default {
         depthTest: false,
         stopPropagation: true, // 控制是否阻止冒泡
         click: function (entity) {
-          me.showInfoBox = true
+          me.infoBox.imgSrc = bf
+          me.infoBox.label = '泵房'
+          me.showInfoBox = false
+          me.flyToEntity(entity, function (e) {
+            // 飞行完成回调方法
+            me.showInfoBox = true
+            // me.viewer.mars.popup.show(entity)// 显示popup
+          })
         }
       })
 
       console.log(divpoint2)
-
-      // this.viewer.mars.centerPoint(position, {
-      //   radius: 300, // 距离目标点的距离
-      //   pitch: -50, // 相机方向
-      //   duration: 4
-      // })
-      // this.viewer.flyTo(entity)
 
       var layercfg = {
         type: '3dtiles',
@@ -336,7 +429,6 @@ export default {
         maximumScreenSpaceError: 1,
         maximumMemoryUsage: 8192,
         offset: { z: -4 },
-        // center: { y: 30.519161, x: 114.237614, z: 1236.59, heading: 194.6, pitch: -48.8, roll: 359.9 },
         dynamicScreenSpaceError: true,
         cullWithChildrenBounds: false,
         luminanceAtZenith: 0.6
@@ -561,13 +653,74 @@ export default {
   }
 
   .infoBox {
-    bottom: 136px;
+    bottom: 334px;
     right: 52px;
     position: absolute;
     display: inline-block;
-    width: 256px;
-    height: 413px;
+    width: 270px;
+    height: 330px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;
+    padding: 0px 20px;
+    box-sizing: border-box;
+    text-align: center;
+    .img {
+      margin-top: 27px;
+      width: 230px;
+      height: 129px;
+    }
+    .close {
+      position: absolute;
+      display: inline-block;
+      background: url(../../assets/images/3d/close.png) no-repeat;
+      top: 6px;
+      right: 6px;
+      width: 12px;
+      height: 12px;
+      cursor: pointer;
+    }
+    .title {
+      display: inline-block;
+      font-size: 16px;
+      color: rgba(30, 176, 252, 1);
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    .decorate {
+      margin-top: 15px;
+      width: 239px;
+      height: 2px;
+      background: linear-gradient(
+        -90deg,
+        rgba(30, 176, 252, 0) 0%,
+        rgba(30, 176, 252, 0.99) 51%,
+        rgba(30, 176, 252, 0) 100%
+      );
+    }
+    .detail {
+      margin-top: 22px;
+      ul {
+
+        li {
+          word-break: break-all;
+          span {
+            display: inline-block;
+            position: relative;
+            top: -7px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            line-height: 27px;
+          }
+          div {
+            display: inline-block;
+            width: 163px;
+            height: 23px;
+            background: rgba(0, 57, 87, 1);
+            opacity: 0.9;
+          }
+        }
+      }
+    }
   }
 }
 </style>

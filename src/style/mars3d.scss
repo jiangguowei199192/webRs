@@ -1,68 +1,59 @@
+.mars3d .label {
+  height    : 28px;
+  width     : 110px;
+  box-sizing: border-box;
+  border    : 1px solid rgba(0, 228, 255, 1);
+  background: rgba(19, 40, 73, 1);
+  opacity   : 0.8;
+  cursor    : pointer;
+  padding   : 3px 10px;
 
-    .mars3d .label{
-      height    : 32px;
-      border    : 1px solid rgba(0, 228, 255, 1);
-      background: rgba(19, 40, 73, 1);
-      opacity   : 0.8;
-      cursor: pointer;
-      padding   : 3px 10px;
-
-      span:nth-child(2) {
-        font-size: 16px;
-        color: #ffffff;
-        position: relative;
-        top: -6px;
-      }
-    }
-  
-  .mars3d .labelxfs {
-    width     : 100px;
-
-    span:nth-child(1) {
-      display     : inline-block;
-      width       : 21px;
-      height      : 24px;
-      background  : url(../assets/images/3d/xiaofangshuan.png) no-repeat;
-      margin-top  : 4px;
-      margin-right: 13px;
-    }
-
+  span:nth-child(2) {
+    font-size: 12px;
+    color    : #ffffff;
+    position : relative;
+    top      : -4px;
   }
+}
 
-  .mars3d .labelbf {
-    height    : 32px;
-    width     : 80px;
-    border    : 1px solid rgba(0, 228, 255, 1);
-    background: rgba(19, 40, 73, 1);
-    opacity   : 0.8;
-    cursor: pointer;
-    padding   : 3px 10px;
+.mars3d .labelxfs {
 
-    span:nth-child(1) {
-      display     : inline-block;
-      width       : 25px;
-      height      : 22px;
-      background  : url(../assets/images/3d/pumphouse.png) no-repeat;
-      margin-top  : 5px;
-      margin-right: 13px;
-    }
-
-  }
-
-  .mars3d .popup-bg
-  {
+  span:nth-child(1) {
     display     : inline-block;
-    width       : 432px;
-    height      : 237px;
-    background  : url(../../public/assets/images/device-box.png) no-repeat;
+    width       : 13px;
+    height      : 15px;
+    background  : url(../assets/images/3d/xiaofangshuan.png) no-repeat;
+    margin-top  : 3px;
+    margin-right: 13px;
   }
 
-  .mars3d .popup-right
-  {
-    right: 52px;
-    position: absolute;
+}
+
+.mars3d .labelbf {
+
+  span:nth-child(1) {
     display     : inline-block;
-    width       : 341px;
-    height      : 550px;
-    background  : url(../assets/images/3d/info-box.png) no-repeat;
+    width       : 18px;
+    height      : 16px;
+    background  : url(../assets/images/3d/pumphouse.png) no-repeat;
+    margin-top  : 3px;
+    margin-right: 13px;
   }
+
+}
+
+.mars3d .popup-bg {
+  display   : inline-block;
+  width     : 432px;
+  height    : 237px;
+  background: url(../../public/assets/images/device-box.png) no-repeat;
+}
+
+.mars3d .popup-right {
+  right     : 52px;
+  position  : absolute;
+  display   : inline-block;
+  width     : 341px;
+  height    : 550px;
+  background: url(../assets/images/3d/info-box.png) no-repeat;
+}
