@@ -132,7 +132,7 @@ export default {
     // 人员识别
     EventBus.$on('video/people/found', info => {
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
-      this.$emit('faceArrayChange', info)
+      EventBus.$emit('faceArrayChange', info)
     })
   },
   mounted () {
