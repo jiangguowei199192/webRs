@@ -99,7 +99,7 @@
                   :key="index"
                   v-if="item.streamUrl"
                   ref="videoCtrl"
-                  @screenchange="getVideoInfo"
+                  @fullscreenvideo="fullscreenvideo"
                   :faceArray="faceArray"
                 ></VideoWall>
               </div>
@@ -296,7 +296,7 @@
             :key="index"
             ref="playerCtrl"
             v-if="item.streamUrl"
-            @screenchange="getVideoInfo"
+            @fullscreenvideo="fullscreenvideo"
           ></VideoWall>
         </div>
       </div>
@@ -387,7 +387,8 @@ export default {
       },
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
-      imgId: '' // 保存抓取图片id
+      imgId: '', // 保存抓取图片id
+      bHasFullVideo: false // 有全屏播放视频
     }
   },
   mixins: [videoMixin, fireMixin, droneInfoMixin],
@@ -1334,33 +1335,32 @@ export default {
       return isFull
     },
     // 双击视频时给显示操作按钮（视频列表及全屏页面公用此方法）
-    getVideoInfo (curScreenInfo) {
-      this.curScreenInfo = curScreenInfo
-      setTimeout(() => {
-        if (this.checkFull() && !curScreenInfo.isShowOperate) {
-          this.totalVideosArray.forEach((item, index) => {
-            if (item.id === curScreenInfo.id) {
-              this.$set(this.totalVideosArray[index], 'isShowOperate', true)
-            }
-          })
-          this.curVideosArray.forEach((item, index) => {
-            if (item.id === curScreenInfo.id) {
-              this.$set(this.curVideosArray[index], 'isShowOperate', true)
-            }
-          })
-        } else {
-          this.totalVideosArray.forEach((item, index) => {
-            if (item.id === curScreenInfo.id) {
-              this.$set(this.totalVideosArray[index], 'isShowOperate', false)
-            }
-          })
-          this.curVideosArray.forEach((item, index) => {
-            if (item.id === curScreenInfo.id) {
-              this.$set(this.curVideosArray[index], 'isShowOperate', false)
-            }
-          })
-        }
-      }, 500)
+    fullscreenvideo (videoObj) {
+      this.curScreenInfo = videoObj.info
+      if (videoObj.bfull === true) {
+        this.totalVideosArray.forEach((item, index) => {
+          if (item.id === videoObj.info.id) {
+            this.$set(this.totalVideosArray[index], 'isShowOperate', true)
+          }
+        })
+        this.curVideosArray.forEach((item, index) => {
+          if (item.id === videoObj.info.id) {
+            this.$set(this.curVideosArray[index], 'isShowOperate', true)
+          }
+        })
+      } else {
+        this.totalVideosArray.forEach((item, index) => {
+          if (item.id === videoObj.info.id) {
+            this.$set(this.totalVideosArray[index], 'isShowOperate', false)
+          }
+        })
+        this.curVideosArray.forEach((item, index) => {
+          if (item.id === videoObj.info.id) {
+            this.$set(this.curVideosArray[index], 'isShowOperate', false)
+          }
+        })
+      }
+      this.bHasFullVideo = videoObj.bfull
     },
     init () {
       // 初始加载9个空元素
@@ -1512,41 +1512,14 @@ export default {
   created () {
     this.init()
     const me = this
-    window.addEventListener(
-      'resize',
-      () => {
-        if (!me.checkFull() || (me.checkFull() && me.dialogVisible)) {
-          me.totalVideosArray.forEach((item, index) => {
-            if (item) {
-              me.$set(me.totalVideosArray[index], 'isShowOperate', false)
-            }
-          })
-          me.curVideosArray.forEach((item, index) => {
-            if (item) {
-              me.$set(me.curVideosArray[index], 'isShowOperate', false)
-            }
-          })
-          if (me.curScreenInfo.id) {
-            me.curScreenInfo = {}
-          }
-        }
-      }
-    )
     // 监听键盘按键事件
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
         // 这一步只能监听到全屏页面的esc 视频中的esc监听不到
-        me.dialogVisible = false
-        me.totalVideosArray.forEach((item, index) => {
-          if (item) {
-            me.$set(me.totalVideosArray[index], 'isShowOperate', false)
-          }
-        })
-        me.curVideosArray.forEach((item, index) => {
-          if (item) {
-            me.$set(me.curVideosArray[index], 'isShowOperate', false)
-          }
-        })
+        // IE浏览器全屏时任然能够监控到esc键，这里处理还有点遗留问题。。。
+        if (!me.bHasFullVideo && me.dialogVisible) {
+          me.dialogVisible = false
+        }
       }
     })
   },
