@@ -14,7 +14,7 @@
     >
       <div class="info">
         <span></span>
-        <span>{{videoInfo.parentLabel}} </span>
+        <span>{{videoInfo.parentLabel}}</span>
       </div>
       <!-- 人员识别 -->
       <div class="face" v-show="videoInfo.positionList&&videoInfo.positionList.length>0">
