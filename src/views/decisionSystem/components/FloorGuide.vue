@@ -41,6 +41,10 @@
 <script>
 export default {
   props: {
+    title: {
+      type: String,
+      required: true
+    },
     info: {
       type: Array,
       required: true
@@ -53,7 +57,6 @@ export default {
     return {
       dialogVisible: false,
       backImg: require('../../../assets/images/Setting/setting-back.png'),
-      title: '黄鹤楼',
       currentImg: ''
     }
   },

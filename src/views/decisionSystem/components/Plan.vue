@@ -79,7 +79,7 @@
       </div>
     </div>
 
-    <FloorGuide ref="floorGuide" v-bind:info="buildingInfos"></FloorGuide>
+    <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
   </div>
 </template>
 
@@ -96,6 +96,7 @@ export default {
 
       activeNames: ['1', '2', '3', '4'],
 
+      buildingTitle: '黄鹤楼',
       buildingInfos: [ // 测试数据
         { title: '1层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: true },
         { title: '2层', image: '', selected: false },
