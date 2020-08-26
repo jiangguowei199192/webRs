@@ -93,6 +93,7 @@
               <div
                 @click.stop="operateCurVideo(item,index)"
                 :class="{active:curVideoIndex===index}"
+                ref="video"
               >
                 <VideoWall
                   :videoInfo.sync="item"
@@ -101,6 +102,8 @@
                   ref="videoCtrl"
                   @fullscreenvideo="fullscreenvideo"
                   :faceArray="faceArray"
+                  :playerWidth="playerWidth"
+                  :playerHeight="playerHeight"
                 ></VideoWall>
               </div>
             </div>
@@ -348,6 +351,8 @@ export default {
   data () {
     return {
       faceArray: [], // 保存人脸识别数据
+      playerWidth: '',
+      playerHeight: '',
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
@@ -1507,6 +1512,12 @@ export default {
           nextBtn.removeAttribute('title')
         }
       })
+    },
+    getPlayerStyle () {
+      this.$nextTick(() => {
+        this.playerWidth = this.$refs.video[0].clientWidth
+        this.playerHeight = this.$refs.video[0].clientHeight
+      })
     }
   },
   created () {
@@ -1524,6 +1535,7 @@ export default {
     })
   },
   mounted () {
+    this.getPlayerStyle()
     EventBus.$on('faceArrayChange', info => {
       this.faceArray = info
     })

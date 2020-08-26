@@ -83,9 +83,11 @@ const videoMixin = {
   methods: {
     closeLeftNav (type) {
       this.showLeft = type !== 1
+      this.getPlayerStyle()
     },
     closeRightInfo (type) {
       this.showRight = type !== 1
+      this.getPlayerStyle()
     },
 
     /**

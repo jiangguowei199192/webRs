@@ -21,7 +21,7 @@
         <span
           v-for="(item,index) in curFaceArray[0].positionList"
           :key="index"
-          :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:394)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:226)+'px',width:item.width+'px',height:item.height+'px'}"
+          :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:playerHeight)+'px',width:item.width/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',height:item.height/720*(videoInfo.isShowOperate?1080:playerHeight)+'px'}"
         ></span>
       </div>
       <div
@@ -210,7 +210,9 @@ export default {
   props: {
     videoInfo: {
       default: () => {}
-    }
+    },
+    playerWidth: [Number, String],
+    playerHeight: [Number, String]
   },
 
   computed: {
