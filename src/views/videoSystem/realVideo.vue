@@ -101,7 +101,6 @@
                   v-if="item.streamUrl"
                   ref="videoCtrl"
                   @fullscreenvideo="fullscreenvideo"
-                  :faceArray="faceArray"
                   :playerWidth="playerWidth"
                   :playerHeight="playerHeight"
                 ></VideoWall>
@@ -350,7 +349,6 @@ export default {
   },
   data () {
     return {
-      faceArray: [], // 保存人脸识别数据
       playerWidth: '',
       playerHeight: '',
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
@@ -953,7 +951,7 @@ export default {
     playOrClose (type, curTreeData) {
       // 1.添加
       if (type === 1) {
-        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, id: curTreeData.id }))
+        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.id }))
         this.curSelectedVideo = JSON.parse(JSON.stringify(curTreeData))
         console.log('当前选中', this.curSelectedVideo)
         this.refreshMap(curTreeData)
@@ -1537,7 +1535,16 @@ export default {
   mounted () {
     this.getPlayerStyle()
     EventBus.$on('faceArrayChange', info => {
-      this.faceArray = info
+      this.totalVideosArray.forEach((item, index) => {
+        if (item.deviceCode === info.deviceCode && item.id === info.channelId) {
+          this.$set(this.totalVideosArray[index], 'positionList', info.positionList)
+        }
+      })
+      this.curVideosArray.forEach((item, index) => {
+        if (item.deviceCode === info.deviceCode && item.id === info.channelId) {
+          this.$set(this.curVideosArray[index], 'positionList', info.positionList)
+        }
+      })
     })
     this.bSaveMultiDroneInfos = true
   }

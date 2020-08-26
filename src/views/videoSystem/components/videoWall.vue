@@ -14,12 +14,12 @@
     >
       <div class="info">
         <span></span>
-        <span>{{videoInfo.parentLabel}}</span>
+        <span>{{videoInfo.parentLabel}} </span>
       </div>
       <!-- 人员识别 -->
-      <div class="face" v-if="curFaceArray&&curFaceArray.length>0">
+      <div class="face" v-show="videoInfo.positionList&&videoInfo.positionList.length>0">
         <span
-          v-for="(item,index) in curFaceArray[0].positionList"
+          v-for="(item,index) in videoInfo.positionList"
           :key="index"
           :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:playerHeight)+'px',width:item.width/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',height:item.height/720*(videoInfo.isShowOperate?1080:playerHeight)+'px'}"
         ></span>
@@ -90,7 +90,10 @@
           </div>
         </div>
       </div>
-      <div class="fullScreenMap" v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&bIsFullScreen===true">
+      <div
+        class="fullScreenMap"
+        v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&bIsFullScreen===true"
+      >
         <div class="infoTitle">位置</div>
         <div class="mapBox">
           <gMap
@@ -122,10 +125,11 @@
           </el-form-item>
           <el-form-item label="标签类型" prop="tagType">
             <select
+              required
               v-model="ruleForm.tagType"
-              style="width:350px;height:34px;border-radius: 5px;"
-              placeholder="请选择标签类型"
+              style="width:350px;height:34px;border-radius: 5px;padding: 0 12px;"
             >
+              <option value disabled selected hidden>请选择标签类型</option>
               <option
                 :value="type.id"
                 v-for="(type,index) in tageTypeArray"
@@ -164,12 +168,20 @@ export default {
       },
       tageTypeArray: [
         {
-          id: 'gongchang',
+          id: '1',
           name: '工厂'
         },
         {
-          id: 'jianzhuwu',
+          id: '2',
           name: '建筑物'
+        },
+        {
+          id: '3',
+          name: '医院'
+        },
+        {
+          id: '4',
+          name: '学校'
         }
       ],
       isSub: false, // 是否监听播放进度改变
@@ -218,14 +230,16 @@ export default {
   computed: {
     deviceCode () {
       return this.videoInfo.deviceCode
-    },
-    curFaceArray () {
-      if (this.faceArray && this.faceArray.length > 0) {
-        return this.faceArray.filter(
-          item => item.deviceCode === this.videoInfo.deviceCode
-        )
-      } return []
     }
+    // curFaceArray () {
+    //   if (this.faceArray && this.faceArray.length > 0) {
+    //     debugger
+    //     return this.faceArray.filter(
+    //       item => item.deviceCode === this.videoInfo.deviceCode
+    //     )
+    //   }
+    //   return []
+    // }
   },
 
   watch: {
@@ -262,6 +276,7 @@ export default {
       } else {
         me.bIsFullScreen = false
         me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
+        me.resetForm('ruleForm')
       }
     })
   },
@@ -350,7 +365,6 @@ export default {
       // 防止弹出全屏视频对话框后，player为null
       var player = this.$refs.playerCtrl.player
       if (player.isFullscreen()) {
-        this.resetForm('ruleForm')
         player.exitFullscreen()
       } else {
         player.requestFullscreen()
@@ -905,6 +919,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+select:invalid {
+  color: #a3afb7;
+}
+.is-error select {
+  border-color: #f56c6c;
+}
 .playerStyle {
   position: relative;
   width: 100%;
@@ -934,12 +954,12 @@ export default {
     margin-left: 8px;
   }
 }
-.face{
-   span{
-     position:absolute;
-     background:url(../../../assets/images/person.png) no-repeat
-   }
- }
+.face {
+  span {
+    position: absolute;
+    background: url(../../../assets/images/person.png) no-repeat;
+  }
+}
 .fullScreen {
   position: absolute;
   right: 30px;
