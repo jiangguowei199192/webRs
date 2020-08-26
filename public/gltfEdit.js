@@ -14,7 +14,7 @@ var gltfEdit = {
     // 加载坐标轴模型
     var axisModel = viewer.scene.primitives.add(Cesium.Model.fromGltf({
       id: 'axis',
-      url: 'http://172.16.63.57:9000/mapdata/gltf' + '/mars/axis.gltf',
+      url: 'http://172.16.63.195:9000/mapdata/gltf' + '/mars/axis.gltf',
       modelMatrix: new Cesium.Matrix4(),
       colorBlendMode: Cesium.ColorBlendMode.HIGHLIGHT
     }))

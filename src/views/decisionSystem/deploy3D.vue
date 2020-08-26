@@ -43,11 +43,13 @@
         </ul>
       </div>
     </div>
+    <FloorGuide  ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
   </div>
 </template>
 
 <script>
 import Map from './components/marsMap.vue'
+import FloorGuide from './components/FloorGuide.vue'
 import $ from 'jquery'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
 import xfs from '@/assets/images/3d/xfs.jpg'
@@ -57,6 +59,7 @@ import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
 var gltfEdit = window.gltfEdit
+const serverUrl = 'http://172.16.63.195:9000/mapdata'
 let me
 export default {
   // 所有cesium和mars3d对象 都不要绑定到data
@@ -70,11 +73,46 @@ export default {
       options: [], // 沙盘绘制选项
       curModels: [],
       showInfoBox: false,
-      infoBox: { imgSrc: '' }
+      infoBox: { imgSrc: '' },
+      buildingTitle: '黄鹤楼',
+      buildingInfos: [
+        // 测试数据
+        {
+          title: '1层',
+          image:
+            'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png',
+          selected: true
+        },
+        { title: '2层', image: '', selected: false },
+        {
+          title: '3层',
+          image:
+            'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png',
+          selected: false
+        },
+        { title: '4层', image: '', selected: false },
+        {
+          title: '5层',
+          image:
+            'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png',
+          selected: false
+        },
+        { title: '6层', image: '', selected: false },
+        { title: '7层', image: '', selected: false },
+        { title: '8层', image: '', selected: false },
+        { title: '9层', image: '', selected: false },
+        { title: '10层', image: '', selected: false },
+        { title: '11层', image: '', selected: false },
+        { title: '12层', image: '', selected: false },
+        { title: '13层', image: '', selected: false },
+        { title: '14层', image: '', selected: false },
+        { title: '15层', image: '', selected: false }
+      ]
     }
   },
   components: {
-    Map
+    Map,
+    FloorGuide
   },
 
   mounted () {
@@ -102,7 +140,12 @@ export default {
       this.activeIndex = index
       if (this.activeIndex === 4) {
         this.showPlotBox = true
-      } else this.showPlotBox = false
+      } else if (this.activeIndex === 6) {
+        this.showPlotBox = false
+        this.$refs.floorGuide.show()
+      } else {
+        this.showPlotBox = false
+      }
     },
 
     /**
@@ -243,14 +286,14 @@ export default {
               if (a.image.startsWith('$serverURL_gltf$')) {
                 a.image = a.image.replace(
                   '$serverURL_gltf$',
-                  'http://172.16.63.57:9000/mapdata/gltf'
+                  serverUrl + '/gltf'
                 )
               }
 
               if (a.style.modelUrl.startsWith('$serverURL_gltf$')) {
                 a.style.modelUrl = a.style.modelUrl.replace(
                   '$serverURL_gltf$',
-                  'http://172.16.63.57:9000/mapdata/gltf'
+                  serverUrl + '/gltf'
                 )
               }
             })
@@ -287,7 +330,7 @@ export default {
       this.viewer.mars.centerPoint(position, {
         radius: 100, // 距离目标点的距离
         pitch: -50, // 相机方向
-        duration: 4,
+        duration: 2,
         complete: callback
       })
       // }
@@ -306,8 +349,7 @@ export default {
         name: '1111111',
         position: position,
         model: {
-          uri:
-            'http://172.16.63.57:9000/mapdata/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+          uri: serverUrl + '/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
           scale: 1,
           opacity: 1,
           clampToGround: true
@@ -324,8 +366,7 @@ export default {
         name: '22222222222',
         position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
         model: {
-          uri:
-            'http://172.16.63.57:9000/mapdata/gltf/mars/firedrill/xiaofangche.gltf',
+          uri: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
           scale: 1,
           opacity: 1,
           clampToGround: true
@@ -425,7 +466,7 @@ export default {
       var layercfg = {
         type: '3dtiles',
         name: '国博',
-        url: 'http://172.16.63.57:9000/mapdata/3dtiles/guobo/Production_1.json',
+        url: serverUrl + '/3dtiles/guobo/Production_1.json',
         maximumScreenSpaceError: 1,
         maximumMemoryUsage: 8192,
         offset: { z: -4 },
@@ -699,7 +740,6 @@ export default {
     .detail {
       margin-top: 22px;
       ul {
-
         li {
           word-break: break-all;
           span {
