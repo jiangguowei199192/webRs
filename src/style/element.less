@@ -204,13 +204,33 @@
   height       : 175px;
   background   : rgba(3, 56, 85, 1);
   border       : none;
-  padding      : 9px;
+  padding      : 9px 4px 9px 9px;
   box-shadow   : none;
   border-radius: 0px;
   box-sizing   : border-box;
   margin: 0px;
-
   .popper__arrow {
    display: none;
+  }
+  .taskList {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    > span {
+      cursor: pointer;
+      box-sizing: border-box;
+      margin-right: 13px;
+      margin-bottom: 14px;
+      color: #fff;
+      font-size: 14px;
+      height: 20px;
+      border: 1px solid rgba(31, 155, 223, 1);
+      border-radius: 2px;
+      min-width: 60px;
+      text-align: center;
+      padding: 0px 7px;
+      line-height: 20px;
+    }
   }
 }

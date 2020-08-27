@@ -47,20 +47,25 @@
       <div class="close" @click="showEditBox = false" />
       <div class="first">
         <span>单位：</span>
-        <el-input></el-input>
+        <el-input v-model="editBox.department"></el-input>
         <span>编号：</span>
-        <el-input class="input"></el-input>
+        <el-input class="input" v-model="editBox.number"></el-input>
+        <div class="num">
+          <span @click="numberAdd(true)"></span>
+          <span @click="numberAdd(false)"></span>
+        </div>
       </div>
       <div class="first second">
         <span>任务：</span>
-        <el-popover placement="bottom" width="400" trigger="click" popper-class="taskPopover">
-          <div></div>
+        <el-popover placement="bottom" width="400" trigger="click" popper-class="taskPopover" v-model="showPopover">
+          <div class="taskList webFsScroll">
+            <span v-for="(item,index) in taskList" :key="index" @click="selectTask(item)">{{item}}</span>
+          </div>
           <div slot="reference" class="task">
-            <span>供水</span>
+            <span>{{editBox.task}}</span>
             <span></span>
           </div>
         </el-popover>
-        <span class="btn" style="margin-left:10px">任务列表</span>
       </div>
       <span class="btn confirm">确定</span>
     </div>
@@ -96,7 +101,20 @@ export default {
       curModels: [],
       showInfoBox: false,
       showEditBox: false,
+      showPopover: false,
       infoBox: { imgSrc: '' },
+      editBox: { department: '天门敦', number: '1', task: '供水' },
+      taskList: [
+        '内政',
+        '出枪掩护',
+        '出枪冷却',
+        '出枪灭火',
+        '供水',
+        '供泡沫',
+        '连接消火栓',
+        '遥控水炮冷却',
+        '遥控水炮灭火'
+      ],
       buildingTitle: '黄鹤楼',
       buildingInfos: [
         // 测试数据
@@ -185,6 +203,23 @@ export default {
     },
 
     /**
+     *  编辑框中编号加减
+     */
+    numberAdd (isAdd) {
+      const a = isAdd === true ? 1 : -1
+      this.editBox.number = parseInt(this.editBox.number) + a
+    },
+
+    /**
+     *  选择任务
+     * @param {Object} item 任务
+     */
+    selectTask (item) {
+      this.editBox.task = item
+      this.showPopover = false
+    },
+
+    /**
      *  获取指定type的默认的标绘样式
      */
     getDefStyle: function (type) {
@@ -197,7 +232,6 @@ export default {
      */
     startEditing (entity) {
       // 启用编辑
-
       gltfEdit.activate(entity, me.viewer, {
         calback: function (result) {}
       })
@@ -734,14 +768,12 @@ export default {
     .first {
       display: flex;
       height: 30px;
-
       /deep/.el-input {
         margin-left: 5px;
         margin-right: 14px;
         height: 23px;
         width: 88px;
       }
-
       /deep/.el-input__inner {
         background: rgba(0, 57, 87, 1);
         opacity: 0.9;
@@ -751,9 +783,35 @@ export default {
         line-height: 23px;
         height: 23px;
       }
-
       /deep/.input.el-input {
         width: 45px;
+      }
+      .num {
+        display: flex;
+        flex-direction: column;
+        width: 8px;
+        height: 14px;
+        top: 22px;
+        right: 30px;
+        position: absolute;
+        span {
+          width: 8px;
+          height: 5px;
+          cursor: pointer;
+        }
+        span:nth-child(1) {
+          background: url(../../assets/images/3d/up.png) no-repeat;
+        }
+        span:nth-child(1):active {
+          background: url(../../assets/images/3d/up-press.png) no-repeat;
+        }
+        span:nth-child(2) {
+          background: url(../../assets/images/3d/down.png) no-repeat;
+          margin-top: 4px;
+        }
+        span:nth-child(2):active {
+          background: url(../../assets/images/3d/down-press.png) no-repeat;
+        }
       }
     }
     .btn {
@@ -775,6 +833,7 @@ export default {
       margin-top: 10px;
     }
     .task {
+      position: relative;
       margin-left: 5px;
       display: inline-block;
       width: 194px;
@@ -783,12 +842,24 @@ export default {
       opacity: 0.9;
       padding: 0px 10px;
       box-sizing: border-box;
-      span {
+      span:nth-child(1) {
         font-size: 14px;
         line-height: 23px;
       }
+      span:nth-child(2) {
+        right: 10px;
+        top: 10px;
+        position: absolute;
+        display: inline-block;
+        width: 8px;
+        height: 5px;
+        cursor: pointer;
+        background: url(../../assets/images/3d/down.png) no-repeat;
+      }
+      span:nth-child(2):active {
+        background: url(../../assets/images/3d/down-press.png) no-repeat;
+      }
     }
-
   }
 
   .close {
