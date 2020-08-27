@@ -7,7 +7,8 @@ function resolve (dir) {
 }
 const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
-  const cfgJson = { baseUrl: 'http://172.16.63.148:8850', mqttServer: '172.16.63.148', mqttPort: 2883, headImg: 'http://172.16.63.148', projectTitle: '武汉市公安局安保防控系统' }
+  // const cfgJson = { baseUrl: 'http://172.16.63.148:8850', mqttServer: '172.16.63.148', mqttPort: 2883, headImg: 'http://172.16.63.148', projectTitle: '武汉市公安局安保防控系统' }
+  const cfgJson = { baseUrl: 'http://111.47.13.103:40009', mqttServer: '111.47.13.103', mqttPort: 40011, headImg: 'http://111.47.13.103:40015', projectTitle: '天地一体化预警侦查系统' }
   return JSON.stringify(cfgJson)
 }
 const CopyWebpackPlugin = require('copy-webpack-plugin')
