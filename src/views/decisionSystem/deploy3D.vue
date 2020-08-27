@@ -318,6 +318,13 @@ export default {
 
         // 删除了对象
         this.drawControl.on(mars3d.draw.event.Delete, function (e) {
+          // 删除对应标签
+          const t = me.findModelLabel(e.entity.name)
+          if (t !== undefined) {
+            const index = me.labelList.indexOf(t)
+            me.labelList.splice(index, 1)
+            t.destroy()
+          }
           me.stopEditing()
           // console.log('删除了对象')
         })
