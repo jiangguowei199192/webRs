@@ -1,5 +1,5 @@
 <template>
-  <div class="playerStyle" @dblclick="fullScreen" @click="addPoint">
+  <div class="playerStyle">
     <LivePlayer
       ref="playerCtrl"
       :videoUrl="videoInfo.streamUrl"
@@ -12,6 +12,7 @@
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
+      <div class="pointLayer" @click="addPoint" @dblclick="fullScreen"></div>
       <div class="info">
         <span></span>
         <span>{{videoInfo.parentLabel}}</span>
@@ -933,7 +934,11 @@ select:invalid {
     outline: none;
   }
 }
-
+.pointLayer {
+  position: absolute;
+  height:100%;
+  width:100%;
+}
 .info {
   position: absolute;
   left: 10px;
