@@ -26,7 +26,7 @@
         ></span>
       </div>
       <div
-        class="fullScreen"
+        class="fullScreenPTZ"
         v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&bIsFullScreen===true"
         @dblclick.stop="stopEvent"
         @click.stop="stopEvent"
@@ -375,7 +375,7 @@ export default {
         const tmpMap = this.$refs.gduMap.map2D
         setTimeout(() => {
           tmpMap._map.updateSize()
-        }, 500)
+        }, 200)
       }
     },
 
@@ -966,7 +966,7 @@ select:invalid {
     border:2px solid green;
   }
 }
-.fullScreen {
+.fullScreenPTZ {
   position: absolute;
   right: 30px;
   top: 50%;
