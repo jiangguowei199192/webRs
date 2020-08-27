@@ -31,11 +31,7 @@
             <div style="margin-left: 22px;">基本情况说明</div>
           </template>
           <div class="itemContainer1">
-            <el-button size="mini" class="basicFactSheetBtn">基本情况</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">供水系统</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">行车路线</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">防火设计</el-button>
-            <el-button size="mini" class="basicFactSheetBtn">重点部位</el-button>
+            <el-button size="mini" class="basicFactSheetBtn" v-for="(item, index) in baseInfos" :key="index" @click="didClickedBaseInfo(index)"> {{item.title}} </el-button>
           </div>
         </el-collapse-item>
 
@@ -80,12 +76,14 @@
     </div>
 
     <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
+    <BaseInfo ref="baseInfo" v-bind:info="baseInfos"></BaseInfo>
   </div>
 </template>
 
 <script>
 import HorCardList from './HorizontalCardList.vue'
 import FloorGuide from './FloorGuide'
+import BaseInfo from './BaseInfo'
 export default {
   data () {
     return {
@@ -98,27 +96,25 @@ export default {
 
       buildingTitle: '黄鹤楼',
       buildingInfos: [ // 测试数据
-        { title: '1层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: true },
-        { title: '2层', image: '', selected: false },
-        { title: '3层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: false },
-        { title: '4层', image: '', selected: false },
-        { title: '5层', image: 'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png', selected: false },
-        { title: '6层', image: '', selected: false },
-        { title: '7层', image: '', selected: false },
-        { title: '8层', image: '', selected: false },
-        { title: '9层', image: '', selected: false },
-        { title: '10层', image: '', selected: false },
-        { title: '11层', image: '', selected: false },
-        { title: '12层', image: '', selected: false },
-        { title: '13层', image: '', selected: false },
-        { title: '14层', image: '', selected: false },
-        { title: '15层', image: '', selected: false }
+        { title: '1层', image: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg' },
+        { title: '2层', image: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg' },
+        { title: '3层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg' },
+        { title: '4层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg' },
+        { title: '5层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg' }
+      ],
+      baseInfos: [ // 测试数据
+        { title: '基本情况', image: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg' },
+        { title: '供水系统', image: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg' },
+        { title: '行车路线', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg' },
+        { title: '防火设计', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg' },
+        { title: '重点部位', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg' }
       ]
     }
   },
   components: {
     HorCardList,
-    FloorGuide
+    FloorGuide,
+    BaseInfo
   },
   methods: {
     toFightDeploy () {
@@ -134,7 +130,11 @@ export default {
     },
     // 点击建筑平面图
     didClickedBuildingImage (index) {
-      this.$refs.floorGuide.show()
+      this.$refs.floorGuide.show(index)
+    },
+    // 点击基本情况说明
+    didClickedBaseInfo (index) {
+      this.$refs.baseInfo.show(index)
     }
   },
 
