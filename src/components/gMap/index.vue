@@ -103,7 +103,7 @@
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
       </div>
     </div>
-    <plan class="plan webFsScroll" v-show="bShowPaln"></plan>
+    <plan class="plan webFsScroll" v-show="bShowPaln" v-bind:info="planData"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -292,7 +292,8 @@ export default {
       mapTypeCur: 1,
       bShowHighPoint: true,
       bShowDrone: true,
-      bShowFire: true
+      bShowFire: true,
+      planData: {} // 预案初始数据
     }
   },
 
@@ -750,6 +751,7 @@ export default {
       this.lastResults = this.addrResults
       this.bShowResult = false
       this.bShowPaln = true
+      this.planData = addr
       if (bCallHandler) {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)

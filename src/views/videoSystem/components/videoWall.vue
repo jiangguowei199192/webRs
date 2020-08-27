@@ -268,7 +268,6 @@ export default {
     var elementResizeDetectorMaker = require('element-resize-detector')
     var erd = elementResizeDetectorMaker()
     var me = this
-    this.startTime = new Date()
     erd.listenTo(this.$refs.playerCtrl.player.el_, function (element) {
       var width = element.offsetWidth
       var height = element.offsetHeight
