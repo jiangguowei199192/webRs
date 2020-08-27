@@ -43,7 +43,28 @@
         </ul>
       </div>
     </div>
-    <FloorGuide  ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
+    <div class="editBox" v-show="showEditBox">
+      <div class="close" @click="showEditBox = false" />
+      <div class="first">
+        <span>单位：</span>
+        <el-input></el-input>
+        <span>编号：</span>
+        <el-input class="input"></el-input>
+      </div>
+      <div class="first second">
+        <span>任务：</span>
+        <el-popover placement="bottom" width="400" trigger="click" popper-class="taskPopover">
+          <div></div>
+          <div slot="reference" class="task">
+            <span>供水</span>
+            <span></span>
+          </div>
+        </el-popover>
+        <span class="btn" style="margin-left:10px">任务列表</span>
+      </div>
+      <span class="btn confirm">确定</span>
+    </div>
+    <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
   </div>
 </template>
 
@@ -65,6 +86,7 @@ export default {
   // 所有cesium和mars3d对象 都不要绑定到data
   data () {
     return {
+      num: 1, // 编号
       activeIndex: 0,
       configUrl: 'config/config.json',
       widgetUrl: 'config/widget.json',
@@ -73,6 +95,7 @@ export default {
       options: [], // 沙盘绘制选项
       curModels: [],
       showInfoBox: false,
+      showEditBox: false,
       infoBox: { imgSrc: '' },
       buildingTitle: '黄鹤楼',
       buildingInfos: [
@@ -197,16 +220,18 @@ export default {
         this.drawControl = new mars3d.Draw(this.viewer, {
           hasEdit: true,
           nameTooltip: true,
-          isContinued: false // 是否连续标绘
+          isContinued: false, // 是否连续标绘
+          isAutoEditing: false // 绘制完成后是否自动激活编辑
         })
 
         // 创建完成
         this.drawControl.on(mars3d.draw.event.DrawCreated, function (e) {
-          var entity = e.entity
-          if (!me.drawControl.isContinued) {
-            me.startEditing(entity)
-          }
+          // var entity = e.entity
+          // if (!me.drawControl.isContinued) {
+          //   me.startEditing(entity)
+          // }
           // console.log('创建完成')
+          me.showEditBox = true
         })
 
         // 开始编辑
@@ -349,14 +374,12 @@ export default {
         name: '1111111',
         position: position,
         model: {
-          uri: serverUrl + '/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+          uri:
+            serverUrl +
+            '/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
           scale: 1,
           opacity: 1,
           clampToGround: true
-        },
-        click: entity => {
-          // 单击回调
-          this.$message({ message: '您单击了：' })
         }
       })
 
@@ -370,6 +393,9 @@ export default {
           scale: 1,
           opacity: 1,
           clampToGround: true
+        },
+        click: function (entity) {
+          me.showEditBox = true
         }
       })
 
@@ -693,6 +719,89 @@ export default {
     }
   }
 
+  .editBox {
+    display: inline-block;
+    width: 285px;
+    height: 127px;
+    background: url(../../assets/images/3d/info-box.png) no-repeat;
+    background-size: 100% 100% !important;
+    bottom: 334px;
+    right: 52px;
+    position: absolute;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 18px 0px 0px 16px;
+    .first {
+      display: flex;
+      height: 30px;
+
+      /deep/.el-input {
+        margin-left: 5px;
+        margin-right: 14px;
+        height: 23px;
+        width: 88px;
+      }
+
+      /deep/.el-input__inner {
+        background: rgba(0, 57, 87, 1);
+        opacity: 0.9;
+        border-radius: 0px;
+        border: none;
+        color: #ffffff;
+        line-height: 23px;
+        height: 23px;
+      }
+
+      /deep/.input.el-input {
+        width: 45px;
+      }
+    }
+    .btn {
+      display: inline-block;
+      width: 108px;
+      position: absolute;
+      left: 87px;
+      bottom: 10px;
+      height: 23px;
+      background: rgba(32, 156, 223, 1);
+      text-align: center;
+      line-height: 23px;
+      cursor: pointer;
+    }
+    .btn:active {
+      background: #00679d;
+    }
+    .second {
+      margin-top: 10px;
+    }
+    .task {
+      margin-left: 5px;
+      display: inline-block;
+      width: 194px;
+      height: 23px;
+      background: rgba(0, 57, 87, 1);
+      opacity: 0.9;
+      padding: 0px 10px;
+      box-sizing: border-box;
+      span {
+        font-size: 14px;
+        line-height: 23px;
+      }
+    }
+
+  }
+
+  .close {
+    position: absolute;
+    display: inline-block;
+    background: url(../../assets/images/3d/close.png) no-repeat;
+    top: 6px;
+    right: 6px;
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+  }
+
   .infoBox {
     bottom: 334px;
     right: 52px;
@@ -708,16 +817,6 @@ export default {
       margin-top: 27px;
       width: 230px;
       height: 129px;
-    }
-    .close {
-      position: absolute;
-      display: inline-block;
-      background: url(../../assets/images/3d/close.png) no-repeat;
-      top: 6px;
-      right: 6px;
-      width: 12px;
-      height: 12px;
-      cursor: pointer;
     }
     .title {
       display: inline-block;
