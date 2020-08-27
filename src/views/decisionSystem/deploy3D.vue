@@ -67,7 +67,7 @@
           </div>
         </el-popover>
       </div>
-      <span class="btn confirm">确定</span>
+      <span class="btn confirm" @click="setModelTask">确定</span>
     </div>
     <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
   </div>
@@ -96,6 +96,7 @@ export default {
       configUrl: 'config/config.json',
       widgetUrl: 'config/widget.json',
       showPlotBox: false,
+      isPlot: false, // 是否是沙盘绘制
       plotType: '',
       options: [], // 沙盘绘制选项
       curModels: [],
@@ -116,38 +117,12 @@ export default {
         '遥控水炮灭火'
       ],
       buildingTitle: '黄鹤楼',
-      buildingInfos: [
-        // 测试数据
-        {
-          title: '1层',
-          image:
-            'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png',
-          selected: true
-        },
-        { title: '2层', image: '', selected: false },
-        {
-          title: '3层',
-          image:
-            'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png',
-          selected: false
-        },
-        { title: '4层', image: '', selected: false },
-        {
-          title: '5层',
-          image:
-            'http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png',
-          selected: false
-        },
-        { title: '6层', image: '', selected: false },
-        { title: '7层', image: '', selected: false },
-        { title: '8层', image: '', selected: false },
-        { title: '9层', image: '', selected: false },
-        { title: '10层', image: '', selected: false },
-        { title: '11层', image: '', selected: false },
-        { title: '12层', image: '', selected: false },
-        { title: '13层', image: '', selected: false },
-        { title: '14层', image: '', selected: false },
-        { title: '15层', image: '', selected: false }
+      buildingInfos: [ // 测试数据
+        { title: '1层', image: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg' },
+        { title: '2层', image: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg' },
+        { title: '3层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg' },
+        { title: '4层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg' },
+        { title: '5层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg' }
       ]
     }
   },
@@ -183,7 +158,7 @@ export default {
         this.showPlotBox = true
       } else if (this.activeIndex === 6) {
         this.showPlotBox = false
-        this.$refs.floorGuide.show()
+        this.$refs.floorGuide.show(0)
       } else {
         this.showPlotBox = false
       }
@@ -203,7 +178,7 @@ export default {
     },
 
     /**
-     *  编辑框中编号加减
+     *  任务框中编号加减
      */
     numberAdd (isAdd) {
       const a = isAdd === true ? 1 : -1
@@ -217,6 +192,47 @@ export default {
     selectTask (item) {
       this.editBox.task = item
       this.showPopover = false
+    },
+
+    /**
+     * 将笛卡尔坐标转为地理坐标
+     * @param {Object} position 笛卡尔坐标
+     */
+    CartesianToDegrees (position) {
+      var cartographic = Cesium.Cartographic.fromCartesian(position)
+      var lon = Number(Cesium.Math.toDegrees(cartographic.longitude).toFixed(7))
+      var lat = Number(Cesium.Math.toDegrees(cartographic.latitude).toFixed(7))
+      var height = Math.ceil(cartographic.height)
+      return { lat: lat, lon: lon, height: height }
+    },
+
+    /**
+     *  设置模型任务
+     */
+    setModelTask () {
+      this.showEditBox = false
+      if (this.isPlot) {
+        var task = JSON.parse(JSON.stringify(this.editBox))
+        task.name = this.curEntity.name
+        // 将笛卡尔坐标转为地理坐标
+        const p = this.CartesianToDegrees(this.curEntity.position)
+        const label = this.addModelLabel(Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 4), task)
+        this.labelList.push(label)
+      } else {
+        const t = this.findModelLabel(this.curEntity.name)
+        if (t !== undefined) {
+          this.copyData(this.editBox, t.opts.data)
+          this.updateLabelHtml(t)
+        }
+      }
+    },
+
+    /**
+     *  寻找模型对应标签
+     * @param {String} name 标签data.name
+     */
+    findModelLabel (name) {
+      return this.labelList.find(t => t.opts.data.name === name)
     },
 
     /**
@@ -260,11 +276,15 @@ export default {
 
         // 创建完成
         this.drawControl.on(mars3d.draw.event.DrawCreated, function (e) {
-          // var entity = e.entity
+          var entity = e.entity
           // if (!me.drawControl.isContinued) {
           //   me.startEditing(entity)
           // }
           // console.log('创建完成')
+          const id = (new Date()).format('yyyy-MM-dd HH:mm:ss')
+          entity.name = id
+          me.curEntity = entity
+          me.isPlot = true
           me.showEditBox = true
         })
 
@@ -284,6 +304,9 @@ export default {
         this.drawControl.on(mars3d.draw.event.EditMovePoint, function (e) {
           var entity = e.entity
           me.startEditing(entity)
+          const p = me.CartesianToDegrees(entity.position)
+          const position = Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 4)
+          me.updateLabelPosition(entity.name, position)
           // console.log('编辑修改了点')
         })
 
@@ -395,6 +418,66 @@ export default {
       // }
     },
 
+    /**
+     *  更新标签html
+     * @param {Object} entity 标签
+     */
+    updateLabelHtml (entity) {
+      const task = entity.opts.data
+      const text1 = task.department + '-' + task.number
+      const text2 = task.task
+      const innerhtml = '<div class="model-label">' +
+      '<span>' + text1 + '</span>' +
+      '<span>' + text2 + '</span>' + '</div>'
+      entity.html = innerhtml
+    },
+
+    /**
+     *  更新标签位置
+     * @param {Object} name 标签名称
+     * @param {Object} position 标签坐标
+     */
+    updateLabelPosition (name, position) {
+      const t = this.findModelLabel(name)
+      if (t !== undefined) {
+        t.position = position
+      }
+    },
+
+    /**
+     *  添加模型上方标签
+     * @param {Object} position 标签坐标
+     * @param {Object} task 任务信息
+     */
+    addModelLabel (position, task) {
+      const text1 = task.department + '-' + task.number
+      const text2 = task.task
+      const innerhtml = '<div class="model-label">' +
+      '<span>' + text1 + '</span>' +
+      '<span>' + text2 + '</span>' + '</div>'
+      const label = new mars3d.DivPoint(this.viewer, {
+        html: innerhtml,
+        anchor: [0, 0],
+        position: position,
+        data: task
+      })
+      return label
+    },
+
+    /**
+     *  拷贝数据
+     * @param {Object} src
+     * @param {Object} dst
+     */
+    copyData (src, dst) {
+      for (var b in dst) {
+        // 拷贝属性
+        if (Object.prototype.hasOwnProperty.call(src, b)) {
+          dst[b] = src[b]
+        }
+      }
+    },
+
     addModel () {
       me = this
       var dataSource = new Cesium.CustomDataSource()
@@ -419,8 +502,10 @@ export default {
 
       const lat = 30.510093
       let lon = 114.235004
+      const id = (new Date()).format('yyyy-MM-dd HH:mm:ss')
+      const task = { name: id, department: '洪山分局', number: '1', task: '供水' }
       const entity = dataSource.entities.add({
-        name: '22222222222',
+        name: id,
         position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
         model: {
           uri: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
@@ -429,13 +514,24 @@ export default {
           clampToGround: true
         },
         click: function (entity) {
+          me.curEntity = entity
           me.showEditBox = true
+          const t = me.findModelLabel(entity.name)
+          if (t !== undefined) {
+            me.copyData(t.opts.data, me.editBox)
+          }
         }
       })
+
+      const label = this.addModelLabel(Cesium.Cartesian3.fromDegrees(lon, lat, 16), task)
+      // 模型标签列表
+      this.labelList = []
+      this.labelList.push(label)
 
       setInterval(() => {
         lon += 0.000001
         entity.position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
+        label.position = Cesium.Cartesian3.fromDegrees(lon, lat, 16)
       }, 1000)
 
       dataSource.entities.add({
