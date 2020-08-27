@@ -1534,7 +1534,7 @@ export default {
   },
   mounted () {
     this.getPlayerStyle()
-    EventBus.$on('faceArrayChange', info => {
+    EventBus.$on('peopleRealChange', info => {
       this.totalVideosArray.forEach((item, index) => {
         if (item.deviceCode === info.deviceCode && item.id === info.channelId) {
           this.$set(this.totalVideosArray[index], 'positionList', info.positionList)
