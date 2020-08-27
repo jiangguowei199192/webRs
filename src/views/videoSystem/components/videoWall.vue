@@ -299,7 +299,7 @@ export default {
       this.$refs[formName].resetFields()
     },
     addPoint (e) {
-      if (this.checkFull()) {
+      if (this.bIsFullScreen === true) {
         console.log(e.pageX, e.pageY)
         // this.videoInfo.streamUrl = 'ws://111.47.13.103:40007/live/34020000001310000005.flv'
         // setTimeout(() => {
