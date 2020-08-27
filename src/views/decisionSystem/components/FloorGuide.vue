@@ -51,23 +51,27 @@ export default {
     }
   },
   created () {
-    this.currentImg = this.info[0].image
+    // this.currentImg = this.info[0].image
   },
   data () {
     return {
       dialogVisible: false,
       backImg: require('../../../assets/images/Setting/setting-back.png'),
-      currentImg: ''
+      currentImg: this.info[0].image
     }
   },
   methods: {
-    show () {
+    show (index) {
       this.dialogVisible = true
+      this.checkStatus(index)
     },
     backClick () {
       this.dialogVisible = false
     },
     itemClicked (index) {
+      this.checkStatus(index)
+    },
+    checkStatus (index) {
       this.currentImg = this.info[index].image
       this.info.forEach(item => {
         item.selected = false
