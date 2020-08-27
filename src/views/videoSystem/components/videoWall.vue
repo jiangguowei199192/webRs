@@ -957,7 +957,8 @@ select:invalid {
 .face {
   span {
     position: absolute;
-    background: url(../../../assets/images/person.png) no-repeat;
+    // background: url(../../../assets/images/person.png) no-repeat;
+    border:2px solid green;
   }
 }
 .fullScreen {
