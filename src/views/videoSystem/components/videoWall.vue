@@ -9,6 +9,7 @@
       :autoplay="true"
       oncontextmenu="return false"
       fluent
+      :stretch="true"
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
@@ -18,7 +19,7 @@
         <span>{{videoInfo.parentLabel}}</span>
       </div>
       <!-- 人员识别 -->
-      <div class="face" v-show="videoInfo.positionList&&videoInfo.positionList.length>0">
+      <div class="fullScreenFace" v-show="videoInfo.positionList&&videoInfo.positionList.length>0">
         <span
           v-for="(item,index) in videoInfo.positionList"
           :key="index"
@@ -26,7 +27,7 @@
         ></span>
       </div>
       <div
-        class="fullScreenPTZ"
+        class="fullScreenOperate"
         v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&bIsFullScreen===true"
         @dblclick.stop="stopEvent"
         @click.stop="stopEvent"
@@ -959,14 +960,14 @@ select:invalid {
     margin-left: 8px;
   }
 }
-.face {
+.fullScreenFace {
   span {
     position: absolute;
     // background: url(../../../assets/images/person.png) no-repeat;
     border:2px solid green;
   }
 }
-.fullScreenPTZ {
+.fullScreenOperate {
   position: absolute;
   right: 30px;
   top: 50%;

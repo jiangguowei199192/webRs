@@ -83,11 +83,15 @@ const videoMixin = {
   methods: {
     closeLeftNav (type) {
       this.showLeft = type !== 1
-      this.getPlayerStyle()
+      if (this.$route.path === '/videoSystem') {
+        this.getPlayerStyle()
+      }
     },
     closeRightInfo (type) {
       this.showRight = type !== 1
-      this.getPlayerStyle()
+      if (this.$route.path === '/videoSystem') {
+        this.getPlayerStyle()
+      }
     },
 
     /**
