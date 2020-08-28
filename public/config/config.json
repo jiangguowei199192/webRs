@@ -3,9 +3,9 @@
 
     "map3d": {
         "_comment1": "视角复位按钮",
-        "homeButton": true, 
+        "homeButton": false, 
         "_comment2": "二三维切换按钮",
-        "sceneModePicker": true,
+        "sceneModePicker": false,
         "_comment3": "帮助按钮",
         "navigationHelpButton": false,
         "infoBox": false,

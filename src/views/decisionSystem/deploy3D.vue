@@ -43,7 +43,11 @@
         </ul>
       </div>
     </div>
-    <div class="editBox" v-show="showEditBox">
+    <div
+      class="editBox"
+      v-show="showEditBox"
+      :style="'top:' + boxTop + 'px;' + 'left:' + boxLeft + 'px;'"
+    >
       <div class="close" @click="showEditBox = false" />
       <div class="first">
         <span>单位：</span>
@@ -57,7 +61,13 @@
       </div>
       <div class="first second">
         <span>任务：</span>
-        <el-popover placement="bottom" width="400" trigger="click" popper-class="taskPopover" v-model="showPopover">
+        <el-popover
+          placement="bottom"
+          width="400"
+          trigger="click"
+          popper-class="taskPopover"
+          v-model="showPopover"
+        >
           <div class="taskList webFsScroll">
             <span v-for="(item,index) in taskList" :key="index" @click="selectTask(item)">{{item}}</span>
           </div>
@@ -70,6 +80,17 @@
       <span class="btn confirm" @click="setModelTask">确定</span>
     </div>
     <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
+    <div class="rightTool">
+      <div class="move">
+        <span></span>
+        <span class="left" @mousedown="moveCamera(2)" @mouseup="stopMoveCamera"></span>
+        <span class="left" @mousedown="moveCamera(3)" @mouseup="stopMoveCamera"></span>
+        <span class="up" @mousedown="moveCamera(4)" @mouseup="stopMoveCamera"></span>
+        <span class="up" @mousedown="moveCamera(5)" @mouseup="stopMoveCamera"></span>
+      </div>
+      <span class="zoom" @click="ZoomIn(true)"></span>
+      <span class="zoom" @click="ZoomIn(false)"></span>
+    </div>
   </div>
 </template>
 
@@ -102,6 +123,8 @@ export default {
       curModels: [],
       showInfoBox: false,
       showEditBox: false,
+      boxLeft: 0, // 任务编辑弹窗left
+      boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       infoBox: { imgSrc: '' },
       editBox: { department: '天门敦', number: '1', task: '供水' },
@@ -117,12 +140,33 @@ export default {
         '遥控水炮灭火'
       ],
       buildingTitle: '黄鹤楼',
-      buildingInfos: [ // 测试数据
-        { title: '1层', image: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg' },
-        { title: '2层', image: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg' },
-        { title: '3层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg' },
-        { title: '4层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg' },
-        { title: '5层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg' }
+      buildingInfos: [
+        // 测试数据
+        {
+          title: '1层',
+          image:
+            'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
+        },
+        {
+          title: '2层',
+          image:
+            'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
+        },
+        {
+          title: '3层',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
+        },
+        {
+          title: '4层',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
+        },
+        {
+          title: '5层',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
+        }
       ]
     }
   },
@@ -200,7 +244,9 @@ export default {
      */
     CartesianToDegrees (position) {
       var cartographic = Cesium.Cartographic.fromCartesian(position)
-      var lon = Number(Cesium.Math.toDegrees(cartographic.longitude).toFixed(7))
+      var lon = Number(
+        Cesium.Math.toDegrees(cartographic.longitude).toFixed(7)
+      )
       var lat = Number(Cesium.Math.toDegrees(cartographic.latitude).toFixed(7))
       var height = Math.ceil(cartographic.height)
       return { lat: lat, lon: lon, height: height }
@@ -216,7 +262,10 @@ export default {
         task.name = this.curEntity.name
         // 将笛卡尔坐标转为地理坐标
         const p = this.CartesianToDegrees(this.curEntity.position)
-        const label = this.addModelLabel(Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 4), task)
+        const label = this.addModelLabel(
+          Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 4),
+          task
+        )
         this.labelList.push(label)
       } else {
         const t = this.findModelLabel(this.curEntity.name)
@@ -262,6 +311,22 @@ export default {
     },
 
     /**
+     *  设置任务编辑窗口位置
+     *@param {Object} point 屏幕坐标
+     */
+    setEditBoxPosition (point) {
+      const width = this.viewer._element.clientWidth
+      const height = this.viewer._element.clientHeight
+      const offsetX = 50
+      if (point.x + 285 + offsetX >= width) {
+        this.boxLeft = 0
+      } else this.boxLeft = point.x + offsetX
+      if (point.y + 270 >= height) {
+        this.boxTop = height - 270
+      } else this.boxTop = point.y
+    },
+
+    /**
      *  开始绘制
      *@param {Object} item 模型
      */
@@ -281,11 +346,23 @@ export default {
           //   me.startEditing(entity)
           // }
           // console.log('创建完成')
-          const id = (new Date()).format('yyyy-MM-dd HH:mm:ss')
+          // if (entity.boundingSphere) {
+          //   const center = entity.boundingSphere.center
+          //   const p = new Cesium.Cartesian3(center.x + entity.boundingSphere.radius, center.y, center.z)
+          //   var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(me.viewer.scene, p)
+          //   var pick = Cesium.SceneTransforms.wgs84ToWindowCoordinates(me.viewer.scene, entity.position)
+          // }
+          var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+            me.viewer.scene,
+            entity.position
+          )
+
+          const id = new Date().format('yyyy-MM-dd HH:mm:ss')
           entity.name = id
           me.curEntity = entity
           me.isPlot = true
           me.showEditBox = true
+          me.setEditBoxPosition(point)
         })
 
         // 开始编辑
@@ -305,7 +382,11 @@ export default {
           var entity = e.entity
           me.startEditing(entity)
           const p = me.CartesianToDegrees(entity.position)
-          const position = Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 4)
+          const position = Cesium.Cartesian3.fromDegrees(
+            p.lon,
+            p.lat,
+            p.height + 4
+          )
           me.updateLabelPosition(entity.name, position)
           // console.log('编辑修改了点')
         })
@@ -325,6 +406,7 @@ export default {
             me.labelList.splice(index, 1)
             t.destroy()
           }
+          me.showEditBox = false
           me.stopEditing()
           // console.log('删除了对象')
         })
@@ -433,9 +515,15 @@ export default {
       const task = entity.opts.data
       const text1 = task.department + '-' + task.number
       const text2 = task.task
-      const innerhtml = '<div class="model-label">' +
-      '<span>' + text1 + '</span>' +
-      '<span>' + text2 + '</span>' + '</div>'
+      const innerhtml =
+        '<div class="model-label">' +
+        '<span>' +
+        text1 +
+        '</span>' +
+        '<span>' +
+        text2 +
+        '</span>' +
+        '</div>'
       entity.html = innerhtml
     },
 
@@ -459,9 +547,15 @@ export default {
     addModelLabel (position, task) {
       const text1 = task.department + '-' + task.number
       const text2 = task.task
-      const innerhtml = '<div class="model-label">' +
-      '<span>' + text1 + '</span>' +
-      '<span>' + text2 + '</span>' + '</div>'
+      const innerhtml =
+        '<div class="model-label">' +
+        '<span>' +
+        text1 +
+        '</span>' +
+        '<span>' +
+        text2 +
+        '</span>' +
+        '</div>'
       const label = new mars3d.DivPoint(this.viewer, {
         html: innerhtml,
         anchor: [0, 0],
@@ -509,8 +603,13 @@ export default {
 
       const lat = 30.510093
       let lon = 114.235004
-      const id = (new Date()).format('yyyy-MM-dd HH:mm:ss')
-      const task = { name: id, department: '洪山分局', number: '1', task: '供水' }
+      const id = new Date().format('yyyy-MM-dd HH:mm:ss')
+      const task = {
+        name: id,
+        department: '洪山分局',
+        number: '1',
+        task: '供水'
+      }
       const entity = dataSource.entities.add({
         name: id,
         position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
@@ -527,10 +626,18 @@ export default {
           if (t !== undefined) {
             me.copyData(t.opts.data, me.editBox)
           }
+          var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+            me.viewer.scene,
+            entity.position._value
+          )
+          me.setEditBoxPosition(point)
         }
       })
 
-      const label = this.addModelLabel(Cesium.Cartesian3.fromDegrees(lon, lat, 16), task)
+      const label = this.addModelLabel(
+        Cesium.Cartesian3.fromDegrees(lon, lat, 16),
+        task
+      )
       // 模型标签列表
       this.labelList = []
       this.labelList.push(label)
@@ -646,6 +753,33 @@ export default {
     },
 
     /**
+     *  平移相机
+     */
+    moveCamera (direction) {
+      this.moveInterval = setInterval(function () {
+        me.viewer.mars.keyboardRoam.moveCamera(direction)
+      }, 50)
+    },
+
+    /**
+     *  停止平移相机
+     */
+    stopMoveCamera () {
+      if (this.moveInterval) {
+        clearInterval(this.moveInterval)
+      }
+    },
+
+    /**
+     *  放大
+     *  @param {Boolen} in 是否放大
+     */
+    ZoomIn (isIn) {
+      var zoomIn = new mars3d.ZoomNavigation(this.viewer, isIn)
+      zoomIn.activate()
+    },
+
+    /**
      *  地图构造完成回调
      */
     onMapload (viewer) {
@@ -666,6 +800,13 @@ export default {
           modifier: Cesium.KeyboardEventModifier.CTRL
         }
       ]
+      viewer.mars.keyboardRoam.bind({
+        moveStep: 10, // 平移步长 (米)。
+        dirStep: 25, // 相机原地旋转步长，值越大步长越小。
+        rotateStep: 1.0, // 相机围绕目标点旋转速率，0.3-2.0
+        minPitch: 0.1, // 最小仰角  0-1
+        maxPitch: 0.95 // 最大仰角  0-1
+      })
 
       this.addModel()
     }
@@ -862,8 +1003,8 @@ export default {
     height: 127px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;
     background-size: 100% 100% !important;
-    bottom: 334px;
-    right: 52px;
+    // bottom: 334px;
+    // right: 52px;
     position: absolute;
     box-sizing: border-box;
     font-size: 14px;
@@ -1033,6 +1174,77 @@ export default {
           }
         }
       }
+    }
+  }
+
+  .rightTool {
+    display: flex;
+    flex-direction: column;
+    width: 78px;
+    position: absolute;
+    right: 8px;
+    top: 80px;
+    align-items:center;
+    .move {
+      width: 78px;
+      height: 78px;
+      display: inline-block;
+      background: url(../../assets/images/3d/move-bg.png) no-repeat;
+      position: relative;
+      span {
+        display: inline-block;
+        cursor: pointer;
+        position: absolute;
+      }
+      span:nth-child(1) {
+        left: 20px;
+        top: 19px;
+        width: 40px;
+        height: 40px;
+        background: url(../../assets/images/3d/hand.png) no-repeat;
+      }
+      .left {
+        top: 50%;
+        transform: translateY(-50%);
+        width: 9px;
+        height: 10px;
+      }
+      .up {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 10px;
+        height: 9px;
+      }
+      span:nth-child(2) {
+        left: 7px;
+        background: url(../../assets/images/3d/move-left.png) no-repeat;
+      }
+      span:nth-child(3) {
+        right: 7px;
+        background: url(../../assets/images/3d/move-right.png) no-repeat;
+      }
+      span:nth-child(4) {
+        top: 7px;
+        background: url(../../assets/images/3d/move-up.png) no-repeat;
+      }
+      span:nth-child(5) {
+        bottom: 7px;
+        background: url(../../assets/images/3d/move-down.png) no-repeat;
+      }
+    }
+    .zoom {
+      display: inline-block;
+      cursor: pointer;
+      width: 27px;
+      height: 27px;
+    }
+    > span:nth-child(2) {
+      margin-top: 13px;
+      background: url(../../assets/images/3d/+.png) no-repeat;
+    }
+    > span:nth-child(3) {
+       margin-top: 10px;
+      background: url(../../assets/images/3d/-.png) no-repeat;
     }
   }
 }
