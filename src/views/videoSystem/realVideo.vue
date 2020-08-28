@@ -734,7 +734,7 @@ export default {
     startChange: debounce(function (index) {
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
-        channel_id: this.curSelectedVideo.id
+        channel_id: this.curSelectedVideo.streamType
       }
       switch (index) {
         case 0:
@@ -860,7 +860,7 @@ export default {
       if (index === 4) return
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
-        channel_id: this.curSelectedVideo.id,
+        channel_id: this.curSelectedVideo.streamType,
         stop: 1,
         step: 0,
         cmd_type: ''
@@ -951,7 +951,7 @@ export default {
     playOrClose (type, curTreeData) {
       // 1.添加
       if (type === 1) {
-        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.id }))
+        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.streamType }))
         this.curSelectedVideo = JSON.parse(JSON.stringify(curTreeData))
         console.log('当前选中', this.curSelectedVideo)
         this.refreshMap(curTreeData)
@@ -1403,7 +1403,7 @@ export default {
       // 显示抓取的图片
       const params = {
         deviceCode: this.curSelectedVideo.deviceCode,
-        channleId: this.curSelectedVideo.id
+        channleId: this.curSelectedVideo.streamType
       }
       this.$axios.post(api.deviceSnap, params).then(res => {
         if (res && res.data && res.data.code === 0) {
@@ -1438,7 +1438,7 @@ export default {
         id: this.imgId,
         deviceCode: this.curSelectedVideo.deviceCode,
         filePath: this.cutImgUrl,
-        channelId: this.curSelectedVideo.id,
+        channelId: this.curSelectedVideo.streamType,
         remark: this.remark
       }
       this.$axios.post(api.deviceUpdate, params).then(res => {
@@ -1536,12 +1536,12 @@ export default {
     this.getPlayerStyle()
     EventBus.$on('peopleRealChange', info => {
       this.totalVideosArray.forEach((item, index) => {
-        if (item.deviceCode === info.deviceCode && item.id === info.channelId) {
+        if (item.deviceCode === info.deviceCode && item.streamType === info.channelId) {
           this.$set(this.totalVideosArray[index], 'positionList', info.positionList)
         }
       })
       this.curVideosArray.forEach((item, index) => {
-        if (item.deviceCode === info.deviceCode && item.id === info.channelId) {
+        if (item.deviceCode === info.deviceCode && item.streamType === info.channelId) {
           this.$set(this.curVideosArray[index], 'positionList', info.positionList)
         }
       })

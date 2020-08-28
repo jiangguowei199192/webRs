@@ -713,7 +713,7 @@ export default {
     startChange (index) {
       const params = {
         device_id: this.videoInfo.deviceCode,
-        channel_id: this.videoInfo.id
+        channel_id: this.videoInfo.streamType
       }
       switch (index) {
         case 0:
@@ -839,7 +839,7 @@ export default {
       if (index === 4) return
       const params = {
         device_id: this.videoInfo.deviceCode,
-        channel_id: this.videoInfo.id,
+        channel_id: this.videoInfo.streamType,
         stop: 1,
         step: 0,
         cmd_type: ''
@@ -939,8 +939,8 @@ select:invalid {
 }
 .pointLayer {
   position: absolute;
-  height:100%;
-  width:100%;
+  height: 100%;
+  width: 100%;
 }
 .info {
   position: absolute;
@@ -966,7 +966,7 @@ select:invalid {
   span {
     position: absolute;
     // background: url(../../../assets/images/person.png) no-repeat;
-    border:2px solid green;
+    border: 2px solid green;
   }
 }
 .fullScreenOperate {
