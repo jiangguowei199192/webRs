@@ -273,7 +273,7 @@ export default {
         return
       }
       if (this.companyType.length <= 0) {
-        this.warnAlert('请输入单位类型')
+        this.warnAlert('请选择单位类型')
         return
       }
       if (this.companyAddress.length <= 0) {
@@ -320,7 +320,6 @@ export default {
         buildingPaths.push(item.path)
       })
       var param = {
-        id: '',
         enterpriseName: this.companyName,
         enterpriseTypeCode: this.companyType,
         enterpriseAddress: this.companyAddress,
@@ -364,16 +363,18 @@ export default {
       }
     },
     initBasicInfo () {
+      console.log(localStorage.selectedAddress)
       if (
         localStorage.selectedAddress !== undefined &&
         localStorage.selectedAddress !== ''
       ) {
         const tP = JSON.parse(localStorage.selectedAddress)
-        localStorage.selectedAddress = ''
+        // localStorage.selectedAddress = ''
         this.companyName = tP.name
-        this.companyType = tP.type
+        // this.companyType = tP.type
         this.companyAddress = tP.address
         this.companyPhone = tP.tel
+
         const tmpMap = this.$refs.gduMap
         tmpMap.mapMoveTo(tP.lon, tP.lat, false)
         tmpMap.map2D.customMarkerLayerManager.clear()

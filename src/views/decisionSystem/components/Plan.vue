@@ -9,23 +9,23 @@
             icon="el-icon-top-right"
             circle
           ></el-button>-->
-          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{address}}</div>
+          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{info.name}}</div>
           <div style="margin-top: 16px; margin-left: 22px; font-size: 12px;">
-            {{subAddress}}
-            <i class="el-icon-warning"></i>
+            {{info.type}}
+            <div v-show="info.keyId !== undefined" class="keypointStyle">重</div>
           </div>
         </div>
         <div class="addressInfoDetail">
-          <i class="el-icon-warning"></i>
-          {{detailAddress}}
+          <i class="el-icon-location"></i>
+          {{info.cityname + info.adname + info.address}}
         </div>
         <div class="addressInfoDetail">
-          <i class="el-icon-warning"></i>
-          {{phoneNumber}}
+          <i class="el-icon-phone"></i>
+          {{info.tel}}
         </div>
       </div>
 
-      <el-collapse style="border: none;" v-model="activeNames">
+      <el-collapse v-show="info.keyId !== undefined" style="border: none;" v-model="activeNames">
         <el-collapse-item name="1">
           <template slot="title">
             <div style="margin-left: 22px;">基本情况说明</div>
@@ -85,14 +85,18 @@ import HorCardList from './HorizontalCardList.vue'
 import FloorGuide from './FloorGuide'
 import BaseInfo from './BaseInfo'
 export default {
+  created () {
+
+  },
+  props: {
+    info: {
+      type: Object,
+      required: true
+    }
+  },
   data () {
     return {
-      address: '武汉华夏理工学院',
-      subAddress: 'XXXX-高校',
-      detailAddress: '武汉市江夏区新技术开发区关山大道XXX',
-      phoneNumber: '027-XXXXXXXX',
-
-      activeNames: ['1', '2', '3', '4'],
+      activeNames: ['1', '2'],
 
       buildingTitle: '黄鹤楼',
       buildingInfos: [ // 测试数据
@@ -155,6 +159,17 @@ export default {
     line-height: 30px;
     border-top: 1px solid rgba(237, 237, 237, 0.5);
     font-size: 12px;
+  }
+  .keypointStyle {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: red;
+    border-radius: 50%;
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    line-height: 24px;
   }
 }
 
