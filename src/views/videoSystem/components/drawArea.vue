@@ -4,7 +4,7 @@
             <div @mousedown="mousedown" @mousemove="mousemove"
                  @mouseup="mouseup" @Mouseleave="Mouseleave" style="position:relative">
                 <!-- <img :src="imgSrc" :style="imgstyle"> -->
-                <canvas ref="table" :width="canvasWidth" :height="canvasHeight" style="position:absolute;top:0;left:0"></canvas>
+                <canvas ref="table" :width="canvasWidth" :height="canvasHeight" ></canvas>
             </div>
         </div>
         <!-- <div style="width: 1450px;z-index: inherit;text-align: right ;margin:10px 0 0 0">

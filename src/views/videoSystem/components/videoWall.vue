@@ -13,7 +13,13 @@
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
-      <div ref="playerArea" class="pointLayer" @click="addPoint" @dblclick="fullScreen"></div>
+      <div ref="playerArea" class="pointLayer"  @dblclick="fullScreen">
+        <div
+          v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&bIsFullScreen===true" @keyup.enter="getCurPosition"
+        >
+          <draw-area @custom="getPosition" ref="drawArea" ></draw-area>
+        </div>
+      </div>
       <div class="info">
         <span></span>
         <span>{{videoInfo.parentLabel}}</span>
@@ -151,6 +157,7 @@
 <script>
 import LivePlayer from '@liveqing/liveplayer'
 import droneInfoMixin from '../../../utils/droneInfoMixin'
+import drawArea from './drawArea'
 export default {
   data () {
     return {
@@ -218,7 +225,8 @@ export default {
   mixins: [droneInfoMixin],
 
   components: {
-    LivePlayer
+    LivePlayer,
+    drawArea
   },
 
   props: {
@@ -259,6 +267,12 @@ export default {
     var elementResizeDetectorMaker = require('element-resize-detector')
     this.erd = elementResizeDetectorMaker()
     this.setPlayerSizeListener()
+    // 监听键盘按键事件
+    document.addEventListener('keyup', (e) => {
+      if (e.keyCode === 13) {
+        this.getCurPosition()
+      }
+    })
   },
 
   methods: {
@@ -266,8 +280,10 @@ export default {
       var me = this
       this.erd.listenTo(this.$refs.playerArea, function (element) {
         var width = element.offsetWidth
-        var height = element.offsetHeight
-        if (width === window.screen.width && height === window.screen.height) {
+
+        console.log(width, element.clientWidth, element.clientWidth, element.style.width)
+        // var height = element.offsetHeight
+        if (width === window.screen.width) {
           me.bIsFullScreen = true
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
         } else {
@@ -276,6 +292,15 @@ export default {
           me.resetForm('ruleForm')
         }
       })
+    },
+    // 获取坐标信息
+    getPosition (obj) {
+      console.log(obj)
+      this.addPoint()
+    },
+    getCurPosition () {
+      debugger
+      this.$refs.drawArea.customQuery()
     },
     submitForm (formName) {
       console.log(this.ruleForm.tagType)
@@ -294,7 +319,7 @@ export default {
     },
     addPoint (e) {
       if (this.bIsFullScreen === true) {
-        console.log(e.pageX, e.pageY)
+        // console.log(e.pageX, e.pageY)
         // this.videoInfo.streamUrl = 'ws://111.47.13.103:40007/live/34020000001310000005.flv'
         // setTimeout(() => {
         //   this.$refs.playerCtrl.player.requestFullscreen()
