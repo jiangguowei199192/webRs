@@ -232,6 +232,9 @@ export default {
   computed: {
     deviceCode () {
       return this.videoInfo.deviceCode
+    },
+    videoSource () {
+      return this.videoInfo.streamUrl
     }
     // curFaceArray () {
     //   if (this.faceArray && this.faceArray.length > 0) {
@@ -253,6 +256,11 @@ export default {
     },
     deviceCode (val) {
       this.setDroneDevCode(val)
+    },
+    videoSource (val) {
+      setTimeout(() => {
+        this.setPlayerSizeListener()
+      }, 500)
     }
   },
 
@@ -266,23 +274,26 @@ export default {
     this.setDroneDevCode(this.videoInfo.deviceCode)
 
     var elementResizeDetectorMaker = require('element-resize-detector')
-    var erd = elementResizeDetectorMaker()
-    var me = this
-    erd.listenTo(this.$refs.playerCtrl.player.el_, function (element) {
-      var width = element.offsetWidth
-      var height = element.offsetHeight
-      if (width === window.screen.width && height === window.screen.height) {
-        me.bIsFullScreen = true
-        me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
-      } else {
-        me.bIsFullScreen = false
-        me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
-        me.resetForm('ruleForm')
-      }
-    })
+    this.erd = elementResizeDetectorMaker()
+    this.setPlayerSizeListener()
   },
 
   methods: {
+    setPlayerSizeListener () {
+      var me = this
+      this.erd.listenTo(this.$refs.playerCtrl.player.el_, function (element) {
+        var width = element.offsetWidth
+        var height = element.offsetHeight
+        if (width === window.screen.width && height === window.screen.height) {
+          me.bIsFullScreen = true
+          me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
+        } else {
+          me.bIsFullScreen = false
+          me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
+          me.resetForm('ruleForm')
+        }
+      })
+    },
     submitForm (formName) {
       console.log(this.ruleForm.tagType)
       this.$refs[formName].validate(valid => {
