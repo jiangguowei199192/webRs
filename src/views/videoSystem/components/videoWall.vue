@@ -280,9 +280,9 @@ export default {
       var me = this
       this.erd.listenTo(this.$refs.playerArea, function (element) {
         var width = element.offsetWidth
-
-        console.log(width, element.clientWidth, element.clientWidth, element.style.width)
         // var height = element.offsetHeight
+        console.log(width, element.clientWidth, element.clientWidth, element.style.width)
+        // if (width === window.screen.width && height === window.screen.height) {
         if (width === window.screen.width) {
           me.bIsFullScreen = true
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })

@@ -97,6 +97,7 @@
         @mouseenter="mouseHandler($event,addr,true)"
         @mouseleave="mouseHandler($event,addr,false)"
       >
+        <div class="keyAddr"  v-show="addr.keyId != undefined"></div>
         <img class="itemImg" v-show="addr._imgUrl != null" :src="addr._imgUrl" />
         <div class="itemName" :title="addr.name">{{index + 1}}. {{ addr.name }}</div>
         <div class="itemAddr" v-show="addr._addr != null">{{ addr._addr }}</div>
@@ -240,6 +241,7 @@
 <script>
 import AMapHelper from '../../axios/amapapis'
 import Plan from '../../views/decisionSystem/components/Plan.vue'
+import { settingApi } from '@/api/setting'
 export default {
   name: 'gMap',
   components: {
@@ -517,6 +519,60 @@ export default {
       this.map2D.searchLayerManager.clear()
     },
 
+    // 重点单位搜索结果追加
+    appendKeyResults (_keyResult) {
+      if (_keyResult.length < 1) {
+        return
+      }
+      if (_keyResult.length > 0 && this.addrResults === null) {
+        this.addrResults = []
+      }
+      _keyResult.forEach(k => {
+        k._bHover = false
+        k._updateHoverCB = this.updateMouseHover
+        k.keyId = k.id
+        if (k.poiId !== undefined) k.id = k.poiId
+        k.name = k.enterpriseName
+        k.address = k.enterpriseAddress
+        k._addr = k.enterpriseAddress
+        k._lon = k.enterpriseLongitude
+        k._lat = k.enterpriseLatitude
+        k.tel = k.enterpriseTel
+        k._imgUrl = null
+        this.addrResults.push(k)
+      })
+      const tmpRes = []
+      const totalNum = this.addrResults.length
+      let count = 0
+      const tA = this.addrResults
+      let tmpMaxLon = -180
+      let tmpMaxLat = -90
+      let tmpMinLon = 180
+      let tmpMinLat = 90
+      for (let i = totalNum - 1; i >= 0; i--) {
+        count += 1
+        tA[i]._index = count
+        if (tA[i]._lon > tmpMaxLon) tmpMaxLon = tA[i]._lon
+        if (tA[i]._lat > tmpMaxLat) tmpMaxLat = tA[i]._lat
+        if (tA[i]._lon < tmpMinLon) tmpMinLon = tA[i]._lon
+        if (tA[i]._lat < tmpMinLat) tmpMinLat = tA[i]._lat
+        tmpRes.push(tA[i])
+      }
+      this.map2D.searchLayerManager.clear()
+      this.map2D.searchLayerManager.addSearchAddrs(tmpRes)
+      if (tmpRes.length > 1) {
+        this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+        this.map2D.zoomOut()
+      } else {
+        this.map2D.zoomToCenter(tA[0]._lon.tA[0]._lat)
+        this.map2D.setZoom(16)
+      }
+      this.addrResults = []
+      this.addrResults = tmpRes
+      this.bShowResult = true
+      this.bRouteOrClose = false
+    },
+
     // 初始化搜索提示框
     initSearchBox () {
       var that = this
@@ -688,7 +744,7 @@ export default {
       this.bShowPaln = false
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
-      AMapHelper.getPOIs({ keywords: addrStr })
+      await AMapHelper.getPOIs({ keywords: addrStr })
         .then(res => {
           if (res.data.status === '1') {
             this.updateSearchResults(res.data.pois)
@@ -696,6 +752,16 @@ export default {
         })
         .catch(err => {
           console.log('AMapHelper.getPOIs Err : ' + err)
+        })
+      await this.$axios.get(settingApi.enterpriseList, { enterpriseName: addrStr })
+        .then((res) => {
+          if (res.data.code === 0) {
+            var keyDatas = res.data.data.data
+            this.appendKeyResults(keyDatas)
+          }
+        })
+        .catch(err => {
+          console.log('axios.get(settingApi.enterpriseList) Err : ' + err)
         })
     },
 
@@ -1279,8 +1345,16 @@ export default {
       color: black;
       background: white;
       cursor: pointer;
+      .keyAddr {
+        float: left;
+        margin-top: 5px;
+        height: 16px;
+        width: 16px;
+        background-image: url('../../assets/images/keyAddr.png');
+      }
       .itemName {
         font-size: 14px;
+        margin-left: 3px;
         margin-top: 3px;
         color: rgb(63, 107, 165);
       }
