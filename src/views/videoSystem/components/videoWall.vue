@@ -589,7 +589,7 @@ export default {
     startChange (index) {
       const params = {
         device_id: this.videoInfo.deviceCode,
-        channel_id: this.videoInfo.id
+        channel_id: this.videoInfo.streamType
       }
       switch (index) {
         case 0:
@@ -715,7 +715,7 @@ export default {
       if (index === 4) return
       const params = {
         device_id: this.videoInfo.deviceCode,
-        channel_id: this.videoInfo.id,
+        channel_id: this.videoInfo.streamType,
         stop: 1,
         step: 0,
         cmd_type: ''
