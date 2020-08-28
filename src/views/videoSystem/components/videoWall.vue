@@ -13,7 +13,7 @@
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
-      <div class="pointLayer" @click="addPoint" @dblclick="fullScreen"></div>
+      <div ref="playerArea" class="pointLayer" @click="addPoint" @dblclick="fullScreen"></div>
       <div class="info">
         <span></span>
         <span>{{videoInfo.parentLabel}}</span>
@@ -232,9 +232,6 @@ export default {
   computed: {
     deviceCode () {
       return this.videoInfo.deviceCode
-    },
-    videoSource () {
-      return this.videoInfo.streamUrl
     }
     // curFaceArray () {
     //   if (this.faceArray && this.faceArray.length > 0) {
@@ -256,11 +253,6 @@ export default {
     },
     deviceCode (val) {
       this.setDroneDevCode(val)
-    },
-    videoSource (val) {
-      setTimeout(() => {
-        this.setPlayerSizeListener()
-      }, 500)
     }
   },
 
@@ -281,7 +273,7 @@ export default {
   methods: {
     setPlayerSizeListener () {
       var me = this
-      this.erd.listenTo(this.$refs.playerCtrl.player.el_, function (element) {
+      this.erd.listenTo(this.$refs.playerArea, function (element) {
         var width = element.offsetWidth
         var height = element.offsetHeight
         if (width === window.screen.width && height === window.screen.height) {
