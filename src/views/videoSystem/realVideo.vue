@@ -951,7 +951,7 @@ export default {
     playOrClose (type, curTreeData) {
       // 1.添加
       if (type === 1) {
-        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.streamType, streamUrl: curTreeData.streamUrl, label: curTreeData.label }))
+        new MqttService().client.send('video/start/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.streamType, streamUrl: curTreeData.streamUrl, label: curTreeData.label, isOpen: true }))
         this.curSelectedVideo = JSON.parse(JSON.stringify(curTreeData))
         console.log('当前选中', this.curSelectedVideo)
         this.refreshMap(curTreeData)
@@ -1026,7 +1026,7 @@ export default {
           )
         }
       } else {
-        new MqttService().client.send('video/stop/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.streamType, streamUrl: curTreeData.streamUrl, label: curTreeData.label }))
+        new MqttService().client.send('video/stop/algorithm', JSON.stringify({ deviceCode: curTreeData.deviceCode, channelId: curTreeData.streamType, streamUrl: curTreeData.streamUrl, label: curTreeData.label, isOpen: false }))
         // 2.关闭视频 如果关闭的是显示的视频
         // if (curTreeData.id === this.curSelectedVideo.id) {
         this.curSelectedVideo = {}
