@@ -771,7 +771,6 @@ export default {
       if (this.filterText === '') {
         this.updateSearchResults(null)
         this.bShowPaln = false
-        localStorage.selectedAddress = ''
       }
     },
 
@@ -789,7 +788,6 @@ export default {
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
       this.bShowPaln = false
-      localStorage.selectedAddress = ''
     },
 
     // 隐藏导航框
@@ -822,8 +820,6 @@ export default {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
       }
-      const tmpPosition = { name: addr.name, lon: addr._lon, lat: addr._lat, address: addr.address, type: addr.type, tel: addr.tel }
-      localStorage.selectedAddress = JSON.stringify(tmpPosition)
     },
 
     // 在地图中鼠标移入移出标记时回调刷新列表中结果项
