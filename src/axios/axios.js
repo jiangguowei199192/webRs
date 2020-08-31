@@ -25,6 +25,7 @@ service.interceptors.request.use((config) => {
   }
   if (config.url !== '/cloud-fms/sysuser/updateHeadImg' &&
       config.url !== '/cloud-fms/sysuser/updateUser' &&
+      config.url !== '/cloud-fms/sysuser/addUser' &&
       config.url !== '/cloud-video/prePlan/enterprise/baseInfoPicUpload' &&
       config.url !== '/cloud-video/prePlan/enterprise/jzpmtPicUpload') {
     // 判断请求方式是否为POST，进行转换格式

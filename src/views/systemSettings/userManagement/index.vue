@@ -102,7 +102,7 @@
           <el-select
             :popper-append-to-body="false"
             v-model="newUserForm.job"
-            placeholder="请选择职务"
+            placeholder=""
             class="selectStyle"
             popper-class="select-popper"
           >
@@ -115,14 +115,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="所属组织">
-          <!-- <el-select :popper-append-to-body="false" v-model="newUserForm.organizations" multiple placeholder="请选择组织" class="selectStyle" popper-class="select-popper">
-            <el-option v-for="item in organizationOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>-->
           <el-cascader
-            placeholder="请选择组织"
-            :options="options"
+            placeholder=""
+            :options="organizationOptions"
             :props="{ multiple: true }"
+            collapse-tags
             filterable
+            class="cascaderStyle"
+            v-model="newUserForm.organizations"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="激活" prop="active">
@@ -206,6 +206,7 @@ export default {
         password: '123456',
         organizations: []
       },
+      organizationOptions: [],
       newUserRules: {
         username: [{ required: true, message: '请输入用户名' }],
         name: [{ required: true, message: '请输入姓名' }],
@@ -213,13 +214,6 @@ export default {
         active: [{ required: true }]
       },
 
-      organizationOptions: [
-        { value: 'val1', label: 'lab1' },
-        { value: 'val2', label: 'lab2' },
-        { value: 'val3', label: 'lab3' },
-        { value: 'val4', label: 'lab4' },
-        { value: 'val5', label: 'lab5' }
-      ],
       resetPasswordForm: {
         password: ''
       },
@@ -265,11 +259,75 @@ export default {
     },
     // 获取组织树
     async getDeptTree () {
+      const p = this
       this.$axios.post(loginApi.getDeptTree).then((res) => {
         if (res.data.code === 0) {
-          this.deptTree = res.data.data
+          p.deptTree = res.data.data
+          p.handleDeptTree(res.data.data)
         }
       })
+    },
+    handleDeptTree (treeData) {
+      var data = []
+      treeData.forEach((item1) => {
+        var child1 = []
+        var temp1
+        if (item1.children) {
+          item1.children.forEach((item2) => {
+            var child2 = []
+            var temp2
+            if (item2.children) {
+              item2.children.forEach((item3) => {
+                var child3 = []
+                var temp3
+                if (item3.children) {
+                  item3.children.forEach((item4) => {
+                    var temp4 = {
+                      value: item4.deptCode,
+                      label: item4.deptName
+                    }
+                    child3.push(temp4)
+                  })
+                  temp3 = {
+                    value: item3.deptCode,
+                    label: item3.deptName,
+                    children: child3
+                  }
+                } else {
+                  temp3 = {
+                    value: item3.deptCode,
+                    label: item3.deptName
+                  }
+                }
+                child2.push(temp3)
+              })
+              temp2 = {
+                value: item2.deptCode,
+                label: item2.deptName,
+                children: child2
+              }
+            } else {
+              temp2 = {
+                value: item2.deptCode,
+                label: item2.deptName
+              }
+            }
+            child1.push(temp2)
+          })
+          temp1 = {
+            value: item1.deptCode,
+            label: item1.deptName,
+            children: child1
+          }
+        } else {
+          temp1 = {
+            value: item1.deptCode,
+            label: item1.deptName
+          }
+        }
+        data.push(temp1)
+      })
+      this.organizationOptions = data
     },
 
     // 分页页数改变
@@ -342,6 +400,36 @@ export default {
       this.$refs.newUserFormRef.validate(async (valid) => {
         if (!valid) return
         this.showNewUser = false
+        var param = {
+          deptCode: this.newUserForm.organizations,
+          mobile: this.newUserForm.phone,
+          password: this.newUserForm.password,
+          roleCode: this.newUserForm.job,
+          status: this.newUserForm.active,
+          useraccount: this.newUserForm.username,
+          username: this.newUserForm.name,
+          email: this.newUserForm.email,
+          userGender: this.newUserForm.six
+        }
+        this.$axios.post(settingApi.addUser, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        }).then(res => {
+          if (res.data.code === 0) {
+            Notification({
+              title: '提示',
+              message: '新增用户成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            return
+          }
+          Notification({
+            title: '提示',
+            message: '新增用户失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+        })
       })
     },
     // 重置密码
@@ -607,6 +695,14 @@ export default {
         border-bottom-color: #3688b1;
       }
     }
+  }
+}
+
+.cascaderStyle {
+  // width: 300px;
+  /deep/.el-cascader__search-input {
+    background: transparent;
+    color: white;
   }
 }
 </style>
