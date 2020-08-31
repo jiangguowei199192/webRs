@@ -841,6 +841,31 @@ export default {
 /deep/.compass {
   right: 8px !important;
   top: 8px !important;
+  width: 107px !important;
+  height: 107px !important;
+}
+
+/deep/.compass-outer-ring {
+  background: url(../../assets/images/3d/N.png) no-repeat !important;
+}
+
+/deep/.compass-outer-ring-background {
+  display: none;
+}
+
+/deep/.compass-rotation-marker {
+    display: none !important;
+}
+
+/deep/.compass-gyro-background {
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background-color: rgba(47, 53, 60, 0.8);
+  box-sizing: content-box;
+  //background-image: url(img/compass-inner.svg);
 }
 
 /deep/.mars3d-popup-content-wrapper {
@@ -1180,14 +1205,14 @@ export default {
   .rightTool {
     display: flex;
     flex-direction: column;
-    width: 78px;
+    width: 80px;
     position: absolute;
-    right: 8px;
-    top: 80px;
-    align-items:center;
+    right: 20px;
+    top: 125px;
+    align-items: center;
     .move {
-      width: 78px;
-      height: 78px;
+      width: 80px;
+      height: 80px;
       display: inline-block;
       background: url(../../assets/images/3d/move-bg.png) no-repeat;
       position: relative;
@@ -1197,8 +1222,9 @@ export default {
         position: absolute;
       }
       span:nth-child(1) {
-        left: 20px;
-        top: 19px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
         width: 40px;
         height: 40px;
         background: url(../../assets/images/3d/hand.png) no-repeat;
@@ -1243,7 +1269,7 @@ export default {
       background: url(../../assets/images/3d/+.png) no-repeat;
     }
     > span:nth-child(3) {
-       margin-top: 10px;
+      margin-top: 10px;
       background: url(../../assets/images/3d/-.png) no-repeat;
     }
   }
