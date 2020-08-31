@@ -147,7 +147,7 @@ export default {
       this.startY = e.offsetY
       this.mousemove(e)
     },
-    // 鼠标移动式时执行
+    // 鼠标移动时执行
     mousemove (e) {
       if (this.isMouseDownInCanvas) { // 当鼠标有按下操作时执行
         console.log('鼠标移动')
@@ -155,7 +155,7 @@ export default {
         this.endY = e.offsetY
         const wwidth = this.endX - this.startX
         const wheigth = this.endY - this.startY
-
+        console.log(wwidth, wheigth)
         // 1.清除指定区域的所有像素
         this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
         this.customcxt.strokeStyle = ' #00ff00' // 矩形框颜色
