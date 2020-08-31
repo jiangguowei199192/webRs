@@ -753,7 +753,7 @@ export default {
         .catch(err => {
           console.log('AMapHelper.getPOIs Err : ' + err)
         })
-      await this.$axios.get(settingApi.enterpriseList, { enterpriseName: addrStr })
+      await this.$axios.get(settingApi.enterpriseList, { params: { enterpriseName: addrStr } })
         .then((res) => {
           if (res.data.code === 0) {
             var keyDatas = res.data.data.data
