@@ -13,11 +13,12 @@
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
-      <div ref="playerArea" class="pointLayer"  @dblclick="fullScreen">
+      <div ref="playerArea" class="pointLayer" @dblclick="fullScreen">
         <div
-          v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&bIsFullScreen===true" @keyup.enter="getCurPosition"
+          v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+          ref="drawBox"
         >
-          <draw-area @custom="getPosition" ref="drawArea" ></draw-area>
+          <draw-area @custom="createImgDom" ref="drawArea"></draw-area>
         </div>
       </div>
       <div class="info">
@@ -115,12 +116,7 @@
           ></gMap>
         </div>
       </div>
-      <div
-        class="fullScreenMark"
-        v-show="showMarkForm"
-        @dblclick="stopEvent"
-        @click.stop="stopEvent"
-      >
+      <div class="fullScreenMark" v-show="showMarkForm">
         <el-form
           :model="ruleForm"
           :rules="rules"
@@ -267,12 +263,12 @@ export default {
     var elementResizeDetectorMaker = require('element-resize-detector')
     this.erd = elementResizeDetectorMaker()
     this.setPlayerSizeListener()
-    // 监听键盘按键事件
-    document.addEventListener('keyup', (e) => {
-      if (e.keyCode === 13) {
-        this.getCurPosition()
-      }
-    })
+    // // 监听键盘按键事件
+    // document.addEventListener('keyup', (e) => {
+    //   if (e.keyCode === 13) {
+    //     this.getCurPosition()
+    //   }
+    // })
   },
 
   methods: {
@@ -281,7 +277,7 @@ export default {
       this.erd.listenTo(this.$refs.playerArea, function (element) {
         var width = element.offsetWidth
         // var height = element.offsetHeight
-        console.log(width, element.clientWidth, element.clientWidth, element.style.width)
+        // console.log(width, element.clientWidth, element.clientWidth, element.style.width)
         // if (width === window.screen.width && height === window.screen.height) {
         if (width === window.screen.width) {
           me.bIsFullScreen = true
@@ -293,31 +289,53 @@ export default {
         }
       })
     },
-    // 获取坐标信息
-    getPosition (obj) {
-      console.log(obj)
-      this.addPoint()
+    // 创建元素
+    createImgDom (obj) {
+      console.log('传递过来的顶部距离', obj.data.offsetTop)
+      const div = document.createElement('div')
+      div.className = 'pic'
+      div.style.left = obj.data.offsetLeft + 'px'
+      div.style.top = obj.data.offsetTop + 'px'
+      const span = document.createElement('span')
+      span.innerHTML = 'x'
+      span.style.color = '#ccc'
+      span.addEventListener('click', function (e) {
+        e.target.parentNode.remove()
+      })
+      const input = document.createElement('input')
+      input.style.width = '100px'
+      input.value = obj.data.labelText
+      input.addEventListener('click', e => {
+        this.showMarkForm = true
+      })
+      div.appendChild(span)
+      div.appendChild(input)
+      this.$refs.drawBox.appendChild(div)
     },
-    getCurPosition () {
-      debugger
-      this.$refs.drawArea.customQuery()
-    },
+    // 表单提交
     submitForm (formName) {
       console.log(this.ruleForm.tagType)
       this.$refs[formName].validate(valid => {
         if (valid) {
           console.log('成功')
+          // this.createImgDom(this.ruleForm.tagType)
+          // 成功之后调用该方法获取坐标信息
+          this.$refs.drawArea.customQuery(this.ruleForm)
+          this.resetForm('ruleForm')
         } else {
           console.log('error submit!!')
           return false
         }
       })
     },
+    // 重置表单
     resetForm (formName) {
       this.showMarkForm = false
       this.$refs[formName].resetFields()
+      this.$refs.drawArea.resetReact()
     },
-    addPoint (e) {
+    // 显示表单
+    showMarkDialog (e) {
       if (this.bIsFullScreen === true) {
         // console.log(e.pageX, e.pageY)
         // this.videoInfo.streamUrl = 'ws://111.47.13.103:40007/live/34020000001310000005.flv'
@@ -938,13 +956,7 @@ export default {
   created () {}
 }
 </script>
-<style lang="less" scoped>
-select:invalid {
-  color: #a3afb7;
-}
-.is-error select {
-  border-color: #f56c6c;
-}
+<style lang="less" >
 .playerStyle {
   position: relative;
   width: 100%;
@@ -952,276 +964,306 @@ select:invalid {
   :focus {
     outline: none;
   }
-}
-.pointLayer {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-}
-.info {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  :nth-child(1) {
-    position: relative;
-    top: -2px;
-    display: inline-block;
-    width: 17px;
-    height: 10px;
-    background: url(../../../assets/images/videowall-play.png) no-repeat;
+  select:invalid {
+    color: #a3afb7;
   }
-
-  :nth-child(2) {
-    font-size: 16px;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 1);
-    margin-left: 8px;
+  .is-error select {
+    border-color: #f56c6c;
   }
-}
-.fullScreenFace {
-  span {
+  .pointLayer {
     position: absolute;
-    // background: url(../../../assets/images/person.png) no-repeat;
-    border: 2px solid green;
+    height: 100%;
+    width: 100%;
+    > div {
+      div.pic {
+        display: inline-block;
+        position: absolute;
+      }
+      span {
+        position: absolute;
+        right: 0;
+        top: -10px;
+        cursor: pointer;
+        display: none;
+      }
+      div.pic:hover span {
+        display: inline;
+      }
+      div.pic img {
+        vertical-align: middle;
+        /* border-radius: 50%; */
+      }
+      div.pic input {
+        //  background:#00a9ff;
+        opacity: 0.6;
+      }
+    }
   }
-}
-.fullScreenOperate {
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 293px;
-  height: 509px;
-  background: url(../../../assets/images/full-screen-operate.png) no-repeat;
-  cursor: text;
-  .deviceInfo {
-    padding-top: 18px;
-    .deviceTitle {
-      box-sizing: border-box;
+  .info {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    :nth-child(1) {
+      position: relative;
+      top: -2px;
+      display: inline-block;
+      width: 17px;
+      height: 10px;
+      background: url(../../../assets/images/videowall-play.png) no-repeat;
+    }
+
+    :nth-child(2) {
+      font-size: 16px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      margin-left: 8px;
+    }
+  }
+  .fullScreenFace {
+    span {
+      position: absolute;
+      // background: url(../../../assets/images/person.png) no-repeat;
+      border: 2px solid green;
+    }
+  }
+  .fullScreenOperate {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 293px;
+    height: 509px;
+    background: url(../../../assets/images/full-screen-operate.png) no-repeat;
+    cursor: text;
+    .deviceInfo {
+      padding-top: 18px;
+      .deviceTitle {
+        box-sizing: border-box;
+        width: 202px;
+        height: 34px;
+        background: url(../../../assets/images/device/info-title.png) no-repeat;
+        line-height: 34px;
+        padding-left: 37px;
+        margin-left: 20px;
+      }
+      .operate {
+        margin-top: 20px;
+        .icons {
+          display: flex;
+          flex-wrap: wrap;
+          padding-left: 45px;
+          div {
+            width: 48px;
+            height: 48px;
+            margin-right: 19px;
+            margin-bottom: 19px;
+            cursor: pointer;
+          }
+          div:nth-child(1) {
+            background: url(../../../assets/images/device/7.png) no-repeat;
+          }
+          div:nth-child(1):hover {
+            background: url(../../../assets/images/device/7_selected.png)
+              no-repeat;
+          }
+          div:nth-child(2) {
+            background: url(../../../assets/images/device/8.png) no-repeat;
+          }
+          div:nth-child(2):hover {
+            background: url(../../../assets/images/device/8_selected.png)
+              no-repeat;
+          }
+          div:nth-child(3) {
+            background: url(../../../assets/images/device/9.png) no-repeat;
+          }
+          div:nth-child(3):hover {
+            background: url(../../../assets/images/device/9_selected.png)
+              no-repeat;
+          }
+          div:nth-child(4) {
+            margin-right: 10px;
+            background: url(../../../assets/images/device/4.png) no-repeat;
+          }
+          div:nth-child(4):hover {
+            background: url(../../../assets/images/device/4_selected.png)
+              no-repeat;
+          }
+          div:nth-child(5) {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            margin-left: 2px;
+            top: -7px;
+            // left: -5px;
+            margin-right: 10px;
+            background: url(../../../assets/images/device/5.png) no-repeat;
+            cursor: text;
+            margin-bottom: 5px;
+          }
+          // div:nth-child(5):hover {
+          //   background: url(../../../assets/images/device/5_selected.png)
+          //     no-repeat;
+          // }
+          div:nth-child(6) {
+            background: url(../../../assets/images/device/6.png) no-repeat;
+          }
+          div:nth-child(6):hover {
+            background: url(../../../assets/images/device/6_selected.png)
+              no-repeat;
+          }
+          div:nth-child(7) {
+            background: url(../../../assets/images/device/1.png) no-repeat;
+          }
+          div:nth-child(7):hover {
+            background: url(../../../assets/images/device/1_selected.png)
+              no-repeat;
+          }
+          div:nth-child(8) {
+            background: url(../../../assets/images/device/2.png) no-repeat;
+          }
+          div:nth-child(8):hover {
+            background: url(../../../assets/images/device/2_selected.png)
+              no-repeat;
+          }
+          div:nth-child(9) {
+            background: url(../../../assets/images/device/3.png) no-repeat;
+          }
+          div:nth-child(9):hover {
+            background: url(../../../assets/images/device/3_selected.png)
+              no-repeat;
+          }
+        }
+        .btns {
+          box-sizing: border-box;
+          font-family: Source Han Sans CN;
+          font-weight: 400;
+          font-size: 18px;
+          > div {
+            width: 201px;
+            height: 37px;
+            line-height: 35px;
+            text-align: center;
+            margin-left: 37px;
+            background: rgba(46, 108, 147, 1);
+            border: 1px solid rgba(28, 161, 220, 1);
+            color: #84ddff;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 13px;
+            span {
+              display: inline-block;
+              width: 48px;
+              font-size: 24px;
+              cursor: pointer;
+              position: relative;
+            }
+            span:nth-child(1):after {
+              content: "|";
+              position: absolute;
+              left: 45px;
+              color: #1ca1dc;
+              top: -3px;
+            }
+            span:nth-child(3):before {
+              content: "|";
+              position: absolute;
+              left: -1px;
+              color: #1ca1dc;
+              top: -3px;
+            }
+            span:hover {
+              background: linear-gradient(
+                90deg,
+                rgb(32, 72, 105) 0%,
+                rgb(32, 72, 105) 100%
+              );
+            }
+            span:nth-child(1):hover:after {
+              display: none;
+            }
+            span:nth-child(3):hover:before {
+              display: none;
+            }
+          }
+        }
+        .slider {
+          display: flex;
+          padding-left: 37px;
+
+          span {
+            line-height: 38px;
+          }
+          span.demonstration {
+            font-weight: bold;
+            color: rgba(132, 221, 255, 1);
+          }
+          span:nth-child(3) {
+            display: inline-block;
+            width: 38px;
+            height: 24px;
+            background: rgba(46, 108, 147, 1);
+            border: 1px solid rgba(28, 161, 220, 1);
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            top: 5px;
+            line-height: 24px;
+          }
+          /deep/.el-slider__bar {
+            background-color: #84ddff;
+          }
+          /deep/.el-slider__button {
+            background-color: #84ddff;
+          }
+        }
+        .sliderTip {
+          font-size: 14px;
+          margin-top: 2px;
+          padding-left: 65px;
+          color: #fff;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+  .fullScreenMap {
+    position: absolute;
+    right: 30px;
+    bottom: 81px;
+    width: 293px;
+    height: 279px;
+    background: url(../../../assets/images/map_box.png) no-repeat;
+    padding: 15px 10px;
+    .infoTitle {
+      padding-left: 35px;
       width: 202px;
       height: 34px;
       background: url(../../../assets/images/device/info-title.png) no-repeat;
       line-height: 34px;
-      padding-left: 37px;
-      margin-left: 20px;
     }
-    .operate {
+    .mapBox {
+      margin-left: 12px;
       margin-top: 20px;
-      .icons {
-        display: flex;
-        flex-wrap: wrap;
-        padding-left: 45px;
-        div {
-          width: 48px;
-          height: 48px;
-          margin-right: 19px;
-          margin-bottom: 19px;
-          cursor: pointer;
-        }
-        div:nth-child(1) {
-          background: url(../../../assets/images/device/7.png) no-repeat;
-        }
-        div:nth-child(1):hover {
-          background: url(../../../assets/images/device/7_selected.png)
-            no-repeat;
-        }
-        div:nth-child(2) {
-          background: url(../../../assets/images/device/8.png) no-repeat;
-        }
-        div:nth-child(2):hover {
-          background: url(../../../assets/images/device/8_selected.png)
-            no-repeat;
-        }
-        div:nth-child(3) {
-          background: url(../../../assets/images/device/9.png) no-repeat;
-        }
-        div:nth-child(3):hover {
-          background: url(../../../assets/images/device/9_selected.png)
-            no-repeat;
-        }
-        div:nth-child(4) {
-          margin-right: 10px;
-          background: url(../../../assets/images/device/4.png) no-repeat;
-        }
-        div:nth-child(4):hover {
-          background: url(../../../assets/images/device/4_selected.png)
-            no-repeat;
-        }
-        div:nth-child(5) {
-          width: 64px;
-          height: 64px;
-          position: relative;
-          margin-left: 2px;
-          top: -7px;
-          // left: -5px;
-          margin-right: 10px;
-          background: url(../../../assets/images/device/5.png) no-repeat;
-          cursor: text;
-          margin-bottom: 5px;
-        }
-        // div:nth-child(5):hover {
-        //   background: url(../../../assets/images/device/5_selected.png)
-        //     no-repeat;
-        // }
-        div:nth-child(6) {
-          background: url(../../../assets/images/device/6.png) no-repeat;
-        }
-        div:nth-child(6):hover {
-          background: url(../../../assets/images/device/6_selected.png)
-            no-repeat;
-        }
-        div:nth-child(7) {
-          background: url(../../../assets/images/device/1.png) no-repeat;
-        }
-        div:nth-child(7):hover {
-          background: url(../../../assets/images/device/1_selected.png)
-            no-repeat;
-        }
-        div:nth-child(8) {
-          background: url(../../../assets/images/device/2.png) no-repeat;
-        }
-        div:nth-child(8):hover {
-          background: url(../../../assets/images/device/2_selected.png)
-            no-repeat;
-        }
-        div:nth-child(9) {
-          background: url(../../../assets/images/device/3.png) no-repeat;
-        }
-        div:nth-child(9):hover {
-          background: url(../../../assets/images/device/3_selected.png)
-            no-repeat;
-        }
-      }
-      .btns {
-        box-sizing: border-box;
-        font-family: Source Han Sans CN;
-        font-weight: 400;
-        font-size: 18px;
-        > div {
-          width: 201px;
-          height: 37px;
-          line-height: 35px;
-          text-align: center;
-          margin-left: 37px;
-          background: rgba(46, 108, 147, 1);
-          border: 1px solid rgba(28, 161, 220, 1);
-          color: #84ddff;
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 13px;
-          span {
-            display: inline-block;
-            width: 48px;
-            font-size: 24px;
-            cursor: pointer;
-            position: relative;
-          }
-          span:nth-child(1):after {
-            content: "|";
-            position: absolute;
-            left: 45px;
-            color: #1ca1dc;
-            top: -3px;
-          }
-          span:nth-child(3):before {
-            content: "|";
-            position: absolute;
-            left: -1px;
-            color: #1ca1dc;
-            top: -3px;
-          }
-          span:hover {
-            background: linear-gradient(
-              90deg,
-              rgb(32, 72, 105) 0%,
-              rgb(32, 72, 105) 100%
-            );
-          }
-          span:nth-child(1):hover:after {
-            display: none;
-          }
-          span:nth-child(3):hover:before {
-            display: none;
-          }
-        }
-      }
-      .slider {
-        display: flex;
-        padding-left: 37px;
-
-        span {
-          line-height: 38px;
-        }
-        span.demonstration {
-          font-weight: bold;
-          color: rgba(132, 221, 255, 1);
-        }
-        span:nth-child(3) {
-          display: inline-block;
-          width: 38px;
-          height: 24px;
-          background: rgba(46, 108, 147, 1);
-          border: 1px solid rgba(28, 161, 220, 1);
-          border-radius: 10px;
-          text-align: center;
-          position: relative;
-          top: 5px;
-          line-height: 24px;
-        }
-        /deep/.el-slider__bar {
-          background-color: #84ddff;
-        }
-        /deep/.el-slider__button {
-          background-color: #84ddff;
-        }
-      }
-      .sliderTip {
-        font-size: 14px;
-        margin-top: 2px;
-        padding-left: 65px;
-        color: #fff;
-        opacity: 0.5;
-      }
+      width: 247px;
+      height: 150px;
     }
   }
-}
-.fullScreenMap {
-  position: absolute;
-  right: 30px;
-  bottom: 81px;
-  width: 293px;
-  height: 279px;
-  background: url(../../../assets/images/map_box.png) no-repeat;
-  padding: 15px 10px;
-  .infoTitle {
-    padding-left: 35px;
-    width: 202px;
-    height: 34px;
-    background: url(../../../assets/images/device/info-title.png) no-repeat;
-    line-height: 34px;
-  }
-  .mapBox {
-    margin-left: 12px;
-    margin-top: 20px;
-    width: 247px;
-    height: 150px;
-  }
-}
-.fullScreenMark {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 500px;
-  height: 300px;
-  background: #00497c;
-  form {
-    margin-top: 30px;
-  }
-  .el-button.el-button--primary {
-    padding: 0;
-    height: 40px !important;
-    background: #409eff;
+  .fullScreenMark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 300px;
+    background: #00497c;
+    form {
+      margin-top: 30px;
+    }
+    .el-button.el-button--primary {
+      padding: 0;
+      height: 40px !important;
+      background: #409eff;
+    }
   }
 }
 </style>

@@ -53,13 +53,17 @@ export default {
   },
 
   methods: {
+    // 清空矩形
+    resetReact () {
+      this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
+    },
     // 取消时返回组件调用处所需的数据
     customClose () {
       this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
       this.$emit('custom', { type: 1, data: '' })
     },
     // 确定时返回组件调用处所需的数据
-    customQuery () {
+    customQuery (ruleForm) {
       this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
       // 根据绘制进行图片裁剪
 
@@ -94,6 +98,8 @@ export default {
       oMark.offsetTop = parseInt(cTop)
       oMark.offsetWidth = parseInt(cWidth)
       oMark.offsetHeight = parseInt(cHeight)
+      oMark.labelText = ruleForm.tagName
+      oMark.labelType = ruleForm.tagType
       this.$emit('custom', { type: 2, data: oMark })
     },
 
@@ -144,6 +150,7 @@ export default {
       this.endY = e.offsetY
       this.startX = e.offsetX
       this.startY = e.offsetY
+      // 只要按一下 就清空了画布中的矩形
       this.mousemove(e)
     },
     // 鼠标移动式时执行
@@ -166,6 +173,7 @@ export default {
     mouseup (e) {
       console.log('鼠标松开，进来了')
       this.isMouseDownInCanvas = false
+      this.$parent.$parent.showMarkDialog()
     },
 
     Mouseleave (e) {
