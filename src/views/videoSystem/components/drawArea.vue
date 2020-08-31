@@ -3,7 +3,6 @@
         <div style="position:absolute;top:0;left:0">
             <div @mousedown="mousedown" @mousemove="mousemove"
                  @mouseup="mouseup" @Mouseleave="Mouseleave" style="position:relative">
-                <!-- <img :src="imgSrc" :style="imgstyle"> -->
                 <canvas ref="table" :width="canvasWidth" :height="canvasHeight" ></canvas>
             </div>
         </div>
@@ -62,11 +61,10 @@ export default {
       this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
       this.$emit('custom', { type: 1, data: '' })
     },
-    // 确定时返回组件调用处所需的数据
+    // 获取矩形坐标信息及宽度和高度
     customQuery (ruleForm) {
       this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
       // 根据绘制进行图片裁剪
-
       // 获取矩形框Left，Width'
       let cLeft = 0
       let cWidth = 0
@@ -88,7 +86,6 @@ export default {
         cTop = this.startY
         cHeight = this.endY - this.startY
       }
-
       var oMark = {}
       // oMark.offsetLeft = parseInt(cLeft / this.customRwidth)
       // oMark.offsetTop = parseInt(cTop / this.customRheight)
@@ -102,8 +99,6 @@ export default {
       oMark.labelType = ruleForm.tagType
       this.$emit('custom', { type: 2, data: oMark })
     },
-
-    // dialog展示自定义矩形框画板，
     // 计算img与canvas标签自适应图片的大小
     show () {
       vue.nextTick(_ => {
@@ -150,7 +145,6 @@ export default {
       this.endY = e.offsetY
       this.startX = e.offsetX
       this.startY = e.offsetY
-      // 只要按一下 就清空了画布中的矩形
       this.mousemove(e)
     },
     // 鼠标移动式时执行
@@ -162,11 +156,12 @@ export default {
         const wwidth = this.endX - this.startX
         const wheigth = this.endY - this.startY
 
-        // 清除指定区域的所有像素
+        // 1.清除指定区域的所有像素
         this.customcxt.clearRect(0, 0, this.DivWidth, this.DivHeight)
         this.customcxt.strokeStyle = ' #00ff00' // 矩形框颜色
         this.customcxt.lineWidth = '2' // 矩形框宽度
-        this.customcxt.strokeRect(this.startX, this.startY, wwidth, wheigth) // 绘制矩形
+        // 2.重新绘制矩形
+        this.customcxt.strokeRect(this.startX, this.startY, wwidth, wheigth)
       }
     },
     // 鼠标松开时执行
@@ -175,7 +170,7 @@ export default {
       this.isMouseDownInCanvas = false
       this.$parent.$parent.showMarkDialog()
     },
-
+    // 鼠标离开时执行
     Mouseleave (e) {
       this.isMouseDownInCanvas = false
     }
