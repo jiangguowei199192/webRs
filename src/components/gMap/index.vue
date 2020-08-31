@@ -564,7 +564,7 @@ export default {
         this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
         this.map2D.zoomOut()
       } else {
-        this.map2D.zoomToCenter(tA[0]._lon.tA[0]._lat)
+        this.map2D.zoomToCenter(tA[0]._lon, tA[0]._lat)
         this.map2D.setZoom(16)
       }
       this.addrResults = []
