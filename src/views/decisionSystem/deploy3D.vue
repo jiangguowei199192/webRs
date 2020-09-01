@@ -83,10 +83,10 @@
     <div class="rightTool">
       <div class="move">
         <span></span>
-        <span class="left" @mousedown="moveCamera(2)" @mouseup="stopMoveCamera(2)"></span>
-        <span class="left" @mousedown="moveCamera(3)" @mouseup="stopMoveCamera(3)"></span>
-        <span class="up" @mousedown="moveCamera(4)" @mouseup="stopMoveCamera(4)"></span>
-        <span class="up" @mousedown="moveCamera(5)" @mouseup="stopMoveCamera(5)"></span>
+        <span class="left" @mousedown="moveCamera(2)" @mouseup="stopMoveCamera(2)" @mouseleave="stopMoveCamera(2)"></span>
+        <span class="left" @mousedown="moveCamera(3)" @mouseup="stopMoveCamera(3)" @mouseleave="stopMoveCamera(3)"></span>
+        <span class="up" @mousedown="moveCamera(4)" @mouseup="stopMoveCamera(4)" @mouseleave="stopMoveCamera(4)"></span>
+        <span class="up" @mousedown="moveCamera(5)" @mouseup="stopMoveCamera(5)" @mouseleave="stopMoveCamera(5)"></span>
       </div>
       <span class="zoom" @click="ZoomIn(true)"></span>
       <span class="zoom" @click="ZoomIn(false)"></span>
@@ -94,10 +94,10 @@
     <div class="rightTool compassGyro">
       <div class="move">
         <span @click="returnHome"></span>
-        <span class="left" @mousedown="rotateCamera(2)" @mouseup="stopRotateCamera"></span>
-        <span class="left" @mousedown="rotateCamera(3)" @mouseup="stopRotateCamera"></span>
-        <span class="up" @mousedown="rotateCamera(4)" @mouseup="stopRotateCamera"></span>
-        <span class="up" @mousedown="rotateCamera(5)" @mouseup="stopRotateCamera"></span>
+        <span class="left" @mousedown="rotateCamera(2)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
+        <span class="left" @mousedown="rotateCamera(3)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
+        <span class="up" @mousedown="rotateCamera(4)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
+        <span class="up" @mousedown="rotateCamera(5)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
       </div>
     </div>
   </div>
@@ -331,6 +331,19 @@ export default {
     },
 
     /**
+     *  自动查找任务编辑框的序号
+     */
+    autoFindEditBoxNum () {
+      var number = 1
+      for (var i = 0; i < this.labelList.length; i++) {
+        const t = this.labelList[i]
+        if (parseInt(t.opts.data.number) !== number) { break } else number += 1
+      }
+
+      return number
+    },
+
+    /**
      *  开始绘制
      *@param {Object} item 模型
      */
@@ -360,6 +373,7 @@ export default {
           me.curEntity = entity
           me.isPlot = true
           me.showEditBox = true
+          me.editBox.number = me.autoFindEditBoxNum()
           me.editBox.task = '- -'
           me.setEditBoxPosition(point)
         })
@@ -369,12 +383,12 @@ export default {
           var entity = e.entity
           me.startEditing(entity)
           me.showModelEditBox(entity)
-          console.log('开始编辑')
+          // console.log('开始编辑')
         })
         //
         this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
           me.stopEditing()
-          console.log('EditMouseMove')
+          // console.log('EditMouseMove')
         })
 
         // 编辑修改了点
@@ -383,13 +397,13 @@ export default {
           me.startEditing(entity)
           const position = me.getModelLabelPosition(entity)
           me.updateLabelPosition(entity.name, position)
-          console.log('编辑修改了点')
+          // console.log('编辑修改了点')
         })
 
         // 停止编辑
         this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
           me.stopEditing()
-          console.log('停止编辑')
+          // console.log('停止编辑')
         })
 
         // 删除了对象
@@ -978,7 +992,6 @@ export default {
           if (pickedObject.primitive instanceof Cesium.Model && pickedObject.primitive._resource._url.indexOf('axis.gltf') === -1) {
 
           } else {
-            console.log('111111111111111')
             me.showEditBox = false
           }
         }
