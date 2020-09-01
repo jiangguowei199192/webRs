@@ -27,7 +27,7 @@
                   :key="index2"
                   class="visible"
                   :title="list.label"
-                >{{list.label.length>3?list.label.slice(0,3)+'..':list.label}}</el-button>
+                >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
               </div>
             </div>
             </div>
