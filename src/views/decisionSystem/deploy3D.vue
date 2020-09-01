@@ -91,6 +91,15 @@
       <span class="zoom" @click="ZoomIn(true)"></span>
       <span class="zoom" @click="ZoomIn(false)"></span>
     </div>
+    <div class="rightTool compassGyro">
+      <div class="move">
+        <span @click="returnHome"></span>
+        <span class="left" @mousedown="rotateCamera(2)" @mouseup="stopMoveCamera"></span>
+        <span class="left" @mousedown="rotateCamera(3)" @mouseup="stopMoveCamera"></span>
+        <span class="up" @mousedown="rotateCamera(4)" @mouseup="stopMoveCamera"></span>
+        <span class="up" @mousedown="rotateCamera(5)" @mouseup="stopMoveCamera"></span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -579,6 +588,67 @@ export default {
       }
     },
 
+    /**
+     *  primitives方式添加模型
+     */
+    createModel (cfg) {
+      var position = Cesium.Cartesian3.fromDegrees(cfg.x, cfg.y, cfg.z || 0)
+      var hpRoll = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(cfg.heading || 0), Cesium.Math.toRadians(cfg.pitch || 0), Cesium.Math.toRadians(cfg.roll || 0))
+
+      var converter = cfg.converter || Cesium.Transforms.eastNorthUpToFixedFrame // Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west')
+
+      var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, converter)
+      if (cfg.scale) { Cesium.Matrix4.multiplyByUniformScale(modelMatrix, cfg.scale, modelMatrix) }
+
+      var modelPrimitive = this.viewer.scene.primitives.add(Cesium.Model.fromGltf({
+        url: cfg.url,
+        modelMatrix: modelMatrix,
+        minimumPixelSize: cfg.minimumPixelSize || 30,
+        silhouetteSize: 0,
+        silhouetteColor: Cesium.Color.BLUE
+      }))
+      modelPrimitive.attribute = cfg
+      modelPrimitive.name = cfg.id
+      modelPrimitive.position = position
+
+      modelPrimitive.readyPromise.then(function (model) {
+        // 求出模型中心点坐标
+        var center = Cesium.Matrix4.multiplyByPoint(
+          modelPrimitive.modelMatrix,
+          modelPrimitive.boundingSphere.center,
+          new Cesium.Cartesian3()
+        )
+        const p = me.CartesianToDegrees(center)
+        const position = Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 2)
+        const task = {
+          name: cfg.id,
+          department: '洪山分局',
+          number: '1',
+          task: '供水'
+        }
+        const label = me.addModelLabel(position, task)
+        // 模型标签列表
+        me.labelList = []
+        me.labelList.push(label)
+      })
+      modelPrimitive.click = function (primitive) {
+        primitive.silhouetteSize = 2
+        me.curEntity = primitive
+        me.showEditBox = true
+        const t = me.findModelLabel(primitive.name)
+        if (t !== undefined) {
+          me.copyData(t.opts.data, me.editBox)
+        }
+        var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+          me.viewer.scene,
+          primitive.position
+        )
+        me.setEditBoxPosition(point)
+      }
+
+      return modelPrimitive
+    },
+
     addModel () {
       me = this
       var dataSource = new Cesium.CustomDataSource()
@@ -602,51 +672,66 @@ export default {
       })
 
       const lat = 30.510093
-      let lon = 114.235004
+      const lon = 114.235004
       const id = new Date().format('yyyy-MM-dd HH:mm:ss')
-      const task = {
-        name: id,
-        department: '洪山分局',
-        number: '1',
-        task: '供水'
-      }
-      const entity = dataSource.entities.add({
-        name: id,
-        position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
-        model: {
-          uri: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
-          scale: 1,
-          opacity: 1,
-          clampToGround: true
-        },
-        click: function (entity) {
-          me.curEntity = entity
-          me.showEditBox = true
-          const t = me.findModelLabel(entity.name)
-          if (t !== undefined) {
-            me.copyData(t.opts.data, me.editBox)
-          }
-          var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-            me.viewer.scene,
-            entity.position._value
-          )
-          me.setEditBoxPosition(point)
-        }
+      // const task = {
+      //   name: id,
+      //   department: '洪山分局',
+      //   number: '1',
+      //   task: '供水'
+      // }
+      // const entity = dataSource.entities.add({
+      //   name: id,
+      //   position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
+      //   model: {
+      //     uri: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
+      //     scale: 1,
+      //     opacity: 1,
+      //     clampToGround: true
+      //   },
+      //   click: function (entity) {
+      //     me.curEntity = entity
+      //     me.showEditBox = true
+      //     const t = me.findModelLabel(entity.name)
+      //     if (t !== undefined) {
+      //       me.copyData(t.opts.data, me.editBox)
+      //     }
+      //     var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+      //       me.viewer.scene,
+      //       entity.position._value
+      //     )
+      //     me.setEditBoxPosition(point)
+      //   }
+      // })
+
+      this.createModel({
+        url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
+        x: lon,
+        y: lat,
+        z: 12,
+        id: id
       })
+      // const label = this.addModelLabel(
+      //   Cesium.Cartesian3.fromDegrees(lon, lat, 16),
+      //   task
+      // )
+      // // 模型标签列表
+      // this.labelList = []
+      // this.labelList.push(label)
 
-      const label = this.addModelLabel(
-        Cesium.Cartesian3.fromDegrees(lon, lat, 16),
-        task
-      )
-      // 模型标签列表
-      this.labelList = []
-      this.labelList.push(label)
+      // setInterval(() => {
+      //   lon += 0.000001
+      //   // entity.position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
+      //   var position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
+      //   var hpRoll = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(0), Cesium.Math.toRadians(0), Cesium.Math.toRadians(0))
 
-      setInterval(() => {
-        lon += 0.000001
-        entity.position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
-        label.position = Cesium.Cartesian3.fromDegrees(lon, lat, 16)
-      }, 1000)
+      //   var converter = Cesium.Transforms.eastNorthUpToFixedFrame // Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west')
+
+      //   var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, converter)
+      //   modelPrimitive.modelMatrix = modelMatrix
+      //   modelPrimitive.position = position
+      //   label.position = Cesium.Cartesian3.fromDegrees(lon, lat, 16)
+      // }, 1000)
 
       dataSource.entities.add({
         name: '避难',
@@ -748,8 +833,15 @@ export default {
       // layercfg.id = 1987
       layercfg.visible = true
       layercfg.flyTo = true
-      var layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
-      layerModel.centerAt()
+      this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
+      this.layerModel.centerAt()
+    },
+
+    /**
+     *  相机视角回到home点
+     */
+    returnHome () {
+      this.layerModel.centerAt()
     },
 
     /**
@@ -768,6 +860,15 @@ export default {
       if (this.moveInterval) {
         clearInterval(this.moveInterval)
       }
+    },
+
+    /**
+     *  平移相机
+     */
+    rotateCamera (direction) {
+      this.moveInterval = setInterval(function () {
+        me.viewer.mars.keyboardRoam.rotateCamera(direction)
+      }, 50)
     },
 
     /**
@@ -854,18 +955,11 @@ export default {
 }
 
 /deep/.compass-rotation-marker {
-    display: none !important;
+  display: none !important;
 }
 
 /deep/.compass-gyro-background {
-  top: 25%;
-  left: 25%;
-  width: 50%;
-  height: 50%;
-  border-radius: 50%;
-  background-color: rgba(47, 53, 60, 0.8);
-  box-sizing: content-box;
-  //background-image: url(img/compass-inner.svg);
+  display: none;
 }
 
 /deep/.mars3d-popup-content-wrapper {
@@ -1207,7 +1301,7 @@ export default {
     flex-direction: column;
     width: 80px;
     position: absolute;
-    right: 20px;
+    right: 22px;
     top: 125px;
     align-items: center;
     .move {
@@ -1224,7 +1318,7 @@ export default {
       span:nth-child(1) {
         left: 50%;
         top: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         width: 40px;
         height: 40px;
         background: url(../../assets/images/3d/hand.png) no-repeat;
@@ -1271,6 +1365,14 @@ export default {
     > span:nth-child(3) {
       margin-top: 10px;
       background: url(../../assets/images/3d/-.png) no-repeat;
+    }
+  }
+
+  .compassGyro {
+    right: 22px;
+    top: 22px;
+    span:nth-child(1) {
+      background: url(../../assets/images/3d/eye.png) no-repeat !important;
     }
   }
 }
