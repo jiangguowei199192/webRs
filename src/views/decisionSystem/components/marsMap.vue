@@ -94,7 +94,11 @@ export default {
         serverURL: options.serverURL,
         ...this.options,
         success: function (viewer, jsondata) { // 地图成功加载完成后执行
-          me.$emit('onload', viewer)
+          // 开场动画
+          viewer.mars.openFlyAnimation(function () {
+            // 动画播放完成后回调
+            me.$emit('onload', viewer)
+          })
         }
       })
 

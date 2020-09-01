@@ -136,7 +136,7 @@ export default {
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       infoBox: { imgSrc: '' },
-      editBox: { department: '天门敦', number: '1', task: '供水' },
+      editBox: { department: '天门敦', number: '1', task: '- -' },
       taskList: [
         '内政',
         '出枪掩护',
@@ -267,15 +267,10 @@ export default {
     setModelTask () {
       this.showEditBox = false
       if (this.isPlot) {
+        this.isPlot = false
         var task = JSON.parse(JSON.stringify(this.editBox))
         task.name = this.curEntity.name
-        // 将笛卡尔坐标转为地理坐标
-        const p = this.CartesianToDegrees(this.curEntity.position)
-        const label = this.addModelLabel(
-          Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 4),
-          task
-        )
-        this.labelList.push(label)
+        this.addModelLabel(this.curEntity, task)
       } else {
         const t = this.findModelLabel(this.curEntity.name)
         if (t !== undefined) {
@@ -326,7 +321,7 @@ export default {
     setEditBoxPosition (point) {
       const width = this.viewer._element.clientWidth
       const height = this.viewer._element.clientHeight
-      const offsetX = 50
+      const offsetX = 100
       if (point.x + 285 + offsetX >= width) {
         this.boxLeft = 0
       } else this.boxLeft = point.x + offsetX
@@ -345,7 +340,7 @@ export default {
           hasEdit: true,
           nameTooltip: true,
           isContinued: false, // 是否连续标绘
-          isAutoEditing: false // 绘制完成后是否自动激活编辑
+          isAutoEditing: true // 绘制完成后是否自动激活编辑
         })
 
         // 创建完成
@@ -355,12 +350,6 @@ export default {
           //   me.startEditing(entity)
           // }
           // console.log('创建完成')
-          // if (entity.boundingSphere) {
-          //   const center = entity.boundingSphere.center
-          //   const p = new Cesium.Cartesian3(center.x + entity.boundingSphere.radius, center.y, center.z)
-          //   var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(me.viewer.scene, p)
-          //   var pick = Cesium.SceneTransforms.wgs84ToWindowCoordinates(me.viewer.scene, entity.position)
-          // }
           var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
             me.viewer.scene,
             entity.position
@@ -371,6 +360,7 @@ export default {
           me.curEntity = entity
           me.isPlot = true
           me.showEditBox = true
+          me.editBox.task = '- -'
           me.setEditBoxPosition(point)
         })
 
@@ -378,32 +368,28 @@ export default {
         this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
           var entity = e.entity
           me.startEditing(entity)
-          // console.log('开始编辑')
+          me.showModelEditBox(entity)
+          console.log('开始编辑')
         })
         //
         this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
           me.stopEditing()
-          // console.log('EditMouseMove')
+          console.log('EditMouseMove')
         })
 
         // 编辑修改了点
         this.drawControl.on(mars3d.draw.event.EditMovePoint, function (e) {
           var entity = e.entity
           me.startEditing(entity)
-          const p = me.CartesianToDegrees(entity.position)
-          const position = Cesium.Cartesian3.fromDegrees(
-            p.lon,
-            p.lat,
-            p.height + 4
-          )
+          const position = me.getModelLabelPosition(entity)
           me.updateLabelPosition(entity.name, position)
-          // console.log('编辑修改了点')
+          console.log('编辑修改了点')
         })
 
         // 停止编辑
         this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
           me.stopEditing()
-          // console.log('停止编辑')
+          console.log('停止编辑')
         })
 
         // 删除了对象
@@ -549,11 +535,31 @@ export default {
     },
 
     /**
+     *  获取模型上方文字坐标
+     * @param {Object} primitive 模型
+     */
+    getModelLabelPosition (primitive) {
+      // 求出模型中心点坐标
+      var center = Cesium.Matrix4.multiplyByPoint(
+        primitive.modelMatrix,
+        primitive.boundingSphere.center,
+        new Cesium.Cartesian3()
+      )
+      const p = me.CartesianToDegrees(center)
+      return Cesium.Cartesian3.fromDegrees(
+        p.lon,
+        p.lat,
+        p.height + 2
+      )
+    },
+
+    /**
      *  添加模型上方标签
-     * @param {Object} position 标签坐标
+     * @param {Object} primitive 模型
      * @param {Object} task 任务信息
      */
-    addModelLabel (position, task) {
+    addModelLabel (primitive, task) {
+      const position = this.getModelLabelPosition(primitive)
       const text1 = task.department + '-' + task.number
       const text2 = task.task
       const innerhtml =
@@ -571,7 +577,7 @@ export default {
         position: position,
         data: task
       })
-      return label
+      this.labelList.push(label)
     },
 
     /**
@@ -593,60 +599,77 @@ export default {
      */
     createModel (cfg) {
       var position = Cesium.Cartesian3.fromDegrees(cfg.x, cfg.y, cfg.z || 0)
-      var hpRoll = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(cfg.heading || 0), Cesium.Math.toRadians(cfg.pitch || 0), Cesium.Math.toRadians(cfg.roll || 0))
+      var hpRoll = new Cesium.HeadingPitchRoll(
+        Cesium.Math.toRadians(cfg.heading || 0),
+        Cesium.Math.toRadians(cfg.pitch || 0),
+        Cesium.Math.toRadians(cfg.roll || 0)
+      )
 
-      var converter = cfg.converter || Cesium.Transforms.eastNorthUpToFixedFrame // Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west')
+      var converter =
+        cfg.converter || Cesium.Transforms.eastNorthUpToFixedFrame // Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west')
 
-      var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, converter)
-      if (cfg.scale) { Cesium.Matrix4.multiplyByUniformScale(modelMatrix, cfg.scale, modelMatrix) }
+      var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
+        position,
+        hpRoll,
+        Cesium.Ellipsoid.WGS84,
+        converter
+      )
+      if (cfg.scale) {
+        Cesium.Matrix4.multiplyByUniformScale(
+          modelMatrix,
+          cfg.scale,
+          modelMatrix
+        )
+      }
 
-      var modelPrimitive = this.viewer.scene.primitives.add(Cesium.Model.fromGltf({
-        url: cfg.url,
-        modelMatrix: modelMatrix,
-        minimumPixelSize: cfg.minimumPixelSize || 30,
-        silhouetteSize: 0,
-        silhouetteColor: Cesium.Color.BLUE
-      }))
+      var modelPrimitive = this.viewer.scene.primitives.add(
+        Cesium.Model.fromGltf({
+          url: cfg.url,
+          modelMatrix: modelMatrix,
+          minimumPixelSize: cfg.minimumPixelSize || 30,
+          silhouetteSize: 0,
+          silhouetteColor: Cesium.Color.BLUE
+        })
+      )
       modelPrimitive.attribute = cfg
       modelPrimitive.name = cfg.id
       modelPrimitive.position = position
 
       modelPrimitive.readyPromise.then(function (model) {
-        // 求出模型中心点坐标
-        var center = Cesium.Matrix4.multiplyByPoint(
-          modelPrimitive.modelMatrix,
-          modelPrimitive.boundingSphere.center,
-          new Cesium.Cartesian3()
-        )
-        const p = me.CartesianToDegrees(center)
-        const position = Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 2)
         const task = {
           name: cfg.id,
           department: '洪山分局',
           number: '1',
           task: '供水'
         }
-        const label = me.addModelLabel(position, task)
         // 模型标签列表
         me.labelList = []
-        me.labelList.push(label)
+        me.addModelLabel(modelPrimitive, task)
       })
       modelPrimitive.click = function (primitive) {
-        primitive.silhouetteSize = 2
-        me.curEntity = primitive
-        me.showEditBox = true
-        const t = me.findModelLabel(primitive.name)
-        if (t !== undefined) {
-          me.copyData(t.opts.data, me.editBox)
-        }
-        var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-          me.viewer.scene,
-          primitive.position
-        )
-        me.setEditBoxPosition(point)
+        // primitive.silhouetteSize = 2
+        me.showModelEditBox(primitive)
       }
 
       return modelPrimitive
+    },
+
+    /**
+     *  显示模型编辑框
+     * @param {Object} entity 模型
+     */
+    showModelEditBox (entity) {
+      me.curEntity = entity
+      me.showEditBox = true
+      const t = me.findModelLabel(entity.name)
+      if (t !== undefined) {
+        me.copyData(t.opts.data, me.editBox)
+      }
+      var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+        me.viewer.scene,
+        entity.position
+      )
+      me.setEditBoxPosition(point)
     },
 
     addModel () {
@@ -656,6 +679,14 @@ export default {
       var position = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 10)
       var position2 = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 25)
       var position3 = Cesium.Cartesian3.fromDegrees(114.238506, 30.508797, 30)
+
+      // var redRectangle = dataSource.entities.add({
+      //   name: 'Red translucent rectangle',
+      //   rectangle: {
+      //     coordinates: Cesium.Rectangle.fromDegrees(114.234754, 30.51001, 114.234924, 30.510067),
+      //     material: Cesium.Color.RED.withAlpha(0.5)
+      //   }
+      // })
 
       // 添加实体
       dataSource.entities.add({
@@ -711,13 +742,6 @@ export default {
         z: 12,
         id: id
       })
-      // const label = this.addModelLabel(
-      //   Cesium.Cartesian3.fromDegrees(lon, lat, 16),
-      //   task
-      // )
-      // // 模型标签列表
-      // this.labelList = []
-      // this.labelList.push(label)
 
       // setInterval(() => {
       //   lon += 0.000001
@@ -782,14 +806,7 @@ export default {
         //   anchor: [0, -50] // 左右、上下的偏移像素值。
         // },
         click: function (entity) {
-          me.infoBox.imgSrc = xfs
-          me.infoBox.label = '消防栓'
-          me.showInfoBox = false
-          me.flyToEntity(entity, function (e) {
-            // 飞行完成回调方法
-            me.showInfoBox = true
-            // me.viewer.mars.popup.show(entity)// 显示popup
-          })
+          me.showDivPointInfoBox(entity, xfs, '消防栓')
         }
       })
 
@@ -805,14 +822,7 @@ export default {
         depthTest: false,
         stopPropagation: true, // 控制是否阻止冒泡
         click: function (entity) {
-          me.infoBox.imgSrc = bf
-          me.infoBox.label = '泵房'
-          me.showInfoBox = false
-          me.flyToEntity(entity, function (e) {
-            // 飞行完成回调方法
-            me.showInfoBox = true
-            // me.viewer.mars.popup.show(entity)// 显示popup
-          })
+          me.showDivPointInfoBox(entity, bf, '泵房')
         }
       })
 
@@ -835,6 +845,24 @@ export default {
       layercfg.flyTo = true
       this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
       this.layerModel.centerAt()
+    },
+
+    /**
+     *  显示InfoBox
+     * @param {Object} entity DivPoint
+     * @param {Object} imgSrc 图片
+     * @param {String} label 标题
+     */
+    showDivPointInfoBox (entity, imgSrc, label) {
+      this.showEditBox = false
+      me.infoBox.imgSrc = imgSrc
+      me.infoBox.label = label
+      me.showInfoBox = false
+      me.flyToEntity(entity, function (e) {
+        // 飞行完成回调方法
+        me.showInfoBox = true
+        // me.viewer.mars.popup.show(entity)// 显示popup
+      })
     },
 
     /**
@@ -943,7 +971,18 @@ export default {
         minPitch: 0.1, // 最小仰角  0-1
         maxPitch: 0.95 // 最大仰角  0-1
       })
+      var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+      handler.setInputAction(event => {
+        var pickedObject = viewer.scene.pick(event.position)
+        if (Cesium.defined(pickedObject)) {
+          if (pickedObject.primitive instanceof Cesium.Model && pickedObject.primitive._resource._url.indexOf('axis.gltf') === -1) {
 
+          } else {
+            console.log('111111111111111')
+            me.showEditBox = false
+          }
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_DOWN)
       this.addModel()
     }
   },
