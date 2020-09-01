@@ -6,5 +6,6 @@ export const settingApi = {
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图
   addEnterprise: '/cloud-video/prePlan/enterprise/add', // 预案：增加单位
   enterpriseTypeList: '/cloud-video/prePlan/enterprise/typeList', // 预案：获取单位类型集合
-  enterpriseList: '/cloud-video/prePlan/list' // 预案：查询预案设置记录列表
+  enterpriseList: '/cloud-video/prePlan/list', // 预案：查询预案设置记录列表
+  getFullInfoById: '/cloud-video/prePlan/getFullInfoById' // 预案：根据id查询预案完整信息
 }
