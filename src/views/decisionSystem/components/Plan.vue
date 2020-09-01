@@ -84,9 +84,11 @@
 import HorCardList from './HorizontalCardList.vue'
 import FloorGuide from './FloorGuide'
 import BaseInfo from './BaseInfo'
-export default {
-  created () {
+import { settingApi } from '@/api/setting'
 
+export default {
+  updated () {
+    this.getData()
   },
   props: {
     info: {
@@ -121,6 +123,14 @@ export default {
     BaseInfo
   },
   methods: {
+    async getData () {
+      if (this.info.keyId) {
+        console.log('keyid:' + this.info.keyId)
+        this.$axios.get(settingApi.getFullInfoById, { params: { id: this.info.keyId } }).then(res => {
+
+        })
+      }
+    },
     toFightDeploy () {
       this.$router.push({ path: '/fightDeploy' })
     },
