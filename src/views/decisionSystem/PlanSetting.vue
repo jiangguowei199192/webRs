@@ -114,6 +114,7 @@ import UploadImage from './components/PlanSettingUploadImage.vue'
 import UploadImageMore from './components/PlanSettingUploadImageMore.vue'
 import { settingApi } from '@/api/setting'
 import { Notification } from 'element-ui'
+
 export default {
   components: {
     UploadImage,
@@ -122,6 +123,7 @@ export default {
   data () {
     return {
       addImg: require('../../assets/images/Setting/setting-addImage.png'),
+      planInfo: '',
 
       enterpriseList: [],
 
@@ -198,17 +200,19 @@ export default {
   methods: {
     // 获取单位类型集合
     async getEnterpriseTypeList () {
-      var p = this
+      // var p = this
       this.$axios.get(settingApi.enterpriseTypeList).then((res) => {
         if (res.data.code === 0) {
           var receive = res.data.data
+          var temp = []
           receive.forEach((item) => {
             var enterpriseType = {
               value: item.typeCode,
               label: item.typeName
             }
-            p.enterpriseList.push(enterpriseType)
+            temp.push(enterpriseType)
           })
+          this.enterpriseList = temp
         }
       })
     },
@@ -327,10 +331,13 @@ export default {
         enterpriseLongitude: this.companyLog,
         enterpriseTel: this.companyPhone,
         enterpriseTelBackup: this.companySubPhone,
-        baseInfoPicList: basicPaths,
-        jzpmtPicList: buildingPaths
+        baseInfoPicList: JSON.stringify(basicPaths),
+        jzpmtPicList: JSON.stringify(buildingPaths),
+        enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
       }
-      this.$axios.post(settingApi.addEnterprise, param).then((res) => {
+      this.$axios.post(settingApi.addEnterprise, param, {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }).then((res) => {
         if (res.data.code === 0) {
         }
       })
@@ -363,25 +370,21 @@ export default {
       }
     },
     initBasicInfo () {
-      console.log(localStorage.selectedAddress)
-      if (
-        localStorage.selectedAddress !== undefined &&
-        localStorage.selectedAddress !== ''
-      ) {
-        const tP = JSON.parse(localStorage.selectedAddress)
-        // localStorage.selectedAddress = ''
-        this.companyName = tP.name
-        // this.companyType = tP.type
-        this.companyAddress = tP.address
-        this.companyPhone = tP.tel
+      this.planInfo = JSON.parse(localStorage.getItem('PlanInfo'))
+      if (this.planInfo) {
+        this.companyName = this.planInfo.name
+        this.companyAddress = this.planInfo.address
+        this.companyPhone = this.planInfo.tel
+        this.companyLog = this.planInfo.lon
+        this.companyLat = this.planInfo.lat
 
         const tmpMap = this.$refs.gduMap
-        tmpMap.mapMoveTo(tP.lon, tP.lat, false)
+        tmpMap.mapMoveTo(this.planInfo.lon, this.planInfo.lat, false)
         tmpMap.map2D.customMarkerLayerManager.clear()
         tmpMap.map2D.customMarkerLayerManager.addMarker({
-          name: tP.name,
-          lon: tP.lon,
-          lat: tP.lat,
+          name: this.planInfo.name,
+          lon: this.planInfo.lon,
+          lat: this.planInfo.lat,
           _bWgs2Gcj: false
         })
         tmpMap.map2D.setZoom(16)

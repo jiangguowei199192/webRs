@@ -3,25 +3,19 @@
     <div style="width: 100%;">
       <div class="addressInfo">
         <div style="height: 98px;">
-          <!-- <el-button
-            style="float: right; width: 40px; margin-right: 20px;"
-            type="primary"
-            icon="el-icon-top-right"
-            circle
-          ></el-button>-->
-          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{info.name}}</div>
+          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{showInfo.name}}</div>
           <div style="margin-top: 16px; margin-left: 22px; font-size: 12px;">
-            {{info.type}}
+            {{showInfo.type}}
             <div v-show="info.keyId !== undefined" class="keypointStyle">重</div>
           </div>
         </div>
         <div class="addressInfoDetail">
           <i class="el-icon-location"></i>
-          {{info.cityname + info.adname + info.address}}
+          {{showInfo.address}}
         </div>
         <div class="addressInfoDetail">
           <i class="el-icon-phone"></i>
-          {{info.tel}}
+          {{showInfo.tel}}
         </div>
       </div>
 
@@ -31,7 +25,13 @@
             <div style="margin-left: 22px;">基本情况说明</div>
           </template>
           <div class="itemContainer1">
-            <el-button size="mini" class="basicFactSheetBtn" v-for="(item, index) in baseInfos" :key="index" @click="didClickedBaseInfo(index)"> {{item.title}} </el-button>
+            <el-button
+              size="mini"
+              class="basicFactSheetBtn"
+              v-for="(item, index) in baseInfos"
+              :key="index"
+              @click="didClickedBaseInfo(index)"
+            >{{item.title}}</el-button>
           </div>
         </el-collapse-item>
 
@@ -40,7 +40,10 @@
             <div style="margin-left: 22px;">建筑平面图</div>
           </template>
           <div class="itemContainer1">
-            <HorCardList v-bind:items="buildingInfos" v-on:didClickedImage="didClickedBuildingImage"></HorCardList>
+            <HorCardList
+              v-bind:items="buildingInfos"
+              v-on:didClickedImage="didClickedBuildingImage"
+            ></HorCardList>
           </div>
         </el-collapse-item>
 
@@ -71,7 +74,12 @@
         </el-collapse-item>
       </el-collapse>
       <div style="height: 50px;">
-        <button type="button" class="editPlanStyle" @click="editPlanClick">预案编辑</button>
+        <button
+          v-show="info.keyId === undefined"
+          type="button"
+          class="editPlanStyle"
+          @click="editPlanClick"
+        >预案编辑</button>
       </div>
     </div>
 
@@ -99,21 +107,72 @@ export default {
   data () {
     return {
       activeNames: ['1', '2'],
-
+      showInfo: {
+        name: '',
+        type: '',
+        address: '',
+        tel: '',
+        subTel: '',
+        lon: '',
+        lat: '',
+        mapId: ''
+      },
       buildingTitle: '黄鹤楼',
-      buildingInfos: [ // 测试数据
-        { title: '1层', image: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg' },
-        { title: '2层', image: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg' },
-        { title: '3层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg' },
-        { title: '4层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg' },
-        { title: '5层', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg' }
+      buildingInfos: [
+        // 测试数据
+        {
+          title: '1层',
+          image:
+            'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
+        },
+        {
+          title: '2层',
+          image:
+            'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
+        },
+        {
+          title: '3层',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
+        },
+        {
+          title: '4层',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
+        },
+        {
+          title: '5层',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
+        }
       ],
-      baseInfos: [ // 测试数据
-        { title: '基本情况', image: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg' },
-        { title: '供水系统', image: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg' },
-        { title: '行车路线', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg' },
-        { title: '防火设计', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg' },
-        { title: '重点部位', image: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg' }
+      baseInfos: [
+        // 测试数据
+        {
+          title: '基本情况',
+          image:
+            'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
+        },
+        {
+          title: '供水系统',
+          image:
+            'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
+        },
+        {
+          title: '行车路线',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
+        },
+        {
+          title: '防火设计',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
+        },
+        {
+          title: '重点部位',
+          image:
+            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
+        }
       ]
     }
   },
@@ -125,11 +184,38 @@ export default {
   methods: {
     async getData () {
       if (this.info.keyId) {
-        console.log('keyid:' + this.info.keyId)
-        this.$axios.get(settingApi.getFullInfoById, { params: { id: this.info.keyId } }).then(res => {
+        var param = {
+          id: this.info.keyId
+          // id: 1
+        }
+        this.$axios
+          .get(settingApi.getFullInfoById, { params: param })
+          .then((res) => {
+            if (res.data.code === 0) {
+              var resData = res.data.data
+              this.showInfo.name = resData.enterpriseName
+              this.showInfo.type = resData.enterpriseTypeCode
+              this.showInfo.address = resData.enterpriseAddress
+              this.showInfo.tel = resData.enterpriseTel
+              this.showInfo.subTel = resData.enterpriseTelBackup
+              this.showInfo.lat = resData.enterpriseLatitude
+              this.showInfo.lon = resData.enterpriseLongitude
+            }
+          })
+      } else {
+        this.showInfo.name = this.info.name
+        this.showInfo.type = this.info.type
+        this.showInfo.address =
+          this.info.cityname + this.info.adname + this.info.address
+        this.showInfo.tel = this.info.tel
+        this.showInfo.subTel = ''
 
-        })
+        const location = this.info.location.split(',')
+        this.showInfo.lon = location[0]
+        this.showInfo.lat = location[1]
       }
+      this.showInfo.mapId = this.info.id
+      localStorage.setItem('PlanInfo', JSON.stringify(this.showInfo))
     },
     toFightDeploy () {
       this.$router.push({ path: '/fightDeploy' })

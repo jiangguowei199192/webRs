@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { Notification } from 'element-ui'
 export default {
   props: {
     info: {
@@ -61,6 +62,16 @@ export default {
 
     // 上传头像前的处理
     onUploadChange (file) {
+      if (!this.info.name || this.info.name === '') {
+        Notification({
+          title: '提示',
+          message: '请先输入图片名称',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return false
+      }
+
       const isJPG =
         file.raw.type === 'image/jpeg' ||
         file.raw.type === 'image/png' ||

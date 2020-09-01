@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { Notification } from 'element-ui'
 export default {
   props: {
     info: {
