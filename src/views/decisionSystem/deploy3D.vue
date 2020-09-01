@@ -83,10 +83,10 @@
     <div class="rightTool">
       <div class="move">
         <span></span>
-        <span class="left" @mousedown="moveCamera(2)" @mouseup="stopMoveCamera"></span>
-        <span class="left" @mousedown="moveCamera(3)" @mouseup="stopMoveCamera"></span>
-        <span class="up" @mousedown="moveCamera(4)" @mouseup="stopMoveCamera"></span>
-        <span class="up" @mousedown="moveCamera(5)" @mouseup="stopMoveCamera"></span>
+        <span class="left" @mousedown="moveCamera(2)" @mouseup="stopMoveCamera(2)"></span>
+        <span class="left" @mousedown="moveCamera(3)" @mouseup="stopMoveCamera(3)"></span>
+        <span class="up" @mousedown="moveCamera(4)" @mouseup="stopMoveCamera(4)"></span>
+        <span class="up" @mousedown="moveCamera(5)" @mouseup="stopMoveCamera(5)"></span>
       </div>
       <span class="zoom" @click="ZoomIn(true)"></span>
       <span class="zoom" @click="ZoomIn(false)"></span>
@@ -94,10 +94,10 @@
     <div class="rightTool compassGyro">
       <div class="move">
         <span @click="returnHome"></span>
-        <span class="left" @mousedown="rotateCamera(2)" @mouseup="stopMoveCamera"></span>
-        <span class="left" @mousedown="rotateCamera(3)" @mouseup="stopMoveCamera"></span>
-        <span class="up" @mousedown="rotateCamera(4)" @mouseup="stopMoveCamera"></span>
-        <span class="up" @mousedown="rotateCamera(5)" @mouseup="stopMoveCamera"></span>
+        <span class="left" @mousedown="rotateCamera(2)" @mouseup="stopRotateCamera"></span>
+        <span class="left" @mousedown="rotateCamera(3)" @mouseup="stopRotateCamera"></span>
+        <span class="up" @mousedown="rotateCamera(4)" @mouseup="stopRotateCamera"></span>
+        <span class="up" @mousedown="rotateCamera(5)" @mouseup="stopRotateCamera"></span>
       </div>
     </div>
   </div>
@@ -848,22 +848,57 @@ export default {
      *  平移相机
      */
     moveCamera (direction) {
-      this.moveInterval = setInterval(function () {
-        me.viewer.mars.keyboardRoam.moveCamera(direction)
-      }, 50)
+      switch (direction) {
+        case 4:
+          this.viewer.mars.keyboardRoam.startMoveForward()
+          break
+        case 5:
+          this.viewer.mars.keyboardRoam.startMoveBackward()
+          break
+        case 2:
+          this.viewer.mars.keyboardRoam.startMoveLeft()
+          break
+        case 3:
+          this.viewer.mars.keyboardRoam.startMoveRight()
+          break
+        default:
+          break
+      }
     },
 
     /**
      *  停止平移相机
      */
-    stopMoveCamera () {
+    stopMoveCamera (direction) {
+      switch (direction) {
+        case 4:
+          this.viewer.mars.keyboardRoam.stopMoveForward()
+          break
+        case 5:
+          this.viewer.mars.keyboardRoam.stopMoveBackward()
+          break
+        case 2:
+          this.viewer.mars.keyboardRoam.stopMoveLeft()
+          break
+        case 3:
+          this.viewer.mars.keyboardRoam.stopMoveRight()
+          break
+        default:
+          break
+      }
+    },
+
+    /**
+     *  停止旋转相机
+     */
+    stopRotateCamera (direction) {
       if (this.moveInterval) {
         clearInterval(this.moveInterval)
       }
     },
 
     /**
-     *  平移相机
+     *  旋转相机
      */
     rotateCamera (direction) {
       this.moveInterval = setInterval(function () {
