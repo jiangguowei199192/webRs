@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
   mqttServer = '172.16.63.148'
   mqttPort = 2883
   headImg = 'http://172.16.63.148'
-  projectTitle = '武汉市公安局安保防控系统'
+  projectTitle = '天地一体化预警侦查系统'
 }
 export default {
   baseUrl,

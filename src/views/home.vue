@@ -87,7 +87,7 @@ export default {
         },
 
         {
-          content: '数字化单兵'
+          content: '评战系统'
         },
         {
           content: '数字化装备'
@@ -253,8 +253,8 @@ export default {
   .box {
     display: flex;
      // 临时显示菜单
-    justify-content: space-between;
-    // justify-content: center;
+    // justify-content: space-between;
+    justify-content: center;
     font-size: 24px;
     font-weight: 500;
     .list {
@@ -268,10 +268,10 @@ export default {
         z-index: 999;
         width: 300px;
          // 临时显示菜单
-        left: -40px;
-        padding-top: 30px;
-        // left: -75px;
-        // padding-top: 33px;
+        // left: -40px;
+        // padding-top: 30px;
+        left: -75px;
+        padding-top: 33px;
         display: none;
         .el-button {
           width: 140px;
@@ -303,7 +303,7 @@ export default {
       line-height: 66px;
       text-align: center;
        // 临时显示菜单 添加
-      margin:0 9px;
+      margin:0 44px;
       font-size: 36px;
       font-weight: bold;
       margin-top: -13px;
@@ -318,6 +318,12 @@ export default {
     }
     div.list:nth-child(n + 5) .active {
       background: url(../assets/images/selected-right.png) no-repeat !important;
+    }
+    div.list:nth-child(3),div.list:nth-child(6){
+      display: none
+    }
+    div.list:nth-child(1),div.list:nth-child(5){
+     margin-right:40px;
     }
   }
   .cur {
