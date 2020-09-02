@@ -27,7 +27,7 @@
         <img class="simpleIcon"
           :class="{simpleIcon_Mini:bMiniSearchStyle}"
           src="../../assets/images/simpleAddrSearch.png"/>
-        </div>
+      </div>
     </div>
     <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
       <input
@@ -41,13 +41,13 @@
         v-on:keyup.delete="resetChooseAddr"
         :placeholder="placeHolder"
       />
-      <div class="inputSearch"
-        @click.stop="searchAddrs(filterText,true)"/>
-      <div
-        class="inputFunc"
-        @click.stop="routeOrCloseFunc"
-        :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"
-      />
+      <div class="inputSearch" @click.stop="searchAddrs(filterText,true)">
+        <img class="searchIcon" src="../../assets/images/simpleAddrSearch.png"/>
+      </div>
+      <div class="inputFunc" @click.stop="routeOrCloseFunc">
+        <img class="closeIcon" v-show="bRouteOrClose === false" src="../../../public/assets/images/search_close.png"/>
+        <img class="closeIcon" v-show="bRouteOrClose === true" src="../../../public/assets/images/route.png"/>
+      </div>
     </div>
     <div class="routeCtrl disable-user-select" v-show="bShowRouteCtrl">
       <el-input
@@ -1281,48 +1281,58 @@ export default {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 326px; //326
+      width: 310px; //326
       height: 32px;
       border-width: 0px;
       border-radius: 4px;
       padding-left: 5px;
-      padding-right: 66px; // 调整搜索提示框宽度与路线图标对齐
+      padding-right: 98px; // 调整搜索提示框宽度与路线图标对齐
       background-color: white;
       outline: none;
     }
     .inputSearch {
       position: absolute;
-      left: 336px;
+      left: 320px;
       top: 0px;
       height: 32px;
-      width: 32px;
+      width: 48px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
       margin: 0px;
-      //border-left: 1px solid gray;
-      background-image: url("../../../public/assets/images/addrSearch.png");
+      background-color: #144683;
+      .searchIcon {
+        margin-left: 8px;
+      }
+    }
+    .inputSearch:hover {
+      opacity: 0.95;
+    }
+    .inputSearch:active {
+      opacity: 0.9;
     }
     .inputFunc {
       position: absolute;
       left: 368px;
       top: 0px;
       height: 32px;
-      width: 32px;
+      width: 48px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
       margin: 0px;
+      background-color: #144683;
+      .closeIcon {
+        margin-left: 8px;
+      }
     }
-    .inputFunc_route {
-      background-color: gray;
-      background-image: url("../../../public/assets/images/route.png");
+    .inputFunc:hover {
+      opacity: 0.95;
     }
-    .inputFunc_close {
-      background-color: white;
-      background-image: url("../../../public/assets/images/search_close.png");
+    .inputFunc:active {
+      opacity: 0.9;
     }
   }
   .searchResult {
