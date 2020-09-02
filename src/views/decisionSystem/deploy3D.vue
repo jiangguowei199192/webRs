@@ -7,7 +7,7 @@
         v-for="(item,index) in 8"
         :key="index"
         :class="{active:activeIndex==index}"
-        @click.stop="tabTo(index)"
+        @click.stop="ButtonDown(2,index)"
       ></div>
     </div>
     <div class="plotBox" v-show="showPlotBox">
@@ -20,7 +20,12 @@
         ></el-option>
       </el-select>
       <div class="models">
-        <div v-for="(item,index) in curModels" :key="index" class="outer" @click="startPlot(item)">
+        <div
+          v-for="(item,index) in curModels"
+          :key="index"
+          class="outer"
+          @click="ButtonDown(1,item)"
+        >
           <div :style="{background: 'url('+ item.image +') no-repeat'}"></div>
         </div>
       </div>
@@ -48,7 +53,7 @@
       v-show="showEditBox"
       :style="'top:' + boxTop + 'px;' + 'left:' + boxLeft + 'px;'"
     >
-      <div class="close" @click="showEditBox = false" />
+      <div class="close" @click="closeEditBox" />
       <div class="first">
         <span>单位：</span>
         <el-input v-model="editBox.department"></el-input>
@@ -83,10 +88,30 @@
     <div class="rightTool">
       <div class="move">
         <span></span>
-        <span class="left" @mousedown="moveCamera(2)" @mouseup="stopMoveCamera(2)" @mouseleave="stopMoveCamera(2)"></span>
-        <span class="left" @mousedown="moveCamera(3)" @mouseup="stopMoveCamera(3)" @mouseleave="stopMoveCamera(3)"></span>
-        <span class="up" @mousedown="moveCamera(4)" @mouseup="stopMoveCamera(4)" @mouseleave="stopMoveCamera(4)"></span>
-        <span class="up" @mousedown="moveCamera(5)" @mouseup="stopMoveCamera(5)" @mouseleave="stopMoveCamera(5)"></span>
+        <span
+          class="left"
+          @mousedown="moveCamera(2)"
+          @mouseup="stopMoveCamera(2)"
+          @mouseleave="stopMoveCamera(2)"
+        ></span>
+        <span
+          class="left"
+          @mousedown="moveCamera(3)"
+          @mouseup="stopMoveCamera(3)"
+          @mouseleave="stopMoveCamera(3)"
+        ></span>
+        <span
+          class="up"
+          @mousedown="moveCamera(4)"
+          @mouseup="stopMoveCamera(4)"
+          @mouseleave="stopMoveCamera(4)"
+        ></span>
+        <span
+          class="up"
+          @mousedown="moveCamera(5)"
+          @mouseup="stopMoveCamera(5)"
+          @mouseleave="stopMoveCamera(5)"
+        ></span>
       </div>
       <span class="zoom" @click="ZoomIn(true)"></span>
       <span class="zoom" @click="ZoomIn(false)"></span>
@@ -94,10 +119,30 @@
     <div class="rightTool compassGyro">
       <div class="move">
         <span @click="returnHome"></span>
-        <span class="left" @mousedown="rotateCamera(2)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
-        <span class="left" @mousedown="rotateCamera(3)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
-        <span class="up" @mousedown="rotateCamera(4)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
-        <span class="up" @mousedown="rotateCamera(5)" @mouseup="stopRotateCamera" @mouseleave="stopRotateCamera"></span>
+        <span
+          class="left"
+          @mousedown="rotateCamera(2)"
+          @mouseup="stopRotateCamera"
+          @mouseleave="stopRotateCamera"
+        ></span>
+        <span
+          class="left"
+          @mousedown="rotateCamera(3)"
+          @mouseup="stopRotateCamera"
+          @mouseleave="stopRotateCamera"
+        ></span>
+        <span
+          class="up"
+          @mousedown="rotateCamera(4)"
+          @mouseup="stopRotateCamera"
+          @mouseleave="stopRotateCamera"
+        ></span>
+        <span
+          class="up"
+          @mousedown="rotateCamera(5)"
+          @mouseup="stopRotateCamera"
+          @mouseleave="stopRotateCamera"
+        ></span>
       </div>
     </div>
   </div>
@@ -107,6 +152,7 @@
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import $ from 'jquery'
+import { stringIsNullOrEmpty } from '@/utils/validate'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
 import xfs from '@/assets/images/3d/xfs.jpg'
 import bf from '@/assets/images/3d/bf.jpg'
@@ -186,14 +232,14 @@ export default {
 
   mounted () {
     this.getPlotData()
-    document.addEventListener('click', this.closeInfoBox)
+    // document.addEventListener('click', this.closeInfoBox)
   },
 
   beforeDestroy () {
     if (this.drawControl) {
       this.endPlot()
     }
-    document.removeEventListener('click', this.closeInfoBox)
+    // document.removeEventListener('click', this.closeInfoBox)
   },
 
   watch: {
@@ -231,6 +277,17 @@ export default {
     },
 
     /**
+     *  关闭任务编辑框
+     */
+    closeEditBox () {
+      if (this.isPlot && this.showEditBox) {
+        this.$notify.warning({ title: '警告', message: '请先添加任务' })
+        return
+      }
+      this.showEditBox = false
+    },
+
+    /**
      *  任务框中编号加减
      */
     numberAdd (isAdd) {
@@ -265,8 +322,25 @@ export default {
      *  设置模型任务
      */
     setModelTask () {
+      if (stringIsNullOrEmpty(this.editBox.department)) {
+        this.$notify.warning({ title: '警告', message: '请输入单位' })
+        return
+      }
+      if (stringIsNullOrEmpty(this.editBox.number)) {
+        this.$notify.warning({ title: '警告', message: '请输入序号' })
+        return
+      }
+      if (
+        stringIsNullOrEmpty(this.editBox.task) ||
+        this.editBox.task === '- -'
+      ) {
+        this.$notify.warning({ title: '警告', message: '请输入任务' })
+        return
+      }
       this.showEditBox = false
       if (this.isPlot) {
+        // 开启drawControl编辑功能
+        this.drawControl.hasEdit(true)
         this.isPlot = false
         var task = JSON.parse(JSON.stringify(this.editBox))
         task.name = this.curEntity.name
@@ -337,10 +411,31 @@ export default {
       var number = 1
       for (var i = 0; i < this.labelList.length; i++) {
         const t = this.labelList[i]
-        if (parseInt(t.opts.data.number) !== number) { break } else number += 1
+        if (parseInt(t.opts.data.number) !== number) {
+          break
+        } else number += 1
       }
 
       return number
+    },
+
+    /**
+     *  按钮按下
+     *@param {Object} item
+     *@param {Object} type 按钮类型
+     */
+    ButtonDown (type, item) {
+      this.showInfoBox = false
+      if (this.isPlot && this.showEditBox) {
+        this.$notify.warning({ title: '警告', message: '请先添加任务' })
+        return
+      }
+      if (this.showEditBox) {
+        this.showEditBox = false
+      }
+      this.clearCurEntity()
+      if (type === 1) this.startPlot(item)
+      else if (type === 2) this.tabTo(item)
     },
 
     /**
@@ -368,9 +463,12 @@ export default {
             entity.position
           )
 
+          // 禁用drawControl编辑功能
+          me.drawControl.hasEdit(false)
           const id = new Date().format('yyyy-MM-dd HH:mm:ss')
           entity.name = id
           me.curEntity = entity
+          // 显示模型任务编辑框
           me.isPlot = true
           me.showEditBox = true
           me.editBox.number = me.autoFindEditBoxNum()
@@ -382,7 +480,6 @@ export default {
         this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
           var entity = e.entity
           me.startEditing(entity)
-          me.showModelEditBox(entity)
           // console.log('开始编辑')
         })
         //
@@ -560,11 +657,7 @@ export default {
         new Cesium.Cartesian3()
       )
       const p = me.CartesianToDegrees(center)
-      return Cesium.Cartesian3.fromDegrees(
-        p.lon,
-        p.lat,
-        p.height + 2
-      )
+      return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 2)
     },
 
     /**
@@ -589,7 +682,8 @@ export default {
         html: innerhtml,
         anchor: [0, 0],
         position: position,
-        data: task
+        data: task,
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 500)
       })
       this.labelList.push(label)
     },
@@ -610,8 +704,10 @@ export default {
 
     /**
      *  primitives方式添加模型
+     * @param {Object} cfg 模型配置
+     * @param {Object} callback 模型加载后的回调
      */
-    createModel (cfg) {
+    createModel (cfg, callback) {
       var position = Cesium.Cartesian3.fromDegrees(cfg.x, cfg.y, cfg.z || 0)
       var hpRoll = new Cesium.HeadingPitchRoll(
         Cesium.Math.toRadians(cfg.heading || 0),
@@ -641,29 +737,21 @@ export default {
           url: cfg.url,
           modelMatrix: modelMatrix,
           minimumPixelSize: cfg.minimumPixelSize || 30,
-          silhouetteSize: 0,
-          silhouetteColor: Cesium.Color.BLUE
+          // silhouetteSize: 8,
+          silhouetteColor: Cesium.Color.fromAlpha(
+            Cesium.Color.YELLOW,
+            parseFloat(0.9)
+          )
         })
       )
       modelPrimitive.attribute = cfg
       modelPrimitive.name = cfg.id
       modelPrimitive.position = position
+      modelPrimitive.hasOutLine = true
 
       modelPrimitive.readyPromise.then(function (model) {
-        const task = {
-          name: cfg.id,
-          department: '洪山分局',
-          number: '1',
-          task: '供水'
-        }
-        // 模型标签列表
-        me.labelList = []
-        me.addModelLabel(modelPrimitive, task)
+        callback(modelPrimitive)
       })
-      modelPrimitive.click = function (primitive) {
-        // primitive.silhouetteSize = 2
-        me.showModelEditBox(primitive)
-      }
 
       return modelPrimitive
     },
@@ -673,7 +761,6 @@ export default {
      * @param {Object} entity 模型
      */
     showModelEditBox (entity) {
-      me.curEntity = entity
       me.showEditBox = true
       const t = me.findModelLabel(entity.name)
       if (t !== undefined) {
@@ -690,8 +777,6 @@ export default {
       me = this
       var dataSource = new Cesium.CustomDataSource()
       this.viewer.dataSources.add(dataSource)
-      var position = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 10)
-      var position2 = Cesium.Cartesian3.fromDegrees(114.23534, 30.510244, 25)
       var position3 = Cesium.Cartesian3.fromDegrees(114.238506, 30.508797, 30)
 
       // var redRectangle = dataSource.entities.add({
@@ -702,60 +787,57 @@ export default {
       //   }
       // })
 
-      // 添加实体
-      dataSource.entities.add({
-        name: '1111111',
-        position: position,
-        model: {
-          uri:
+      this.createModel(
+        {
+          url:
             serverUrl +
             '/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
-          scale: 1,
-          opacity: 1,
-          clampToGround: true
+          x: 114.23534,
+          y: 30.510244,
+          z: 10
+        },
+        function (primitive) {
+          const position = me.getModelLabelPosition(primitive)
+          const divpoint1 = new mars3d.DivPoint(me.viewer, {
+            html: ` <div class="label labelxfs">
+                  <span></span>
+                  <span>消防栓</span>
+                </div>`,
+            anchor: [0, -60],
+            position: position,
+            depthTest: false,
+            click: function (entity) {
+              me.ClickDivPoint(entity, xfs, '消防栓', false)
+            }
+          })
+
+          console.log(divpoint1)
         }
-      })
+      )
 
       const lat = 30.510093
       const lon = 114.235004
       const id = new Date().format('yyyy-MM-dd HH:mm:ss')
-      // const task = {
-      //   name: id,
-      //   department: '洪山分局',
-      //   number: '1',
-      //   task: '供水'
-      // }
-      // const entity = dataSource.entities.add({
-      //   name: id,
-      //   position: Cesium.Cartesian3.fromDegrees(lon, lat, 12),
-      //   model: {
-      //     uri: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
-      //     scale: 1,
-      //     opacity: 1,
-      //     clampToGround: true
-      //   },
-      //   click: function (entity) {
-      //     me.curEntity = entity
-      //     me.showEditBox = true
-      //     const t = me.findModelLabel(entity.name)
-      //     if (t !== undefined) {
-      //       me.copyData(t.opts.data, me.editBox)
-      //     }
-      //     var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-      //       me.viewer.scene,
-      //       entity.position._value
-      //     )
-      //     me.setEditBoxPosition(point)
-      //   }
-      // })
-
-      this.createModel({
-        url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
-        x: lon,
-        y: lat,
-        z: 12,
-        id: id
-      })
+      this.createModel(
+        {
+          url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
+          x: lon,
+          y: lat,
+          z: 12,
+          id: id
+        },
+        function (primitive) {
+          const task = {
+            name: id,
+            department: '洪山分局',
+            number: '1',
+            task: '供水'
+          }
+          // 模型标签列表
+          me.labelList = []
+          me.addModelLabel(primitive, task)
+        }
+      )
 
       // setInterval(() => {
       //   lon += 0.000001
@@ -802,30 +884,6 @@ export default {
         }
       })
 
-      const divpoint1 = new mars3d.DivPoint(this.viewer, {
-        html: ` <div class="label labelxfs">
-                  <span></span>
-                  <span>消防栓</span>
-                </div>`,
-        anchor: [-61, 0],
-        position: position2,
-        depthTest: false,
-        // distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
-        //   100,
-        //   200000
-        // ), // 按视距距离显示
-        // popup: {
-        //   html: ` <div class="popup-bg">
-        //         </div>`,
-        //   anchor: [0, -50] // 左右、上下的偏移像素值。
-        // },
-        click: function (entity) {
-          me.showDivPointInfoBox(entity, xfs, '消防栓')
-        }
-      })
-
-      console.log(divpoint1)
-
       const divpoint2 = new mars3d.DivPoint(this.viewer, {
         html: ` <div class="label labelbf">
                   <span></span>
@@ -836,7 +894,7 @@ export default {
         depthTest: false,
         stopPropagation: true, // 控制是否阻止冒泡
         click: function (entity) {
-          me.showDivPointInfoBox(entity, bf, '泵房')
+          me.ClickDivPoint(entity, bf, '泵房', true)
         }
       })
 
@@ -854,7 +912,6 @@ export default {
         luminanceAtZenith: 0.6
       }
 
-      // layercfg.id = 1987
       layercfg.visible = true
       layercfg.flyTo = true
       this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
@@ -862,20 +919,30 @@ export default {
     },
 
     /**
-     *  显示InfoBox
+     *  点击DivPoint
      * @param {Object} entity DivPoint
      * @param {Object} imgSrc 图片
      * @param {String} label 标题
+     * @param {Boolen} showInfoBox 是否显示infobox
      */
-    showDivPointInfoBox (entity, imgSrc, label) {
-      this.showEditBox = false
-      me.infoBox.imgSrc = imgSrc
-      me.infoBox.label = label
-      me.showInfoBox = false
-      me.flyToEntity(entity, function (e) {
+    ClickDivPoint (entity, imgSrc, label, showInfoBox) {
+      if (this.isPlot && this.showEditBox) {
+        this.$notify.warning({ title: '警告', message: '请先添加任务' })
+        return
+      }
+
+      if (this.showEditBox) {
+        this.showEditBox = false
+      }
+      this.clearCurEntity()
+      this.showInfoBox = false
+      this.flyToEntity(entity, function (e) {
         // 飞行完成回调方法
-        me.showInfoBox = true
-        // me.viewer.mars.popup.show(entity)// 显示popup
+        if (showInfoBox) {
+          me.infoBox.imgSrc = imgSrc
+          me.infoBox.label = label
+          me.showInfoBox = showInfoBox
+        }
       })
     },
 
@@ -958,6 +1025,18 @@ export default {
     },
 
     /**
+     *  清除当前模型
+     */
+    clearCurEntity () {
+      if (this.curEntity) {
+        if (this.curEntity.hasOutLine) {
+          this.curEntity.silhouetteSize = 0
+        }
+        this.curEntity = ''
+      }
+    },
+
+    /**
      *  地图构造完成回调
      */
     onMapload (viewer) {
@@ -985,15 +1064,46 @@ export default {
         minPitch: 0.1, // 最小仰角  0-1
         maxPitch: 0.95 // 最大仰角  0-1
       })
+
+      // 地图鼠标按下
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
       handler.setInputAction(event => {
-        var pickedObject = viewer.scene.pick(event.position)
-        if (Cesium.defined(pickedObject)) {
-          if (pickedObject.primitive instanceof Cesium.Model && pickedObject.primitive._resource._url.indexOf('axis.gltf') === -1) {
+        me.showInfoBox = false
+        // 如果正在编辑第一次绘制模型的任务
+        if (me.isPlot && me.showEditBox) {
+          me.$notify.warning({ title: '警告', message: '请先添加任务' })
+          return
+        }
 
-          } else {
+        me.clearCurEntity()
+        var pickedObject = viewer.scene.pick(event.position)
+        // 如果点击的是模型
+        if (
+          Cesium.defined(pickedObject) &&
+          pickedObject.primitive instanceof Cesium.Model &&
+          pickedObject.primitive._resource._url.indexOf('axis.gltf') === -1
+        ) {
+          me.curEntity = pickedObject.primitive
+          let show = true
+          // 如果点击消防栓模型
+          if (pickedObject.primitive._resource._url.indexOf('xiaofangshuan.gltf') !== -1) {
+            show = false
+            me.infoBox.imgSrc = xfs
+            me.infoBox.label = '消防栓'
+            me.showInfoBox = true
             me.showEditBox = false
           }
+          // 设置模型选中样式
+          if (pickedObject.primitive.hasOutLine) {
+            pickedObject.primitive.silhouetteSize = 8
+          }
+          // 显示任务编辑窗
+          if (show && pickedObject.primitive.position) {
+            me.showModelEditBox(pickedObject.primitive)
+          }
+        } else {
+          // 如果点击其他区域
+          me.showEditBox = false
         }
       }, Cesium.ScreenSpaceEventType.LEFT_DOWN)
       this.addModel()

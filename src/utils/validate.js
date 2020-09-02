@@ -183,3 +183,12 @@ export function isUrl (rule, value, callback) {
     }
   }
 }
+
+// 判断字符串是否为空
+export function stringIsNullOrEmpty (str) {
+  if (typeof str === 'undefined' || str === null || str === '') {
+    return true
+  }
+
+  return false
+}
