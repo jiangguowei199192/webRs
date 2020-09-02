@@ -271,7 +271,7 @@ export default {
       simplePlaceHolder: '请输入地点或经纬度',
       placeHolder: '请输入目的地',
       titelTel: '电话: ',
-      bRouteOrClose: true, // true:route,false:close
+      bRouteOrClose: false, // true:route,false:close
       bShowRouteCtrl: false,
       bShowResult: false,
       bShowPaln: false,
@@ -439,6 +439,7 @@ export default {
       this.map2D.searchLayerManager.popNavImgClickEvent.addEventListener(
         this.popNavImgClickEventCB
       )
+      this.map2D.searchLayerManager.setPopupNavVisible(false)
     },
 
     // 自动定位当前位置回调
@@ -515,7 +516,7 @@ export default {
       }
       this.addrResults = null
       this.bShowResult = false
-      this.bRouteOrClose = true
+      this.bRouteOrClose = false // true (由true改为false隐藏路线导航功能)
       this.map2D.searchLayerManager.clear()
     },
 
