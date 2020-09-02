@@ -1270,7 +1270,6 @@ export default {
   }
   .searchCtrl {
     position: absolute;
-    //width: 400px;
     height: 32px;
     background-color: white;
     left: 15px;
@@ -1281,18 +1280,18 @@ export default {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 308px;
+      width: 294px;
       height: 32px;
       border-width: 0px;
       border-radius: 4px;
       padding-left: 5px;
-      padding-right: 98px; // 调整搜索提示框宽度与路线图标对齐
+      padding-right: 102px; // 调整搜索提示框宽度与路线图标对齐
       background-color: white;
       outline: none;
     }
     .inputSearch {
       position: absolute;
-      left: 320px;
+      left: 306px;
       top: 0px;
       height: 32px;
       width: 48px;
@@ -1314,10 +1313,10 @@ export default {
     }
     .inputFunc {
       position: absolute;
-      left: 368px;
+      left: 354px;
       top: 0px;
       height: 32px;
-      width: 46px;
+      width: 48px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
@@ -1325,7 +1324,7 @@ export default {
       margin: 0px;
       background-color: #144683;
       .closeIcon {
-        margin-left: 8px;
+        margin-left: 6px;
       }
     }
     .inputFunc:hover {
@@ -1337,7 +1336,7 @@ export default {
   }
   .searchResult {
     position: absolute;
-    width: 414px;
+    width: 400px;
     left: 15px;
     top: 60px;
     overflow-x: hidden;
