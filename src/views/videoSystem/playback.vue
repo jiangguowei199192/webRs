@@ -696,8 +696,8 @@ export default {
       this.$axios
         .get(api.getSnapList, {
           params: {
-            // deviceCode: null,
-            channelId: this.curNode.id,
+            deviceCode: this.curNode.pID,
+            channelId: this.curNode.streamType,
             date: timestamp
           }
         })
