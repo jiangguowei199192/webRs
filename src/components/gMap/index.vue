@@ -1281,7 +1281,7 @@ export default {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 310px; //326
+      width: 308px;
       height: 32px;
       border-width: 0px;
       border-radius: 4px;
@@ -1337,7 +1337,7 @@ export default {
   }
   .searchResult {
     position: absolute;
-    width: 400px;
+    width: 414px;
     left: 15px;
     top: 60px;
     overflow-x: hidden;
