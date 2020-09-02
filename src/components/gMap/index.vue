@@ -1317,7 +1317,7 @@ export default {
       left: 368px;
       top: 0px;
       height: 32px;
-      width: 48px;
+      width: 46px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
