@@ -151,7 +151,6 @@
 <script>
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
-import $ from 'jquery'
 import { stringIsNullOrEmpty } from '@/utils/validate'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
 import xfs from '@/assets/images/3d/xfs.jpg'
@@ -319,6 +318,42 @@ export default {
     },
 
     /**
+   * 根据 距离方向 和 观察点 计算 目标点
+   * @param {Object} viewPoint 观察点
+   * @param {Object} direction 方向
+   * @param {Object} radius 可视距离
+   */
+    getPointByDirection (position, direction, radius) {
+    // 世界坐标转换为投影坐标
+      var webMercatorProjection = new Cesium.WebMercatorProjection(this.viewer.scene.globe.ellipsoid)
+      var viewPointWebMercator = webMercatorProjection.project(Cesium.Cartographic.fromCartesian(position))
+      // 计算目标点
+      var toPoint = new Cesium.Cartesian3(viewPointWebMercator.x + radius * Math.cos(direction), viewPointWebMercator.y + radius * Math.sin(direction), 0)
+      // 投影坐标转世界坐标
+      const carto = webMercatorProjection.unproject(toPoint)
+      return Cesium.Cartesian3.fromRadians(carto.longitude, carto.latitude, carto.height)
+    },
+
+    /**
+     * 计算模型下方矩形框位置
+     * @param {Object} entity 模型
+     */
+    getModelRectPosition (entity) {
+      // 求出模型heading值
+      var hpr = mars3d.matrix.getHeadingPitchRollByMatrix(entity.modelMatrix)
+      var heading = Cesium.Math.toDegrees(hpr.heading)
+      heading = 360 - heading
+      heading = Cesium.Math.toRadians(heading)
+      var center = Cesium.Matrix4.multiplyByPoint(
+        entity.modelMatrix,
+        entity.boundingSphere.center,
+        new Cesium.Cartesian3()
+      )
+      const p1 = this.CartesianToDegrees(center)
+      return { coordinates: Cesium.Rectangle.fromDegrees(p1.lon - 0.000077, p1.lat - 0.000031, p1.lon + 0.000045, p1.lat + 0.000007), rotation: heading }
+    },
+
+    /**
      *  设置模型任务
      */
     setModelTask () {
@@ -345,6 +380,48 @@ export default {
         var task = JSON.parse(JSON.stringify(this.editBox))
         task.name = this.curEntity.name
         this.addModelLabel(this.curEntity, task)
+
+        // 添加模型下方矩形框
+        const entity = this.curEntity
+
+        // var center = Cesium.Matrix4.multiplyByPoint(
+        //   entity.modelMatrix,
+        //   entity.boundingSphere.center,
+        //   new Cesium.Cartesian3()
+        // )
+
+        // const p1 = this.getPointByDirection(center, 0, entity.boundingSphere.radius)
+        // p1.z += 100
+        // this.viewer.entities.add({
+        //   name: '根据视距显示点',
+        //   position: p1,
+        //   point: {
+        //     color: Cesium.Color.BLUE,
+        //     pixelSize: 100
+
+        //   }
+        // })
+        // let p2 = this.getPointByDirection(center, 90, entity.boundingSphere.radius)
+        // let p3 = this.getPointByDirection(center, 180, entity.boundingSphere.radius)
+        // let p4 = this.getPointByDirection(center, 270, entity.boundingSphere.radius)
+        // p1 = this.CartesianToDegrees(p1)
+        // p2 = this.CartesianToDegrees(p2)
+        // p3 = this.CartesianToDegrees(p3)
+        // p4 = this.CartesianToDegrees(p4)
+        const p = this.getModelRectPosition(entity)
+        const rect = this.viewer.entities.add({
+          name: task.name,
+          rectangle: {
+            coordinates: p.coordinates,
+            // coordinates: Cesium.Rectangle.fromDegrees(p4.lon, p3.lat, p2.lon, p1.lat),
+            material: Cesium.Color.GREEN.withAlpha(0.5),
+            rotation: p.heading
+          }
+        })
+
+        // 消防车下方，矩形框列表
+        if (!this.rectList) this.rectList = []
+        this.rectList.push(rect)
       } else {
         const t = this.findModelLabel(this.curEntity.name)
         if (t !== undefined) {
@@ -374,6 +451,7 @@ export default {
      *@param {Object} entity 模型
      */
     startEditing (entity) {
+      this.showOrHideRect(false, entity)
       // 启用编辑
       gltfEdit.activate(entity, me.viewer, {
         calback: function (result) {}
@@ -439,14 +517,34 @@ export default {
     },
 
     /**
+     *  隐藏/显示消防车下方矩形框
+     *@param {Boolen} show
+     *@param {Object} entity 矩形框名字
+     */
+    showOrHideRect (show, entity) {
+      if (me.rectList) {
+        const r = me.rectList.find(t => t._name === entity.name)
+        if (r !== undefined) {
+          if (show) {
+            const p = this.getModelRectPosition(entity)
+            r.rectangle.coordinates = p.coordinates
+            r.rectangle.rotation = p.rotation
+          }
+          r.show = show
+        }
+      }
+    },
+
+    /**
      *  开始绘制
      *@param {Object} item 模型
      */
     startPlot (item) {
       if (!this.drawControl) {
         this.drawControl = new mars3d.Draw(this.viewer, {
+          drawShow: true,
           hasEdit: true,
-          nameTooltip: true,
+          // nameTooltip: true,//是否在不可编辑状态时将 name名称 属性 绑定到tooltip
           isContinued: false, // 是否连续标绘
           isAutoEditing: true // 绘制完成后是否自动激活编辑
         })
@@ -478,13 +576,13 @@ export default {
 
         // 开始编辑
         this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
-          var entity = e.entity
-          me.startEditing(entity)
+          me.startEditing(e.entity)
           // console.log('开始编辑')
         })
         //
         this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
-          me.stopEditing()
+          me.showOrHideRect(false, e.entity)
+          me.stopEditing(e.entity)
           // console.log('EditMouseMove')
         })
 
@@ -499,6 +597,7 @@ export default {
 
         // 停止编辑
         this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
+          me.showOrHideRect(true, e.entity)
           me.stopEditing()
           // console.log('停止编辑')
         })
@@ -512,8 +611,17 @@ export default {
             me.labelList.splice(index, 1)
             t.destroy()
           }
+          // 删除矩形框列表
+          if (me.rectList) {
+            const r = me.rectList.find(t => t._name === e.entity.name)
+            if (r !== undefined) {
+              const index = me.labelList.indexOf(r)
+              me.labelList.splice(index, 1)
+              me.viewer.entities.remove(r)
+            }
+          }
           me.showEditBox = false
-          me.stopEditing()
+          me.stopEditing(e.entity)
           // console.log('删除了对象')
         })
       }
@@ -583,16 +691,6 @@ export default {
         .catch(err => {
           console.log('getPlotData Err : ' + err)
         })
-    },
-
-    /**
-     *  显示隐藏一些按钮
-     */
-    showOrHideViewerBtns () {
-      // 隐藏位置信息状态
-      this.viewer.mars.location.show = false
-      // 隐藏比例尺
-      $('#distanceLegendDiv').hide()
     },
 
     /**
@@ -778,15 +876,6 @@ export default {
       var dataSource = new Cesium.CustomDataSource()
       this.viewer.dataSources.add(dataSource)
       var position3 = Cesium.Cartesian3.fromDegrees(114.238506, 30.508797, 30)
-
-      // var redRectangle = dataSource.entities.add({
-      //   name: 'Red translucent rectangle',
-      //   rectangle: {
-      //     coordinates: Cesium.Rectangle.fromDegrees(114.234754, 30.51001, 114.234924, 30.510067),
-      //     material: Cesium.Color.RED.withAlpha(0.5)
-      //   }
-      // })
-
       this.createModel(
         {
           url:
@@ -1043,7 +1132,6 @@ export default {
       this.viewer = viewer
       // 控制鼠标只取模型上的点，忽略地形上的点的拾取
       viewer.mars.onlyPickModelPosition = true
-      this.showOrHideViewerBtns()
       // 设置右键旋转
       viewer.scene.screenSpaceCameraController.tiltEventTypes = [
         Cesium.CameraEventType.RIGHT_DRAG,

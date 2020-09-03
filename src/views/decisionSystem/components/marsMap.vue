@@ -8,6 +8,7 @@
 <script>
 import Vue from 'vue'
 import axios from 'axios'
+import $ from 'jquery'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
 export default {
@@ -94,6 +95,10 @@ export default {
         serverURL: options.serverURL,
         ...this.options,
         success: function (viewer, jsondata) { // 地图成功加载完成后执行
+          // 隐藏位置信息状态
+          viewer.mars.location.show = false
+          // 隐藏比例尺
+          $('#distanceLegendDiv').hide()
           // 开场动画
           viewer.mars.openFlyAnimation(function () {
             // 动画播放完成后回调
