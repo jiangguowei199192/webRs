@@ -1002,6 +1002,8 @@ export default {
     height: 100%;
     width: 100%;
     > div {
+        height:100%;
+        background: url(../../../assets/images/AR/ar_bg.png) no-repeat;
       > div.header {
         position: absolute;
         left: 50%;
