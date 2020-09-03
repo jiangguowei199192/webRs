@@ -3,7 +3,7 @@
     <div
       :id="mapContainerID"
       class="mapContainer"
-      :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
+      :class="{lineCursor:measureType==1,areaCursor:measureType==2,radiusCorner:bRadiusCorner,flatCorner:bFlatCorner}"
       @dblclick="dblClickMap"
     ></div>
     <div class="simpleSearchCtrl"
@@ -299,6 +299,16 @@ export default {
   },
 
   props: {
+    // 地图圆角样式
+    bRadiusCorner: {
+      type: Boolean,
+      default: false
+    },
+    // 地图平角样式
+    bFlatCorner: {
+      type: Boolean,
+      default: false
+    },
     // 为false时，不根据浏览器自动定位；为true时，根据浏览器定位用户当前位置。
     bAutoLocate: {
       type: Boolean,
@@ -1199,6 +1209,15 @@ export default {
   .mapContainer {
     width: 100%;
     height: 100%;
+    border: 1px solid transparent;
+    overflow: hidden;
+  }
+  .radiusCorner {
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+  }
+  .flatCorner {
+    clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px,100% calc(100% - 20px), calc(100% - 20px) 100%,20px 100%, 0 calc(100% - 20px), 0 20px);
   }
   .lineCursor {
     cursor: url("../../assets/images/m_line.png") 3 4, auto;
