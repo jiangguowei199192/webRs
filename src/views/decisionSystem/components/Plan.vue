@@ -112,7 +112,7 @@ export default {
         lat: '',
         mapId: ''
       },
-      buildingTitle: '黄鹤楼',
+      buildingTitle: '建筑平面图',
       buildingInfos: [
         // 测试数据
         // {
