@@ -93,19 +93,14 @@ import HorCardList from './HorizontalCardList.vue'
 import FloorGuide from './FloorGuide'
 import BaseInfo from './BaseInfo'
 import { settingApi } from '@/api/setting'
+import globalApi from '@/utils/globalApi'
 
 export default {
-  updated () {
-    this.getData()
-  },
   props: {
-    info: {
-      type: Object,
-      required: true
-    }
   },
   data () {
     return {
+      info: '',
       activeNames: ['1', '2'],
       showInfo: {
         name: '',
@@ -120,60 +115,33 @@ export default {
       buildingTitle: '黄鹤楼',
       buildingInfos: [
         // 测试数据
-        {
-          title: '1层',
-          image:
-            'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
-        },
-        {
-          title: '2层',
-          image:
-            'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
-        },
-        {
-          title: '3层',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
-        },
-        {
-          title: '4层',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
-        },
-        {
-          title: '5层',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
-        }
+        // {
+        //   title: '1层',
+        //   image:
+        //     'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
+        // },
+        // {
+        //   title: '2层',
+        //   image:
+        //     'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
+        // },
+        // {
+        //   title: '3层',
+        //   image:
+        //     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
+        // },
+        // {
+        //   title: '4层',
+        //   image:
+        //     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
+        // },
+        // {
+        //   title: '5层',
+        //   image:
+        //     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
+        // }
       ],
-      baseInfos: [
-        // 测试数据
-        {
-          title: '基本情况',
-          image:
-            'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
-        },
-        {
-          title: '供水系统',
-          image:
-            'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
-        },
-        {
-          title: '行车路线',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
-        },
-        {
-          title: '防火设计',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
-        },
-        {
-          title: '重点部位',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
-        }
-      ]
+      baseInfos: []
     }
   },
   components: {
@@ -182,11 +150,16 @@ export default {
     BaseInfo
   },
   methods: {
+    show (info) {
+      this.info = info
+      this.getData()
+    },
     async getData () {
+      console.log('6666666')
+      console.log(this.info)
       if (this.info.keyId) {
         var param = {
           id: this.info.keyId
-          // id: 1
         }
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
@@ -194,12 +167,32 @@ export default {
             if (res.data.code === 0) {
               var resData = res.data.data
               this.showInfo.name = resData.enterpriseName
-              this.showInfo.type = resData.enterpriseTypeCode
+              this.showInfo.type = resData.enterpriseTypeName
               this.showInfo.address = resData.enterpriseAddress
               this.showInfo.tel = resData.enterpriseTel
               this.showInfo.subTel = resData.enterpriseTelBackup
               this.showInfo.lat = resData.enterpriseLatitude
               this.showInfo.lon = resData.enterpriseLongitude
+
+              var baseInfosTemp = []
+              resData.planEnterpriseBaseInfoPic.forEach(item => {
+                var temp = {
+                  title: item.picName,
+                  image: globalApi.headImg + item.picPath
+                }
+                baseInfosTemp.push(temp)
+              })
+              this.baseInfos = baseInfosTemp
+
+              var buildingInfosTemp = []
+              resData.planEnterpriseJzpmtPic.forEach(item => {
+                var temp = {
+                  title: item.picName,
+                  image: globalApi.headImg + item.picPath
+                }
+                buildingInfosTemp.push(temp)
+              })
+              this.buildingInfos = buildingInfosTemp
             }
           })
       } else {
@@ -230,7 +223,7 @@ export default {
     },
     // 点击建筑平面图
     didClickedBuildingImage (index) {
-      this.$refs.floorGuide.show(index)
+      this.$refs.floorGuide.show(this.buildingInfos, index)
     },
     // 点击基本情况说明
     didClickedBaseInfo (index) {

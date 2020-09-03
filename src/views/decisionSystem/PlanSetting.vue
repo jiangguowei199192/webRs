@@ -331,16 +331,26 @@ export default {
         enterpriseLongitude: this.companyLog,
         enterpriseTel: this.companyPhone,
         enterpriseTelBackup: this.companySubPhone,
-        baseInfoPicList: JSON.stringify(basicPaths),
-        jzpmtPicList: JSON.stringify(buildingPaths),
+        baseInfoPicList: basicPaths,
+        jzpmtPicList: buildingPaths,
         enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
       }
-      this.$axios.post(settingApi.addEnterprise, param, {
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-      }).then((res) => {
-        if (res.data.code === 0) {
-        }
-      })
+      this.$axios
+        .post(settingApi.addEnterprise, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            localStorage.removeItem('PlanInfo')
+            Notification({
+              title: '提示',
+              message: '保存成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            this.$router.push({ path: '/decisionSystem' })
+          }
+        })
     },
     warnAlert (msg) {
       Notification({

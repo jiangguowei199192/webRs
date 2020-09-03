@@ -44,24 +44,27 @@ export default {
     title: {
       type: String,
       required: true
-    },
-    info: {
-      type: Array,
-      required: true
     }
+    // info: {
+    //   type: Array,
+    //   required: true
+    // }
   },
   created () {
     // this.currentImg = this.info[0].image
   },
   data () {
     return {
+      info: [],
       dialogVisible: false,
       backImg: require('../../../assets/images/Setting/setting-back.png'),
-      currentImg: this.info[0].image
+      currentImg: ''
     }
   },
   methods: {
-    show (index) {
+    show (info, index) {
+      this.info = info
+      this.currentImg = this.info[0].image
       this.dialogVisible = true
       this.checkStatus(index)
     },
@@ -72,11 +75,13 @@ export default {
       this.checkStatus(index)
     },
     checkStatus (index) {
-      this.currentImg = this.info[index].image
-      this.info.forEach(item => {
-        item.selected = false
-      })
-      this.info[index].selected = true
+      if (this.info.length) {
+        this.currentImg = this.info[index].image
+        this.info.forEach(item => {
+          item.selected = false
+        })
+        this.info[index].selected = true
+      }
     }
   }
 }

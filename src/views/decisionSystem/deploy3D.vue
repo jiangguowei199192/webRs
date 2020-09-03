@@ -84,7 +84,7 @@
       </div>
       <span class="btn confirm" @click="setModelTask">确定</span>
     </div>
-    <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
+    <FloorGuide ref="floorGuide" v-bind:title="buildingTitle"></FloorGuide>
     <div class="rightTool">
       <div class="move">
         <span></span>
@@ -257,7 +257,7 @@ export default {
         this.showPlotBox = true
       } else if (this.activeIndex === 6) {
         this.showPlotBox = false
-        this.$refs.floorGuide.show(0)
+        this.$refs.floorGuide.show(this.buildingInfos, 0)
       } else {
         this.showPlotBox = false
       }

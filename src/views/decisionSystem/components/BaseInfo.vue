@@ -67,8 +67,10 @@ export default {
     }
   },
   created () {
-    this.currentImg = this.info[0].image
-    this.checkLeftRightStatus()
+    if (this.info.length) {
+      this.currentImg = this.info[0].image
+      this.checkLeftRightStatus()
+    }
   },
   data () {
     return {
@@ -82,9 +84,11 @@ export default {
   },
   methods: {
     show (index) {
-      this.dialogVisible = true
-      this.currentIndex = index
-      this.checkLeftRightStatus()
+      if (this.info.length) {
+        this.dialogVisible = true
+        this.currentIndex = index
+        this.checkLeftRightStatus()
+      }
     },
 
     backClick () {
