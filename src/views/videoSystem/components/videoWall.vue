@@ -19,7 +19,15 @@
           ref="drawBox"
         >
           <div class="header">AR实景地图指挥</div>
-          <div class="footer"></div>
+          <div class="footer">
+            <img :src="arPic" alt="">
+            <img :src="alarmPic" alt="">
+            <img :src="capturePic" alt="">
+            <img :src="photoPic" alt="">
+            <img :src="tagPic" alt="">
+            <img :src="searchPic" alt="">
+            <img :src="settingPic" alt="">
+          </div>
         </div>
       </div>
       <div class="info">
@@ -157,6 +165,27 @@ import droneInfoMixin from '../../../utils/droneInfoMixin'
 export default {
   data () {
     return {
+      arPic: require('@/assets/images/AR/ar.png'),
+      arSelectedPic: require('@/assets/images/AR/ar_selected.png'),
+
+      alarmPic: require('@/assets/images/AR/alarm.png'),
+      alarmSelectedPic: require('@/assets/images/AR/alarm_selected.png'),
+
+      capturePic: require('@/assets/images/AR/capature.png'),
+      captureSelectedPic: require('@/assets/images/AR/capature_selected.png'),
+
+      photoPic: require('@/assets/images/AR/photo.png'),
+      photoSelectedPic: require('@/assets/images/AR/photo_selected.png'),
+
+      tagPic: require('@/assets/images/AR/tag.png'),
+      tagSelectedPic: require('@/assets/images/AR/tag_selected.png'),
+
+      searchPic: require('@/assets/images/AR/search.png'),
+      searchSelectedPic: require('@/assets/images/AR/search_selected.png'),
+
+      settingPic: require('@/assets/images/AR/setting.png'),
+      settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
+
       showMarkForm: false,
       ruleForm: {
         tagName: '',
@@ -987,7 +1016,7 @@ export default {
         font-weight: bold;
         color: #ffffff;
       }
-      div.header::selection { background:transparent; }
+    ::selection { background:transparent; }
       div.footer{
         position: absolute;
         left:0;
@@ -995,6 +1024,12 @@ export default {
         width:1920px;
         height:73px;
         background: url(../../../assets/images/AR/ar_footer.png) no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img{
+          margin-right:32px;
+        }
       }
     //   div.pic {
     //     display: inline-block;
