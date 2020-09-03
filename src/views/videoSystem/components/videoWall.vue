@@ -18,7 +18,8 @@
           v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
           ref="drawBox"
         >
-          <draw-area @custom="createImgDom" ref="drawArea"></draw-area>
+          <div class="header">AR实景地图指挥</div>
+          <div class="footer"></div>
         </div>
       </div>
       <div class="info">
@@ -153,7 +154,6 @@
 <script>
 import LivePlayer from '@liveqing/liveplayer'
 import droneInfoMixin from '../../../utils/droneInfoMixin'
-import drawArea from './drawArea'
 export default {
   data () {
     return {
@@ -221,8 +221,7 @@ export default {
   mixins: [droneInfoMixin],
 
   components: {
-    LivePlayer,
-    drawArea
+    LivePlayer
   },
 
   props: {
@@ -332,7 +331,6 @@ export default {
     resetForm (formName) {
       this.showMarkForm = false
       this.$refs[formName].resetFields()
-      this.$refs.drawArea.resetReact()
     },
     // 显示表单
     showMarkDialog (e) {
@@ -975,28 +973,51 @@ export default {
     height: 100%;
     width: 100%;
     > div {
-      div.pic {
-        display: inline-block;
+      > div.header {
         position: absolute;
+        left: 50%;
+        width: 1205px;
+        height: 69px;
+        line-height: 69px;
+        text-align: center;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/AR/ar_header.png) no-repeat;
+        font-size: 36px;
+        font-family: Source Han Sans CN;
+        font-weight: bold;
+        color: #ffffff;
       }
-      span {
+      div.header::selection { background:transparent; }
+      div.footer{
         position: absolute;
-        right: 0;
-        top: -10px;
-        cursor: pointer;
-        display: none;
+        left:0;
+        bottom:0;
+        width:1920px;
+        height:73px;
+        background: url(../../../assets/images/AR/ar_footer.png) no-repeat;
       }
-      div.pic:hover span {
-        display: inline;
-      }
-      div.pic img {
-        vertical-align: middle;
-        /* border-radius: 50%; */
-      }
-      div.pic input {
-        //  background:#00a9ff;
-        opacity: 0.6;
-      }
+    //   div.pic {
+    //     display: inline-block;
+    //     position: absolute;
+    //   }
+    //   span {
+    //     position: absolute;
+    //     right: 0;
+    //     top: -10px;
+    //     cursor: pointer;
+    //     display: none;
+    //   }
+    //   div.pic:hover span {
+    //     display: inline;
+    //   }
+    //   div.pic img {
+    //     vertical-align: middle;
+    //     /* border-radius: 50%; */
+    //   }
+    //   div.pic input {
+    //     //  background:#00a9ff;
+    //     opacity: 0.6;
+    //   }
     }
   }
   .info {

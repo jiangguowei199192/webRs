@@ -34,12 +34,6 @@ const routes = [
         name: 'fireAlarm',
         component: () => import('../views/videoSystem/fireAlarm')
       },
-      // 火情火警
-      {
-        path: '/huizi',
-        name: 'huizi',
-        component: () => import('../views/videoSystem/huizi')
-      },
       // 设备地图
       {
         path: '/deviceMap',
