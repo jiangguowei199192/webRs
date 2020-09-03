@@ -7,11 +7,17 @@
 <script>
 export default {
   name: 'decision',
+  watch: {
+    $route: 'refresh'
+  },
   data () {
     return {
     }
   },
   methods: {
+    refresh () {
+      this.$refs.gduMap.routeOrCloseFunc()
+    }
   },
   created () {
   }

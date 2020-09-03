@@ -3,8 +3,8 @@
     <div style="width: 100%;">
       <div class="addressInfo">
         <div style="height: 98px;">
-          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px;">{{showInfo.name}}</div>
-          <div style="margin-top: 16px; margin-left: 22px; font-size: 12px;">
+          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{showInfo.name}}</div>
+          <div style="margin-top: 16px; margin-left: 22px; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
             {{showInfo.type}}
             <div v-show="info.keyId !== undefined" class="keypointStyle">重</div>
           </div>
@@ -155,8 +155,6 @@ export default {
       this.getData()
     },
     async getData () {
-      console.log('6666666')
-      console.log(this.info)
       if (this.info.keyId) {
         var param = {
           id: this.info.keyId
@@ -248,6 +246,9 @@ export default {
     line-height: 30px;
     border-top: 1px solid rgba(237, 237, 237, 0.5);
     font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .keypointStyle {
     display: inline-block;
