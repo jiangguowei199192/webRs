@@ -33,6 +33,25 @@
               <img :src="settingPic" title="设置" alt />
             </template>
           </div>
+          <div class="realPoliceInfo" v-show="showRealPolice" @dblclick.stop="stopEvent">
+            <div class="title">实时警情</div>
+            <div class="content webFsScroll">
+              <div class="item" v-for="(item,index) in 9" :key="index">
+                <div class="pic">
+                  <img src="../../../assets/images/type_fire.png" alt />
+                </div>
+                <div>
+                  <p>时间：2020-08-12 15:12:00</p>
+                  <p>地点：武汉市第一医院</p>
+                  <p>坐标：30.254124 114.221454</p>
+                  <p>
+                    类型：
+                    <span class="type">火情报警</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="info">
@@ -162,28 +181,6 @@
             <el-button type="primary" @click="resetForm('ruleForm')">取消</el-button>
           </el-form-item>
         </el-form>
-      </div>
-      <div
-        class="realPoliceInfo"
-        v-show="showRealPolice&&videoInfo.isShowOperate"
-      >
-        <div class="title">实时警情</div>
-        <div class="content webFsScroll">
-          <div class="item" v-for="(item,index) in 9" :key="index">
-            <div class="pic">
-              <img src="../../../assets/images/type_fire.png" alt />
-            </div>
-            <div>
-              <p>时间：2020-08-12 15:12:00</p>
-              <p>地点：武汉市第一医院</p>
-              <p>坐标：30.254124 114.221454</p>
-              <p>
-                类型：
-                <span class="type">火情报警</span>
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </LivePlayer>
   </div>
@@ -1065,6 +1062,55 @@ export default {
           margin-right: 32px;
         }
       }
+       .realPoliceInfo {
+      position: absolute;
+      top: 125px;
+      right: 40px;
+      width: 306px;
+      height: 568px;
+      cursor: text;
+      background: url(../../../assets/images/AR/police_info.png) no-repeat;
+      div.title {
+        padding: 18px;
+        font-size: 14px;
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        color: #ffffff;
+      }
+      div.content {
+        padding: 0 14px 0 18px;
+        max-height: 500px;
+        overflow-y: auto;
+        .item {
+          display: flex;
+          font-size: 12px;
+          padding: 10px 8px;
+          margin-bottom: 10px;
+          background: linear-gradient(
+            -90deg,
+            rgba(30, 176, 252, 0.1) 0%,
+            rgba(30, 176, 252, 0.1) 100%
+          );
+          // opacity: 0.22;
+          div.pic {
+            width: 80px;
+            height: 80px;
+            margin-right: 8px;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+
+          div p {
+            line-height: 18px;
+            span.type {
+              color: #1eb0fc;
+            }
+          }
+        }
+      }
+    }
       //   div.pic {
       //     display: inline-block;
       //     position: absolute;
@@ -1356,55 +1402,6 @@ export default {
       padding: 0;
       height: 40px !important;
       background: #409eff;
-    }
-  }
-  .realPoliceInfo {
-    position: absolute;
-    top: 125px;
-    right: 40px;
-    width: 306px;
-    height: 568px;
-    cursor: text;
-    background: url(../../../assets/images/AR/police_info.png) no-repeat;
-    div.title {
-      padding: 18px;
-      font-size: 14px;
-      font-family: Source Han Sans CN;
-      font-weight: 400;
-      color: #ffffff;
-    }
-    div.content {
-      padding: 0 14px 0 18px;
-      max-height: 500px;
-      overflow-y: auto;
-      .item {
-        display: flex;
-        font-size: 12px;
-        padding: 10px 8px;
-        margin-bottom: 10px;
-        background: linear-gradient(
-          -90deg,
-          rgba(30, 176, 252, 0.1) 0%,
-          rgba(30, 176, 252, 0.1) 100%
-        );
-        // opacity: 0.22;
-        div.pic {
-          width: 80px;
-          height: 80px;
-          margin-right: 8px;
-          img {
-            width: 100%;
-            height: 100%;
-          }
-        }
-
-        div p {
-          line-height: 18px;
-          span.type {
-            color: #1eb0fc;
-          }
-        }
-      }
     }
   }
 }
