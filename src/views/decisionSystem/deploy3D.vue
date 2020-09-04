@@ -1111,6 +1111,117 @@ export default {
     ZoomIn (isIn) {
       var zoomIn = new mars3d.ZoomNavigation(this.viewer, isIn)
       zoomIn.activate()
+      // this.measureHeight(false)
+    },
+
+    /**
+     *  测量开始,移除鼠标事件
+     * @param {Number} type 测量类型
+     */
+    measureStart () {
+      this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN)
+    },
+
+    /**
+     *  测量结束,绑定鼠标事件
+     */
+    measureEnd () {
+      this.handler.setInputAction(event => {
+        me.showInfoBox = false
+        // 如果正在编辑第一次绘制模型的任务
+        if (me.isPlot && me.showEditBox) {
+          me.$notify.warning({ title: '警告', message: '请先添加任务' })
+          return
+        }
+
+        me.clearCurEntity()
+        var pickedObject = me.viewer.scene.pick(event.position)
+        // 如果点击的是模型
+        if (
+          Cesium.defined(pickedObject) &&
+          pickedObject.primitive instanceof Cesium.Model &&
+          pickedObject.primitive._resource._url.indexOf('axis.gltf') === -1
+        ) {
+          me.curEntity = pickedObject.primitive
+          let show = true
+          // 如果点击消防栓模型
+          if (pickedObject.primitive._resource._url.indexOf('xiaofangshuan.gltf') !== -1) {
+            show = false
+            me.infoBox.imgSrc = xfs
+            me.infoBox.label = '消防栓'
+            me.showInfoBox = true
+            me.showEditBox = false
+          }
+          // 设置模型选中样式
+          if (pickedObject.primitive.hasOutLine) {
+            pickedObject.primitive.silhouetteSize = 8
+          }
+          // 显示任务编辑窗
+          if (show && pickedObject.primitive.position) {
+            me.showModelEditBox(pickedObject.primitive)
+          }
+        } else {
+          // 如果点击其他区域
+          me.showEditBox = false
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_DOWN)
+    },
+
+    /**
+     *  测距
+     *  @param {Boolen} terrain 测量长度、面积时标识是否贴地模式
+     */
+    measureLength (terrain) {
+      this.measureStart()
+      this.measureSurface.measuerLength({
+        terrain: terrain,
+        onEnd: this.measureEnd
+      //   style: { // 可以自定义样式
+      //     lineType: 'solid',
+      //     color: '#ffff00',
+      //     width: 3,
+      //     clampToGround: true // 是否贴地
+      //   }
+      })
+    },
+
+    /**
+     *  测面积
+     *  @param {Boolen} terrain 测量长度、面积时标识是否贴地模式
+     */
+    measureArea (terrain) {
+      this.measureStart()
+      this.measureSurface.measureArea({
+        terrain: terrain,
+        onEnd: this.measureEnd
+        // style: { // 可以自定义样式
+        //   color: '#00fff2',
+        //   opacity: 0.4,
+        //   outline: true,
+        //   outlineColor: '#fafa5a',
+        //   outlineWidth: 1,
+        //   clampToGround: false // 贴地
+        // }
+      })
+    },
+
+    /**
+     *  高度差
+     *  @param {Boolen} isSuper 是否三角测量
+     */
+    measureHeight (isSuper) {
+      this.measureStart()
+      this.measureSurface.measureHeight({
+        isSuper: isSuper,
+        onEnd: this.measureEnd
+      })
+    },
+
+    /**
+     *  设置视角
+     */
+    setCameraView () {
+      // const view = mars3d.point.getCameraView(this.viewer, true)
     },
 
     /**
@@ -1123,6 +1234,34 @@ export default {
         }
         this.curEntity = ''
       }
+    },
+
+    /**
+     *  自动旋转
+     * @param {Boolen} start 是否开始旋转
+     */
+    AutoRotate (start) {
+      if (!this.layerModel) return
+      if (start) { mars3d.point.windingPoint.start(this.viewer, this.layerModel.originalCenter) } else mars3d.point.windingPoint.stop()
+    },
+
+    /**
+     *  截图
+     */
+    screenshot () {
+      this.viewer.mars.expImage({
+        download: true,
+        calback: function (base64, size) { // 回调
+          window.layer.open({
+            type: 1,
+            title: '场景出图',
+            skin: 'layer-mars-dialog animation-scale-up',
+            resize: true,
+            area: ['50%', '60%'], // 宽高
+            content: '<img src=' + base64 + ' style="width:100%;">'
+          })
+        }
+      })
     },
 
     /**
@@ -1153,51 +1292,23 @@ export default {
         maxPitch: 0.95 // 最大仰角  0-1
       })
 
-      // 地图鼠标按下
-      var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
-      handler.setInputAction(event => {
-        me.showInfoBox = false
-        // 如果正在编辑第一次绘制模型的任务
-        if (me.isPlot && me.showEditBox) {
-          me.$notify.warning({ title: '警告', message: '请先添加任务' })
-          return
+      this.measureSurface = new mars3d.analysi.Measure({
+        viewer: viewer,
+        removeScreenSpaceEvent: true,
+        label: { // 可设置文本样式
+          color: '#ffffff',
+          font_family: '楷体',
+          font_size: 20,
+          background: false
         }
+      })
 
-        me.clearCurEntity()
-        var pickedObject = viewer.scene.pick(event.position)
-        // 如果点击的是模型
-        if (
-          Cesium.defined(pickedObject) &&
-          pickedObject.primitive instanceof Cesium.Model &&
-          pickedObject.primitive._resource._url.indexOf('axis.gltf') === -1
-        ) {
-          me.curEntity = pickedObject.primitive
-          let show = true
-          // 如果点击消防栓模型
-          if (pickedObject.primitive._resource._url.indexOf('xiaofangshuan.gltf') !== -1) {
-            show = false
-            me.infoBox.imgSrc = xfs
-            me.infoBox.label = '消防栓'
-            me.showInfoBox = true
-            me.showEditBox = false
-          }
-          // 设置模型选中样式
-          if (pickedObject.primitive.hasOutLine) {
-            pickedObject.primitive.silhouetteSize = 8
-          }
-          // 显示任务编辑窗
-          if (show && pickedObject.primitive.position) {
-            me.showModelEditBox(pickedObject.primitive)
-          }
-        } else {
-          // 如果点击其他区域
-          me.showEditBox = false
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_DOWN)
+      // 地图鼠标按下
+      this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+      this.measureEnd()
       this.addModel()
     }
-  },
-  created () {}
+  }
 }
 </script>
 
