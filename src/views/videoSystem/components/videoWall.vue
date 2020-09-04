@@ -19,14 +19,14 @@
           ref="drawBox"
         >
           <div class="header">AR实景地图指挥</div>
-          <div class="footer">
-            <img :src="arPic" alt="">
-            <img :src="alarmPic" alt="">
-            <img :src="capturePic" alt="">
-            <img :src="photoPic" alt="">
-            <img :src="tagPic" alt="">
-            <img :src="searchPic" alt="">
-            <img :src="settingPic" alt="">
+          <div class="footer" @dblclick.stop="stopEvent">
+            <img :src="arPic" alt />
+            <img :src="alarmPic" alt />
+            <img :src="capturePic" alt />
+            <img :src="photoPic" alt />
+            <img :src="tagPic" alt />
+            <img :src="searchPic" alt />
+            <img :src="settingPic" alt />
           </div>
         </div>
       </div>
@@ -42,9 +42,10 @@
           :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:playerHeight)+'px',width:item.width/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',height:item.height/720*(videoInfo.isShowOperate?1080:playerHeight)+'px'}"
         ></span>
       </div>
-      <div
+      <!-- 云台操作 -->
+      <!-- <div
         class="fullScreenOperate"
-        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false&&bIsFullScreen===true"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
         @dblclick.stop="stopEvent"
         @click.stop="stopEvent"
       >
@@ -58,8 +59,8 @@
                 @mousedown="startChange(index)"
                 @mouseup="stopChange(index)"
               ></div>
-            </div>
-            <!-- <div class="btns">
+      </div>-->
+      <!-- <div class="btns">
              <div>
                   <span @mousedown="startChange(1000,true)" @mouseup="stopChange">+</span>
                   <b>变倍</b>
@@ -75,9 +76,9 @@
                   <b>光圈</b>
                   <span @mousedown="startFocusLris(1005)" @mouseup="stopFocusLris">-</span>
                 </div>
-            </div>-->
-            <!-- sdk -->
-            <div class="btns">
+      </div>-->
+      <!-- sdk -->
+      <!-- <div class="btns">
               <div>
                 <span @mousedown="startChange(1000)" @mouseup="stopChange(1000)">+</span>
                 <b>变倍</b>
@@ -107,7 +108,8 @@
             <div class="sliderTip">步速值范围为1-8之间</div>
           </div>
         </div>
-      </div>
+      </div>-->
+      <!-- 无人机地图 -->
       <div
         class="fullScreenMap"
         v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&bIsFullScreen===true"
@@ -155,6 +157,28 @@
             <el-button type="primary" @click="resetForm('ruleForm')">取消</el-button>
           </el-form-item>
         </el-form>
+      </div>
+      <div
+        class="realPoliceInfo"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+      >
+        <div class="title">实时警情</div>
+        <div class="content webFsScroll">
+          <div class="item" v-for="(item,index) in 9" :key="index">
+            <div class="pic">
+              <img src="../../../assets/images/type_fire.png" alt />
+            </div>
+            <div>
+              <p>时间：2020-08-12 15:12:00</p>
+              <p>地点：武汉市第一医院</p>
+              <p>坐标：30.254124 114.221454</p>
+              <p>
+                类型：
+                <span class="type">火情报警</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </LivePlayer>
   </div>
@@ -1002,8 +1026,8 @@ export default {
     height: 100%;
     width: 100%;
     > div {
-        height:100%;
-        background: url(../../../assets/images/AR/ar_bg.png) no-repeat;
+      height: 100%;
+      background: url(../../../assets/images/AR/ar_bg.png) no-repeat;
       > div.header {
         position: absolute;
         left: 50%;
@@ -1018,43 +1042,45 @@ export default {
         font-weight: bold;
         color: #ffffff;
       }
-    ::selection { background:transparent; }
-      div.footer{
+      ::selection {
+        background: transparent;
+      }
+      div.footer {
         position: absolute;
-        left:0;
-        bottom:0;
-        width:1920px;
-        height:73px;
+        left: 0;
+        bottom: 0;
+        width: 1920px;
+        height: 73px;
         background: url(../../../assets/images/AR/ar_footer.png) no-repeat;
         display: flex;
         justify-content: center;
         align-items: center;
-        img{
-          margin-right:32px;
+        img {
+          margin-right: 32px;
         }
       }
-    //   div.pic {
-    //     display: inline-block;
-    //     position: absolute;
-    //   }
-    //   span {
-    //     position: absolute;
-    //     right: 0;
-    //     top: -10px;
-    //     cursor: pointer;
-    //     display: none;
-    //   }
-    //   div.pic:hover span {
-    //     display: inline;
-    //   }
-    //   div.pic img {
-    //     vertical-align: middle;
-    //     /* border-radius: 50%; */
-    //   }
-    //   div.pic input {
-    //     //  background:#00a9ff;
-    //     opacity: 0.6;
-    //   }
+      //   div.pic {
+      //     display: inline-block;
+      //     position: absolute;
+      //   }
+      //   span {
+      //     position: absolute;
+      //     right: 0;
+      //     top: -10px;
+      //     cursor: pointer;
+      //     display: none;
+      //   }
+      //   div.pic:hover span {
+      //     display: inline;
+      //   }
+      //   div.pic img {
+      //     vertical-align: middle;
+      //     /* border-radius: 50%; */
+      //   }
+      //   div.pic input {
+      //     //  background:#00a9ff;
+      //     opacity: 0.6;
+      //   }
     }
   }
   .info {
@@ -1321,6 +1347,54 @@ export default {
       padding: 0;
       height: 40px !important;
       background: #409eff;
+    }
+  }
+  .realPoliceInfo {
+    position: absolute;
+    top: 125px;
+    right: 40px;
+    width: 306px;
+    height: 568px;
+    background: url(../../../assets/images/AR/police_info.png) no-repeat;
+    div.title {
+      padding: 18px;
+      font-size: 14px;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      color: #ffffff;
+    }
+    div.content {
+      padding: 0 14px 0 18px;
+      max-height: 500px;
+      overflow-y: auto;
+      .item {
+        display: flex;
+        font-size: 12px;
+        padding: 10px 8px;
+        margin-bottom: 10px;
+        background: linear-gradient(
+          -90deg,
+          rgba(30, 176, 252, 0.1) 0%,
+          rgba(30, 176, 252, 0.1) 100%
+        );
+        // opacity: 0.22;
+        div.pic {
+          width: 80px;
+          height: 80px;
+          margin-right:8px;
+          img{
+            width:100%;
+            height:100%;
+          }
+        }
+
+        div p{
+          line-height:18px;
+           span.type {
+          color: #1eb0fc;
+        }
+        }
+      }
     }
   }
 }
