@@ -1355,6 +1355,7 @@ export default {
     right: 40px;
     width: 306px;
     height: 568px;
+    cursor: text;
     background: url(../../../assets/images/AR/police_info.png) no-repeat;
     div.title {
       padding: 18px;
