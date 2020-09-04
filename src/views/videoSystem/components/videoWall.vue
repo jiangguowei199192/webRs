@@ -165,7 +165,7 @@
       </div>
       <div
         class="realPoliceInfo"
-        v-show="showRealPolice"
+        v-show="showRealPolice&&videoInfo.isShowOperate"
       >
         <div class="title">实时警情</div>
         <div class="content webFsScroll">
