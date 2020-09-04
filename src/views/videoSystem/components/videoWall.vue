@@ -17,16 +17,21 @@
         <div
           v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
           ref="drawBox"
+          :class="{bg:showAR}"
         >
-          <div class="header">AR实景地图指挥</div>
+          <template v-if="showAR">
+            <div class="header">AR实景地图指挥</div>
+          </template>
           <div class="footer" @dblclick.stop="stopEvent">
-            <img :src="arPic" alt />
-            <img :src="alarmPic" alt />
-            <img :src="capturePic" alt />
-            <img :src="photoPic" alt />
-            <img :src="tagPic" alt />
-            <img :src="searchPic" alt />
-            <img :src="settingPic" alt />
+            <img :src="arPic" alt title="开启AR" @click="showAR=!showAR" />
+            <img :src="alarmPic" alt title="火情报警" @click="showRealPolice=!showRealPolice" />
+            <img :src="capturePic" alt title="抓取" />
+            <img :src="photoPic" alt title="图库" />
+            <template v-if="showAR">
+              <img :src="tagPic" title="标签" alt />
+              <img :src="searchPic" title="搜索" alt />
+              <img :src="settingPic" title="设置" alt />
+            </template>
           </div>
         </div>
       </div>
@@ -160,7 +165,7 @@
       </div>
       <div
         class="realPoliceInfo"
-        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+        v-show="showRealPolice"
       >
         <div class="title">实时警情</div>
         <div class="content webFsScroll">
@@ -189,6 +194,8 @@ import droneInfoMixin from '../../../utils/droneInfoMixin'
 export default {
   data () {
     return {
+      showAR: false, // 显示AR
+      showRealPolice: false, // 显示实时警情
       arPic: require('@/assets/images/AR/ar.png'),
       arSelectedPic: require('@/assets/images/AR/ar_selected.png'),
 
@@ -1027,7 +1034,6 @@ export default {
     width: 100%;
     > div {
       height: 100%;
-      background: url(../../../assets/images/AR/ar_bg.png) no-repeat;
       > div.header {
         position: absolute;
         left: 50%;
@@ -1081,6 +1087,9 @@ export default {
       //     //  background:#00a9ff;
       //     opacity: 0.6;
       //   }
+    }
+    div.bg {
+      background: url(../../../assets/images/AR/ar_bg.png) no-repeat;
     }
   }
   .info {
@@ -1382,18 +1391,18 @@ export default {
         div.pic {
           width: 80px;
           height: 80px;
-          margin-right:8px;
-          img{
-            width:100%;
-            height:100%;
+          margin-right: 8px;
+          img {
+            width: 100%;
+            height: 100%;
           }
         }
 
-        div p{
-          line-height:18px;
-           span.type {
-          color: #1eb0fc;
-        }
+        div p {
+          line-height: 18px;
+          span.type {
+            color: #1eb0fc;
+          }
         }
       }
     }
