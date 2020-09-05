@@ -423,11 +423,19 @@ export default {
     createMap () {
       const rootUrl = this.getRootUrl()
       this.mapTypeCur = this.mapTypeBasic + this.mapTypeIndex
+      let bNetWorkConn = true
+      if (localStorage.bNetWorkConn !== undefined) {
+        if (localStorage.bNetWorkConn === 'false') {
+          bNetWorkConn = false
+        }
+      }
+      bNetWorkConn = true // 暂时不启用离线地图(启用离线地图需要配置好DataConfig.json中offlineLayers地址)
       // eslint-disable-next-line
       this.map2D = new D2.Map2D({
         containerId: this.mapContainerID,
         baseLayerType: this.mapTypeCur,
-        serverBaseUrl: rootUrl
+        serverBaseUrl: rootUrl,
+        bIsOnline: bNetWorkConn
       })
       this.setPositionFormatCB()
       this.map2D.setMinZoom(this.minZoom)
@@ -1342,7 +1350,7 @@ export default {
       margin: 0px;
       background-color: #144683;
       .closeIcon {
-        margin-left: 6px;
+        margin-left: 8px;
       }
     }
     .inputFunc:hover {
