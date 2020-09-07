@@ -25,9 +25,9 @@
             <img :src="moreImg" />
           </button>
         </el-popover>
-        <button type="button" class="more" @click="download()">
+        <!-- <button type="button" class="more" @click="download()">
           <img :src="downloadImg" />
-        </button>
+        </button> -->
         <button type="button" class="more" @click="refresh()">
           <img :src="refreshImg" />
         </button>
