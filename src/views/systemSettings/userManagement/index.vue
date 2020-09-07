@@ -134,7 +134,7 @@
             <el-radio label="女"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="初始密码" prop="password">
+        <el-form-item label="初始密码" prop="password" v-show="newUserTitle === '新增用户'">
           <el-input v-model="newUserForm.password"></el-input>
         </el-form-item>
         <el-form-item>
@@ -367,6 +367,16 @@ export default {
     },
     // 新增用户
     userAdd () {
+      this.newUserForm.username = ''
+      this.newUserForm.name = ''
+      this.newUserForm.phone = ''
+      this.newUserForm.email = ''
+      this.newUserForm.job = ''
+      this.newUserForm.active = true
+      this.newUserForm.six = ''
+      this.newUserForm.password = '123456'
+      this.newUserForm.organizations = []
+
       this.showMorePopover = false
       this.showNewUser = true
       this.newUserTitle = '新增用户'
@@ -383,6 +393,17 @@ export default {
         })
         return ''
       }
+
+      this.newUserForm.username = this.userList[this.radio].useraccount
+      this.newUserForm.name = this.userList[this.radio].username
+      this.newUserForm.phone = ''
+      this.newUserForm.email = ''
+      this.newUserForm.job = ''
+      this.newUserForm.active = true
+      this.newUserForm.six = ''
+      // this.newUserForm.password = '123456'
+      this.newUserForm.organizations = []
+
       this.showNewUser = true
       this.newUserTitle = '修改用户'
     },
@@ -398,43 +419,96 @@ export default {
         })
         return ''
       }
+
+      var param = {
+        userId: this.userList[this.radio].id
+      }
+      this.$axios.post(settingApi.delUser, param).then(res => {
+        if (res.data.code === 0) {
+          this.getUserList()
+          Notification({
+            title: '提示',
+            message: '删除用户成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+        }
+      })
     },
     // 新增用户或编辑用户-保存
     newUserConfirm () {
       this.$refs.newUserFormRef.validate(async (valid) => {
         if (!valid) return
         this.showNewUser = false
-        var param = {
-          deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
-          mobile: this.newUserForm.phone,
-          password: this.newUserForm.password,
-          roleCode: this.newUserForm.job,
-          status: this.newUserForm.active ? 1 : 0,
-          useraccount: this.newUserForm.username,
-          username: this.newUserForm.name,
-          email: this.newUserForm.email,
-          userGender: this.newUserForm.six === '男' ? 1 : 0
-        }
-        this.$axios.post(settingApi.addUser, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        }).then(res => {
-          if (res.data.code === 0) {
-            this.getUserList()
+
+        if (this.newUserTitle === '新增用户') {
+          var param = {
+            deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
+            mobile: this.newUserForm.phone,
+            password: this.newUserForm.password,
+            roleCode: this.newUserForm.job,
+            status: this.newUserForm.active ? 1 : 0,
+            useraccount: this.newUserForm.username,
+            username: this.newUserForm.name,
+            email: this.newUserForm.email,
+            userGender: this.newUserForm.six === '男' ? 1 : 0
+          }
+          this.$axios.post(settingApi.addUser, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }).then(res => {
+            if (res.data.code === 0) {
+              this.getUserList()
+              Notification({
+                title: '提示',
+                message: '新增用户成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
             Notification({
               title: '提示',
-              message: '新增用户成功',
-              type: 'success',
+              message: '新增用户失败',
+              type: 'warning',
               duration: 5 * 1000
             })
-            return
-          }
-          Notification({
-            title: '提示',
-            message: '新增用户失败',
-            type: 'warning',
-            duration: 5 * 1000
           })
-        })
+        }
+
+        if (this.newUserTitle === '修改用户') {
+          var param2 = {
+            id: this.userList[this.radio].id,
+            deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
+            mobile: this.newUserForm.phone,
+            // password: this.newUserForm.password,
+            roleCode: this.newUserForm.job,
+            status: this.newUserForm.active ? 1 : 0,
+            useraccount: this.newUserForm.username,
+            username: this.newUserForm.name,
+            email: this.newUserForm.email,
+            userGender: this.newUserForm.six === '男' ? 1 : 0
+          }
+          this.$axios.post(settingApi.updateUser, param2, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }).then(res => {
+            if (res.data.code === 0) {
+              this.getUserList()
+              Notification({
+                title: '提示',
+                message: '修改用户成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
+            Notification({
+              title: '提示',
+              message: '修改用户失败',
+              type: 'warning',
+              duration: 5 * 1000
+            })
+          })
+        }
       })
     },
     // 重置密码
