@@ -98,7 +98,7 @@
         <el-form-item label="邮箱">
           <el-input v-model="newUserForm.email"></el-input>
         </el-form-item>
-        <el-form-item label="职务">
+        <el-form-item label="职务" prop="job">
           <el-select
             :popper-append-to-body="false"
             v-model="newUserForm.job"
@@ -114,27 +114,27 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="所属组织">
+        <el-form-item label="所属组织" prop="organizations">
           <el-cascader
             placeholder=""
             :options="organizationOptions"
-            :props="{ multiple: true }"
             collapse-tags
             filterable
             class="cascaderStyle"
             v-model="newUserForm.organizations"
+            :show-all-levels="false"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="激活" prop="active">
           <el-switch v-model="newUserForm.active"></el-switch>
         </el-form-item>
-        <el-form-item label="性别">
+        <el-form-item label="性别" prop="six">
           <el-radio-group v-model="newUserForm.six">
             <el-radio label="男"></el-radio>
             <el-radio label="女"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="初始密码">
+        <el-form-item label="初始密码" prop="password">
           <el-input v-model="newUserForm.password"></el-input>
         </el-form-item>
         <el-form-item>
@@ -211,7 +211,11 @@ export default {
         username: [{ required: true, message: '请输入用户名' }],
         name: [{ required: true, message: '请输入姓名' }],
         phone: [{ required: true, message: '请输入手机号' }],
-        active: [{ required: true }]
+        active: [{ required: true }],
+        job: [{ required: true, message: '请选择职务' }],
+        organizations: [{ required: true, message: '请选择组织' }],
+        six: [{ required: true, message: '请选择性别' }],
+        password: [{ required: true, message: '请输入密码' }]
       },
 
       resetPasswordForm: {
@@ -401,20 +405,21 @@ export default {
         if (!valid) return
         this.showNewUser = false
         var param = {
-          deptCode: this.newUserForm.organizations,
+          deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
           mobile: this.newUserForm.phone,
           password: this.newUserForm.password,
           roleCode: this.newUserForm.job,
-          status: this.newUserForm.active,
+          status: this.newUserForm.active ? 1 : 0,
           useraccount: this.newUserForm.username,
           username: this.newUserForm.name,
           email: this.newUserForm.email,
-          userGender: this.newUserForm.six
+          userGender: this.newUserForm.six === '男' ? 1 : 0
         }
         this.$axios.post(settingApi.addUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         }).then(res => {
           if (res.data.code === 0) {
+            this.getUserList()
             Notification({
               title: '提示',
               message: '新增用户成功',
