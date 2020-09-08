@@ -7,24 +7,36 @@
       </button>
       <div class="container1">
         <div class="leftBox">
-          <div class="leftTip" @click="newRole">
-            <el-button class="newRoleBtn">自定义管理角色</el-button>
+          <div class="leftTitleStyle">角色列表</div>
+          <div style="height: 598px; margin-left: 15px; margin-right: 15px;">
+            <el-tree
+              ref="roleTree"
+              :data="roleList"
+              :props="defaultProps"
+              node-key="roleCode"
+              :current-node-key="selectedRoleCode"
+              @node-click="roleTreeClick">
+            </el-tree>
           </div>
-          <el-tree :data="treeData" :props="defaultProps" default-expand-all></el-tree>
+
+          <div @click="newRole">
+            <el-button class="newRoleStyle" icon="el-icon-circle-plus">自定义管理角色</el-button>
+          </div>
         </div>
+
         <div class="rightBox">
           <button type="button" class="addUser" @click="addUser">添加用户</button>
           <div class="tableBox">
-            <el-table @row-click="ClickTableRow" :data="tableData" stripe empty-text="no data" tooltip-effect="light">
+
+            <el-table @row-click="ClickTableRow" :data="userList" stripe empty-text="no data" tooltip-effect="light">
               <el-table-column label width="33" align="center" :resizable="false">
                 <template slot-scope="scope">
                   <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="用户" prop="userName"></el-table-column>
-              <el-table-column align="center" label="职位" prop="position"></el-table-column>
-              <el-table-column align="center" label="所属部门" prop="department"></el-table-column>
-              <el-table-column align="center" label="分管范围" prop="range"></el-table-column>
+              <el-table-column align="center" label="用户" prop="username"></el-table-column>
+              <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
+              <el-table-column align="center" label="所属部门" prop="deptName"></el-table-column>
               <el-table-column align="center" label="操作">
                 <template slot-scope="scope">
                   <el-button
@@ -35,12 +47,16 @@
                 </template>
               </el-table-column>
             </el-table>
+
             <el-pagination
             class="tablePagination"
             popper-class="pageSelect"
             :total="pageData.total"
             :page-size="pageData.pageSize"
-            layout="total, prev, pager, next, jumper"></el-pagination>
+            layout="total, prev, pager, next, jumper"
+            :current-page.sync="pageData.currentPage"
+            @current-change="currentPageChange">
+            </el-pagination>
           </div>
         </div>
       </div>
@@ -101,92 +117,31 @@
 </template>
 
 <script>
+import { settingApi } from '@/api/setting'
+
 export default {
   created () {
-    this.pageData.total = this.tableData.length
+    this.getRoleList()
+    this.getUserList()
   },
   data () {
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
-      treeData: [
-        {
-          label: '一级 1',
-          children: [
-            {
-              label: '二级 1-1',
-              children: [
-                { label: '三级 1-1-1' }
-              ]
-            }
-          ]
-        },
-        {
-          label: '一级 2',
-          children: [
-            // {
-            //   label: '二级 2-1',
-            //   children: [
-            //     { label: '三级 2-1-1' }
-            //   ]
-            // },
-            // {
-            //   label: '二级 2-2',
-            //   children: [
-            //     { label: '三级 2-2-1' }
-            //   ]
-            // }
-          ]
-        },
-        {
-          label: '一级 3',
-          children: [
-            // {
-            //   label: '二级 3-1',
-            //   children: [
-            //     { label: '三级 3-1-1' }
-            //   ]
-            // },
-            // {
-            //   label: '二级 3-2',
-            //   children: [
-            //     { label: '三级 3-2-1' }
-            //   ]
-            // }
-          ]
-        }
-      ],
+
+      roleList: [],
       defaultProps: {
-        children: 'children',
-        label: 'label'
+        label: 'roleName'
       },
+
+      userList: [],
       pageData: {
-        total: 0,
-        pageSize: 4
+        total: 0, // 总条目数
+        pageSize: 10, // 每页显示条目个数
+        currentPage: 1 // 当前页
       },
+      selectedRoleCode: 2001,
+
       radio: -1,
-      tableData: [ // 测试数据
-        {
-          userName: '王小虎1',
-          position: '队长',
-          range: '',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎2',
-          position: '队长',
-          range: '',
-          department: '炊事班',
-          selected: true
-        },
-        {
-          userName: '王小虎3',
-          position: '队长',
-          range: '',
-          department: '炊事班',
-          selected: true
-        }
-      ],
       showDeleteTip: false,
       showAddUser: false,
       addUserForm: {
@@ -235,6 +190,39 @@ export default {
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
+    // 获取角色列表
+    async getRoleList () {
+      this.$axios.post(settingApi.getRoleList).then((res) => {
+        if (res.data.code === 0) {
+          this.roleList = res.data.data
+        }
+      })
+    },
+    // 获取用户列表
+    async getUserList () {
+      var param = {
+        currentPage: this.pageData.currentPage,
+        pageSize: this.pageData.pageSize,
+        roleCode: this.selectedRoleCode
+      }
+      this.$axios.post(settingApi.queryUserDeptPage, param).then(res => {
+        if (res.data.code === 0) {
+          this.userList = res.data.data.records
+          this.pageData.total = res.data.data.total
+        }
+      })
+    },
+    // 分页页数改变
+    currentPageChange () {
+      this.getUserList()
+    },
+    // 选择角色
+    roleTreeClick (item) {
+      console.log(item)
+      this.selectedRoleCode = item.roleCode
+      this.getUserList()
+    },
+
     // 点击添加用户
     addUser () {
       this.showAddUser = true
@@ -295,16 +283,23 @@ export default {
     height: 682px;
     border: solid 2px #39a4dd;
     border-radius: 10px;
-    overflow-y: scroll;
     float: left;
-    .leftTip {
-      .newRoleBtn {
-        width: 100%;
-        background-color: #00b4ff;
-        border: none;
-        border-radius: 0;
-        color: white;
-      }
+    overflow: hidden;
+    .leftTitleStyle {
+      height: 42px;
+      line-height: 42px;
+      margin-left: 22px;
+      margin-right: 22px;
+      font-size: 16px;
+    }
+    .newRoleStyle {
+      width: 100%;
+      height: 42px;
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      color: #20b1dc;
+      font-size: 14px;
     }
   }
   .rightBox {
@@ -409,5 +404,6 @@ export default {
   }
   /deep/ .el-tree-node.is-current > .el-tree-node__content {
     background:rgba(255, 255, 255, 0.1)!important;
+    color: white;
   }
 </style>
