@@ -86,64 +86,68 @@
     </div>
     <FloorGuide ref="floorGuide" v-bind:title="buildingTitle"></FloorGuide>
     <div class="rightTool">
-      <div class="move">
-        <span></span>
-        <span
-          class="left"
-          @mousedown="moveCamera(2)"
-          @mouseup="stopMoveCamera(2)"
-          @mouseleave="stopMoveCamera(2)"
-        ></span>
-        <span
-          class="left"
-          @mousedown="moveCamera(3)"
-          @mouseup="stopMoveCamera(3)"
-          @mouseleave="stopMoveCamera(3)"
-        ></span>
-        <span
-          class="up"
-          @mousedown="moveCamera(4)"
-          @mouseup="stopMoveCamera(4)"
-          @mouseleave="stopMoveCamera(4)"
-        ></span>
-        <span
-          class="up"
-          @mousedown="moveCamera(5)"
-          @mouseup="stopMoveCamera(5)"
-          @mouseleave="stopMoveCamera(5)"
-        ></span>
-      </div>
-      <span class="zoom" @click="ZoomIn(true)"></span>
-      <span class="zoom" @click="ZoomIn(false)"></span>
+      <span></span>
+      <span
+        class="left"
+        @mousedown="moveCamera(2)"
+        @mouseup="stopMoveCamera(2)"
+        @mouseleave="stopMoveCamera(2)"
+      ></span>
+      <span
+        class="left"
+        @mousedown="moveCamera(3)"
+        @mouseup="stopMoveCamera(3)"
+        @mouseleave="stopMoveCamera(3)"
+      ></span>
+      <span
+        class="up"
+        @mousedown="moveCamera(4)"
+        @mouseup="stopMoveCamera(4)"
+        @mouseleave="stopMoveCamera(4)"
+      ></span>
+      <span
+        class="up"
+        @mousedown="moveCamera(5)"
+        @mouseup="stopMoveCamera(5)"
+        @mouseleave="stopMoveCamera(5)"
+      ></span>
+    </div>
+    <div class="zoom">
+      <span @click="ZoomIn(true)"></span>
+      <span @click="ZoomIn(false)"></span>
     </div>
     <div class="rightTool compassGyro">
-      <div class="move">
-        <span @click="returnHome"></span>
-        <span
-          class="left"
-          @mousedown="rotateCamera(2)"
-          @mouseup="stopRotateCamera"
-          @mouseleave="stopRotateCamera"
-        ></span>
-        <span
-          class="left"
-          @mousedown="rotateCamera(3)"
-          @mouseup="stopRotateCamera"
-          @mouseleave="stopRotateCamera"
-        ></span>
-        <span
-          class="up"
-          @mousedown="rotateCamera(4)"
-          @mouseup="stopRotateCamera"
-          @mouseleave="stopRotateCamera"
-        ></span>
-        <span
-          class="up"
-          @mousedown="rotateCamera(5)"
-          @mouseup="stopRotateCamera"
-          @mouseleave="stopRotateCamera"
-        ></span>
-      </div>
+      <span></span>
+      <span
+        class="left"
+        @mousedown="rotateCamera(2)"
+        @mouseup="stopRotateCamera"
+        @mouseleave="stopRotateCamera"
+      ></span>
+      <span
+        class="left"
+        @mousedown="rotateCamera(3)"
+        @mouseup="stopRotateCamera"
+        @mouseleave="stopRotateCamera"
+      ></span>
+      <span
+        class="up"
+        @mousedown="rotateCamera(4)"
+        @mouseup="stopRotateCamera"
+        @mouseleave="stopRotateCamera"
+      ></span>
+      <span
+        class="up"
+        @mousedown="rotateCamera(5)"
+        @mouseup="stopRotateCamera"
+        @mouseleave="stopRotateCamera"
+      ></span>
+    </div>
+    <div class="topTool">
+      <span v-for="(item,index) in 7" :key="index" @click.stop="ButtonDown(3,index)"></span>
+    </div>
+    <div class="rotate" :class="{active:isRotate}" @click.stop="ButtonDown(4)">
+      <span></span>
     </div>
   </div>
 </template>
@@ -160,12 +164,13 @@ import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
 var gltfEdit = window.gltfEdit
-const serverUrl = 'http://172.16.63.195:9000/mapdata'
+const serverUrl = 'http://172.16.16.112:9000/mapdata'
 let me
 export default {
   // 所有cesium和mars3d对象 都不要绑定到data
   data () {
     return {
+      isRotate: false, // 是否自动旋转
       num: 1, // 编号
       activeIndex: 0,
       configUrl: 'config/config.json',
@@ -318,20 +323,48 @@ export default {
     },
 
     /**
-   * 根据 距离方向 和 观察点 计算 目标点
-   * @param {Object} viewPoint 观察点
-   * @param {Object} direction 方向
-   * @param {Object} radius 可视距离
-   */
+     * 根据 距离方向 和 观察点 计算 目标点
+     * @param {Object} viewPoint 观察点
+     * @param {Object} direction 方向
+     * @param {Object} radius 可视距离
+     */
     getPointByDirection (position, direction, radius) {
-    // 世界坐标转换为投影坐标
-      var webMercatorProjection = new Cesium.WebMercatorProjection(this.viewer.scene.globe.ellipsoid)
-      var viewPointWebMercator = webMercatorProjection.project(Cesium.Cartographic.fromCartesian(position))
+      // 世界坐标转换为投影坐标
+      var webMercatorProjection = new Cesium.WebMercatorProjection(
+        this.viewer.scene.globe.ellipsoid
+      )
+      var viewPointWebMercator = webMercatorProjection.project(
+        Cesium.Cartographic.fromCartesian(position)
+      )
       // 计算目标点
-      var toPoint = new Cesium.Cartesian3(viewPointWebMercator.x + radius * Math.cos(direction), viewPointWebMercator.y + radius * Math.sin(direction), 0)
+      var toPoint = new Cesium.Cartesian3(
+        viewPointWebMercator.x + radius * Math.cos(direction),
+        viewPointWebMercator.y + radius * Math.sin(direction),
+        0
+      )
       // 投影坐标转世界坐标
       const carto = webMercatorProjection.unproject(toPoint)
-      return Cesium.Cartesian3.fromRadians(carto.longitude, carto.latitude, carto.height)
+      return Cesium.Cartesian3.fromRadians(
+        carto.longitude,
+        carto.latitude,
+        carto.height
+      )
+    },
+
+    /**
+     * 根据 距离方向 和 观察点 计算 目标点
+     * @param {Object} viewPoint 观察点
+     * @param {Object} direction 方向
+     * @param {Object} radius 可视距离
+     */
+    getPointByDirectionAnd (position, angle, radius) {
+      var center = mars3d.pointconvert.cartesian2mercator(position)
+
+      var x = center[0] + radius * Math.cos(angle)
+      var y = center[1] + radius * Math.sin(angle)
+
+      var newPoint = mars3d.pointconvert.mercator2cartesian([x, y, center[2]])
+      return newPoint
     },
 
     /**
@@ -350,7 +383,15 @@ export default {
         new Cesium.Cartesian3()
       )
       const p1 = this.CartesianToDegrees(center)
-      return { coordinates: Cesium.Rectangle.fromDegrees(p1.lon - 0.000077, p1.lat - 0.000031, p1.lon + 0.000045, p1.lat + 0.000007), rotation: heading }
+      return {
+        coordinates: Cesium.Rectangle.fromDegrees(
+          p1.lon - 0.000077,
+          p1.lat - 0.000031,
+          p1.lon + 0.000045,
+          p1.lat + 0.000007
+        ),
+        rotation: heading
+      }
     },
 
     /**
@@ -390,15 +431,41 @@ export default {
         //   new Cesium.Cartesian3()
         // )
 
-        // const p1 = this.getPointByDirection(center, 0, entity.boundingSphere.radius)
+        // const p1 = this.getPointByDirectionAnd(center, 0, 5)
+        // const p2 = this.getPointByDirectionAnd(center, 90, 5)
+        // const p3 = this.getPointByDirectionAnd(center, 180, 5)
+        // const p4 = this.getPointByDirectionAnd(center, 270, entity.boundingSphere.radius)
         // p1.z += 100
         // this.viewer.entities.add({
         //   name: '根据视距显示点',
         //   position: p1,
         //   point: {
         //     color: Cesium.Color.BLUE,
-        //     pixelSize: 100
-
+        //     pixelSize: 10
+        //   }
+        // })
+        // this.viewer.entities.add({
+        //   name: '根据视距显示点',
+        //   position: p2,
+        //   point: {
+        //     color: Cesium.Color.BLUE,
+        //     pixelSize: 10
+        //   }
+        // })
+        // this.viewer.entities.add({
+        //   name: '根据视距显示点',
+        //   position: p3,
+        //   point: {
+        //     color: Cesium.Color.BLUE,
+        //     pixelSize: 50
+        //   }
+        // })
+        // this.viewer.entities.add({
+        //   name: '根据视距显示点',
+        //   position: p4,
+        //   point: {
+        //     color: Cesium.Color.BLUE,
+        //     pixelSize: 50
         //   }
         // })
         // let p2 = this.getPointByDirection(center, 90, entity.boundingSphere.radius)
@@ -498,6 +565,35 @@ export default {
     },
 
     /**
+     *  顶部工具栏按下
+     *@param {Object} item
+     */
+    topToolClick (item) {
+      switch (item) {
+        case 0:
+          this.returnHome()
+          break
+        case 1:
+          this.screenshot()
+          break
+        case 2:
+          this.viewer.mars.onlyPickModelPosition = false
+          this.measureLength(false)
+          break
+        case 3:
+          this.viewer.mars.onlyPickModelPosition = false
+          this.measureHeight(false)
+          break
+        case 4:
+          this.viewer.mars.onlyPickModelPosition = false
+          this.measureArea(false)
+          break
+        default:
+          break
+      }
+    },
+
+    /**
      *  按钮按下
      *@param {Object} item
      *@param {Object} type 按钮类型
@@ -514,6 +610,8 @@ export default {
       this.clearCurEntity()
       if (type === 1) this.startPlot(item)
       else if (type === 2) this.tabTo(item)
+      else if (type === 3) this.topToolClick(item)
+      else if (type === 4) this.autoRotate()
     },
 
     /**
@@ -835,7 +933,6 @@ export default {
           url: cfg.url,
           modelMatrix: modelMatrix,
           minimumPixelSize: cfg.minimumPixelSize || 30,
-          // silhouetteSize: 8,
           silhouetteColor: Cesium.Color.fromAlpha(
             Cesium.Color.YELLOW,
             parseFloat(0.9)
@@ -1126,6 +1223,8 @@ export default {
      *  测量结束,绑定鼠标事件
      */
     measureEnd () {
+      // 控制鼠标只取模型上的点，忽略地形上的点的拾取
+      this.viewer.mars.onlyPickModelPosition = true
       this.handler.setInputAction(event => {
         me.showInfoBox = false
         // 如果正在编辑第一次绘制模型的任务
@@ -1145,7 +1244,11 @@ export default {
           me.curEntity = pickedObject.primitive
           let show = true
           // 如果点击消防栓模型
-          if (pickedObject.primitive._resource._url.indexOf('xiaofangshuan.gltf') !== -1) {
+          if (
+            pickedObject.primitive._resource._url.indexOf(
+              'xiaofangshuan.gltf'
+            ) !== -1
+          ) {
             show = false
             me.infoBox.imgSrc = xfs
             me.infoBox.label = '消防栓'
@@ -1175,13 +1278,14 @@ export default {
       this.measureStart()
       this.measureSurface.measuerLength({
         terrain: terrain,
-        onEnd: this.measureEnd
-      //   style: { // 可以自定义样式
-      //     lineType: 'solid',
-      //     color: '#ffff00',
-      //     width: 3,
-      //     clampToGround: true // 是否贴地
-      //   }
+        onEnd: this.measureEnd,
+        style: {
+          // 可以自定义样式
+          lineType: 'solid',
+          color: '#ffff00',
+          width: 3,
+          clampToGround: true // 是否贴地
+        }
       })
     },
 
@@ -1238,11 +1342,16 @@ export default {
 
     /**
      *  自动旋转
-     * @param {Boolen} start 是否开始旋转
      */
-    AutoRotate (start) {
+    autoRotate () {
       if (!this.layerModel) return
-      if (start) { mars3d.point.windingPoint.start(this.viewer, this.layerModel.originalCenter) } else mars3d.point.windingPoint.stop()
+      this.isRotate = !this.isRotate
+      if (this.isRotate) {
+        mars3d.point.windingPoint.start(
+          this.viewer,
+          this.layerModel.originalCenter
+        )
+      } else mars3d.point.windingPoint.stop()
     },
 
     /**
@@ -1251,7 +1360,8 @@ export default {
     screenshot () {
       this.viewer.mars.expImage({
         download: true,
-        calback: function (base64, size) { // 回调
+        calback: function (base64, size) {
+          // 回调
           window.layer.open({
             type: 1,
             title: '场景出图',
@@ -1269,8 +1379,6 @@ export default {
      */
     onMapload (viewer) {
       this.viewer = viewer
-      // 控制鼠标只取模型上的点，忽略地形上的点的拾取
-      viewer.mars.onlyPickModelPosition = true
       // 设置右键旋转
       viewer.scene.screenSpaceCameraController.tiltEventTypes = [
         Cesium.CameraEventType.RIGHT_DRAG,
@@ -1295,7 +1403,8 @@ export default {
       this.measureSurface = new mars3d.analysi.Measure({
         viewer: viewer,
         removeScreenSpaceEvent: true,
-        label: { // 可设置文本样式
+        label: {
+          // 可设置文本样式
           color: '#ffffff',
           font_family: '楷体',
           font_size: 20,
@@ -1336,14 +1445,15 @@ export default {
 }
 
 /deep/.compass {
-  right: 8px !important;
-  top: 8px !important;
+  right: 16px !important;
   width: 107px !important;
   height: 107px !important;
+  bottom: 24px !important;
 }
 
 /deep/.compass-outer-ring {
   background: url(../../assets/images/3d/N.png) no-repeat !important;
+  bottom: 138px !important;
 }
 
 /deep/.compass-outer-ring-background {
@@ -1693,82 +1803,156 @@ export default {
   }
 
   .rightTool {
+    position: absolute;
+    right: 30px;
+    bottom: 143px;
+    width: 80px;
+    height: 80px;
+    display: inline-block;
+    background: url(../../assets/images/3d/move-bg.png) no-repeat;
+    span {
+      display: inline-block;
+      cursor: pointer;
+      position: absolute;
+    }
+    span:nth-child(1) {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: url(../../assets/images/3d/hand.png) no-repeat;
+      cursor: default;
+    }
+    .left {
+      width: 18px;
+      height: 18px;
+    }
+    .up {
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+    }
+    span:nth-child(2) {
+      top: 50%;
+      transform: translateY(-50%);
+      left: 3px;
+      background: url(../../assets/images/3d/move-left.png) no-repeat;
+    }
+    span:nth-child(3) {
+      top: 29px;
+      right: 3px;
+      background: url(../../assets/images/3d/move-right.png) no-repeat;
+    }
+    span:nth-child(4) {
+      top: 3px;
+      background: url(../../assets/images/3d/move-up.png) no-repeat;
+    }
+    span:nth-child(5) {
+      bottom: 3px;
+      background: url(../../assets/images/3d/move-down.png) no-repeat;
+    }
+  }
+
+  .zoom {
+    position: absolute;
+    right: 58px;
+    bottom: 240px;
     display: flex;
     flex-direction: column;
-    width: 80px;
-    position: absolute;
-    right: 22px;
-    top: 125px;
-    align-items: center;
-    .move {
-      width: 80px;
-      height: 80px;
-      display: inline-block;
-      background: url(../../assets/images/3d/move-bg.png) no-repeat;
-      position: relative;
-      span {
-        display: inline-block;
-        cursor: pointer;
-        position: absolute;
-      }
-      span:nth-child(1) {
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 40px;
-        height: 40px;
-        background: url(../../assets/images/3d/hand.png) no-repeat;
-      }
-      .left {
-        top: 50%;
-        transform: translateY(-50%);
-        width: 9px;
-        height: 10px;
-      }
-      .up {
-        left: 50%;
-        transform: translateX(-50%);
-        width: 10px;
-        height: 9px;
-      }
-      span:nth-child(2) {
-        left: 7px;
-        background: url(../../assets/images/3d/move-left.png) no-repeat;
-      }
-      span:nth-child(3) {
-        right: 7px;
-        background: url(../../assets/images/3d/move-right.png) no-repeat;
-      }
-      span:nth-child(4) {
-        top: 7px;
-        background: url(../../assets/images/3d/move-up.png) no-repeat;
-      }
-      span:nth-child(5) {
-        bottom: 7px;
-        background: url(../../assets/images/3d/move-down.png) no-repeat;
-      }
-    }
-    .zoom {
+    span {
       display: inline-block;
       cursor: pointer;
       width: 27px;
       height: 27px;
     }
-    > span:nth-child(2) {
+    span:nth-child(1) {
       margin-top: 13px;
       background: url(../../assets/images/3d/+.png) no-repeat;
     }
-    > span:nth-child(3) {
+    span:nth-child(2) {
       margin-top: 10px;
       background: url(../../assets/images/3d/-.png) no-repeat;
     }
   }
 
   .compassGyro {
-    right: 22px;
-    top: 22px;
+    right: 30px;
+    bottom: 38px;
     span:nth-child(1) {
       background: url(../../assets/images/3d/eye.png) no-repeat !important;
+    }
+  }
+
+  .topTool {
+    position: absolute;
+    display: flex;
+    top: 20px;
+    right: 80px;
+    span {
+      display: inline-block;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      margin-right: 16px;
+    }
+    span:nth-child(1) {
+      background: url(../../assets/images/3d/home.png) no-repeat;
+      margin-right: 72px;
+    }
+    span:nth-child(2) {
+      background: url(../../assets/images/3d/snap.png) no-repeat;
+    }
+    span:nth-child(3) {
+      background: url(../../assets/images/3d/measure-distance.png) no-repeat;
+    }
+    span:nth-child(4) {
+      background: url(../../assets/images/3d/measure-height.png) no-repeat;
+    }
+    span:nth-child(5) {
+      background: url(../../assets/images/3d/measure-area.png) no-repeat;
+    }
+    span:nth-child(6) {
+      background: url(../../assets/images/3d/setting.png) no-repeat;
+    }
+    span:nth-child(7) {
+      background: url(../../assets/images/3d/share.png) no-repeat;
+    }
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(360deg) ;
+    }
+    to {
+      transform: rotate(0deg) ;
+    }
+  }
+
+  .rotate {
+    position: absolute;
+    top: 20px;
+    right: 432px;
+    width: 40px;
+    height: 40px;
+    background: url(../../assets/images/3d/rotate.png) no-repeat;
+    padding: 8px;
+    box-sizing: border-box;
+    span {
+      display: inline-block;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      background: url(../../assets/images/3d/rotate-inner.png) no-repeat;
+    }
+  }
+
+  .rotate.active {
+    background: url(../../assets/images/3d/start-rotate.png) no-repeat;
+    span {
+      //动画名称 动画时间 运动曲线 何时开始 播放次数
+      animation: rotate 10s linear 0s infinite;
     }
   }
 }
