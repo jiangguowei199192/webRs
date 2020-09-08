@@ -23,14 +23,40 @@
             <div class="header">AR实景地图指挥</div>
           </template>
           <div class="footer" @dblclick.stop="stopEvent">
-            <img :src="arPic" alt title="开启AR" @click="showAR=!showAR" />
-            <img :src="alarmPic" alt title="火情报警" @click="showRealPolice=!showRealPolice" />
-            <img :src="capturePic" alt title="抓取" />
-            <img :src="photoPic" alt title="图库" />
+            <a @mouseenter="showActive(1)" @mouseleave="showActive(0)" title="AR"  @click="showAR=!showAR" >
+              <img :src="arPic" alt title="AR">
+              <img v-show="active === 1" class="hide_tab" :src="arSelectedPic" />
+            </a>
+            <a
+              @mouseenter="showActive(2)"
+              @mouseleave="showActive(0)"
+              @click="showRealPolice=!showRealPolice"
+              title="火情报警"
+            >
+              <img :src="alarmPic" alt />
+              <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
+            </a>
+            <a  @mouseenter="showActive(3)" @mouseleave="showActive(0)" title="抓取">
+              <img :src="capturePic" alt  />
+               <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
+            </a>
+            <a @mouseenter="showActive(4)" @mouseleave="showActive(0)" title="图库">
+              <img :src="photoPic" alt  />
+               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
+            </a>
             <template v-if="showAR">
-              <img :src="tagPic" title="标签" alt />
-              <img :src="searchPic" title="搜索" alt />
-              <img :src="settingPic" title="设置" alt />
+              <a @mouseenter="showActive(5)" @mouseleave="showActive(0)" title="标签">
+                 <img :src="tagPic" alt  />
+                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
+              </a>
+              <a  @mouseenter="showActive(6)" @mouseleave="showActive(0)"  title="搜索">
+                <img :src="searchPic"  alt />
+                <img v-show="active === 6" class="hide_tab" :src="searchSelectedPic" />
+              </a>
+              <a  @mouseenter="showActive(7)" @mouseleave="showActive(0)"  title="设置">
+                <img :src="settingPic" title="设置" alt />
+                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
+              </a>
             </template>
           </div>
           <div class="realPoliceInfo" v-show="showRealPolice" @dblclick.stop="stopEvent">
@@ -191,6 +217,7 @@ import droneInfoMixin from '../../../utils/droneInfoMixin'
 export default {
   data () {
     return {
+      active: '',
       showAR: false, // 显示AR
       showRealPolice: false, // 显示实时警情
       arPic: require('@/assets/images/AR/ar.png'),
@@ -328,6 +355,10 @@ export default {
   },
 
   methods: {
+    // 鼠标悬停显示的图片
+    showActive (index) {
+      this.active = index
+    },
     setPlayerSizeListener () {
       var me = this
       this.erd.listenTo(this.$refs.playerArea, function (element) {
@@ -1013,6 +1044,9 @@ export default {
 </script>
 <style lang="less" >
 .playerStyle {
+   ::selection {
+        background: transparent;
+      }
   position: relative;
   width: 100%;
   height: 100%;
@@ -1058,59 +1092,68 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        img {
+        a {
+          position: relative;
+          display: inline-block;
+          width: 40px;
+          height: 40px;
           margin-right: 32px;
+          .hide_tab {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+          }
         }
       }
-       .realPoliceInfo {
-      position: absolute;
-      top: 125px;
-      right: 40px;
-      width: 306px;
-      height: 568px;
-      cursor: text;
-      background: url(../../../assets/images/AR/police_info.png) no-repeat;
-      div.title {
-        padding: 18px;
-        font-size: 14px;
-        font-family: Source Han Sans CN;
-        font-weight: 400;
-        color: #ffffff;
-      }
-      div.content {
-        padding: 0 14px 0 18px;
-        max-height: 500px;
-        overflow-y: auto;
-        .item {
-          display: flex;
-          font-size: 12px;
-          padding: 10px 8px;
-          margin-bottom: 10px;
-          background: linear-gradient(
-            -90deg,
-            rgba(30, 176, 252, 0.1) 0%,
-            rgba(30, 176, 252, 0.1) 100%
-          );
-          // opacity: 0.22;
-          div.pic {
-            width: 80px;
-            height: 80px;
-            margin-right: 8px;
-            img {
-              width: 100%;
-              height: 100%;
+      .realPoliceInfo {
+        position: absolute;
+        top: 125px;
+        right: 40px;
+        width: 306px;
+        height: 568px;
+        cursor: text;
+        background: url(../../../assets/images/AR/police_info.png) no-repeat;
+        div.title {
+          padding: 18px;
+          font-size: 14px;
+          font-family: Source Han Sans CN;
+          font-weight: 400;
+          color: #ffffff;
+        }
+        div.content {
+          padding: 0 14px 0 18px;
+          max-height: 500px;
+          overflow-y: auto;
+          .item {
+            display: flex;
+            font-size: 12px;
+            padding: 10px 8px;
+            margin-bottom: 10px;
+            background: linear-gradient(
+              -90deg,
+              rgba(30, 176, 252, 0.1) 0%,
+              rgba(30, 176, 252, 0.1) 100%
+            );
+            // opacity: 0.22;
+            div.pic {
+              width: 80px;
+              height: 80px;
+              margin-right: 8px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
             }
-          }
 
-          div p {
-            line-height: 18px;
-            span.type {
-              color: #1eb0fc;
+            div p {
+              line-height: 18px;
+              span.type {
+                color: #1eb0fc;
+              }
             }
           }
         }
       }
-    }
       //   div.pic {
       //     display: inline-block;
       //     position: absolute;
