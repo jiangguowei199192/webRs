@@ -50,7 +50,7 @@
             <el-table-column align="center" label="用户名" prop="useraccount"></el-table-column>
             <el-table-column align="center" label="用户姓名" prop="username"></el-table-column>
             <!-- <el-table-column align="center" label="所属部门" prop="deptName"></el-table-column> -->
-            <el-table-column align="center" label="职务" prop="roleName"></el-table-column>
+            <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
             <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
             <el-table-column align="center" label="激活">
               <template slot-scope="scope">
@@ -98,7 +98,7 @@
         <el-form-item label="邮箱">
           <el-input v-model="newUserForm.email"></el-input>
         </el-form-item>
-        <el-form-item label="职务" prop="job">
+        <el-form-item label="角色" prop="job">
           <el-select
             :popper-append-to-body="false"
             v-model="newUserForm.job"
@@ -253,7 +253,7 @@ export default {
         }
       })
     },
-    // 获取职务列表
+    // 获取角色列表
     async getRoleList () {
       this.$axios.post(settingApi.getRoleList).then((res) => {
         if (res.data.code === 0) {

@@ -23,7 +23,7 @@
                 </template>
               </el-table-column>
               <el-table-column align="center" label="用户" prop="userName"></el-table-column>
-              <el-table-column align="center" label="职位" prop="position"></el-table-column>
+              <el-table-column align="center" label="角色" prop="position"></el-table-column>
               <el-table-column align="center" label="手机号" prop="phoneNumber"></el-table-column>
               <el-table-column align="center" label="所属部门" prop="department"></el-table-column>
               <el-table-column align="center" label="操作">
