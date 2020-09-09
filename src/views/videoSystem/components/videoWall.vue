@@ -1579,7 +1579,7 @@ export default {
           center;
       }
       div:nth-child(4) {
-        left: 60px;
+        left: 64px;
         top: -44px;
         background:#1477AB;
         width:40px;
@@ -1587,11 +1587,12 @@ export default {
         text-align: center;
         line-height: 40px;
         border-radius: 50%;
+        border: 2px solid #2ECCEE;
       }
        div:nth-child(5) {
              width:59px;
         height:48px;
-        left: 24px;
+        left: 20px;
         top: -42px;
         background: url(../../../assets/images/operate/minus.png) no-repeat
           center;
