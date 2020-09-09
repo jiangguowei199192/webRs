@@ -34,7 +34,7 @@
                   <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="用户" prop="username"></el-table-column>
+              <el-table-column align="center" label="用户姓名" prop="username"></el-table-column>
               <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
               <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
               <el-table-column align="center" label="操作">
@@ -66,9 +66,9 @@
       title="提示"
       :visible.sync="showDeleteTip"
       width="30%">
-      是否从系统管理员角色中移除用户 {{ radio >= 0 ? tableData[radio].userName : '' }}
+      是否从{{ radio >= 0 ? userList[radio].roleName : '' }}角色中移除用户 {{ radio >= 0 ? userList[radio].username : '' }}
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showDeleteTip = false">确 定</el-button>
+        <el-button type="primary" @click="deleteTipSave">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -216,28 +216,53 @@ export default {
     currentPageChange () {
       this.getUserList()
     },
+    // 点击表格行
+    ClickTableRow (row) {
+      this.radio = this.userList.indexOf(row)
+    },
     // 选择角色
     roleTreeClick (item) {
-      console.log(item)
       this.selectedRoleCode = item.roleCode
       this.getUserList()
     },
 
-    // 点击添加用户
-    addUser () {
-      this.showAddUser = true
-    },
-    // 点击表格行
-    ClickTableRow (row) {
-      this.radio = this.tableData.indexOf(row)
-    },
     // 移除用户
     deleteClick (index, row) {
       this.showDeleteTip = true
     },
-    // 新建角色
-    newRole () {
-      this.showNewRole = true
+    // 移除用户-确定
+    deleteTipSave () {
+      this.showDeleteTip = false
+
+      var param = {
+        id: this.userList[this.radio].id,
+        roleCode: 0
+      }
+      this.$axios.post(settingApi.updateUser, param, {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }).then(res => {
+        if (res.data.code === 0) {
+          this.getUserList()
+          Notification({
+            title: '提示',
+            message: '移除成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          return
+        }
+        Notification({
+          title: '提示',
+          message: '移除失败',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+      })
+    },
+
+    // 添加用户
+    addUser () {
+      this.showAddUser = true
     },
     // 添加用户-保存
     addUserConfirm () {
@@ -246,6 +271,12 @@ export default {
         this.showAddUser = false
       })
     },
+
+    // 新建角色
+    newRole () {
+      this.showNewRole = true
+    },
+
     // 新建角色-保存
     newRoleConfirm () {
       this.$refs.newRoleFormRef.validate(async valid => {

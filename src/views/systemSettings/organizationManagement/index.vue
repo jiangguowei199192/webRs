@@ -22,7 +22,7 @@
                   <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="用户" prop="userName"></el-table-column>
+              <el-table-column align="center" label="用户姓名" prop="userName"></el-table-column>
               <el-table-column align="center" label="角色" prop="position"></el-table-column>
               <el-table-column align="center" label="手机号" prop="phoneNumber"></el-table-column>
               <el-table-column align="center" label="所属组织" prop="department"></el-table-column>
