@@ -27,7 +27,8 @@ service.interceptors.request.use((config) => {
       config.url !== '/cloud-fms/sysuser/updateUser' &&
       config.url !== '/cloud-fms/sysuser/addUser' &&
       config.url !== '/cloud-video/prePlan/enterprise/baseInfoPicUpload' &&
-      config.url !== '/cloud-video/prePlan/enterprise/jzpmtPicUpload') {
+      config.url !== '/cloud-video/prePlan/enterprise/jzpmtPicUpload' &&
+      config.url !== '/cloud-fms/sysuser/batchUpdateUserRole') {
     // 判断请求方式是否为POST，进行转换格式
     config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
   }
