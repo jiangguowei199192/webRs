@@ -174,14 +174,15 @@
           <div v-for="(item,index) in 8" :key="index"></div>
         </div>
         <div class="extra">
-          <!-- <img src="" alt="" class="zoom">
-          <img src="" alt="" class="focus">
-          <img src="" alt="" class="add">
-          <span class="step">X1.0</span>
-          <img src="" alt="" class="minus">-->
-          <div v-for="(item,index) in 5" :key="index">
+          <div
+            v-for="(item,index) in 5"
+            :key="index"
+            :title="index===0?'变倍':index==1?'变焦':index==3?'步速':''"
+            :class="{selected:curSelectedIcon==index}"
+            @click.stop="changeZoomOrFocus(index)"
+          >
             <template v-if="index===3">
-              <span>X1.0</span>
+              <span>X{{curStep}}</span>
             </template>
           </div>
         </div>
@@ -267,7 +268,8 @@ export default {
 
       settingPic: require('@/assets/images/AR/setting.png'),
       settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
-
+      curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
+      curStep: 4, // 步速
       showMarkForm: false,
       ruleForm: {
         tagName: '',
@@ -382,6 +384,18 @@ export default {
   },
 
   methods: {
+    // 切换变倍或变焦
+    changeZoomOrFocus (index) {
+      // 只有是0,1时切换样式  其它不改变
+      if (index <= 1) {
+        this.curSelectedIcon = index
+      } else if (index === 2 || index === 4) {
+        // 判断当前是变倍还是变焦 进行放大操作
+      } else {
+        ++this.curStep
+        this.curStep = this.curStep > 8 ? 1 : this.curStep
+      }
+    },
     // 鼠标悬停显示的图片
     showActive (index) {
       this.active = index
@@ -1550,8 +1564,8 @@ export default {
     }
     .extra {
       position: absolute;
-      top:0;
-      right:0;
+      top: 0;
+      right: 0;
       div {
         width: 36px;
         height: 36px;
@@ -1564,38 +1578,56 @@ export default {
         background: url(../../../assets/images/operate/zoom.png) no-repeat
           center;
       }
+      div:nth-child(1).selected {
+        background: url(../../../assets/images/operate/zoom_selected.png)
+          no-repeat center;
+      }
       div:nth-child(2) {
         left: 22px;
         top: -60px;
         background: url(../../../assets/images/operate/focus.png) no-repeat
           center;
       }
+      div:nth-child(2).selected {
+        background: url(../../../assets/images/operate/focus_selected.png)
+          no-repeat center;
+      }
       div:nth-child(3) {
-        width:51px;
-        height:63px;
+        width: 51px;
+        height: 63px;
         left: 54px;
         top: -54px;
-        background: url(../../../assets/images/operate/add.png) no-repeat
-          center;
+        background: url(../../../assets/images/operate/add.png) no-repeat center;
+      }
+      div:nth-child(3):hover {
+        background: url(../../../assets/images/operate/add_selected.png)
+          no-repeat center;
       }
       div:nth-child(4) {
         left: 64px;
         top: -44px;
-        background:#1477AB;
-        width:40px;
-        height:40px;
+        background: #1477ab;
+        width: 40px;
+        height: 40px;
         text-align: center;
         line-height: 40px;
         border-radius: 50%;
-        border: 2px solid #2ECCEE;
+        border: 2px solid #2eccee;
       }
-       div:nth-child(5) {
-             width:59px;
-        height:48px;
+      div:nth-child(4):hover {
+        background: #004469;
+      }
+      div:nth-child(5) {
+        width: 59px;
+        height: 48px;
         left: 20px;
         top: -42px;
         background: url(../../../assets/images/operate/minus.png) no-repeat
           center;
+      }
+      div:nth-child(5):hover {
+        background: url(../../../assets/images/operate/minus_selected.png)
+          no-repeat center;
       }
     }
   }
