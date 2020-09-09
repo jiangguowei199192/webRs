@@ -5,6 +5,7 @@ export const settingApi = {
   delUser: '/cloud-fms/sysuser/del', // 设置：用户管理-删除用户
   updateUser: '/cloud-fms/sysuser/updateUser', // 设置：用户管理-修改用户
   queryUserDeptPage: '/cloud-fms/sysuser/queryUserDeptPage', // 设置：角色管理-查询用户列表
+  getUserDetailById: '/cloud-fms/sysuser/getUserDetailById', // 设置：用户管理-根据id查询用户详细信息
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图
