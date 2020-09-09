@@ -98,93 +98,27 @@
           :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:playerHeight)+'px',width:item.width/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',height:item.height/720*(videoInfo.isShowOperate?1080:playerHeight)+'px'}"
         ></span>
       </div>
-      <!-- 云台操作 -->
-      <!-- <div
-        class="fullScreenOperate"
-        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
-        @dblclick.stop="stopEvent"
-        @click.stop="stopEvent"
-      >
-        <div class="deviceInfo">
-          <div class="deviceTitle">云台</div>
-          <div class="operate">
-            <div class="icons">
-              <div
-                v-for="(item,index) in 9"
-                :key="index"
-                @mousedown="startChange(index)"
-                @mouseup="stopChange(index)"
-              ></div>
-      </div>-->
-      <!-- <div class="btns">
-             <div>
-                  <span @mousedown="startChange(1000,true)" @mouseup="stopChange">+</span>
-                  <b>变倍</b>
-                  <span @mousedown="startChange(1001,true)" @mouseup="stopChange">-</span>
-                </div>
-                <div>
-                  <span @mousedown="startFocusLris(1002)" @mouseup="stopFocusLris">+</span>
-                  <b>变焦</b>
-                  <span @mousedown="startFocusLris(1003)" @mouseup="stopFocusLris">-</span>
-                </div>
-                <div>
-                  <span @mousedown="startFocusLris(1004)" @mouseup="stopFocusLris">+</span>
-                  <b>光圈</b>
-                  <span @mousedown="startFocusLris(1005)" @mouseup="stopFocusLris">-</span>
-                </div>
-      </div>-->
-      <!-- sdk -->
-      <!-- <div class="btns">
-              <div>
-                <span @mousedown="startChange(1000)" @mouseup="stopChange(1000)">+</span>
-                <b>变倍</b>
-                <span @mousedown="startChange(1001)" @mouseup="stopChange(1001)">-</span>
-              </div>
-              <div>
-                <span @mousedown="startChange(1002)" @mouseup="stopChange(1002)">+</span>
-                <b>变焦</b>
-                <span @mousedown="startChange(1003)" @mouseup="stopChange(1003)">-</span>
-              </div>
-              <div>
-                <span @mousedown="startChange(1004)" @mouseup="stopChange(1004)">+</span>
-                <b>光圈</b>
-                <span @mousedown="startChange(1005)" @mouseup="stopChange(1005)">-</span>
-              </div>
-            </div>
-            <div class="slider">
-              <span class="demonstration">步速</span>
-              <el-slider
-                v-model="step"
-                :min="1"
-                :max="8"
-                style="width:106px;margin-left:16px;margin-right:16px;"
-              ></el-slider>
-              <span>{{step}}</span>
-            </div>
-            <div class="sliderTip">步速值范围为1-8之间</div>
-          </div>
-        </div>
-      </div>-->
       <!-- 新版云台操作 -->
       <div
         class="operate"
         v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
       >
         <div class="circle">
-          <div v-for="(item,index) in 8" :key="index"></div>
+          <div
+            v-for="(item,index) in 8"
+            :key="index"
+            @mousedown="startChange(index)"
+            @mouseup="stopChange(index)"
+          ></div>
         </div>
         <div class="extra">
-          <div
-            v-for="(item,index) in 5"
-            :key="index"
-            :title="index===0?'变倍':index==1?'变焦':index==3?'步速':''"
-            :class="{selected:curSelectedIcon==index}"
-            @click.stop="changeZoomOrFocus(index)"
-          >
-            <template v-if="index===3">
-              <span>X{{curStep}}</span>
-            </template>
+          <div title="变倍" :class="{selected:curSelectedIcon==0}" @click="curSelectedIcon=0"></div>
+          <div title="变焦" :class="{selected:curSelectedIcon==1}" @click="curSelectedIcon=1"></div>
+          <div @mousedown="startChange(999)" @mouseup="stopChange(999)"></div>
+          <div @click.stop="addStep">
+            <span>X{{step}}</span>
           </div>
+          <div @mousedown="startChange(9999)" @mouseup="stopChange(9999)"></div>
         </div>
       </div>
       <!-- 无人机地图 -->
@@ -269,7 +203,6 @@ export default {
       settingPic: require('@/assets/images/AR/setting.png'),
       settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
       curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
-      curStep: 4, // 步速
       showMarkForm: false,
       ruleForm: {
         tagName: '',
@@ -384,17 +317,10 @@ export default {
   },
 
   methods: {
-    // 切换变倍或变焦
-    changeZoomOrFocus (index) {
-      // 只有是0,1时切换样式  其它不改变
-      if (index <= 1) {
-        this.curSelectedIcon = index
-      } else if (index === 2 || index === 4) {
-        // 判断当前是变倍还是变焦 进行放大操作
-      } else {
-        ++this.curStep
-        this.curStep = this.curStep > 8 ? 1 : this.curStep
-      }
+    // 点击步速
+    addStep () {
+      ++this.step
+      this.step = this.step > 8 ? 1 : this.step
     },
     // 鼠标悬停显示的图片
     showActive (index) {
@@ -638,238 +564,6 @@ export default {
         }
       }
     },
-    // 按钮和变倍的鼠标按下事件
-    // startChange (index, isInOut = false) {
-    //   const params = {}
-    //   if (!isInOut) {
-    //     switch (index) {
-    //       case 0:
-    //         ++this.recordNums.leftUp
-    //         this.clearRecord('leftUp')
-    //         // 左上
-    //         params.leftRight = 1
-    //         params.upDown = 1
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.leftUp > 255
-    //             ? 255
-    //             : this.step * this.recordNums.leftUp
-    //         params.zoomSpeed = 0
-    //         console.dir(params)
-    //         this.changeViewVideo(1, params)
-    //         break
-    //       case 1:
-    //         ++this.recordNums.up
-    //         this.clearRecord('up')
-    //         // 上移
-    //         params.upDown = 1
-    //         params.leftRight = 0
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.up > 255
-    //             ? 255
-    //             : this.step * this.recordNums.up
-    //         params.zoomSpeed = 0
-    //         console.dir(params)
-    //         this.changeViewVideo(1, params)
-    //         break
-    //       case 2:
-    //         ++this.recordNums.rightUp
-    //         this.clearRecord('rightUp')
-    //         // 右上
-    //         params.leftRight = 2
-    //         params.upDown = 1
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.rightUp > 255
-    //             ? 255
-    //             : this.step * this.recordNums.rightUp
-    //         params.zoomSpeed = 0
-    //         console.dir(params)
-    //         this.changeViewVideo(1, params)
-    //         break
-    //       case 3:
-    //         ++this.recordNums.left
-    //         this.clearRecord('left')
-    //         // 左
-    //         params.leftRight = 1
-    //         params.upDown = 0
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.left > 255
-    //             ? 255
-    //             : this.step * this.recordNums.left
-    //         params.zoomSpeed = 0
-    //         this.changeViewVideo(1, params)
-    //         console.dir(params)
-    //         break
-    //       case 4:
-    //         break
-    //       case 5:
-    //         ++this.recordNums.right
-    //         this.clearRecord('right')
-    //         // 右
-    //         params.leftRight = 2
-    //         params.upDown = 0
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.right > 255
-    //             ? 255
-    //             : this.step * this.recordNums.right
-    //         params.zoomSpeed = 0
-    //         console.dir(params)
-    //         this.changeViewVideo(1, params)
-    //         break
-    //       case 6:
-    //         ++this.recordNums.leftDown
-    //         this.clearRecord('leftDown')
-    //         // 左下
-    //         params.leftRight = 1
-    //         params.upDown = 2
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.leftDown > 255
-    //             ? 255
-    //             : this.step * this.recordNums.leftDown
-    //         params.zoomSpeed = 0
-    //         console.dir(params)
-    //         this.changeViewVideo(1, params)
-    //         break
-    //       case 7:
-    //         ++this.recordNums.down
-    //         this.clearRecord('down')
-    //         // 下
-    //         params.upDown = 2
-    //         params.leftRight = 0
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.down > 255
-    //             ? 255
-    //             : this.step * this.recordNums.down
-    //         params.zoomSpeed = 0
-    //         console.dir(params)
-    //         this.changeViewVideo(1, params)
-    //         break
-    //       case 8:
-    //         ++this.recordNums.rightDown
-    //         this.clearRecord('rightDown')
-    //         // 右下
-    //         params.leftRight = 2
-    //         params.upDown = 2
-    //         params.inOut = 0
-    //         params.moveSpeed =
-    //           this.step * this.recordNums.rightDown > 255
-    //             ? 255
-    //             : this.step * this.recordNums.rightDown
-    //         params.zoomSpeed = 0
-    //         this.changeViewVideo(1, params)
-    //         console.dir(params)
-    //         break
-    //       default:
-    //         break
-    //     }
-    //   } else {
-    //     // 变倍
-    //     params.leftRight = 0
-    //     params.upDown = 0
-    //     params.moveSpeed = 0
-
-    //     if (index === 1000) {
-    //       params.inOut = 2
-    //       params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
-    //     } else {
-    //       params.inOut = 1
-    //       this.zoomSpeed--
-    //       this.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
-    //       params.zoomSpeed = this.zoomSpeed
-    //     }
-    //     this.changeViewVideo(1, params)
-    //     console.log(params)
-    //   }
-    // },
-    // // 按钮和变倍的鼠标弹起停止控制
-    // stopChange () {
-    //   const params = {}
-    //   params.leftRight = 0
-    //   params.upDown = 0
-    //   params.inOut = 0
-    //   params.moveSpeed = 0
-    //   params.zoomSpeed = 0
-    //   console.log('停止')
-    //   console.dir(params)
-    //   this.changeViewVideo(1, params)
-    // },
-    // // 变焦和光圈鼠标按下事件
-    // startFocusLris (type) {
-    //   const params = {}
-    //   if (type === 1002) {
-    //     params.focus = 2
-    //     params.focusSpeed = this.focusSpeed++ > 255 ? 255 : this.focusSpeed
-    //     params.lris = 0
-    //     params.lrisSpeed = 0
-    //   } else if (type === 1003) {
-    //     params.focus = 1
-    //     this.focusSpeed--
-    //     this.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
-    //     params.focusSpeed = this.focusSpeed
-    //     params.lris = 0
-    //     params.lrisSpeed = 0
-    //   } else if (type === 1004) {
-    //     params.lris = 2
-    //     params.lrisSpeed = this.lrisSpeed++ > 255 ? 255 : this.lrisSpeed
-    //     params.focus = 0
-    //     params.focusSpeed = 0
-    //   } else if (type === 1005) {
-    //     params.lris = 1
-    //     this.lrisSpeed--
-    //     this.lrisSpeed = this.lrisSpeed < 0 ? 0 : this.lrisSpeed
-    //     params.lrisSpeed = this.lrisSpeed
-    //     params.focus = 0
-    //     params.focusSpeed = 0
-    //   }
-    //   console.log(params)
-    //   this.changeViewVideo(2, params)
-    // },
-    // // 变焦和光圈鼠标松开事件
-    // stopFocusLris () {
-    //   const params = {
-    //     lris: 0,
-    //     lrisSpeed: 0,
-    //     focus: 0,
-    //     focusSpeed: 0
-    //   }
-    //   this.changeViewVideo(2, params)
-    // },
-    // 云台操作按钮的请求
-    // changeViewVideo (type, params) {
-    //   if (type === 1) {
-    //     this.$axios
-    //       .post(
-    //         'api/ptz/' +
-    //         this.videoInfo.deviceCode +
-    //         '/' +
-    //         this.videoInfo.id, params
-    //       )
-    //       .then(res => {
-    //         if (res && res.data && res.data.code === 0) {
-    //           console.log('控制成功了')
-    //         }
-    //       })
-    //   } else {
-    //     this.$axios
-    //       .post(
-    //         'api/fi/' +
-    //         this.videoInfo.deviceCode +
-    //         '/' +
-    //         this.videoInfo.id, params
-    //       )
-    //       .then(res => {
-    //         if (res && res.data && res.data.code === 0) {
-    //           console.log('控制成功了')
-    //         }
-    //       })
-    //   }
-    // }
     // 鼠标按下
     startChange (index) {
       const params = {
@@ -878,14 +572,6 @@ export default {
       }
       switch (index) {
         case 0:
-          // 左上
-          params.cmd_type = 32
-          params.step = this.step
-          params.stop = 0
-          console.dir(params)
-          this.changeViewVideo(params)
-          break
-        case 1:
           // 上移
           params.cmd_type = 0
           params.step = this.step
@@ -893,7 +579,7 @@ export default {
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 2:
+        case 1:
           // 右上
           params.cmd_type = 33
           params.step = this.step
@@ -901,17 +587,7 @@ export default {
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 3:
-          // 左移
-          params.cmd_type = 2
-          params.step = this.step
-          params.stop = 0
-          console.dir(params)
-          this.changeViewVideo(params)
-          break
-        case 4:
-          break
-        case 5:
+        case 2:
           // 右移
           params.cmd_type = 3
           params.step = this.step
@@ -919,23 +595,7 @@ export default {
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 6:
-          // 左下
-          params.cmd_type = 34
-          params.step = this.step
-          params.stop = 0
-          console.dir(params)
-          this.changeViewVideo(params)
-          break
-        case 7:
-          // 下
-          params.cmd_type = 1
-          params.step = this.step
-          params.stop = 0
-          console.dir(params)
-          this.changeViewVideo(params)
-          break
-        case 8:
+        case 3:
           // 右下
           params.cmd_type = 35
           params.step = this.step
@@ -943,61 +603,88 @@ export default {
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 1000:
-          // 变倍+
-          params.cmd_type = 4
+        case 4:
+          // 下
+          params.cmd_type = 1
           params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 1001:
-          // 变倍-
-          params.cmd_type = 5
+        case 5:
+          // 左下
+          params.cmd_type = 34
           params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 1002:
-          // 变焦+
-          params.cmd_type = 6
+        case 6:
+          // 左
+          params.cmd_type = 2
           params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 1003:
-          // 变焦-
-          params.cmd_type = 7
+        case 7:
+          // 左上
+          params.cmd_type = 32
           params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 1004:
-          // 光圈+
-          params.cmd_type = 8
+          // 加号
+        case 999:
+          if (this.curSelectedIcon === 0) {
+            // 变倍+
+            params.cmd_type = 4
+          } else {
+            // 变焦+
+            params.cmd_type = 6
+          }
           params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
-        case 1005:
-          // 光圈-
-          params.cmd_type = 9
+          // 减号
+        case 9999:
+          if (this.curSelectedIcon === 0) {
+            // 变倍-
+            params.cmd_type = 5
+          } else {
+            // 变焦-
+            params.cmd_type = 7
+          }
           params.step = this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
           break
+        // case 1004:
+        //   // 光圈+
+        //   params.cmd_type = 8
+        //   params.step = this.step
+        //   params.stop = 0
+        //   console.dir(params)
+        //   this.changeViewVideo(params)
+        //   break
+        // case 1005:
+        //   // 光圈-
+        //   params.cmd_type = 9
+        //   params.step = this.step
+        //   params.stop = 0
+        //   console.dir(params)
+        //   this.changeViewVideo(params)
+        //   break
         default:
           break
       }
     },
     // 鼠标松开
     stopChange (index) {
-      if (index === 4) return
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType,
@@ -1007,63 +694,65 @@ export default {
       }
       switch (index) {
         case 0:
-          // 左上
-          params.cmd_type = 32
-          break
-        case 1:
-          // 上移
+          // 上
           params.cmd_type = 0
           break
-        case 2:
+        case 1:
           // 右上
           params.cmd_type = 33
           break
-        case 3:
-          // 左移
-          params.cmd_type = 2
-          break
-        case 4:
-          break
-        case 5:
-          // 右移
+        case 2:
+          // 右
           params.cmd_type = 3
           break
-        case 6:
-          // 左下
-          params.cmd_type = 34
-          break
-        case 7:
-          // 下
-          params.cmd_type = 1
-          break
-        case 8:
+        case 3:
           // 右下
           params.cmd_type = 35
           break
-        case 1000:
-          // 变倍+
-          params.cmd_type = 4
+        case 4:
+          // 下
+          params.cmd_type = 1
           break
-        case 1001:
-          // 变倍-
-          params.cmd_type = 5
+        case 5:
+          // 左下
+          params.cmd_type = 34
           break
-        case 1002:
-          // 变焦+
-          params.cmd_type = 6
+        case 6:
+          // 左
+          params.cmd_type = 2
           break
-        case 1003:
-          // 变焦-
-          params.cmd_type = 7
+        case 7:
+          // 左上
+          params.cmd_type = 32
           break
-        case 1004:
-          // 光圈+
-          params.cmd_type = 8
+          // 加号
+        case 999:
+          if (this.curSelectedIcon === 0) {
+            // 变倍+
+            params.cmd_type = 4
+          } else {
+            // 变焦+
+            params.cmd_type = 6
+          }
           break
-        case 1005:
-          // 光圈-
-          params.cmd_type = 9
+        // 减号
+        case 9999:
+          if (this.curSelectedIcon === 0) {
+            // 变倍-
+            params.cmd_type = 5
+          } else {
+            // 变焦-
+            params.cmd_type = 7
+          }
           break
+        // case 1004:
+        //   // 光圈+
+        //   params.cmd_type = 8
+        //   break
+        // case 1005:
+        //   // 光圈-
+        //   params.cmd_type = 9
+        //   break
       }
 
       console.log(params)
