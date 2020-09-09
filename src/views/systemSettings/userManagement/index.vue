@@ -49,7 +49,6 @@
             </el-table-column>
             <el-table-column align="center" label="用户名" prop="useraccount"></el-table-column>
             <el-table-column align="center" label="用户姓名" prop="username"></el-table-column>
-            <!-- <el-table-column align="center" label="所属部门" prop="deptName"></el-table-column> -->
             <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
             <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
             <el-table-column align="center" label="激活">
@@ -394,18 +393,24 @@ export default {
         return ''
       }
 
-      this.newUserForm.username = this.userList[this.radio].useraccount
-      this.newUserForm.name = this.userList[this.radio].username
-      this.newUserForm.phone = ''
-      this.newUserForm.email = ''
-      this.newUserForm.job = ''
-      this.newUserForm.active = true
-      this.newUserForm.six = ''
-      // this.newUserForm.password = '123456'
-      this.newUserForm.organizations = []
+      var currentUser = this.userList[this.radio]
+      var param = { userId: currentUser.id }
+      this.$axios.post(settingApi.getUserDetailById, param).then(res => {
+        if (res.data.code === 0) {
+          var userDetail = res.data.data
+          this.newUserForm.username = userDetail.useraccount
+          this.newUserForm.name = userDetail.username
+          this.newUserForm.phone = userDetail.mobile
+          this.newUserForm.email = userDetail.email
+          this.newUserForm.job = userDetail.roleCode
+          this.newUserForm.active = userDetail.status !== 0
+          this.newUserForm.six = userDetail.userGender === 0 ? '女' : '男'
+          this.newUserForm.organizations = userDetail.deptCodes
 
-      this.showNewUser = true
-      this.newUserTitle = '修改用户'
+          this.showNewUser = true
+          this.newUserTitle = '修改用户'
+        }
+      })
     },
     // 删除用户
     userDelete () {
@@ -480,7 +485,6 @@ export default {
             id: this.userList[this.radio].id,
             deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
             mobile: this.newUserForm.phone,
-            // password: this.newUserForm.password,
             roleCode: this.newUserForm.job,
             status: this.newUserForm.active ? 1 : 0,
             useraccount: this.newUserForm.username,
@@ -748,6 +752,7 @@ export default {
     color: white;
   }
   .selectStyle {
+    width: 200px;
     // 下拉框
     /deep/.el-input__inner {
       font-size: 12px;
@@ -778,7 +783,7 @@ export default {
 }
 
 .cascaderStyle {
-  // width: 300px;
+  width: 200px;
   /deep/.el-cascader__search-input {
     background: transparent;
     color: white;
