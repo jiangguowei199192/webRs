@@ -49,7 +49,6 @@
             </el-table-column>
             <el-table-column align="center" label="用户名" prop="useraccount"></el-table-column>
             <el-table-column align="center" label="用户姓名" prop="username"></el-table-column>
-            <!-- <el-table-column align="center" label="所属部门" prop="deptName"></el-table-column> -->
             <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
             <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
             <el-table-column align="center" label="激活">
@@ -753,6 +752,7 @@ export default {
     color: white;
   }
   .selectStyle {
+    width: 200px;
     // 下拉框
     /deep/.el-input__inner {
       font-size: 12px;
@@ -783,7 +783,7 @@ export default {
 }
 
 .cascaderStyle {
-  // width: 300px;
+  width: 200px;
   /deep/.el-cascader__search-input {
     background: transparent;
     color: white;

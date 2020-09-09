@@ -9,7 +9,7 @@
         <div class="leftBox">
           <div class="leftTip">
             <i class="el-icon-warning"></i>
-            1位用户未分配所属部门
+            1位用户未分配所属组织
             </div>
           <el-tree :data="treeData" :props="defaultProps" default-expand-all :render-content="renderContent"></el-tree>
         </div>
@@ -25,7 +25,7 @@
               <el-table-column align="center" label="用户" prop="userName"></el-table-column>
               <el-table-column align="center" label="角色" prop="position"></el-table-column>
               <el-table-column align="center" label="手机号" prop="phoneNumber"></el-table-column>
-              <el-table-column align="center" label="所属部门" prop="department"></el-table-column>
+              <el-table-column align="center" label="所属组织" prop="department"></el-table-column>
               <el-table-column align="center" label="操作">
                 <template slot-scope="scope">
                   <el-button

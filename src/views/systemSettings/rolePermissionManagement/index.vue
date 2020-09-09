@@ -36,7 +36,7 @@
               </el-table-column>
               <el-table-column align="center" label="用户" prop="username"></el-table-column>
               <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
-              <el-table-column align="center" label="所属部门" prop="deptName"></el-table-column>
+              <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
               <el-table-column align="center" label="操作">
                 <template slot-scope="scope">
                   <el-button
