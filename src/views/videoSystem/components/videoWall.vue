@@ -23,8 +23,13 @@
             <div class="header">AR实景地图指挥</div>
           </template>
           <div class="footer" @dblclick.stop="stopEvent">
-            <a @mouseenter="showActive(1)" @mouseleave="showActive(0)" title="AR"  @click="showAR=!showAR" >
-              <img :src="arPic" alt title="AR">
+            <a
+              @mouseenter="showActive(1)"
+              @mouseleave="showActive(0)"
+              title="AR"
+              @click="showAR=!showAR"
+            >
+              <img :src="arPic" alt title="AR" />
               <img v-show="active === 1" class="hide_tab" :src="arSelectedPic" />
             </a>
             <a
@@ -36,29 +41,30 @@
               <img :src="alarmPic" alt />
               <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
             </a>
-            <a  @mouseenter="showActive(3)" @mouseleave="showActive(0)" title="抓取">
-              <img :src="capturePic" alt  />
-               <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
+            <a @mouseenter="showActive(3)" @mouseleave="showActive(0)" title="抓取">
+              <img :src="capturePic" alt />
+              <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
             </a>
             <a @mouseenter="showActive(4)" @mouseleave="showActive(0)" title="图库">
-              <img :src="photoPic" alt  />
-               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
+              <img :src="photoPic" alt />
+              <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
             </a>
             <template v-if="showAR">
               <a @mouseenter="showActive(5)" @mouseleave="showActive(0)" title="标签">
-                 <img :src="tagPic" alt  />
-                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
+                <img :src="tagPic" alt />
+                <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
               </a>
-              <a  @mouseenter="showActive(6)" @mouseleave="showActive(0)"  title="搜索">
-                <img :src="searchPic"  alt />
+              <a @mouseenter="showActive(6)" @mouseleave="showActive(0)" title="搜索">
+                <img :src="searchPic" alt />
                 <img v-show="active === 6" class="hide_tab" :src="searchSelectedPic" />
               </a>
-              <a  @mouseenter="showActive(7)" @mouseleave="showActive(0)"  title="设置">
+              <a @mouseenter="showActive(7)" @mouseleave="showActive(0)" title="设置">
                 <img :src="settingPic" title="设置" alt />
-                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
+                <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
               </a>
             </template>
           </div>
+          <!-- 实时警情 -->
           <div class="realPoliceInfo" v-show="showRealPolice" @dblclick.stop="stopEvent">
             <div class="title">实时警情</div>
             <div class="content webFsScroll">
@@ -159,6 +165,27 @@
           </div>
         </div>
       </div>-->
+      <!-- 新版云台操作 -->
+      <div
+        class="operate"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+      >
+        <div class="circle">
+          <div v-for="(item,index) in 8" :key="index"></div>
+        </div>
+        <div class="extra">
+          <!-- <img src="" alt="" class="zoom">
+          <img src="" alt="" class="focus">
+          <img src="" alt="" class="add">
+          <span class="step">X1.0</span>
+          <img src="" alt="" class="minus">-->
+          <div v-for="(item,index) in 5" :key="index">
+            <template v-if="index===3">
+              <span>X1.0</span>
+            </template>
+          </div>
+        </div>
+      </div>
       <!-- 无人机地图 -->
       <div
         class="fullScreenMap"
@@ -1044,9 +1071,9 @@ export default {
 </script>
 <style lang="less" >
 .playerStyle {
-   ::selection {
-        background: transparent;
-      }
+  ::selection {
+    background: transparent;
+  }
   position: relative;
   width: 100%;
   height: 100%;
@@ -1092,12 +1119,14 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: text;
         a {
           position: relative;
           display: inline-block;
           width: 40px;
           height: 40px;
           margin-right: 32px;
+          cursor: pointer;
           .hide_tab {
             position: absolute;
             bottom: 0;
@@ -1445,6 +1474,128 @@ export default {
       padding: 0;
       height: 40px !important;
       background: #409eff;
+    }
+  }
+  div.operate {
+    position: absolute;
+    right: 90px;
+    bottom: 85px;
+    cursor: text;
+    .circle {
+      width: 165px;
+      height: 164px;
+      background: url(../../../assets/images/operate/circle.png) no-repeat;
+      position: relative;
+      div {
+        width: 36px;
+        height: 36px;
+        position: absolute;
+        cursor: pointer;
+      }
+      div:nth-child(1) {
+        left: 50%;
+        top: 5px;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/operate/up.png) no-repeat center;
+      }
+      div:nth-child(2) {
+        left: 76%;
+        top: 30px;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/operate/right_up.png) no-repeat
+          center;
+      }
+      div:nth-child(3) {
+        left: 88%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: url(../../../assets/images/operate/right.png) no-repeat
+          center;
+      }
+      div:nth-child(4) {
+        left: 78%;
+        top: 62%;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/operate/right_bottom.png)
+          no-repeat center;
+      }
+      div:nth-child(5) {
+        left: 52%;
+        top: 78%;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/operate/down.png) no-repeat
+          center;
+      }
+      div:nth-child(6) {
+        left: 26%;
+        top: 62%;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/operate/left_down.png) no-repeat
+          center;
+      }
+      div:nth-child(7) {
+        left: 14%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: url(../../../assets/images/operate/left.png) no-repeat
+          center;
+      }
+      div:nth-child(8) {
+        left: 25%;
+        top: 16%;
+        transform: translateX(-50%);
+        background: url(../../../assets/images/operate/left_up.png) no-repeat
+          center;
+      }
+    }
+    .extra {
+      position: absolute;
+      top:0;
+      right:0;
+      div {
+        width: 36px;
+        height: 36px;
+        position: relative;
+        cursor: pointer;
+      }
+      div:nth-child(1) {
+        left: -34px;
+        top: -42px;
+        background: url(../../../assets/images/operate/zoom.png) no-repeat
+          center;
+      }
+      div:nth-child(2) {
+        left: 22px;
+        top: -60px;
+        background: url(../../../assets/images/operate/focus.png) no-repeat
+          center;
+      }
+      div:nth-child(3) {
+        width:51px;
+        height:63px;
+        left: 54px;
+        top: -54px;
+        background: url(../../../assets/images/operate/add.png) no-repeat
+          center;
+      }
+      div:nth-child(4) {
+        left: 60px;
+        top: -44px;
+        background:#1477AB;
+        width:40px;
+        height:40px;
+        text-align: center;
+        line-height: 40px;
+        border-radius: 50%;
+      }
+       div:nth-child(5) {
+             width:59px;
+        height:48px;
+        left: 24px;
+        top: -42px;
+        background: url(../../../assets/images/operate/minus.png) no-repeat
+          center;
+      }
     }
   }
 }
