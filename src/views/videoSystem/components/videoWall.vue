@@ -1249,8 +1249,8 @@ export default {
           no-repeat center;
       }
       div:nth-child(2) {
-        left: 76%;
-        top: 30px;
+        left: 74%;
+        top: 24px;
         transform: translateX(-50%);
         background: url(../../../assets/images/operate/right_up.png) no-repeat
           center;
