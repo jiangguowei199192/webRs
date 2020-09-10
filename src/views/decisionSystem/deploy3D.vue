@@ -328,35 +328,6 @@ export default {
      * @param {Object} direction 方向
      * @param {Object} radius 可视距离
      */
-    getPointByDirection (position, direction, radius) {
-      // 世界坐标转换为投影坐标
-      var webMercatorProjection = new Cesium.WebMercatorProjection(
-        this.viewer.scene.globe.ellipsoid
-      )
-      var viewPointWebMercator = webMercatorProjection.project(
-        Cesium.Cartographic.fromCartesian(position)
-      )
-      // 计算目标点
-      var toPoint = new Cesium.Cartesian3(
-        viewPointWebMercator.x + radius * Math.cos(direction),
-        viewPointWebMercator.y + radius * Math.sin(direction),
-        0
-      )
-      // 投影坐标转世界坐标
-      const carto = webMercatorProjection.unproject(toPoint)
-      return Cesium.Cartesian3.fromRadians(
-        carto.longitude,
-        carto.latitude,
-        carto.height
-      )
-    },
-
-    /**
-     * 根据 距离方向 和 观察点 计算 目标点
-     * @param {Object} viewPoint 观察点
-     * @param {Object} direction 方向
-     * @param {Object} radius 可视距离
-     */
     getPointByDirectionAnd (position, angle, radius) {
       var center = mars3d.pointconvert.cartesian2mercator(position)
 
@@ -377,20 +348,20 @@ export default {
       var heading = Cesium.Math.toDegrees(hpr.heading)
       heading = 360 - heading
       heading = Cesium.Math.toRadians(heading)
-      var center = Cesium.Matrix4.multiplyByPoint(
-        entity.modelMatrix,
-        entity.boundingSphere.center,
-        new Cesium.Cartesian3()
-      )
-      const p1 = this.CartesianToDegrees(center)
+      // 左上
+      const p1 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(-7, 2, 0), new Cesium.Cartesian3())
+      // 右上
+      const p2 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(5, 2, 0), new Cesium.Cartesian3())
+      // 右下
+      const p3 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(5, -2, 0), new Cesium.Cartesian3())
+      // 左下
+      const p4 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(-7, -2, 0), new Cesium.Cartesian3())
       return {
-        coordinates: Cesium.Rectangle.fromDegrees(
-          p1.lon - 0.000077,
-          p1.lat - 0.000031,
-          p1.lon + 0.000045,
-          p1.lat + 0.000007
-        ),
-        rotation: heading
+        rotation: heading,
+        p1: p1,
+        p2: p2,
+        p3: p3,
+        p4: p4
       }
     },
 
@@ -424,65 +395,12 @@ export default {
 
         // 添加模型下方矩形框
         const entity = this.curEntity
-
-        // var center = Cesium.Matrix4.multiplyByPoint(
-        //   entity.modelMatrix,
-        //   entity.boundingSphere.center,
-        //   new Cesium.Cartesian3()
-        // )
-
-        // const p1 = this.getPointByDirectionAnd(center, 0, 5)
-        // const p2 = this.getPointByDirectionAnd(center, 90, 5)
-        // const p3 = this.getPointByDirectionAnd(center, 180, 5)
-        // const p4 = this.getPointByDirectionAnd(center, 270, entity.boundingSphere.radius)
-        // p1.z += 100
-        // this.viewer.entities.add({
-        //   name: '根据视距显示点',
-        //   position: p1,
-        //   point: {
-        //     color: Cesium.Color.BLUE,
-        //     pixelSize: 10
-        //   }
-        // })
-        // this.viewer.entities.add({
-        //   name: '根据视距显示点',
-        //   position: p2,
-        //   point: {
-        //     color: Cesium.Color.BLUE,
-        //     pixelSize: 10
-        //   }
-        // })
-        // this.viewer.entities.add({
-        //   name: '根据视距显示点',
-        //   position: p3,
-        //   point: {
-        //     color: Cesium.Color.BLUE,
-        //     pixelSize: 50
-        //   }
-        // })
-        // this.viewer.entities.add({
-        //   name: '根据视距显示点',
-        //   position: p4,
-        //   point: {
-        //     color: Cesium.Color.BLUE,
-        //     pixelSize: 50
-        //   }
-        // })
-        // let p2 = this.getPointByDirection(center, 90, entity.boundingSphere.radius)
-        // let p3 = this.getPointByDirection(center, 180, entity.boundingSphere.radius)
-        // let p4 = this.getPointByDirection(center, 270, entity.boundingSphere.radius)
-        // p1 = this.CartesianToDegrees(p1)
-        // p2 = this.CartesianToDegrees(p2)
-        // p3 = this.CartesianToDegrees(p3)
-        // p4 = this.CartesianToDegrees(p4)
         const p = this.getModelRectPosition(entity)
         const rect = this.viewer.entities.add({
           name: task.name,
-          rectangle: {
-            coordinates: p.coordinates,
-            // coordinates: Cesium.Rectangle.fromDegrees(p4.lon, p3.lat, p2.lon, p1.lat),
-            material: Cesium.Color.GREEN.withAlpha(0.5),
-            rotation: p.heading
+          polygon: {
+            hierarchy: new Cesium.PolygonHierarchy([p.p1, p.p2, p.p3, p.p4, p.p1]),
+            material: Cesium.Color.GREEN.withAlpha(0.5)
           }
         })
 
@@ -625,8 +543,7 @@ export default {
         if (r !== undefined) {
           if (show) {
             const p = this.getModelRectPosition(entity)
-            r.rectangle.coordinates = p.coordinates
-            r.rectangle.rotation = p.rotation
+            r.polygon.hierarchy = new Cesium.PolygonHierarchy([p.p1, p.p2, p.p3, p.p4, p.p1])
           }
           r.show = show
         }
@@ -1216,6 +1133,8 @@ export default {
      * @param {Number} type 测量类型
      */
     measureStart () {
+      // 禁用drawControl编辑功能
+      if (this.drawControl) { this.drawControl.hasEdit(false) }
       this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN)
     },
 
@@ -1223,6 +1142,8 @@ export default {
      *  测量结束,绑定鼠标事件
      */
     measureEnd () {
+      // 开启drawControl编辑功能
+      if (this.drawControl) { this.drawControl.hasEdit(true) }
       // 控制鼠标只取模型上的点，忽略地形上的点的拾取
       this.viewer.mars.onlyPickModelPosition = true
       this.handler.setInputAction(event => {
@@ -1282,8 +1203,8 @@ export default {
         style: {
           // 可以自定义样式
           lineType: 'solid',
-          color: '#ffff00',
-          width: 3,
+          color: '#00A8FF',
+          width: 2,
           clampToGround: true // 是否贴地
         }
       })
@@ -1405,10 +1326,11 @@ export default {
         removeScreenSpaceEvent: true,
         label: {
           // 可设置文本样式
-          color: '#ffffff',
-          font_family: '楷体',
-          font_size: 20,
-          background: false
+          color: '#333333',
+          // font_family: '楷体',
+          font_size: 12,
+          background_color: '#ffffff' // 背景颜色
+          // background: false
         }
       })
 
