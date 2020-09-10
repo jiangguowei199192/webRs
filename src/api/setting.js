@@ -8,6 +8,8 @@ export const settingApi = {
   getUserDetailById: '/cloud-fms/sysuser/getUserDetailById', // 设置：用户管理-根据id查询用户详细信息
   queryUserList: '/cloud-fms/sysuser/queryUserList', // 设置：角色管理-添加用户-用户列表
   batchUpdateUserRole: '/cloud-fms/sysuser/batchUpdateUserRole', // 设置：角色管理-批量添加用户
+  getMenuTree: '/cloud-fms/menu/getMenuTree', // 设置：角色管理-新建角色-菜单列表
+  addRole: '/cloud-fms/role/add', // 设置：角色管理-新建角色
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图

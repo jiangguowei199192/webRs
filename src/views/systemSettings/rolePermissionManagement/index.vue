@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <el-dialog title="提示" :visible.sync="showDeleteTip" width="30%" class="dialogStyle">
+    <el-dialog title="提示" :visible.sync="showDeleteTip" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <div
         style="height: 50px;"
       >是否从{{ radio >= 0 ? userList[radio].roleName : '' }}角色中移除用户 {{ radio >= 0 ? userList[radio].username : '' }}</div>
@@ -77,7 +77,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="添加用户" :visible.sync="showAddUser" width="30%" class="dialogStyle">
+    <el-dialog title="添加用户" :visible.sync="showAddUser" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="addUserFormRef" :model="addUserForm" label-width="80px" :rules="addUserRules">
         <el-form-item label="选择用户" prop="user">
           <el-select
@@ -102,7 +102,7 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="新建角色" :visible.sync="showNewRole" width="30%">
+    <el-dialog title="新建角色" :visible.sync="showNewRole" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="newRoleFormRef" :model="newRoleForm" label-width="80px" :rules="newRoleRules">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="newRoleForm.name"></el-input>
@@ -114,17 +114,17 @@
           <el-input v-model="newRoleForm.message"></el-input>
         </el-form-item>
         <el-form-item label="初始权限" prop="permission">
-          <el-select v-model="newRoleForm.permission" multiple>
-            <el-option
-              v-for="item in permissionOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+          <el-cascader
+            placeholder=""
+            :options="permissionOptions"
+            :props="permissionProps"
+            collapse-tags
+            class="cascaderStyle"
+            v-model="newRoleForm.permission"
+          ></el-cascader>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="newRoleConfirm" style="float: right;">保存</el-button>
+          <el-button type="primary" @click="newRoleConfirm" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -141,6 +141,13 @@ export default {
     this.getUserList()
   },
   data () {
+    var isNumber = (rule, value, callback) => {
+      if (!Number(value)) {
+        callback(new Error('请输入正整数'))
+      }
+      callback()
+    }
+
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
 
@@ -169,25 +176,28 @@ export default {
       },
       addUser_userList: [],
 
+      clickfalse: false,
+      permissionProps: {
+        // checkStrictly: true,
+        emitPath: false,
+        multiple: true,
+        label: 'menuName',
+        value: 'id',
+        children: 'children'
+      },
       showNewRole: false,
       newRoleForm: {
         name: '',
-        tag: '',
+        tag: null,
         message: '',
         permission: []
       },
       newRoleRules: {
         name: [{ required: true, message: '请输入名称' }],
-        tag: [{ required: true, message: '请输入标识' }],
-        message: [{ required: true, message: '请输入角色备注' }]
+        tag: [{ required: true, message: '请输入标识' }, { validator: isNumber, trigger: 'blur' }],
+        permission: [{ required: true, message: '请选择权限' }]
       },
-      permissionOptions: [
-        { value: 'val1', label: 'lab1' },
-        { value: 'val2', label: 'lab2' },
-        { value: 'val3', label: 'lab3' },
-        { value: 'val4', label: 'lab4' },
-        { value: 'val5', label: 'lab5' }
-      ]
+      permissionOptions: []
     }
   },
   methods: {
@@ -271,7 +281,7 @@ export default {
       this.addUserForm.user = []
 
       var param = {}
-      this.$axios.post(settingApi.queryUserList, param).then(res => {
+      this.$axios.post(settingApi.queryUserList, param).then((res) => {
         if (res.data.code === 0) {
           this.addUser_userList = res.data.data
           this.showAddUser = true
@@ -286,7 +296,7 @@ export default {
 
         // console.log(this.addUserForm.user)
         var param = []
-        this.addUserForm.user.forEach(item => {
+        this.addUserForm.user.forEach((item) => {
           var temp = {
             id: item,
             roleCode: this.selectedRoleCode
@@ -294,32 +304,103 @@ export default {
           param.push(temp)
         })
 
-        this.$axios.post(settingApi.batchUpdateUserRole, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        }).then(res => {
-          if (res.data.code === 0) {
-            this.getUserList()
+        this.$axios
+          .post(settingApi.batchUpdateUserRole, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.getUserList()
+              Notification({
+                title: '提示',
+                message: '添加成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
+
             Notification({
               title: '提示',
-              message: '添加成功',
-              type: 'success',
+              message: '添加失败',
+              type: 'warning',
               duration: 5 * 1000
             })
-          }
-        })
+          })
       })
     },
 
     // 新建角色
     newRole () {
-      this.showNewRole = true
+      this.$axios.post(settingApi.getMenuTree).then((res) => {
+        if (res.data.code === 0) {
+          var temp = res.data.data
+          // 一级
+          temp.forEach(item => {
+            if (item.children) {
+              if (item.children.length <= 0) {
+                item.children = null
+              } else {
+                // 二级
+                var temp2 = item.children
+                temp2.forEach(item2 => {
+                  if (item2.children) {
+                    if (item2.children.length <= 0) {
+                      item2.children = null
+                    } else {
+                      // 三级
+                      var temp3 = item2.children
+                      temp3.forEach(item3 => {
+                        if (item3.children) {
+                          if (item3.children.length <= 0) {
+                            item3.children = null
+                          }
+                        }
+                      })
+                    }
+                  }
+                })
+              }
+            }
+          })
+          this.permissionOptions = temp
+          this.showNewRole = true
+        }
+      })
     },
-
     // 新建角色-保存
-    newRoleConfirm () {
+    async newRoleConfirm () {
       this.$refs.newRoleFormRef.validate(async (valid) => {
         if (!valid) return
         this.showNewRole = false
+
+        var param = {
+          roleName: this.newRoleForm.name,
+          roleCode: this.newRoleForm.tag,
+          menuIds: this.newRoleForm.permission,
+          roleDescribe: this.newRoleForm.message
+        }
+        this.$axios.post(settingApi.addRole, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        }).then(res => {
+          if (res.data.code === 0) {
+            this.getRoleList()
+            Notification({
+              title: '提示',
+              message: '新建角色成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+            return
+          }
+
+          Notification({
+            title: '提示',
+            message: '新建角色失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+        })
       })
     }
   }
@@ -552,6 +633,14 @@ export default {
         border-bottom-color: #3688b1;
       }
     }
+  }
+}
+
+.cascaderStyle {
+  width: 300px;
+  /deep/.el-cascader__search-input {
+    background: transparent;
+    color: white;
   }
 }
 </style>
