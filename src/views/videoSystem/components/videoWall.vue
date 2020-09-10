@@ -83,6 +83,7 @@
                 </div>
               </div>
             </div>
+             <img src="../../../assets/images/AR/X.png" @click="showRealPolice=false">
           </div>
           <!-- 标签弹框 -->
           <div class="tagInfo"  @dblclick.stop="stopEvent"  v-show="showTagInfo">
@@ -902,6 +903,12 @@ export default {
               }
             }
           }
+        }
+        >img{
+          position: absolute;
+          right:18px;
+          top:18px;
+          cursor: pointer;
         }
       }
       .tagInfo {
