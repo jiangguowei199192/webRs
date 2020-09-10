@@ -50,7 +50,7 @@
               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
             </a>
             <template v-if="showAR">
-              <a @mouseenter="showActive(5)" @mouseleave="showActive(0)" title="标签">
+              <a @mouseenter="showActive(5)" @mouseleave="showActive(0)" title="标签" @click="showTagInfo=!showTagInfo">
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
               </a>
@@ -84,8 +84,25 @@
               </div>
             </div>
           </div>
+          <!-- 标签弹框 -->
+          <div class="tagInfo"  @dblclick.stop="stopEvent"  v-show="showTagInfo">
+            <div>
+              <img src="../../../assets/images/AR/high.png" alt />
+              <p>高点监控</p>
+            </div>
+            <div>
+              <img src="../../../assets/images/AR/building.png" alt />
+              <p>建筑大厦</p>
+            </div>
+            <div>
+              <img src="../../../assets/images/AR/river.png" alt />
+              <p>河流</p>
+            </div>
+            <img src="../../../assets/images/AR/X.png" alt="" @click="showTagInfo=false">
+          </div>
         </div>
       </div>
+      <!-- 视频图标及标签 -->
       <div class="info">
         <span></span>
         <span>{{videoInfo.parentLabel}}</span>
@@ -204,6 +221,7 @@ export default {
       settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
       curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
       showMarkForm: false,
+      showTagInfo: false, // 标签弹框 默认不显示
       ruleForm: {
         tagName: '',
         tagType: ''
@@ -635,7 +653,7 @@ export default {
           console.dir(params)
           this.changeViewVideo(params)
           break
-          // 加号
+        // 加号
         case 999:
           if (this.curSelectedIcon === 0) {
             // 变倍+
@@ -649,7 +667,7 @@ export default {
           console.dir(params)
           this.changeViewVideo(params)
           break
-          // 减号
+        // 减号
         case 9999:
           if (this.curSelectedIcon === 0) {
             // 变倍-
@@ -725,7 +743,7 @@ export default {
           // 左上
           params.cmd_type = 32
           break
-          // 加号
+        // 加号
         case 999:
           if (this.curSelectedIcon === 0) {
             // 变倍+
@@ -884,6 +902,30 @@ export default {
               }
             }
           }
+        }
+      }
+      .tagInfo {
+        position: absolute;
+        bottom: 114px;
+        left: 924px;
+        width: 338px;
+        height: 126px;
+        background: url(../../../assets/images/AR/tag_bg.png) no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: text;
+        >div{
+          text-align: center;
+        }
+        div:nth-child(2){
+          margin:0 20px;
+        }
+        >img{
+          position: absolute;
+          top:15px;
+          right:14px;
+          cursor: pointer;
         }
       }
       //   div.pic {
@@ -1203,7 +1245,8 @@ export default {
         background: url(../../../assets/images/operate/up.png) no-repeat center;
       }
       div:nth-child(1):hover {
-        background: url(../../../assets/images/operate/up_selected.png) no-repeat center;
+        background: url(../../../assets/images/operate/up_selected.png)
+          no-repeat center;
       }
       div:nth-child(2) {
         left: 76%;
@@ -1213,8 +1256,8 @@ export default {
           center;
       }
       div:nth-child(2):hover {
-        background: url(../../../assets/images/operate/right_up_selected.png) no-repeat
-          center;
+        background: url(../../../assets/images/operate/right_up_selected.png)
+          no-repeat center;
       }
       div:nth-child(3) {
         left: 88%;
@@ -1224,8 +1267,8 @@ export default {
           center;
       }
       div:nth-child(3):hover {
-        background: url(../../../assets/images/operate/right_selected.png) no-repeat
-          center ;
+        background: url(../../../assets/images/operate/right_selected.png)
+          no-repeat center;
       }
       div:nth-child(4) {
         left: 78%;
@@ -1234,9 +1277,9 @@ export default {
         background: url(../../../assets/images/operate/right_bottom.png)
           no-repeat center;
       }
-        div:nth-child(4):hover {
-        background: url(../../../assets/images/operate/right_bottom_selected.png) no-repeat
-          center;
+      div:nth-child(4):hover {
+        background: url(../../../assets/images/operate/right_bottom_selected.png)
+          no-repeat center;
       }
       div:nth-child(5) {
         left: 52%;
@@ -1246,8 +1289,8 @@ export default {
           center;
       }
       div:nth-child(5):hover {
-        background: url(../../../assets/images/operate/down_selected.png) no-repeat
-          center;
+        background: url(../../../assets/images/operate/down_selected.png)
+          no-repeat center;
       }
       div:nth-child(6) {
         left: 26%;
@@ -1256,9 +1299,9 @@ export default {
         background: url(../../../assets/images/operate/left_down.png) no-repeat
           center;
       }
-     div:nth-child(6):hover {
-        background: url(../../../assets/images/operate/left_down_selected.png) no-repeat
-          center;
+      div:nth-child(6):hover {
+        background: url(../../../assets/images/operate/left_down_selected.png)
+          no-repeat center;
       }
       div:nth-child(7) {
         left: 14%;
@@ -1268,8 +1311,8 @@ export default {
           center;
       }
       div:nth-child(7):hover {
-        background: url(../../../assets/images/operate/left_selected.png) no-repeat
-          center;
+        background: url(../../../assets/images/operate/left_selected.png)
+          no-repeat center;
       }
       div:nth-child(8) {
         left: 25%;
@@ -1279,8 +1322,8 @@ export default {
           center;
       }
       div:nth-child(8):hover {
-        background: url(../../../assets/images/operate/left_up_selected.png) no-repeat
-          center;
+        background: url(../../../assets/images/operate/left_up_selected.png)
+          no-repeat center;
       }
     }
     .extra {
