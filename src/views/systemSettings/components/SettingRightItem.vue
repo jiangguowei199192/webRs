@@ -14,7 +14,7 @@
       ></i>
     </div>
 
-    <el-dialog title="补充信息" :visible.sync="showExtraInfo" width="30%" class="dialogStyle">
+    <el-dialog title="补充信息" :visible.sync="showExtraInfo" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="extraInfoRef" :model="extraInfoForm" :rules="extraInfoRules">
         <el-form-item prop="orgName">
           <!-- <el-input v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input> -->
@@ -35,7 +35,7 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="头像" :visible.sync="showUploadIcon" width="30%" class="dialogStyle">
+    <el-dialog title="头像" :visible.sync="showUploadIcon" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <div style="text-align:center;" class="uploadDiv">
         <el-upload
           class="avatar-uploader"
@@ -58,7 +58,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="我的信息" :visible.sync="showMyInfo" width="30%" class="dialogStyle">
+    <el-dialog title="我的信息" :visible.sync="showMyInfo" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="myInfoFormRef" :model="myInfoForm" label-width="80px" :rules="myInfoRules">
         <!-- <el-form-item
           v-for="(item, index) in myInfoForm.domains" :key="index"
@@ -116,6 +116,8 @@ export default {
   },
   data () {
     return {
+      clickfalse: false,
+
       showExtraInfo: false,
       extraInfoForm: {
         orgName: this.userDetail.orgName,

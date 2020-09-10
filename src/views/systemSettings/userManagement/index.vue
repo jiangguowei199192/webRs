@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <el-dialog :title="newUserTitle" :visible.sync="showNewUser" width="30%" class="dialogStyle">
+    <el-dialog :title="newUserTitle" :visible.sync="showNewUser" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="newUserFormRef" :model="newUserForm" label-width="80px" :rules="newUserRules">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="newUserForm.username"></el-input>
@@ -142,7 +142,7 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="重置密码" :visible.sync="showResetPassword" width="30%" class="dialogStyle">
+    <el-dialog title="重置密码" :visible.sync="showResetPassword" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form
         ref="resetPasswordFormRef"
         :model="resetPasswordForm"
@@ -182,6 +182,7 @@ export default {
       showMorePopover: false, // 展示更多弹窗
       showNewUser: false, // 新建用户弹窗
       showResetPassword: false, // 重置密码弹窗
+      clickfalse: false,
 
       pageData: {
         total: 0, // 总条目数
