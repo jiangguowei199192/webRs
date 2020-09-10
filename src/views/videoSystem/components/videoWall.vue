@@ -921,6 +921,11 @@ export default {
         div:nth-child(2){
           margin:0 20px;
         }
+        div:nth-child(2),div:nth-child(3){
+          img{
+            margin:5px 0;
+          }
+        }
         >img{
           position: absolute;
           top:15px;
