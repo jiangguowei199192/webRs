@@ -1194,6 +1194,7 @@ export default {
         height: 36px;
         position: absolute;
         cursor: pointer;
+        z-index: 10000;
       }
       div:nth-child(1) {
         left: 50%;
@@ -1201,11 +1202,18 @@ export default {
         transform: translateX(-50%);
         background: url(../../../assets/images/operate/up.png) no-repeat center;
       }
+      div:nth-child(1):hover {
+        background: url(../../../assets/images/operate/up_selected.png) no-repeat center;
+      }
       div:nth-child(2) {
         left: 76%;
         top: 30px;
         transform: translateX(-50%);
         background: url(../../../assets/images/operate/right_up.png) no-repeat
+          center;
+      }
+      div:nth-child(2):hover {
+        background: url(../../../assets/images/operate/right_up_selected.png) no-repeat
           center;
       }
       div:nth-child(3) {
@@ -1215,6 +1223,10 @@ export default {
         background: url(../../../assets/images/operate/right.png) no-repeat
           center;
       }
+      div:nth-child(3):hover {
+        background: url(../../../assets/images/operate/right_selected.png) no-repeat
+          center ;
+      }
       div:nth-child(4) {
         left: 78%;
         top: 62%;
@@ -1222,11 +1234,19 @@ export default {
         background: url(../../../assets/images/operate/right_bottom.png)
           no-repeat center;
       }
+        div:nth-child(4):hover {
+        background: url(../../../assets/images/operate/right_bottom_selected.png) no-repeat
+          center;
+      }
       div:nth-child(5) {
         left: 52%;
         top: 78%;
         transform: translateX(-50%);
         background: url(../../../assets/images/operate/down.png) no-repeat
+          center;
+      }
+      div:nth-child(5):hover {
+        background: url(../../../assets/images/operate/down_selected.png) no-repeat
           center;
       }
       div:nth-child(6) {
@@ -1236,6 +1256,10 @@ export default {
         background: url(../../../assets/images/operate/left_down.png) no-repeat
           center;
       }
+     div:nth-child(6):hover {
+        background: url(../../../assets/images/operate/left_down_selected.png) no-repeat
+          center;
+      }
       div:nth-child(7) {
         left: 14%;
         top: 50%;
@@ -1243,11 +1267,19 @@ export default {
         background: url(../../../assets/images/operate/left.png) no-repeat
           center;
       }
+      div:nth-child(7):hover {
+        background: url(../../../assets/images/operate/left_selected.png) no-repeat
+          center;
+      }
       div:nth-child(8) {
         left: 25%;
         top: 16%;
         transform: translateX(-50%);
         background: url(../../../assets/images/operate/left_up.png) no-repeat
+          center;
+      }
+      div:nth-child(8):hover {
+        background: url(../../../assets/images/operate/left_up_selected.png) no-repeat
           center;
       }
     }
