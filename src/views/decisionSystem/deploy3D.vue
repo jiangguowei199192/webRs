@@ -24,10 +24,31 @@
           v-for="(item,index) in curModels"
           :key="index"
           class="outer"
-          @click="ButtonDown(1,item)"
+          @click="ButtonDown(1,item,index)"
+          :class="{active:curModelIndex===index}"
+          :title="item.name"
         >
           <div :style="{background: 'url('+ item.image +') no-repeat'}"></div>
         </div>
+      </div>
+    </div>
+    <div class="edit" v-show="editMode">
+      <div class="tabList">
+        <div
+          v-for="(item,index) in 4"
+          :key="index"
+          :class="{active:editIndex==index}"
+          @click.stop="ButtonDown(5,index)"
+        ></div>
+      </div>
+      <div @click.stop="ButtonDown(6)">设定视角</div>
+      <div></div>
+      <div v-show="showViewDetail">
+        <span>经度: {{viewDetail.lon}}</span>
+        <span>纬度: {{viewDetail.lat}}</span>
+        <span>视高: {{viewDetail.alt}}</span>
+        <span>方向角: {{viewDetail.head}}°</span>
+        <span>俯仰角: {{viewDetail.pitch}}°</span>
       </div>
     </div>
     <div class="infoBox" v-show="showInfoBox" ref="infobox">
@@ -173,20 +194,25 @@ export default {
       isRotate: false, // 是否自动旋转
       num: 1, // 编号
       activeIndex: 0,
+      editIndex: 0,
+      showViewDetail: false, // 显示视角信息
+      curModelIndex: 1000, // 沙盘绘制模式下，选中模型索引
       configUrl: 'config/config.json',
       widgetUrl: 'config/widget.json',
       showPlotBox: false,
+      editMode: false, // 是否编辑模式
       isPlot: false, // 是否是沙盘绘制
       plotType: '',
       options: [], // 沙盘绘制选项
       curModels: [],
       showInfoBox: false,
-      showEditBox: false,
+      showEditBox: false, // 是否显示模型任务编辑框
       boxLeft: 0, // 任务编辑弹窗left
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       infoBox: { imgSrc: '' },
       editBox: { department: '天门敦', number: '1', task: '- -' },
+      viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       taskList: [
         '内政',
         '出枪掩护',
@@ -256,14 +282,16 @@ export default {
 
   methods: {
     tabTo (index) {
+      if (this.activeIndex === index) return
       this.activeIndex = index
+      this.showPlotBox = false
+      this.editMode = false
       if (this.activeIndex === 4) {
         this.showPlotBox = true
       } else if (this.activeIndex === 6) {
-        this.showPlotBox = false
         this.$refs.floorGuide.show(this.buildingInfos, 0)
-      } else {
-        this.showPlotBox = false
+      } else if (this.activeIndex === 7) {
+        this.editMode = true
       }
     },
 
@@ -349,13 +377,29 @@ export default {
       heading = 360 - heading
       heading = Cesium.Math.toRadians(heading)
       // 左上
-      const p1 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(-7, 2, 0), new Cesium.Cartesian3())
+      const p1 = Cesium.Matrix4.multiplyByPoint(
+        entity.modelMatrix,
+        new Cesium.Cartesian3(-7, 2, 0),
+        new Cesium.Cartesian3()
+      )
       // 右上
-      const p2 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(5, 2, 0), new Cesium.Cartesian3())
+      const p2 = Cesium.Matrix4.multiplyByPoint(
+        entity.modelMatrix,
+        new Cesium.Cartesian3(5, 2, 0),
+        new Cesium.Cartesian3()
+      )
       // 右下
-      const p3 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(5, -2, 0), new Cesium.Cartesian3())
+      const p3 = Cesium.Matrix4.multiplyByPoint(
+        entity.modelMatrix,
+        new Cesium.Cartesian3(5, -2, 0),
+        new Cesium.Cartesian3()
+      )
       // 左下
-      const p4 = Cesium.Matrix4.multiplyByPoint(entity.modelMatrix, new Cesium.Cartesian3(-7, -2, 0), new Cesium.Cartesian3())
+      const p4 = Cesium.Matrix4.multiplyByPoint(
+        entity.modelMatrix,
+        new Cesium.Cartesian3(-7, -2, 0),
+        new Cesium.Cartesian3()
+      )
       return {
         rotation: heading,
         p1: p1,
@@ -399,7 +443,13 @@ export default {
         const rect = this.viewer.entities.add({
           name: task.name,
           polygon: {
-            hierarchy: new Cesium.PolygonHierarchy([p.p1, p.p2, p.p3, p.p4, p.p1]),
+            hierarchy: new Cesium.PolygonHierarchy([
+              p.p1,
+              p.p2,
+              p.p3,
+              p.p4,
+              p.p1
+            ]),
             material: Cesium.Color.GREEN.withAlpha(0.5)
           }
         })
@@ -516,9 +566,12 @@ export default {
      *@param {Object} item
      *@param {Object} type 按钮类型
      */
-    ButtonDown (type, item) {
+    ButtonDown (type, item, index) {
+      if (!this.viewer) return
       // 停止测量
-      this.measureSurface.stopDraw()
+      if (this.measureSurface) {
+        this.measureSurface.stopDraw()
+      }
       this.showInfoBox = false
       if (this.isPlot && this.showEditBox) {
         this.$notify.warning({ title: '警告', message: '请先添加任务' })
@@ -528,10 +581,30 @@ export default {
         this.showEditBox = false
       }
       this.clearCurEntity()
-      if (type === 1) this.startPlot(item)
-      else if (type === 2) this.tabTo(item)
-      else if (type === 3) this.topToolClick(item)
-      else if (type === 4) this.autoRotate()
+
+      switch (type) {
+        case 1:
+          this.curModelIndex = index
+          this.startPlot(item)
+          break
+        case 2:
+          this.tabTo(item)
+          break
+        case 3:
+          this.topToolClick(item)
+          break
+        case 4:
+          this.autoRotate()
+          break
+        case 5:
+          this.editIndex = item
+          break
+        case 6:
+          this.setCameraView()
+          break
+        default:
+          break
+      }
     },
 
     /**
@@ -545,7 +618,13 @@ export default {
         if (r !== undefined) {
           if (show) {
             const p = this.getModelRectPosition(entity)
-            r.polygon.hierarchy = new Cesium.PolygonHierarchy([p.p1, p.p2, p.p3, p.p4, p.p1])
+            r.polygon.hierarchy = new Cesium.PolygonHierarchy([
+              p.p1,
+              p.p2,
+              p.p3,
+              p.p4,
+              p.p1
+            ])
           }
           r.show = show
         }
@@ -577,7 +656,7 @@ export default {
             me.viewer.scene,
             entity.position
           )
-
+          me.curModelIndex = 1000
           // 禁用drawControl编辑功能
           me.drawControl.hasEdit(false)
           const id = new Date().format('yyyy-MM-dd HH:mm:ss')
@@ -1062,6 +1141,7 @@ export default {
      *  平移相机
      */
     moveCamera (direction) {
+      if (!this.viewer) return
       switch (direction) {
         case 4:
           this.viewer.mars.keyboardRoam.startMoveForward()
@@ -1084,6 +1164,7 @@ export default {
      *  停止平移相机
      */
     stopMoveCamera (direction) {
+      if (!this.viewer) return
       switch (direction) {
         case 4:
           this.viewer.mars.keyboardRoam.stopMoveForward()
@@ -1115,6 +1196,7 @@ export default {
      *  旋转相机
      */
     rotateCamera (direction) {
+      if (!this.viewer) return
       this.moveInterval = setInterval(function () {
         me.viewer.mars.keyboardRoam.rotateCamera(direction)
       }, 50)
@@ -1125,6 +1207,7 @@ export default {
      *  @param {Boolen} in 是否放大
      */
     ZoomIn (isIn) {
+      if (!this.viewer) return
       var zoomIn = new mars3d.ZoomNavigation(this.viewer, isIn)
       zoomIn.activate()
     },
@@ -1135,7 +1218,9 @@ export default {
      */
     measureStart () {
       // 禁用drawControl编辑功能
-      if (this.drawControl) { this.drawControl.hasEdit(false) }
+      if (this.drawControl) {
+        this.drawControl.hasEdit(false)
+      }
       this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN)
     },
 
@@ -1144,7 +1229,9 @@ export default {
      */
     measureEnd () {
       // 开启drawControl编辑功能
-      if (this.drawControl) { this.drawControl.hasEdit(true) }
+      if (this.drawControl) {
+        this.drawControl.hasEdit(true)
+      }
       // 控制鼠标只取模型上的点，忽略地形上的点的拾取
       this.viewer.mars.onlyPickModelPosition = true
       this.handler.setInputAction(event => {
@@ -1197,6 +1284,7 @@ export default {
      *  @param {Boolen} terrain 测量长度、面积时标识是否贴地模式
      */
     measureLength (terrain) {
+      if (!this.measureSurface) return
       this.measureStart()
       this.measureSurface.measuerLength({
         terrain: terrain,
@@ -1216,11 +1304,13 @@ export default {
      *  @param {Boolen} terrain 测量长度、面积时标识是否贴地模式
      */
     measureArea (terrain) {
+      if (!this.measureSurface) return
       this.measureStart()
       this.measureSurface.measureArea({
         terrain: terrain,
         onEnd: this.measureEnd,
-        style: { // 可以自定义样式
+        style: {
+          // 可以自定义样式
           color: '#00A8FF',
           opacity: 0.25,
           outline: true,
@@ -1236,6 +1326,7 @@ export default {
      *  @param {Boolen} isSuper 是否三角测量
      */
     measureHeight (isSuper) {
+      if (!this.measureSurface) return
       this.measureStart()
       this.measureSurface.measureHeight({
         isSuper: isSuper,
@@ -1254,7 +1345,14 @@ export default {
      *  设置视角
      */
     setCameraView () {
-      // const view = mars3d.point.getCameraView(this.viewer, true)
+      this.showViewDetail = true
+      const view = mars3d.point.getCameraView(this.viewer, true)
+      this.viewDetail.lat = view.x
+      this.viewDetail.lon = view.y
+      this.viewDetail.alt = view.z
+      this.viewDetail.head = view.heading
+      this.viewDetail.pitch = view.pitch
+      console.log(view)
     },
 
     /**
@@ -1437,7 +1535,7 @@ export default {
       cursor: pointer;
       margin-right: 39px;
     }
-    .active {
+    div.active {
       transform: scale(1.2);
     }
     div:nth-child(1) {
@@ -1466,6 +1564,106 @@ export default {
     }
   }
 
+  .edit {
+    display: inline-block;
+    position: absolute;
+    background: url(../../assets/images/3d/edit-box.png) no-repeat;
+    width: 368px;
+    height: 690px;
+    left: 38px;
+    top: 50px;
+    .tabList {
+      margin-left: 70px;
+      margin-top: 30px;
+      display: flex;
+      align-items: flex-end;
+      div {
+        width: 37px;
+        height: 42px;
+        cursor: pointer;
+        margin-right: 22px;
+      }
+      div:nth-child(1) {
+        background: url(../../assets/images/3d/water-small.png) no-repeat;
+      }
+      div:nth-child(1).active {
+        background: url(../../assets/images/3d/water-small-s.png) no-repeat;
+        width: 46px;
+        height: 52px;
+      }
+      div:nth-child(2) {
+        background: url(../../assets/images/3d/fire-small.png) no-repeat;
+      }
+      div:nth-child(2).active {
+        background: url(../../assets/images/3d/fire-small-s.png) no-repeat;
+        width: 46px;
+        height: 52px;
+      }
+      div:nth-child(3) {
+        background: url(../../assets/images/3d/area-small.png) no-repeat;
+      }
+      div:nth-child(3).active {
+        background: url(../../assets/images/3d/area-small-s.png) no-repeat;
+        width: 46px;
+        height: 52px;
+      }
+      div:nth-child(4) {
+        background: url(../../assets/images/3d/vr-small.png) no-repeat;
+      }
+      div:nth-child(4).active {
+        background: url(../../assets/images/3d/vr-small-s.png) no-repeat;
+        width: 46px;
+        height: 52px;
+      }
+    }
+    > div:nth-child(2) {
+      display: inline-block;
+      position: absolute;
+      width: 108px;
+      height: 28px;
+      background: #209cdf;
+      font-size: 14px;
+      color: #ffffff;
+      text-align: center;
+      line-height: 28px;
+      left: 40px;
+      bottom: 75px;
+      cursor: pointer;
+    }
+    > div:nth-child(3) {
+      display: inline-block;
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: url(../../assets/images/3d/add.png) no-repeat;
+      right: 40px;
+      bottom: 69px;
+      cursor: pointer;
+    }
+    > div:nth-child(3):active {
+      background: url(../../assets/images/3d/add-click.png) no-repeat;
+    }
+    > div:nth-child(4) {
+      display: flex;
+      flex-wrap: wrap;
+      position: absolute;
+      left: 24px;
+      bottom: 8px;
+      span {
+        display: inline-block;
+        height: 22px;
+        background: #0a2549;
+        font-size: 10px;
+        color: #ffffff;
+        line-height: 22px;
+        width: 97px;
+        margin-right:10px;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+    }
+  }
+
   .plotBox {
     display: inline-block;
     position: absolute;
@@ -1480,6 +1678,14 @@ export default {
       display: flex;
       flex-wrap: wrap;
       padding-left: 24px;
+      .outer.active {
+        border: 2px solid rgba(255, 244, 100, 1);
+        background: none;
+      }
+      .outer:hover {
+        border: 2px solid rgba(255, 244, 100, 1);
+        background: none;
+      }
       .outer {
         background: url(../../assets/images/3d/box.png) no-repeat;
         width: 114px;
@@ -1559,8 +1765,6 @@ export default {
     height: 127px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;
     background-size: 100% 100% !important;
-    // bottom: 334px;
-    // right: 52px;
     position: absolute;
     box-sizing: border-box;
     font-size: 14px;
@@ -1854,10 +2058,10 @@ export default {
 
   @keyframes rotate {
     from {
-      transform: rotate(360deg) ;
+      transform: rotate(360deg);
     }
     to {
-      transform: rotate(0deg) ;
+      transform: rotate(0deg);
     }
   }
 
