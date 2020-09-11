@@ -45,12 +45,22 @@
               <img :src="capturePic" alt />
               <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
             </a>
-            <a @mouseenter="showActive(4)" @mouseleave="showActive(0)" title="图库">
+            <a
+              @mouseenter="showActive(4)"
+              @mouseleave="showActive(0)"
+              title="图库"
+              @click="showPicStorage=!showPicStorage"
+            >
               <img :src="photoPic" alt />
               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
             </a>
             <template v-if="showAR">
-              <a @mouseenter="showActive(5)" @mouseleave="showActive(0)" title="标签" @click="showTagInfo=!showTagInfo">
+              <a
+                @mouseenter="showActive(5)"
+                @mouseleave="showActive(0)"
+                title="标签"
+                @click="showTagInfo=!showTagInfo"
+              >
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
               </a>
@@ -64,7 +74,7 @@
               </a>
             </template>
           </div>
-          <!-- 实时警情 -->
+          <!-- 实时警情弹框 -->
           <div class="realPoliceInfo" v-show="showRealPolice" @dblclick.stop="stopEvent">
             <div class="title">实时警情</div>
             <div class="content webFsScroll">
@@ -83,10 +93,10 @@
                 </div>
               </div>
             </div>
-             <img src="../../../assets/images/AR/X.png" @click="showRealPolice=false">
+            <img src="../../../assets/images/AR/X.png" @click="showRealPolice=false" />
           </div>
           <!-- 标签弹框 -->
-          <div class="tagInfo"  @dblclick.stop="stopEvent"  v-show="showTagInfo">
+          <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showTagInfo">
             <div>
               <img src="../../../assets/images/AR/high.png" alt />
               <p>高点监控</p>
@@ -99,7 +109,40 @@
               <img src="../../../assets/images/AR/river.png" alt />
               <p>河流</p>
             </div>
-            <img src="../../../assets/images/AR/X.png" alt="" @click="showTagInfo=false">
+            <img src="../../../assets/images/AR/X.png" alt @click="showTagInfo=false" />
+          </div>
+          <!-- 图库弹框 -->
+          <div class="picStorage" @dblclick.stop="stopEvent" v-show="showPicStorage">
+            <!-- 关闭按钮 -->
+            <img src="../../../assets/images/AR/X.png" alt @click="showPicStorage=false" />
+            <div>
+              <span>起止时间：</span>
+              <el-date-picker
+                type="datetimerange"
+                v-model="dateRange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :append-to-body="false"
+              ></el-date-picker>
+            </div>
+            <div class="box">
+              <div class="item" v-for="(item,index) in 15" :key="index">
+                <img src="../../../assets/images/type_fire.png" width="123px" height="123px" />
+                <p>绿地中心检测目标</p>
+                <div>2020-09-11</div>
+              </div>
+            </div>
+            <el-pagination
+              background
+              layout="total,prev, pager, next"
+              :total="pageInfo.total"
+              class="tablePagination"
+              popper-class="pageSelect"
+              :page-size="pageInfo.pageSize"
+              @current-change="handleCurrentChange"
+              :current-page.sync="pageInfo.currentPage"
+            ></el-pagination>
           </div>
         </div>
       </div>
@@ -223,6 +266,13 @@ export default {
       curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
       showMarkForm: false,
       showTagInfo: false, // 标签弹框 默认不显示
+      showPicStorage: false, // 图库弹框 默认不显示
+      pageInfo: {
+        total: 1000,
+        currentPage: 2,
+        pageSize: 15
+      },
+      dateRange: '',
       ruleForm: {
         tagName: '',
         tagType: ''
@@ -786,6 +836,11 @@ export default {
             console.log('成功！')
           }
         })
+    },
+    // 获取当前页
+    handleCurrentChange (val) {
+      this.pageInfo.currentPage = val
+      console.log(`当前页: ${val}`)
     }
   },
   created () {}
@@ -904,10 +959,10 @@ export default {
             }
           }
         }
-        >img{
+        > img {
           position: absolute;
-          right:18px;
-          top:18px;
+          right: 18px;
+          top: 18px;
           cursor: pointer;
         }
       }
@@ -922,22 +977,82 @@ export default {
         align-items: center;
         justify-content: center;
         cursor: text;
-        >div{
+        > div {
           text-align: center;
         }
-        div:nth-child(2){
-          margin:0 20px;
+        div:nth-child(2) {
+          margin: 0 20px;
         }
-        div:nth-child(2),div:nth-child(3){
-          img{
-            margin:5px 0;
+        div:nth-child(2),
+        div:nth-child(3) {
+          img {
+            margin: 5px 0;
           }
         }
-        >img{
+        > img {
           position: absolute;
-          top:15px;
-          right:14px;
+          top: 15px;
+          right: 14px;
           cursor: pointer;
+        }
+      }
+      .picStorage {
+        position: absolute;
+        top: 94px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 800px;
+        height: 676px;
+        background: url(../../../assets/images/AR/pic_storage.png) no-repeat;
+        box-sizing: border-box;
+        padding: 26px 0px 24px 26px;
+        > img {
+          position: absolute;
+          top: 18px;
+          right: 25px;
+          cursor: pointer;
+        }
+        .el-date-editor {
+          .el-input__icon,
+          .el-range-separator {
+            line-height: 26px;
+          }
+        }
+        .el-picker-panel {
+          position: absolute !important;
+          width: 576px;
+          .el-picker-panel__icon-btn {
+            margin-top: 0;
+          }
+          button {
+            font-size: 14px;
+          }
+        }
+        .box {
+          margin-top: 24px;
+          display: flex;
+          flex-wrap: wrap;
+          .item {
+            width: 123px;
+            margin-right: 31px;
+            padding-bottom: 10px;
+            text-align: center;
+            font-size: 12px;
+            position: relative;
+            p {
+              margin-top: 9px;
+              margin-bottom: 15px;
+            }
+          }
+        }
+        .tablePagination {
+          margin-top: 5px;
+          text-align: end;
+          padding-right: 18px;
+          button.btn-next,
+          button.btn-prev {
+            background: transparent !important;
+          }
         }
       }
       //   div.pic {
