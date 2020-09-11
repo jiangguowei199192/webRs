@@ -29,7 +29,7 @@
               @mouseenter="deptTreeMouseEnter(data)"
               @mouseleave="deptTreeMouseLeave(data)"
             >
-              <span>{{ node.label }}</span>
+              <span>{{ node.label + (data.children ? ('[' + data.children.length + ']') : '') }}</span>
 
               <!-- <el-popover
                 placement="right"
