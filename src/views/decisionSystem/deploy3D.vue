@@ -495,15 +495,15 @@ export default {
           this.screenshot()
           break
         case 2:
-          this.viewer.mars.onlyPickModelPosition = false
+          // this.viewer.mars.onlyPickModelPosition = false
           this.measureLength(false)
           break
         case 3:
-          this.viewer.mars.onlyPickModelPosition = false
+          // this.viewer.mars.onlyPickModelPosition = false
           this.measureHeight(false)
           break
         case 4:
-          this.viewer.mars.onlyPickModelPosition = false
+          // this.viewer.mars.onlyPickModelPosition = false
           this.measureArea(false)
           break
         default:
@@ -517,6 +517,8 @@ export default {
      *@param {Object} type 按钮类型
      */
     ButtonDown (type, item) {
+      // 停止测量
+      this.measureSurface.stopDraw()
       this.showInfoBox = false
       if (this.isPlot && this.showEditBox) {
         this.$notify.warning({ title: '警告', message: '请先添加任务' })
@@ -1125,7 +1127,6 @@ export default {
     ZoomIn (isIn) {
       var zoomIn = new mars3d.ZoomNavigation(this.viewer, isIn)
       zoomIn.activate()
-      // this.measureHeight(false)
     },
 
     /**
@@ -1204,7 +1205,7 @@ export default {
           // 可以自定义样式
           lineType: 'solid',
           color: '#00A8FF',
-          width: 2,
+          width: 3,
           clampToGround: true // 是否贴地
         }
       })
@@ -1218,15 +1219,15 @@ export default {
       this.measureStart()
       this.measureSurface.measureArea({
         terrain: terrain,
-        onEnd: this.measureEnd
-        // style: { // 可以自定义样式
-        //   color: '#00fff2',
-        //   opacity: 0.4,
-        //   outline: true,
-        //   outlineColor: '#fafa5a',
-        //   outlineWidth: 1,
-        //   clampToGround: false // 贴地
-        // }
+        onEnd: this.measureEnd,
+        style: { // 可以自定义样式
+          color: '#00A8FF',
+          opacity: 0.25,
+          outline: true,
+          outlineColor: '#00A8FF',
+          outlineWidth: 2,
+          clampToGround: true // 贴地
+        }
       })
     },
 
@@ -1238,7 +1239,14 @@ export default {
       this.measureStart()
       this.measureSurface.measureHeight({
         isSuper: isSuper,
-        onEnd: this.measureEnd
+        onEnd: this.measureEnd,
+        style: {
+          // 可以自定义样式
+          lineType: 'solid',
+          color: '#00A8FF',
+          width: 3,
+          clampToGround: true // 是否贴地
+        }
       })
     },
 
@@ -1327,10 +1335,11 @@ export default {
         label: {
           // 可设置文本样式
           color: '#333333',
-          // font_family: '楷体',
+          font_family: '微软雅黑',
           font_size: 12,
-          background_color: '#ffffff' // 背景颜色
-          // background: false
+          background_color: '#ffffff',
+          background_opacity: 1,
+          background: true
         }
       })
 
