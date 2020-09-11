@@ -116,7 +116,8 @@
         <el-form-item label="所属组织" prop="organizations">
           <el-cascader
             placeholder=""
-            :options="organizationOptions"
+            :options="deptTree"
+            :props="deptProps"
             collapse-tags
             filterable
             class="cascaderStyle"
@@ -193,6 +194,11 @@ export default {
       userList: [],
       roleList: [],
       deptTree: [],
+      deptProps: {
+        label: 'deptName',
+        value: 'deptCode',
+        children: 'children'
+      },
 
       newUserTitle: '',
       newUserForm: {
@@ -206,7 +212,6 @@ export default {
         password: '123456',
         organizations: []
       },
-      organizationOptions: [],
       newUserRules: {
         username: [{ required: true, message: '请输入用户名' }],
         name: [{ required: true, message: '请输入姓名' }],
@@ -263,76 +268,104 @@ export default {
     },
     // 获取组织树
     async getDeptTree () {
-      const p = this
       this.$axios.post(loginApi.getDeptTree).then((res) => {
         if (res.data.code === 0) {
-          p.deptTree = res.data.data
-          p.handleDeptTree(res.data.data)
-        }
-      })
-    },
-    handleDeptTree (treeData) {
-      var data = []
-      treeData.forEach((item1) => {
-        var child1 = []
-        var temp1
-        if (item1.children) {
-          item1.children.forEach((item2) => {
-            var child2 = []
-            var temp2
-            if (item2.children) {
-              item2.children.forEach((item3) => {
-                var child3 = []
-                var temp3
-                if (item3.children) {
-                  item3.children.forEach((item4) => {
-                    var temp4 = {
-                      value: item4.deptCode,
-                      label: item4.deptName
+          var temp = res.data.data
+          // 一级
+          temp.forEach(item => {
+            if (item.children) {
+              if (item.children.length <= 0) {
+                item.children = null
+              } else {
+                // 二级
+                var temp2 = item.children
+                temp2.forEach(item2 => {
+                  if (item2.children) {
+                    if (item2.children.length <= 0) {
+                      item2.children = null
+                    } else {
+                      // 三级
+                      var temp3 = item2.children
+                      temp3.forEach(item3 => {
+                        if (item3.children) {
+                          if (item3.children.length <= 0) {
+                            item3.children = null
+                          }
+                        }
+                      })
                     }
-                    child3.push(temp4)
-                  })
-                  temp3 = {
-                    value: item3.deptCode,
-                    label: item3.deptName,
-                    children: child3
                   }
-                } else {
-                  temp3 = {
-                    value: item3.deptCode,
-                    label: item3.deptName
-                  }
-                }
-                child2.push(temp3)
-              })
-              temp2 = {
-                value: item2.deptCode,
-                label: item2.deptName,
-                children: child2
-              }
-            } else {
-              temp2 = {
-                value: item2.deptCode,
-                label: item2.deptName
+                })
               }
             }
-            child1.push(temp2)
           })
-          temp1 = {
-            value: item1.deptCode,
-            label: item1.deptName,
-            children: child1
-          }
-        } else {
-          temp1 = {
-            value: item1.deptCode,
-            label: item1.deptName
-          }
+          this.deptTree = temp
         }
-        data.push(temp1)
       })
-      this.organizationOptions = data
     },
+
+    // handleDeptTree (treeData) {
+    //   var data = []
+    //   treeData.forEach((item1) => {
+    //     var child1 = []
+    //     var temp1
+    //     if (item1.children) {
+    //       item1.children.forEach((item2) => {
+    //         var child2 = []
+    //         var temp2
+    //         if (item2.children) {
+    //           item2.children.forEach((item3) => {
+    //             var child3 = []
+    //             var temp3
+    //             if (item3.children) {
+    //               item3.children.forEach((item4) => {
+    //                 var temp4 = {
+    //                   value: item4.deptCode,
+    //                   label: item4.deptName
+    //                 }
+    //                 child3.push(temp4)
+    //               })
+    //               temp3 = {
+    //                 value: item3.deptCode,
+    //                 label: item3.deptName,
+    //                 children: child3
+    //               }
+    //             } else {
+    //               temp3 = {
+    //                 value: item3.deptCode,
+    //                 label: item3.deptName
+    //               }
+    //             }
+    //             child2.push(temp3)
+    //           })
+    //           temp2 = {
+    //             value: item2.deptCode,
+    //             label: item2.deptName,
+    //             children: child2
+    //           }
+    //         } else {
+    //           temp2 = {
+    //             value: item2.deptCode,
+    //             label: item2.deptName
+    //           }
+    //         }
+    //         child1.push(temp2)
+    //       })
+    //       temp1 = {
+    //         value: item1.deptCode,
+    //         label: item1.deptName,
+    //         children: child1
+    //       }
+    //     } else {
+    //       temp1 = {
+    //         value: item1.deptCode,
+    //         label: item1.deptName
+    //       }
+    //     }
+    //     data.push(temp1)
+    //   })
+    //   this.organizationOptions = data
+    // },
 
     // 分页页数改变
     currentPageChange () {
