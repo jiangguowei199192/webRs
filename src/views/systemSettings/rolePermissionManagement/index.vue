@@ -16,6 +16,7 @@
               node-key="roleCode"
               :current-node-key="selectedRoleCode"
               @node-click="roleTreeClick"
+              v-if="selectedRoleCode"
             ></el-tree>
           </div>
 
@@ -68,16 +69,28 @@
       </div>
     </div>
 
-    <el-dialog title="提示" :visible.sync="showDeleteTip" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
+    <el-dialog
+      title="提示"
+      :visible.sync="showDeleteTip"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
       <div
         style="height: 50px;"
-      >是否从{{ radio >= 0 ? userList[radio].roleName : '' }}角色中移除用户 {{ radio >= 0 ? userList[radio].username : '' }}</div>
+      >是否从{{ radio >= 0 ? userList[radio].roleName : '' }}角色中移除用户{{ radio >= 0 ? userList[radio].username : '' }}</div>
       <div style="height: 30px;">
         <el-button type="primary" @click="deleteTipSave" class="trueBtn">确 定</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog title="添加用户" :visible.sync="showAddUser" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
+    <el-dialog
+      title="添加用户"
+      :visible.sync="showAddUser"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
       <el-form ref="addUserFormRef" :model="addUserForm" label-width="80px" :rules="addUserRules">
         <el-form-item label="选择用户" prop="user">
           <el-select
@@ -102,7 +115,13 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="新建角色" :visible.sync="showNewRole" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
+    <el-dialog
+      title="新建角色"
+      :visible.sync="showNewRole"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
       <el-form ref="newRoleFormRef" :model="newRoleForm" label-width="80px" :rules="newRoleRules">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="newRoleForm.name"></el-input>
@@ -115,7 +134,7 @@
         </el-form-item>
         <el-form-item label="初始权限" prop="permission">
           <el-cascader
-            placeholder=""
+            placeholder
             :options="permissionOptions"
             :props="permissionProps"
             collapse-tags
@@ -138,7 +157,6 @@ import { Notification } from 'element-ui'
 export default {
   created () {
     this.getRoleList()
-    this.getUserList()
   },
   data () {
     var isNumber = (rule, value, callback) => {
@@ -162,7 +180,7 @@ export default {
         pageSize: 10, // 每页显示条目个数
         currentPage: 1 // 当前页
       },
-      selectedRoleCode: 2001,
+      selectedRoleCode: null,
 
       radio: -1,
       showDeleteTip: false,
@@ -194,7 +212,10 @@ export default {
       },
       newRoleRules: {
         name: [{ required: true, message: '请输入名称' }],
-        tag: [{ required: true, message: '请输入标识' }, { validator: isNumber, trigger: 'blur' }],
+        tag: [
+          { required: true, message: '请输入标识' },
+          { validator: isNumber, trigger: 'blur' }
+        ],
         permission: [{ required: true, message: '请选择权限' }]
       },
       permissionOptions: []
@@ -209,6 +230,8 @@ export default {
       this.$axios.post(settingApi.getRoleList).then((res) => {
         if (res.data.code === 0) {
           this.roleList = res.data.data
+          this.selectedRoleCode = res.data.data[0].roleCode
+          this.getUserList()
         }
       })
     },
@@ -250,7 +273,7 @@ export default {
 
       var param = {
         id: this.userList[this.radio].id,
-        roleCode: 0
+        roleCode: null
       }
       this.$axios
         .post(settingApi.updateUser, param, {
@@ -336,21 +359,21 @@ export default {
         if (res.data.code === 0) {
           var temp = res.data.data
           // 一级
-          temp.forEach(item => {
+          temp.forEach((item) => {
             if (item.children) {
               if (item.children.length <= 0) {
                 item.children = null
               } else {
                 // 二级
                 var temp2 = item.children
-                temp2.forEach(item2 => {
+                temp2.forEach((item2) => {
                   if (item2.children) {
                     if (item2.children.length <= 0) {
                       item2.children = null
                     } else {
                       // 三级
                       var temp3 = item2.children
-                      temp3.forEach(item3 => {
+                      temp3.forEach((item3) => {
                         if (item3.children) {
                           if (item3.children.length <= 0) {
                             item3.children = null
@@ -380,27 +403,29 @@ export default {
           menuIds: this.newRoleForm.permission,
           roleDescribe: this.newRoleForm.message
         }
-        this.$axios.post(settingApi.addRole, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        }).then(res => {
-          if (res.data.code === 0) {
-            this.getRoleList()
+        this.$axios
+          .post(settingApi.addRole, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.getRoleList()
+              Notification({
+                title: '提示',
+                message: '新建角色成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
+
             Notification({
               title: '提示',
-              message: '新建角色成功',
-              type: 'success',
+              message: '新建角色失败',
+              type: 'warning',
               duration: 5 * 1000
             })
-            return
-          }
-
-          Notification({
-            title: '提示',
-            message: '新建角色失败',
-            type: 'warning',
-            duration: 5 * 1000
           })
-        })
       })
     }
   }
@@ -531,6 +556,9 @@ export default {
   color: #23cefd;
   background-color: transparent;
   .el-tree-node {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     .el-tree-node__content {
       height: 35px;
       line-height: 35px;
@@ -540,9 +568,6 @@ export default {
     .el-tree-node:focus > .el-tree-node__content {
       color: #fff;
       background-color: rgba(255, 255, 255, 0.1);
-    }
-    .el-tree-node:focus > .el-tree-node__content {
-      border: 1px solid #23cefd;
     }
     .el-tree-node__expand-icon {
       color: #23cefd;

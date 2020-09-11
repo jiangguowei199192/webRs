@@ -10,6 +10,7 @@ export const settingApi = {
   batchUpdateUserRole: '/cloud-fms/sysuser/batchUpdateUserRole', // 设置：角色管理-批量添加用户
   getMenuTree: '/cloud-fms/menu/getMenuTree', // 设置：角色管理-新建角色-菜单列表
   addRole: '/cloud-fms/role/add', // 设置：角色管理-新建角色
+  batchUpdateUserDeptCode: '/cloud-fms/sysuser/batchUpdateUserDeptCode', // 设置：组织管理-添加用户
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图
