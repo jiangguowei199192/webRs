@@ -1006,6 +1006,7 @@ export default {
         background: url(../../../assets/images/AR/pic_storage.png) no-repeat;
         box-sizing: border-box;
         padding: 26px 0px 24px 26px;
+        cursor: text;
         > img {
           position: absolute;
           top: 18px;
