@@ -52,14 +52,14 @@
       </div>
       <div class="list webFsScroll">
         <div
-          v-for="(item,index) in 4"
+          v-for="(item,index) in waterList"
           :key="index"
           :class="{active:modelIndex==index}"
           @click.stop="ButtonDown(7,item,index)"
         >
-          <span :style="machineIcon(1)"></span>
+          <span :style="machineIcon(item.type)"></span>
           <span></span>
-          <span>111111111</span>
+          <span>{{item.name}}</span>
           <span></span>
         </div>
       </div>
@@ -225,6 +225,24 @@ export default {
       infoBox: { imgSrc: '' },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
+      waterList: [
+        {
+          type: 1,
+          name: '消防栓'
+        },
+        {
+          type: 2,
+          name: '水池水箱'
+        },
+        {
+          type: 3,
+          name: '水泵接合器'
+        },
+        {
+          type: 4,
+          name: '泵房'
+        }
+      ],
       taskList: [
         '内政',
         '出枪掩护',
@@ -1731,6 +1749,9 @@ export default {
       left: 40px;
       bottom: 75px;
       cursor: pointer;
+    }
+    > div:nth-child(2):active {
+      background: #00679d;
     }
     > div:nth-child(3) {
       position: absolute;
