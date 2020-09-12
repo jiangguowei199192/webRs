@@ -50,6 +50,19 @@
         <span>方向角: {{viewDetail.head}}°</span>
         <span>俯仰角: {{viewDetail.pitch}}°</span>
       </div>
+      <div class="list webFsScroll">
+        <div
+          v-for="(item,index) in 4"
+          :key="index"
+          :class="{active:modelIndex==index}"
+          @click.stop="ButtonDown(7,item,index)"
+        >
+          <span :style="machineIcon(1)"></span>
+          <span></span>
+          <span>111111111</span>
+          <span></span>
+        </div>
+      </div>
     </div>
     <div class="infoBox" v-show="showInfoBox" ref="infobox">
       <div class="close" @click="showInfoBox = false" />
@@ -167,9 +180,7 @@
     <div class="topTool">
       <span v-for="(item,index) in 7" :key="index" @click.stop="ButtonDown(3,index)"></span>
     </div>
-    <div class="rotate" :class="{active:isRotate}" @click.stop="ButtonDown(4)">
-      <span></span>
-    </div>
+    <div class="rotate" :class="{active:isRotate}" @click.stop="ButtonDown(4)"></div>
   </div>
 </template>
 
@@ -195,6 +206,7 @@ export default {
       num: 1, // 编号
       activeIndex: 0,
       editIndex: 0,
+      modelIndex: 1000,
       showViewDetail: false, // 显示视角信息
       curModelIndex: 1000, // 沙盘绘制模式下，选中模型索引
       configUrl: 'config/config.json',
@@ -292,6 +304,44 @@ export default {
         this.$refs.floorGuide.show(this.buildingInfos, 0)
       } else if (this.activeIndex === 7) {
         this.editMode = true
+      }
+    },
+
+    /**
+     *  匹配icon
+     */
+    machineIcon (type) {
+      switch (type) {
+        case 1:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/xiaofangshuan-edit.png') +
+              ') no-repeat'
+          }
+        case 2:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/watertank-edit.png') +
+              ') no-repeat'
+          }
+        case 3:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/pumpadapter-edit.png') +
+              ') no-repeat'
+          }
+        case 4:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/pumphouse-edit.png') +
+              ') no-repeat'
+          }
+        default:
+          break
       }
     },
 
@@ -601,6 +651,9 @@ export default {
           break
         case 6:
           this.setCameraView()
+          break
+        case 7:
+          this.modelIndex = index
           break
         default:
           break
@@ -1513,7 +1566,6 @@ export default {
   overflow: hidden;
 
   .bottom {
-    display: inline-block;
     position: absolute;
     bottom: 0px;
     width: 1536px;
@@ -1565,7 +1617,6 @@ export default {
   }
 
   .edit {
-    display: inline-block;
     position: absolute;
     background: url(../../assets/images/3d/edit-box.png) no-repeat;
     width: 368px;
@@ -1616,8 +1667,59 @@ export default {
         height: 52px;
       }
     }
+    .list {
+      box-sizing: border-box;
+      height: 432px;
+      margin-top: 29px;
+      margin-right: 8px;
+      overflow-y: auto;
+      padding: 0px 23px 0px 33px;
+      > div {
+        width: 299px;
+        height: 44px;
+        box-sizing: border-box;
+        background: #0a2549;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        span:nth-child(1) {
+          margin-right: 19px;
+          margin-left: 10px;
+          display: inline-block;
+          width: 28px;
+          height: 28px;
+        }
+        span:nth-child(2) {
+          display: inline-block;
+          width: 2px;
+          height: 42px;
+          background: url(../../assets/images/3d/rect.png) no-repeat;
+          margin-right: 27px;
+        }
+        span:nth-child(3) {
+          display: inline-block;
+          font-size: 16px;
+          color: #00cbff;
+          flex-grow: 1;
+        }
+        span:nth-child(4) {
+          cursor: pointer;
+          display: inline-block;
+          width: 15px;
+          height: 20px;
+          background: url(../../assets/images/3d/delete.png) no-repeat;
+          margin-left: 14px;
+          margin-right: 14px;
+        }
+      }
+      > div.active {
+        border: 1px solid #36a0f2;
+      }
+    }
+
     > div:nth-child(2) {
-      display: inline-block;
       position: absolute;
       width: 108px;
       height: 28px;
@@ -1631,7 +1733,6 @@ export default {
       cursor: pointer;
     }
     > div:nth-child(3) {
-      display: inline-block;
       position: absolute;
       width: 40px;
       height: 40px;
@@ -1657,7 +1758,7 @@ export default {
         color: #ffffff;
         line-height: 22px;
         width: 97px;
-        margin-right:10px;
+        margin-right: 10px;
         margin-bottom: 6px;
         text-align: center;
       }
@@ -1665,7 +1766,6 @@ export default {
   }
 
   .plotBox {
-    display: inline-block;
     position: absolute;
     background: url(../../assets/images/3d/plot-box.png) no-repeat;
     width: 290px;
@@ -1760,7 +1860,6 @@ export default {
   }
 
   .editBox {
-    display: inline-block;
     width: 285px;
     height: 127px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;
@@ -1868,7 +1967,6 @@ export default {
 
   .close {
     position: absolute;
-    display: inline-block;
     background: url(../../assets/images/3d/close.png) no-repeat;
     top: 6px;
     right: 6px;
@@ -1881,7 +1979,6 @@ export default {
     bottom: 334px;
     right: 52px;
     position: absolute;
-    display: inline-block;
     width: 270px;
     height: 330px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;
@@ -1943,7 +2040,6 @@ export default {
     bottom: 143px;
     width: 80px;
     height: 80px;
-    display: inline-block;
     background: url(../../assets/images/3d/move-bg.png) no-repeat;
     span {
       display: inline-block;
@@ -2024,35 +2120,64 @@ export default {
     position: absolute;
     display: flex;
     top: 20px;
-    right: 80px;
+    right: 30px;
+    width: 406px;
+    height: 44px;
+    background: url(../../assets/images/3d/toolbar-bg.png) no-repeat;
+    align-items: center;
     span {
       display: inline-block;
       cursor: pointer;
-      width: 40px;
-      height: 40px;
-      margin-right: 16px;
+      width: 30px;
+      height: 30px;
     }
     span:nth-child(1) {
       background: url(../../assets/images/3d/home.png) no-repeat;
-      margin-right: 72px;
+      margin-left: 16px;
     }
     span:nth-child(2) {
       background: url(../../assets/images/3d/snap.png) no-repeat;
+      margin-left: 59px;
     }
     span:nth-child(3) {
       background: url(../../assets/images/3d/measure-distance.png) no-repeat;
+      margin-left: 41px;
+    }
+    span:nth-child(3)::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      right: 251px;
+      display: inline-block;
+      width: 2px;
+      height: 37px;
+      background: url(../../assets/images/3d/tool-rect.png) no-repeat;
     }
     span:nth-child(4) {
       background: url(../../assets/images/3d/measure-height.png) no-repeat;
+      margin-left: 10px;
     }
     span:nth-child(5) {
       background: url(../../assets/images/3d/measure-area.png) no-repeat;
+      margin-left: 10px;
     }
     span:nth-child(6) {
       background: url(../../assets/images/3d/setting.png) no-repeat;
+      margin-left: 33px;
+    }
+    span:nth-child(6)::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      right: 105px;
+      display: inline-block;
+      width: 2px;
+      height: 37px;
+      background: url(../../assets/images/3d/tool-rect.png) no-repeat;
     }
     span:nth-child(7) {
       background: url(../../assets/images/3d/share.png) no-repeat;
+      margin-left: 13px;
     }
   }
 
@@ -2067,28 +2192,17 @@ export default {
 
   .rotate {
     position: absolute;
-    top: 20px;
-    right: 432px;
-    width: 40px;
-    height: 40px;
-    background: url(../../assets/images/3d/rotate.png) no-repeat;
-    padding: 8px;
-    box-sizing: border-box;
-    span {
-      display: inline-block;
-      cursor: pointer;
-      width: 24px;
-      height: 24px;
-      background: url(../../assets/images/3d/rotate-inner.png) no-repeat;
-    }
+    top: 27px;
+    right: 346px;
+    width: 30px;
+    height: 30px;
+    background: url(../../assets/images/3d/rotate-inner.png) no-repeat;
+    cursor: pointer;
   }
 
   .rotate.active {
-    background: url(../../assets/images/3d/start-rotate.png) no-repeat;
-    span {
-      //动画名称 动画时间 运动曲线 何时开始 播放次数
-      animation: rotate 10s linear 0s infinite;
-    }
+    //动画名称 动画时间 运动曲线 何时开始 播放次数
+    animation: rotate 10s linear 0s infinite;
   }
 }
 </style>
