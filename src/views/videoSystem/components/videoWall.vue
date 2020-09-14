@@ -1264,6 +1264,9 @@ export default {
           button.btn-prev {
             background: transparent !important;
           }
+          .btn-prev{
+            margin-right:0;
+          }
         }
       }
       //   div.pic {
