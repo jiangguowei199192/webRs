@@ -42,7 +42,24 @@
         ></div>
       </div>
       <div @click.stop="ButtonDown(6)">设定视角</div>
-      <div></div>
+      <div class="add" slot="reference" v-show="editIndex!==1&& editIndex!==0"></div>
+      <el-popover
+        placement="right"
+        trigger="click"
+        popper-class="editPopover"
+        v-model="editPopover"
+      >
+        <div class="addList">
+          <span v-show="editIndex === 0"></span>
+          <span v-show="editIndex === 0"></span>
+          <span v-show="editIndex === 0"></span>
+          <span v-show="editIndex === 0"></span>
+          <span v-show="editIndex === 1"></span>
+          <span v-show="editIndex === 1"></span>
+        </div>
+        <div class="add" slot="reference" v-show="editIndex!==2&& editIndex!==3"></div>
+        <div class="close" @click="editPopover = false" />
+      </el-popover>
       <div v-show="showViewDetail">
         <span>经度: {{viewDetail.lon}}</span>
         <span>纬度: {{viewDetail.lat}}</span>
@@ -66,7 +83,8 @@
     </div>
     <div class="infoBox" v-show="showInfoBox" ref="infobox">
       <div class="close" @click="showInfoBox = false" />
-      <img class="img" :src="infoBox.imgSrc" />
+      <img :src="infoBox.imgSrc" />
+      <span class="export"></span>
       <span class="title">{{infoBox.label}}</span>
       <div class="decorate"></div>
       <div class="detail">
@@ -196,7 +214,7 @@ import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
 var gltfEdit = window.gltfEdit
-const serverUrl = 'http://172.16.16.112:9000/mapdata'
+const serverUrl = 'http://172.16.16.101:9000/mapdata'
 let me
 export default {
   // 所有cesium和mars3d对象 都不要绑定到data
@@ -222,6 +240,7 @@ export default {
       boxLeft: 0, // 任务编辑弹窗left
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
+      editPopover: false, // 编辑模式Popover是否显示
       infoBox: { imgSrc: '' },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
@@ -306,6 +325,12 @@ export default {
     plotType (val) {
       if (this.options.length > 0 && val >= 0 && val < this.options.length) {
         this.curModels = this.options[val].list
+      }
+    },
+
+    editIndex (val) {
+      if (val !== 0 && val !== 1) {
+        this.editPopover = false
       }
     }
   },
@@ -1188,6 +1213,7 @@ export default {
 
       if (this.showEditBox) {
         this.showEditBox = false
+        this.showPopover = false
       }
       this.clearCurEntity()
       this.showInfoBox = false
@@ -1753,7 +1779,7 @@ export default {
     > div:nth-child(2):active {
       background: #00679d;
     }
-    > div:nth-child(3) {
+    .add {
       position: absolute;
       width: 40px;
       height: 40px;
@@ -1762,7 +1788,7 @@ export default {
       bottom: 69px;
       cursor: pointer;
     }
-    > div:nth-child(3):active {
+    .add:active {
       background: url(../../assets/images/3d/add-click.png) no-repeat;
     }
     > div:nth-child(4) {
@@ -2006,10 +2032,21 @@ export default {
     padding: 0px 20px;
     box-sizing: border-box;
     text-align: center;
-    .img {
+
+    > img {
       margin-top: 27px;
       width: 230px;
       height: 129px;
+    }
+    .export {
+      cursor: pointer;
+      display: inline-block;
+      top: 134px;
+      right: 20px;
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: url(../../assets/images/3d/export.png) no-repeat;
     }
     .title {
       display: inline-block;
