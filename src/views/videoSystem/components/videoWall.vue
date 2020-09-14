@@ -68,7 +68,12 @@
                 <img :src="searchPic" alt />
                 <img v-show="active === 6" class="hide_tab" :src="searchSelectedPic" />
               </a>
-              <a @mouseenter="showActive(7)" @mouseleave="showActive(0)" title="设置">
+              <a
+                @mouseenter="showActive(7)"
+                @mouseleave="showActive(0)"
+                title="设置"
+                @click="showSetting=!showSetting"
+              >
                 <img :src="settingPic" title="设置" alt />
                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
               </a>
@@ -142,6 +147,78 @@
               :page-size="pageInfo.pageSize"
               @current-change="handleCurrentChange"
               :current-page.sync="pageInfo.currentPage"
+            ></el-pagination>
+          </div>
+          <!-- 设置弹框 -->
+          <div class="settingInfo" v-show="showSetting" @dblclick.stop="stopEvent">
+            <div class="settingTitle">标签设置</div>
+            <img src="../../../assets/images/AR/X.png" alt @click="showSetting=false" />
+            <div class="operateBox">
+              <div>
+                <span>标签名称：</span>
+                <el-input style="width:140px;" v-model.trim="tagName" placeholder="请输入标签名称"></el-input>
+              </div>
+              <div style="margin-left:44px;">
+                <span>标签类型：</span>
+                <el-select
+                  style="width:140px"
+                  v-model="tagType"
+                  placeholder="请选择"
+                  :popper-append-to-body="false"
+                  popper-class="selectStyle"
+                >
+                  <el-option
+                    v-for="item in tagArray"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </div>
+              <br />
+              <div style="margin-top:14px;">
+                <span>设备名称：</span>
+                <el-input style="width:140px;" v-model.trim="deviceName" placeholder="请输入设备名称"></el-input>
+              </div>
+              <div style="margin-left:44px; margin-top:14px;">
+                <span>启用状态：</span>
+                <el-select
+                  style="width:140px"
+                  v-model="status"
+                  placeholder="请选择"
+                  :popper-append-to-body="false"
+                  popper-class="selectStyle"
+                >
+                  <!-- <el-option
+                    v-for="item in tagArray"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>-->
+                  <el-option label="启用" value="1"></el-option>
+                  <el-option label="禁用" value="0"></el-option>
+                </el-select>
+              </div>
+              <div class="icon">
+                <img src="../../../assets/images/AR/search_icon.png" alt />
+                <img src="../../../assets/images/AR/refresh.png" alt />
+                <img src="../../../assets/images/AR/down.png" alt />
+                <img src="../../../assets/images/AR/more.png" alt />
+              </div>
+            </div>
+            <el-table :data="tableData" style="width: 100%;margin-top:17px;" :stripe="true">
+              <el-table-column prop="date" label="日期" width="180" align="center"></el-table-column>
+              <el-table-column prop="name" label="姓名" width="180" align="center"></el-table-column>
+              <el-table-column prop="address" label="地址" align="center"></el-table-column>
+            </el-table>
+            <el-pagination
+             :append-to-body="false"
+              class="tablePagination"
+              background
+              layout="total, prev, pager, next"
+              popper-class="pageSelect"
+              :page-size="5"
+               :total="1000">
             ></el-pagination>
           </div>
         </div>
@@ -267,6 +344,60 @@ export default {
       showMarkForm: false,
       showTagInfo: false, // 标签弹框 默认不显示
       showPicStorage: false, // 图库弹框 默认不显示
+      showSetting: false, // 设置弹框
+      tagName: '', // 标签名称
+      deviceName: '', // 设备名称
+      tagType: '', // 标签类型
+      tagArray: [
+        {
+          value: '选项1',
+          label: '黄金糕'
+        },
+        {
+          value: '选项2',
+          label: '双皮奶'
+        },
+        {
+          value: '选项3',
+          label: '蚵仔煎'
+        },
+        {
+          value: '选项4',
+          label: '龙须面'
+        },
+        {
+          value: '选项5',
+          label: '北京烤鸭'
+        }
+      ],
+      status: '0', // 启用类型
+      tableData: [
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1517 弄'
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1519 弄'
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄'
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄'
+        }
+      ],
       pageInfo: {
         total: 1000,
         currentPage: 2,
@@ -1050,6 +1181,85 @@ export default {
           margin-top: 5px;
           text-align: end;
           padding-right: 18px;
+          button.btn-next,
+          button.btn-prev {
+            background: transparent !important;
+          }
+        }
+      }
+      .settingInfo {
+        position: absolute;
+        top: 170px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 690px;
+        height: 440px;
+        cursor: text;
+        background: url(../../../assets/images/AR/setting_bg.png) no-repeat;
+        box-sizing: border-box;
+        padding: 16px 20px;
+        .settingTitle {
+          width: 202px;
+          height: 45px;
+          background: url(../../../assets/images/device/info-title.png)
+            no-repeat;
+          padding-left: 26px;
+          line-height: 36px;
+          font-size: 16px;
+        }
+        > img {
+          position: absolute;
+          top: 18px;
+          right: 25px;
+          cursor: pointer;
+        }
+        .operateBox {
+          font-size: 14px;
+          font-weight: 400;
+          // color: #1eb0fc;
+          position: relative;
+          > div {
+            display: inline-block;
+          }
+          div.icon {
+            position: relative;
+            top: 10px;
+            left: 35px;
+            > img {
+              margin-right: 15px;
+            }
+          }
+          .selectStyle {
+            position: absolute !important;
+          }
+        }
+        .el-table thead tr th {
+          font-size: 14px;
+          font-family: Source Han Sans CN;
+          font-weight: 400;
+          color: #ffffff;
+          background: #3688b1;
+          padding: 1px 0 !important;
+        }
+        .el-table__row {
+          height: 38px;
+          background: #326680;
+          td div.cell {
+            color: #fff;
+          }
+          td {
+            padding: 7px 0 !important;
+          }
+        }
+        .el-table__row.el-table__row--striped td {
+          background: #3688b1;
+        }
+        .el-table--enable-row-hover .el-table__body tr:hover > td {
+          background-color: #27354d !important;
+          opacity: 0.5;
+        }
+        .tablePagination {
+          text-align: right;
           button.btn-next,
           button.btn-prev {
             background: transparent !important;
