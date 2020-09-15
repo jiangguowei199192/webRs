@@ -35,7 +35,7 @@
             <a
               @mouseenter="showActive(2)"
               @mouseleave="showActive(0)"
-              @click="showRealPolice=!showRealPolice"
+              @click="showCurindex=1"
               title="火情报警"
             >
               <img :src="alarmPic" alt />
@@ -49,7 +49,7 @@
               @mouseenter="showActive(4)"
               @mouseleave="showActive(0)"
               title="图库"
-              @click="showPicStorage=!showPicStorage"
+              @click="showCurindex=3"
             >
               <img :src="photoPic" alt />
               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
@@ -59,7 +59,7 @@
                 @mouseenter="showActive(5)"
                 @mouseleave="showActive(0)"
                 title="标签"
-                @click="showTagInfo=!showTagInfo"
+                @click="showCurindex=4"
               >
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
@@ -72,7 +72,7 @@
                 @mouseenter="showActive(7)"
                 @mouseleave="showActive(0)"
                 title="设置"
-                @click="showSetting=!showSetting"
+                @click="showCurindex=6"
               >
                 <img :src="settingPic" title="设置" alt />
                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
@@ -80,7 +80,7 @@
             </template>
           </div>
           <!-- 实时警情弹框 -->
-          <div class="realPoliceInfo" v-show="showRealPolice" @dblclick.stop="stopEvent">
+          <div class="realPoliceInfo" v-show="showCurindex==1" @dblclick.stop="stopEvent">
             <div class="title">实时警情</div>
             <div class="content webFsScroll">
               <div class="item" v-for="(item,index) in 9" :key="index">
@@ -98,10 +98,10 @@
                 </div>
               </div>
             </div>
-            <img src="../../../assets/images/AR/X.png" @click="showRealPolice=false" />
+            <img src="../../../assets/images/AR/X.png" @click="showCurindex=1000" />
           </div>
           <!-- 标签弹框 -->
-          <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showTagInfo">
+          <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showCurindex==4">
             <div>
               <img src="../../../assets/images/AR/high.png" alt />
               <p>高点监控</p>
@@ -117,9 +117,9 @@
             <img src="../../../assets/images/AR/X.png" alt @click="showTagInfo=false" />
           </div>
           <!-- 图库弹框 -->
-          <div class="picStorage" @dblclick.stop="stopEvent" v-show="showPicStorage">
+          <div class="picStorage" @dblclick.stop="stopEvent" v-show="showCurindex==3">
             <!-- 关闭按钮 -->
-            <img src="../../../assets/images/AR/X.png" alt @click="showPicStorage=false" />
+            <img src="../../../assets/images/AR/X.png" alt @click="showCurindex==1000" />
             <div>
               <span>起止时间：</span>
               <el-date-picker
@@ -150,9 +150,9 @@
             ></el-pagination>
           </div>
           <!-- 设置弹框 -->
-          <div class="settingInfo" v-show="showSetting" @dblclick.stop="stopEvent">
+          <div class="settingInfo" v-show="showCurindex==6" @dblclick.stop="stopEvent">
             <div class="settingTitle">标签设置</div>
-            <img src="../../../assets/images/AR/X.png" alt @click="showSetting=false" />
+            <img src="../../../assets/images/AR/X.png" alt @click="showCurindex=1000" />
             <div class="operateBox">
               <div>
                 <span>标签名称：</span>
@@ -321,7 +321,7 @@ export default {
     return {
       active: '',
       showAR: false, // 显示AR
-      showRealPolice: false, // 显示实时警情
+      showCurindex: 1000, // 显示弹框
       arPic: require('@/assets/images/AR/ar.png'),
       arSelectedPic: require('@/assets/images/AR/ar_selected.png'),
 
@@ -344,9 +344,9 @@ export default {
       settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
       curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
       showMarkForm: false,
-      showTagInfo: false, // 标签弹框 默认不显示
-      showPicStorage: false, // 图库弹框 默认不显示
-      showSetting: false, // 设置弹框
+      // showTagInfo: false, // 标签弹框 默认不显示
+      // showPicStorage: false, // 图库弹框 默认不显示
+      // showSetting: false, // 设置弹框
       tagName: '', // 标签名称
       deviceName: '', // 设备名称
       tagType: '', // 标签类型
