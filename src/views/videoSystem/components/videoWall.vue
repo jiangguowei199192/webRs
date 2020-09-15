@@ -275,6 +275,7 @@
             :bShowLonLat="false"
             :bAutoLocate="false"
             :bDbClickStyle="true"
+            @fullscreenMapStyleChange="fullscreenMapStyleChange"
           ></gMap>
         </div>
       </div>
@@ -668,6 +669,10 @@ export default {
           tmpMap._map.updateSize()
         }, 200)
       }
+    },
+
+    fullscreenMapStyleChange (bFullscreen) {
+      console.log('fullscreenMapStyleChange:', bFullscreen)
     },
 
     /**

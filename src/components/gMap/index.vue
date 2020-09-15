@@ -1031,6 +1031,7 @@ export default {
       }
       if (this.bDbClickStyle) {
         this.bFullscreenMap = !this.bFullscreenMap
+        this.$emit('fullscreenMapStyleChange', this.bFullscreenMap)
         setTimeout(() => {
           this.map2D._map.updateSize()
         }, 10)
