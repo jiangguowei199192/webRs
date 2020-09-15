@@ -274,6 +274,7 @@
             :bShowMeasure="false"
             :bShowLonLat="false"
             :bAutoLocate="false"
+            :bDbClickStyle="true"
           ></gMap>
         </div>
       </div>
@@ -1300,6 +1301,7 @@ export default {
     position: absolute;
     left: 10px;
     top: 10px;
+    z-index: 2;
     :nth-child(1) {
       position: relative;
       top: -2px;

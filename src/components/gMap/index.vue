@@ -3,7 +3,7 @@
     <div
       :id="mapContainerID"
       class="mapContainer"
-      :class="{lineCursor:measureType==1,areaCursor:measureType==2,radiusCorner:bRadiusCorner,flatCorner:bFlatCorner}"
+      :class="{lineCursor:measureType==1,areaCursor:measureType==2,radiusCorner:bRadiusCorner,flatCorner:bFlatCorner,fullscreenMap:bFullscreenMap}"
       @dblclick="dblClickMap"
     ></div>
     <div class="simpleSearchCtrl"
@@ -294,7 +294,8 @@ export default {
       mapTypeCur: 1,
       bShowHighPoint: true,
       bShowDrone: true,
-      bShowFire: true
+      bShowFire: true,
+      bFullscreenMap: false
     }
   },
 
@@ -306,6 +307,11 @@ export default {
     },
     // 地图平角样式
     bFlatCorner: {
+      type: Boolean,
+      default: false
+    },
+    // 是否启用双击样式
+    bDbClickStyle: {
       type: Boolean,
       default: false
     },
@@ -457,6 +463,8 @@ export default {
         this.popNavImgClickEventCB
       )
       this.map2D.searchLayerManager.setPopupNavVisible(false)
+
+      this.map2D.enableDoubleClickZoom(false)
     },
 
     // 自动定位当前位置回调
@@ -1021,6 +1029,12 @@ export default {
         this.map2D.measureTool.start()
         this.map2D.measureTool.stop()
       }
+      if (this.bDbClickStyle) {
+        this.bFullscreenMap = !this.bFullscreenMap
+        setTimeout(() => {
+          this.map2D._map.updateSize()
+        }, 10)
+      }
     },
 
     // 开始测量距离
@@ -1226,6 +1240,19 @@ export default {
   }
   .flatCorner {
     clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px,100% calc(100% - 20px), calc(100% - 20px) 100%,20px 100%, 0 calc(100% - 20px), 0 20px);
+  }
+  .fullscreenMap {
+    position:fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height:100% !important;
+    z-index: 1;
+    background: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: visible;
+    border: 0px solid transparent;
   }
   .lineCursor {
     cursor: url("../../assets/images/m_line.png") 3 4, auto;
