@@ -214,8 +214,8 @@
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
+import { uuid } from '@/utils/public'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
-import bf from '@/assets/images/3d/bf.jpg'
 import exit from '@/assets/images/3d/exit.png'
 import axios from 'axios'
 var Cesium = window.Cesium
@@ -751,17 +751,33 @@ export default {
           item.infoImg = require('../../assets/images/3d/xfs.jpg')
           item.editIndex = this.editIndex
           break
+        case 2:
+          item = this.options[2].list[2]
+          item.name = '水池水箱'
+          // 标签上的图片
+          item.img = require('../../assets/images/3d/watertank.png')
+          // infobox上的图片
+          item.infoImg = require('../../assets/images/3d/bf.jpg')
+          break
         case 3:
           item = this.options[2].list[1]
           // 标签上的图片
           item.img = require('../../assets/images/3d/xiaofangshuibengjieheqi.png')
           // infobox上的图片
           item.infoImg = require('../../assets/images/3d/xfs.jpg')
-          item.editIndex = this.editIndex
+          break
+        case 4:
+          item = this.options[2].list[2]
+          item.name = '泵房'
+          // 标签上的图片
+          item.img = require('../../assets/images/3d/pumphouse.png')
+          // infobox上的图片
+          item.infoImg = require('../../assets/images/3d/bf.jpg')
           break
         default:
           break
       }
+      item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true
       this.startPlot(item)
@@ -807,7 +823,7 @@ export default {
      *@param {Object} entity 模型
      */
     plotModelComplete (entity) {
-      const id = new Date().format('yyyy-MM-dd HH:mm:ss')
+      const id = uuid(8, 16)
       if (!entity.name)entity.name = id
       // 编辑模式下的模型列表
       if (!this.modelList) this.modelList = []
@@ -1231,7 +1247,6 @@ export default {
       me = this
       var dataSource = new Cesium.CustomDataSource()
       this.viewer.dataSources.add(dataSource)
-      var position3 = Cesium.Cartesian3.fromDegrees(114.238506, 30.508797, 30)
       const lat = 30.510093
       const lon = 114.235004
       const id = new Date().format('yyyy-MM-dd HH:mm:ss')
@@ -1300,22 +1315,6 @@ export default {
           )
         }
       })
-
-      const divpoint2 = new mars3d.DivPoint(this.viewer, {
-        html: ` <div class="label labelbf">
-                  <span></span>
-                  <span>泵房</span>
-                </div>`,
-        anchor: [-61, 0],
-        position: position3,
-        depthTest: false,
-        stopPropagation: true, // 控制是否阻止冒泡
-        click: function (entity) {
-          me.ClickDivPoint(entity, bf, '泵房', true)
-        }
-      })
-
-      console.log(divpoint2)
 
       var layercfg = {
         type: '3dtiles',

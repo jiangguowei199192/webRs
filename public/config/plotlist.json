@@ -154,6 +154,15 @@
                 "modelUrl": "$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf",
                 "scale": 0.1
             }
+        },
+        {
+            "name": "通用",
+            "image": "$serverURL_gltf$/imap/img/1564471440760.jpg",
+            "type": "model-p",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf",
+                "scale": 7
+            }
         }
     ]
 }

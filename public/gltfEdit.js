@@ -194,7 +194,7 @@ var gltfEdit = {
     if (!this.axisModel) return
 
     this.destroyEvent()
-    this.viewer.scene.primitives.remove(this.axisModel)
+    if (this.viewer) { this.viewer.scene.primitives.remove(this.axisModel) }
     delete this.axisModel
   }
 
