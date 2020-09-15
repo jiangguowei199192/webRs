@@ -1233,6 +1233,7 @@ export default {
             left: 35px;
             > img {
               margin-right: 15px;
+              cursor: pointer;
             }
           }
           .selectStyle {
