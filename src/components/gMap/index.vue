@@ -1030,12 +1030,16 @@ export default {
         this.map2D.measureTool.stop()
       }
       if (this.bDbClickStyle) {
-        this.bFullscreenMap = !this.bFullscreenMap
-        this.$emit('fullscreenMapStyleChange', this.bFullscreenMap)
-        setTimeout(() => {
-          this.map2D._map.updateSize()
-        }, 10)
+        this.changeFullscreenMapStyle()
       }
+    },
+
+    changeFullscreenMapStyle () {
+      this.bFullscreenMap = !this.bFullscreenMap
+      this.$emit('fullscreenMapStyleChange', this.bFullscreenMap)
+      setTimeout(() => {
+        this.map2D._map.updateSize()
+      }, 10)
     },
 
     // 开始测量距离

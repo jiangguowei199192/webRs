@@ -279,6 +279,30 @@
           ></gMap>
         </div>
       </div>
+      <!-- 小窗口视频 -->
+      <div
+        class="smallPlayerStyle"
+        v-if="bFullscreenMap===true&&bIsFullScreen===true"
+      >
+        <div class="infoTitle">直播</div>
+        <div class="videoBox">
+          <div class="smallVideoBox"  @dblclick="dbclickSmallVideo">
+            <LivePlayer
+              ref="smallPlayerCtrl"
+              :videoUrl="videoInfo.streamUrl"
+              :show-custom-button="false"
+              :muted="false"
+              :controls="false"
+              :autoplay="true"
+              oncontextmenu="return false"
+              fluent
+              :stretch="true"
+              :live="videoInfo.isLive !==false"
+              aspect="fullscreen"
+            />
+          </div>
+        </div>
+      </div>
       <div class="fullScreenMark" v-show="showMarkForm">
         <el-form
           :model="ruleForm"
@@ -447,6 +471,7 @@ export default {
       lrisSpeed: 0, // 光圈
       step: 4, // 步速值
       bIsFullScreen: false, // 播放器是否全屏
+      bFullscreenMap: false, // 小地图是否全屏
       recordNums: {
         leftUp: 0,
         up: 0,
@@ -671,8 +696,18 @@ export default {
       }
     },
 
+    /**
+     * 响应地图双击样式改变事件
+     */
     fullscreenMapStyleChange (bFullscreen) {
-      console.log('fullscreenMapStyleChange:', bFullscreen)
+      this.bFullscreenMap = bFullscreen
+    },
+
+    /**
+     * 双击右下角小视频切换到视频全屏
+     */
+    dbclickSmallVideo () {
+      this.$refs.gduMap.changeFullscreenMapStyle()
     },
 
     /**
@@ -1307,7 +1342,7 @@ export default {
     position: absolute;
     left: 10px;
     top: 10px;
-    z-index: 2;
+    z-index: 3;
     :nth-child(1) {
       position: relative;
       top: -2px;
@@ -1531,7 +1566,7 @@ export default {
       }
     }
   }
-  .fullScreenMap {
+  .fullScreenMap,.smallPlayerStyle {
     position: absolute;
     right: 30px;
     bottom: 81px;
@@ -1546,12 +1581,20 @@ export default {
       background: url(../../../assets/images/device/info-title.png) no-repeat;
       line-height: 34px;
     }
-    .mapBox {
+    .mapBox,.videoBox {
       margin-left: 12px;
       margin-top: 20px;
       width: 247px;
       height: 150px;
+      .smallVideoBox {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
     }
+  }
+  .smallPlayerStyle {
+    z-index: 2;
   }
   .fullScreenMark {
     position: absolute;
