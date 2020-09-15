@@ -50,12 +50,20 @@
         v-model="editPopover"
       >
         <div class="addList">
-          <span v-show="editIndex === 0"></span>
-          <span v-show="editIndex === 0"></span>
-          <span v-show="editIndex === 0"></span>
-          <span v-show="editIndex === 0"></span>
-          <span v-show="editIndex === 1"></span>
-          <span v-show="editIndex === 1"></span>
+          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,1)"></span>
+          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,2)"></span>
+          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,3)"></span>
+          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,4)"></span>
+          <span v-show="editIndex === 1" @click.stop="ButtonDown(8,5)"></span>
+          <span v-show="editIndex === 1" @click.stop="ButtonDown(8,6)"></span>
+        </div>
+        <div class="txtList">
+          <span v-show="editIndex === 0">消防栓</span>
+          <span v-show="editIndex === 0">水池水箱</span>
+          <span v-show="editIndex === 0">水泵接合器</span>
+          <span v-show="editIndex === 0">泵房</span>
+          <span v-show="editIndex === 1">安全出口</span>
+          <span v-show="editIndex === 1">应急避难所</span>
         </div>
         <div class="add" slot="reference" v-show="editIndex!==2&& editIndex!==3"></div>
         <div class="close" @click="editPopover = false" />
@@ -69,7 +77,7 @@
       </div>
       <div class="list webFsScroll">
         <div
-          v-for="(item,index) in waterList"
+          v-for="(item,index) in markDatas[editIndex]"
           :key="index"
           :class="{active:modelIndex==index}"
           @click.stop="ButtonDown(7,item,index)"
@@ -77,7 +85,7 @@
           <span :style="machineIcon(item.type)"></span>
           <span></span>
           <span>{{item.name}}</span>
-          <span></span>
+          <span @click.stop="ButtonDown(9,item)"></span>
         </div>
       </div>
     </div>
@@ -207,7 +215,6 @@ import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
 import emergency from '@/assets/images/3d/emergencyshelters.png'
-import xfs from '@/assets/images/3d/xfs.jpg'
 import bf from '@/assets/images/3d/bf.jpg'
 import exit from '@/assets/images/3d/exit.png'
 import axios from 'axios'
@@ -244,24 +251,7 @@ export default {
       infoBox: { imgSrc: '' },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
-      waterList: [
-        {
-          type: 1,
-          name: '消防栓'
-        },
-        {
-          type: 2,
-          name: '水池水箱'
-        },
-        {
-          type: 3,
-          name: '水泵接合器'
-        },
-        {
-          type: 4,
-          name: '泵房'
-        }
-      ],
+      markDatas: [[], [], [], []],
       taskList: [
         '内政',
         '出枪掩护',
@@ -564,7 +554,15 @@ export default {
      * @param {String} name 标签data.name
      */
     findModelLabel (name) {
-      return this.labelList.find(t => t.opts.data.name === name)
+      return this.labelList.find(t => t.opts.name === name)
+    },
+
+    /**
+     *  寻找模型对应marker
+     * @param {String} name 标签data.name
+     */
+    findModelMarker (name) {
+      return this.markList.find(t => t.opts.name === name)
     },
 
     /**
@@ -698,6 +696,12 @@ export default {
         case 7:
           this.modelIndex = index
           break
+        case 8:
+          this.plotModel(item)
+          break
+        case 9:
+          this.deleteModel(item)
+          break
         default:
           break
       }
@@ -709,6 +713,10 @@ export default {
      *@param {Object} entity 矩形框名字
      */
     showOrHideRect (show, entity) {
+      const attr = entity.attribute
+      // 如果是编辑模式下添加的模型
+      if (Object.prototype.hasOwnProperty.call(attr, 'edit')) { return }
+
       if (me.rectList) {
         const r = me.rectList.find(t => t._name === entity.name)
         if (r !== undefined) {
@@ -728,6 +736,86 @@ export default {
     },
 
     /**
+     *  标会编辑模式下的模型
+     *@param {Number} type 模型类型
+     */
+    plotModel (type) {
+      this.editPopover = false
+      let item = ''
+      switch (type) {
+        case 1:
+          item = this.options[2].list[0]
+          // 标签上的图片
+          item.img = require('../../assets/images/3d/xiaofangshuan.png')
+          // infobox上的图片
+          item.infoImg = require('../../assets/images/3d/xfs.jpg')
+          item.editIndex = this.editIndex
+          break
+        case 3:
+          item = this.options[2].list[1]
+          // 标签上的图片
+          item.img = require('../../assets/images/3d/xiaofangshuibengjieheqi.png')
+          // infobox上的图片
+          item.infoImg = require('../../assets/images/3d/xfs.jpg')
+          item.editIndex = this.editIndex
+          break
+        default:
+          break
+      }
+      item.plotType = type
+      item.edit = true
+      this.startPlot(item)
+    },
+
+    /**
+     *  删除编辑模式里面模型
+     *@param {Object} item
+     */
+    deleteModel (item) {
+      const m = this.modelList.find(m => m.name === item.id)
+      if (m !== undefined) {
+        this.drawControl.deleteEntity(m)
+        this.deleteModelMarker(m)
+        const index = this.modelList.indexOf(m)
+        this.modelList.splice(index, 1)
+      }
+    },
+
+    /**
+     *  删除模型对应marker
+     *@param {Object} entity 模型
+     */
+    deleteModelMarker (entity) {
+      // 删除对应marker
+      const t = me.findModelMarker(entity.name)
+      if (t !== undefined) {
+        const index = this.markList.indexOf(t)
+        this.markList.splice(index, 1)
+        t.destroy()
+      }
+      const attr = entity.attribute
+      const list = this.markDatas[attr.editIndex]
+      const l = list.find(r => r.id === entity.name)
+      if (l !== undefined) {
+        const index = list.indexOf(list)
+        list.splice(index, 1)
+      }
+    },
+
+    /**
+     *  标会编辑模式下的模型完成
+     *@param {Object} entity 模型
+     */
+    plotModelComplete (entity) {
+      const id = new Date().format('yyyy-MM-dd HH:mm:ss')
+      if (!entity.name)entity.name = id
+      // 编辑模式下的模型列表
+      if (!this.modelList) this.modelList = []
+      this.modelList.push(entity)
+      this.addModelMark(entity)
+    },
+
+    /**
      *  开始绘制
      *@param {Object} item 模型
      */
@@ -738,7 +826,7 @@ export default {
           hasEdit: true,
           // nameTooltip: true,//是否在不可编辑状态时将 name名称 属性 绑定到tooltip
           isContinued: false, // 是否连续标绘
-          isAutoEditing: true // 绘制完成后是否自动激活编辑
+          isAutoEditing: false // 绘制完成后是否自动激活编辑
         })
 
         // 创建完成
@@ -748,22 +836,43 @@ export default {
           //   me.startEditing(entity)
           // }
           // console.log('创建完成')
-          var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-            me.viewer.scene,
-            entity.position
-          )
-          me.curModelIndex = 1000
-          // 禁用drawControl编辑功能
-          me.drawControl.hasEdit(false)
+          const attr = entity.attribute
           const id = new Date().format('yyyy-MM-dd HH:mm:ss')
-          entity.name = id
-          me.curEntity = entity
-          // 显示模型任务编辑框
-          me.isPlot = true
-          me.showEditBox = true
-          me.editBox.number = me.autoFindEditBoxNum()
-          me.editBox.task = '- -'
-          me.setEditBoxPosition(point)
+          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+            entity.drawOk = true
+            if (entity.loadOk && entity.drawOk) {
+              me.plotModelComplete(entity)
+            }
+          } else {
+            entity.name = id
+            var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+              me.viewer.scene,
+              entity.position
+            )
+            me.curModelIndex = 1000
+            // 禁用drawControl编辑功能
+            me.drawControl.hasEdit(false)
+            me.curEntity = entity
+            // 显示模型任务编辑框
+            me.isPlot = true
+            me.showEditBox = true
+            me.editBox.number = me.autoFindEditBoxNum()
+            me.editBox.task = '- -'
+            me.setEditBoxPosition(point)
+          }
+        })
+
+        // 模型加载完成后事件
+        this.drawControl.on(mars3d.draw.event.LoadEnd, function (e) {
+          var entity = e.entity
+          const attr = entity.attribute
+          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+            entity.loadOk = true
+            if (entity.loadOk && entity.drawOk) {
+              me.plotModelComplete(entity)
+            }
+          }
+          // console.log('gltf模型加载完成')
         })
 
         // 开始编辑
@@ -771,7 +880,7 @@ export default {
           me.startEditing(e.entity)
           // console.log('开始编辑')
         })
-        //
+
         this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
           me.showOrHideRect(false, e.entity)
           me.stopEditing(e.entity)
@@ -783,7 +892,13 @@ export default {
           var entity = e.entity
           me.startEditing(entity)
           const position = me.getModelLabelPosition(entity)
-          me.updateLabelPosition(entity.name, position)
+          const attr = entity.attribute
+          // 如果是编辑模式下添加的模型
+          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+            me.updateMarkerPosition(entity.name, position)
+          } else {
+            me.updateLabelPosition(entity.name, position)
+          }
           // console.log('编辑修改了点')
         })
 
@@ -796,24 +911,32 @@ export default {
 
         // 删除了对象
         this.drawControl.on(mars3d.draw.event.Delete, function (e) {
-          // 删除对应标签
-          const t = me.findModelLabel(e.entity.name)
-          if (t !== undefined) {
-            const index = me.labelList.indexOf(t)
-            me.labelList.splice(index, 1)
-            t.destroy()
-          }
-          // 删除矩形框列表
-          if (me.rectList) {
-            const r = me.rectList.find(t => t._name === e.entity.name)
-            if (r !== undefined) {
-              const index = me.labelList.indexOf(r)
+          var entity = e.entity
+          const attr = entity.attribute
+          // 如果是编辑模式下添加的模型
+          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+            me.deleteModelMarker(entity)
+          } else {
+            // 删除对应标签
+            const t = me.findModelLabel(entity.name)
+            if (t !== undefined) {
+              const index = me.labelList.indexOf(t)
               me.labelList.splice(index, 1)
-              me.viewer.entities.remove(r)
+              t.destroy()
             }
+            // 删除矩形框列表
+            if (me.rectList) {
+              const r = me.rectList.find(t => t._name === entity.name)
+              if (r !== undefined) {
+                const index = me.labelList.indexOf(r)
+                me.labelList.splice(index, 1)
+                me.viewer.entities.remove(r)
+              }
+            }
+            me.showEditBox = false
           }
-          me.showEditBox = false
-          me.stopEditing(e.entity)
+
+          me.stopEditing(entity)
           // console.log('删除了对象')
         })
       }
@@ -936,6 +1059,18 @@ export default {
     },
 
     /**
+     *  更新Marker位置
+     * @param {Object} name 标签名称
+     * @param {Object} position 标签坐标
+     */
+    updateMarkerPosition (name, position) {
+      const t = this.findModelMarker(name)
+      if (t !== undefined) {
+        t.position = position
+      }
+    },
+
+    /**
      *  获取模型上方文字坐标
      * @param {Object} primitive 模型
      */
@@ -973,6 +1108,7 @@ export default {
         anchor: [0, 0],
         position: position,
         data: task,
+        name: primitive.name,
         distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 500)
       })
       this.labelList.push(label)
@@ -1062,39 +1198,40 @@ export default {
       me.setEditBoxPosition(point)
     },
 
+    /**
+     *  添加模型标签
+     * @param {Object} entity 模型
+     */
+    addModelMark (entity) {
+      const attr = entity.attribute
+      const position = me.getModelLabelPosition(entity)
+      const marker = new mars3d.DivPoint(this.viewer, {
+        html: ` <div class="label labelxfs">
+                  <img src="${attr.img}"></img>
+                  <span>${attr.name}</span>
+                </div>`,
+        anchor: [0, -60],
+        position: position,
+        depthTest: false,
+        name: entity.name,
+        click: function (entity) {
+          me.ClickDivPoint(entity, attr.infoImg, attr.name, false)
+        }
+      })
+      this.infoBox.imgSrc = attr.infoImg
+      this.infoBox.label = attr.name
+      this.showInfoBox = true
+      // 标签列表
+      if (!this.markList) { this.markList = [] }
+      this.markList.push(marker)
+      this.markDatas[this.editIndex].push({ type: attr.plotType, name: attr.name, id: entity.name })
+    },
+
     addModel () {
       me = this
       var dataSource = new Cesium.CustomDataSource()
       this.viewer.dataSources.add(dataSource)
       var position3 = Cesium.Cartesian3.fromDegrees(114.238506, 30.508797, 30)
-      this.createModel(
-        {
-          url:
-            serverUrl +
-            '/gltf/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
-          x: 114.23534,
-          y: 30.510244,
-          z: 10
-        },
-        function (primitive) {
-          const position = me.getModelLabelPosition(primitive)
-          const divpoint1 = new mars3d.DivPoint(me.viewer, {
-            html: ` <div class="label labelxfs">
-                  <span></span>
-                  <span>消防栓</span>
-                </div>`,
-            anchor: [0, -60],
-            position: position,
-            depthTest: false,
-            click: function (entity) {
-              me.ClickDivPoint(entity, xfs, '消防栓', false)
-            }
-          })
-
-          console.log(divpoint1)
-        }
-      )
-
       const lat = 30.510093
       const lon = 114.235004
       const id = new Date().format('yyyy-MM-dd HH:mm:ss')
@@ -1350,14 +1487,11 @@ export default {
           me.curEntity = pickedObject.primitive
           let show = true
           // 如果点击消防栓模型
-          if (
-            pickedObject.primitive._resource._url.indexOf(
-              'xiaofangshuan.gltf'
-            ) !== -1
-          ) {
+          const attr = pickedObject.primitive.attribute
+          if (attr && Object.prototype.hasOwnProperty.call(attr, 'edit')) {
             show = false
-            me.infoBox.imgSrc = xfs
-            me.infoBox.label = '消防栓'
+            me.infoBox.imgSrc = attr.infoImg
+            me.infoBox.label = attr.name
             me.showInfoBox = true
             me.showEditBox = false
           }

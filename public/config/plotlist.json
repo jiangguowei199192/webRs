@@ -135,5 +135,25 @@
                 "modelUrl": "$serverURL_gltf$/sample/CesiumMan/Cesium_Man.gltf"
             }
         }
+    ],
+    "防火": [
+        {
+            "name": "消防栓",
+            "image": "$serverURL_gltf$/gltf/xiaofang/xiaofang/img/xiaofangshuan.jpg",
+            "type": "model-p",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf",
+                "scale": 0.5
+            }
+        },
+        {
+            "name": "水泵接合器",
+            "image": "$serverURL_gltf$/gltf/xiaofang/xiaofang/img/xiaofangshuibengjieheqi.jpg",
+            "type": "model-p",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf",
+                "scale": 0.1
+            }
+        }
     ]
 }
