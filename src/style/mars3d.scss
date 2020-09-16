@@ -18,33 +18,18 @@
     margin-top  : 3px;
     margin-right: 13px;
   }
-
   span {
     font-size: 12px;
     color    : #ffffff;
     position : relative;
     top      : -4px;
   }
-
 }
 
-.mars3d .labelbf {
-
-  span:nth-child(1) {
-    display     : inline-block;
-    width       : 18px;
-    height      : 16px;
-    background  : url(../assets/images/3d/pumphouse.png) no-repeat;
-    margin-top  : 3px;
-    margin-right: 13px;
-  }
-
-  span:nth-child(2) {
-    font-size: 12px;
-    color    : #ffffff;
-    position : relative;
-    top      : -4px;
-  }
+.mars3d .labelvr {
+    width       : 29px;
+    height      : 29px;
+    background  : url(../assets/images/3d/vr-icon.png) no-repeat;
 }
 
 .mars3d .popup-bg {

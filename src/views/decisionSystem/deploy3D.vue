@@ -42,7 +42,7 @@
         ></div>
       </div>
       <div @click.stop="ButtonDown(6)">设定视角</div>
-      <div class="add" slot="reference" v-show="editIndex!==1&& editIndex!==0"></div>
+      <div class="add" @click.stop="ButtonDown(10,editIndex)" v-show="editIndex!==1&& editIndex!==0"></div>
       <el-popover
         placement="right"
         trigger="click"
@@ -215,8 +215,6 @@ import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
 import { uuid } from '@/utils/public'
-import emergency from '@/assets/images/3d/emergencyshelters.png'
-import exit from '@/assets/images/3d/exit.png'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
@@ -322,6 +320,30 @@ export default {
       if (val !== 0 && val !== 1) {
         this.editPopover = false
       }
+      this.fliterModel(val)
+    },
+
+    activeIndex (val) {
+      switch (val) {
+        case 0:
+        case 4:
+        case 6:
+          this.fliterModel(1000)
+          break
+        case 1:
+        case 2:
+        case 3:
+          this.fliterModel(val - 1)
+          break
+        case 5:
+          this.fliterModel(3)
+          break
+        case 7:
+          this.fliterModel(this.editIndex)
+          break
+        default:
+          break
+      }
     }
   },
 
@@ -371,6 +393,34 @@ export default {
             background:
               'url(' +
               require('../../assets/images/3d/pumphouse-edit.png') +
+              ') no-repeat'
+          }
+        case 5:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/exit-edit.png') +
+              ') no-repeat'
+          }
+        case 6:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/emergencyshelters-edit.png') +
+              ') no-repeat'
+          }
+        case 7:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/build-edit.png') +
+              ') no-repeat'
+          }
+        case 8:
+          return {
+            background:
+              'url(' +
+              require('../../assets/images/3d/vr-edit.png') +
               ') no-repeat'
           }
         default:
@@ -695,12 +745,16 @@ export default {
           break
         case 7:
           this.modelIndex = index
+          this.selectItemInEditList(item)
           break
         case 8:
           this.plotModel(item)
           break
         case 9:
           this.deleteModel(item)
+          break
+        case 10:
+          this.plotModel(item === 2 ? 7 : 8)
           break
         default:
           break
@@ -715,7 +769,9 @@ export default {
     showOrHideRect (show, entity) {
       const attr = entity.attribute
       // 如果是编辑模式下添加的模型
-      if (Object.prototype.hasOwnProperty.call(attr, 'edit')) { return }
+      if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+        return
+      }
 
       if (me.rectList) {
         const r = me.rectList.find(t => t._name === entity.name)
@@ -744,43 +800,141 @@ export default {
       let item = ''
       switch (type) {
         case 1:
-          item = this.options[2].list[0]
-          // 标签上的图片
-          item.img = require('../../assets/images/3d/xiaofangshuan.png')
-          // infobox上的图片
-          item.infoImg = require('../../assets/images/3d/xfs.jpg')
-          item.editIndex = this.editIndex
+          item = {
+            name: '消防栓',
+            type: 'model-p',
+            // 标签上的图片
+            img: require('../../assets/images/3d/xiaofangshuan.png'),
+            // infobox上的图片
+            infoImg: require('../../assets/images/3d/xfs.jpg'),
+            style: {
+              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+              scale: 0.5
+            }
+          }
           break
         case 2:
-          item = this.options[2].list[2]
-          item.name = '水池水箱'
-          // 标签上的图片
-          item.img = require('../../assets/images/3d/watertank.png')
-          // infobox上的图片
-          item.infoImg = require('../../assets/images/3d/bf.jpg')
+          item = {
+            name: '水池水箱',
+            type: 'model-p',
+            // 标签上的图片
+            img: require('../../assets/images/3d/watertank.png'),
+            // infobox上的图片
+            infoImg: require('../../assets/images/3d/bf.jpg'),
+            style: {
+              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              scale: 7
+            }
+          }
           break
         case 3:
-          item = this.options[2].list[1]
-          // 标签上的图片
-          item.img = require('../../assets/images/3d/xiaofangshuibengjieheqi.png')
-          // infobox上的图片
-          item.infoImg = require('../../assets/images/3d/xfs.jpg')
+          item = {
+            name: '水泵接合器',
+            type: 'model-p',
+            // 标签上的图片
+            img: require('../../assets/images/3d/xiaofangshuibengjieheqi.png'),
+            // infobox上的图片
+            infoImg: require('../../assets/images/3d/xfs.jpg'),
+            style: {
+              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
+              scale: 0.1
+            }
+          }
           break
         case 4:
-          item = this.options[2].list[2]
-          item.name = '泵房'
-          // 标签上的图片
-          item.img = require('../../assets/images/3d/pumphouse.png')
-          // infobox上的图片
-          item.infoImg = require('../../assets/images/3d/bf.jpg')
+          item = {
+            name: '泵房',
+            type: 'model-p',
+            // 标签上的图片
+            img: require('../../assets/images/3d/pumphouse.png'),
+            // infobox上的图片
+            infoImg: require('../../assets/images/3d/bf.jpg'),
+            style: {
+              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              scale: 7
+            }
+          }
+          break
+        case 5:
+          item = {
+            name: '安全出口',
+            type: 'billboard',
+            edittype: 'billboard',
+            style: {
+              image: require('../../assets/images/3d/exit.png'),
+              visibleDepth: false,
+              distanceDisplayCondition: true,
+              distanceDisplayCondition_far: 1000
+            }
+          }
+          break
+        case 6:
+          item = {
+            name: '应急避难所',
+            type: 'billboard',
+            edittype: 'billboard',
+            style: {
+              image: require('../../assets/images/3d/emergencyshelters.png'),
+              visibleDepth: false,
+              distanceDisplayCondition: true,
+              distanceDisplayCondition_far: 1000
+            }
+          }
+          break
+        case 7:
+          item = {
+            name: '重点单位',
+            type: 'model-p',
+            // 标签上的图片
+            img: require('../../assets/images/3d/build.png'),
+            // infobox上的图片
+            infoImg: require('../../assets/images/3d/bf.jpg'),
+            style: {
+              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              scale: 7
+            }
+          }
+          break
+        case 8:
+          item = {
+            name: 'VR全景',
+            type: 'model-p',
+            isVr: true,
+            // 标签上的图片
+            img: require('../../assets/images/3d/vr-icon.png'),
+            // infobox上的图片
+            infoImg: require('../../assets/images/3d/vrquanjing.jpg'),
+            style: {
+              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              scale: 7
+            }
+          }
           break
         default:
           break
       }
+      const modelUrl = item.style.modelUrl
+      if (modelUrl && modelUrl.startsWith('$serverURL_gltf$')) {
+        item.style.modelUrl = item.style.modelUrl.replace(
+          '$serverURL_gltf$',
+          serverUrl + '/gltf'
+        )
+      }
+
       item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true
       this.startPlot(item)
+    },
+
+    /**
+     *  选中编辑模式中列表某项
+     */
+    selectItemInEditList (item) {
+      const m = this.modelList.find(m => m.name === item.id)
+      if (m !== undefined) {
+        this.flyToEntity(m)
+      }
     },
 
     /**
@@ -802,18 +956,20 @@ export default {
      *@param {Object} entity 模型
      */
     deleteModelMarker (entity) {
-      // 删除对应marker
-      const t = me.findModelMarker(entity.name)
-      if (t !== undefined) {
-        const index = this.markList.indexOf(t)
-        this.markList.splice(index, 1)
-        t.destroy()
-      }
       const attr = entity.attribute
+      if (attr.type !== 'billboard') {
+        // 删除对应marker
+        const t = this.findModelMarker(entity.name)
+        if (t !== undefined) {
+          const index = this.markList.indexOf(t)
+          this.markList.splice(index, 1)
+          t.destroy()
+        }
+      }
       const list = this.markDatas[attr.editIndex]
       const l = list.find(r => r.id === entity.name)
       if (l !== undefined) {
-        const index = list.indexOf(list)
+        const index = list.indexOf(l)
         list.splice(index, 1)
       }
     },
@@ -824,11 +980,36 @@ export default {
      */
     plotModelComplete (entity) {
       const id = uuid(8, 16)
-      if (!entity.name)entity.name = id
+      const attr = entity.attribute
+      if (!entity.name) entity.name = id
       // 编辑模式下的模型列表
       if (!this.modelList) this.modelList = []
       this.modelList.push(entity)
-      this.addModelMark(entity)
+      // 模型才添加marker
+      if (attr.type !== 'billboard') {
+        this.addModelMark(entity)
+      }
+      this.markDatas[this.editIndex].push({
+        type: attr.plotType,
+        name: attr.name,
+        id: entity.name
+      })
+    },
+
+    /**
+     *  根据类型过滤模型
+     */
+    fliterModel (index) {
+      if (this.modelList) {
+        this.modelList.forEach(e => {
+          if (e.attribute.editIndex === index) { e.show = true } else e.show = false
+        })
+      }
+      if (this.markList) {
+        this.markList.forEach(e => {
+          if (e.opts.editIndex === index) { e.visible = true } else e.visible = false
+        })
+      }
     },
 
     /**
@@ -856,7 +1037,9 @@ export default {
           const id = new Date().format('yyyy-MM-dd HH:mm:ss')
           if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
             entity.drawOk = true
-            if (entity.loadOk && entity.drawOk) {
+            if (attr.type === 'billboard') {
+              me.plotModelComplete(entity)
+            } else if (entity.loadOk && entity.drawOk) {
               me.plotModelComplete(entity)
             }
           } else {
@@ -893,35 +1076,43 @@ export default {
 
         // 开始编辑
         this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
-          me.startEditing(e.entity)
+          if (e.entity.attribute.type !== 'billboard') {
+            me.startEditing(e.entity)
+          }
           // console.log('开始编辑')
         })
 
         this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
-          me.showOrHideRect(false, e.entity)
-          me.stopEditing(e.entity)
+          if (e.entity.attribute.type !== 'billboard') {
+            me.showOrHideRect(false, e.entity)
+            me.stopEditing()
+          }
           // console.log('EditMouseMove')
         })
 
         // 编辑修改了点
         this.drawControl.on(mars3d.draw.event.EditMovePoint, function (e) {
           var entity = e.entity
-          me.startEditing(entity)
-          const position = me.getModelLabelPosition(entity)
-          const attr = entity.attribute
-          // 如果是编辑模式下添加的模型
-          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
-            me.updateMarkerPosition(entity.name, position)
-          } else {
-            me.updateLabelPosition(entity.name, position)
+          if (entity.attribute.type !== 'billboard') {
+            me.startEditing(entity)
+            const position = me.getModelLabelPosition(entity)
+            const attr = entity.attribute
+            // 如果是编辑模式下添加的模型
+            if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+              me.updateMarkerPosition(entity.name, position)
+            } else {
+              me.updateLabelPosition(entity.name, position)
+            }
           }
           // console.log('编辑修改了点')
         })
 
         // 停止编辑
         this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
-          me.showOrHideRect(true, e.entity)
-          me.stopEditing()
+          if (e.entity.attribute.type !== 'billboard') {
+            me.showOrHideRect(true, e.entity)
+            me.stopEditing()
+          }
           // console.log('停止编辑')
         })
 
@@ -1221,12 +1412,20 @@ export default {
     addModelMark (entity) {
       const attr = entity.attribute
       const position = me.getModelLabelPosition(entity)
-      const marker = new mars3d.DivPoint(this.viewer, {
-        html: ` <div class="label labelxfs">
+      let html = ''
+      if (attr.isVr) {
+        html = ` <div class="labelvr">
+                </div>`
+      } else {
+        html = ` <div class="label labelxfs">
                   <img src="${attr.img}"></img>
                   <span>${attr.name}</span>
-                </div>`,
-        anchor: [0, -60],
+                </div>`
+      }
+      const marker = new mars3d.DivPoint(this.viewer, {
+        editIndex: attr.editIndex,
+        html: html,
+        anchor: [0, -10],
         position: position,
         depthTest: false,
         name: entity.name,
@@ -1238,9 +1437,10 @@ export default {
       this.infoBox.label = attr.name
       this.showInfoBox = true
       // 标签列表
-      if (!this.markList) { this.markList = [] }
+      if (!this.markList) {
+        this.markList = []
+      }
       this.markList.push(marker)
-      this.markDatas[this.editIndex].push({ type: attr.plotType, name: attr.name, id: entity.name })
     },
 
     addModel () {
@@ -1284,37 +1484,6 @@ export default {
       //   modelPrimitive.position = position
       //   label.position = Cesium.Cartesian3.fromDegrees(lon, lat, 16)
       // }, 1000)
-
-      dataSource.entities.add({
-        name: '避难',
-        position: Cesium.Cartesian3.fromDegrees(114.23724, 30.510647, 25),
-        billboard: {
-          image: emergency,
-          scale: 1,
-          horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
-            0.0,
-            1000
-          )
-        }
-      })
-
-      dataSource.entities.add({
-        name: '紧急出口',
-        position: Cesium.Cartesian3.fromDegrees(114.234825, 30.510722, 12),
-        billboard: {
-          image: exit,
-          scale: 1,
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
-          horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
-            0.0,
-            1000
-          )
-        }
-      })
 
       var layercfg = {
         type: '3dtiles',
