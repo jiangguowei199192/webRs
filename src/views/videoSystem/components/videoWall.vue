@@ -19,6 +19,8 @@
           ref="drawBox"
           :class="{bg:showAR}"
         >
+          <!-- canvas绘图 -->
+          <canvas-area :showAR="showAR"></canvas-area>
           <template v-if="showAR">
             <div class="header">AR实景地图指挥</div>
           </template>
@@ -119,7 +121,7 @@
           <!-- 图库弹框 -->
           <div class="picStorage" @dblclick.stop="stopEvent" v-show="showCurindex==3">
             <!-- 关闭按钮 -->
-            <img src="../../../assets/images/AR/X.png" alt @click="showCurindex==1000" />
+            <img src="../../../assets/images/AR/X.png" alt @click="showCurindex=1000" />
             <div>
               <span>起止时间：</span>
               <el-date-picker
@@ -212,14 +214,14 @@
               <el-table-column prop="address" label="地址" align="center"></el-table-column>
             </el-table>
             <el-pagination
-             :append-to-body="false"
+              :append-to-body="false"
               class="tablePagination"
               background
               layout="total, prev, pager, next"
               popper-class="pageSelect"
               :page-size="5"
-               :total="1000">
-            ></el-pagination>
+              :total="1000"
+            >></el-pagination>
           </div>
         </div>
       </div>
@@ -280,13 +282,10 @@
         </div>
       </div>
       <!-- 小窗口视频 -->
-      <div
-        class="smallPlayerStyle"
-        v-if="bFullscreenMap===true&&bIsFullScreen===true"
-      >
+      <div class="smallPlayerStyle" v-if="bFullscreenMap===true&&bIsFullScreen===true">
         <div class="infoTitle">直播</div>
         <div class="videoBox">
-          <div class="smallVideoBox"  @dblclick="dbclickSmallVideo">
+          <div class="smallVideoBox" @dblclick="dbclickSmallVideo">
             <LivePlayer
               ref="smallPlayerCtrl"
               :videoUrl="videoInfo.streamUrl"
@@ -340,6 +339,7 @@
 <script>
 import LivePlayer from '@liveqing/liveplayer'
 import droneInfoMixin from '../../../utils/droneInfoMixin'
+import canvasArea from './canvasArea'
 export default {
   data () {
     return {
@@ -494,7 +494,8 @@ export default {
   mixins: [droneInfoMixin],
 
   components: {
-    LivePlayer
+    LivePlayer,
+    canvasArea
   },
 
   props: {
@@ -1306,8 +1307,8 @@ export default {
           button.btn-prev {
             background: transparent !important;
           }
-          .btn-prev{
-            margin-right:0;
+          .btn-prev {
+            margin-right: 0;
           }
         }
       }
@@ -1566,7 +1567,8 @@ export default {
       }
     }
   }
-  .fullScreenMap,.smallPlayerStyle {
+  .fullScreenMap,
+  .smallPlayerStyle {
     position: absolute;
     right: 30px;
     bottom: 81px;
@@ -1581,7 +1583,8 @@ export default {
       background: url(../../../assets/images/device/info-title.png) no-repeat;
       line-height: 34px;
     }
-    .mapBox,.videoBox {
+    .mapBox,
+    .videoBox {
       margin-left: 12px;
       margin-top: 20px;
       width: 247px;
