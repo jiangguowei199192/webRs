@@ -114,7 +114,7 @@
               <img src="../../../assets/images/AR/river.png" alt />
               <p>河流</p>
             </div>
-            <img src="../../../assets/images/AR/X.png" alt @click="showTagInfo=false" />
+            <img src="../../../assets/images/AR/X.png" alt @click="showCurindex=1000" />
           </div>
           <!-- 图库弹框 -->
           <div class="picStorage" @dblclick.stop="stopEvent" v-show="showCurindex==3">
