@@ -360,6 +360,17 @@ export default {
       } else if (this.activeIndex === 7) {
         this.editMode = true
       }
+
+      // 显示隐藏实时gis数据
+      if (this.gisCollection) {
+        this.gisCollection.show = this.activeIndex === 0
+      }
+      if (this.labelList) {
+        const list = this.labelList.filter(item => item.opts.isGis)
+        list.forEach(e => {
+          e.visible = this.activeIndex === 0
+        })
+      }
     },
 
     /**
@@ -1135,8 +1146,8 @@ export default {
             if (me.rectList) {
               const r = me.rectList.find(t => t._name === entity.name)
               if (r !== undefined) {
-                const index = me.labelList.indexOf(r)
-                me.labelList.splice(index, 1)
+                const index = me.rectList.indexOf(r)
+                me.rectList.splice(index, 1)
                 me.viewer.entities.remove(r)
               }
             }
@@ -1319,6 +1330,7 @@ export default {
         distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 500)
       })
       this.labelList.push(label)
+      return label
     },
 
     /**
@@ -1336,11 +1348,15 @@ export default {
     },
 
     /**
-     *  primitives方式添加模型
+     * 添加实时gis模型
      * @param {Object} cfg 模型配置
-     * @param {Object} callback 模型加载后的回调
      */
-    createModel (cfg, callback) {
+    createGisModel (cfg) {
+      cfg.id = uuid(8, 16)
+      if (!this.gisCollection) {
+        this.gisCollection = new Cesium.PrimitiveCollection()
+        this.viewer.scene.primitives.add(this.gisCollection)
+      }
       var position = Cesium.Cartesian3.fromDegrees(cfg.x, cfg.y, cfg.z || 0)
       var hpRoll = new Cesium.HeadingPitchRoll(
         Cesium.Math.toRadians(cfg.heading || 0),
@@ -1365,7 +1381,7 @@ export default {
         )
       }
 
-      var modelPrimitive = this.viewer.scene.primitives.add(
+      var modelPrimitive = this.gisCollection.add(
         Cesium.Model.fromGltf({
           url: cfg.url,
           modelMatrix: modelMatrix,
@@ -1382,7 +1398,16 @@ export default {
       modelPrimitive.hasOutLine = true
 
       modelPrimitive.readyPromise.then(function (model) {
-        callback(modelPrimitive)
+        const task = {
+          name: cfg.id,
+          department: '洪山分局',
+          number: '1',
+          task: '供水'
+        }
+        // 模型标签列表
+        me.labelList = []
+        const l = me.addModelLabel(modelPrimitive, task)
+        l.opts.isGis = true
       })
 
       return modelPrimitive
@@ -1449,25 +1474,12 @@ export default {
       this.viewer.dataSources.add(dataSource)
       const lat = 30.510093
       const lon = 114.235004
-      const id = new Date().format('yyyy-MM-dd HH:mm:ss')
-      this.createModel(
+      this.createGisModel(
         {
           url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
           x: lon,
           y: lat,
-          z: 12,
-          id: id
-        },
-        function (primitive) {
-          const task = {
-            name: id,
-            department: '洪山分局',
-            number: '1',
-            task: '供水'
-          }
-          // 模型标签列表
-          me.labelList = []
-          me.addModelLabel(primitive, task)
+          z: 12
         }
       )
 
