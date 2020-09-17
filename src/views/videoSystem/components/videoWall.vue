@@ -317,7 +317,7 @@
               style="width:350px"
               required
               v-model="ruleForm.tagType"
-              placeholder="请选择"
+              placeholder="请选择标签类型"
               :popper-append-to-body="false"
               popper-class="selectStyle"
             >
