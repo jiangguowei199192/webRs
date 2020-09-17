@@ -320,6 +320,7 @@ export default {
       if (val !== 0 && val !== 1) {
         this.editPopover = false
       }
+      this.modelIndex = 1000
       this.fliterModel(val)
     },
 
@@ -852,7 +853,7 @@ export default {
             infoImg: require('../../assets/images/3d/xfs.jpg'),
             style: {
               modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
-              scale: 0.1
+              scale: 0.08
             }
           }
           break
@@ -1052,7 +1053,7 @@ export default {
           // console.log('创建完成')
           const attr = entity.attribute
           const id = new Date().format('yyyy-MM-dd HH:mm:ss')
-          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+          if (attr.edit) {
             entity.drawOk = true
             if (attr.type === 'billboard') {
               me.plotModelComplete(entity)
@@ -1082,7 +1083,7 @@ export default {
         this.drawControl.on(mars3d.draw.event.LoadEnd, function (e) {
           var entity = e.entity
           const attr = entity.attribute
-          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+          if (attr.edit) {
             entity.loadOk = true
             if (entity.loadOk && entity.drawOk) {
               me.plotModelComplete(entity)
@@ -1115,7 +1116,7 @@ export default {
             const position = me.getModelLabelPosition(entity)
             const attr = entity.attribute
             // 如果是编辑模式下添加的模型
-            if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+            if (attr.edit) {
               me.updateMarkerPosition(entity.name, position)
             } else {
               me.updateLabelPosition(entity.name, position)
@@ -1138,7 +1139,7 @@ export default {
           var entity = e.entity
           const attr = entity.attribute
           // 如果是编辑模式下添加的模型
-          if (Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+          if (attr.edit) {
             me.deleteModelMarker(entity)
           } else {
             // 删除对应标签
@@ -1300,13 +1301,18 @@ export default {
      */
     getModelLabelPosition (primitive) {
       // 求出模型中心点坐标
-      var center = Cesium.Matrix4.multiplyByPoint(
-        primitive.modelMatrix,
-        primitive.boundingSphere.center,
-        new Cesium.Cartesian3()
-      )
-      const p = me.CartesianToDegrees(center)
-      return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 2)
+      // var center = Cesium.Matrix4.multiplyByPoint(
+      //   primitive.modelMatrix,
+      //   primitive.boundingSphere.center,
+      //   new Cesium.Cartesian3()
+      // )
+      // const p = me.CartesianToDegrees(center)
+      // return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 2)
+      const attr = primitive.attribute
+      const p = this.CartesianToDegrees(primitive.position)
+      if (attr.edit) {
+        return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 5)
+      } else return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 3)
     },
 
     /**
@@ -1456,7 +1462,7 @@ export default {
       const marker = new mars3d.DivPoint(this.viewer, {
         editIndex: attr.editIndex,
         html: html,
-        anchor: [0, -10],
+        anchor: [0, 0],
         position: position,
         depthTest: false,
         name: entity.name,
@@ -1672,9 +1678,9 @@ export default {
         ) {
           me.curEntity = pickedObject.primitive
           let show = true
-          // 如果点击消防栓模型
+          // 如果点击编辑模式下添加的模型
           const attr = pickedObject.primitive.attribute
-          if (attr && Object.prototype.hasOwnProperty.call(attr, 'edit')) {
+          if (attr && attr.edit) {
             show = false
             me.infoBox.imgSrc = attr.infoImg
             me.infoBox.label = attr.name
