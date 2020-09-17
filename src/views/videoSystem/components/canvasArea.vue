@@ -18,7 +18,12 @@ export default {
     showAR: {
       type: Boolean,
       default: false
+    },
+    showMarkForm: {
+      type: Boolean,
+      default: false
     }
+
   },
   methods: {
     // 鼠标按下记录起始坐标
@@ -104,21 +109,28 @@ export default {
           div.addEventListener(
             'mousedown',
             e => {
-              this.mousedownHandler(e)
+              if (!this.showMarkForm) {
+                this.mousedownHandler(e)
+              }
             },
             false
           )
           div.addEventListener(
             'mousemove',
             $event => {
-              this.mousemovehandler($event)
+              if (!this.showMarkForm) {
+                // 弹框没有显示时才可以绘制
+                this.mousemovehandler($event)
+              }
             },
             false
           )
           div.addEventListener(
             'mouseup',
             $event => {
-              this.mouseuphandler($event)
+              if (!this.showMarkForm) {
+                this.mouseuphandler($event)
+              }
             },
             false
           )

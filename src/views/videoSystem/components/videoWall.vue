@@ -20,7 +20,7 @@
           :class="{bg:showAR}"
         >
           <!-- canvas绘图 -->
-          <canvas-area :showAR="showAR" @canvasEnd="getPosition"></canvas-area>
+          <canvas-area :showAR="showAR" @canvasEnd="getPosition" :showMarkForm="showMarkForm"></canvas-area>
           <template v-if="showAR">
             <div class="header">AR实景地图指挥</div>
           </template>
@@ -165,7 +165,7 @@
                 <el-select
                   style="width:140px"
                   v-model="tagType"
-                  placeholder="请选择"
+                  placeholder="请选择标签类型"
                   :popper-append-to-body="false"
                   popper-class="selectStyle"
                 >
@@ -312,9 +312,9 @@
           <el-form-item label="标签名称" prop="tagName">
             <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:350px"></el-input>
           </el-form-item>
-          <el-form-item label="标签类型" prop="tagType" >
+          <el-form-item label="标签类型" prop="tagType">
             <el-select
-            style="width:350px"
+              style="width:350px"
               required
               v-model="ruleForm.tagType"
               placeholder="请选择"
@@ -371,6 +371,7 @@ export default {
       settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
       curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
       showMarkForm: false,
+      curPositionObj: {}, // 保存当前位置相关坐标
       // showTagInfo: false, // 标签弹框 默认不显示
       // showPicStorage: false, // 图库弹框 默认不显示
       // showSetting: false, // 设置弹框
@@ -448,20 +449,16 @@ export default {
       },
       tageTypeArray: [
         {
-          id: '1',
-          name: '工厂'
+          id: '01',
+          name: '高点监控'
         },
         {
-          id: '2',
-          name: '建筑物'
+          id: '02',
+          name: '建筑大厦'
         },
         {
-          id: '3',
-          name: '医院'
-        },
-        {
-          id: '4',
-          name: '学校'
+          id: '03',
+          name: '河流'
         }
       ],
       isSub: false, // 是否监听播放进度改变
@@ -539,12 +536,6 @@ export default {
     var elementResizeDetectorMaker = require('element-resize-detector')
     this.erd = elementResizeDetectorMaker()
     this.setPlayerSizeListener()
-    // // 监听键盘按键事件
-    // document.addEventListener('keyup', (e) => {
-    //   if (e.keyCode === 13) {
-    //     this.getCurPosition()
-    //   }
-    // })
   },
 
   methods: {
@@ -577,15 +568,19 @@ export default {
     },
     // 获取位置信息
     getPosition (curPosition) {
-      this.showMarkForm = true
+      if (curPosition.width > 0) {
+        this.curPositionObj = JSON.parse(JSON.stringify(curPosition))
+        this.showMarkForm = true
+      }
     },
     // 创建元素
-    createImgDom (obj) {
-      console.log('传递过来的顶部距离', obj.data.offsetTop)
+    createTag (ruleForm, positionObj) {
+      console.log('传递过来的顶部距离', positionObj)
       const div = document.createElement('div')
       div.className = 'pic'
-      div.style.left = obj.data.offsetLeft + 'px'
-      div.style.top = obj.data.offsetTop + 'px'
+      div.style.position = 'absolute'
+      div.style.left = positionObj.x + 'px'
+      div.style.top = positionObj.y + 'px'
       const span = document.createElement('span')
       span.innerHTML = 'x'
       span.style.color = '#ccc'
@@ -594,7 +589,7 @@ export default {
       })
       const input = document.createElement('input')
       input.style.width = '100px'
-      input.value = obj.data.labelText
+      input.value = ruleForm.tagName
       input.addEventListener('click', e => {
         this.showMarkForm = true
       })
@@ -610,7 +605,9 @@ export default {
           console.log('成功')
           // this.createImgDom(this.ruleForm.tagType)
           // 成功之后调用该方法获取坐标信息
-          this.$refs.drawArea.customQuery(this.ruleForm)
+          // this.$refs.drawArea.customQuery(this.ruleForm)
+          // 标签名称和标签类型校验成功之后 调接口  获取数据  无需手动创建dom结构
+          this.createTag(this.ruleForm, this.curPositionObj)
           this.resetForm('ruleForm')
         } else {
           console.log('error submit!!')
