@@ -638,10 +638,13 @@ export default {
      *@param {Object} entity 模型
      */
     startEditing (entity) {
+      // 当前正在编辑的实体
+      this.curEditEntity = entity
       this.showOrHideRect(false, entity)
       // 启用编辑
       gltfEdit.activate(entity, me.viewer, {
-        calback: function (result) {}
+        calback: function (result) {
+        }
       })
     },
 
@@ -650,6 +653,7 @@ export default {
      *@param {Object} entity 模型
      */
     stopEditing (entity) {
+      this.curEditEntity = ''
       gltfEdit.disable() // 停止编辑
     },
 
@@ -1015,6 +1019,8 @@ export default {
         this.modelList.forEach(e => {
           if (e.attribute.editIndex === index) { e.show = true } else e.show = false
         })
+
+        if (this.curEditEntity && !this.curEditEntity.show) { this.stopEditing() }
       }
       if (this.markList) {
         this.markList.forEach(e => {
@@ -1763,7 +1769,6 @@ export default {
       this.viewDetail.alt = view.z
       this.viewDetail.head = view.heading
       this.viewDetail.pitch = view.pitch
-      console.log(view)
     },
 
     /**
