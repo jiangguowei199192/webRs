@@ -20,7 +20,7 @@
           :class="{bg:showAR}"
         >
           <!-- canvas绘图 -->
-          <canvas-area :showAR="showAR"></canvas-area>
+          <canvas-area :showAR="showAR" @canvasEnd="getPosition"></canvas-area>
           <template v-if="showAR">
             <div class="header">AR实景地图指挥</div>
           </template>
@@ -214,7 +214,6 @@
               <el-table-column prop="address" label="地址" align="center"></el-table-column>
             </el-table>
             <el-pagination
-              :append-to-body="false"
               class="tablePagination"
               background
               layout="total, prev, pager, next"
@@ -313,19 +312,22 @@
           <el-form-item label="标签名称" prop="tagName">
             <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:350px"></el-input>
           </el-form-item>
-          <el-form-item label="标签类型" prop="tagType">
-            <select
+          <el-form-item label="标签类型" prop="tagType" >
+            <el-select
+            style="width:350px"
               required
               v-model="ruleForm.tagType"
-              style="width:350px;height:34px;border-radius: 5px;padding: 0 12px;"
+              placeholder="请选择"
+              :popper-append-to-body="false"
+              popper-class="selectStyle"
             >
-              <option value disabled selected hidden>请选择标签类型</option>
-              <option
-                :value="type.id"
-                v-for="(type,index) in tageTypeArray"
-                :key="index"
-              >{{type.name}}</option>
-            </select>
+              <el-option
+                v-for="item in tageTypeArray"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
@@ -567,10 +569,15 @@ export default {
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
         } else {
           me.bIsFullScreen = false
+          me.showAR && (me.showAR = false)
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
           me.resetForm('ruleForm')
         }
       })
+    },
+    // 获取位置信息
+    getPosition (curPosition) {
+      this.showMarkForm = true
     },
     // 创建元素
     createImgDom (obj) {
@@ -1041,6 +1048,9 @@ export default {
   .is-error select {
     border-color: #f56c6c;
   }
+  .selectStyle {
+    position: absolute !important;
+  }
   .pointLayer {
     position: absolute;
     height: 100%;
@@ -1276,9 +1286,6 @@ export default {
               margin-right: 15px;
               cursor: pointer;
             }
-          }
-          .selectStyle {
-            position: absolute !important;
           }
         }
         .el-table thead tr th {

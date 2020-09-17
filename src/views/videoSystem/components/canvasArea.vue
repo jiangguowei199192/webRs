@@ -5,7 +5,7 @@
     @mousemove="mousemovehandler($event)"
     @mousedown="mousedownHandler($event)"
   >-->
-  <div class="ar">
+  <div class="ar" v-if="showAR">
     <canvas id="myCanvas" width="1920" height="1080">您的浏览器不支持 HTML5 canvas 标签。</canvas>
   </div>
 </template>
@@ -90,36 +90,43 @@ export default {
       // 获取矩形框Top，Height
       console.log(endX, startX)
       console.log(cLeft, cTop, cWidth, cHeight)
+      const positionObj = { x: cLeft, y: cTop, width: cWidth, height: cHeight }
+      this.$emit('canvasEnd', positionObj)
     }
   },
-  mounted () {
-    const div = document.getElementsByClassName('ar')[0]
-    console.log(div)
-    div.addEventListener(
-      'mousedown',
-      e => {
-        if (!this.showAR) return
-        this.mousedownHandler(e)
-      },
-      false
-    )
-    div.addEventListener(
-      'mousemove',
-      $event => {
-        if (!this.showAR) return
-        this.mousemovehandler($event)
-      },
-      false
-    )
-    div.addEventListener(
-      'mouseup',
-      $event => {
-        if (!this.showAR) return
-        this.mouseuphandler($event)
-      },
-      false
-    )
-  }
+  watch: {
+    showAR (nv) {
+      if (nv) {
+        this.$nextTick(() => {
+          // 始终只会找到当前开启ar的视频
+          const div = document.getElementsByClassName('ar')[0]
+          console.log(div)
+          div.addEventListener(
+            'mousedown',
+            e => {
+              this.mousedownHandler(e)
+            },
+            false
+          )
+          div.addEventListener(
+            'mousemove',
+            $event => {
+              this.mousemovehandler($event)
+            },
+            false
+          )
+          div.addEventListener(
+            'mouseup',
+            $event => {
+              this.mouseuphandler($event)
+            },
+            false
+          )
+        })
+      }
+    }
+  },
+  mounted () {}
 }
 </script>
 <style>
