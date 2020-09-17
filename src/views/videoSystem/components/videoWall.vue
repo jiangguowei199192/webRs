@@ -255,7 +255,7 @@
           <div title="变倍" :class="{selected:curSelectedIcon==0}" @click="curSelectedIcon=0"></div>
           <div title="变焦" :class="{selected:curSelectedIcon==1}" @click="curSelectedIcon=1"></div>
           <div @mousedown="startChange(999)" @mouseup="stopChange(999)"></div>
-          <div @click.stop="addStep">
+          <div @click.stop="addStep" title="步速">
             <span>X{{step}}</span>
           </div>
           <div @mousedown="startChange(9999)" @mouseup="stopChange(9999)"></div>
@@ -340,6 +340,7 @@
 import LivePlayer from '@liveqing/liveplayer'
 import droneInfoMixin from '../../../utils/droneInfoMixin'
 import canvasArea from './canvasArea'
+import { debounce } from '../../../utils/public.js'
 export default {
   data () {
     return {
@@ -807,7 +808,7 @@ export default {
       }
     },
     // 鼠标按下
-    startChange (index) {
+    startChange: debounce(function (index) {
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType
@@ -924,9 +925,9 @@ export default {
         default:
           break
       }
-    },
+    }, 500),
     // 鼠标松开
-    stopChange (index) {
+    stopChange: debounce(function (index) {
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType,
@@ -999,7 +1000,7 @@ export default {
 
       console.log(params)
       this.changeViewVideo(params)
-    },
+    }, 500),
     // 云台操作
     changeViewVideo (params) {
       this.$axios
@@ -1021,6 +1022,10 @@ export default {
 </script>
 <style lang="less" >
 .playerStyle {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   ::selection {
     background: transparent;
   }
