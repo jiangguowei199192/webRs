@@ -42,7 +42,11 @@
         ></div>
       </div>
       <div @click.stop="ButtonDown(6)">设定视角</div>
-      <div class="add" @click.stop="ButtonDown(10,editIndex)" v-show="editIndex!==1&& editIndex!==0"></div>
+      <div
+        class="add"
+        @click.stop="ButtonDown(10,editIndex)"
+        v-show="editIndex!==1&& editIndex!==0"
+      ></div>
       <el-popover
         placement="right"
         trigger="click"
@@ -204,7 +208,7 @@
       ></span>
     </div>
     <div class="topTool">
-      <span v-for="(item,index) in 7" :key="index" @click.stop="ButtonDown(3,index)"></span>
+      <span v-for="(item,index) in 8" :key="index" @click.stop="ButtonDown(3,index)"></span>
     </div>
     <div class="rotate" :class="{active:isRotate}" @click.stop="ButtonDown(4)"></div>
   </div>
@@ -644,8 +648,7 @@ export default {
       this.showOrHideRect(false, entity)
       // 启用编辑
       gltfEdit.activate(entity, me.viewer, {
-        calback: function (result) {
-        }
+        calback: function (result) {}
       })
     },
 
@@ -824,7 +827,8 @@ export default {
             // infobox上的图片
             infoImg: require('../../assets/images/3d/xfs.jpg'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+              modelUrl:
+                '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
               scale: 0.5
             }
           }
@@ -852,7 +856,8 @@ export default {
             // infobox上的图片
             infoImg: require('../../assets/images/3d/xfs.jpg'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
+              modelUrl:
+                '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
               scale: 0.08
             }
           }
@@ -1018,14 +1023,20 @@ export default {
     fliterModel (index) {
       if (this.modelList) {
         this.modelList.forEach(e => {
-          if (e.attribute.editIndex === index) { e.show = true } else e.show = false
+          if (e.attribute.editIndex === index) {
+            e.show = true
+          } else e.show = false
         })
 
-        if (this.curEditEntity && !this.curEditEntity.show) { this.stopEditing() }
+        if (this.curEditEntity && !this.curEditEntity.show) {
+          this.stopEditing()
+        }
       }
       if (this.markList) {
         this.markList.forEach(e => {
-          if (e.opts.editIndex === index) { e.visible = true } else e.visible = false
+          if (e.opts.editIndex === index) {
+            e.visible = true
+          } else e.visible = false
         })
       }
     },
@@ -1486,14 +1497,12 @@ export default {
       this.viewer.dataSources.add(dataSource)
       const lat = 30.510093
       const lon = 114.235004
-      this.createGisModel(
-        {
-          url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
-          x: lon,
-          y: lat,
-          z: 12
-        }
-      )
+      this.createGisModel({
+        url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
+        x: lon,
+        y: lat,
+        z: 12
+      })
 
       // setInterval(() => {
       //   lon += 0.000001
@@ -2504,7 +2513,7 @@ export default {
     display: flex;
     top: 20px;
     right: 30px;
-    width: 406px;
+    width: 436px;
     height: 44px;
     background: url(../../assets/images/3d/toolbar-bg.png) no-repeat;
     align-items: center;
@@ -2530,7 +2539,7 @@ export default {
       content: "";
       position: absolute;
       top: 4px;
-      right: 251px;
+      right: 281px;
       display: inline-block;
       width: 2px;
       height: 37px;
@@ -2544,23 +2553,29 @@ export default {
       background: url(../../assets/images/3d/measure-area.png) no-repeat;
       margin-left: 10px;
     }
-    span:nth-child(6) {
-      background: url(../../assets/images/3d/setting.png) no-repeat;
-      margin-left: 33px;
+     span:nth-child(6) {
+      background: url(../../assets/images/3d/save.png) no-repeat;
+      margin-left: 28px;
     }
+
     span:nth-child(6)::before {
       content: "";
       position: absolute;
       top: 4px;
-      right: 105px;
+      right: 135px;
       display: inline-block;
       width: 2px;
       height: 37px;
       background: url(../../assets/images/3d/tool-rect.png) no-repeat;
     }
+
     span:nth-child(7) {
+      background: url(../../assets/images/3d/setting.png) no-repeat;
+      margin-left: 9px;
+    }
+    span:nth-child(8) {
       background: url(../../assets/images/3d/share.png) no-repeat;
-      margin-left: 13px;
+      margin-left: 9px;
     }
   }
 
@@ -2576,7 +2591,7 @@ export default {
   .rotate {
     position: absolute;
     top: 27px;
-    right: 346px;
+    right: 376px;
     width: 30px;
     height: 30px;
     background: url(../../assets/images/3d/rotate-inner.png) no-repeat;
