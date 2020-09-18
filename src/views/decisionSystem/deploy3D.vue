@@ -2527,13 +2527,22 @@ export default {
       background: url(../../assets/images/3d/home.png) no-repeat;
       margin-left: 16px;
     }
+    span:nth-child(1):active {
+      background: url(../../assets/images/3d/home-click.png) no-repeat;
+    }
     span:nth-child(2) {
       background: url(../../assets/images/3d/snap.png) no-repeat;
       margin-left: 59px;
     }
+    span:nth-child(2):active {
+      background: url(../../assets/images/3d/snap-click.png) no-repeat;
+    }
     span:nth-child(3) {
       background: url(../../assets/images/3d/measure-distance.png) no-repeat;
       margin-left: 41px;
+    }
+    span:nth-child(3):active {
+      background: url(../../assets/images/3d/measure-distance-click.png) no-repeat;
     }
     span:nth-child(3)::before {
       content: "";
@@ -2549,15 +2558,23 @@ export default {
       background: url(../../assets/images/3d/measure-height.png) no-repeat;
       margin-left: 10px;
     }
+    span:nth-child(4):active {
+      background: url(../../assets/images/3d/measure-height-click.png) no-repeat;
+    }
     span:nth-child(5) {
       background: url(../../assets/images/3d/measure-area.png) no-repeat;
       margin-left: 10px;
+    }
+    span:nth-child(5):active {
+      background: url(../../assets/images/3d/measure-area-click.png) no-repeat;
     }
      span:nth-child(6) {
       background: url(../../assets/images/3d/save.png) no-repeat;
       margin-left: 28px;
     }
-
+    span:nth-child(6):active {
+      background: url(../../assets/images/3d/save-click.png) no-repeat;
+    }
     span:nth-child(6)::before {
       content: "";
       position: absolute;
@@ -2573,9 +2590,15 @@ export default {
       background: url(../../assets/images/3d/setting.png) no-repeat;
       margin-left: 9px;
     }
+    span:nth-child(7):active {
+      background: url(../../assets/images/3d/setting-click.png) no-repeat;
+    }
     span:nth-child(8) {
       background: url(../../assets/images/3d/share.png) no-repeat;
       margin-left: 9px;
+    }
+    span:nth-child(8):active {
+      background: url(../../assets/images/3d/share-click.png) no-repeat;
     }
   }
 
@@ -2596,6 +2619,10 @@ export default {
     height: 30px;
     background: url(../../assets/images/3d/rotate-inner.png) no-repeat;
     cursor: pointer;
+  }
+
+  .rotate:active {
+    background: url(../../assets/images/3d/rotate-inner-click.png) no-repeat;
   }
 
   .rotate.active {
