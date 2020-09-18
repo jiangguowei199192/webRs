@@ -8,11 +8,13 @@
     <div class="bottom"></div>
     <div class="tabs">
       <div
-        v-for="(item,index) in 8"
+        v-for="(item,index) in tabs"
         :key="index"
         :class="{active:activeIndex==index}"
         @click.stop="ButtonDown(2,index)"
-      ></div>
+      >
+        <span>{{item}}</span>
+      </div>
     </div>
     <div class="plotBox" v-show="showPlotBox">
       <el-select v-model="plotType" placeholder="请选择" class="select" :popper-append-to-body="false">
@@ -258,6 +260,16 @@ export default {
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
+      tabs: [
+        '实时GIS',
+        '水源分布',
+        '防火设计',
+        '重点区域',
+        '沙盘绘制',
+        'VR视角',
+        '图纸资料',
+        '编辑模式'
+      ],
       taskList: [
         '内政',
         '出枪掩护',
@@ -1996,33 +2008,75 @@ export default {
       height: 79px;
       cursor: pointer;
       margin-right: 39px;
+      span{
+        display: inline-block;
+        font-size: 16px;
+        color: #FFFFFF;
+        transform: translate(2px,90px);
+      }
     }
     div.active {
-      transform: scale(1.2);
+      //transform: scale(1.2);
+      width: 87px;
+      height: 98px;
+      transform: translateY(-8px);
+       span{
+        transform: translate(10px,98px);
+      }
     }
     div:nth-child(1) {
       background: url(../../assets/images/3d/gis.png) no-repeat;
     }
+    div:nth-child(1).active {
+      background: url(../../assets/images/3d/gis-select.png) no-repeat;
+    }
     div:nth-child(2) {
       background: url(../../assets/images/3d/water.png) no-repeat;
+    }
+    div:nth-child(2).active {
+      background: url(../../assets/images/3d/water-select.png) no-repeat;
     }
     div:nth-child(3) {
       background: url(../../assets/images/3d/fire.png) no-repeat;
     }
+    div:nth-child(3).active {
+      background: url(../../assets/images/3d/fire-select.png) no-repeat;
+    }
     div:nth-child(4) {
       background: url(../../assets/images/3d/area.png) no-repeat;
+    }
+    div:nth-child(4).active {
+      background: url(../../assets/images/3d/area-select.png) no-repeat;
     }
     div:nth-child(5) {
       background: url(../../assets/images/3d/draw.png) no-repeat;
     }
+    div:nth-child(5).active {
+      background: url(../../assets/images/3d/draw-select.png) no-repeat;
+    }
     div:nth-child(6) {
       background: url(../../assets/images/3d/vr.png) no-repeat;
+       span {
+       transform: translate(6px,90px);
+      }
+    }
+    div:nth-child(6).active {
+      background: url(../../assets/images/3d/vr-select.png) no-repeat;
+      span {
+       transform: translate(16px,98px);
+      }
     }
     div:nth-child(7) {
       background: url(../../assets/images/3d/paper.png) no-repeat;
     }
+    div:nth-child(7).active {
+      background: url(../../assets/images/3d/paper-select.png) no-repeat;
+    }
     div:nth-child(8) {
       background: url(../../assets/images/3d/edit.png) no-repeat;
+    }
+    div:nth-child(8).active {
+      background: url(../../assets/images/3d/edit-select.png) no-repeat;
     }
   }
 
