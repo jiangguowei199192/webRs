@@ -1,6 +1,10 @@
 <template>
   <div class="mapcontainer mars3d">
     <Map :url="configUrl" :widgetUrl="widgetUrl" @onload="onMapload" />
+    <div class="title">
+      <span @click.stop="ButtonDown(11)"></span>
+      <span>三维预案</span>
+    </div>
     <div class="bottom"></div>
     <div class="tabs">
       <div
@@ -774,6 +778,9 @@ export default {
           break
         case 10:
           this.plotModel(item === 2 ? 7 : 8)
+          break
+        case 11:
+          this.$router.push({ path: '/decisionSystem' })
           break
         default:
           break
@@ -1943,6 +1950,32 @@ export default {
   height: 890px;
   overflow: hidden;
 
+  .title{
+    display: flex;
+    box-sizing: border-box;
+    width: 134px;
+    height: 40px;
+    border: 1px solid #39A4DD;
+    background: rgba(18, 30, 58, 0.85);
+    position: absolute;
+    top:20px;
+    left:37px;
+    align-items: center;
+    span:nth-child(1) {
+    display: inline-block;
+    width: 20px;
+    height: 16px;
+    background: url(../../assets/images/Setting/setting-back.png) no-repeat;
+    cursor: pointer;
+    margin-left: 16px;
+    margin-right: 13px;
+    }
+    span:nth-child(2) {
+    font-size: 18px;
+    color: #FFFFFF;
+    }
+  }
+
   .bottom {
     position: absolute;
     bottom: 0px;
@@ -2000,7 +2033,7 @@ export default {
     width: 368px;
     height: 690px;
     left: 38px;
-    top: 50px;
+    top: 90px;
     .tabList {
       margin-left: 70px;
       margin-top: 30px;
@@ -2152,7 +2185,7 @@ export default {
     width: 290px;
     height: 706px;
     left: 38px;
-    top: 50px;
+    top: 90px;
 
     .models {
       margin-top: 12px;
