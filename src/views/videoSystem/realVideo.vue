@@ -1415,7 +1415,7 @@ export default {
           this.$notify.success({
             title: '成功',
             message: '抓取成功！',
-            duration: 800
+            duration: 800000
           })
           // this.$nextTick(() => {
           // 目的地

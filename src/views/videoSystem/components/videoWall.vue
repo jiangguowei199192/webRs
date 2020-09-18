@@ -224,6 +224,44 @@
           </div>
         </div>
       </div>
+      <template v-if="showNotification">
+        <!-- 警告 -->
+        <div role="alert" class="el-notification right" style="top: 16px; z-index: 2000;">
+          <i class="el-notification__icon" :class="{'el-icon-warning':infoObj.isWarning,'el-icon-success':infoObj.isSuccess,'el-icon-error':infoObj.isError}"></i>
+          <div class="el-notification__group is-with-icon">
+            <h2 class="el-notification__title">警告</h2>
+            <div class="el-notification__content">
+              <p>{{infoObj.msg}}</p>
+            </div>
+            <div
+              class="el-notification__closeBtn el-icon-close"
+              @click.stop="showNotification=false"
+            ></div>
+          </div>
+        </div>
+        <!-- 成功 -->
+        <!-- <div role="alert" class="el-notification right" style="top: 16px; z-index: 2008;">
+          <i class="el-notification__icon el-icon-success"></i>
+          <div class="el-notification__group is-with-icon">
+            <h2 class="el-notification__title">成功</h2>
+            <div class="el-notification__content">
+              <p>抓取成功！</p>
+            </div>
+            <div class="el-notification__closeBtn el-icon-close"></div>
+          </div>
+        </div>-->
+        <!-- 失败 -->
+        <!-- <div role="alert" class="el-notification right" style="top: 16px; z-index: 2008;">
+          <i class="el-notification__icon el-icon-error"></i>
+          <div class="el-notification__group is-with-icon">
+            <h2 class="el-notification__title">失败</h2>
+            <div class="el-notification__content">
+              <p>抓取成功！</p>
+            </div>
+            <div class="el-notification__closeBtn el-icon-close"></div>
+          </div>
+        </div>-->
+      </template>
       <!-- 视频图标及标签 -->
       <div class="info">
         <span></span>
@@ -461,6 +499,13 @@ export default {
           name: '河流'
         }
       ],
+      showNotification: false,
+      infoObj: {
+        isWarning: false,
+        isSuccess: false,
+        isError: false,
+        msg: ''
+      }, // 提示信息
       isSub: false, // 是否监听播放进度改变
       isUpdateTime: true,
       curTime: 0,
@@ -607,6 +652,13 @@ export default {
           // 成功之后调用该方法获取坐标信息
           // this.$refs.drawArea.customQuery(this.ruleForm)
           // 标签名称和标签类型校验成功之后 调接口  获取数据  无需手动创建dom结构
+          this.showNotification = true
+          this.infoObj.isError = true
+          this.infoObj.msg = 'SDFSDFSDF'
+          setTimeout(() => {
+            this.showNotification = false
+          }, 3000)
+
           this.createTag(this.ruleForm, this.curPositionObj)
           this.resetForm('ruleForm')
         } else {
