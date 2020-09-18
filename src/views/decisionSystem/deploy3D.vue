@@ -1656,7 +1656,6 @@ export default {
 
     /**
      *  测量开始,移除鼠标事件
-     * @param {Number} type 测量类型
      */
     measureStart () {
       // 禁用drawControl编辑功能
