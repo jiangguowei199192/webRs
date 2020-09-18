@@ -227,7 +227,10 @@
       <template v-if="showNotification">
         <!-- 警告 -->
         <div role="alert" class="el-notification right" style="top: 16px; z-index: 2000;">
-          <i class="el-notification__icon" :class="{'el-icon-warning':infoObj.isWarning,'el-icon-success':infoObj.isSuccess,'el-icon-error':infoObj.isError}"></i>
+          <i
+            class="el-notification__icon"
+            :class="{'el-icon-warning':infoObj.isWarning,'el-icon-success':infoObj.isSuccess,'el-icon-error':infoObj.isError}"
+          ></i>
           <div class="el-notification__group is-with-icon">
             <h2 class="el-notification__title">警告</h2>
             <div class="el-notification__content">
@@ -339,20 +342,22 @@
           </div>
         </div>
       </div>
+      <!-- 添加标签的弹框 -->
       <div class="fullScreenMark" v-show="showMarkForm">
+        <img src="../../../assets/images/AR/close.png"  @click="resetForm('ruleForm')"/>
         <el-form
           :model="ruleForm"
           :rules="rules"
           ref="ruleForm"
-          label-width="100px"
+          label-width="86px"
           class="demo-ruleForm"
         >
           <el-form-item label="标签名称" prop="tagName">
-            <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:350px"></el-input>
+            <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:172px"></el-input>
           </el-form-item>
-          <el-form-item label="标签类型" prop="tagType">
+          <el-form-item label="标签类型" prop="tagType" style="margin-top:20px;">
             <el-select
-              style="width:350px"
+              style="width:172px"
               required
               v-model="ruleForm.tagType"
               placeholder="请选择标签类型"
@@ -367,9 +372,14 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-top:20px;">
+            <el-button
+              type="primary"
+              @click="resetForm('ruleForm')"
+              style="background:#18223A;color:#209CDF;
+border: 1px solid #209CDF;"
+            >取消</el-button>
             <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
-            <el-button type="primary" @click="resetForm('ruleForm')">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -606,6 +616,7 @@ export default {
         } else {
           me.bIsFullScreen = false
           me.showAR && (me.showAR = false)
+          me.showCurindex = 1000
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
           me.resetForm('ruleForm')
         }
@@ -1665,15 +1676,34 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;
-    height: 300px;
-    background: #00497c;
+    width: 286px;
+    height: 147px;
+    cursor: text;
+    background: url(../../../assets/images/AR/tag_add.png) no-repeat ;
+    >img{
+      position:absolute;
+      top:6px;
+      right:6px;
+      cursor: pointer;
+    }
     form {
-      margin-top: 30px;
+      margin-top: 18px;
+    }
+    .el-form-item__content,
+    .el-form-item__label,
+    .el-input__inner,
+    .el-input__icon {
+      height: 22px;
+      line-height: 22px !important;
+    }
+    .el-form-item{
+      margin-bottom:0px;
     }
     .el-button.el-button--primary {
       padding: 0;
-      height: 40px !important;
+      width: 68px !important;
+      height: 24px !important;
+      line-height: 24px !important;
       background: #409eff;
     }
   }
