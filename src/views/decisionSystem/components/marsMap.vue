@@ -17,7 +17,7 @@ export default {
   props: {
     // 初始化配置参数
     url: String,
-    widgetUrl: String,
+    // widgetUrl: String,
 
     // 地图唯一性标识
     mapKey: {
@@ -108,9 +108,9 @@ export default {
       })
 
       // widget处理
-      this.getMapConfig(this.widgetUrl).then((data) => {
-        this.initStaticWidget(viewer, data)
-      })
+      // this.getMapConfig(this.widgetUrl).then((data) => {
+      //   this.initStaticWidget(viewer, data)
+      // })
 
       // viewer.mars.click = () => {
       //   // 触发 document 上的事件

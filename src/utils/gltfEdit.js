@@ -1,6 +1,6 @@
 ﻿var Cesium = window.Cesium
 var mars3d = window.mars3d
-var gltfEdit = {
+export var gltfEdit = {
   // 开始编辑
   activate: function (model, viewer, options) {
     this.viewer = viewer

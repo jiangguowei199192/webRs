@@ -1,7 +1,7 @@
 <template>
   <div class="mapcontainer mars3d">
-    <Map :url="configUrl" :widgetUrl="widgetUrl" @onload="onMapload" />
-    <div class="title">
+    <Map :url="configUrl" @onload="onMapload" />
+    <div class="back">
       <span @click.stop="ButtonDown(11)"></span>
       <span>三维预案</span>
     </div>
@@ -219,6 +219,7 @@
 </template>
 
 <script>
+import { gltfEdit } from '@/utils/gltfEdit.js'
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
@@ -226,7 +227,7 @@ import { uuid } from '@/utils/public'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
-var gltfEdit = window.gltfEdit
+// var gltfEdit = window.gltfEdit
 const serverUrl = 'http://172.16.16.101:9000/mapdata'
 let me
 export default {
@@ -241,7 +242,6 @@ export default {
       showViewDetail: false, // 显示视角信息
       curModelIndex: 1000, // 沙盘绘制模式下，选中模型索引
       configUrl: 'config/config.json',
-      widgetUrl: 'config/widget.json',
       showPlotBox: false,
       editMode: false, // 是否编辑模式
       isPlot: false, // 是否是沙盘绘制
@@ -1950,7 +1950,7 @@ export default {
   height: 890px;
   overflow: hidden;
 
-  .title{
+  .back{
     display: flex;
     box-sizing: border-box;
     width: 134px;
