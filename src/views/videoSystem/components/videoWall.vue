@@ -135,7 +135,10 @@
             </div>
             <div class="box">
               <div class="item" v-for="(item,index) in 15" :key="index">
-                <img src="../../../assets/images/type_fire.png" width="123px" height="123px" />
+                <div class="container">
+                  <img src="../../../assets/images/type_fire.png" />
+                  <span >X</span>
+                </div>
                 <p>绿地中心检测目标</p>
                 <div>2020-09-11</div>
               </div>
@@ -344,20 +347,20 @@
       </div>
       <!-- 添加标签的弹框 -->
       <div class="fullScreenMark" v-show="showMarkForm">
-        <img src="../../../assets/images/AR/close.png"  @click="resetForm('ruleForm')"/>
+        <img src="../../../assets/images/AR/close.png" @click="resetForm('ruleForm')" />
         <el-form
           :model="ruleForm"
           :rules="rules"
           ref="ruleForm"
-          label-width="86px"
+          label-width="120px"
           class="demo-ruleForm"
         >
           <el-form-item label="标签名称" prop="tagName">
-            <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:172px"></el-input>
+            <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:228px"></el-input>
           </el-form-item>
           <el-form-item label="标签类型" prop="tagType" style="margin-top:20px;">
             <el-select
-              style="width:172px"
+              style="width:228px"
               required
               v-model="ruleForm.tagType"
               placeholder="请选择标签类型"
@@ -372,14 +375,14 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item style="margin-top:20px;">
+          <el-form-item style="margin-top:30px;">
             <el-button
               type="primary"
               @click="resetForm('ruleForm')"
               style="background:#18223A;color:#209CDF;
-border: 1px solid #209CDF;"
+border: 1px solid #209CDF;width:108px!important"
             >取消</el-button>
-            <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')" style="width:108px!important">确定</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -1110,6 +1113,7 @@ export default {
   }
   .selectStyle {
     position: absolute !important;
+    top:30px !important;
   }
   .pointLayer {
     position: absolute;
@@ -1287,7 +1291,27 @@ export default {
             padding-bottom: 10px;
             text-align: center;
             font-size: 12px;
-            position: relative;
+            .container {
+              width: 123px;
+              height: 123px;
+              position: relative;
+              img {
+                width: 100%;
+                height: 100%;
+              }
+              span {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                color: #aaa;
+                font-size: 18px;
+                cursor: pointer;
+                display: none;
+              }
+            }
+            .container:hover span {
+              display: block;
+            }
             p {
               margin-top: 9px;
               margin-bottom: 15px;
@@ -1676,34 +1700,39 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 286px;
-    height: 147px;
+    width: 386px;
+    height: 250px;
     cursor: text;
-    background: url(../../../assets/images/AR/tag_add.png) no-repeat ;
-    >img{
-      position:absolute;
-      top:6px;
-      right:6px;
+    background: url(../../../assets/images/AR/tag_add.png) no-repeat;
+    background-size:100% 100%;
+    > img {
+      position: absolute;
+      top: 6px;
+      right: 6px;
       cursor: pointer;
     }
     form {
-      margin-top: 18px;
+      margin-top: 20px;
     }
-    .el-form-item__content,
-    .el-form-item__label,
-    .el-input__inner,
-    .el-input__icon {
-      height: 22px;
-      line-height: 22px !important;
+    // .el-form-item__content,
+    // .el-form-item__label,
+    // .el-input__inner,
+    // .el-input__icon {
+    //   height: 22px;
+    //   line-height: 22px !important;
+    // }
+    .el-form-item {
+      margin-bottom: 0px;
     }
-    .el-form-item{
-      margin-bottom:0px;
+    .el-select-dropdown__item{
+      height:28px!important;
+      line-height: 28px!important;
     }
     .el-button.el-button--primary {
       padding: 0;
       width: 68px !important;
-      height: 24px !important;
-      line-height: 24px !important;
+      height: 36px !important;
+      line-height: 36px !important;
       background: #409eff;
     }
   }
