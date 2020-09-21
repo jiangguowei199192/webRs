@@ -131,6 +131,8 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 :append-to-body="false"
+                @change="getTimeRange"
+               value-format="timestamp"
               ></el-date-picker>
             </div>
             <div class="box">
@@ -1085,6 +1087,10 @@ export default {
     handleCurrentChange (val) {
       this.pageInfo.currentPage = val
       console.log(`当前页: ${val}`)
+    },
+    getTimeRange () {
+      console.log(this.dateRange)
+      debugger
     }
   },
   created () {}
