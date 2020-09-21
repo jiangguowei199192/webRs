@@ -1526,6 +1526,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   overflow: visible;
+  background-image: url('../../assets/images/bg.png');
 }
 
 // 全屏弹框
