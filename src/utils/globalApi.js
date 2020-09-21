@@ -26,14 +26,14 @@ if (process.env.NODE_ENV === 'production') {
   })
 } else {
   // 来消防办公，内网地址改外网
-  // baseUrl = 'http://111.47.13.103:40009'
-  // mqttServer = '111.47.13.103'
-  // mqttPort = 40011
-  // headImg = 'http://111.47.13.103:40015'
-  baseUrl = 'http://172.16.63.148:8850'
-  mqttServer = '172.16.63.148'
-  mqttPort = 2883
-  headImg = 'http://172.16.63.148'
+  baseUrl = 'http://111.47.13.103:40009'
+  mqttServer = '111.47.13.103'
+  mqttPort = 40011
+  headImg = 'http://111.47.13.103:40015'
+  // baseUrl = 'http://172.16.63.148:8850'
+  // mqttServer = '172.16.63.148'
+  // mqttPort = 2883
+  // headImg = 'http://172.16.63.148'
   projectTitle = '武汉市公安局安保防控系统'
 }
 export default {
