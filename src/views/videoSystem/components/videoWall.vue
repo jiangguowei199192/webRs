@@ -1707,8 +1707,8 @@ export default {
     background-size:100% 100%;
     > img {
       position: absolute;
-      top: 6px;
-      right: 6px;
+      top: 8px;
+      right: 8px;
       cursor: pointer;
     }
     form {
