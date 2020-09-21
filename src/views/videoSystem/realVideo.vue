@@ -37,7 +37,7 @@
                   :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                   :title="list.label"
-                >{{list.label.length>3?list.label.slice(0,3)+'..':list.label}}</el-button>
+                >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
                 <!-- <el-button
                     :class="{infrared:list.label==='可见光'}"
                     :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
