@@ -11,6 +11,7 @@
             <i class="el-icon-warning"></i>
             1位用户未分配所属组织
           </div>
+
           <el-tree
             :data="deptTree"
             :props="deptTreeProps"
@@ -31,37 +32,34 @@
             >
               <span>{{ node.label + (data.children ? ('[' + data.children.length + ']') : '') }}</span>
 
-              <!-- <el-popover
-                placement="right"
-                width="150"
-                trigger="click"
-                popper-class="el-popover-more"
-                v-model="showMorePopover"
-              >
-                <div style="text-align: center;">
-                  <el-button class="popoverBtn">新增下级组织</el-button>
-                  <el-button class="popoverBtn">修改组织</el-button>
-                  <el-button class="popoverBtn">绑定设备</el-button>
-                </div>
-
-                <el-button
-                  v-show="data.del"
-                  size="mini"
-                  type="primary"
-                  @click="deptTreeSetting"
-                  style="color: white; margin-left: 15px; border: none;"
-                  icon="el-icon-setting"
-                ></el-button>
-              </el-popover> -->
-
-              <el-link
+              <!-- <el-link
                 v-show="data.del"
                 size="mini"
                 type="primary"
                 @click="deptTreeSetting"
                 style="color: white; margin-left: 15px; border: none;"
                 icon="el-icon-setting"
-              ></el-link>
+              ></el-link>-->
+
+              <el-popover
+                placement="right"
+                width="150"
+                trigger="hover"
+                popper-class="el-popover-more"
+              >
+                <div style="text-align: center;">
+                  <el-button class="popoverBtn" @click="organizationAdd(data)">新增下级组织</el-button>
+                  <el-button class="popoverBtn" @click="organizationEdit(data)">修改组织</el-button>
+                  <el-button class="popoverBtn" @click="bindDevice(data)">绑定设备</el-button>
+                </div>
+
+                <el-button
+                  slot="reference"
+                  icon="el-icon-setting"
+                  v-show="data.del"
+                  class="settingStyle"
+                ></el-button>
+              </el-popover>
             </span>
           </el-tree>
         </div>
@@ -155,6 +153,52 @@
         <el-button type="primary" @click="deleteTipSave" class="trueBtn">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="新增组织"
+      :visible.sync="showAddOrganization"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
+      <el-form
+        ref="addOrganizationFormRef"
+        :model="addOrganizationForm"
+        label-width="80px"
+        :rules="addOrganizationRules"
+      >
+        <el-form-item label="组织名称" prop="organizationName">
+          <el-input v-model="addOrganizationForm.organizationName"></el-input>
+        </el-form-item>
+        <el-form-item label="类型" prop="organizationType">
+          <el-select
+            v-model="addOrganizationForm.organizationType"
+            :popper-append-to-body="false"
+            placeholder
+            popper-class="select-popper"
+          >
+            <!-- <el-option
+              v-for="item in addUser_userList"
+              :key="item.id"
+              :label="item.username"
+              :value="item.id"
+            ></el-option> -->
+          </el-select>
+        </el-form-item>
+        <el-form-item label="上级组织" prop="previousOrganization">
+          <el-cascader
+            placeholder
+            :options="deptTree"
+            :props="addOrganizationProps"
+            :show-all-levels="false"
+            v-model="addOrganizationForm.previousOrganization"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="addUserConfirm" class="trueBtn">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -172,7 +216,7 @@ export default {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
       clickfalse: false,
 
-      // showMorePopover: false,
+      showMorePopover: false,
 
       deptTree: [],
       deptTreeProps: {
@@ -199,7 +243,26 @@ export default {
       },
       addUser_userList: [],
 
-      showDeleteTip: false
+      showDeleteTip: false,
+
+      showAddOrganization: false,
+      addOrganizationForm: {
+        organizationName: '',
+        organizationType: '',
+        previousOrganization: ''
+      },
+      addOrganizationRules: {
+        organizationName: [{ required: true, message: '请输入组织名称' }],
+        organizationType: [{ required: true, message: '请选择类型' }],
+        previousOrganization: [{ required: true, message: '请选择上级组织' }]
+      },
+      addOrganizationProps: {
+        emitPath: false,
+        checkStrictly: true,
+        children: 'children',
+        label: 'deptName',
+        value: 'deptCode'
+      }
     }
   },
   methods: {
@@ -211,7 +274,37 @@ export default {
     async getDeptTree () {
       this.$axios.post(loginApi.getDeptTree).then((res) => {
         if (res.data.code === 0) {
-          this.deptTree = res.data.data
+          var temp = res.data.data
+          // 一级
+          temp.forEach((item) => {
+            if (item.children) {
+              if (item.children.length <= 0) {
+                item.children = null
+              } else {
+                // 二级
+                var temp2 = item.children
+                temp2.forEach((item2) => {
+                  if (item2.children) {
+                    if (item2.children.length <= 0) {
+                      item2.children = null
+                    } else {
+                      // 三级
+                      var temp3 = item2.children
+                      temp3.forEach((item3) => {
+                        if (item3.children) {
+                          if (item3.children.length <= 0) {
+                            item3.children = null
+                          }
+                        }
+                      })
+                    }
+                  }
+                })
+              }
+            }
+          })
+          this.deptTree = temp
+
           this.selectedDeptCode = res.data.data[0].deptCode
           this.getUserList()
         }
@@ -312,26 +405,28 @@ export default {
           }
           param.push(temp)
         })
-        this.$axios.post(settingApi.batchUpdateUserDeptCode, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        }).then(res => {
-          if (res.data.code === 0) {
-            this.getUserList()
+        this.$axios
+          .post(settingApi.batchUpdateUserDeptCode, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.getUserList()
+              Notification({
+                title: '提示',
+                message: '添加成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              return
+            }
             Notification({
               title: '提示',
-              message: '添加成功',
-              type: 'success',
+              message: '添加失败',
+              type: 'warning',
               duration: 5 * 1000
             })
-            return
-          }
-          Notification({
-            title: '提示',
-            message: '添加失败',
-            type: 'warning',
-            duration: 5 * 1000
           })
-        })
       })
     },
 
@@ -341,8 +436,26 @@ export default {
     deptTreeMouseLeave (data) {
       this.$set(data, 'del', false)
     },
-    deptTreeSetting () {
-      console.log(111)
+    // deptTreeSetting () {
+    //   console.log(111)
+    //   this.showMorePopover = true
+    // },
+
+    // 新增组织
+    organizationAdd (data) {
+      // console.log('新增组织')
+      // console.log(data)
+      this.showAddOrganization = true
+    },
+    // 修改组织
+    organizationEdit (data) {
+      // console.log('修改组织')
+      // console.log(data)
+    },
+    // 绑定设备
+    bindDevice (data) {
+      // console.log('绑定设备')
+      // console.log(data)
     }
   }
 }
@@ -542,32 +655,47 @@ export default {
   }
   .selectStyle {
     width: 80%;
-    // 下拉框
-    /deep/.el-input__inner {
-      font-size: 12px;
-    }
-    /deep/.select-popper {
-      background-color: #3688b1;
-      font-size: 12px;
-      color: white;
-      border: none;
-      .el-select-dropdown__item.selected {
-        background-color: #3688b1;
-      }
-      .el-select-dropdown__item {
-        font-size: 12px;
-        color: white;
-      }
-      .el-select-dropdown__item.hover {
-        background-color: #3688b1;
-      }
-      .popper__arrow {
-        border-bottom-color: #3688b1;
-      }
-      .popper__arrow::after {
-        border-bottom-color: #3688b1;
-      }
-    }
+    // // 下拉框
+    // /deep/.el-input__inner {
+    //   font-size: 12px;
+    // }
+    // /deep/.select-popper {
+    //   background-color: #3688b1;
+    //   font-size: 12px;
+    //   color: white;
+    //   border: none;
+    //   .el-select-dropdown__item.selected {
+    //     background-color: #3688b1;
+    //   }
+    //   .el-select-dropdown__item {
+    //     font-size: 12px;
+    //     color: white;
+    //   }
+    //   .el-select-dropdown__item.hover {
+    //     background-color: #3688b1;
+    //   }
+    //   .popper__arrow {
+    //     border-bottom-color: #3688b1;
+    //   }
+    //   .popper__arrow::after {
+    //     border-bottom-color: #3688b1;
+    //   }
+    // }
   }
+}
+
+.settingStyle {
+  width: 35px;
+  height: 35px;
+  background-color: transparent;
+  color: white;
+  border: none;
+}
+.popoverBtn {
+  background: transparent;
+  color: white;
+  border: 0;
+  margin-left: 0px;
+  border-radius: 0px;
 }
 </style>

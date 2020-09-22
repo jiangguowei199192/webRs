@@ -633,36 +633,36 @@ export default {
   .selectStyle {
     width: 80%;
     // 下拉框
-    /deep/.el-input__inner {
-      font-size: 12px;
-    }
-    /deep/.select-popper {
-      background-color: #3688b1;
-      font-size: 12px;
-      color: white;
-      border: none;
-      .el-select-dropdown__item.selected {
-        background-color: #3688b1;
-      }
-      .el-select-dropdown__item {
-        font-size: 12px;
-        color: white;
-      }
-      .el-select-dropdown__item.hover {
-        background-color: #3688b1;
-      }
-      .popper__arrow {
-        border-bottom-color: #3688b1;
-      }
-      .popper__arrow::after {
-        border-bottom-color: #3688b1;
-      }
-    }
+    // /deep/.el-input__inner {
+    //   font-size: 12px;
+    // }
+    // /deep/.select-popper {
+    //   background-color: #3688b1;
+    //   font-size: 12px;
+    //   color: white;
+    //   border: none;
+    //   .el-select-dropdown__item.selected {
+    //     background-color: #3688b1;
+    //   }
+    //   .el-select-dropdown__item {
+    //     font-size: 12px;
+    //     color: white;
+    //   }
+    //   .el-select-dropdown__item.hover {
+    //     background-color: #3688b1;
+    //   }
+    //   .popper__arrow {
+    //     border-bottom-color: #3688b1;
+    //   }
+    //   .popper__arrow::after {
+    //     border-bottom-color: #3688b1;
+    //   }
+    // }
   }
 }
 
 .cascaderStyle {
-  width: 300px;
+  // width: 300px;
   /deep/.el-cascader__search-input {
     background: transparent;
     color: white;
