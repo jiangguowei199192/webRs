@@ -43,9 +43,16 @@
               <img :src="alarmPic" alt />
               <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
             </a>
-            <a @mouseenter="showActive(3)" @mouseleave="showActive(0)" title="抓取">
+            <a
+              @mouseenter="showActive(3)"
+              @mouseleave="showActive(0)"
+              title="抓取"
+              @click.stop="showImg"
+            >
               <img :src="capturePic" alt />
               <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
+              <!-- 用于显示截取的图片 -->
+              <img :src="`${picUrl}${cutImgUrl}`" class="cutImg" id="pic" v-show="showCutImg" />
             </a>
             <a
               @mouseenter="showActive(4)"
@@ -132,14 +139,14 @@
                 end-placeholder="结束日期"
                 :append-to-body="false"
                 @change="getTimeRange"
-               value-format="timestamp"
+                value-format="timestamp"
               ></el-date-picker>
             </div>
             <div class="box">
               <div class="item" v-for="(item,index) in 15" :key="index">
                 <div class="container">
                   <img src="../../../assets/images/type_fire.png" />
-                  <span >X</span>
+                  <span>X</span>
                 </div>
                 <p>绿地中心检测目标</p>
                 <div>2020-09-11</div>
@@ -237,7 +244,7 @@
             :class="{'el-icon-warning':infoObj.isWarning,'el-icon-success':infoObj.isSuccess,'el-icon-error':infoObj.isError}"
           ></i>
           <div class="el-notification__group is-with-icon">
-            <h2 class="el-notification__title">警告</h2>
+            <h2 class="el-notification__title">{{infoObj.title}}</h2>
             <div class="el-notification__content">
               <p>{{infoObj.msg}}</p>
             </div>
@@ -384,7 +391,11 @@
               style="background:#18223A;color:#209CDF;
 border: 1px solid #209CDF;width:108px!important"
             >取消</el-button>
-            <el-button type="primary" @click="submitForm('ruleForm')" style="width:108px!important">确定</el-button>
+            <el-button
+              type="primary"
+              @click="submitForm('ruleForm')"
+              style="width:108px!important"
+            >确定</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -395,11 +406,16 @@ border: 1px solid #209CDF;width:108px!important"
 import LivePlayer from '@liveqing/liveplayer'
 import droneInfoMixin from '../../../utils/droneInfoMixin'
 import canvasArea from './canvasArea'
-import { debounce } from '../../../utils/public.js'
+import { debounce, throttle } from '../../../utils/public.js'
+import globalApi from '../../../utils/globalApi'
+import { api } from '@/api/videoSystem/realVideo'
 export default {
   data () {
     return {
-      active: '',
+      picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
+      showCutImg: false, // 是否显示抓拍的图片 默认不显示
+      cutImgUrl: '', // 显示抓取的图片
+      active: '', // 动态显示悬停相关图标
       showAR: false, // 显示AR
       showCurindex: 1000, // 显示弹框
       arPic: require('@/assets/images/AR/ar.png'),
@@ -516,6 +532,7 @@ export default {
       ],
       showNotification: false,
       infoObj: {
+        title: '',
         isWarning: false,
         isSuccess: false,
         isError: false,
@@ -608,6 +625,41 @@ export default {
     showActive (index) {
       this.active = index
     },
+    // 点击抓取，显示抓拍图片
+    showImg: throttle(function () {
+      // 显示抓取的图片
+      const params = {
+        deviceCode: this.videoInfo.deviceCode,
+        channleId: this.videoInfo.streamType
+      }
+      this.$axios.post(api.deviceSnap, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.showNotification = true
+          this.infoObj = {
+            title: '成功',
+            isSuccess: true,
+            isError: false,
+            msg: '抓取成功！'
+          }
+          setTimeout(() => {
+            this.showNotification = false
+          }, 3000)
+          this.showCutImg = true
+          this.imgId = res.data.data.id
+          this.cutImgUrl = res.data.data.filePath
+
+          // this.$nextTick(() => {
+          // 目的地
+          //   this.moveElement('pic', 150, -200)
+          // })
+          setTimeout(() => {
+            // document.getElementById('pic').style.left = '410px'
+            // document.getElementById('pic').style.top = '-470px'
+            this.showCutImg = false
+          }, 4000)
+        }
+      })
+    }, 5000),
     setPlayerSizeListener () {
       var me = this
       this.erd.listenTo(this.$refs.playerArea, function (element) {
@@ -669,7 +721,8 @@ export default {
           // this.$refs.drawArea.customQuery(this.ruleForm)
           // 标签名称和标签类型校验成功之后 调接口  获取数据  无需手动创建dom结构
           this.showNotification = true
-          this.infoObj.isError = true
+          this.infoObj.isSuccess = true
+          this.infoObj.isError = false
           this.infoObj.msg = 'SDFSDFSDF'
           setTimeout(() => {
             this.showNotification = false
@@ -1119,7 +1172,7 @@ export default {
   }
   .selectStyle {
     position: absolute !important;
-    top:30px !important;
+    top: 30px !important;
   }
   .pointLayer {
     position: absolute;
@@ -1166,6 +1219,13 @@ export default {
             position: absolute;
             bottom: 0;
             left: 0;
+          }
+          img.cutImg {
+            position: absolute;
+            top: -210px;
+            left: 20px;
+            width: 200px;
+            height: 200px;
           }
         }
       }
@@ -1320,7 +1380,7 @@ export default {
             }
             p {
               margin-top: 9px;
-              margin-bottom: 15px;
+              margin-bottom: 8px;
             }
           }
         }
@@ -1710,7 +1770,7 @@ export default {
     height: 250px;
     cursor: text;
     background: url(../../../assets/images/AR/tag_add.png) no-repeat;
-    background-size:100% 100%;
+    background-size: 100% 100%;
     > img {
       position: absolute;
       top: 8px;
@@ -1730,9 +1790,9 @@ export default {
     .el-form-item {
       margin-bottom: 0px;
     }
-    .el-select-dropdown__item{
-      height:28px!important;
-      line-height: 28px!important;
+    .el-select-dropdown__item {
+      height: 28px !important;
+      line-height: 28px !important;
     }
     .el-button.el-button--primary {
       padding: 0;
