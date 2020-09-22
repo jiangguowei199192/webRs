@@ -347,9 +347,11 @@ export default {
     activeIndex (val) {
       switch (val) {
         case 0:
-        case 4:
         case 6:
           this.fliterModel(1000)
+          break
+        case 4:
+          this.fliterModel(5)
           break
         case 1:
         case 2:
@@ -986,8 +988,6 @@ export default {
       if (m !== undefined) {
         this.drawControl.deleteEntity(m)
         this.deleteModelMarker(m)
-        const index = this.modelList.indexOf(m)
-        this.modelList.splice(index, 1)
       }
     },
 
@@ -1022,7 +1022,7 @@ export default {
       const id = uuid(8, 16)
       const attr = entity.attribute
       if (!entity.name) entity.name = id
-      // 编辑模式下的模型列表
+      // 标绘的模型列表
       if (!this.modelList) this.modelList = []
       this.modelList.push(entity)
       // 模型才添加marker
@@ -1051,6 +1051,19 @@ export default {
           this.stopEditing()
         }
       }
+
+      // 隐藏/显示模型上方标签
+      if (this.labelList) {
+        const list = this.labelList.filter(item => !item.opts.isGis)
+        list.forEach(e => { e.visible = this.activeIndex === 4 })
+      }
+
+      // 隐藏/显示消防车下方矩形框
+      if (this.rectList) {
+        this.rectList.forEach(e => { e.show = this.activeIndex === 4 })
+      }
+
+      // 隐藏/显示模型上方marker
       if (this.markList) {
         this.markList.forEach(e => {
           if (e.opts.editIndex === index) {
@@ -1082,7 +1095,6 @@ export default {
           // }
           // console.log('创建完成')
           const attr = entity.attribute
-          const id = new Date().format('yyyy-MM-dd HH:mm:ss')
           if (attr.edit) {
             entity.drawOk = true
             if (attr.type === 'billboard') {
@@ -1091,7 +1103,10 @@ export default {
               me.plotModelComplete(entity)
             }
           } else {
+            const id = uuid(8, 16)
             entity.name = id
+            // 沙盘绘制的模型
+            attr.editIndex = 5
             var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
               me.viewer.scene,
               entity.position
@@ -1100,6 +1115,9 @@ export default {
             // 禁用drawControl编辑功能
             me.drawControl.hasEdit(false)
             me.curEntity = entity
+            // 标绘的模型列表
+            if (!me.modelList) me.modelList = []
+            me.modelList.push(entity)
             // 显示模型任务编辑框
             me.isPlot = true
             me.showEditBox = true
@@ -1168,6 +1186,9 @@ export default {
         this.drawControl.on(mars3d.draw.event.Delete, function (e) {
           var entity = e.entity
           const attr = entity.attribute
+
+          const index = me.modelList.indexOf(entity)
+          if (index > -1) { me.modelList.splice(index, 1) }
           // 如果是编辑模式下添加的模型
           if (attr.edit) {
             me.deleteModelMarker(entity)
