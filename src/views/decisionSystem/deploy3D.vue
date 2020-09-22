@@ -345,8 +345,12 @@ export default {
     },
 
     activeIndex (val) {
+      if (val === 0 || val === 4 || val === 7) { this.enableDrawControlEdit(true) } else this.enableDrawControlEdit(false)
+
       switch (val) {
         case 0:
+          this.fliterModel(5)
+          break
         case 6:
           this.fliterModel(1000)
           break
@@ -382,17 +386,6 @@ export default {
         this.$refs.floorGuide.show(this.buildingInfos, 0)
       } else if (this.activeIndex === 7) {
         this.editMode = true
-      }
-
-      // 显示隐藏实时gis数据
-      if (this.gisCollection) {
-        this.gisCollection.show = this.activeIndex === 0
-      }
-      if (this.labelList) {
-        const list = this.labelList.filter(item => item.opts.isGis)
-        list.forEach(e => {
-          e.visible = this.activeIndex === 0
-        })
       }
     },
 
@@ -598,7 +591,7 @@ export default {
       this.showEditBox = false
       if (this.isPlot) {
         // 开启drawControl编辑功能
-        this.drawControl.hasEdit(true)
+        this.enableDrawControlEdit(true)
         this.isPlot = false
         var task = JSON.parse(JSON.stringify(this.editBox))
         task.name = this.curEntity.name
@@ -902,6 +895,7 @@ export default {
             name: '安全出口',
             type: 'billboard',
             edittype: 'billboard',
+            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               image: require('../../assets/images/3d/exit.png'),
               visibleDepth: false,
@@ -915,6 +909,7 @@ export default {
             name: '应急避难所',
             type: 'billboard',
             edittype: 'billboard',
+            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               image: require('../../assets/images/3d/emergencyshelters.png'),
               visibleDepth: false,
@@ -1038,8 +1033,26 @@ export default {
 
     /**
      *  根据类型过滤模型
+     * @param {Number} index 模式 5:沙盘绘制模式
      */
     fliterModel (index) {
+      // 显示隐藏实时gis数据
+      if (this.gisCollection) {
+        this.gisCollection.show = this.activeIndex === 0
+      }
+      // 实时gis模式，显示实时gis数据和沙盘绘制数据
+      // 隐藏/显示模型上方标签
+      if (this.activeIndex === 0) {
+        if (this.labelList) {
+          this.labelList.forEach(e => { e.visible = true })
+        }
+      } else if (this.labelList) {
+        let list = this.labelList.filter(item => !item.opts.isGis)
+        list.forEach(e => { e.visible = this.activeIndex === 4 })
+        list = this.labelList.filter(item => item.opts.isGis)
+        list.forEach(e => { e.visible = false })
+      }
+
       if (this.modelList) {
         this.modelList.forEach(e => {
           if (e.attribute.editIndex === index) {
@@ -1047,20 +1060,14 @@ export default {
           } else e.show = false
         })
 
-        if (this.curEditEntity && !this.curEditEntity.show) {
+        if (this.curEditEntity) {
           this.stopEditing()
         }
       }
 
-      // 隐藏/显示模型上方标签
-      if (this.labelList) {
-        const list = this.labelList.filter(item => !item.opts.isGis)
-        list.forEach(e => { e.visible = this.activeIndex === 4 })
-      }
-
       // 隐藏/显示消防车下方矩形框
       if (this.rectList) {
-        this.rectList.forEach(e => { e.show = this.activeIndex === 4 })
+        this.rectList.forEach(e => { e.show = this.activeIndex === 4 || this.activeIndex === 0 })
       }
 
       // 隐藏/显示模型上方marker
@@ -1113,7 +1120,7 @@ export default {
             )
             me.curModelIndex = 1000
             // 禁用drawControl编辑功能
-            me.drawControl.hasEdit(false)
+            me.enableDrawControlEdit(false)
             me.curEntity = entity
             // 标绘的模型列表
             if (!me.modelList) me.modelList = []
@@ -1448,17 +1455,13 @@ export default {
         Cesium.Model.fromGltf({
           url: cfg.url,
           modelMatrix: modelMatrix,
-          minimumPixelSize: cfg.minimumPixelSize || 30,
-          silhouetteColor: Cesium.Color.fromAlpha(
-            Cesium.Color.YELLOW,
-            parseFloat(0.9)
-          )
+          minimumPixelSize: cfg.minimumPixelSize || 30
         })
       )
       modelPrimitive.attribute = cfg
       modelPrimitive.name = cfg.id
       modelPrimitive.position = position
-      modelPrimitive.hasOutLine = true
+      // modelPrimitive.hasOutLine = true
 
       modelPrimitive.readyPromise.then(function (model) {
         const task = {
@@ -1516,10 +1519,7 @@ export default {
         anchor: [0, 0],
         position: position,
         depthTest: false,
-        name: entity.name,
-        click: function (entity) {
-          me.ClickDivPoint(entity, attr.infoImg, attr.name, false)
-        }
+        name: entity.name
       })
       this.infoBox.imgSrc = attr.infoImg
       this.infoBox.label = attr.name
@@ -1688,13 +1688,21 @@ export default {
     },
 
     /**
+     *  启用/禁用drawControl编辑功能
+     *  @param {Boolen} enable 是否启用
+     */
+    enableDrawControlEdit (enable) {
+      if (this.drawControl) {
+        this.drawControl.hasEdit(enable)
+      }
+    },
+
+    /**
      *  测量开始,移除鼠标事件
      */
     measureStart () {
       // 禁用drawControl编辑功能
-      if (this.drawControl) {
-        this.drawControl.hasEdit(false)
-      }
+      this.enableDrawControlEdit(false)
       this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN)
     },
 
@@ -1703,9 +1711,7 @@ export default {
      */
     measureEnd () {
       // 开启drawControl编辑功能
-      if (this.drawControl) {
-        this.drawControl.hasEdit(true)
-      }
+      this.enableDrawControlEdit(true)
       // 控制鼠标只取模型上的点，忽略地形上的点的拾取
       this.viewer.mars.onlyPickModelPosition = true
       this.handler.setInputAction(event => {
@@ -1736,12 +1742,31 @@ export default {
             me.showEditBox = false
           }
           // 设置模型选中样式
-          if (pickedObject.primitive.hasOutLine) {
-            pickedObject.primitive.silhouetteSize = 8
+          if (me.activeIndex !== 4 && me.activeIndex !== 7) {
+            // 如果不是沙盘绘制的模型，设置模型轮廓
+            if (!attr.editIndex || attr.editIndex !== 5) {
+              pickedObject.primitive.silhouetteColor = Cesium.Color.fromAlpha(
+                Cesium.Color.YELLOW,
+                parseFloat(0.9)
+              )
+              pickedObject.primitive.silhouetteSize = 8
+            }
           }
           // 显示任务编辑窗
           if (show && pickedObject.primitive.position) {
             me.showModelEditBox(pickedObject.primitive)
+          }
+        } else if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.Billboard) {
+          // 如果点击billboard
+          me.showEditBox = false
+          if (me.activeIndex === 2) {
+            const attr = pickedObject.primitive.id.attribute
+            me.flyToEntity(pickedObject.primitive, function (e) {
+              // 飞行完成回调方法
+              me.infoBox.imgSrc = attr.infoImg
+              me.infoBox.label = attr.name
+              me.showInfoBox = true
+            })
           }
         } else {
           // 如果点击其他区域
@@ -1830,9 +1855,7 @@ export default {
      */
     clearCurEntity () {
       if (this.curEntity) {
-        if (this.curEntity.hasOutLine) {
-          this.curEntity.silhouetteSize = 0
-        }
+        this.curEntity.silhouetteSize = 0
         this.curEntity = ''
       }
     },
