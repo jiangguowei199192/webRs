@@ -52,7 +52,13 @@
               <img :src="capturePic" alt />
               <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
               <!-- 用于显示截取的图片 -->
-              <img :src="`${picUrl}${cutImgUrl}`" class="cutImg" id="pic" v-show="showCutImg" />
+              <img
+                :src="`${picUrl}${cutImgUrl}`"
+                class="cutImg"
+                id="pic"
+                v-show="showCutImg"
+                @click.stop="cutDialogVisible=true"
+              />
             </a>
             <a
               @mouseenter="showActive(4)"
@@ -399,6 +405,28 @@ border: 1px solid #209CDF;width:108px!important"
           </el-form-item>
         </el-form>
       </div>
+      <el-dialog
+        :visible.sync="cutDialogVisible"
+        class="cutDialog"
+        :close-on-click-modal="false"
+        :show-close="false"
+        :before-close="clearRemark"
+        :append-to-body="false"
+      >
+        <img :src="`${picUrl}${cutImgUrl}`" width="743px" height="428px" alt />
+        <span slot="footer" class="dialog-footer">
+          <div class="remark">
+            <div class="replain">
+              <span>说明：</span>
+              <el-input v-model.trim="remark" placeholder="请输入" :maxlength="27"></el-input>
+            </div>
+            <div>
+              <el-button @click="clearRemark" style="width:87px;">取 消</el-button>
+              <el-button type="primary" @click.stop="confirm" style="width:87px;">确 定</el-button>
+            </div>
+          </div>
+        </span>
+      </el-dialog>
     </LivePlayer>
   </div>
 </template>
@@ -415,6 +443,9 @@ export default {
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       showCutImg: false, // 是否显示抓拍的图片 默认不显示
       cutImgUrl: '', // 显示抓取的图片
+      cutDialogVisible: false, // 抓取弹窗
+      imgId: '', // 保存抓取图片id
+      remark: '', // 说明文字
       active: '', // 动态显示悬停相关图标
       showAR: false, // 显示AR
       showCurindex: 1000, // 显示弹框
@@ -635,31 +666,65 @@ export default {
       this.$axios.post(api.deviceSnap, params).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.showNotification = true
-          this.infoObj = {
-            title: '成功',
-            isSuccess: true,
-            isError: false,
-            msg: '抓取成功！'
-          }
+          this.infoObj.isWarning = false
+          this.infoObj.isError = false
+          this.infoObj.isSuccess = true
+          this.infoObj.title = '成功'
+          this.infoObj.msg = '抓取成功！'
           setTimeout(() => {
             this.showNotification = false
           }, 3000)
           this.showCutImg = true
           this.imgId = res.data.data.id
           this.cutImgUrl = res.data.data.filePath
-
-          // this.$nextTick(() => {
-          // 目的地
-          //   this.moveElement('pic', 150, -200)
-          // })
           setTimeout(() => {
-            // document.getElementById('pic').style.left = '410px'
-            // document.getElementById('pic').style.top = '-470px'
             this.showCutImg = false
           }, 4000)
         }
       })
     }, 5000),
+    // 点击确定按钮
+    confirm () {
+      // 防止此时设备下线
+      if (Object.keys(this.videoInfo).length === 0) {
+        this.showNotification = true
+        this.infoObj.isWarning = true
+        this.infoObj.isError = false
+        this.infoObj.isSuccess = false
+        this.infoObj.title = '警告'
+        this.infoObj.msg = '请先选择设备！'
+        setTimeout(() => {
+          this.showNotification = false
+        }, 3000)
+        return
+      }
+      const params = {
+        id: this.imgId,
+        deviceCode: this.videoInfo.deviceCode,
+        filePath: this.cutImgUrl,
+        channelId: this.videoInfo.streamType,
+        remark: this.remark
+      }
+      this.$axios.post(api.deviceUpdate, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.showNotification = true
+          this.infoObj.isWarning = false
+          this.infoObj.isError = false
+          this.infoObj.isSuccess = true
+          this.infoObj.title = '成功'
+          this.infoObj.msg = '添加说明成功！'
+          setTimeout(() => {
+            this.showNotification = false
+          }, 3000)
+          this.clearRemark()
+        }
+      })
+    },
+    // 重置抓拍弹框
+    clearRemark () {
+      this.cutDialogVisible = false
+      this.remark = ''
+    },
     setPlayerSizeListener () {
       var me = this
       this.erd.listenTo(this.$refs.playerArea, function (element) {
@@ -673,7 +738,9 @@ export default {
         } else {
           me.bIsFullScreen = false
           me.showAR && (me.showAR = false)
+          // 都不显示
           me.showCurindex = 1000
+          me.clearRemark()
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
           me.resetForm('ruleForm')
         }
@@ -1173,6 +1240,53 @@ export default {
   .selectStyle {
     position: absolute !important;
     top: 30px !important;
+  }
+  .cutDialog {
+    background: rgba(0, 0, 0, 0.6);
+    /deep/.el-dialog {
+      width: 803px;
+      height: 549px;
+      background: url(../../../assets/images/dialog-bg.png) no-repeat;
+      .el-dialog__header {
+        display: none;
+      }
+      .el-dialog__body {
+        padding: 26px 30px;
+      }
+      .el-dialog__footer {
+        padding: 0 30px;
+        .remark {
+          display: flex;
+          justify-content: space-between;
+          .replain {
+            text-align: left;
+            span {
+              color: #fff;
+            }
+            .el-input {
+              width: 410px;
+              .el-input__inner {
+                color: #fff;
+                border: none;
+                border-bottom: 1px solid rgb(153, 153, 153);
+                background: transparent;
+              }
+              input::-webkit-input-placeholder {
+                color: #999;
+              }
+            }
+          }
+          .el-button--default {
+            background: transparent;
+            color: rgba(30, 176, 252, 1);
+            border: 1px solid #dcdfe6;
+          }
+          .el-button--primary {
+            background: #1eb0fc;
+          }
+        }
+      }
+    }
   }
   .pointLayer {
     position: absolute;
