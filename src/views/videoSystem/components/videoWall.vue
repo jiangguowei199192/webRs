@@ -1459,25 +1459,25 @@ export default {
               }
               .mask {
                 position: absolute;
-                bottom: -23px;
+                bottom:0px;
                 width: 100%;
                 padding:0 10px;
                 height: 23px;
                 display: flex;
                 justify-content: space-between;
+                align-items: center;
                 color: #aaa;
-                font-size: 18px;
+                font-size: 14px;
                 background: #000000;
                 opacity: 0;
-                transition: all .5s linear;
+                transition: all 1.5s ease-in-out;
                 i{
                   cursor: pointer;
                 }
               }
             }
             .container:hover .mask {
-              bottom:0px;
-              opacity: 0.6;
+              opacity: 0.5;
             }
             > p {
               margin-top: 8px;
