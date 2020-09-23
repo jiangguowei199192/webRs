@@ -152,10 +152,16 @@
               <div class="item" v-for="(item,index) in 15" :key="index">
                 <div class="container">
                   <img src="../../../assets/images/type_fire.png" />
-                  <span>X</span>
+                  <div class="mask">
+                    <!-- <img src="../../../assets/images/AR/delete.png" />
+                    <img src="../../../assets/images/AR/edit.png" />-->
+                    <i class="el-icon-edit"></i>
+
+                    <i class="el-icon-delete"></i>
+                  </div>
                 </div>
                 <p>绿地中心检测目标</p>
-                <div>2020-09-11</div>
+                <p>2020-09-11</p>
               </div>
             </div>
             <el-pagination
@@ -209,12 +215,6 @@
                   :popper-append-to-body="false"
                   popper-class="selectStyle"
                 >
-                  <!-- <el-option
-                    v-for="item in tagArray"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>-->
                   <el-option label="启用" value="1"></el-option>
                   <el-option label="禁用" value="0"></el-option>
                 </el-select>
@@ -260,28 +260,6 @@
             ></div>
           </div>
         </div>
-        <!-- 成功 -->
-        <!-- <div role="alert" class="el-notification right" style="top: 16px; z-index: 2008;">
-          <i class="el-notification__icon el-icon-success"></i>
-          <div class="el-notification__group is-with-icon">
-            <h2 class="el-notification__title">成功</h2>
-            <div class="el-notification__content">
-              <p>抓取成功！</p>
-            </div>
-            <div class="el-notification__closeBtn el-icon-close"></div>
-          </div>
-        </div>-->
-        <!-- 失败 -->
-        <!-- <div role="alert" class="el-notification right" style="top: 16px; z-index: 2008;">
-          <i class="el-notification__icon el-icon-error"></i>
-          <div class="el-notification__group is-with-icon">
-            <h2 class="el-notification__title">失败</h2>
-            <div class="el-notification__content">
-              <p>抓取成功！</p>
-            </div>
-            <div class="el-notification__closeBtn el-icon-close"></div>
-          </div>
-        </div>-->
       </template>
       <!-- 视频图标及标签 -->
       <div class="info">
@@ -1475,26 +1453,34 @@ export default {
               width: 123px;
               height: 123px;
               position: relative;
-              img {
+              > img {
                 width: 100%;
                 height: 100%;
               }
-              span {
+              .mask {
                 position: absolute;
-                top: 8px;
-                right: 8px;
+                bottom:0px;
+                width: 100%;
+                padding:0 10px;
+                height: 23px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
                 color: #aaa;
-                font-size: 18px;
-                cursor: pointer;
-                display: none;
+                font-size: 14px;
+                background: #000000;
+                opacity: 0;
+                transition: all 1.5s ease-in-out;
+                i{
+                  cursor: pointer;
+                }
               }
             }
-            .container:hover span {
-              display: block;
+            .container:hover .mask {
+              opacity: 0.5;
             }
-            p {
-              margin-top: 9px;
-              margin-bottom: 8px;
+            > p {
+              margin-top: 8px;
             }
           }
         }
