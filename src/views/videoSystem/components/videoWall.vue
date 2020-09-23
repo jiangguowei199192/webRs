@@ -64,7 +64,7 @@
               @mouseenter="showActive(4)"
               @mouseleave="showActive(0)"
               title="图库"
-              @click="showCurindex=3"
+              @click="getPicStorage"
             >
               <img :src="photoPic" alt />
               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
@@ -149,19 +149,16 @@
               ></el-date-picker>
             </div>
             <div class="box">
-              <div class="item" v-for="(item,index) in 15" :key="index">
+              <div class="item" v-for="(item,index) in picStorageArray" :key="index">
                 <div class="container">
-                  <img src="../../../assets/images/type_fire.png" />
+                  <img :src="`${picUrl}${item.filePath}`" />
                   <div class="mask">
-                    <!-- <img src="../../../assets/images/AR/delete.png" />
-                    <img src="../../../assets/images/AR/edit.png" />-->
                     <i class="el-icon-edit"></i>
-
                     <i class="el-icon-delete"></i>
                   </div>
                 </div>
-                <p>绿地中心检测目标</p>
-                <p>2020-09-11</p>
+                <p>{{item.fileName}}</p>
+                <p>{{item.createTime|timeFormat}}</p>
               </div>
             </div>
             <el-pagination
@@ -415,6 +412,7 @@ import canvasArea from './canvasArea'
 import { debounce, throttle } from '../../../utils/public.js'
 import globalApi from '../../../utils/globalApi'
 import { api } from '@/api/videoSystem/realVideo'
+import { timeFormat } from '@/utils/date'
 export default {
   data () {
     return {
@@ -511,7 +509,8 @@ export default {
         currentPage: 2,
         pageSize: 15
       },
-      dateRange: '',
+      dateRange: [], // 保存图库日期的数组
+      picStorageArray: [], // 保存图库数据
       ruleForm: {
         tagName: '',
         tagType: ''
@@ -702,6 +701,38 @@ export default {
     clearRemark () {
       this.cutDialogVisible = false
       this.remark = ''
+    },
+    // 点击抓拍 显示图库弹框 获取图库数据
+    getPicStorage () {
+      this.showCurindex = 3
+      this.getSnapList()
+    },
+    // 获取图库列表
+    getSnapList () {
+      console.log(this.dateRange)
+      const params = {
+        deviceCode: this.videoInfo.deviceCode,
+        channelId: this.videoInfo.streamType,
+        dates: this.dateRange
+      }
+      this.$axios.get(api.getSnapList, { params }).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.picStorageArray = res.data.data
+        } else {
+          this.picStorageArray = []
+        }
+      })
+    },
+    // 选择图库时间
+    getTimeRange () {
+      console.log(this.dateRange)
+      this.getSnapList()
+      debugger
+    },
+    // 获取当前页
+    handleCurrentChange (val) {
+      this.pageInfo.currentPage = val
+      console.log(`当前页: ${val}`)
     },
     setPlayerSizeListener () {
       var me = this
@@ -1180,16 +1211,10 @@ export default {
             console.log('成功！')
           }
         })
-    },
-    // 获取当前页
-    handleCurrentChange (val) {
-      this.pageInfo.currentPage = val
-      console.log(`当前页: ${val}`)
-    },
-    getTimeRange () {
-      console.log(this.dateRange)
-      debugger
     }
+  },
+  filters: {
+    timeFormat
   },
   created () {}
 }
@@ -1459,9 +1484,9 @@ export default {
               }
               .mask {
                 position: absolute;
-                bottom:0px;
+                bottom: 0px;
                 width: 100%;
-                padding:0 10px;
+                padding: 0 10px;
                 height: 23px;
                 display: flex;
                 justify-content: space-between;
@@ -1471,7 +1496,7 @@ export default {
                 background: #000000;
                 opacity: 0;
                 transition: all 1.5s ease-in-out;
-                i{
+                i {
                   cursor: pointer;
                 }
               }
