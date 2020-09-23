@@ -100,12 +100,11 @@
       </div>
     </div>
     <div class="infoBox" v-show="showInfoBox" ref="infobox">
-      <el-input type="text" v-model.trim="infoBox.label" :readonly="!infoBox.editing" class="title" :class="{active:infoBox.editing}"></el-input>
+      <el-input type="text" v-model.trim="infoBox.name" :readonly="!infoBox.editing" class="title" :class="{active:infoBox.editing}"></el-input>
       <div class="close" @click="showInfoBox = false" />
-      <div v-if="!infoBox.imgSrc" class="default"/>
-      <img :src="infoBox.imgSrc" v-if="infoBox.imgSrc"/>
+      <div v-if="!infoBox.infoImg" class="default"/>
+      <img :src="infoBox.infoImg" v-if="infoBox.infoImg"/>
       <span class="export" v-show="infoBox.editing"></span>
-      <!-- <span class="title">{{infoBox.label}}</span> -->
       <div class="detail">
         <ul>
           <li>
@@ -119,8 +118,8 @@
         </ul>
       </div>
       <span class="btn editBtn" v-show="infoBox.isEdit" @click="infoBox.editing = true">编辑</span>
-      <span class="btn editBtn" v-show="infoBox.editing" @click="infoBox.editing = false">确定</span>
-      <span class="btn cancelBtn" v-show="infoBox.editing" @click="infoBox.editing = false">取消</span>
+      <span class="btn editBtn" v-show="infoBox.editing" @click="saveModelInfo(true)">确定</span>
+      <span class="btn cancelBtn" v-show="infoBox.editing" @click="saveModelInfo(false)">取消</span>
     </div>
     <div
       class="editBox"
@@ -260,7 +259,7 @@ export default {
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       editPopover: false, // 编辑模式Popover是否显示
-      infoBox: { imgSrc: '', isEdit: true, text1: '', text2: '', editing: false },
+      infoBox: { infoImg: '', isEdit: true, text1: '', text2: '', name: '', editing: false },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
@@ -505,6 +504,22 @@ export default {
     },
 
     /**
+     *  保存模型数据
+     * @param {Object} save 是否保存
+     */
+    saveModelInfo (save) {
+      let dst = ''
+      if (this.curEntity && this.curEntity instanceof Cesium.Model) {
+        dst = this.curEntity.attribute
+      } else if (this.curEntity && this.curEntity instanceof Cesium.Billboard) {
+        dst = this.curEntity.id.attribute
+      }
+      if (save === true) this.copyData(this.infoBox, dst)
+      else this.copyData(this.curEntity.attribute, this.infoBox)
+      this.infoBox.editing = false
+    },
+
+    /**
      * 将笛卡尔坐标转为地理坐标
      * @param {Object} position 笛卡尔坐标
      */
@@ -735,6 +750,13 @@ export default {
           // this.viewer.mars.onlyPickModelPosition = false
           this.measureArea(false)
           break
+        case 5:
+          if (!this.drawControl || stringIsNullOrEmpty(this.drawControl.toGeoJSON())) { this.$notify.warning({ title: '提示', message: '当前未标绘任何数据' }) }
+          if (this.drawControl) {
+            var json = this.drawControl.toGeoJSON()
+            console.log(json)
+          }
+          break
         default:
           break
       }
@@ -847,7 +869,7 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/xiaofangshuan.png'),
             // infobox上的图片
-            infoImg: require('../../assets/images/3d/xfs.jpg'),
+            // infoImg: require('../../assets/images/3d/xfs.jpg'),
             style: {
               modelUrl:
                 '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
@@ -954,6 +976,7 @@ export default {
         )
       }
 
+      item.infoImg = ''
       item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true
@@ -1010,6 +1033,7 @@ export default {
      *@param {Object} entity 模型
      */
     plotModelComplete (entity) {
+      this.curEntity = entity
       const id = uuid(8, 16)
       const attr = entity.attribute
       if (!entity.name) entity.name = id
@@ -1021,10 +1045,19 @@ export default {
         this.addModelMark(entity)
       }
       this.markDatas[this.editIndex].push({
-        type: attr.plotType,
+        type: attr.plotType, // 编辑模式下，模型列表的Icon类型
         name: attr.name,
         id: entity.name
       })
+
+      // 防止模型后来才加载，没有执行this.handler.setInputAction
+      if (!this.showInfoBox) {
+        if (!attr.init) {
+          attr.init = true
+          this.infoBox.editing = true
+        }
+        this.showInfoBox = true
+      }
     },
 
     /**
@@ -1521,8 +1554,7 @@ export default {
         }
 
       })
-      this.infoBox.imgSrc = attr.infoImg
-      this.infoBox.label = attr.name
+      this.copyData(attr, this.infoBox)
       // 标签列表
       if (!this.markList) {
         this.markList = []
@@ -1716,9 +1748,12 @@ export default {
           const attr = pickedObject.primitive.attribute
           if (attr && attr.edit) {
             show = false
-            me.infoBox.imgSrc = attr.infoImg
-            me.infoBox.label = attr.name
+            me.copyData(attr, me.infoBox)
             me.infoBox.isEdit = me.activeIndex === 7
+            if (me.infoBox.isEdit && !attr.init) {
+              attr.init = true
+              me.infoBox.editing = true
+            }
             me.showInfoBox = true
             me.showEditBox = false
           }
@@ -1738,12 +1773,16 @@ export default {
             me.showModelEditBox(pickedObject.primitive)
           }
         } else if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.Billboard) {
+          me.curEntity = pickedObject.primitive
           // 如果点击billboard
           me.showEditBox = false
           const attr = pickedObject.primitive.id.attribute
-          me.infoBox.imgSrc = attr.infoImg
-          me.infoBox.label = attr.name
+          me.copyData(attr, me.infoBox)
           me.infoBox.isEdit = me.activeIndex === 7
+          if (me.infoBox.isEdit && !attr.init) {
+            attr.init = true
+            me.infoBox.editing = true
+          }
           if (me.activeIndex === 2) {
             me.flyToEntity(pickedObject.primitive, function (e) {
               // 飞行完成回调方法
@@ -2568,6 +2607,7 @@ export default {
        right: 34px;
     }
     .cancelBtn{
+      box-sizing: border-box;
       border: 1px solid #209CDF;
       background:transparent;
       right: 114px;
