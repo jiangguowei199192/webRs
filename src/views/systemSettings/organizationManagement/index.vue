@@ -32,15 +32,6 @@
             >
               <span>{{ node.label + (data.children ? ('[' + data.children.length + ']') : '') }}</span>
 
-              <!-- <el-link
-                v-show="data.del"
-                size="mini"
-                type="primary"
-                @click="deptTreeSetting"
-                style="color: white; margin-left: 15px; border: none;"
-                icon="el-icon-setting"
-              ></el-link>-->
-
               <el-popover
                 placement="right"
                 width="150"
@@ -155,7 +146,7 @@
     </el-dialog>
 
     <el-dialog
-      title="新增组织"
+      :title="addOrganizationTitle"
       :visible.sync="showAddOrganization"
       :close-on-click-modal="clickfalse"
       width="30%"
@@ -177,12 +168,12 @@
             placeholder
             popper-class="select-popper"
           >
-            <!-- <el-option
-              v-for="item in addUser_userList"
-              :key="item.id"
-              :label="item.username"
-              :value="item.id"
-            ></el-option> -->
+            <el-option
+              v-for="item in organizationTypes"
+              :key="item.typeCode"
+              :label="item.typeName"
+              :value="item.typeCode"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="上级组织" prop="previousOrganization">
@@ -194,8 +185,11 @@
             v-model="addOrganizationForm.previousOrganization"
           ></el-cascader>
         </el-form-item>
+        <el-form-item label="创建时间" prop="createTime">
+          <el-input v-model="addOrganizationForm.createTime" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="addUserConfirm" class="trueBtn">保存</el-button>
+          <el-button type="primary" @click="addOrganizationConfirm" class="trueBtn">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -210,6 +204,7 @@ import { settingApi } from '@/api/setting'
 export default {
   created () {
     this.getDeptTree()
+    this.getOrganizationTypes()
   },
   data () {
     return {
@@ -249,7 +244,8 @@ export default {
       addOrganizationForm: {
         organizationName: '',
         organizationType: '',
-        previousOrganization: ''
+        previousOrganization: '',
+        createTime: ''
       },
       addOrganizationRules: {
         organizationName: [{ required: true, message: '请输入组织名称' }],
@@ -262,12 +258,25 @@ export default {
         children: 'children',
         label: 'deptName',
         value: 'deptCode'
-      }
+      },
+      organizationTypes: [],
+      addOrganizationTitle: '',
+      currentOrganization: ''
     }
   },
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
+    },
+
+    async getOrganizationTypes () {
+      this.$axios
+        .get(settingApi.queryByTypeCode, { params: { typeCode: 'dept_type' } })
+        .then((res) => {
+          if (res.data.code === 0) {
+            this.organizationTypes = res.data.data
+          }
+        })
     },
 
     // 获取组织树
@@ -436,26 +445,122 @@ export default {
     deptTreeMouseLeave (data) {
       this.$set(data, 'del', false)
     },
-    // deptTreeSetting () {
-    //   console.log(111)
-    //   this.showMorePopover = true
-    // },
 
     // 新增组织
     organizationAdd (data) {
-      // console.log('新增组织')
-      // console.log(data)
+      this.currentOrganization = data
+      this.addOrganizationTitle = '新增组织'
+      this.addOrganizationForm.createTime = this.getCurrentDate()
+      this.addOrganizationForm.organizationName = ''
+      this.addOrganizationForm.organizationType = ''
+      this.addOrganizationForm.previousOrganization = data.deptCode
       this.showAddOrganization = true
     },
     // 修改组织
     organizationEdit (data) {
-      // console.log('修改组织')
-      // console.log(data)
+      this.currentOrganization = data
+      this.addOrganizationTitle = '修改组织'
+      this.addOrganizationForm.createTime = this.getCurrentDate()
+      this.addOrganizationForm.organizationName = data.deptName
+      this.addOrganizationForm.organizationType = data.deptTypeCode
+      this.addOrganizationForm.previousOrganization = data.deptCode
+      this.showAddOrganization = true
     },
     // 绑定设备
     bindDevice (data) {
       // console.log('绑定设备')
       // console.log(data)
+    },
+    // 新增组织-保存
+    addOrganizationConfirm () {
+      this.$refs.addOrganizationFormRef.validate(async (valid) => {
+        if (!valid) return
+        this.showAddOrganization = false
+
+        if (this.addOrganizationTitle === '新增组织') {
+          var param1 = {
+            deptName: this.addOrganizationForm.organizationName,
+            deptTypeCode: this.addOrganizationForm.organizationType,
+            parentDeptCode: this.addOrganizationForm.previousOrganization
+          }
+          this.$axios
+            .post(settingApi.addDept, param1, {
+              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+            })
+            .then((res) => {
+              if (res.data.code === 0) {
+                Notification({
+                  title: '提示',
+                  message: '新增成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                return
+              }
+              Notification({
+                title: '提示',
+                message: '新增失败',
+                type: 'warning',
+                duration: 5 * 1000
+              })
+            })
+        }
+
+        if (this.addOrganizationTitle === '修改组织') {
+          var param2 = {
+            deptName: this.addOrganizationForm.organizationName,
+            deptTypeCode: this.addOrganizationForm.organizationType,
+            parentDeptCode: this.addOrganizationForm.previousOrganization
+          }
+          this.$axios
+            .post(settingApi.updateDept, param2, {
+              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+            })
+            .then((res) => {
+              if (res.data.code === 0) {
+                Notification({
+                  title: '提示',
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                return
+              }
+              Notification({
+                title: '提示',
+                message: '修改失败',
+                type: 'warning',
+                duration: 5 * 1000
+              })
+            })
+        }
+      })
+    },
+
+    getCurrentDate () {
+      var date = new Date()
+      var seperator1 = '-'
+      var seperator2 = ':'
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      if (month >= 1 && month <= 9) {
+        month = '0' + month
+      }
+      if (day >= 0 && day <= 9) {
+        day = '0' + day
+      }
+      var currentDate =
+        year +
+        seperator1 +
+        month +
+        seperator1 +
+        day +
+        ' ' +
+        date.getHours() +
+        seperator2 +
+        date.getMinutes()
+      return currentDate
     }
   }
 }
