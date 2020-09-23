@@ -295,44 +295,61 @@
           <div @mousedown="startChange(9999)" @mouseup="stopChange(9999)"></div>
         </div>
       </div>
-      <!-- 无人机地图 -->
+      <!-- 无人机指挥 -->
       <div
-        class="fullScreenMap"
-        v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&bIsFullScreen===true"
+        class="droneControl"
+        v-show="videoInfo.deviceTypeCode==='WRJ'&&videoInfo.isShowOperate&&bIsFullScreenVideo===true"
       >
-        <div class="infoTitle">位置</div>
-        <div class="mapBox">
-          <gMap
-            ref="gduMap"
-            handleType="devMap"
-            :bShowSimpleSearchTools="false"
-            :bShowBasic="false"
-            :bShowMeasure="false"
-            :bShowLonLat="false"
-            :bAutoLocate="false"
-            :bDbClickStyle="true"
-            @fullscreenMapStyleChange="fullscreenMapStyleChange"
-          ></gMap>
+        <div class="header stretchIMG">
+          <div class="exitFullScreen" @click="exitFullScreen">
+            <span></span>
+            <span>退出全屏</span>
+          </div>
         </div>
-      </div>
-      <!-- 小窗口视频 -->
-      <div class="smallPlayerStyle" v-if="bFullscreenMap===true&&bIsFullScreen===true">
-        <div class="infoTitle">直播</div>
-        <div class="videoBox">
-          <div class="smallVideoBox" @dblclick="dbclickSmallVideo">
-            <LivePlayer
-              ref="smallPlayerCtrl"
-              :videoUrl="videoInfo.streamUrl"
-              :show-custom-button="false"
-              :muted="false"
-              :controls="false"
-              :autoplay="true"
-              oncontextmenu="return false"
-              fluent
-              :stretch="true"
-              :live="videoInfo.isLive !==false"
-              aspect="fullscreen"
-            />
+        <div class="bottom stretchIMG"></div>
+        <div class="menu stretchIMG">
+          <div class="itemBtn detectBtn"></div>
+          <div class="itemBtn puzzleBtn">
+            <img src="../../../assets/images/drone/puzzling.gif"/>
+          </div>
+          <div class="itemBtn pointBtn"></div>
+          <div class="itemBtn routeBtn"></div>
+        </div>
+        <div class="mapOuterBox" :class="{mapOuterBoxFullScreen:bIsFullscreenMap}">
+          <div class="mapArea" :class="{mapAreaFullScreen:bIsFullscreenMap}">
+            <gMap
+              ref="gduMap"
+              handleType="devMap"
+              :bShowSimpleSearchTools="false"
+              :bShowBasic="bIsFullscreenMap"
+              :bShowSelLayer="false"
+              :bShowMeasure="false"
+              :bShowLonLat="false"
+              :bAutoLocate="true"
+              :bDbClickStyle="true"
+              @mapDbClickEvent="mapDbClickEventCB"
+            ></gMap>
+            <div class="sizeChange" v-show="!bIsFullscreenMap" @click="changeVideoAndMap"/>
+          </div>
+        </div>
+        <div class="smallVideoStyle" v-if="bIsFullscreenMap===true&&bIsFullScreenVideo===true">
+          <div class="smallVideoArea">
+            <div class="smallVideoBox" @dblclick="changeVideoAndMap">
+              <LivePlayer
+                ref="smallPlayerCtrl"
+                :videoUrl="videoInfo.streamUrl"
+                :show-custom-button="false"
+                :muted="false"
+                :controls="false"
+                :autoplay="true"
+                oncontextmenu="return false"
+                fluent
+                :stretch="true"
+                :live="videoInfo.isLive !==false"
+                aspect="fullscreen"
+              />
+              <div class="sizeChange" @click="changeVideoAndMap"/>
+            </div>
           </div>
         </div>
       </div>
@@ -370,8 +387,7 @@
             <el-button
               type="primary"
               @click="resetForm('ruleForm')"
-              style="background:#18223A;color:#209CDF;
-border: 1px solid #209CDF;width:108px!important"
+              style="background:#18223A;color:#209CDF;border: 1px solid #209CDF;width:108px!important"
             >取消</el-button>
             <el-button
               type="primary"
@@ -556,8 +572,8 @@ export default {
       focusSpeed: 0, // 变焦
       lrisSpeed: 0, // 光圈
       step: 4, // 步速值
-      bIsFullScreen: false, // 播放器是否全屏
-      bFullscreenMap: false, // 小地图是否全屏
+      bIsFullScreenVideo: false, // 播放器是否全屏
+      bIsFullscreenMap: false, // 小地图是否全屏
       recordNums: {
         leftUp: 0,
         up: 0,
@@ -743,10 +759,11 @@ export default {
         // console.log(width, element.clientWidth, element.clientWidth, element.style.width)
         // if (width === window.screen.width && height === window.screen.height) {
         if (width === window.screen.width) {
-          me.bIsFullScreen = true
+          me.bIsFullScreenVideo = true
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: true })
         } else {
-          me.bIsFullScreen = false
+          me.bIsFullScreenVideo = false
+          me.$refs.gduMap.closeAllPopover()
           me.showAR && (me.showAR = false)
           // 都不显示
           me.showCurindex = 1000
@@ -820,7 +837,7 @@ export default {
     },
     // 显示表单
     showMarkDialog (e) {
-      if (this.bIsFullScreen === true) {
+      if (this.bIsFullScreenVideo === true) {
         // console.log(e.pageX, e.pageY)
         // this.videoInfo.streamUrl = 'ws://111.47.13.103:40007/live/34020000001310000005.flv'
         // setTimeout(() => {
@@ -900,18 +917,29 @@ export default {
       }
     },
 
-    /**
-     * 响应地图双击样式改变事件
-     */
-    fullscreenMapStyleChange (bFullscreen) {
-      this.bFullscreenMap = bFullscreen
+    // 退出全屏
+    exitFullScreen () {
+      this.$refs.playerCtrl.player.exitFullscreen()
     },
 
     /**
-     * 双击右下角小视频切换到视频全屏
+     * 响应地图双击样式改变事件
      */
-    dbclickSmallVideo () {
-      this.$refs.gduMap.changeFullscreenMapStyle()
+    mapDbClickEventCB (bFullscreenMap) {
+      this.changeVideoAndMap()
+    },
+
+    /**
+     * 地图与视频全屏切换
+     */
+    changeVideoAndMap () {
+      this.bIsFullscreenMap = !this.bIsFullscreenMap
+      this.$refs.gduMap.setBasicHighBottom(this.bIsFullscreenMap)
+      this.$refs.gduMap.setPopoverAppendStyle(!this.bIsFullscreenMap)
+      const tmpMap = this.$refs.gduMap.map2D
+      setTimeout(() => {
+        tmpMap._map.updateSize()
+      }, 10)
     },
 
     /**
@@ -1634,7 +1662,7 @@ export default {
     position: absolute;
     left: 10px;
     top: 10px;
-    z-index: 3;
+    z-index: 5;
     :nth-child(1) {
       position: relative;
       top: -2px;
@@ -1858,37 +1886,160 @@ export default {
       }
     }
   }
-  .fullScreenMap,
-  .smallPlayerStyle {
+  .droneControl {
+    width: 100%;
+    height: 100%;
     position: absolute;
-    right: 30px;
-    bottom: 81px;
-    width: 293px;
-    height: 279px;
-    background: url(../../../assets/images/map_box.png) no-repeat;
-    padding: 15px 10px;
-    .infoTitle {
-      padding-left: 35px;
-      width: 202px;
-      height: 34px;
-      background: url(../../../assets/images/device/info-title.png) no-repeat;
-      line-height: 34px;
+    pointer-events: none;
+    .stretchIMG {
+      background-repeat:no-repeat;
+      background-size:100% 100%;
+      -moz-background-size:100% 100%;
     }
-    .mapBox,
-    .videoBox {
-      margin-left: 12px;
-      margin-top: 20px;
-      width: 247px;
-      height: 150px;
-      .smallVideoBox {
-        position: relative;
-        width: 100%;
-        height: 100%;
+    .header {
+      position: absolute;
+      top: 0px;
+      width: 100%;
+      height: 125px;
+      background-image: url('../../../assets/images/drone/header-bg.png');
+      z-index: 3;
+      .exitFullScreen {
+        pointer-events: visible;
+        position: absolute;
+        display: flex;
+        height: 33px;
+        line-height: 33px;
+        right: 20px;
+        top: 3px;
+        z-index: 5;
+        :nth-child(1) {
+          margin-top: 3px;
+          width: 33px;
+          height: 33px;
+          background-image: url("../../../assets/images/drone/size-back.png");
+        }
+        :nth-child(2) {
+          height: 33px;
+          line-height: 33px;
+          font-size: 16px;
+          font-weight: bold;
+          color: rgba(255, 255, 255, 1);
+          margin-left: 8px;
+        }
       }
     }
-  }
-  .smallPlayerStyle {
-    z-index: 2;
+    .bottom {
+      position: absolute;
+      bottom: 0px;
+      width: 100%;
+      height: 209px;
+      background-image: url('../../../assets/images/drone/bottom-bg.png');
+      z-index: 3;
+    }
+    .menu {
+      position: absolute;
+      bottom: 0px;
+      width: 100%;
+      height: 73px;
+      background-image: url('../../../assets/images/AR/ar_footer.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 3;
+      .itemBtn {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        margin-right: 32px;
+        pointer-events:visible;
+      }
+      .detectBtn {
+        background-image: url('../../../assets/images/drone/detect.png');
+      }
+      .detectBtn:active {
+        background-image: url('../../../assets/images/drone/detect-active.png');
+      }
+      .puzzleBtn {
+        background-image: url('../../../assets/images/drone/puzzle.png');
+      }
+      .puzzleBtn:active {
+        background-image: url('../../../assets/images/drone/puzzle-active.png');
+      }
+      .pointBtn {
+        background-image: url('../../../assets/images/drone/point.png');
+      }
+      .pointBtn:hover {
+        background-image: url('../../../assets/images/drone/point-active.png');
+      }
+      .pointBtn:active {
+        opacity: 0.85;
+      }
+      .routeBtn {
+        background-image: url('../../../assets/images/drone/route.png');
+      }
+      .routeBtn:hover {
+        background-image: url('../../../assets/images/drone/route-active.png');
+      }
+      .routeBtn:active {
+        opacity: 0.85;
+      }
+    }
+    .mapOuterBox,
+    .smallVideoStyle {
+      z-index: 3;
+      position: absolute;
+      left: 60px;
+      bottom: 60px;
+      width: 283px;
+      height: 183px;
+      background-image: url('../../../assets/images/drone/map-box.png');
+      pointer-events:visible;
+      .mapArea,
+      .smallVideoArea {
+        position: relative;
+        margin-left: 18px;
+        margin-top: 21px;
+        width: 246px;
+        height: 143px;
+        .smallVideoBox {
+          width: 100%;
+          height: 100%;
+        }
+        .sizeChange {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          height: 41px;
+          width: 41px;
+          background-image: url('../../../assets/images/drone/size-change.png');
+        }
+        .sizeChange:hover {
+          opacity: 0.8;
+        }
+        .sizeChange:active {
+          opacity: 0.9;
+        }
+      }
+    }
+    .mapOuterBoxFullScreen {
+      z-index: 2;
+      position:relative;
+      left: 0px;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      width: 100%;
+      height: 100%;
+      background-image: none;
+      .mapAreaFullScreen {
+        margin-left: 0px;
+        margin-top: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: whitesmoke;
+      }
+    }
   }
   .fullScreenMark {
     position: absolute;

@@ -3,7 +3,7 @@
     <div
       :id="mapContainerID"
       class="mapContainer"
-      :class="{lineCursor:measureType==1,areaCursor:measureType==2,radiusCorner:bRadiusCorner,flatCorner:bFlatCorner,fullscreenMap:bFullscreenMap}"
+      :class="{lineCursor:measureType==1,areaCursor:measureType==2,radiusCorner:bRadiusCorner,flatCorner:bFlatCorner}"
       @dblclick="dblClickMap"
     ></div>
     <div class="simpleSearchCtrl"
@@ -117,8 +117,8 @@
         @click="clickArea"
       ></div>
     </div>
-    <div class="basicTools" :class="{basicToolsBottom:!bShowLonLat}" v-if="bShowAllTools && bShowBasic">
-      <el-popover placement="left" trigger="click" popper-class="el-popover-custom">
+    <div class="basicTools" :class="{basicToolsBottom:!bShowLonLat,basicToolsBottom2:bBasicHighBottom}" v-if="bShowAllTools && bShowBasic">
+      <el-popover :append-to-body="bAppendToBody" ref="ctrlLayer" placement="left" trigger="click" popper-class="el-popover-custom">
         <div class="mapPopover">
           <div class="mapTypeContainer">
             <div style="height:45px;position: relative;">
@@ -175,9 +175,9 @@
             >火点</span>
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickSelMap"></div>
+        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickSelLayer"></div>
       </el-popover>
-      <el-popover placement="left" trigger="click" popper-class="el-popover-custom">
+      <el-popover :append-to-body="bAppendToBody" ref="ctrlMapSel" placement="left" trigger="click" popper-class="el-popover-custom">
         <div class="mapPopover">
           <div class="mapTypeContainer">
             <div style="height:45px;position: relative;">
@@ -295,7 +295,8 @@ export default {
       bShowHighPoint: true,
       bShowDrone: true,
       bShowFire: true,
-      bFullscreenMap: false
+      bBasicHighBottom: false, // 控制右下角基础工具条向上移动
+      bAppendToBody: true // 控制Popover弹窗附加文档结构位置
     }
   },
 
@@ -1030,16 +1031,8 @@ export default {
         this.map2D.measureTool.stop()
       }
       if (this.bDbClickStyle) {
-        this.changeFullscreenMapStyle()
+        this.$emit('mapDbClickEvent')
       }
-    },
-
-    changeFullscreenMapStyle () {
-      this.bFullscreenMap = !this.bFullscreenMap
-      this.$emit('fullscreenMapStyleChange', this.bFullscreenMap)
-      setTimeout(() => {
-        this.map2D._map.updateSize()
-      }, 10)
     },
 
     // 开始测量距离
@@ -1072,9 +1065,18 @@ export default {
       }
     },
 
-    // 点击切换地图类型
+    // 弹出切换功能图层的Popover
+    clickSelLayer () {
+      this.$nextTick(() => {
+        this.$refs.ctrlMapSel.doClose()
+      })
+    },
+
+    // 弹出切换底图图层的Popover
     clickSelMap () {
-      // do...
+      this.$nextTick(() => {
+        this.$refs.ctrlLayer.doClose()
+      })
     },
 
     // 定位到地图指定坐标
@@ -1109,6 +1111,26 @@ export default {
       if (this.mapTypeCur !== tmpType) {
         this.mapTypeCur = tmpType
         this.map2D._imageLayerManager.changeBaseLayer(this.mapTypeCur)
+      }
+    },
+
+    // 设置基础工具条是否向上平移
+    setBasicHighBottom (bHigh) {
+      this.bBasicHighBottom = bHigh
+    },
+
+    // 设置基础工具条是否向上平移
+    setPopoverAppendStyle (bAppend) {
+      this.bAppendToBody = bAppend
+    },
+
+    // 关闭切换图层的Popover
+    closeAllPopover () {
+      if (this.$refs.ctrlLayer !== undefined) {
+        this.$refs.ctrlLayer.doClose()
+      }
+      if (this.$refs.ctrlMapSel !== undefined) {
+        this.$refs.ctrlMapSel.doClose()
       }
     },
 
@@ -1236,7 +1258,7 @@ export default {
   .mapContainer {
     width: 100%;
     height: 100%;
-    border: 1px solid transparent;
+    border: 0px solid transparent;
     overflow: hidden;
   }
   .radiusCorner {
@@ -1245,19 +1267,6 @@ export default {
   }
   .flatCorner {
     clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px,100% calc(100% - 20px), calc(100% - 20px) 100%,20px 100%, 0 calc(100% - 20px), 0 20px);
-  }
-  .fullscreenMap {
-    position:fixed;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height:100% !important;
-    z-index: 1;
-    background: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    overflow: visible;
-    border: 0px solid transparent;
   }
   .lineCursor {
     cursor: url("../../assets/images/m_line.png") 3 4, auto;
@@ -1566,6 +1575,9 @@ export default {
   }
   .basicToolsBottom {
     bottom: 15px;
+  }
+  .basicToolsBottom2 {
+    bottom: 145px;
   }
   .lonLatTools {
     position: absolute;
