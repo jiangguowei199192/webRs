@@ -78,7 +78,7 @@
         <div class="add" slot="reference" v-show="editIndex!==2&& editIndex!==3"></div>
         <div class="close" @click="editPopover = false" />
       </el-popover>
-      <div v-show="showViewDetail">
+      <div v-show="showViewDetail" class="detail">
         <span>经度: {{viewDetail.lon}}</span>
         <span>纬度: {{viewDetail.lat}}</span>
         <span>视高: {{viewDetail.alt}}</span>
@@ -102,9 +102,8 @@
     <div class="infoBox" v-show="showInfoBox" ref="infobox">
       <div class="close" @click="showInfoBox = false" />
       <img :src="infoBox.imgSrc" />
-      <span class="export"></span>
+      <span class="export" v-show="infoBox.isEdit"></span>
       <span class="title">{{infoBox.label}}</span>
-      <div class="decorate"></div>
       <div class="detail">
         <ul>
           <li>
@@ -256,7 +255,7 @@ export default {
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       editPopover: false, // 编辑模式Popover是否显示
-      infoBox: { imgSrc: '' },
+      infoBox: { imgSrc: '', isEdit: true },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
@@ -970,7 +969,7 @@ export default {
     selectItemInEditList (item) {
       const m = this.modelList.find(m => m.name === item.id)
       if (m !== undefined) {
-        this.flyToEntity(m)
+        this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -50 })
       }
     },
 
@@ -1519,11 +1518,14 @@ export default {
         anchor: [0, 0],
         position: position,
         depthTest: false,
-        name: entity.name
+        name: entity.name,
+        click: function (entity) {
+          me.ClickDivPoint(entity)
+        }
+
       })
       this.infoBox.imgSrc = attr.infoImg
       this.infoBox.label = attr.name
-      this.showInfoBox = true
       // 标签列表
       if (!this.markList) {
         this.markList = []
@@ -1579,30 +1581,11 @@ export default {
     /**
      *  点击DivPoint
      * @param {Object} entity DivPoint
-     * @param {Object} imgSrc 图片
-     * @param {String} label 标题
-     * @param {Boolen} showInfoBox 是否显示infobox
      */
-    ClickDivPoint (entity, imgSrc, label, showInfoBox) {
-      if (this.isPlot && this.showEditBox) {
-        this.$notify.warning({ title: '警告', message: '请先添加任务' })
-        return
-      }
-
-      if (this.showEditBox) {
-        this.showEditBox = false
-        this.showPopover = false
-      }
+    ClickDivPoint (entity) {
       this.clearCurEntity()
       this.showInfoBox = false
-      this.flyToEntity(entity, function (e) {
-        // 飞行完成回调方法
-        if (showInfoBox) {
-          me.infoBox.imgSrc = imgSrc
-          me.infoBox.label = label
-          me.showInfoBox = showInfoBox
-        }
-      })
+      this.viewer.mars.flyTo(entity, { duration: 3, radius: 100, pitch: -50 })
     },
 
     /**
@@ -1738,6 +1721,7 @@ export default {
             show = false
             me.infoBox.imgSrc = attr.infoImg
             me.infoBox.label = attr.name
+            me.infoBox.isEdit = me.activeIndex === 7
             me.showInfoBox = true
             me.showEditBox = false
           }
@@ -1759,15 +1743,16 @@ export default {
         } else if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.Billboard) {
           // 如果点击billboard
           me.showEditBox = false
+          const attr = pickedObject.primitive.id.attribute
+          me.infoBox.imgSrc = attr.infoImg
+          me.infoBox.label = attr.name
+          me.infoBox.isEdit = me.activeIndex === 7
           if (me.activeIndex === 2) {
-            const attr = pickedObject.primitive.id.attribute
             me.flyToEntity(pickedObject.primitive, function (e) {
               // 飞行完成回调方法
-              me.infoBox.imgSrc = attr.infoImg
-              me.infoBox.label = attr.name
               me.showInfoBox = true
             })
-          }
+          } else me.showInfoBox = true
         } else {
           // 如果点击其他区域
           me.showEditBox = false
@@ -2255,7 +2240,7 @@ export default {
     .add:active {
       background: url(../../assets/images/3d/add-click.png) no-repeat;
     }
-    > div:nth-child(4) {
+    .detail {
       display: flex;
       flex-wrap: wrap;
       position: absolute;
@@ -2491,8 +2476,9 @@ export default {
     right: 52px;
     position: absolute;
     width: 270px;
-    height: 330px;
+    height: 335px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;
+    background-size: 100% 100%;
     padding: 0px 20px;
     box-sizing: border-box;
     text-align: center;
@@ -2518,17 +2504,6 @@ export default {
       color: rgba(30, 176, 252, 1);
       margin-top: 10px;
       font-weight: 500;
-    }
-    .decorate {
-      margin-top: 15px;
-      width: 239px;
-      height: 2px;
-      background: linear-gradient(
-        -90deg,
-        rgba(30, 176, 252, 0) 0%,
-        rgba(30, 176, 252, 0.99) 51%,
-        rgba(30, 176, 252, 0) 100%
-      );
     }
     .detail {
       margin-top: 22px;
