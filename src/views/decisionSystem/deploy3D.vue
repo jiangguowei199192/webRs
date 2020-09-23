@@ -100,22 +100,27 @@
       </div>
     </div>
     <div class="infoBox" v-show="showInfoBox" ref="infobox">
+      <el-input type="text" v-model.trim="infoBox.label" :readonly="!infoBox.editing" class="title" :class="{active:infoBox.editing}"></el-input>
       <div class="close" @click="showInfoBox = false" />
-      <img :src="infoBox.imgSrc" />
-      <span class="export" v-show="infoBox.isEdit"></span>
-      <span class="title">{{infoBox.label}}</span>
+      <div v-if="!infoBox.imgSrc" class="default"/>
+      <img :src="infoBox.imgSrc" v-if="infoBox.imgSrc"/>
+      <span class="export" v-show="infoBox.editing"></span>
+      <!-- <span class="title">{{infoBox.label}}</span> -->
       <div class="detail">
         <ul>
           <li>
-            <span>文案：</span>
-            <div></div>
+            <span>位置:</span>
+            <el-input type="text" v-model.trim="infoBox.text1" :readonly="!infoBox.editing" :class="{active:infoBox.editing}"></el-input>
           </li>
           <li>
-            <span>文案：</span>
-            <div></div>
+            <span>说明:</span>
+            <el-input type="text" v-model.trim="infoBox.text2" :readonly="!infoBox.editing" :class="{active:infoBox.editing}"></el-input>
           </li>
         </ul>
       </div>
+      <span class="btn editBtn" v-show="infoBox.isEdit" @click="infoBox.editing = true">编辑</span>
+      <span class="btn editBtn" v-show="infoBox.editing" @click="infoBox.editing = false">确定</span>
+      <span class="btn cancelBtn" v-show="infoBox.editing" @click="infoBox.editing = false">取消</span>
     </div>
     <div
       class="editBox"
@@ -255,7 +260,7 @@ export default {
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       editPopover: false, // 编辑模式Popover是否显示
-      infoBox: { imgSrc: '', isEdit: true },
+      infoBox: { imgSrc: '', isEdit: true, text1: '', text2: '', editing: false },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
@@ -341,6 +346,10 @@ export default {
       }
       this.modelIndex = 1000
       this.fliterModel(val)
+    },
+
+    showInfoBox (val) {
+      if (val === false) { this.infoBox.editing = false }
     },
 
     activeIndex (val) {
@@ -852,8 +861,6 @@ export default {
             type: 'model-p',
             // 标签上的图片
             img: require('../../assets/images/3d/watertank.png'),
-            // infobox上的图片
-            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
               scale: 7
@@ -866,8 +873,6 @@ export default {
             type: 'model-p',
             // 标签上的图片
             img: require('../../assets/images/3d/xiaofangshuibengjieheqi.png'),
-            // infobox上的图片
-            infoImg: require('../../assets/images/3d/xfs.jpg'),
             style: {
               modelUrl:
                 '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
@@ -881,8 +886,6 @@ export default {
             type: 'model-p',
             // 标签上的图片
             img: require('../../assets/images/3d/pumphouse.png'),
-            // infobox上的图片
-            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
               scale: 7
@@ -894,7 +897,6 @@ export default {
             name: '安全出口',
             type: 'billboard',
             edittype: 'billboard',
-            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               image: require('../../assets/images/3d/exit.png'),
               visibleDepth: false,
@@ -908,7 +910,6 @@ export default {
             name: '应急避难所',
             type: 'billboard',
             edittype: 'billboard',
-            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               image: require('../../assets/images/3d/emergencyshelters.png'),
               visibleDepth: false,
@@ -923,8 +924,6 @@ export default {
             type: 'model-p',
             // 标签上的图片
             img: require('../../assets/images/3d/build.png'),
-            // infobox上的图片
-            infoImg: require('../../assets/images/3d/bf.jpg'),
             style: {
               modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
               scale: 7
@@ -938,8 +937,6 @@ export default {
             isVr: true,
             // 标签上的图片
             img: require('../../assets/images/3d/vr-icon.png'),
-            // infobox上的图片
-            infoImg: require('../../assets/images/3d/vrquanjing.jpg'),
             style: {
               modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
               scale: 7
@@ -2481,53 +2478,99 @@ export default {
     background-size: 100% 100%;
     padding: 0px 20px;
     box-sizing: border-box;
-    text-align: center;
-
+    /deep/.el-input{
+      width: 173px;
+      height: 23px;
+      font-size: 14px;
+    }
+    /deep/.el-input__inner {
+      height: 23px;
+      background: #033754;
+      opacity: 0.9;
+      border-radius: 0px;
+      border: none;
+      color: #1EB0FC;
+      line-height: 23px;
+      padding: 0 15px;
+    }
+    .title{
+      margin-top: 14px;
+      font-size: 16px;
+      /deep/.el-input__inner {
+        padding: 0px;
+        background: transparent;
+      }
+    }
+     /deep/.el-input.active .el-input__inner {
+        border: 1px solid #209CDF;
+     }
     > img {
-      margin-top: 27px;
+      position: relative;
+      margin-top: 20px;
       width: 230px;
-      height: 129px;
+      height: 122px;
+      cursor: pointer;
+    }
+    .default{
+      position: relative;
+      margin-top: 20px;
+      width: 230px;
+      height: 122px;
+      cursor: pointer;
+      background: url(../../assets/images/3d/default.png) no-repeat;
     }
     .export {
       cursor: pointer;
       display: inline-block;
-      top: 134px;
+      top: 156px;
       right: 20px;
       position: absolute;
       width: 22px;
       height: 22px;
       background: url(../../assets/images/3d/export.png) no-repeat;
     }
-    .title {
-      display: inline-block;
-      font-size: 16px;
-      color: rgba(30, 176, 252, 1);
-      margin-top: 10px;
-      font-weight: 500;
-    }
     .detail {
-      margin-top: 22px;
+      margin-top: 20px;
       ul {
         li {
           word-break: break-all;
+          margin-bottom: 10px;
           span {
             display: inline-block;
             position: relative;
-            top: -7px;
+            //top: -7px;
             font-size: 14px;
             font-weight: 500;
             color: rgba(255, 255, 255, 1);
             line-height: 27px;
-          }
-          div {
-            display: inline-block;
-            width: 163px;
-            height: 23px;
-            background: rgba(0, 57, 87, 1);
-            opacity: 0.9;
+            margin-right: 10px;
           }
         }
       }
+    }
+    .btn {
+      display: inline-block;
+      width: 70px;
+      height: 24px;
+      background: #209CDF;
+      text-align: center;
+      line-height: 24px;
+      font-size: 14px;
+      color: #FFFFFF;
+      cursor: pointer;
+      position: absolute;
+      bottom: 12px;
+    }
+    .btn:active {
+      background: #00679d;
+    }
+    .editBtn {
+       right: 34px;
+    }
+    .cancelBtn{
+      border: 1px solid #209CDF;
+      background:transparent;
+      right: 114px;
     }
   }
 
