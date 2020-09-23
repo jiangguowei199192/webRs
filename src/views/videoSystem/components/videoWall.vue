@@ -166,6 +166,7 @@
               layout="total,prev, pager, next"
               :total="pageInfo.total"
               class="tablePagination"
+              style="position:absolute;bottom: 25px;width: 774px;"
               popper-class="pageSelect"
               :page-size="pageInfo.pageSize"
               @current-change="handleCurrentChange"
@@ -1468,6 +1469,7 @@ export default {
           margin-top: 24px;
           display: flex;
           flex-wrap: wrap;
+          justify-content: left;
           .item {
             width: 123px;
             margin-right: 31px;
@@ -1513,6 +1515,8 @@ export default {
           margin-top: 5px;
           text-align: end;
           padding-right: 18px;
+          position: absolute;
+          bottom: 0px;
           button.btn-next,
           button.btn-prev {
             background: transparent !important;
