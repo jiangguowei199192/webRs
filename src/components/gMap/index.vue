@@ -118,7 +118,7 @@
       ></div>
     </div>
     <div class="basicTools" :class="{basicToolsBottom:!bShowLonLat,basicToolsBottom2:bBasicHighBottom}" v-if="bShowAllTools && bShowBasic">
-      <el-popover :append-to-body="bAppendToBody" ref="ctrlLayer" placement="left" trigger="click" popper-class="el-popover-custom">
+      <el-popover :append-to-body="bAppendToBody" ref="ctrlFuncLayer" placement="left" trigger="click" popper-class="el-popover-custom">
         <div class="mapPopover">
           <div class="mapTypeContainer">
             <div style="height:45px;position: relative;">
@@ -175,9 +175,9 @@
             >火点</span>
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickSelLayer"></div>
+        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickChangeFuncLayers"></div>
       </el-popover>
-      <el-popover :append-to-body="bAppendToBody" ref="ctrlMapSel" placement="left" trigger="click" popper-class="el-popover-custom">
+      <el-popover :append-to-body="bAppendToBody" ref="ctrlBasicLayer" placement="left" trigger="click" popper-class="el-popover-custom">
         <div class="mapPopover">
           <div class="mapTypeContainer">
             <div style="height:45px;position: relative;">
@@ -225,7 +225,7 @@
             >混合地图</span>
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickSelMap"></div>
+        <div slot="reference" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickChangeBasicLayers"></div>
       </el-popover>
       <div class="yDivBtn btnLocator btnActive" @click="clickLocator"></div>
       <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
@@ -296,7 +296,9 @@ export default {
       bShowDrone: true,
       bShowFire: true,
       bBasicHighBottom: false, // 控制右下角基础工具条向上移动
-      bAppendToBody: true // 控制Popover弹窗附加文档结构位置
+      bAppendToBody: true, // 控制Popover弹窗附加文档结构位置
+      popoverOffsetX: -38, // 地图右下角工具条Popover弹窗x轴偏移
+      popoverOffsetY: 33 // 地图右下角工具条Popover弹窗y轴偏移
     }
   },
 
@@ -1065,18 +1067,72 @@ export default {
       }
     },
 
-    // 弹出切换功能图层的Popover
-    clickSelLayer () {
-      this.$nextTick(() => {
-        this.$refs.ctrlMapSel.doClose()
-      })
+    // 设置基础工具条是否向上平移
+    setBasicHighBottom (bHigh) {
+      this.bBasicHighBottom = bHigh
+    },
+    // 设置基础工具条是否向上平移
+    setPopoverAppendStyle (bAppend) {
+      this.bAppendToBody = bAppend
+    },
+    // 设置Popover弹窗偏移量
+    setPopoverPositionOffset (x, y) {
+      this.popoverOffsetX = x
+      this.popoverOffsetY = y
     },
 
+    // 关闭切换图层的Popover
+    closeAllPopover () {
+      if (this.$refs.ctrlFuncLayer !== undefined) {
+        this.$refs.ctrlFuncLayer.doClose()
+      }
+      if (this.$refs.ctrlBasicLayer !== undefined) {
+        this.$refs.ctrlBasicLayer.doClose()
+      }
+    },
+    // 弹出切换功能图层的Popover
+    clickChangeFuncLayers () {
+      this.closeAndOffsetPopover(this.$refs.ctrlBasicLayer, this.$refs.ctrlFuncLayer)
+    },
     // 弹出切换底图图层的Popover
-    clickSelMap () {
+    clickChangeBasicLayers () {
+      this.closeAndOffsetPopover(this.$refs.ctrlFuncLayer, this.$refs.ctrlBasicLayer)
+    },
+    // 关闭和偏移Popover弹窗
+    closeAndOffsetPopover (closePop, offsetPop) {
+      let tmpbOffset = true
+      try {
+        if (offsetPop.popperElm.ariaHidden === 'false') {
+          tmpbOffset = false
+        }
+      } catch (error) {}
       this.$nextTick(() => {
-        this.$refs.ctrlLayer.doClose()
+        closePop.doClose()
+        if (this.bAppendToBody === false) {
+          const tmpThis = this
+          setTimeout(() => {
+            const tmpStyle = offsetPop.popperElm.style
+            tmpThis.offsetPopoverPosition(tmpStyle, tmpThis.popoverOffsetX, tmpThis.popoverOffsetY, tmpbOffset)
+          }, 1)
+        }
       })
+    },
+    // 偏移Popover弹窗位置
+    offsetPopoverPosition (style, offsetx, offsety, bOffset) {
+      let tmpLeft = style.left
+      tmpLeft = tmpLeft.replace('px', '')
+      tmpLeft = parseFloat(tmpLeft)
+      let tmpTop = style.top
+      tmpTop = tmpTop.replace('px', '')
+      tmpTop = parseFloat(tmpTop)
+      tmpLeft = tmpLeft + offsetx + 'px'
+      tmpTop = tmpTop + offsety + 'px'
+      if (bOffset) {
+        style.left = tmpLeft
+        style.popoverOffsetLeft = tmpLeft
+        style.top = tmpTop
+        style.popoverOffsetTop = tmpTop
+      }
     },
 
     // 定位到地图指定坐标
@@ -1111,26 +1167,6 @@ export default {
       if (this.mapTypeCur !== tmpType) {
         this.mapTypeCur = tmpType
         this.map2D._imageLayerManager.changeBaseLayer(this.mapTypeCur)
-      }
-    },
-
-    // 设置基础工具条是否向上平移
-    setBasicHighBottom (bHigh) {
-      this.bBasicHighBottom = bHigh
-    },
-
-    // 设置基础工具条是否向上平移
-    setPopoverAppendStyle (bAppend) {
-      this.bAppendToBody = bAppend
-    },
-
-    // 关闭切换图层的Popover
-    closeAllPopover () {
-      if (this.$refs.ctrlLayer !== undefined) {
-        this.$refs.ctrlLayer.doClose()
-      }
-      if (this.$refs.ctrlMapSel !== undefined) {
-        this.$refs.ctrlMapSel.doClose()
       }
     },
 
