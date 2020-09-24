@@ -1507,6 +1507,7 @@ export default {
           margin-top: 24px;
           display: flex;
           flex-wrap: wrap;
+          align-content: start;
           justify-content: left;
           height: 495px;
           .item {
