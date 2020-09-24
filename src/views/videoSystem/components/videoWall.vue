@@ -1507,7 +1507,7 @@ export default {
           margin-top: 24px;
           display: flex;
           flex-wrap: wrap;
-          align-content: start;
+          align-content: flex-start;
           justify-content: left;
           height: 495px;
           .item {
@@ -1566,6 +1566,9 @@ export default {
           button.btn-next,
           button.btn-prev {
             background: transparent !important;
+          }
+           button.btn-prev {
+            margin-right:0px;
           }
         }
       }
