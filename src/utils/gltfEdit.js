@@ -85,6 +85,18 @@ export var gltfEdit = {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     downHandler.setInputAction(function (event) {
+      if (isAxis) {
+        var hpr = mars3d.matrix.getHeadingPitchRollByMatrix(that.model.modelMatrix)
+        var heading = Cesium.Math.toDegrees(hpr.heading)
+        var pitch = Cesium.Math.toDegrees(hpr.pitch)
+        var roll = Cesium.Math.toDegrees(hpr.roll)
+        var h = mars3d.point.formatNum(heading, 1)
+        var p = mars3d.point.formatNum(pitch, 1)
+        var r = mars3d.point.formatNum(roll, 1)
+        that.model.attribute.style.heading = h
+        that.model.attribute.style.pitch = p
+        that.model.attribute.style.roll = r
+      }
       isAxis = false
       that.cameraControl(true)
     }, Cesium.ScreenSpaceEventType.LEFT_UP)
@@ -133,19 +145,19 @@ export var gltfEdit = {
     // 移动模型
     this.model.modelMatrix = m2
 
-    var hpr = mars3d.matrix.getHeadingPitchRollByMatrix(m2)
-    var heading = Cesium.Math.toDegrees(hpr.heading)
-    var pitch = Cesium.Math.toDegrees(hpr.pitch)
-    var roll = Cesium.Math.toDegrees(hpr.roll)
+    // var hpr = mars3d.matrix.getHeadingPitchRollByMatrix(m2)
+    // var heading = Cesium.Math.toDegrees(hpr.heading)
+    // var pitch = Cesium.Math.toDegrees(hpr.pitch)
+    // var roll = Cesium.Math.toDegrees(hpr.roll)
 
-    if (this.options.calback) {
-      this.options.calback({
-        entity: this.model,
-        heading: mars3d.point.formatNum(heading, 1),
-        pitch: mars3d.point.formatNum(pitch, 1),
-        roll: mars3d.point.formatNum(roll, 1)
-      })
-    }
+    // if (this.options.calback) {
+    //   this.options.calback({
+    //     entity: this.model,
+    //     heading: mars3d.point.formatNum(heading, 1),
+    //     pitch: mars3d.point.formatNum(pitch, 1),
+    //     roll: mars3d.point.formatNum(roll, 1)
+    //   })
+    // }
 
     // 更新 坐标轴模型
     this.updateAxisMatrix()

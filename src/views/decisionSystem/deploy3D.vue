@@ -109,11 +109,11 @@
         <ul>
           <li>
             <span>位置:</span>
-            <el-input type="text" v-model.trim="infoBox.text1" :readonly="!infoBox.editing" :class="{active:infoBox.editing}"></el-input>
+            <el-input type="text" v-model.trim="infoBox.location" :readonly="!infoBox.editing" :class="{active:infoBox.editing}"></el-input>
           </li>
           <li>
             <span>说明:</span>
-            <el-input type="text" v-model.trim="infoBox.text2" :readonly="!infoBox.editing" :class="{active:infoBox.editing}"></el-input>
+            <el-input type="text" v-model.trim="infoBox.describe" :readonly="!infoBox.editing" :class="{active:infoBox.editing}"></el-input>
           </li>
         </ul>
       </div>
@@ -259,7 +259,7 @@ export default {
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       editPopover: false, // 编辑模式Popover是否显示
-      infoBox: { infoImg: '', isEdit: true, text1: '', text2: '', name: '', editing: false },
+      infoBox: { infoImg: '', isEdit: true, location: '', describe: '', name: '', editing: false },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
@@ -613,35 +613,18 @@ export default {
       }
       this.showEditBox = false
       if (this.isPlot) {
+        var task = JSON.parse(JSON.stringify(this.editBox))
+        task.id = this.curEntity.attribute.id
+        this.curEntity.attribute.task = task
         // 开启drawControl编辑功能
         this.enableDrawControlEdit(true)
         this.isPlot = false
-        var task = JSON.parse(JSON.stringify(this.editBox))
-        task.name = this.curEntity.name
         this.addModelLabel(this.curEntity, task)
-
         // 添加模型下方矩形框
-        const entity = this.curEntity
-        const p = this.getModelRectPosition(entity)
-        const rect = this.viewer.entities.add({
-          name: task.name,
-          polygon: {
-            hierarchy: new Cesium.PolygonHierarchy([
-              p.p1,
-              p.p2,
-              p.p3,
-              p.p4,
-              p.p1
-            ]),
-            material: Cesium.Color.GREEN.withAlpha(0.5)
-          }
-        })
-
-        // 消防车下方，矩形框列表
-        if (!this.rectList) this.rectList = []
-        this.rectList.push(rect)
+        this.addModelRect(this.curEntity)
       } else {
-        const t = this.findModelLabel(this.curEntity.name)
+        this.copyData(this.editBox, this.curEntity.attribute.task)
+        const t = this.findModelLabel(this.curEntity.attribute.id)
         if (t !== undefined) {
           this.copyData(this.editBox, t.opts.data)
           this.updateLabelHtml(t)
@@ -682,7 +665,8 @@ export default {
       this.showOrHideRect(false, entity)
       // 启用编辑
       gltfEdit.activate(entity, me.viewer, {
-        calback: function (result) {}
+        calback: function (result) {
+        }
       })
     },
 
@@ -753,12 +737,68 @@ export default {
         case 5:
           if (!this.drawControl || stringIsNullOrEmpty(this.drawControl.toGeoJSON())) { this.$notify.warning({ title: '提示', message: '当前未标绘任何数据' }) }
           if (this.drawControl) {
-            var json = this.drawControl.toGeoJSON()
-            console.log(json)
+            this.json = this.drawControl.toGeoJSON()
+            console.log(this.json)
           }
+          break
+        case 6:
+          this.clearDraw()
+          break
+        case 7:
+          this.loadGeoJson()
           break
         default:
           break
+      }
+    },
+
+    /**
+     *  清除所有标绘数据
+     */
+    clearDraw () {
+      this.drawControl.clearDraw()
+      if (this.markList) {
+        this.markList.forEach(m => m.destroy())
+        this.markList = []
+      }
+      if (this.labelList) {
+        this.labelList.forEach(m => m.destroy())
+        this.labelList = []
+      }
+      if (this.rectList) {
+        this.rectList.forEach(m => this.viewer.entities.remove(m))
+        this.rectList = []
+      }
+      if (this.modelList) this.modelList = []
+      if (this.markDatas) this.markDatas = []
+    },
+
+    /**
+     *  加载geoJson
+     */
+    loadGeoJson () {
+      if (this.json) {
+        const entities = this.drawControl.loadJson(this.json)
+        if (!this.modelList) this.modelList = []
+        entities.forEach(e => {
+          this.modelList.push(e)
+          const attr = e.attribute
+          // billboard
+          if (attr.type === 'billboard') {
+
+          } else if (attr.edit) {
+            // 编辑模式下绘制的模型
+
+          } else {
+            // 沙盘绘制添加的模型
+            // 添加模型上方标签
+            this.addModelLabel(e, e.attribute.task)
+            // 添加模型下方矩形框
+            this.addModelRect(e)
+          }
+        })
+        console.log('----------------------------')
+        console.log(entities)
       }
     },
 
@@ -785,9 +825,12 @@ export default {
 
       switch (type) {
         case 1:
+        {
           this.curModelIndex = index
-          this.startPlot(item)
+          const m = JSON.parse(JSON.stringify(item))
+          this.startPlot(m)
           break
+        }
         case 2:
           this.tabTo(item)
           break
@@ -837,7 +880,7 @@ export default {
       }
 
       if (me.rectList) {
-        const r = me.rectList.find(t => t._name === entity.name)
+        const r = me.rectList.find(t => t._name === attr.id)
         if (r !== undefined) {
           if (show) {
             const p = this.getModelRectPosition(entity)
@@ -987,7 +1030,7 @@ export default {
      *  选中编辑模式中列表某项
      */
     selectItemInEditList (item) {
-      const m = this.modelList.find(m => m.name === item.id)
+      const m = this.modelList.find(m => m.attribute.id === item.id)
       if (m !== undefined) {
         this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -50 })
       }
@@ -998,7 +1041,7 @@ export default {
      *@param {Object} item
      */
     deleteModel (item) {
-      const m = this.modelList.find(m => m.name === item.id)
+      const m = this.modelList.find(m => m.attribute.id === item.id)
       if (m !== undefined) {
         this.drawControl.deleteEntity(m)
         this.deleteModelMarker(m)
@@ -1013,7 +1056,7 @@ export default {
       const attr = entity.attribute
       if (attr.type !== 'billboard') {
         // 删除对应marker
-        const t = this.findModelMarker(entity.name)
+        const t = this.findModelMarker(attr.id)
         if (t !== undefined) {
           const index = this.markList.indexOf(t)
           this.markList.splice(index, 1)
@@ -1021,7 +1064,7 @@ export default {
         }
       }
       const list = this.markDatas[attr.editIndex]
-      const l = list.find(r => r.id === entity.name)
+      const l = list.find(r => r.id === attr.id)
       if (l !== undefined) {
         const index = list.indexOf(l)
         list.splice(index, 1)
@@ -1036,7 +1079,7 @@ export default {
       this.curEntity = entity
       const id = uuid(8, 16)
       const attr = entity.attribute
-      if (!entity.name) entity.name = id
+      attr.id = id
       // 标绘的模型列表
       if (!this.modelList) this.modelList = []
       this.modelList.push(entity)
@@ -1047,7 +1090,7 @@ export default {
       this.markDatas[this.editIndex].push({
         type: attr.plotType, // 编辑模式下，模型列表的Icon类型
         name: attr.name,
-        id: entity.name
+        id: id
       })
 
       // 防止模型后来才加载，没有执行this.handler.setInputAction
@@ -1131,6 +1174,8 @@ export default {
           // }
           // console.log('创建完成')
           const attr = entity.attribute
+          attr.location = ''
+          attr.describe = ''
           if (attr.edit) {
             entity.drawOk = true
             if (attr.type === 'billboard') {
@@ -1140,7 +1185,7 @@ export default {
             }
           } else {
             const id = uuid(8, 16)
-            entity.name = id
+            attr.id = id
             // 沙盘绘制的模型
             attr.editIndex = 5
             var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
@@ -1201,9 +1246,9 @@ export default {
             const attr = entity.attribute
             // 如果是编辑模式下添加的模型
             if (attr.edit) {
-              me.updateMarkerPosition(entity.name, position)
+              me.updateMarkerPosition(attr.id, position)
             } else {
-              me.updateLabelPosition(entity.name, position)
+              me.updateLabelPosition(attr.id, position)
             }
           }
           // console.log('编辑修改了点')
@@ -1230,7 +1275,7 @@ export default {
             me.deleteModelMarker(entity)
           } else {
             // 删除对应标签
-            const t = me.findModelLabel(entity.name)
+            const t = me.findModelLabel(attr.id)
             if (t !== undefined) {
               const index = me.labelList.indexOf(t)
               me.labelList.splice(index, 1)
@@ -1238,7 +1283,7 @@ export default {
             }
             // 删除矩形框列表
             if (me.rectList) {
-              const r = me.rectList.find(t => t._name === entity.name)
+              const r = me.rectList.find(t => t._name === attr.id)
               if (r !== undefined) {
                 const index = me.rectList.indexOf(r)
                 me.rectList.splice(index, 1)
@@ -1425,11 +1470,37 @@ export default {
         anchor: [0, 0],
         position: position,
         data: task,
-        name: primitive.name,
+        name: primitive.attribute.id,
         distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 500)
       })
+      if (!this.labelList) this.labelList = []
       this.labelList.push(label)
       return label
+    },
+
+    /**
+     *  添加模型下方矩形框
+     * @param {Object} entity 模型
+     */
+    addModelRect (entity) {
+      const p = this.getModelRectPosition(entity)
+      const rect = this.viewer.entities.add({
+        name: entity.attribute.id,
+        polygon: {
+          hierarchy: new Cesium.PolygonHierarchy([
+            p.p1,
+            p.p2,
+            p.p3,
+            p.p4,
+            p.p1
+          ]),
+          material: Cesium.Color.GREEN.withAlpha(0.5)
+        }
+      })
+
+      // 消防车下方，矩形框列表
+      if (!this.rectList) this.rectList = []
+      this.rectList.push(rect)
     },
 
     /**
@@ -1488,7 +1559,6 @@ export default {
         })
       )
       modelPrimitive.attribute = cfg
-      modelPrimitive.name = cfg.id
       modelPrimitive.position = position
       // modelPrimitive.hasOutLine = true
 
@@ -1514,7 +1584,7 @@ export default {
      */
     showModelEditBox (entity) {
       me.showEditBox = true
-      const t = me.findModelLabel(entity.name)
+      const t = me.findModelLabel(entity.attribute.id)
       if (t !== undefined) {
         me.copyData(t.opts.data, me.editBox)
       }
@@ -1548,7 +1618,7 @@ export default {
         anchor: [0, 0],
         position: position,
         depthTest: false,
-        name: entity.name,
+        name: attr.id,
         click: function (entity) {
           me.ClickDivPoint(entity)
         }
