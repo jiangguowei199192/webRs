@@ -160,8 +160,12 @@
                 <p>{{item.fileName}}</p>
                 <p>{{item.createTime|timeFormat}}</p>
               </div>
+              <div class="empty" >
+                暂无数据
+              </div>
             </div>
             <el-pagination
+              v-if="picStorageArray&&picStorageArray.length>0"
               background
               layout="total,prev, pager, next"
               :total="pageInfo.total"
@@ -1498,6 +1502,7 @@ export default {
           display: flex;
           flex-wrap: wrap;
           justify-content: left;
+          height:495px;
           .item {
             width: 123px;
             margin-right: 31px;
@@ -1537,6 +1542,12 @@ export default {
             > p {
               margin-top: 8px;
             }
+          }
+          .empty{
+            width:100%;
+            height:100%;
+            line-height: 495px;
+            text-align: center;
           }
         }
         .tablePagination {
