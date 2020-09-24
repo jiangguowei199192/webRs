@@ -9,7 +9,7 @@
         <div class="leftBox">
           <div class="leftTip">
             <i class="el-icon-warning"></i>
-            1位用户未分配所属组织
+            {{userCountOfNoDept}}位用户未分配所属组织
           </div>
 
           <el-tree
@@ -41,7 +41,7 @@
                 <div style="text-align: center;">
                   <el-button class="popoverBtn" @click="organizationAdd(data)">新增下级组织</el-button>
                   <el-button class="popoverBtn" @click="organizationEdit(data)">修改组织</el-button>
-                  <el-button class="popoverBtn" @click="bindDevice(data)">绑定设备</el-button>
+                  <!-- <el-button class="popoverBtn" @click="bindDevice(data)">绑定设备</el-button> -->
                 </div>
 
                 <el-button
@@ -193,6 +193,30 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog
+      title="组织绑定设备"
+      :visible.sync="showBindDevice"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
+      <el-form ref="bindDeviceFormRef" :model="bindDeviceForm" label-width="80px" :rules="bindDeviceRules">
+        <el-form-item label="选择设备" prop="selectedDevice">
+          <el-cascader
+            placeholder
+            :options="deviceList"
+            :props="bindDeviceProps"
+            :show-all-levels="false"
+            v-model="bindDeviceForm.selectedDevice"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="bindDeviceConfirm" class="trueBtn">保存</el-button>
+        </el-form-item>
+      </el-form>
+      <!-- <el-transfer v-model="selectedDevice" :data="deviceList"></el-transfer> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -200,11 +224,16 @@
 import { Notification } from 'element-ui'
 import { loginApi } from '@/api/login'
 import { settingApi } from '@/api/setting'
+import videoMixin from '../../videoSystem/mixins/videoMixin'
 
 export default {
+  mixins: [videoMixin],
   created () {
+    this.getUserOfNoDept()
     this.getDeptTree()
     this.getOrganizationTypes()
+    this.deviceList = this.treeData
+    // console.log(this.treeData)
   },
   data () {
     return {
@@ -261,7 +290,22 @@ export default {
       },
       organizationTypes: [],
       addOrganizationTitle: '',
-      currentOrganization: ''
+      currentOrganization: '',
+
+      showBindDevice: false,
+      bindDeviceForm: {
+        selectedDevice: []
+      },
+      bindDeviceRules: {
+        selectedDevice: [{ required: true, message: '请选择设备' }]
+      },
+      bindDeviceProps: {
+        emitPath: false,
+        multiple: true
+      },
+      deviceList: [],
+
+      userCountOfNoDept: 0
     }
   },
   methods: {
@@ -269,6 +313,16 @@ export default {
       this.$router.push({ path: '/systemSettings' })
     },
 
+    // 获取未分配组织的用户数量
+    async getUserOfNoDept () {
+      this.$axios.get(settingApi.countDeptUser).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.userCountOfNoDept = res.data.data
+        }
+      })
+    },
+
+    // 获取组织类型集合
     async getOrganizationTypes () {
       this.$axios
         .get(settingApi.queryByTypeCode, { params: { typeCode: 'dept_type' } })
@@ -463,16 +517,17 @@ export default {
       this.addOrganizationForm.createTime = this.getCurrentDate()
       this.addOrganizationForm.organizationName = data.deptName
       this.addOrganizationForm.organizationType = data.deptTypeCode
-      this.addOrganizationForm.previousOrganization = data.deptCode
+      this.addOrganizationForm.previousOrganization = data.parentDeptCode
       this.showAddOrganization = true
     },
     // 绑定设备
     bindDevice (data) {
       // console.log('绑定设备')
       // console.log(data)
+      this.showBindDevice = true
     },
     // 新增组织-保存
-    addOrganizationConfirm () {
+    async addOrganizationConfirm () {
       this.$refs.addOrganizationFormRef.validate(async (valid) => {
         if (!valid) return
         this.showAddOrganization = false
@@ -489,6 +544,7 @@ export default {
             })
             .then((res) => {
               if (res.data.code === 0) {
+                this.getDeptTree()
                 Notification({
                   title: '提示',
                   message: '新增成功',
@@ -510,7 +566,8 @@ export default {
           var param2 = {
             deptName: this.addOrganizationForm.organizationName,
             deptTypeCode: this.addOrganizationForm.organizationType,
-            parentDeptCode: this.addOrganizationForm.previousOrganization
+            parentDeptCode: this.addOrganizationForm.previousOrganization,
+            id: this.currentOrganization.id
           }
           this.$axios
             .post(settingApi.updateDept, param2, {
@@ -518,6 +575,7 @@ export default {
             })
             .then((res) => {
               if (res.data.code === 0) {
+                this.getDeptTree()
                 Notification({
                   title: '提示',
                   message: '修改成功',
@@ -534,6 +592,13 @@ export default {
               })
             })
         }
+      })
+    },
+    // 绑定设备-保存
+    async bindDeviceConfirm () {
+      this.$refs.bindDeviceFormRef.validate(async (valid) => {
+        if (!valid) return
+        this.showBindDevice = false
       })
     },
 
