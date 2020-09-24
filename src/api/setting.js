@@ -14,6 +14,7 @@ export const settingApi = {
   queryByTypeCode: '/cloud-fms/dict/queryByTypeCode', // 设置：组织管理-获取组织类型
   addDept: '/cloud-fms/dept/add', // 设置：组织管理-新增组织
   updateDept: '/cloud-fms/dept/update', // 设置：组织管理-修改组织
+  countDeptUser: '/cloud-fms/sysuser/countDeptUser', // 设置：组织管理-获取未分配组织的用户数量
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图
