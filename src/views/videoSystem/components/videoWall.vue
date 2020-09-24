@@ -157,10 +157,10 @@
                     <i class="el-icon-delete"></i>
                   </div>
                 </div>
-                <p>{{item.fileName}}</p>
                 <p>{{item.createTime|timeFormat}}</p>
+                <p :title="item.remark">{{item.remark&&item.remark.length>9?item.remark.slice(0,9)+'.':item.remark}}</p>
               </div>
-              <div class="empty"  v-if="picStorageArray&&picStorageArray.length==0">暂无数据</div>
+              <div class="empty" v-if="picStorageArray&&picStorageArray.length==0">暂无数据</div>
             </div>
             <el-pagination
               v-if="picStorageArray&&picStorageArray.length>0"
@@ -523,9 +523,10 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ],
+      // 图库的分页信息
       pageInfo: {
         total: 1000,
-        currentPage: 2,
+        currentPage: 1,
         pageSize: 15
       },
       dateRange: [], // 保存图库日期的数组
@@ -721,9 +722,10 @@ export default {
       this.cutDialogVisible = false
       this.remark = ''
     },
-    // 点击抓拍 显示图库弹框 获取图库数据
+    // 点击图库 显示图库弹框 获取图库数据
     getPicStorage () {
       this.showCurindex = 3
+      this.pageInfo.currentPage = 1
       this.getSnapList()
     },
     // 获取图库列表
@@ -732,19 +734,24 @@ export default {
       const params = {
         deviceCode: this.videoInfo.deviceCode,
         channelId: this.videoInfo.streamType,
+        currentPage: this.pageInfo.currentPage,
+        pageSize: this.pageInfo.pageSize,
         dates: this.dateRange
       }
       this.$axios.get(api.getSnapList, { params }).then(res => {
         if (res && res.data && res.data.code === 0) {
-          this.picStorageArray = res.data.data
+          this.picStorageArray = res.data.data.data
+          this.pageInfo.total = res.data.data.paginator.totalCount
         } else {
           this.picStorageArray = []
+          this.pageInfo.total = 0
         }
       })
     },
     // 选择图库时间
     getTimeRange () {
       console.log(this.dateRange)
+      this.pageInfo.currentPage = 1
       this.getSnapList()
       debugger
     },
@@ -752,6 +759,7 @@ export default {
     handleCurrentChange (val) {
       this.pageInfo.currentPage = val
       console.log(`当前页: ${val}`)
+      this.getSnapList()
     },
     setPlayerSizeListener () {
       var me = this
@@ -1524,12 +1532,12 @@ export default {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                color: #aaa;
                 font-size: 14px;
                 background: #000000;
                 opacity: 0;
                 transition: all 1.5s ease-in-out;
                 i {
+                  color:#fff;
                   cursor: pointer;
                 }
               }
