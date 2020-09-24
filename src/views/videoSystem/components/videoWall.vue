@@ -322,6 +322,7 @@
             <gMap
               ref="gduMap"
               handleType="devMap"
+              :baseMapIndex="0"
               :bShowSimpleSearchTools="false"
               :bShowBasic="bIsFullscreenMap"
               :bShowSelLayer="false"

@@ -303,6 +303,11 @@ export default {
   },
 
   props: {
+    // 默认底图序号
+    baseMapIndex: {
+      type: Number,
+      default: 0
+    },
     // 地图圆角样式
     bRadiusCorner: {
       type: Boolean,
@@ -431,6 +436,10 @@ export default {
     // 创建地图组件
     createMap () {
       const rootUrl = this.getRootUrl()
+      this.mapTypeIndex = this.baseMapIndex
+      if (this.mapTypeIndex > 2 || this.mapTypeIndex < 0) {
+        this.mapTypeIndex = 0
+      }
       this.mapTypeCur = this.mapTypeBasic + this.mapTypeIndex
       let bNetWorkConn = true
       if (localStorage.bNetWorkConn !== undefined) {
