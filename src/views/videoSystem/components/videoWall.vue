@@ -160,9 +160,7 @@
                 <p>{{item.fileName}}</p>
                 <p>{{item.createTime|timeFormat}}</p>
               </div>
-              <div class="empty" >
-                暂无数据
-              </div>
+              <div class="empty"  v-if="picStorageArray&&picStorageArray.length==0">暂无数据</div>
             </div>
             <el-pagination
               v-if="picStorageArray&&picStorageArray.length>0"
@@ -314,7 +312,7 @@
         <div class="menu stretchIMG">
           <div class="itemBtn detectBtn"></div>
           <div class="itemBtn puzzleBtn">
-            <img src="../../../assets/images/drone/puzzling.gif"/>
+            <img src="../../../assets/images/drone/puzzling.gif" />
           </div>
           <div class="itemBtn pointBtn"></div>
           <div class="itemBtn routeBtn"></div>
@@ -333,7 +331,7 @@
               :bDbClickStyle="true"
               @mapDbClickEvent="mapDbClickEventCB"
             ></gMap>
-            <div class="sizeChange" v-show="!bIsFullscreenMap" @click="changeVideoAndMap"/>
+            <div class="sizeChange" v-show="!bIsFullscreenMap" @click="changeVideoAndMap" />
           </div>
         </div>
         <div class="smallVideoStyle" v-if="bIsFullscreenMap===true&&bIsFullScreenVideo===true">
@@ -352,7 +350,7 @@
                 :live="videoInfo.isLive !==false"
                 aspect="fullscreen"
               />
-              <div class="sizeChange" @click="changeVideoAndMap"/>
+              <div class="sizeChange" @click="changeVideoAndMap" />
             </div>
           </div>
         </div>
@@ -1502,7 +1500,7 @@ export default {
           display: flex;
           flex-wrap: wrap;
           justify-content: left;
-          height:495px;
+          height: 495px;
           .item {
             width: 123px;
             margin-right: 31px;
@@ -1543,9 +1541,9 @@ export default {
               margin-top: 8px;
             }
           }
-          .empty{
-            width:100%;
-            height:100%;
+          .empty {
+            width: 100%;
+            height: 100%;
             line-height: 495px;
             text-align: center;
           }
@@ -1903,16 +1901,16 @@ export default {
     position: absolute;
     pointer-events: none;
     .stretchIMG {
-      background-repeat:no-repeat;
-      background-size:100% 100%;
-      -moz-background-size:100% 100%;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      -moz-background-size: 100% 100%;
     }
     .header {
       position: absolute;
       top: 0px;
       width: 100%;
       height: 125px;
-      background-image: url('../../../assets/images/drone/header-bg.png');
+      background-image: url("../../../assets/images/drone/header-bg.png");
       z-index: 3;
       .exitFullScreen {
         pointer-events: visible;
@@ -1944,7 +1942,7 @@ export default {
       bottom: 0px;
       width: 100%;
       height: 209px;
-      background-image: url('../../../assets/images/drone/bottom-bg.png');
+      background-image: url("../../../assets/images/drone/bottom-bg.png");
       z-index: 3;
     }
     .menu {
@@ -1952,7 +1950,7 @@ export default {
       bottom: 0px;
       width: 100%;
       height: 73px;
-      background-image: url('../../../assets/images/AR/ar_footer.png');
+      background-image: url("../../../assets/images/AR/ar_footer.png");
       display: flex;
       justify-content: center;
       align-items: center;
@@ -1963,34 +1961,34 @@ export default {
         width: 40px;
         height: 40px;
         margin-right: 32px;
-        pointer-events:visible;
+        pointer-events: visible;
       }
       .detectBtn {
-        background-image: url('../../../assets/images/drone/detect.png');
+        background-image: url("../../../assets/images/drone/detect.png");
       }
       .detectBtn:active {
-        background-image: url('../../../assets/images/drone/detect-active.png');
+        background-image: url("../../../assets/images/drone/detect-active.png");
       }
       .puzzleBtn {
-        background-image: url('../../../assets/images/drone/puzzle.png');
+        background-image: url("../../../assets/images/drone/puzzle.png");
       }
       .puzzleBtn:active {
-        background-image: url('../../../assets/images/drone/puzzle-active.png');
+        background-image: url("../../../assets/images/drone/puzzle-active.png");
       }
       .pointBtn {
-        background-image: url('../../../assets/images/drone/point.png');
+        background-image: url("../../../assets/images/drone/point.png");
       }
       .pointBtn:hover {
-        background-image: url('../../../assets/images/drone/point-active.png');
+        background-image: url("../../../assets/images/drone/point-active.png");
       }
       .pointBtn:active {
         opacity: 0.85;
       }
       .routeBtn {
-        background-image: url('../../../assets/images/drone/route.png');
+        background-image: url("../../../assets/images/drone/route.png");
       }
       .routeBtn:hover {
-        background-image: url('../../../assets/images/drone/route-active.png');
+        background-image: url("../../../assets/images/drone/route-active.png");
       }
       .routeBtn:active {
         opacity: 0.85;
@@ -2004,8 +2002,8 @@ export default {
       bottom: 60px;
       width: 283px;
       height: 183px;
-      background-image: url('../../../assets/images/drone/map-box.png');
-      pointer-events:visible;
+      background-image: url("../../../assets/images/drone/map-box.png");
+      pointer-events: visible;
       .mapArea,
       .smallVideoArea {
         position: relative;
@@ -2023,7 +2021,7 @@ export default {
           right: 0px;
           height: 41px;
           width: 41px;
-          background-image: url('../../../assets/images/drone/size-change.png');
+          background-image: url("../../../assets/images/drone/size-change.png");
         }
         .sizeChange:hover {
           opacity: 0.8;
@@ -2035,7 +2033,7 @@ export default {
     }
     .mapOuterBoxFullScreen {
       z-index: 2;
-      position:relative;
+      position: relative;
       left: 0px;
       top: 0px;
       right: 0px;
