@@ -348,7 +348,14 @@ export default {
     },
 
     showInfoBox (val) {
-      if (val === false) { this.infoBox.editing = false }
+      if (val === false) {
+        for (var i in this.infoBox) {
+          if (i !== 'isEdit' && i !== 'editing') {
+            this.infoBox[i] = ''
+          }
+        }
+        this.infoBox.editing = false
+      }
     },
 
     activeIndex (val) {
@@ -508,8 +515,11 @@ export default {
      * @param {Object} save 是否保存
      */
     saveModelInfo (save) {
+      if (!this.curEntity) return
       let dst = ''
-      if (this.curEntity && this.curEntity instanceof Cesium.Model) {
+      if (this.curEntity instanceof Cesium.Entity) {
+        dst = this.curEntity.attribute
+      } else if (this.curEntity instanceof Cesium.Model) {
         dst = this.curEntity.attribute
       } else if (this.curEntity && this.curEntity instanceof Cesium.Billboard) {
         dst = this.curEntity.id.attribute
@@ -770,7 +780,7 @@ export default {
         this.rectList = []
       }
       if (this.modelList) this.modelList = []
-      if (this.markDatas) this.markDatas = []
+      if (this.markDatas) this.markDatas = [[], [], [], []]
     },
 
     /**
@@ -783,12 +793,16 @@ export default {
         entities.forEach(e => {
           this.modelList.push(e)
           const attr = e.attribute
-          // billboard
-          if (attr.type === 'billboard') {
-
-          } else if (attr.edit) {
-            // 编辑模式下绘制的模型
-
+          // 编辑模式下绘制的模型
+          if (attr.edit) {
+            if (attr.type !== 'billboard') {
+              this.addModelMark(e)
+            }
+            this.markDatas[attr.editIndex].push({
+              type: attr.plotType, // 编辑模式下，模型列表的Icon类型
+              name: attr.name,
+              id: attr.id
+            })
           } else {
             // 沙盘绘制添加的模型
             // 添加模型上方标签
@@ -854,6 +868,7 @@ export default {
           this.plotModel(item)
           break
         case 9:
+          this.modelIndex = 1000
           this.deleteModel(item)
           break
         case 10:
@@ -1096,6 +1111,7 @@ export default {
       // 防止模型后来才加载，没有执行this.handler.setInputAction
       if (!this.showInfoBox) {
         if (!attr.init) {
+          this.copyData(attr, this.infoBox)
           attr.init = true
           this.infoBox.editing = true
         }
@@ -1624,7 +1640,6 @@ export default {
         }
 
       })
-      this.copyData(attr, this.infoBox)
       // 标签列表
       if (!this.markList) {
         this.markList = []
