@@ -1340,7 +1340,6 @@ export default {
     // 双击视频时给显示操作按钮（视频列表及全屏页面公用此方法）
     fullscreenvideo (videoObj) {
       this.curScreenInfo = videoObj.info
-      console.log(videoObj.bfull)
       if (videoObj.bfull === true) {
         this.totalVideosArray.forEach((item, index) => {
           if (item.id === videoObj.info.id) {
