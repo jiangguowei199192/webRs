@@ -709,6 +709,7 @@ export default {
       this.$axios.post(api.deviceUpdate, params).then(res => {
         if (res && res.data && res.data.code === 0) {
           if (!this.isAdd) {
+            this.pageInfo.currentPage = 1
             this.getSnapList()
           }
           this.showNotification = true
