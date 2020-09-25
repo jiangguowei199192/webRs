@@ -633,14 +633,15 @@ export default {
 
 <style lang="scss" scoped>
 .back {
-  width: 134px;
-  height: 40px;
-  border: solid 1px #39a4dd;
+  width: 120px;
+  height: 36px;
+  border: none;
   font-size: 18px;
   color: #ffffff;
-  background-color: transparent;
   outline: none;
   display: block;
+  background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
+  background-size: 100% 100%;
 }
 .container {
   width: 1242px;

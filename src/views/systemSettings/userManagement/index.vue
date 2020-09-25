@@ -304,69 +304,6 @@ export default {
       })
     },
 
-    // handleDeptTree (treeData) {
-    //   var data = []
-    //   treeData.forEach((item1) => {
-    //     var child1 = []
-    //     var temp1
-    //     if (item1.children) {
-    //       item1.children.forEach((item2) => {
-    //         var child2 = []
-    //         var temp2
-    //         if (item2.children) {
-    //           item2.children.forEach((item3) => {
-    //             var child3 = []
-    //             var temp3
-    //             if (item3.children) {
-    //               item3.children.forEach((item4) => {
-    //                 var temp4 = {
-    //                   value: item4.deptCode,
-    //                   label: item4.deptName
-    //                 }
-    //                 child3.push(temp4)
-    //               })
-    //               temp3 = {
-    //                 value: item3.deptCode,
-    //                 label: item3.deptName,
-    //                 children: child3
-    //               }
-    //             } else {
-    //               temp3 = {
-    //                 value: item3.deptCode,
-    //                 label: item3.deptName
-    //               }
-    //             }
-    //             child2.push(temp3)
-    //           })
-    //           temp2 = {
-    //             value: item2.deptCode,
-    //             label: item2.deptName,
-    //             children: child2
-    //           }
-    //         } else {
-    //           temp2 = {
-    //             value: item2.deptCode,
-    //             label: item2.deptName
-    //           }
-    //         }
-    //         child1.push(temp2)
-    //       })
-    //       temp1 = {
-    //         value: item1.deptCode,
-    //         label: item1.deptName,
-    //         children: child1
-    //       }
-    //     } else {
-    //       temp1 = {
-    //         value: item1.deptCode,
-    //         label: item1.deptName
-    //       }
-    //     }
-    //     data.push(temp1)
-    //   })
-    //   this.organizationOptions = data
-    // },
-
     // 分页页数改变
     currentPageChange () {
       this.getUserList()
@@ -625,14 +562,15 @@ export default {
 
 <style lang="scss" scoped>
 .back {
-  width: 170px;
-  height: 40px;
-  border: solid 1px #39a4dd;
+  width: 120px;
+  height: 36px;
+  border: none;
   font-size: 18px;
   color: #ffffff;
-  background-color: transparent;
   outline: none;
   display: block;
+  background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
+  background-size: 100% 100%;
 }
 .container {
   width: 1242px;

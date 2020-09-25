@@ -168,15 +168,16 @@ export default {
   margin: 0 auto;
 }
 .backStyle {
-  width: 140px;
-  height: 46px;
-  border: solid 1px #39a4dd;
-  font-size: 24px;
+  width: 120px;
+  height: 36px;
+  border: none;
+  font-size: 18px;
   color: #ffffff;
-  background-color: transparent;
   outline: none;
   display: block;
   cursor: pointer;
+  background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
+  background-size: 100% 100%;
 }
 .containerStyle3 {
   margin: 10px auto 0 auto;
