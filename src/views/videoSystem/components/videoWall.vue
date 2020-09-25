@@ -1530,6 +1530,7 @@ export default {
             width: 123px;
             margin-right: 31px;
             padding-bottom: 10px;
+            // height:173px;
             text-align: center;
             font-size: 12px;
             .container {
