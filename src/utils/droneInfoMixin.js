@@ -8,7 +8,11 @@ const droneInfoMixin = {
       bSaveMultiDroneInfos: false,
       dronesInfos: {},
       droneMarkerLayer: null,
-      droneTrailLayer: null
+      droneTrailLayer: null,
+      bDetectStatus: false,
+      bPuzzlingStatus: false,
+      bSetPointStatus: false,
+      bShowRouteStatus: true
     }
   },
 
@@ -181,6 +185,23 @@ const droneInfoMixin = {
         this.$refs.gduMap.map2D.zoomToCenter(oldRecords[pointsNum - 1].lonLat[0],
           oldRecords[pointsNum - 1].lonLat[1])
       }
+    },
+    // 设置无人机是否开启检测算法
+    switchDetectStatus () {
+      this.bDetectStatus = !this.bDetectStatus
+    },
+    // 设置无人机是否开启检测算法
+    switchPuzzlingStatus () {
+      this.bPuzzlingStatus = !this.bPuzzlingStatus
+    },
+    // 设置是否可以选定目标点
+    switchSetPointStatus () {
+      this.bSetPointStatus = !this.bSetPointStatus
+    },
+    // 设置是否显示无人机飞行轨迹
+    switchShowRouteStatus () {
+      this.bShowRouteStatus = !this.bShowRouteStatus
+      this.droneTrailLayer.setVisible(this.bShowRouteStatus)
     }
   }
 }

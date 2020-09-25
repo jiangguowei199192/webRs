@@ -312,12 +312,24 @@
         </div>
         <div class="bottom stretchIMG"></div>
         <div class="menu stretchIMG">
-          <div class="itemBtn detectBtn"></div>
-          <div class="itemBtn puzzleBtn">
+          <div class="itemBtn"
+              :class="{detectBtn:!bDetectStatus,detectBtnActive:bDetectStatus}"
+              @click.stop="switchDetectStatus"
+          ></div>
+          <div class="itemBtn"
+              :class="{puzzleBtn:!bPuzzlingStatus,puzzleBtnActive:bPuzzlingStatus}"
+              @click.stop="switchPuzzlingStatus"
+          >
             <div class="scanningStyle"></div>
           </div>
-          <div class="itemBtn pointBtn"></div>
-          <div class="itemBtn routeBtn"></div>
+          <div class="itemBtn"
+              :class="{pointBtn:!bSetPointStatus,pointBtnActive:bSetPointStatus}"
+              @click.stop="switchSetPointStatus"
+          ></div>
+          <div class="itemBtn"
+              :class="{routeBtn:!bShowRouteStatus,routeBtnActive:bShowRouteStatus}"
+              @click.stop="switchShowRouteStatus"
+          ></div>
         </div>
         <div class="mapOuterBox" :class="{mapOuterBoxFullScreen:bIsFullscreenMap}">
           <div class="mapArea" :class="{mapAreaFullScreen:bIsFullscreenMap}">
@@ -1995,6 +2007,7 @@ export default {
       z-index: 3;
     }
     .menu {
+      visibility: hidden;
       position: absolute;
       bottom: 0px;
       width: 100%;
@@ -2012,10 +2025,13 @@ export default {
         margin-right: 32px;
         pointer-events: visible;
       }
+      .itemBtn:hover {
+        opacity: 0.65;
+      }
       .detectBtn {
         background-image: url("../../../assets/images/drone/detect.png");
       }
-      .detectBtn:active {
+      .detectBtnActive {
         background-image: url("../../../assets/images/drone/detect-active.png");
       }
       .puzzleBtn {
@@ -2045,26 +2061,20 @@ export default {
           }
         }
       }
-      .puzzleBtn:active {
+      .puzzleBtnActive {
         background-image: url("../../../assets/images/drone/puzzle-active.png");
       }
       .pointBtn {
         background-image: url("../../../assets/images/drone/point.png");
       }
-      .pointBtn:hover {
+      .pointBtnActive {
         background-image: url("../../../assets/images/drone/point-active.png");
-      }
-      .pointBtn:active {
-        opacity: 0.85;
       }
       .routeBtn {
         background-image: url("../../../assets/images/drone/route.png");
       }
-      .routeBtn:hover {
+      .routeBtnActive {
         background-image: url("../../../assets/images/drone/route-active.png");
-      }
-      .routeBtn:active {
-        opacity: 0.85;
       }
     }
     .mapOuterBox,
