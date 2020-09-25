@@ -320,7 +320,7 @@
               :class="{puzzleBtn:!bPuzzlingStatus,puzzleBtnActive:bPuzzlingStatus}"
               @click.stop="switchPuzzlingStatus"
           >
-            <div class="scanningStyle"></div>
+            <div class="scanningStyle" v-show="bPuzzlingStatus"></div>
           </div>
           <div class="itemBtn"
               :class="{pointBtn:!bSetPointStatus,pointBtnActive:bSetPointStatus}"
@@ -2036,33 +2036,33 @@ export default {
       }
       .puzzleBtn {
         background-image: url("../../../assets/images/drone/puzzle.png");
-        .scanningStyle {
-          background: url("../../../assets/images/drone/scanning.png") center center no-repeat;
-          width: 40px;
-          height:40px;
-          animation: scanning 4s steps(32) infinite
-        }
-        @keyframes scanning{
-          0% {
-            transform: rotateX(0deg);
-            background-position: 0px -10px;
-          }
-          50% {
-            transform: rotateX(0deg);
-            background-position: 0px 40px;
-          }
-          50.0001% {
-            transform: rotateX(180deg);
-            background-position: 0px -10px;
-          }
-          100% {
-          transform: rotateX(180deg);
-            background-position: 0px 40px;
-          }
-        }
       }
       .puzzleBtnActive {
         background-image: url("../../../assets/images/drone/puzzle-active.png");
+      }
+      .scanningStyle {
+        background: url("../../../assets/images/drone/scanning.png") center center no-repeat;
+        width: 40px;
+        height:40px;
+        animation: scanning 4s steps(32) infinite
+      }
+      @keyframes scanning{
+        0% {
+          transform: rotateX(0deg);
+          background-position: 0px -10px;
+        }
+        50% {
+          transform: rotateX(0deg);
+          background-position: 0px 40px;
+        }
+        50.0001% {
+          transform: rotateX(180deg);
+          background-position: 0px -10px;
+        }
+        100% {
+        transform: rotateX(180deg);
+          background-position: 0px 40px;
+        }
       }
       .pointBtn {
         background-image: url("../../../assets/images/drone/point.png");
