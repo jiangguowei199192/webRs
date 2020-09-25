@@ -154,7 +154,7 @@
                   <img :src="`${picUrl}${item.filePath}`" />
                   <div class="mask">
                     <i class="el-icon-edit" @click.stop="editCurPic(item)"></i>
-                    <i class="el-icon-delete"></i>
+                    <i class="el-icon-delete" @click.stop="deleteCurPic(item)"></i>
                   </div>
                 </div>
                 <p>{{item.createTime|timeFormat}}</p>
@@ -777,6 +777,24 @@ export default {
       this.cutImgUrl = curData.filePath
       this.remark = curData.remark || ''
       this.imgId = curData.id
+    },
+    // 删除当前图片
+    deleteCurPic (item) {
+      this.$axios.get(api.deleteSnapList, { params: { id: item.id } }).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.showNotification = true
+          this.infoObj.isWarning = false
+          this.infoObj.isError = false
+          this.infoObj.isSuccess = true
+          this.infoObj.title = '成功'
+          this.infoObj.msg = '删除成功'
+          setTimeout(() => {
+            this.showNotification = false
+          }, 3000)
+          this.pageInfo.currentPage = 1
+          this.getSnapList()
+        }
+      })
     },
     setPlayerSizeListener () {
       var me = this
