@@ -314,7 +314,7 @@
         <div class="menu stretchIMG">
           <div class="itemBtn detectBtn"></div>
           <div class="itemBtn puzzleBtn">
-            <img src="../../../assets/images/drone/puzzling.gif" />
+            <div class="scanningStyle"></div>
           </div>
           <div class="itemBtn pointBtn"></div>
           <div class="itemBtn routeBtn"></div>
@@ -2002,6 +2002,30 @@ export default {
       }
       .puzzleBtn {
         background-image: url("../../../assets/images/drone/puzzle.png");
+        .scanningStyle {
+          background: url("../../../assets/images/drone/scanning.png") center center no-repeat;
+          width: 40px;
+          height:40px;
+          animation: scanning 4s steps(32) infinite
+        }
+        @keyframes scanning{
+          0% {
+            transform: rotateX(0deg);
+            background-position: 0px -10px;
+          }
+          50% {
+            transform: rotateX(0deg);
+            background-position: 0px 40px;
+          }
+          50.0001% {
+            transform: rotateX(180deg);
+            background-position: 0px -10px;
+          }
+          100% {
+          transform: rotateX(180deg);
+            background-position: 0px 40px;
+          }
+        }
       }
       .puzzleBtn:active {
         background-image: url("../../../assets/images/drone/puzzle-active.png");
