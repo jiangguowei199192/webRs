@@ -104,7 +104,7 @@
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
       </div>
     </div>
-    <plan class="plan webFsScroll" v-show="bShowPaln" ref="plan"></plan>
+    <plan v-show="bShowPaln" ref="plan"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -1501,17 +1501,6 @@ export default {
         opacity: 1;
       }
     }
-  }
-  .plan {
-    position: absolute;
-    width: 400px;
-    max-height: 600px;
-    left: 15px;
-    top: 60px;
-    border-radius: 4px;
-    background-color: rgba(17, 29, 58, 0.85);
-    overflow-y: auto;
-    overflow-x: hidden;
   }
   .measureTools {
     position: absolute;

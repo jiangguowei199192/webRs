@@ -3,7 +3,7 @@
     <div style="text-align: center;">
       <!-- <span style="color: red;">*</span> -->
       <span class="fontStyle1">请上传{{info.title}}</span>
-      <button type="button" class="exampleStyle">查看示例</button>
+      <!-- <button type="button" class="exampleStyle">查看示例</button> -->
     </div>
     <el-upload
       class="uploadStyle"

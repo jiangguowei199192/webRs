@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <div style="width: 100%;">
-      <div class="addressInfo">
-        <div style="height: 98px;">
-          <div style="margin-top: 24px; margin-left: 22px; font-size: 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{showInfo.name}}</div>
-          <div style="margin-top: 16px; margin-left: 22px; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+  <div class="containerStyle">
+    <div class="containerStyle1 webFsScroll">
+      <div>
+        <div class="containerStyle2">
+          <div class="titleStyle">{{showInfo.name}}</div>
+          <div class="subTitleStyle">
             {{showInfo.type}}
             <div v-show="info.keyId !== undefined" class="keypointStyle">重</div>
           </div>
@@ -13,7 +13,7 @@
           <i class="el-icon-location"></i>
           {{showInfo.address}}
         </div>
-        <div class="addressInfoDetail">
+        <div class="addressInfoDetail telStyle">
           <i class="el-icon-phone"></i>
           {{showInfo.tel}}
         </div>
@@ -96,8 +96,7 @@ import { settingApi } from '@/api/setting'
 import globalApi from '@/utils/globalApi'
 
 export default {
-  props: {
-  },
+  props: {},
   data () {
     return {
       info: '',
@@ -113,34 +112,7 @@ export default {
         mapId: ''
       },
       buildingTitle: '建筑平面图',
-      buildingInfos: [
-        // 测试数据
-        // {
-        //   title: '1层',
-        //   image:
-        //     'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
-        // },
-        // {
-        //   title: '2层',
-        //   image:
-        //     'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
-        // },
-        // {
-        //   title: '3层',
-        //   image:
-        //     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
-        // },
-        // {
-        //   title: '4层',
-        //   image:
-        //     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
-        // },
-        // {
-        //   title: '5层',
-        //   image:
-        //     'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
-        // }
-      ],
+      buildingInfos: [],
       baseInfos: []
     }
   },
@@ -155,7 +127,7 @@ export default {
       this.getData()
     },
     async getData () {
-      if (this.info.keyId) {
+      if (this.info.keyId) { // 自己服务器保存的数据
         var param = {
           id: this.info.keyId
         }
@@ -173,7 +145,7 @@ export default {
               this.showInfo.lon = resData.enterpriseLongitude
 
               var baseInfosTemp = []
-              resData.planEnterpriseBaseInfoPic.forEach(item => {
+              resData.planEnterpriseBaseInfoPic.forEach((item) => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -183,7 +155,7 @@ export default {
               this.baseInfos = baseInfosTemp
 
               var buildingInfosTemp = []
-              resData.planEnterpriseJzpmtPic.forEach(item => {
+              resData.planEnterpriseJzpmtPic.forEach((item) => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -193,12 +165,21 @@ export default {
               this.buildingInfos = buildingInfosTemp
             }
           })
-      } else {
+      } else { // 第三方地图的数据
         this.showInfo.name = this.info.name
-        this.showInfo.type = this.info.type
+        if (this.info.type) {
+          var typeArr = this.info.type.split(';')
+          if (typeArr.length > 0) {
+            this.showInfo.type = typeArr[0]
+          }
+        }
         this.showInfo.address =
           this.info.cityname + this.info.adname + this.info.address
-        this.showInfo.tel = this.info.tel
+        if (this.info.tel.length <= 0) {
+          this.showInfo.tel = '无'
+        } else {
+          this.showInfo.tel = this.info.tel
+        }
         this.showInfo.subTel = ''
 
         const location = this.info.location.split(',')
@@ -238,33 +219,73 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.addressInfo {
-  .addressInfoDetail {
-    margin-left: 22px;
-    margin-right: 22px;
-    height: 30px;
-    line-height: 30px;
-    border-top: 1px solid rgba(237, 237, 237, 0.5);
-    font-size: 12px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-  .keypointStyle {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    background-color: red;
-    border-radius: 50%;
-    color: white;
-    font-size: 14px;
-    text-align: center;
-    line-height: 24px;
-  }
+.containerStyle {
+  position: absolute;
+  width: 400px;
+  height: 600px;
+  left: 15px;
+  top: 60px;
+  background: url("../../../assets/images/plan/plan-box.png") no-repeat;
+  background-size: 100% 100%;
+}
+.containerStyle1 {
+  width: 380px;
+  height: 580px;
+  margin: 10px 10px 10px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.containerStyle2 {
+  width: 100%;
+  height: 98px;
+  background: url("../../../assets/images/plan/plan-titleBox.png") no-repeat;
+  background-size: 100% 100%;
+  padding-top: 24px;
+}
+.titleStyle {
+  height: 20px;
+  // margin-top: 24px;
+  margin-left: 22px;
+  font-size: 18px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.subTitleStyle {
+  margin-top: 16px;
+  margin-left: 22px;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.addressInfoDetail {
+  margin-left: 22px;
+  margin-right: 22px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.telStyle {
+  border-top: 1px solid rgba(237, 237, 237, 0.5);
+}
+.keypointStyle {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: red;
+  border-radius: 50%;
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  line-height: 24px;
 }
 
 .basicFactSheetBtn {
-  width: 105px;
+  width: 95px;
   margin: 10px 10px 10px 0px;
 }
 .el-button + .el-button {

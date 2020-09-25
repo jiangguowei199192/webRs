@@ -118,15 +118,16 @@ export default {
   margin: 0 auto;
 }
 .backStyle {
-  width: 140px;
-  height: 46px;
-  border: solid 1px #39a4dd;
-  font-size: 24px;
+  width: 120px;
+  height: 36px;
+  border: none;
+  font-size: 18px;
   color: #ffffff;
-  background-color: transparent;
   outline: none;
   display: block;
   cursor: pointer;
+  background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
+  background-size: 100% 100%;
 }
 .containerStyle3 {
   width: 1213px;
@@ -153,13 +154,12 @@ export default {
   overflow: auto;
   .floorItemStyle {
     height: 40px;
-    // background-color: gray;
     border-top: solid 12px transparent;
     border-bottom: solid 12px transparent;
     .itemStyle {
       width: 140px;
       height: 40px;
-      border: solid 1px #39a4dd;
+      border: none;
       font-size: 14px;
       color: #ffffff;
       outline: none;
@@ -167,10 +167,12 @@ export default {
       cursor: pointer;
     }
     .itemStyleNormal {
-      background-color: #086484;
+      background: url("../../../assets/images/plan/plan-btn-unselected.png") no-repeat;
+      background-size: 100% 100%;
     }
     .itemStyleSelected {
-      background-color: #00d0f9;
+      background: url("../../../assets/images/plan/plan-btn-selected.png") no-repeat;
+      background-size: 100% 100%;
     }
   }
 }
@@ -178,8 +180,7 @@ export default {
   float: right;
   height: 676px;
   width: 1020px;
-  background: url("../../../assets/images/Setting/setting-rightBox.png")
-    no-repeat;
+  background: url("../../../assets/images/Setting/setting-rightBox.png") no-repeat;
   background-size: 100% 100%;
   text-align: center;
   .imgStyle {
