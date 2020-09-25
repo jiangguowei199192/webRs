@@ -316,8 +316,7 @@
               :class="{detectBtn:!bDetectStatus,detectBtnActive:bDetectStatus}"
               @click.stop="switchDetectStatus"
           ></div>
-          <div class="itemBtn"
-              :class="{puzzleBtn:!bPuzzlingStatus,puzzleBtnActive:bPuzzlingStatus}"
+          <div class="itemBtn puzzleBtn"
               @click.stop="switchPuzzlingStatus"
           >
             <div class="scanningStyle" v-show="bPuzzlingStatus"></div>
@@ -2037,7 +2036,7 @@ export default {
       .puzzleBtn {
         background-image: url("../../../assets/images/drone/puzzle.png");
       }
-      .puzzleBtnActive {
+      .puzzleBtn:active {
         background-image: url("../../../assets/images/drone/puzzle-active.png");
       }
       .scanningStyle {
