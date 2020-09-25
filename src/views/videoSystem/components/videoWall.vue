@@ -57,7 +57,7 @@
                 class="cutImg"
                 id="pic"
                 v-show="showCutImg"
-                @click.stop="cutDialogVisible=true"
+                @click.stop="cutDialogVisible=true;isAdd=true"
               />
             </a>
             <a
@@ -153,12 +153,14 @@
                 <div class="container">
                   <img :src="`${picUrl}${item.filePath}`" />
                   <div class="mask">
-                    <i class="el-icon-edit"></i>
+                    <i class="el-icon-edit" @click.stop="editCurPic(item)"></i>
                     <i class="el-icon-delete"></i>
                   </div>
                 </div>
                 <p>{{item.createTime|timeFormat}}</p>
-                <p :title="item.remark">{{item.remark&&item.remark.length>9?item.remark.slice(0,9)+'.':item.remark}}</p>
+                <p
+                  :title="item.remark"
+                >{{item.remark&&item.remark.length>9?item.remark.slice(0,9)+'.':item.remark}}</p>
               </div>
               <div class="empty" v-if="picStorageArray&&picStorageArray.length==0">暂无数据</div>
             </div>
@@ -440,6 +442,7 @@ export default {
       showCutImg: false, // 是否显示抓拍的图片 默认不显示
       cutImgUrl: '', // 显示抓取的图片
       cutDialogVisible: false, // 抓取弹窗
+      isAdd: true, // 默认是添加说明
       imgId: '', // 保存抓取图片id
       remark: '', // 说明文字
       active: '', // 动态显示悬停相关图标
@@ -705,12 +708,15 @@ export default {
       }
       this.$axios.post(api.deviceUpdate, params).then(res => {
         if (res && res.data && res.data.code === 0) {
+          if (!this.isAdd) {
+            this.getSnapList()
+          }
           this.showNotification = true
           this.infoObj.isWarning = false
           this.infoObj.isError = false
           this.infoObj.isSuccess = true
           this.infoObj.title = '成功'
-          this.infoObj.msg = '添加说明成功！'
+          this.infoObj.msg = this.isAdd ? '添加说明成功！' : '修改说明成功'
           setTimeout(() => {
             this.showNotification = false
           }, 3000)
@@ -721,6 +727,7 @@ export default {
     // 重置抓拍弹框
     clearRemark () {
       this.cutDialogVisible = false
+      this.isAdd = true
       this.remark = ''
     },
     // 点击图库 显示图库弹框 获取图库数据
@@ -754,13 +761,21 @@ export default {
       console.log(this.dateRange)
       this.pageInfo.currentPage = 1
       this.getSnapList()
-      debugger
     },
     // 获取当前页
     handleCurrentChange (val) {
       this.pageInfo.currentPage = val
       console.log(`当前页: ${val}`)
       this.getSnapList()
+    },
+    // 编辑当前图片
+    editCurPic (item) {
+      this.isAdd = false
+      this.cutDialogVisible = true
+      const curData = JSON.parse(JSON.stringify(item))
+      this.cutImgUrl = curData.filePath
+      this.remark = curData.remark || ''
+      this.imgId = curData.id
     },
     setPlayerSizeListener () {
       var me = this
@@ -1527,7 +1542,7 @@ export default {
               }
               .mask {
                 position: absolute;
-                bottom: 0px;
+                bottom: -23px;
                 width: 100%;
                 padding: 0 10px;
                 height: 23px;
@@ -1535,17 +1550,18 @@ export default {
                 justify-content: space-between;
                 align-items: center;
                 font-size: 14px;
-                background: #000000;
+                background: #000;
                 opacity: 0;
-                transition: all 1.5s ease-in-out;
+                transition: all 1s ease-in-out;
                 i {
-                  color:#fff;
+                  color: #fff;
                   cursor: pointer;
                 }
               }
             }
             .container:hover .mask {
-              opacity: 0.5;
+              bottom: 0px;
+              opacity: 0.7;
             }
             > p {
               margin-top: 8px;
@@ -1568,8 +1584,8 @@ export default {
           button.btn-prev {
             background: transparent !important;
           }
-           button.btn-prev {
-            margin-right:0px;
+          button.btn-prev {
+            margin-right: 0px;
           }
         }
       }
