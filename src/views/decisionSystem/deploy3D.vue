@@ -1,8 +1,8 @@
 <template>
-  <div class="mapcontainer mars3d">
-    <Map :url="configUrl" @onload="onMapload" />
+  <div class="mapcontainer mars3d" @click.capture="containerClick">
+    <Map :url="configUrl" @onload="onMapload"/>
     <div class="back">
-      <span @click.stop="ButtonDown(11)"></span>
+      <span @click.stop="back"></span>
       <span>三维预案</span>
     </div>
     <div class="bottom"></div>
@@ -11,7 +11,7 @@
         v-for="(item,index) in tabs"
         :key="index"
         :class="{active:activeIndex==index}"
-        @click.stop="ButtonDown(2,index)"
+        @click.stop="tabTo(index)"
       >
         <span>{{item}}</span>
       </div>
@@ -30,7 +30,7 @@
           v-for="(item,index) in curModels"
           :key="index"
           class="outer"
-          @click="ButtonDown(1,item,index)"
+          @click="plot(item,index)"
           :class="{active:curModelIndex===index}"
           :title="item.name"
         >
@@ -44,13 +44,13 @@
           v-for="(item,index) in 4"
           :key="index"
           :class="{active:editIndex==index}"
-          @click.stop="ButtonDown(5,index)"
+          @click.stop="editIndex = index"
         ></div>
       </div>
-      <div @click.stop="ButtonDown(6)">设定视角</div>
+      <div @click.stop="setCameraView">设定视角</div>
       <div
         class="add"
-        @click.stop="ButtonDown(10,editIndex)"
+        @click.stop="plotModel(editIndex === 2 ? 7 : 8)"
         v-show="editIndex!==1&& editIndex!==0"
       ></div>
       <el-popover
@@ -60,12 +60,12 @@
         v-model="editPopover"
       >
         <div class="addList">
-          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,1)"></span>
-          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,2)"></span>
-          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,3)"></span>
-          <span v-show="editIndex === 0" @click.stop="ButtonDown(8,4)"></span>
-          <span v-show="editIndex === 1" @click.stop="ButtonDown(8,5)"></span>
-          <span v-show="editIndex === 1" @click.stop="ButtonDown(8,6)"></span>
+          <span v-show="editIndex === 0" @click.stop="plotModel(1)"></span>
+          <span v-show="editIndex === 0" @click.stop="plotModel(2)"></span>
+          <span v-show="editIndex === 0" @click.stop="plotModel(3)"></span>
+          <span v-show="editIndex === 0" @click.stop="plotModel(4)"></span>
+          <span v-show="editIndex === 1" @click.stop="plotModel(5)"></span>
+          <span v-show="editIndex === 1" @click.stop="plotModel(6)"></span>
         </div>
         <div class="txtList">
           <span v-show="editIndex === 0">消防栓</span>
@@ -76,7 +76,7 @@
           <span v-show="editIndex === 1">应急避难所</span>
         </div>
         <div class="add" slot="reference" v-show="editIndex!==2&& editIndex!==3"></div>
-        <div class="close" @click="editPopover = false" />
+        <div class="close" @click.stop="editPopover = false" />
       </el-popover>
       <div v-show="showViewDetail" class="detail">
         <span>经度: {{viewDetail.lon}}</span>
@@ -90,12 +90,12 @@
           v-for="(item,index) in markDatas[editIndex]"
           :key="index"
           :class="{active:modelIndex==index}"
-          @click.stop="ButtonDown(7,item,index)"
+          @click.stop="selectItemInEditList(index,item)"
         >
           <span :style="machineIcon(item.type)"></span>
           <span></span>
           <span>{{item.name}}</span>
-          <span @click.stop="ButtonDown(9,item)"></span>
+          <span @click.stop="deleteModel(item)"></span>
         </div>
       </div>
     </div>
@@ -117,12 +117,12 @@
           </li>
         </ul>
       </div>
-      <span class="btn editBtn" v-show="infoBox.isEdit" @click="infoBox.editing = true">编辑</span>
-      <span class="btn editBtn" v-show="infoBox.editing" @click="saveModelInfo(true)">确定</span>
-      <span class="btn cancelBtn" v-show="infoBox.editing" @click="saveModelInfo(false)">取消</span>
+      <span class="btn editBtn" v-show="infoBox.isEdit" @click.stop="infoBox.editing = true">编辑</span>
+      <span class="btn editBtn" v-show="infoBox.editing" @click.stop="saveModelInfo(true)">确定</span>
+      <span class="btn cancelBtn" v-show="infoBox.editing" @click.stop="saveModelInfo(false)">取消</span>
     </div>
     <div
-      class="editBox"
+      class="editBox" ref="editbox"
       v-show="showEditBox"
       :style="'top:' + boxTop + 'px;' + 'left:' + boxLeft + 'px;'"
     >
@@ -217,9 +217,9 @@
       ></span>
     </div>
     <div class="topTool">
-      <span v-for="(item,index) in 8" :key="index" @click.stop="ButtonDown(3,index)"></span>
+      <span v-for="(item,index) in 8" :key="index" @click.stop="topToolClick(index)"></span>
     </div>
-    <div class="rotate" :class="{active:isRotate}" @click.stop="ButtonDown(4)"></div>
+    <div class="rotate" :class="{active:isRotate}" @click.stop="autoRotate"></div>
   </div>
 </template>
 
@@ -347,8 +347,13 @@ export default {
       this.fliterModel(val)
     },
 
+    showEditBox (val) {
+      if (val === false) this.clearCurEntity()
+    },
+
     showInfoBox (val) {
       if (val === false) {
+        this.clearCurEntity()
         for (var i in this.infoBox) {
           if (i !== 'isEdit' && i !== 'editing') {
             this.infoBox[i] = ''
@@ -389,6 +394,31 @@ export default {
   },
 
   methods: {
+
+    containerClick (event) {
+      if (!this.viewer) {
+        event.stopPropagation()
+        return
+      }
+      // 如果点击到三维地球，直接返回。因为ScreenSpaceEventHandler绑定的InputAction会最先执行
+      if (this.viewer.scene.canvas.contains(event.target)) return
+      // 如果点击到信息编辑弹窗
+      if (this.$refs.infobox.contains(event.target)) return
+      // 停止测量
+      if (this.measureSurface) this.measureSurface.stopDraw()
+      this.showInfoBox = false
+      // 如果点击到任务编辑弹窗
+      if (this.$refs.editbox.contains(event.target)) return
+      else if (this.isPlot && this.showEditBox) {
+        // 如果第一次编辑任务
+        this.$notify.warning({ title: '警告', message: '请先添加任务' })
+        event.stopPropagation()
+        return
+      }
+      if (this.showEditBox) this.showEditBox = false
+      this.clearCurEntity()
+    },
+
     tabTo (index) {
       if (this.activeIndex === index) return
       this.activeIndex = index
@@ -698,7 +728,7 @@ export default {
       const height = this.viewer._element.clientHeight
       const offsetX = 100
       if (point.x + 285 + offsetX >= width) {
-        this.boxLeft = 0
+        this.boxLeft = width - 285 - 20
       } else this.boxLeft = point.x + offsetX
       if (point.y + 270 >= height) {
         this.boxTop = height - 270
@@ -817,69 +847,21 @@ export default {
     },
 
     /**
-     *  按钮按下
-     *@param {Object} item
-     *@param {Object} type 按钮类型
+     *  返回
      */
-    ButtonDown (type, item, index) {
-      if (!this.viewer) return
-      // 停止测量
-      if (this.measureSurface) {
-        this.measureSurface.stopDraw()
-      }
-      this.showInfoBox = false
-      if (this.isPlot && this.showEditBox) {
-        this.$notify.warning({ title: '警告', message: '请先添加任务' })
-        return
-      }
-      if (this.showEditBox) {
-        this.showEditBox = false
-      }
-      this.clearCurEntity()
+    back () {
+      this.$router.push({ path: '/decisionSystem' })
+    },
 
-      switch (type) {
-        case 1:
-        {
-          this.curModelIndex = index
-          const m = JSON.parse(JSON.stringify(item))
-          this.startPlot(m)
-          break
-        }
-        case 2:
-          this.tabTo(item)
-          break
-        case 3:
-          this.topToolClick(item)
-          break
-        case 4:
-          this.autoRotate()
-          break
-        case 5:
-          this.editIndex = item
-          break
-        case 6:
-          this.setCameraView()
-          break
-        case 7:
-          this.modelIndex = index
-          this.selectItemInEditList(item)
-          break
-        case 8:
-          this.plotModel(item)
-          break
-        case 9:
-          this.modelIndex = 1000
-          this.deleteModel(item)
-          break
-        case 10:
-          this.plotModel(item === 2 ? 7 : 8)
-          break
-        case 11:
-          this.$router.push({ path: '/decisionSystem' })
-          break
-        default:
-          break
-      }
+    /**
+     *  沙盘绘制
+     *@param {Object} item 待绘制模型
+     *@param {Object} type 绘制类别
+     */
+    plot (item, index) {
+      this.curModelIndex = index
+      const m = JSON.parse(JSON.stringify(item))
+      this.startPlot(m)
     },
 
     /**
@@ -1044,7 +1026,8 @@ export default {
     /**
      *  选中编辑模式中列表某项
      */
-    selectItemInEditList (item) {
+    selectItemInEditList (index, item) {
+      this.modelIndex = index
       const m = this.modelList.find(m => m.attribute.id === item.id)
       if (m !== undefined) {
         this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -50 })
@@ -1056,6 +1039,7 @@ export default {
      *@param {Object} item
      */
     deleteModel (item) {
+      this.modelIndex = 1000
       const m = this.modelList.find(m => m.attribute.id === item.id)
       if (m !== undefined) {
         this.drawControl.deleteEntity(m)
@@ -1714,6 +1698,7 @@ export default {
      */
     moveCamera (direction) {
       if (!this.viewer) return
+      if (me.isPlot && me.showEditBox) return
       switch (direction) {
         case 4:
           this.viewer.mars.keyboardRoam.startMoveForward()
@@ -1769,6 +1754,7 @@ export default {
      */
     rotateCamera (direction) {
       if (!this.viewer) return
+      if (me.isPlot && me.showEditBox) return
       this.moveInterval = setInterval(function () {
         me.viewer.mars.keyboardRoam.rotateCamera(direction)
       }, 50)
