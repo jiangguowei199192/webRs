@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="playBack">
     <VideoMain
       :showLeft="showLeft"
       :showRight="showRight"
@@ -1256,6 +1256,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.playBack{
+  padding:20px;
+}
 .leftContainer {
   box-sizing: border-box;
   padding: 27px 0px 0 28px;

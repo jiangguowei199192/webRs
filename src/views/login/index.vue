@@ -172,7 +172,7 @@ export default {
       text-align: center;
       line-height: 150px;
       color: white;
-      font-size: 38px;
+      font-size: 34px;
     }
     .username {
       width: 403px;

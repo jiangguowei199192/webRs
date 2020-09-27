@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top:-5px;">
+  <div style="margin-top:-5px;padding:20px;">
     <div class="leftBox">
       <div style="height: 800px;">
         <SettingLeftItem

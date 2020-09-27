@@ -1553,6 +1553,7 @@ export default {
 <style lang="less" scoped>
 .videoContainer {
   box-sizing: border-box;
+  padding:20px;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;

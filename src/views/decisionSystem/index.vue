@@ -32,6 +32,7 @@ export default {
 
 <style lang="scss" scoped>
 .decision {
-  height: 800px;
+  height: 899px;
+  padding-top: 20px;
 }
 </style>

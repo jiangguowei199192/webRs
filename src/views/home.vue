@@ -250,6 +250,9 @@ export default {
     height: auto !important;
     padding: 0 20px 0 20px;
   }
+  .el-main{
+    padding:0;
+  }
   .box {
     display: flex;
      // 临时显示菜单
