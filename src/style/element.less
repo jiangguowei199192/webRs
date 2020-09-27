@@ -384,3 +384,66 @@
     cursor    : pointer;
   }
 }
+
+.el-message-box {
+  display: inline-block;
+  width: 490px;
+  height: 190px;
+  background-color: transparent;
+  background: url(../assets/images/confirm-bg.png) no-repeat;
+  border-radius: 0px;
+  border: none;
+  box-shadow: none;
+  padding-bottom: 0px;
+  position: relative;
+
+  .el-button {
+    width: 87px;
+    height: 32px;
+    border: 1px solid #1EB0FC;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 0px;
+    line-height: 32px;
+    background-color: transparent;
+    color: #1FB0FC;
+   }
+
+  .el-button--primary {
+      background-color: #1EB0FC;
+      color: #fff;
+  }
+
+  .el-message-box__header {
+    padding: 0px;
+    display: inline-block;
+    width: 202px;
+    height: 45px;
+    background: url(../assets/images/info-title.png) no-repeat;
+    margin-top: 10px;
+    margin-left: 10px;
+   }
+
+   .el-message-box__title {
+    padding-left: 40px;
+    margin-bottom: 0;
+    font-size: 16px;
+    line-height: 45px;
+    color: #ffff;
+   }
+
+   .el-message-box__content {
+      text-align: center;
+      padding: 0px;    
+      color: #1FB0FC;
+      font-size: 18px;
+      padding: 18px 0px;
+    }
+
+   .el-message-box__btns {
+     position: absolute;
+     bottom: 20px;
+     padding: 0px;
+     right: 30px;
+   }
+}

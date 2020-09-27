@@ -377,8 +377,21 @@ export default {
       }
     },
 
-    activeIndex (val) {
+    activeIndex (val, oldVal) {
       if (val === 0 || val === 4 || val === 7) { this.enableDrawControlEdit(true) } else this.enableDrawControlEdit(false)
+      if (oldVal === 7 && val !== 7) {
+        this.$confirm('当前存在未保存的标绘对象，是否离开?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          showClose: false
+        })
+          .then(() => {
+
+          })
+          .catch(() => {
+
+          })
+      }
 
       switch (val) {
         case 0:
@@ -2485,6 +2498,7 @@ export default {
   }
 
   .editBox {
+    z-index: 100;
     width: 285px;
     height: 127px;
     background: url(../../assets/images/3d/info-box.png) no-repeat;

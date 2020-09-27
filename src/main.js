@@ -25,6 +25,7 @@ Vue.prototype.$axios = axios
 Vue.prototype.$ = $
 Vue.config.productionTip = false
 Vue.prototype.$md5 = md5
+Vue.prototype.$confirm = ElementUI.MessageBox.confirm
 
 new Vue({
   router,
