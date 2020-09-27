@@ -103,7 +103,9 @@
       <el-input type="text" v-model.trim="infoBox.name" :readonly="!infoBox.editing" class="title" :class="{active:infoBox.editing}"></el-input>
       <div class="close" @click="showInfoBox = false" />
       <div v-if="!infoBox.infoImg" class="default"/>
-      <img :src="infoBox.infoImg" v-if="infoBox.infoImg"/>
+      <img :src="infoBox.infoImg" v-if="infoBox.infoImg && !infoBox.isVr"/>
+      <iframe id="frameImg" frameborder="0" :src="infoBox.infoImg" v-if="infoBox.infoImg && infoBox.isVr"></iframe>
+      <div class="frame" v-if="infoBox.infoImg && activeIndex !==7" @click="showImage"></div>
       <span class="export" v-show="infoBox.editing"></span>
       <div class="detail">
         <ul>
@@ -220,6 +222,17 @@
       <span v-for="(item,index) in 8" :key="index" @click.stop="topToolClick(index)"></span>
     </div>
     <div class="rotate" :class="{active:isRotate}" @click.stop="autoRotate"></div>
+    <el-dialog
+      custom-class="el-dialog-custom"
+      :visible.sync="imgDialogVisible"
+      :show-close="false"
+      type="primary"
+      @click="imgDialogVisible = false"
+      center
+    >
+      <img :src="infoBox.infoImg" v-if="!infoBox.isVr"/>
+      <iframe id="iframe" :src="infoBox.infoImg" frameborder="0" v-if="infoBox.isVr"></iframe>
+    </el-dialog>
   </div>
 </template>
 
@@ -232,13 +245,13 @@ import { uuid } from '@/utils/public'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
-// var gltfEdit = window.gltfEdit
 const serverUrl = 'http://172.16.16.101:9000/mapdata'
 let me
 export default {
   // 所有cesium和mars3d对象 都不要绑定到data
   data () {
     return {
+      imgDialogVisible: false,
       isRotate: false, // 是否自动旋转
       num: 1, // 编号
       activeIndex: 0,
@@ -259,7 +272,7 @@ export default {
       boxTop: 0, // 任务编辑弹窗top
       showPopover: false,
       editPopover: false, // 编辑模式Popover是否显示
-      infoBox: { infoImg: '', isEdit: true, location: '', describe: '', name: '', editing: false },
+      infoBox: { infoImg: '', isEdit: true, location: '', describe: '', name: '', editing: false, isVr: false },
       editBox: { department: '天门敦', number: '1', task: '- -' },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
@@ -355,11 +368,12 @@ export default {
       if (val === false) {
         this.clearCurEntity()
         for (var i in this.infoBox) {
-          if (i !== 'isEdit' && i !== 'editing') {
+          if (i !== 'isEdit' && i !== 'editing' && i !== 'isVr') {
             this.infoBox[i] = ''
           }
         }
         this.infoBox.editing = false
+        this.infoBox.isVr = false
       }
     },
 
@@ -394,7 +408,6 @@ export default {
   },
 
   methods: {
-
     containerClick (event) {
       if (!this.viewer) {
         event.stopPropagation()
@@ -406,7 +419,8 @@ export default {
       if (this.$refs.infobox.contains(event.target)) return
       // 停止测量
       if (this.measureSurface) this.measureSurface.stopDraw()
-      this.showInfoBox = false
+      // 如果正在显示infobox的大图，则不隐藏infobox
+      if (!this.imgDialogVisible) this.showInfoBox = false
       // 如果点击到任务编辑弹窗
       if (this.$refs.editbox.contains(event.target)) return
       else if (this.isPlot && this.showEditBox) {
@@ -431,6 +445,14 @@ export default {
       } else if (this.activeIndex === 7) {
         this.editMode = true
       }
+    },
+
+    /**
+     *  显示Infobox上的图
+     */
+    showImage () {
+      if (this.activeIndex === 7) return
+      this.imgDialogVisible = true
     },
 
     /**
@@ -908,8 +930,6 @@ export default {
             type: 'model-p',
             // 标签上的图片
             img: require('../../assets/images/3d/xiaofangshuan.png'),
-            // infobox上的图片
-            // infoImg: require('../../assets/images/3d/xfs.jpg'),
             style: {
               modelUrl:
                 '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
@@ -1016,7 +1036,9 @@ export default {
         )
       }
 
+      // infobox上的图片
       item.infoImg = ''
+      // item.infoImg = 'http://120.24.12.64:80/fmsUploads/panoramic/pano_1591671612143/index.html'
       item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true
@@ -2619,14 +2641,28 @@ export default {
       margin-top: 20px;
       width: 230px;
       height: 122px;
+    }
+    #frameImg
+    {
+      position: relative;
+      margin-top: 20px;
+      width: 230px;
+      height: 122px;
+    }
+    .frame
+    {
+      position: absolute;
+      top: 20px;
+      width: 230px;
+      height: 122px;
       cursor: pointer;
+      background: transparent
     }
     .default{
       position: relative;
       margin-top: 20px;
       width: 230px;
       height: 122px;
-      cursor: pointer;
       background: url(../../assets/images/3d/default.png) no-repeat;
     }
     .export {
