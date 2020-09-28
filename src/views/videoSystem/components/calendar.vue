@@ -62,6 +62,7 @@
       :visible.sync="imgDialogVisible"
       :show-close="false"
       type="primary"
+      :append-to-body ='true'
       @click.native="imgDialogVisible = false"
       center
     >

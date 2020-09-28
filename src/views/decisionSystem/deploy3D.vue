@@ -379,14 +379,15 @@ export default {
 
     activeIndex (val, oldVal) {
       if (val === 0 || val === 4 || val === 7) { this.enableDrawControlEdit(true) } else this.enableDrawControlEdit(false)
-      if (oldVal === 7 && val !== 7) {
-        this.$confirm('当前存在未保存的标绘对象，是否离开?', '提示', {
+
+      if (oldVal === 7 && val !== 7 && this.drawControl && !stringIsNullOrEmpty(this.json = this.drawControl.toGeoJSON())) {
+        this.$confirm('当前存在未保存的标绘对象，是否保存?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           showClose: false
         })
           .then(() => {
-
+            console.log(this.json)
           })
           .catch(() => {
 
@@ -810,11 +811,10 @@ export default {
           this.measureArea(false)
           break
         case 5:
-          if (!this.drawControl || stringIsNullOrEmpty(this.drawControl.toGeoJSON())) { this.$notify.warning({ title: '提示', message: '当前未标绘任何数据' }) }
-          if (this.drawControl) {
-            this.json = this.drawControl.toGeoJSON()
-            console.log(this.json)
+          if (!this.drawControl || stringIsNullOrEmpty(this.json = this.drawControl.toGeoJSON())) {
+            this.$notify.warning({ title: '提示', message: '当前未标绘任何数据' })
           }
+          console.log(this.json)
           break
         case 6:
           this.clearDraw()
@@ -1050,8 +1050,8 @@ export default {
       }
 
       // infobox上的图片
-      item.infoImg = ''
-      // item.infoImg = 'http://120.24.12.64:80/fmsUploads/panoramic/pano_1591671612143/index.html'
+      // item.infoImg = ''
+      item.infoImg = 'http://120.24.12.64:80/fmsUploads/panoramic/pano_1591671612143/index.html'
       item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true
