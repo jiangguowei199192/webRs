@@ -106,7 +106,8 @@
       <img :src="infoBox.infoImg" v-if="infoBox.infoImg && !infoBox.isVr"/>
       <iframe id="frameImg" frameborder="0" :src="infoBox.infoImg" v-if="infoBox.infoImg && infoBox.isVr"></iframe>
       <div class="frame" v-if="infoBox.infoImg && activeIndex !==7" @click="showImage"></div>
-      <span class="export" v-show="infoBox.editing"></span>
+      <span class="export" v-show="infoBox.editing" @click.stop="uploadImg"></span>
+      <input type="file" ref="picFile" style="display:none" accept="image/jpeg" @change="picFileChange"/>
       <div class="detail">
         <ul>
           <li>
@@ -238,6 +239,7 @@
 
 <script>
 import { gltfEdit } from '@/utils/gltfEdit.js'
+import EXIF from 'exif-js'
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
@@ -459,6 +461,36 @@ export default {
       } else if (this.activeIndex === 7) {
         this.editMode = true
       }
+    },
+
+    /**
+     *  上传图片
+     */
+    uploadImg () {
+      this.$refs.picFile.click()
+    },
+
+    /**
+     *  图片选择完毕
+     */
+    picFileChange (e) {
+      if (this.infoBox.isVr && e.target.files.length > 0) {
+        // VR图像长宽比需要2:1
+        const f = e.target.files[0]
+        EXIF.getData(f, function () {
+          let valid = true
+          const allMetaData = EXIF.getAllTags(this)
+          if (!allMetaData.PixelXDimension || !allMetaData.PixelYDimension) {
+            valid = false
+          } else if (allMetaData.PixelXDimension !== allMetaData.PixelYDimension * 2) {
+            valid = false
+          }
+
+          if (!valid) me.$notify.warning({ title: '警告', message: '无效图片,全景图长宽比需要是2:1' })
+        })
+      }
+
+      this.$refs.picFile.value = null
     },
 
     /**
