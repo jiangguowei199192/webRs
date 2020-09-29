@@ -337,14 +337,12 @@ export default {
 
   mounted () {
     this.getPlotData()
-    // document.addEventListener('click', this.closeInfoBox)
   },
 
   beforeDestroy () {
     if (this.drawControl) {
       this.endPlot()
     }
-    // document.removeEventListener('click', this.closeInfoBox)
   },
 
   watch: {
@@ -381,15 +379,16 @@ export default {
 
     activeIndex (val, oldVal) {
       if (val === 0 || val === 4 || val === 7) { this.enableDrawControlEdit(true) } else this.enableDrawControlEdit(false)
-
-      if (oldVal === 7 && val !== 7 && this.drawControl && !stringIsNullOrEmpty(this.json = this.drawControl.toGeoJSON())) {
+      let save = false
+      if (oldVal === 7 && val !== 7) { save = true } else if (oldVal === 4 && val !== 4) { save = true }
+      if (save && this.drawControl && !stringIsNullOrEmpty(this.drawControl.toGeoJSON())) {
         this.$confirm('当前存在未保存的标绘对象，是否保存?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           showClose: false
         })
           .then(() => {
-            console.log(this.json)
+
           })
           .catch(() => {
 
@@ -450,7 +449,7 @@ export default {
     },
 
     tabTo (index) {
-      if (this.activeIndex === index) return
+      if (this.activeIndex === index && this.activeIndex !== 6) return
       this.activeIndex = index
       this.showPlotBox = false
       this.editMode = false
