@@ -158,7 +158,9 @@
           </div>
         </el-popover>
       </div>
-      <span class="btn confirm" @click="setModelTask">确定</span>
+      <span class="btn" @click.stop="setModelTask">确定</span>
+      <span class="del" @click.stop="deletePlotModel" v-if="activeIndex === 4"></span>
+      <el-checkbox v-model="editBox.hide" v-if="activeIndex === 0">隐藏模型</el-checkbox>
     </div>
     <FloorGuide ref="floorGuide" v-bind:title="buildingTitle"></FloorGuide>
     <div class="rightTool">
@@ -275,7 +277,7 @@ export default {
       showPopover: false,
       editPopover: false, // 编辑模式Popover是否显示
       infoBox: { infoImg: '', isEdit: true, location: '', describe: '', name: '', editing: false, isVr: false },
-      editBox: { department: '天门敦', number: '1', task: '- -' },
+      editBox: { department: '天门敦', number: '1', task: '- -', hide: false },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
       tabs: [
@@ -697,6 +699,30 @@ export default {
         p3: p3,
         p4: p4
       }
+    },
+
+    /**
+     *  删除沙盘绘制的模型
+     */
+    deletePlotModel () {
+      this.$confirm('是否确认删除', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false
+      })
+        .then(() => {
+          const id = this.curEntity.attribute.id
+          const m = this.modelList.find(m => m.attribute.id === id)
+          if (m !== undefined) this.drawControl.deleteEntity(m)
+          if (this.isPlot) {
+            this.isPlot = false
+            // 启用drawControl编辑功能
+            this.enableDrawControlEdit(true)
+          }
+        })
+        .catch(() => {
+
+        })
     },
 
     /**
@@ -2589,22 +2615,64 @@ export default {
     }
     .btn {
       display: inline-block;
-      width: 108px;
+      width: 72px;
       position: absolute;
-      left: 87px;
+      right: 30px;
       bottom: 10px;
-      height: 23px;
+      height: 24px;
       background: rgba(32, 156, 223, 1);
       text-align: center;
-      line-height: 23px;
+      line-height: 24px;
       cursor: pointer;
     }
     .btn:active {
       background: #00679d;
     }
+    .del {
+      display: inline-block;
+      width: 16px;
+      position: absolute;
+      left: 15px;
+      bottom: 15px;
+      height: 16px;
+      background: url(../../assets/images/3d/delete-s.png) no-repeat;
+      cursor: pointer;
+    }
+    .del:active {
+      background: url(../../assets/images/3d/delete-s-click.png) no-repeat;
+    }
     .second {
       margin-top: 10px;
     }
+    /deep/.el-checkbox__inner {
+      border: 1px solid #209CDF;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      background-color: transparent;
+      transition: border-color .25s cubic-bezier(.71,-.46,.29,1.46),background-color .25s cubic-bezier(.71,-.46,.29,1.46);
+    }
+    /deep/.el-checkbox {
+      color: #fff;
+      margin-top:10px;
+    }
+    /deep/.el-checkbox__input.is-checked+.el-checkbox__label {
+      color: #fff;
+    }
+    /deep/.el-checkbox__input.is-checked .el-checkbox__inner::after {
+      visibility:visible;
+    }
+    /deep/.el-checkbox__inner::after {
+      background: #2097D9;
+      border-radius: 50%;
+      border: none;
+      height: 10px;
+      left: 1.5px;
+      top: 2px;
+      transform: none;
+      width: 10px;
+      visibility:hidden;
+     }
     .task {
       position: relative;
       margin-left: 5px;
