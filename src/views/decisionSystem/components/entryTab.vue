@@ -39,19 +39,24 @@
                 ></gMap>
               </div>
               <div class="tab_wrap" v-show="currentTab == 1">
-                <div v-for="(item, index) in info" :key="index">
-                  <div
-                    class="tab_img_wrap fl"
-                    v-for="(children_item, children_index) in item.children"
-                    :key="children_index"
-                    @click="imgChecked(children_index)"
-                  >
-                    <span>{{ children_item.title }}</span>
+                <div v-if="this.buildInfo.length == 0" class="tab_img_wrap">
+                  <h2>暂无建筑平面图</h2>
+                </div>
+                <div v-else>
+                  <div v-for="(item, index) in info" :key="index">
                     <div
-                      style="margin-top: 5px; height: 80px; padding: 1px"
-                      :class="{ active: selectClass == children_index }"
+                      class="tab_img_wrap fl"
+                      v-for="(children_item, children_index) in item.children"
+                      :key="children_index"
+                      @click="imgChecked(children_index)"
                     >
-                      <img :src="children_item.image" alt />
+                      <span>{{ children_item.title }}</span>
+                      <div
+                        style="margin-top: 5px; height: 80px; padding: 1px"
+                        :class="{ active: selectClass == children_index }"
+                      >
+                        <img :src="children_item.image" alt />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -70,6 +75,7 @@
                 size="mini"
                 style="width: 70px"
                 @click="goToFightDeploy"
+                :disabled="isDisabled"
                 >确定</el-button
               >
               <el-button
@@ -91,30 +97,49 @@
 export default {
   data () {
     return {
+      // Tab弹窗显隐状态
       dialogVisible: false,
+      // Tab弹窗info
       info: [],
+      // 建筑平面图info
+      buildInfo: [],
+      // 确定按钮禁用状态
+      isDisabled: false,
+      // 当前选中Tab的class
       currentClass: 0,
+      // 当前选中Tab的index
       currentTab: 0,
+      // 当前选中建筑平面图的class
       selectClass: 0
     }
   },
 
   methods: {
+    // Tab入口弹窗操作
     show (info) {
       this.info = info
       this.dialogVisible = true
     },
 
+    // 点击每个Tab选项
     tabChecked (current) {
       this.currentClass = current
       this.currentTab = current
-      // console.log(this.info)
+      //   console.log(this.info)
+      this.buildInfo = this.info[1].children
+      if (current === 1) {
+        if (this.buildInfo.length === 0) {
+          this.isDisabled = true
+        }
+      }
     },
 
+    // 点击Tab图片
     imgChecked (select) {
       this.selectClass = select
     },
 
+    // 跳转到FightDeploy页
     goToFightDeploy () {
       this.$router.push({ path: '/fightDeploy' })
       setTimeout(() => {
@@ -122,6 +147,7 @@ export default {
       }, 300)
     },
 
+    // 返回到Plan页
     backToPlan () {
       this.dialogVisible = false
     }
