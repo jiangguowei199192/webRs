@@ -1,16 +1,32 @@
 <template>
   <div class="container">
+    <!-- 头部返回 -->
     <div class="header">
       <div class="back">
-        <el-button type="primary" size="mini" icon="el-icon-arrow-left" @click="backToPlan">指挥决策</el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          icon="el-icon-arrow-left"
+          @click="backToPlan"
+          >指挥决策</el-button
+        >
       </div>
     </div>
+    <!-- main容器 -->
     <div class="main" :style="'height:' + workHeight + 'px;'">
+      <!-- 底图 -->
       <div class="content">
-        <img src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png" alt />
+        <img
+          src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
+          alt
+        />
       </div>
+      <!-- 左边模型列表 -->
       <div class="left">
-        <div class="model_edit" :style="'height:' + (this.workHeight - 60) + 'px;'">
+        <div
+          class="model_edit"
+          :style="'height:' + (this.workHeight - 60) + 'px;'"
+        >
           <div class="edit_menu">
             <i class="el-icon-delete" title="删除"></i>
             <i class="el-icon-folder-opened" title="保存"></i>
@@ -36,32 +52,28 @@
           >
             <ul class="fl">
               <li
-                :style="{ backgroundColor:item.bgColor}"
+                id="list"
+                :style="{ backgroundColor: item.bgColor }"
                 v-for="item in areaList"
                 :key="item.index"
                 draggable="true"
                 @dragstart="drag(item)"
-              >{{item.area}}</li>
-            </ul>
-            <ul class="fr">
-              <li
-                :style="{ backgroundColor:item.bgColor}"
-                v-for="item in markList"
-                :key="item.index"
-                draggable="true"
-                @dragstart="drag(item)"
               >
-                <!-- <img :src="item.imgSrc" alt /> -->
-                <i :class="item.icon"></i>
+                <span>{{ item.area }}</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
+      <!-- 画布编辑区 -->
       <div class="detail"></div>
+      <!-- 右边区域/任务列表 -->
       <div class="right">
         <h3>停靠设置/任务分配</h3>
-        <div class="task_list webFsScroll" :style="'height:' + (this.workHeight - 60) + 'px;'">
+        <div
+          class="task_list webFsScroll"
+          :style="'height:' + (this.workHeight - 60) + 'px;'"
+        >
           <div class="list_wrap" v-for="item in arrList" :key="item.index">
             <div class="list_left">
               <el-tree
@@ -73,7 +85,6 @@
                 default-expand-all
                 @node-click="handleNodeClick"
               ></el-tree>
-              <!-- <p>任务: 人员疏散</p> -->
             </div>
             <div class="list_right">
               <el-tree
@@ -94,17 +105,24 @@
 </template>
 
 <script>
-import { setTimeout } from 'timers'
 export default {
   name: 'fightDeploy',
 
   data () {
     return {
-      minHeight: 700,
+      minHeight: 750,
       fullHeight: 0,
       workHeight: 0,
 
+      editNum: null,
+      jsPlumb: null,
+      index: 1,
+      data: {
+        nodeList: [],
+        newTemplate: '1'
+      },
       areaList: [],
+      currentItem: '',
       markList: [],
       taskList: [
         {
@@ -119,12 +137,6 @@ export default {
             },
             {
               label: '泡沫消防车'
-            },
-            {
-              label: '登高平台消防车'
-            },
-            {
-              label: '抢险救援消防车'
             }
           ]
         }
@@ -160,24 +172,6 @@ export default {
                   label: '1区-3-1'
                 }
               ]
-            },
-            {
-              id: 141,
-              label: '1区-4',
-              children: [
-                {
-                  label: '1区-4-1'
-                }
-              ]
-            },
-            {
-              id: 151,
-              label: '1区-5',
-              children: [
-                {
-                  label: '1区-5-1'
-                }
-              ]
             }
           ]
         }
@@ -187,22 +181,14 @@ export default {
       options: [
         {
           value: '1',
-          label: '北京'
-        },
-        {
-          value: '2',
-          label: '上海'
-        },
-        {
-          value: '3',
           label: '广州'
         },
         {
-          value: '4',
+          value: '2',
           label: '武汉'
         },
         {
-          value: '5',
+          value: '3',
           label: '杭州'
         }
       ],
@@ -219,52 +205,46 @@ export default {
       this.setWorkAreaHeight()
     }
 
-    var items1 = ['指挥区', '作业区', '集结区', '休整区', '入口']
-    var items2 = [
-      'el-icon-headset',
-      'el-icon-school',
-      'el-icon-sell',
-      'el-icon-trophy',
-      'el-icon-watch'
+    const items = [
+      '指挥区',
+      '作业区',
+      '集结区',
+      '休整区',
+      '入口',
+      '疏散区',
+      '1号停车区',
+      '2号停车区'
     ]
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
       this.areaList.push({
-        area: items1[Math.floor(Math.random() * items1.length)],
-        bgColor: '#' + Math.random().toString(16).substr(2, 6).toUpperCase()
-      })
-      this.markList.push({
-        icon: items2[Math.floor(Math.random() * items1.length)],
+        area: items[Math.floor(Math.random() * items.length)],
         bgColor: '#' + Math.random().toString(16).substr(2, 6).toUpperCase()
       })
     }
   },
 
-  destroyed () {
+  beforeDestroy () {
     window.onresize = null
   },
 
   methods: {
+    // 拖拽
+    drag (item) {
+      this.currentItem = item
+      console.log(this.currentItem)
+    },
+
     setWorkAreaHeight () {
-      var h = document.documentElement.clientHeight
+      const h = document.documentElement.clientHeight
       if (h < this.minHeight) this.fullHeight = this.minHeight
       else this.fullHeight = h
-      this.workHeight = this.fullHeight - 126 - 20
-      // console.log(this.workHeight)
-    },
-
-    backToPlan () {
-      //   console.log(545)
-      this.$router.back(-1)
-    },
-
-    handleNodeClick () {
-      // console.log('出来混迟早是要还的')
+      this.workHeight = this.fullHeight - 126
+      // console.log(this.workHeight);
     },
 
     visibleChange (value) {
-      // if (!value) this.filterText = ''
-      setTimeout(function () {
-        var tagTextList = document
+      setTimeout(() => {
+        const tagTextList = document
           .querySelector('#app')
           .querySelectorAll('.el-input__inner')
         // console.log(tagTextList)
@@ -274,14 +254,18 @@ export default {
       }, 100)
     },
 
-    renderContent () {
-      console.log('出来混迟早是要还的')
+    backToPlan () {
+      this.$router.back(-1)
+    },
+
+    handleNodeClick () {
+      // console.log('出来混迟早是要还的')
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .container {
   width: 100%;
   height: 100%;
@@ -316,7 +300,7 @@ export default {
       left: 0;
       top: 30px;
       .model_edit {
-        width: 255px;
+        width: 260px;
         background-color: rgba(0, 0, 0, 0.5);
         .edit_menu {
           display: flex;
@@ -343,17 +327,18 @@ export default {
           overflow-y: auto;
           margin-top: 15px;
           ul {
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-            margin: 0 10px;
+            margin-left: 13px;
             li {
+              float: left;
               width: 105px;
               height: 105px;
+              border: 1px solid rgb(145, 145, 145);
               font-size: 14px;
               line-height: 100px;
               text-align: center;
-              margin-bottom: 10px;
+              // margin-bottom: 10px;
+              margin: 0 10px 12px 0;
+              cursor: pointer;
               i {
                 display: inline-block;
                 vertical-align: middle;
@@ -367,15 +352,18 @@ export default {
     .detail {
       position: absolute;
       left: 0;
-      top: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
       height: 100%;
       background-color: rgba(255, 255, 255, 0.3);
+      #drawContent {
+        width: 100%;
+        height: 100%;
+        // position: relative;
+      }
     }
     .right {
-      // display: none;
-      // opacity: (0, 1);
-      // transition: all 2s linear;
       z-index: 999;
       width: 350px;
       height: 100%;

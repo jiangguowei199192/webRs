@@ -3,26 +3,32 @@
     <div class="containerStyle1 webFsScroll">
       <div>
         <div class="containerStyle2">
-          <div class="titleStyle">{{showInfo.name}}</div>
+          <div class="titleStyle">{{ showInfo.name }}</div>
           <div class="subTitleStyle">
-            {{showInfo.type}}
-            <div v-show="info.keyId !== undefined" class="keypointStyle">重</div>
+            {{ showInfo.type }}
+            <div v-show="info.keyId !== undefined" class="keypointStyle">
+              重
+            </div>
           </div>
         </div>
         <div class="addressInfoDetail">
           <i class="el-icon-location"></i>
-          {{showInfo.address}}
+          {{ showInfo.address }}
         </div>
         <div class="addressInfoDetail telStyle">
           <i class="el-icon-phone"></i>
-          {{showInfo.tel}}
+          {{ showInfo.tel }}
         </div>
       </div>
 
-      <el-collapse v-show="info.keyId !== undefined" style="border: none;" v-model="activeNames">
+      <el-collapse
+        v-show="info.keyId !== undefined"
+        style="border: none"
+        v-model="activeNames"
+      >
         <el-collapse-item name="1">
           <template slot="title">
-            <div style="margin-left: 22px;">基本情况说明</div>
+            <div style="margin-left: 22px">基本情况说明</div>
           </template>
           <div class="itemContainer1">
             <el-button
@@ -31,13 +37,14 @@
               v-for="(item, index) in baseInfos"
               :key="index"
               @click="didClickedBaseInfo(index)"
-            >{{item.title}}</el-button>
+              >{{ item.title }}</el-button
+            >
           </div>
         </el-collapse-item>
 
         <el-collapse-item name="2">
           <template slot="title">
-            <div style="margin-left: 22px;">建筑平面图</div>
+            <div style="margin-left: 22px">建筑平面图</div>
           </template>
           <div class="itemContainer1">
             <HorCardList
@@ -49,42 +56,54 @@
 
         <el-collapse-item name="3">
           <template slot="title">
-            <div style="margin-left: 22px;">作战部署图</div>
+            <div style="margin-left: 22px">作战部署图</div>
           </template>
           <div class="itemContainer2">
             <img
               class="edit_img fl"
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
-              @click="toFightDeploy"
+              @click="entryTabShow"
             />
           </div>
         </el-collapse-item>
 
         <el-collapse-item name="4">
           <template slot="title">
-            <div style="margin-left: 22px;">三维预案</div>
+            <div style="margin-left: 22px">三维预案</div>
           </template>
           <div class="itemContainer2">
             <img
               src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
-              style="width: 100%; height: 200px;"
+              style="width: 100%; height: 200px"
               @click="goto3d"
             />
           </div>
         </el-collapse-item>
       </el-collapse>
-      <div style="height: 50px;">
+      <div style="height: 50px">
         <button
           v-show="info.keyId === undefined"
           type="button"
           class="editPlanStyle"
           @click="editPlanClick"
-        >预案编辑</button>
+        >
+          预案编辑
+        </button>
       </div>
     </div>
 
-    <FloorGuide ref="floorGuide" v-bind:title="buildingTitle" v-bind:info="buildingInfos"></FloorGuide>
+    <FloorGuide
+      ref="floorGuide"
+      v-bind:title="buildingTitle"
+      v-bind:info="buildingInfos"
+    ></FloorGuide>
     <BaseInfo ref="baseInfo" v-bind:info="baseInfos"></BaseInfo>
+    <!-- 作战部署入口 -->
+    <EntryTab
+      ref="entryTab"
+      :title="buildingTitle"
+      :info="deployInfos"
+    ></EntryTab>
   </div>
 </template>
 
@@ -92,6 +111,7 @@
 import HorCardList from './HorizontalCardList.vue'
 import FloorGuide from './FloorGuide'
 import BaseInfo from './BaseInfo'
+import EntryTab from './entryTab'
 import { settingApi } from '@/api/setting'
 import globalApi from '@/utils/globalApi'
 
@@ -113,13 +133,28 @@ export default {
       },
       buildingTitle: '建筑平面图',
       buildingInfos: [],
-      baseInfos: []
+      baseInfos: [],
+      deployInfos: [
+        {
+          title: '地图',
+          children: []
+        },
+        {
+          title: '建筑平面图',
+          children: []
+        },
+        {
+          title: '实时二维',
+          children: []
+        }
+      ]
     }
   },
   components: {
     HorCardList,
     FloorGuide,
-    BaseInfo
+    BaseInfo,
+    EntryTab
   },
   methods: {
     show (info) {
@@ -127,13 +162,15 @@ export default {
       this.getData()
     },
     async getData () {
-      if (this.info.keyId) { // 自己服务器保存的数据
+      if (this.info.keyId) {
+        // 自己服务器保存的数据
         var param = {
           id: this.info.keyId
         }
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
           .then((res) => {
+            // console.log(res)
             if (res.data.code === 0) {
               var resData = res.data.data
               this.showInfo.name = resData.enterpriseName
@@ -163,9 +200,12 @@ export default {
                 buildingInfosTemp.push(temp)
               })
               this.buildingInfos = buildingInfosTemp
+              this.deployInfos[1].children = buildingInfosTemp
+              // console.log(this.deployInfos);
             }
           })
-      } else { // 第三方地图的数据
+      } else {
+        // 第三方地图的数据
         this.showInfo.name = this.info.name
         if (this.info.type) {
           var typeArr = this.info.type.split(';')
@@ -189,9 +229,7 @@ export default {
       this.showInfo.mapId = this.info.id
       localStorage.setItem('PlanInfo', JSON.stringify(this.showInfo))
     },
-    toFightDeploy () {
-      this.$router.push({ path: '/fightDeploy' })
-    },
+
     editPlanClick () {
       this.$router.push({
         path: '/PlanSetting'
@@ -207,6 +245,10 @@ export default {
     // 点击基本情况说明
     didClickedBaseInfo (index) {
       this.$refs.baseInfo.show(index)
+    },
+    // 点击作战部署图
+    entryTabShow () {
+      this.$refs.entryTab.show(this.deployInfos)
     }
   },
 
@@ -303,18 +345,6 @@ export default {
     margin: 0 0 10px 10px;
     cursor: pointer;
   }
-  // .edit_icon {
-  //   display: block;
-  //   width: 25px;
-  //   height: 25px;
-  //   background-color: #fff;
-  //   border-radius: 50%;
-  //   font-size: 18px;
-  //   text-align: center;
-  //   line-height: 25px;
-  //   cursor: pointer;
-  //   margin: 112px 0 0 10px;
-  // }
 }
 
 /* 折叠列表样式 */
