@@ -66,7 +66,26 @@
         </div>
       </div>
       <!-- 画布编辑区 -->
-      <div class="detail"></div>
+      <div class="detail">
+        <div
+          id="drawContent"
+          ref="drawContent"
+          @drop="drop($event)"
+          @dragover.prevent
+        >
+          <drawNode
+            class="drawNode"
+            ref="drawNode"
+            v-for="node in data.nodeList"
+            :key="node.id"
+            :node="node"
+            :id="node.id"
+            @change-node-site="changeNodeSite"
+            @delete-node="deleteNode"
+            @edit-node="editNode"
+          ></drawNode>
+        </div>
+      </div>
       <!-- 右边区域/任务列表 -->
       <div class="right">
         <h3>停靠设置/任务分配</h3>
@@ -105,8 +124,15 @@
 </template>
 
 <script>
+import { jsPlumb } from 'jsplumb'
+import drawNode from './components/drawNode'
+
 export default {
   name: 'fightDeploy',
+
+  components: {
+    drawNode
+  },
 
   data () {
     return {
@@ -223,15 +249,108 @@ export default {
     }
   },
 
+  mounted () {
+    this.jsPlumb = jsPlumb.getInstance()
+    this.$nextTick(() => {
+      this.init()
+    })
+  },
+
   beforeDestroy () {
     window.onresize = null
   },
 
   methods: {
+    init () {
+      const _this = this
+      this.jsPlumb.ready(() => {
+        // 加载立即重绘jsPlumb
+        _this.jsPlumb.setSuspendDrawing(false, true)
+        _this.loadDraw()
+      })
+    },
+
+    // 初始化节点
+    loadDraw () {
+      for (let i = 0; i < this.data.nodeList.length; i++) {
+        const node = this.data.nodeList[i]
+        this.jsPlumb.draggable(node.id, {
+          containment: 'parent'
+        })
+      }
+      this.jsPlumb.setContainer('drawContent')
+    },
+
     // 拖拽
     drag (item) {
       this.currentItem = item
       console.log(this.currentItem)
+    },
+
+    // 拖放
+    drop (event) {
+      // console.log(event);
+      // var eles = this.$refs.drawContent.children;
+      // console.log(eles);
+      const index = this.index++
+      const temp = {
+        label: this.currentItem.area,
+        left: event.offsetX - 105 / 2 + 'px',
+        top: event.offsetY - 105 / 2 + 'px',
+        id: 'node' + index
+      }
+      // localStorage.setItem('ev-top', JSON.stringify(temp.top))
+      // localStorage.setItem('ev-left', JSON.stringify(temp.left))
+      // localStorage.setItem('ev-id', JSON.stringify(temp.id))
+
+      this.addNode(temp)
+      // this.editNode(temp.id)
+    },
+
+    // 添加节点
+    addNode (temp) {
+      // console.log('添加节点', temp)
+      this.data.nodeList.push(temp)
+      this.$nextTick(() => {
+        this.jsPlumb.draggable(temp.id, {
+          containment: 'parent'
+        })
+        // this.jsPlumb.setContainer("drawContent");
+      })
+    },
+
+    // 单击节点
+    editNode (tag) {
+      // console.log(this.$refs.drawNode[0].$el)
+      console.log('编辑节点', tag)
+    },
+
+    // 删除节点
+    deleteNode (nodeId) {
+      this.$confirm('确定要删除节点' + nodeId + ' ?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false
+      })
+        .then(() => {
+          this.data.nodeList = this.data.nodeList.filter((item) => {
+            return item.id !== nodeId
+          })
+        })
+        .catch(() => {})
+      return true
+    },
+
+    // 改变节点位置
+    changeNodeSite (data) {
+      for (let i = 0; i < this.data.nodeList.length; i++) {
+        const node = this.data.nodeList[i]
+        // console.log(node);
+        if (node.id === data.nodeId) {
+          node.left = data.left
+          node.top = data.top
+        }
+      }
     },
 
     setWorkAreaHeight () {

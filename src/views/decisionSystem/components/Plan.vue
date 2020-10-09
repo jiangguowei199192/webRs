@@ -200,7 +200,7 @@ export default {
                 buildingInfosTemp.push(temp)
               })
               this.buildingInfos = buildingInfosTemp
-              // this.deployInfos[1].children = buildingInfosTemp
+              this.deployInfos[1].children = buildingInfosTemp
               // console.log(this.deployInfos)
             }
           })
