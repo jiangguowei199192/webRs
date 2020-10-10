@@ -12,7 +12,13 @@ const droneInfoMixin = {
       bDetectStatus: false,
       bPuzzlingStatus: false,
       bSetPointStatus: false,
-      bShowRouteStatus: true
+      bShowRouteStatus: true,
+      di_height: '',
+      di_hSpeed: '',
+      di_vSpeed: '',
+      di_battery: '',
+      di_longitude: '',
+      di_latitude: ''
     }
   },
 
@@ -57,6 +63,7 @@ const droneInfoMixin = {
     // 飞机下线处理
     updateDroneStatus (obj) {
       if (obj.snCode === this.curDevCode) {
+        this.updataDIparams(null)
         if (this.droneInfo !== null && this.droneInfo.offline === false) {
           this.droneInfo.offline = true
           this.setOfflineStyle(this.curDevCode, true)
@@ -67,6 +74,23 @@ const droneInfoMixin = {
         }
       }
     },
+    updataDIparams (obj) {
+      if (obj !== null) {
+        this.di_height = obj.height
+        this.di_hSpeed = obj.hSpeed
+        this.di_vSpeed = obj.vSpeed
+        this.di_battery = obj.batteryLeft
+        this.di_longitude = parseFloat(obj.longitude).toFixed(7)
+        this.di_latitude = parseFloat(obj.latitude).toFixed(7)
+      } else {
+        this.di_height = ''
+        this.di_hSpeed = ''
+        this.di_vSpeed = ''
+        this.di_battery = ''
+        this.di_longitude = ''
+        this.di_latitude = ''
+      }
+    },
     // 飞机实时信息处理
     updateDroneRealtimeInfo (obj) {
       if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
@@ -74,6 +98,7 @@ const droneInfoMixin = {
       }
 
       if (obj.snCode === this.curDevCode) {
+        this.updataDIparams(obj)
         if (this.droneInfo === null && this.dronesInfos[obj.snCode] === undefined) {
           this.droneInfo = obj
           this.mapMoveToDronePosition(obj)
