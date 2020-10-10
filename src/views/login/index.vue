@@ -2,7 +2,7 @@
   <div>
     <div class="login">
       <div class="content">
-        <div class="title">{{loginTitle}}</div>
+        <div class="title">{{ loginTitle }}</div>
         <el-input
           placeholder="用户名"
           auto-complete="new-password"
@@ -27,11 +27,44 @@
         ></el-input>
         <div class="checkDiv">
           <el-checkbox v-model="checked" class="check">记住密码</el-checkbox>
-          <el-button type="text" size="mini" class="forgot" @click="dialogVisible = true">忘记密码？</el-button>
+          <el-button
+            type="text"
+            size="mini"
+            class="forgot"
+            @click="dialogVisible = true"
+            >忘记密码？</el-button
+          >
         </div>
         <el-button class="loginBtn" @click="jumpToMain">登 录</el-button>
+
+        <div class="settingBoxStyle">
+          <div class="settingStyle" @click="settingClick">
+            <div class="settingIconSty">
+              <i class="el-icon-setting"></i>
+            </div>
+            <div class="settingTitleStyle">高级设置</div>
+          </div>
+        </div>
+
+        <div class="serverAddressBoxSty" v-show="showServer">
+          <div class="serverTitleSty">服务器：</div>
+          <el-select v-model="selectedServerAddress" class="serverSelectSty">
+            <el-option
+              v-for="(item, index) in serverAddressList"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </div>
       </div>
-      <el-dialog title="忘记密码" :visible.sync="dialogVisible" width="30%" class="dialogStyle">
+
+      <el-dialog
+        title="忘记密码"
+        :visible.sync="dialogVisible"
+        width="30%"
+        class="dialogStyle"
+      >
         <p>
           <span>普通用户请联系管理员重置密码。</span>
         </p>
@@ -43,7 +76,12 @@
       </p>
         <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p>-->
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="dialogVisible = false" class="trueBtn">确 定</el-button>
+          <el-button
+            type="primary"
+            @click="dialogVisible = false"
+            class="trueBtn"
+            >确 定</el-button
+          >
         </span>
       </el-dialog>
     </div>
@@ -54,6 +92,8 @@
 import { loginApi } from '@/api/login'
 import { Notification } from 'element-ui'
 import globalApi from '../../utils/globalApi'
+import $ from 'jquery'
+
 export default {
   name: 'login',
   data () {
@@ -65,7 +105,11 @@ export default {
         password: ''
       },
       checked: true,
-      dialogVisible: false
+      dialogVisible: false,
+
+      showServer: false,
+      serverAddressList: [],
+      selectedServerAddress: ''
     }
   },
   methods: {
@@ -114,10 +158,40 @@ export default {
           this.$router.push({ path: '/videoSystem' })
         }
       })
+    },
+    settingClick () {
+      this.showServer = !this.showServer
+    },
+
+    init () {
+      var that = this
+      $.ajax({
+        async: true, // fasle表示同步请求，true表示异步请求
+        type: 'get',
+        dataType: 'json',
+        url: '/webFs/serverconfig.json', // 请求地址
+        success: function (res) {
+          // 请求成功
+          var tempArr = []
+          res.baseUrlList.forEach((item, index) => {
+            var dict = {
+              label: item,
+              value: index
+            }
+            tempArr.push(dict)
+          })
+          that.serverAddressList = tempArr
+        },
+        error: function (err) {
+          // 请求失败，包含具体的错误信息
+          console.log(err)
+        }
+      })
     }
   },
   created () {},
   mounted () {
+    this.init()
     var oldTime = localStorage.getItem('time')
     if (oldTime) {
       var currentTime = Math.round(new Date() / 1000) // 当前时间戳，单位秒
@@ -145,7 +219,9 @@ export default {
   background-size: 100% 100%;
   .content {
     width: 500px;
-    height: 502px;
+    // height: 502px;
+    // height: 534px;
+    padding-bottom: 30px;
     background: url(../../assets/images/Login/login-contentBg.png) no-repeat;
     background-size: 100% 100%;
     position: absolute;
@@ -193,6 +269,47 @@ export default {
       background-color: #00b8ff;
       border: 0;
       margin-top: 30px;
+    }
+    .settingBoxStyle {
+      width: 403px;
+      height: 20px;
+      margin: 20px auto;
+      .settingStyle {
+        cursor: pointer;
+        width: 100px;
+        height: 20px;
+        .settingIconSty {
+          width: 20px;
+          height: 20px;
+          float: left;
+          margin-left: -10;
+        }
+        .settingTitleStyle {
+          height: 20px;
+          float: right;
+          line-height: 20px;
+          vertical-align: top;
+          font-size: 19px;
+        }
+      }
+    }
+    .serverAddressBoxSty {
+      width: 403px;
+      height: 36px;
+      margin: 20px auto;
+      .serverTitleSty {
+        font-size: 16px;
+        line-height: 36px;
+        float: left;
+      }
+      .serverSelectSty {
+        /deep/ .el-input__inner {
+          background: url(../../assets/images/Login/login-usernameBox.png)
+            no-repeat;
+          background-size: 100% 100%;
+          color: white;
+        }
+      }
     }
   }
 }
