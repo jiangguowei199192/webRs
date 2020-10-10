@@ -48,11 +48,6 @@
         ></div>
       </div>
       <div @click.stop="setCameraView">设定视角</div>
-      <div
-        class="add"
-        @click.stop="plotModel(editIndex === 2 ? 7 : 8)"
-        v-show="editIndex!==1&& editIndex!==0"
-      ></div>
       <el-popover
         placement="right"
         trigger="click"
@@ -66,6 +61,8 @@
           <span v-show="editIndex === 0" @click.stop="plotModel(4)"></span>
           <span v-show="editIndex === 1" @click.stop="plotModel(5)"></span>
           <span v-show="editIndex === 1" @click.stop="plotModel(6)"></span>
+          <span v-show="editIndex === 2" @click.stop="plotModel(7)"></span>
+          <span v-show="editIndex === 3" @click.stop="plotModel(8)"></span>
         </div>
         <div class="txtList">
           <span v-show="editIndex === 0">消防栓</span>
@@ -74,8 +71,10 @@
           <span v-show="editIndex === 0">泵房</span>
           <span v-show="editIndex === 1">安全出口</span>
           <span v-show="editIndex === 1">应急避难所</span>
+          <span v-show="editIndex === 2">重点区域</span>
+          <span v-show="editIndex === 3">VR视角</span>
         </div>
-        <div class="add" slot="reference" v-show="editIndex!==2&& editIndex!==3"></div>
+        <div class="add" slot="reference"></div>
         <div class="close" @click.stop="editPopover = false" />
       </el-popover>
       <div v-show="showViewDetail" class="detail">
@@ -1051,9 +1050,9 @@ export default {
             edittype: 'billboard',
             style: {
               image: require('../../assets/images/3d/exit.png'),
-              visibleDepth: false,
-              distanceDisplayCondition: true,
-              distanceDisplayCondition_far: 1000
+              visibleDepth: false
+              // distanceDisplayCondition: true,
+              // distanceDisplayCondition_far: 1000
             }
           }
           break
@@ -1064,9 +1063,9 @@ export default {
             edittype: 'billboard',
             style: {
               image: require('../../assets/images/3d/emergencyshelters.png'),
-              visibleDepth: false,
-              distanceDisplayCondition: true,
-              distanceDisplayCondition_far: 1000
+              visibleDepth: false
+              // distanceDisplayCondition: true,
+              // distanceDisplayCondition_far: 1000
             }
           }
           break
@@ -1204,7 +1203,9 @@ export default {
       if (this.gisCollection) {
         this.gisCollection.show = this.activeIndex === 0
       }
-      // 实时gis模式，显示实时gis数据和沙盘绘制数据
+      // 实时gis模式，显示实时gis数据和所有绘制数据（包含沙盘绘制模型、水源、防火、重点区域、VR)
+      // 沙盘绘制模式，显示所有绘制数据（包含沙盘绘制模型、水源、防火、重点区域、VR)
+
       // 隐藏/显示模型上方标签
       if (this.activeIndex === 0) {
         if (this.labelList) {
@@ -1219,14 +1220,12 @@ export default {
 
       if (this.modelList) {
         this.modelList.forEach(e => {
-          if (e.attribute.editIndex === index) {
-            e.show = true
-          } else e.show = false
+          if (index === 5) e.show = true
+          else if (e.attribute.editIndex === index)e.show = true
+          else e.show = false
         })
 
-        if (this.curEditEntity) {
-          this.stopEditing()
-        }
+        if (this.curEditEntity) this.stopEditing()
       }
 
       // 隐藏/显示消防车下方矩形框
@@ -1237,9 +1236,9 @@ export default {
       // 隐藏/显示模型上方marker
       if (this.markList) {
         this.markList.forEach(e => {
-          if (e.opts.editIndex === index) {
-            e.visible = true
-          } else e.visible = false
+          if (index === 5) e.visible = true
+          else if (e.opts.editIndex === index) e.visible = true
+          else e.visible = false
         })
       }
     },
@@ -1468,7 +1467,7 @@ export default {
       var position = entity.position
       this.viewer.mars.centerPoint(position, {
         radius: 100, // 距离目标点的距离
-        pitch: -50, // 相机方向
+        pitch: -30, // 相机方向
         duration: 2,
         complete: callback
       })
@@ -1775,7 +1774,7 @@ export default {
     ClickDivPoint (entity) {
       this.clearCurEntity()
       this.showInfoBox = false
-      this.viewer.mars.flyTo(entity, { duration: 3, radius: 100, pitch: -50 })
+      this.viewer.mars.flyTo(entity, { duration: 3, radius: 100, pitch: -30 })
     },
 
     /**
@@ -2427,7 +2426,7 @@ export default {
     > div:nth-child(2):active {
       background: #00679d;
     }
-    .add {
+        .add {
       position: absolute;
       width: 40px;
       height: 40px;
