@@ -363,7 +363,10 @@ export default {
     },
 
     showEditBox (val) {
-      if (val === false) this.clearCurEntity()
+      if (val === false) {
+        this.editBox.hide = false
+        this.clearCurEntity()
+      }
     },
 
     showInfoBox (val) {
@@ -1680,16 +1683,17 @@ export default {
      * @param {Object} entity 模型
      */
     showModelEditBox (entity) {
-      me.showEditBox = true
+      this.showEditBox = true
       const t = me.findModelLabel(entity.attribute.id)
+      this.editBox.hide = !entity.show
       if (t !== undefined) {
-        me.copyData(t.opts.data, me.editBox)
+        this.copyData(t.opts.data, this.editBox)
       }
       var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-        me.viewer.scene,
+        this.viewer.scene,
         entity.position
       )
-      me.setEditBoxPosition(point)
+      this.setEditBoxPosition(point)
     },
 
     /**
@@ -1771,6 +1775,9 @@ export default {
       layercfg.flyTo = true
       this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
       this.layerModel.centerAt()
+      setTimeout(() => {
+        me.ZoomIn(true)
+      }, 500)
     },
 
     /**
@@ -1960,11 +1967,12 @@ export default {
         } else if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.GroundPrimitive) {
           // 如果点击模型下方矩形
           // 如果模型隐藏，需要显示任务编辑框
+          me.showEditBox = false
           const entity = pickedObject.id
           const m = me.modelList.find(m => m.attribute.id === entity.name)
           if (m !== undefined && !m.show) {
             me.curEntity = m
-            me.showEditBox = true
+            me.showModelEditBox(m)
           }
         } else {
           // 如果点击其他区域
@@ -2681,7 +2689,7 @@ export default {
       border-radius: 50%;
       border: none;
       height: 10px;
-      left: 1.5px;
+      left: 2px;
       top: 2px;
       transform: none;
       width: 10px;
