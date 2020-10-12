@@ -221,9 +221,9 @@
       ></span>
     </div>
     <div class="topTool">
-      <span v-for="(item,index) in 8" :key="index" @click.stop="topToolClick(index)"></span>
+      <span v-for="(item,index) in topTools" :key="index" @click.stop="topToolClick(index)" :title='item'></span>
     </div>
-    <div class="rotate" :class="{active:isRotate}" @click.stop="autoRotate"></div>
+    <div class="rotate" :class="{active:isRotate}" @click.stop="autoRotate" title="自动旋转"></div>
     <el-dialog
       custom-class="el-dialog-custom"
       :visible.sync="imgDialogVisible"
@@ -279,6 +279,7 @@ export default {
       editBox: { department: '天门敦', number: '1', task: '- -', hide: false },
       viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
       markDatas: [[], [], [], []],
+      topTools: ['回正', '截图', '测距', '测高', '测面积', '保存', '设置', '分享'],
       tabs: [
         '实时GIS',
         '水源分布',
@@ -760,6 +761,11 @@ export default {
         if (t !== undefined) {
           this.copyData(this.editBox, t.opts.data)
           this.updateLabelHtml(t)
+        }
+        this.curEntity.show = !this.editBox.hide
+        if (this.editBox.hide) {
+          this.showOrHideRect(true, this.curEntity)
+          this.stopEditing()
         }
       }
     },
@@ -1645,8 +1651,8 @@ export default {
       var modelPrimitive = this.gisCollection.add(
         Cesium.Model.fromGltf({
           url: cfg.url,
-          modelMatrix: modelMatrix,
-          minimumPixelSize: cfg.minimumPixelSize || 30
+          modelMatrix: modelMatrix
+          // minimumPixelSize: cfg.minimumPixelSize || 30
         })
       )
       modelPrimitive.attribute = cfg
@@ -1951,6 +1957,15 @@ export default {
               me.showInfoBox = true
             })
           } else me.showInfoBox = true
+        } else if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.GroundPrimitive) {
+          // 如果点击模型下方矩形
+          // 如果模型隐藏，需要显示任务编辑框
+          const entity = pickedObject.id
+          const m = me.modelList.find(m => m.attribute.id === entity.name)
+          if (m !== undefined && !m.show) {
+            me.curEntity = m
+            me.showEditBox = true
+          }
         } else {
           // 如果点击其他区域
           me.showEditBox = false
