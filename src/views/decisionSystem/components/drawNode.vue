@@ -116,7 +116,7 @@ export default {
     // 点击选中元素
     activated (pos) {
       this.controlled.isActive = true
-      console.log('选中当前元素', pos)
+      console.log('当前元素' + this.node.id, pos)
     },
     // 拖拽中
     onDragging (pos) {

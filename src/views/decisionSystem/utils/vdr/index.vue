@@ -51,14 +51,17 @@ export default {
       type: Boolean,
       default: false
     },
+
     bg: {
       type: String,
       default: ''
     },
+
     lock: {
       type: Boolean,
       default: false
     },
+
     w: {
       type: Number,
       default: 100,
@@ -66,6 +69,7 @@ export default {
         return val >= 0
       }
     },
+
     h: {
       type: Number,
       default: 100,
@@ -73,6 +77,7 @@ export default {
         return val >= 0
       }
     },
+
     x: {
       type: Number,
       default: 0,
@@ -80,6 +85,7 @@ export default {
         return typeof val === 'number'
       }
     },
+
     y: {
       type: Number,
       default: 0,
@@ -87,36 +93,44 @@ export default {
         return typeof val === 'number'
       }
     },
+
     z: {
       type: [String, Number],
       default: 'auto'
     },
+
     r: {
       type: Number,
       default: 0
     },
+
     sticks: {
       type: Array,
       default: function () {
         return ['tl', 'tm', 'tr', 'mr', 'br', 'bm', 'bl', 'ml', 'angle']
       }
     },
+
     active: {
       type: Boolean,
       default: true
     },
+
     draggable: {
       type: Boolean,
       default: true
     },
+
     resizeable: {
       type: Boolean,
       default: true
     },
+
     rotateable: {
       type: Boolean,
       default: true
     },
+
     activeable: {
       type: Boolean,
       default: true
@@ -125,6 +139,7 @@ export default {
     widthRange: {
       type: Array
     },
+
     heightRange: {
       type: Array
     }
@@ -154,14 +169,15 @@ export default {
         zIndex: this.zIndex,
         width: `${this.width}px`,
         height: `${this.height}px`,
-        // backgroundImage: `url(${this.bg})`,
         transform: `${translate} ${rotate}`,
         visibility: this.hidden ? 'hidden' : 'visible'
       }
     },
+
     rotateSticks () {
       return this.sticks.filter((itme) => itme !== 'angle')
     },
+
     posData () {
       return {
         left: this.left,
@@ -172,17 +188,21 @@ export default {
         stick: this.currentStick
       }
     },
+
     // x的最小偏移值
     minOffsetLeft () {
       return this.parentWidth - this.right - this.minWidth
     },
+
     maxOffsetLeft () {
       return this.parentWidth - this.right - this.maxWidth
     },
+
     // y的最小偏移值
     minOffsetTop () {
       return this.parentHeight - this.bottom - this.minHeight
     },
+
     maxOffsetTop () {
       return this.parentHeight - this.bottom - this.maxHeight
     }
@@ -205,12 +225,14 @@ export default {
       if (min < 0 || (min >= 0 && min >= this.width)) return 0
       return min || 0
     },
+
     // 计算最大宽
     calcMaxWidth () {
       const max = Math.max.apply(null, this.widthRange)
       if (max <= 0 || (max > 0 && max < this.width)) return Infinity
       return max || Infinity
     },
+
     // 计算最小高
     calcMinHeight () {
       let min = Math.min.apply(null, this.heightRange)
@@ -224,6 +246,7 @@ export default {
       }
       return min || 0
     },
+
     // 计算最大高
     calcMaxHeight () {
       let max = Math.max.apply(null, this.heightRange)
@@ -237,6 +260,7 @@ export default {
       }
       return max || Infinity
     },
+
     // 范围值初始
     setLimitValue () {
       this.minWidth = this.calcMinWidth()
@@ -244,6 +268,7 @@ export default {
       this.minHeight = this.calcMinHeight()
       this.maxHeight = this.calcMaxHeight()
     },
+
     // 获取所有父旋转角的叠加状态角
     getParentsRotate (ev) {
       let rotate = 0
@@ -263,6 +288,7 @@ export default {
       }
       return rotate
     },
+
     // 获取元素旋转角度(矩阵转换)
     getElementRotate (element) {
       if (element === null) return 0
@@ -275,7 +301,6 @@ export default {
         parentStyle.transform
 
       if (matrixInfo.match('matrix') === null) return 0
-
       const matrix = matrixInfo.replace(/matrix\(|\)|\s/gi, '')
       const matrixArray = matrix.split(',') || []
       const a = Number(matrixArray[0])
@@ -283,6 +308,7 @@ export default {
       const angle = Math.round(Math.atan2(b, a) * (180 / Math.PI))
       return angle || 0
     },
+
     // 初始化
     init () {
       // 元素宽高比例初始化
@@ -314,6 +340,7 @@ export default {
       document.documentElement.addEventListener('mousemove', this.move)
       document.documentElement.addEventListener('mouseup', this.up)
     },
+
     // 元素本身的mousedown事件回调函数
     bodyDown (ev) {
       if (!this.activeable) return
@@ -336,6 +363,7 @@ export default {
         this.$emit('dragStart', this.posData)
       }
     },
+
     // 元素本身的mousemove事件回调函数
     bodyMove (ev) {
       // 起始位置信息
@@ -383,6 +411,7 @@ export default {
       // 触发事件
       this.$emit('resizeStart', this.posData)
     },
+
     // 缩放控件的mousemove事件回调函数
     stickMove (ev) {
       // 当前空间类型
@@ -488,6 +517,7 @@ export default {
         this.rotateMove(ev)
       }
     },
+
     // mousemup事件回调函数
     up () {
       // 拖拽停止
@@ -527,6 +557,7 @@ export default {
         this.height = this.width / this.whRatio
       }
     },
+
     top (value) {
       // body处于拖动状态时，不重新计算宽高
       if (this.bodyDrag) return
@@ -545,6 +576,7 @@ export default {
         }
       }
     },
+
     right (value) {
       // body处于拖动状态时，不重新计算宽高
       if (this.bodyDrag) return
@@ -559,6 +591,7 @@ export default {
         this.height = this.width / this.whRatio
       }
     },
+
     bottom (value) {
       // body处于拖动状态时，不重新计算宽高
       if (this.bodyDrag) return
@@ -577,6 +610,7 @@ export default {
         }
       }
     },
+
     w (value) {
       if (value <= 0 || isNaN(value) || value === null) {
         this.width = 0
@@ -589,6 +623,7 @@ export default {
       }
       this.whRatio = this.width / this.height
     },
+
     h (value) {
       if (value <= 0 || isNaN(value) || value === null) {
         this.width = 0
@@ -601,20 +636,25 @@ export default {
       }
       this.whRatio = this.width / this.height
     },
+
     x (value) {
       this.left = value
       this.right = this.parentWidth - this.w - value
     },
+
     y (value) {
       this.top = value
       this.bottom = this.parentHeight - this.h - value
     },
+
     z (value) {
       this.zIndex = value
     },
+
     r (value) {
       this.rotate = value
     },
+
     lock (value) {
       if (value) {
         this.whRatio = this.width / this.height
@@ -625,4 +665,4 @@ export default {
 }
 </script>
 
-<style lang="css" src="./index.css"></style>
+<style lang="scss" src="./index.scss"></style>
