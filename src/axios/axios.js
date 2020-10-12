@@ -6,7 +6,6 @@ import {
 } from 'element-ui'
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: globalApi.baseUrl, // 请求前缀
   timeout: 10000, // 请求超时时间
   // crossDomain: true, // 设置cross跨域
   withCredentials: true // 设置cross跨域 并设置访问权限 允许跨域携带cookie信息
@@ -18,6 +17,7 @@ service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencod
 // 添加请求拦截器
 
 service.interceptors.request.use((config) => {
+  config.baseURL = globalApi.baseUrl
   let token = ''
   if (config.url !== '/fms-auth-center/login') {
     token = sessionStorage.getItem('token')

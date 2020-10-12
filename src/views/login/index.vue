@@ -2,7 +2,7 @@
   <div>
     <div class="login">
       <div class="content">
-        <div class="title">{{ loginTitle }}</div>
+        <div class="title">{{ configJson.projectTitle }}</div>
         <el-input
           placeholder="用户名"
           auto-complete="new-password"
@@ -48,12 +48,12 @@
 
         <div class="serverAddressBoxSty" v-show="showServer">
           <div class="serverTitleSty">服务器：</div>
-          <el-select v-model="selectedServerAddress" class="serverSelectSty">
+          <el-select v-model="selectedServerIndex" class="serverSelectSty">
             <el-option
-              v-for="(item, index) in serverAddressList"
+              v-for="(item, index) in configJson.baseUrlList"
               :key="index"
-              :label="item.label"
-              :value="item.value"
+              :label="item.baseUrl"
+              :value="index"
             ></el-option>
           </el-select>
         </div>
@@ -92,13 +92,11 @@
 import { loginApi } from '@/api/login'
 import { Notification } from 'element-ui'
 import globalApi from '../../utils/globalApi'
-import $ from 'jquery'
 
 export default {
   name: 'login',
   data () {
     return {
-      loginTitle: globalApi.projectTitle || '消防救援现场指挥系统',
       passwordInputType: 'text',
       loginInfo: {
         username: '',
@@ -108,8 +106,8 @@ export default {
       dialogVisible: false,
 
       showServer: false,
-      serverAddressList: [],
-      selectedServerAddress: ''
+      configJson: globalApi.configJson,
+      selectedServerIndex: 0
     }
   },
   methods: {
@@ -121,11 +119,20 @@ export default {
       }
     },
     async jumpToMain () {
+      // 登录前，配置baseUrl
+      var selectedAddr = this.configJson.baseUrlList[this.selectedServerIndex]
+      globalApi.baseUrl = selectedAddr.baseUrl
+      globalApi.mqttServer = selectedAddr.mqttServer
+      globalApi.mqttPort = selectedAddr.mqttPort
+      globalApi.headImg = selectedAddr.headImg
+      globalApi.projectTitle = this.configJson.projectTitle
+      // 将selectedServerIndex保存至本地，当没走登录页时，读取本地selectedServerIndex来配置baseUrl
+      localStorage.setItem('selectedServerIndex', this.selectedServerIndex)
+
       if (
         this.loginInfo.username.length <= 0 ||
         this.loginInfo.password.length <= 0
       ) {
-        // this.$message.error('请输入用户名和密码')
         Notification({
           title: '错误',
           message: '请输入用户名和密码',
@@ -161,37 +168,10 @@ export default {
     },
     settingClick () {
       this.showServer = !this.showServer
-    },
-
-    init () {
-      var that = this
-      $.ajax({
-        async: true, // fasle表示同步请求，true表示异步请求
-        type: 'get',
-        dataType: 'json',
-        url: '/webFs/serverconfig.json', // 请求地址
-        success: function (res) {
-          // 请求成功
-          var tempArr = []
-          res.baseUrlList.forEach((item, index) => {
-            var dict = {
-              label: item,
-              value: index
-            }
-            tempArr.push(dict)
-          })
-          that.serverAddressList = tempArr
-        },
-        error: function (err) {
-          // 请求失败，包含具体的错误信息
-          console.log(err)
-        }
-      })
     }
   },
   created () {},
   mounted () {
-    this.init()
     var oldTime = localStorage.getItem('time')
     if (oldTime) {
       var currentTime = Math.round(new Date() / 1000) // 当前时间戳，单位秒
