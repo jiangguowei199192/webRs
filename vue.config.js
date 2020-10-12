@@ -16,7 +16,17 @@ const createServerConfig = function (compilation) {
         mqttServer: '111.47.13.103',
         mqttPort: 40011,
         headImg: 'http://111.47.13.103:40015'
+        // baseUrl: 'http://58.49.169.235:50020',
+        // mqttServer: '58.49.169.235',
+        // mqttPort: 50022,
+        // headImg: 'http://58.49.169.235:50026'
       }
+      // {
+      //   baseUrl: 'http://172.26.13.103:8850',
+      //   mqttServer: '172.26.13.103',
+      //   mqttPort: 2883,
+      //   headImg: 'http://172.26.13.103:80'
+      // }
     ]
   }
   return JSON.stringify(cfgJson)
