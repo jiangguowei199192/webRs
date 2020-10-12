@@ -1,22 +1,69 @@
 <template>
-  <div
-    id="node-item"
-    class="node-item"
-    ref="node"
-    :style="drawNodeContainer"
-    @mouseenter="showDelete"
-    @mouseleave="hideDelete"
-    @mouseup="changeNodeSite"
-    @click.stop="editNode"
+  <!-- <div style="position: absolute" id="container"> -->
+  <!-- 初始状态 -->
+  <!-- <div
+      v-show="editType == 0"
+      class="node-item"
+      ref="node"
+      :style="drawNodeContainer_one"
+      @mouseenter="showDelete"
+      @mouseleave="hideDelete"
+      @mouseup="changeNodeSite"
+      @click.stop="editNode"
+      @dblclick.stop="addWrap"
+    >
+      <span id="node-span">{{ node.label }}</span>
+      <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
+        <i class="el-icon-circle-close"></i>
+      </div>
+    </div> -->
+  <!-- 编辑状态 -->
+  <!-- <div v-show="editType == 1"> -->
+  <vdr
+    :active="controlled.isActive"
+    :w="controlled.width"
+    :h="controlled.height"
+    :x="controlled.left"
+    :y="controlled.top"
+    :r="controlled.rotate"
+    :widthRange="controlled.minW"
+    :heightRange="controlled.minH"
+    :draggable="true"
+    @activated="activated"
+    @dragging="onDragging"
+    @resizing="onResizing"
+    @rotating="onRotating"
+    @resizeStop="resizeStop"
+    @rotateStop="rotateStop"
   >
-    <span id="node-span">{{ node.label }}</span>
-    <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
-      <i class="el-icon-circle-close"></i>
+    <div
+      class="node-item"
+      ref="node"
+      style="width: 100%; height: 100%"
+      :style="
+        this.editType == 1 ? 'drawNodeContainer_two' : 'drawNodeContainer_one'
+      "
+      @mouseenter="showDelete"
+      @mouseleave="hideDelete"
+    >
+      <span id="node-span">{{ node.label }}</span>
+      <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
+        <i class="el-icon-circle-close"></i>
+      </div>
+      <div v-show="sizeShow">
+        <div class="node-width">w: {{ posData.width }}</div>
+        <div class="node-height">h: {{ posData.height }}</div>
+        <div class="node-rotate">r:{{ posData.rotate }}°</div>
+      </div>
     </div>
-  </div>
+  </vdr>
+  <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 <script>
+import { EventBus } from '@/utils/eventBus.js'
+
 export default {
   props: {
     node: Object
@@ -24,27 +71,99 @@ export default {
 
   data () {
     return {
+      // 操作类型
       editType: 0,
-      mouseEnter: false
+      mouseEnter: false,
+      // 节点状态
+      controlled: {
+        width: 105,
+        height: 105,
+        left: parseInt(this.node.left.replace('px', '')),
+        top: parseInt(this.node.top.replace('px', '')),
+        rotate: 0,
+        minW: [20, 1000],
+        minH: [20, 1000],
+        lock: false,
+        isActive: false
+      },
+      // 节点位置信息
+      posData: {},
+      // 实时尺寸显隐
+      sizeShow: false
     }
   },
 
   computed: {
-    // 节点容器样式
-    drawNodeContainer: {
+    // 编辑前节点容器样式
+    drawNodeContainer_one: {
       get () {
         return {
           position: 'absolute',
-          minWidth: '105px',
           top: this.node.top,
           left: this.node.left,
+          boxShadow: this.mouseEnter ? '#66a6e0 0px 0px 10px 0px' : ''
+        }
+      }
+    },
+    // 编辑中节点容器样式
+    drawNodeContainer_two: {
+      get () {
+        return {
+          position: 'absolute',
           boxShadow: this.mouseEnter ? '#66a6e0 0px 0px 10px 0px' : ''
         }
       }
     }
   },
 
+  created () {
+    const { width, height, left, top, rotate } = this.controlled
+    this.posData.width = width
+    this.posData.height = height
+    this.posData.left = left
+    this.posData.top = top
+    this.posData.rotate = rotate
+
+    // console.log(this.posData);
+  },
+
+  mounted () {
+    const _this = this
+    EventBus.$on('type', (data) => {
+      // console.log(data)
+      _this.controlled.isActive = data
+    })
+  },
+
   methods: {
+    // 点击选中元素
+    activated (pos) {
+      this.controlled.isActive = true
+      console.log('选中当前元素', pos)
+    },
+    // 拖拽中
+    onDragging (pos) {
+      this.posData = pos
+    },
+    // 缩放中
+    onResizing (pos) {
+      this.posData = pos
+      this.sizeShow = true
+    },
+    // 旋转中
+    onRotating (pos) {
+      this.posData = pos
+      this.sizeShow = true
+    },
+    // 缩放结束
+    resizeStop (pos) {
+      this.sizeShow = false
+    },
+    // 旋转停止
+    rotateStop (pos) {
+      this.sizeShow = false
+    },
+
     // 删除节点
     deleteNode () {
       this.$emit('delete-node', this.node.id)
@@ -52,15 +171,14 @@ export default {
 
     // 单击节点
     editNode () {
-      this.$emit('edit-node', [this.node.id, this.$refs.node])
-      // this.editType = 'node'
-      // this.edit = true
-      // console.log('编辑节点', this.edit)
+      this.editType = 1
+      this.$emit('edit-node', [this.node.id, this.editType, this.$refs.node])
+      // console.log("单击节点", this.$refs.node);
+    },
 
-      // console.log(
-      //   this.$refs.dragDiv.$el.style.display,
-      //   this.$refs.nodeDiv.style.display
-      // );
+    // 双击节点
+    addWrap () {
+      console.log('双击节点', this.$refs.node)
     },
 
     // 鼠标进入
@@ -89,8 +207,6 @@ export default {
 .node-item {
   width: 105px;
   height: 105px;
-  // width: 100%;
-  // height: 100%;
   background: rgb(30, 66, 68);
   border: 1px solid rgb(145, 145, 145);
   font-size: 14px;
@@ -100,7 +216,6 @@ export default {
   position: relative;
   cursor: move;
 }
-
 .node-del {
   position: absolute;
   color: red;
@@ -108,5 +223,36 @@ export default {
   cursor: pointer;
   top: 0;
   right: 0;
+}
+.node-width,
+.node-height,
+.node-rotate {
+  width: 40px;
+  height: 15px;
+  line-height: 15px;
+  text-align: center;
+  position: absolute;
+  font-size: 10px;
+  background: rgb(243, 109, 20);
+  color: #fff;
+  cursor: pointer;
+}
+.node-width {
+  top: 0;
+  left: calc(50%-20px);
+}
+.node-height {
+  top: calc(50%-7.5px);
+  left: 0;
+}
+.node-rotate {
+  top: 0;
+  left: 0;
+}
+/deep/.vdr_display {
+  visibility: visible !important;
+}
+/deep/.vdr_hide {
+  visibility: hidden !important;
 }
 </style>

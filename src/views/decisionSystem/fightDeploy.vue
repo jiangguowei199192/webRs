@@ -126,6 +126,8 @@
 <script>
 import { jsPlumb } from 'jsplumb'
 import drawNode from './components/drawNode'
+import { EventBus } from '@/utils/eventBus.js'
+// import $ from 'jquery'
 
 export default {
   name: 'fightDeploy',
@@ -142,7 +144,10 @@ export default {
 
       editNum: null,
       jsPlumb: null,
+      activeType: true,
+      // 节点id
       index: 1,
+      // 节点info
       data: {
         nodeList: [],
         newTemplate: '1'
@@ -254,6 +259,20 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+
+    document.onclick = function (event) {
+      var e = event || window.event
+      var ele = e.srcElement || e.target
+      while (ele) {
+        if (ele.class === 'drawNode') {
+          return
+        }
+        ele = ele.parentNode
+      }
+      this.activeType = false
+      EventBus.$emit('type', this.activeType)
+      // console.log("点击区域以外: " + this.activeType);
+    }
   },
 
   beforeDestroy () {
@@ -284,14 +303,12 @@ export default {
     // 拖拽
     drag (item) {
       this.currentItem = item
-      console.log(this.currentItem)
+      // console.log(this.currentItem)
     },
 
     // 拖放
     drop (event) {
       // console.log(event);
-      // var eles = this.$refs.drawContent.children;
-      // console.log(eles);
       const index = this.index++
       const temp = {
         label: this.currentItem.area,
@@ -299,9 +316,6 @@ export default {
         top: event.offsetY - 105 / 2 + 'px',
         id: 'node' + index
       }
-      // localStorage.setItem('ev-top', JSON.stringify(temp.top))
-      // localStorage.setItem('ev-left', JSON.stringify(temp.left))
-      // localStorage.setItem('ev-id', JSON.stringify(temp.id))
 
       this.addNode(temp)
       // this.editNode(temp.id)
@@ -313,9 +327,8 @@ export default {
       this.data.nodeList.push(temp)
       this.$nextTick(() => {
         this.jsPlumb.draggable(temp.id, {
-          containment: 'parent'
+          containment: ''
         })
-        // this.jsPlumb.setContainer("drawContent");
       })
     },
 
@@ -353,6 +366,7 @@ export default {
       }
     },
 
+    // 动态设置有效操作区高度
     setWorkAreaHeight () {
       const h = document.documentElement.clientHeight
       if (h < this.minHeight) this.fullHeight = this.minHeight
@@ -361,6 +375,7 @@ export default {
       // console.log(this.workHeight);
     },
 
+    // select选择框动态设置title
     visibleChange (value) {
       setTimeout(() => {
         const tagTextList = document
@@ -373,6 +388,7 @@ export default {
       }, 100)
     },
 
+    // 返回Plan页
     backToPlan () {
       this.$router.back(-1)
     },
