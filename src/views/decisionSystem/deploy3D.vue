@@ -78,10 +78,10 @@
         <div class="close" @click.stop="editPopover = false" />
       </el-popover>
       <div v-show="showViewDetail" class="detail">
-        <span>经度: {{viewDetail.lon}}</span>
-        <span>纬度: {{viewDetail.lat}}</span>
-        <span>视高: {{viewDetail.alt}}</span>
-        <span>方向角: {{viewDetail.head}}°</span>
+        <span>经度: {{viewDetail.x}}</span>
+        <span>纬度: {{viewDetail.y}}</span>
+        <span>视高: {{viewDetail.z}}</span>
+        <span>方向角: {{viewDetail.heading}}°</span>
         <span>俯仰角: {{viewDetail.pitch}}°</span>
       </div>
       <div class="list webFsScroll">
@@ -254,6 +254,8 @@ export default {
   // 所有cesium和mars3d对象 都不要绑定到data
   data () {
     return {
+      homeView: '',
+      cameraViews: ['', '', '', ''], // 编辑模式下的视角
       imgDialogVisible: false,
       isRotate: false, // 是否自动旋转
       num: 1, // 编号
@@ -355,11 +357,17 @@ export default {
     },
 
     editIndex (val) {
-      if (val !== 0 && val !== 1) {
-        this.editPopover = false
-      }
       this.modelIndex = 1000
       this.fliterModel(val)
+      if (this.cameraViews[val] !== '') {
+        this.showViewDetail = true
+        this.copyData(this.cameraViews[val], this.viewDetail)
+        this.viewer.mars.centerAt(this.viewDetail)
+      } else {
+        this.returnHome()
+        this.showViewDetail = false
+        for (var i in this.viewDetail) this.viewDetail[i] = ''
+      }
     },
 
     showEditBox (val) {
@@ -399,7 +407,8 @@ export default {
 
           })
       }
-
+      var changeView = false
+      var viewIndex = 0
       switch (val) {
         case 0:
           this.fliterModel(5)
@@ -414,15 +423,24 @@ export default {
         case 2:
         case 3:
           this.fliterModel(val - 1)
+          changeView = true
+          viewIndex = val - 1
           break
         case 5:
           this.fliterModel(3)
+          changeView = true
+          viewIndex = 3
           break
         case 7:
           this.fliterModel(this.editIndex)
           break
         default:
           break
+      }
+
+      if (changeView) {
+        if (this.cameraViews[viewIndex] !== '') this.viewer.mars.centerAt(this.viewDetail)
+        else this.returnHome()
       }
     }
   },
@@ -1778,6 +1796,9 @@ export default {
       setTimeout(() => {
         me.ZoomIn(true)
       }, 500)
+      setTimeout(() => {
+        me.homeView = me.getCameraView()
+      }, 1000)
     },
 
     /**
@@ -1794,7 +1815,7 @@ export default {
      *  相机视角回到home点
      */
     returnHome () {
-      this.layerModel.centerAt()
+      this.viewer.mars.centerAt(this.homeView)
     },
 
     /**
@@ -2044,16 +2065,21 @@ export default {
     },
 
     /**
+     *  获取当前视角
+     */
+    getCameraView () {
+      const view = mars3d.point.getCameraView(this.viewer, true)
+      return view
+    },
+
+    /**
      *  设置视角
      */
     setCameraView () {
       this.showViewDetail = true
-      const view = mars3d.point.getCameraView(this.viewer, true)
-      this.viewDetail.lat = view.x
-      this.viewDetail.lon = view.y
-      this.viewDetail.alt = view.z
-      this.viewDetail.head = view.heading
-      this.viewDetail.pitch = view.pitch
+      this.viewDetail = this.getCameraView()
+      const v = JSON.parse(JSON.stringify(this.viewDetail))
+      this.cameraViews[this.editIndex] = v
     },
 
     /**
