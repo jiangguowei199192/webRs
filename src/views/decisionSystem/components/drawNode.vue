@@ -1,24 +1,4 @@
 <template>
-  <!-- <div style="position: absolute" id="container"> -->
-  <!-- 初始状态 -->
-  <!-- <div
-      v-show="editType == 0"
-      class="node-item"
-      ref="node"
-      :style="drawNodeContainer_one"
-      @mouseenter="showDelete"
-      @mouseleave="hideDelete"
-      @mouseup="changeNodeSite"
-      @click.stop="editNode"
-      @dblclick.stop="addWrap"
-    >
-      <span id="node-span">{{ node.label }}</span>
-      <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
-        <i class="el-icon-circle-close"></i>
-      </div>
-    </div> -->
-  <!-- 编辑状态 -->
-  <!-- <div v-show="editType == 1"> -->
   <vdr
     :active="controlled.isActive"
     :w="controlled.width"
@@ -41,7 +21,7 @@
       ref="node"
       style="width: 100%; height: 100%"
       :style="
-        this.editType == 1 ? 'drawNodeContainer_two' : 'drawNodeContainer_one'
+        this.editType == 0 ? 'drawNodeContainer_one' : 'drawNodeContainer_two'
       "
       @mouseenter="showDelete"
       @mouseleave="hideDelete"
@@ -57,8 +37,6 @@
       </div>
     </div>
   </vdr>
-  <!-- </div> -->
-  <!-- </div> -->
 </template>
 
 <script>
@@ -117,17 +95,16 @@ export default {
   },
 
   created () {
+    // 节点位置信息初始化
     const { width, height, left, top, rotate } = this.controlled
     this.posData.width = width
     this.posData.height = height
     this.posData.left = left
     this.posData.top = top
     this.posData.rotate = rotate
-
     // console.log(this.posData);
-  },
 
-  mounted () {
+    // 节点激活状态
     const _this = this
     EventBus.$on('type', (data) => {
       // console.log(data)
@@ -173,7 +150,6 @@ export default {
     editNode () {
       this.editType = 1
       this.$emit('edit-node', [this.node.id, this.editType, this.$refs.node])
-      // console.log("单击节点", this.$refs.node);
     },
 
     // 双击节点
@@ -248,11 +224,5 @@ export default {
 .node-rotate {
   top: 0;
   left: 0;
-}
-/deep/.vdr_display {
-  visibility: visible !important;
-}
-/deep/.vdr_hide {
-  visibility: hidden !important;
 }
 </style>

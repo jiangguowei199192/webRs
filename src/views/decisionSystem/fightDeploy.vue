@@ -127,7 +127,6 @@
 import { jsPlumb } from 'jsplumb'
 import drawNode from './components/drawNode'
 import { EventBus } from '@/utils/eventBus.js'
-// import $ from 'jquery'
 
 export default {
   name: 'fightDeploy',
@@ -141,9 +140,8 @@ export default {
       minHeight: 750,
       fullHeight: 0,
       workHeight: 0,
-
-      editNum: null,
       jsPlumb: null,
+      // 节点激活状态
       activeType: true,
       // 节点id
       index: 1,
@@ -255,11 +253,13 @@ export default {
   },
 
   mounted () {
+    // 节点初始化
     this.jsPlumb = jsPlumb.getInstance()
     this.$nextTick(() => {
       this.init()
     })
 
+    // 点击节点以外区域
     document.onclick = function (event) {
       var e = event || window.event
       var ele = e.srcElement || e.target
@@ -297,7 +297,6 @@ export default {
           containment: 'parent'
         })
       }
-      this.jsPlumb.setContainer('drawContent')
     },
 
     // 拖拽
@@ -325,11 +324,11 @@ export default {
     addNode (temp) {
       // console.log('添加节点', temp)
       this.data.nodeList.push(temp)
-      this.$nextTick(() => {
-        this.jsPlumb.draggable(temp.id, {
-          containment: ''
-        })
-      })
+      // this.$nextTick(() => {
+      //   this.jsPlumb.draggable(temp.id, {
+      //     containment: 'parent'
+      //   })
+      // })
     },
 
     // 单击节点
