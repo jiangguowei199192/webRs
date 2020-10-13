@@ -79,7 +79,7 @@ export default {
       isActive: 1, // 默认激活视频侦查系统
       systems: [
         {
-          content: '可视化调度'
+          content: '指挥决策'
         },
         {
           content: '视频侦查'
@@ -92,7 +92,7 @@ export default {
         },
 
         {
-          content: '预警历史'
+          content: '战评系统'
         },
         {
           content: '数字化装备'
