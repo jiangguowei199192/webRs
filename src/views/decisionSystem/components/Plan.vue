@@ -73,7 +73,7 @@
           </template>
           <div class="itemContainer2">
             <img
-              src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
+              src="../../../assets/images/plan/3d.png"
               style="width: 100%; height: 200px"
               @click="goto3d"
             />

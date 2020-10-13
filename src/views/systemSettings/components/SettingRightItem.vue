@@ -276,10 +276,11 @@ export default {
     // 上传头像-保存
     async submitUpload () {
       const formData = new FormData()
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       formData.append('id', this.userDetail.id)
       formData.append('file', this.imageFile)
       if (this.imageUrl) {
-        this.$axios.post(loginApi.updateHeadImg, formData).then((res) => {
+        this.$axios.post(loginApi.updateHeadImg, formData, config).then((res) => {
           // console.log(res)
           if (res.data.code === 0) {
             this.showUploadIcon = false

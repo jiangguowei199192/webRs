@@ -240,6 +240,8 @@
 
 <script>
 import { gltfEdit } from '@/utils/gltfEdit.js'
+import { api } from '@/api/3d.js'
+import globalApi from '@/utils/globalApi'
 import EXIF from 'exif-js'
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
@@ -496,6 +498,8 @@ export default {
      *  图片选择完毕
      */
     picFileChange (e) {
+      const f = e.target.files[0]
+      this.$refs.picFile.value = null
       if (this.infoBox.isVr && e.target.files.length > 0) {
         // VR图像长宽比需要2:1
         const f = e.target.files[0]
@@ -509,6 +513,18 @@ export default {
           }
 
           if (!valid) me.$notify.warning({ title: '警告', message: '无效图片,全景图长宽比需要是2:1' })
+        })
+      } else {
+        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+        const formData = new FormData()
+        formData.append('file', f)
+        this.$axios.post(api.uploadModelPic, formData, config).then((res) => {
+          if (res.data.code === 0) {
+            me.infoBox.infoImg = globalApi.headImg + res.data.data.picPath
+            me.curEntity.attribute.infoImg = me.infoBox.infoImg
+          }
+        }).catch(err => {
+          console.log('uploadModelPic Err : ' + err)
         })
       }
 
@@ -1098,7 +1114,7 @@ export default {
           break
         case 7:
           item = {
-            name: '重点单位',
+            name: '重点区域',
             type: 'model-p',
             // 标签上的图片
             img: require('../../assets/images/3d/build.png'),
@@ -1133,8 +1149,8 @@ export default {
       }
 
       // infobox上的图片
-      // item.infoImg = ''
-      item.infoImg = 'http://120.24.12.64:80/fmsUploads/panoramic/pano_1591671612143/index.html'
+      item.infoImg = ''
+      // item.infoImg = 'http://120.24.12.64:80/fmsUploads/panoramic/pano_1591671612143/index.html'
       item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true

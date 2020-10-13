@@ -113,6 +113,7 @@
 import UploadImage from './components/PlanSettingUploadImage.vue'
 import UploadImageMore from './components/PlanSettingUploadImageMore.vue'
 import { settingApi } from '@/api/setting'
+import { api } from '@/api/3d.js'
 import { Notification } from 'element-ui'
 
 export default {
@@ -232,10 +233,11 @@ export default {
     },
     // 建筑平面图-上传图片
     async buildingPlanDoUploadImage (imageFile, item) {
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('picName', item.name)
       formData.append('file', imageFile)
-      this.$axios.post(settingApi.jzpmtPicUpload, formData).then((res) => {
+      this.$axios.post(settingApi.jzpmtPicUpload, formData, config).then((res) => {
         if (res.data.code === 0) {
           var receive = res.data.data
           item.path = receive.picPath
@@ -252,10 +254,11 @@ export default {
 
     // 基本情况说明-上传图片
     async basicSituationDoUploadImage (imageFile, item) {
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('picTypeCode', item.id)
       formData.append('file', imageFile)
-      this.$axios.post(settingApi.baseInfoPicUpload, formData).then((res) => {
+      this.$axios.post(settingApi.baseInfoPicUpload, formData, config).then((res) => {
         if (res.data.code === 0) {
           var receive = res.data.data
           item.path = receive.picPath
@@ -267,6 +270,22 @@ export default {
           type: 'warning',
           duration: 5 * 1000
         })
+      })
+    },
+
+    // 新增三维预案
+    addPlan3D (id) {
+      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+      var data = {
+        enterpriseId: id,
+        modelPath: '/cloud-video/prePlanFor3D/3dtiles/guobo/Production_1.json'
+      }
+      this.$axios.post(api.add3dPlan, data, config).then((res) => {
+        if (res.data.code === 0) {
+
+        }
+      }).catch(err => {
+        console.log('add3dPlan Err : ' + err)
       })
     },
 
@@ -349,6 +368,7 @@ export default {
               duration: 5 * 1000
             })
             this.$router.push({ path: '/decisionSystem' })
+            this.addPlan3D(res.data.data.id)
           }
         })
     },
