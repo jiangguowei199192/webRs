@@ -102,10 +102,7 @@ export default {
         }
       ],
       curActive: 1, // 激活实时视频还是回放视频 1实时 2回放
-      realtimeInfoTopicArray: [], // 需要监听的飞机实时信息主题
-      isChecked: false,
-      aboutImgSrc: require('../assets/images/about/about.png'),
-      aboutImgCkSrc: require('../assets/images/about/about-ck.png')
+      realtimeInfoTopicArray: [] // 需要监听的飞机实时信息主题
     }
   },
   created () {
