@@ -25,16 +25,11 @@
             <div class="header">AR实景地图指挥</div>
           </template>
           <div class="footer" @dblclick.stop="stopEvent">
-            <a
-              @mouseenter="showActive(1)"
-              @mouseleave="showActive(0)"
-              title="AR"
-              @click="showAR=!showAR"
-            >
+            <a @mouseenter="showActive(1)" @mouseleave="showActive(0)" title="AR" @click="changeAR">
               <img :src="arPic" alt title="AR" />
               <img v-show="active === 1" class="hide_tab" :src="arSelectedPic" />
             </a>
-            <a
+            <!-- <a
               @mouseenter="showActive(2)"
               @mouseleave="showActive(0)"
               @click="showCurindex=1"
@@ -42,7 +37,7 @@
             >
               <img :src="alarmPic" alt />
               <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
-            </a>
+            </a>-->
             <a
               @mouseenter="showActive(3)"
               @mouseleave="showActive(0)"
@@ -79,7 +74,7 @@
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
               </a>
-              <a @mouseenter="showActive(6)" @mouseleave="showActive(0)" title="搜索">
+              <!-- <a @mouseenter="showActive(6)" @mouseleave="showActive(0)" title="搜索">
                 <img :src="searchPic" alt />
                 <img v-show="active === 6" class="hide_tab" :src="searchSelectedPic" />
               </a>
@@ -91,7 +86,7 @@
               >
                 <img :src="settingPic" title="设置" alt />
                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
-              </a>
+              </a>-->
             </template>
           </div>
           <!-- 实时警情弹框 -->
@@ -118,7 +113,7 @@
           <!-- 标签弹框 -->
           <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showCurindex==4">
             <div>
-              <img src="../../../assets/images/AR/high.png" alt />
+              <img src="../../../assets/images/AR/high2.png" alt />
               <p>高点监控</p>
             </div>
             <div>
@@ -126,7 +121,7 @@
               <p>建筑大厦</p>
             </div>
             <div>
-              <img src="../../../assets/images/AR/river.png" alt />
+              <img src="../../../assets/images/AR/river2.png" alt />
               <p>河流</p>
             </div>
             <img src="../../../assets/images/AR/X.png" alt @click="showCurindex=1000" />
@@ -274,7 +269,25 @@
           v-for="(item,index) in videoInfo.positionList"
           :key="index"
           :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:playerHeight)+'px',width:item.width/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',height:item.height/720*(videoInfo.isShowOperate?1080:playerHeight)+'px'}"
+          :class="{ship:item.label==1}"
         ></span>
+      </div>
+      <!-- 显示AR标签 -->
+      <div
+        class="fullScreenAr"
+        v-show="showAR&&videoInfo.arPositionList&&videoInfo.arPositionList.length>0"
+      >
+        <div
+          v-for="(item,index) in videoInfo.arPositionList"
+          :class="{high:item.label==0,build:item.label==1,river:item.label==2}"
+          :key="index"
+          :style="{
+          left:item.label=='0'?((Number(item.left)+Number(item.width/2))/1280*1920-51.5)+'px':(Number(item.left)+Number(item.width/2))/1280*1920+'px',
+         top:item.label==0?((item.top/720)*1080-102)+'px':((item.top/720)*1080-58)+'px'}"
+        >
+          <div>{{item.labelName}}</div>
+          <!-- Number(item.left)+Number(item.width/2))/720)*1080-25+'px' -->
+        </div>
       </div>
       <!-- 新版云台操作 -->
       <div
@@ -312,33 +325,24 @@
         </div>
         <div class="bottom stretchIMG"></div>
         <div class="menu stretchIMG">
-          <div class="itemBtn"
-              :class="{detectBtn:!bDetectStatus,detectBtnActive:bDetectStatus}"
-              @click.stop="switchDetectStatus"
+          <div
+            class="itemBtn"
+            :class="{detectBtn:!bDetectStatus,detectBtnActive:bDetectStatus}"
+            @click.stop="switchDetectStatus"
           ></div>
-          <div class="itemBtn puzzleBtn"
-              @click.stop="switchPuzzlingStatus"
-          >
+          <div class="itemBtn puzzleBtn" @click.stop="switchPuzzlingStatus">
             <div class="scanningStyle" v-show="bPuzzlingStatus"></div>
           </div>
-          <div class="itemBtn"
-              :class="{pointBtn:!bSetPointStatus,pointBtnActive:bSetPointStatus}"
-              @click.stop="switchSetPointStatus"
+          <div
+            class="itemBtn"
+            :class="{pointBtn:!bSetPointStatus,pointBtnActive:bSetPointStatus}"
+            @click.stop="switchSetPointStatus"
           ></div>
-          <div class="itemBtn"
-              :class="{routeBtn:!bShowRouteStatus,routeBtnActive:bShowRouteStatus}"
-              @click.stop="switchShowRouteStatus"
+          <div
+            class="itemBtn"
+            :class="{routeBtn:!bShowRouteStatus,routeBtnActive:bShowRouteStatus}"
+            @click.stop="switchShowRouteStatus"
           ></div>
-        </div>
-        <div class="realInfo leftInfo" v-show="di_height !== ''">
-          <span class="leftMargin">高度:</span><span>{{di_height}}m</span>
-          <span class="leftMargin">H.S:</span><span>{{di_hSpeed}}m/s</span>
-          <span class="leftMargin">V.S:</span><span>{{di_vSpeed}}m/s</span>
-        </div>
-        <div class="realInfo rightInfo" v-show="di_battery !== ''">
-          <span>电量:</span><span class="rightMargin">{{di_battery}}%</span>
-          <span>经度:</span><span class="rightMargin">{{di_longitude}}</span>
-          <span>纬度:</span><span class="rightMargin">{{di_latitude}}</span>
         </div>
         <div class="mapOuterBox" :class="{mapOuterBoxFullScreen:bIsFullscreenMap}">
           <div class="mapArea" :class="{mapAreaFullScreen:bIsFullscreenMap}">
@@ -456,9 +460,20 @@ import { debounce, throttle } from '../../../utils/public.js'
 import globalApi from '../../../utils/globalApi'
 import { api } from '@/api/videoSystem/realVideo'
 import { timeFormat } from '@/utils/date'
+import MqttService from '@/utils/mqttService'
 export default {
   data () {
     return {
+      arPositionList: [
+        {
+          top: '144.67',
+          left: '834.67',
+          width: '66.67',
+          label: '0',
+          labelName: '标签名称',
+          height: '79.33'
+        }
+      ],
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       showCutImg: false, // 是否显示抓拍的图片 默认不显示
       cutImgUrl: '', // 显示抓取的图片
@@ -571,15 +586,15 @@ export default {
       },
       tageTypeArray: [
         {
-          id: '01',
+          id: '0',
           name: '高点监控'
         },
         {
-          id: '02',
+          id: '1',
           name: '建筑大厦'
         },
         {
-          id: '03',
+          id: '2',
           name: '河流'
         }
       ],
@@ -651,6 +666,37 @@ export default {
     },
     deviceCode (val) {
       this.setDroneDevCode(val)
+    },
+    'videoInfo.isShowOperate' (nv, ov) {
+      if (nv) {
+        if (this.videoInfo.deviceTypeCode === 'GDJK') {
+          // 开启人员识别
+          new MqttService().client.send(
+            'video/start/algorithm',
+            JSON.stringify({
+              deviceCode: this.videoInfo.deviceCode,
+              channelId: this.videoInfo.streamType,
+              streamUrl: this.videoInfo.streamUrl,
+              isOpen: 1
+            })
+          )
+          console.log('开启人员识别')
+        }
+      } else {
+        if (this.videoInfo.deviceTypeCode === 'GDJK') {
+          // 关闭人员识别
+          new MqttService().client.send(
+            'video/stop/algorithm',
+            JSON.stringify({
+              deviceCode: this.videoInfo.deviceCode,
+              channelId: this.videoInfo.streamType,
+              streamUrl: this.videoInfo.streamUrl,
+              isOpen: 0
+            })
+          )
+          console.log('关闭人员识别')
+        }
+      }
     }
   },
 
@@ -677,6 +723,33 @@ export default {
     // 鼠标悬停显示的图片
     showActive (index) {
       this.active = index
+    },
+    // 显示与隐藏AR
+    changeAR () {
+      this.showAR = !this.showAR
+      if (this.showAR) {
+        // 开启AR
+        new MqttService().client.send(
+          'video/start/arAlgorithm',
+          JSON.stringify({
+            deviceCode: this.videoInfo.deviceCode,
+            channelId: this.videoInfo.streamType,
+            streamUrl: this.videoInfo.streamUrl,
+            isOpen: 1
+          })
+        )
+      } else {
+        // 关闭AR
+        new MqttService().client.send(
+          'video/stop/arAlgorithm',
+          JSON.stringify({
+            deviceCode: this.videoInfo.deviceCode,
+            channelId: this.videoInfo.streamType,
+            streamUrl: this.videoInfo.streamUrl,
+            isOpen: 0
+          })
+        )
+      }
     },
     // 点击抓取，显示抓拍图片
     showImg: throttle(function () {
@@ -801,21 +874,23 @@ export default {
     },
     // 删除当前图片
     deleteCurPic (item) {
-      this.$axios.get(api.deleteSnapList, { params: { id: item.id } }).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          this.showNotification = true
-          this.infoObj.isWarning = false
-          this.infoObj.isError = false
-          this.infoObj.isSuccess = true
-          this.infoObj.title = '成功'
-          this.infoObj.msg = '删除成功'
-          setTimeout(() => {
-            this.showNotification = false
-          }, 3000)
-          this.pageInfo.currentPage = 1
-          this.getSnapList()
-        }
-      })
+      this.$axios
+        .get(api.deleteSnapList, { params: { id: item.id } })
+        .then(res => {
+          if (res && res.data && res.data.code === 0) {
+            this.showNotification = true
+            this.infoObj.isWarning = false
+            this.infoObj.isError = false
+            this.infoObj.isSuccess = true
+            this.infoObj.title = '成功'
+            this.infoObj.msg = '删除成功'
+            setTimeout(() => {
+              this.showNotification = false
+            }, 3000)
+            this.pageInfo.currentPage = 1
+            this.getSnapList()
+          }
+        })
     },
     setPlayerSizeListener () {
       var me = this
@@ -830,19 +905,40 @@ export default {
         } else {
           me.bIsFullScreenVideo = false
           me.$refs.gduMap.closeAllPopover()
-          me.showAR && (me.showAR = false)
+
           // 都不显示
           me.showCurindex = 1000
           me.clearRemark()
           me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
           me.resetForm('ruleForm')
+          // 关闭AR
+          if (me.showAR) {
+            new MqttService().client.send(
+              'video/stop/arAlgorithm',
+              JSON.stringify({
+                deviceCode: me.videoInfo.deviceCode,
+                channelId: me.videoInfo.streamType,
+                streamUrl: me.videoInfo.streamUrl,
+                isOpen: 0
+              })
+            )
+            console.log('关闭AR')
+          }
+          me.showAR && (me.showAR = false)
         }
       })
     },
     // 获取位置信息
     getPosition (curPosition) {
       if (curPosition.width > 0) {
-        this.curPositionObj = JSON.parse(JSON.stringify(curPosition))
+        const curArea = JSON.parse(JSON.stringify(curPosition))
+        this.curPositionObj = {
+          x: Math.round((curArea.x / 1920) * 1280 * 100) / 100,
+          y: Math.round((curArea.y / 1080) * 720 * 100) / 100,
+          width: Math.round((curArea.width / 1920) * 1280 * 100) / 100,
+          height: Math.round((curArea.height / 1080) * 720 * 100) / 100
+        }
+        console.log(this.curPositionObj)
         this.showMarkForm = true
       }
     },
@@ -880,15 +976,41 @@ export default {
           // 成功之后调用该方法获取坐标信息
           // this.$refs.drawArea.customQuery(this.ruleForm)
           // 标签名称和标签类型校验成功之后 调接口  获取数据  无需手动创建dom结构
-          this.showNotification = true
-          this.infoObj.isSuccess = true
-          this.infoObj.isError = false
-          this.infoObj.msg = 'SDFSDFSDF'
-          setTimeout(() => {
-            this.showNotification = false
-          }, 3000)
+          // this.showNotification = true
+          // this.infoObj.isSuccess = true
+          // this.infoObj.isError = false
+          // this.infoObj.msg = 'SDFSDFSDF'
+          // setTimeout(() => {
+          //   this.showNotification = false
+          // }, 3000)
 
-          this.createTag(this.ruleForm, this.curPositionObj)
+          // this.createTag(this.ruleForm, this.curPositionObj)
+          new MqttService().client.send(
+            'video/add/arAlgorithm',
+            JSON.stringify({
+              deviceCode: this.videoInfo.deviceCode,
+              channelId: this.videoInfo.streamType,
+              streamUrl: this.videoInfo.streamUrl,
+              label: this.ruleForm.tagType,
+              labelName: this.ruleForm.tagName,
+              x: this.curPositionObj.x,
+              y: this.curPositionObj.y,
+              width: this.curPositionObj.width,
+              height: this.curPositionObj.height,
+              isOpen: 1
+            })
+          )
+          console.log({
+            deviceCode: this.videoInfo.deviceCode,
+            channelId: this.videoInfo.streamType,
+            streamUrl: this.videoInfo.streamUrl,
+            label: this.ruleForm.tagType,
+            labelName: this.ruleForm.tagName,
+            x: this.curPositionObj.x,
+            y: this.curPositionObj.y,
+            width: this.curPositionObj.width,
+            height: this.curPositionObj.height
+          })
           this.resetForm('ruleForm')
         } else {
           console.log('error submit!!')
@@ -1411,6 +1533,7 @@ export default {
       }
       div.footer {
         position: absolute;
+        z-index: 20;
         left: 0;
         bottom: 0;
         width: 1920px;
@@ -1528,6 +1651,7 @@ export default {
       }
       .picStorage {
         position: absolute;
+        z-index: 20;
         top: 94px;
         left: 50%;
         transform: translateX(-50%);
@@ -1756,17 +1880,54 @@ export default {
       font-weight: bold;
       color: rgba(255, 255, 255, 1);
       margin-left: 8px;
+      text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
     }
   }
   .fullScreenFace {
     span {
       position: absolute;
-      // background: url(../../../assets/images/person.png) no-repeat;
-      border: 2px solid green;
+      z-index: 10;
+      // background: url(../../../assets/images/person.png) no-repeat center center;
+      // background-size:100% 100%;
+      border: 2px solid #00ff00;
+      background: rgba(0, 255, 0, 0.3);
+    }
+    span.ship {
+      border: 2px solid #00e4ff;
+      background: rgba(0, 228, 255, 0.3);
+    }
+  }
+  .fullScreenAr {
+    > div {
+      position: absolute;
+      box-sizing: border-box;
+      height: 103px;
+      width: 102px;
+      div {
+        font-size: 12px;
+        text-align: center;
+        line-height: 44px;
+      }
+    }
+    > div.river,
+    div.build {
+      width: 145px;
+      height: 59px;
+      padding-left: 48px;
+    }
+    div.river {
+      background: url(../../../assets/images/AR/river.png) no-repeat;
+    }
+    div.build {
+      background: url(../../../assets/images/AR/build.png) no-repeat;
+    }
+    div.high {
+      background: url(../../../assets/images/AR/high.png) no-repeat;
     }
   }
   .fullScreenOperate {
     position: absolute;
+    z-index: 20;
     right: 30px;
     top: 50%;
     transform: translateY(-50%);
@@ -2050,12 +2211,13 @@ export default {
         background-image: url("../../../assets/images/drone/puzzle-active.png");
       }
       .scanningStyle {
-        background: url("../../../assets/images/drone/scanning.png") center center no-repeat;
+        background: url("../../../assets/images/drone/scanning.png") center
+          center no-repeat;
         width: 40px;
-        height:40px;
-        animation: scanning 4s steps(32) infinite
+        height: 40px;
+        animation: scanning 4s steps(32) infinite;
       }
-      @keyframes scanning{
+      @keyframes scanning {
         0% {
           transform: rotateX(0deg);
           background-position: 0px -10px;
@@ -2069,7 +2231,7 @@ export default {
           background-position: 0px -10px;
         }
         100% {
-        transform: rotateX(180deg);
+          transform: rotateX(180deg);
           background-position: 0px 40px;
         }
       }
@@ -2085,29 +2247,6 @@ export default {
       .routeBtnActive {
         background-image: url("../../../assets/images/drone/route-active.png");
       }
-    }
-    .realInfo {
-      position: absolute;
-      z-index: 3;
-      bottom: 5px;
-      height: 24px;
-      line-height: 24px;
-      color: #FFFFFF;
-      font-size: 14px;
-      .leftMargin {
-        margin-left: 35px;
-        margin-right: 3px;
-      }
-      .rightMargin {
-        margin-left: 3px;
-        margin-right: 35px;
-      }
-    }
-    .leftInfo {
-      right: 68.75%;
-    }
-    .rightInfo {
-      left: 68.75%;
     }
     .mapOuterBox,
     .smallVideoStyle {
@@ -2167,6 +2306,7 @@ export default {
   }
   .fullScreenMark {
     position: absolute;
+    z-index: 20;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -2208,6 +2348,7 @@ export default {
   }
   div.operate {
     position: absolute;
+    z-index: 20;
     right: 90px;
     bottom: 85px;
     cursor: text;
