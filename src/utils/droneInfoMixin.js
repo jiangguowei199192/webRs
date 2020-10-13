@@ -221,7 +221,9 @@ const droneInfoMixin = {
     },
     // 设置是否可以选定目标点
     switchSetPointStatus () {
-      this.bSetPointStatus = !this.bSetPointStatus
+      if (this.changeVideoAndMap) {
+        this.changeVideoAndMap()
+      }
     },
     // 设置是否显示无人机飞行轨迹
     switchShowRouteStatus () {
