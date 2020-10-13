@@ -33,6 +33,7 @@ export default {
       endX = e.pageX
       endY = e.pageY
       isdown = 1
+      this.$emit('canvasStart')
       console.log(startX + ',,,,' + startY)
       console.log('endX', endX)
     },

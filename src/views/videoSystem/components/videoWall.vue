@@ -20,7 +20,7 @@
           :class="{bg:showAR}"
         >
           <!-- canvas绘图 -->
-          <canvas-area :showAR="showAR" @canvasEnd="getPosition" :showMarkForm="showMarkForm"></canvas-area>
+          <canvas-area :showAR="showAR" @canvasEnd="getPosition" @canvasStart="showCurindex=1000" :showMarkForm="showMarkForm"></canvas-area>
           <template v-if="showAR">
             <div class="header">AR实景地图指挥</div>
           </template>
