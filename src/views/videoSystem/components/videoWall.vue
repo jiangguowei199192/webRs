@@ -29,7 +29,7 @@
               <img :src="arPic" alt title="AR" />
               <img v-show="active === 1" class="hide_tab" :src="arSelectedPic" />
             </a>
-            <!-- <a
+            <a
               @mouseenter="showActive(2)"
               @mouseleave="showActive(0)"
               @click="showCurindex=1"
@@ -37,7 +37,7 @@
             >
               <img :src="alarmPic" alt />
               <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
-            </a>-->
+            </a>
             <a
               @mouseenter="showActive(3)"
               @mouseleave="showActive(0)"
@@ -763,6 +763,8 @@ export default {
     },
     // 点击抓取，显示抓拍图片
     showImg: throttle(function () {
+      // 防止抓拍时，有显示其它弹框
+      this.showCurindex = 1000
       // 显示抓取的图片
       const params = {
         deviceCode: this.videoInfo.deviceCode,
