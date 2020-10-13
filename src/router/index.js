@@ -9,7 +9,7 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
   return originalPush.call(this, location).catch(err => err)
 }
-document.title = globalApi.projectTitle
+document.title = globalApi.configJson.projectTitle || globalApi.projectTitle
 const routes = [
   // 登录
   {
