@@ -118,6 +118,11 @@ const routes = [
             path: '/systemSettings/firePolice',
             name: 'firePolice',
             component: () => import('../views/systemSettings/firePolice')
+          },
+          {
+            path: '/systemSettings/videoAccessManagement',
+            name: 'videoAccessManagement',
+            component: () => import('../views/systemSettings/videoAccessManagement')
           }
         ]
       }
