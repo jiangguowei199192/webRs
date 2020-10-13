@@ -181,7 +181,16 @@ export default {
   methods: {
     // 点击行
     clicked () {
-      if (this.data.id === 10) {
+      if (this.data.id === 0) {
+        // 我的信息
+        this.showMyInfo = true
+      } else if (this.data.id === 1) {
+        // 上传头像
+        this.showUploadIcon = true
+      } else if (this.data.id === 2) {
+        // 补充信息
+        this.showExtraInfo = true
+      } else if (this.data.id === 10) {
         // 用户管理
         this.$router.push({ path: '/systemSettings/userManagement' })
       } else if (this.data.id === 11) {
@@ -190,21 +199,15 @@ export default {
       } else if (this.data.id === 12) {
         // 组织管理
         this.$router.push({ path: '/systemSettings/organizationManagement' })
-      } else if (this.data.id === 2) {
-        // 补充信息
-        this.showExtraInfo = true
-      } else if (this.data.id === 1) {
-        // 上传头像
-        this.showUploadIcon = true
-      } else if (this.data.id === 0) {
-        // 我的信息
-        this.showMyInfo = true
-      } else if (this.data.id === 31) {
-        // 火情地图
-        this.$router.push({ path: '/systemSettings/fireMap' })
+      } else if (this.data.id === 20) {
+        // 视频接入
+        this.$router.push({ path: '/systemSettings/videoAccessManagement' })
       } else if (this.data.id === 30) {
         // 火情报警
         this.$router.push({ path: '/systemSettings/firePolice' })
+      } else if (this.data.id === 31) {
+        // 火情地图
+        this.$router.push({ path: '/systemSettings/fireMap' })
       }
     },
     // 补充信息-保存
