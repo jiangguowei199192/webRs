@@ -344,6 +344,16 @@
             @click.stop="switchShowRouteStatus"
           ></div>
         </div>
+        <div class="realInfo leftInfo" v-show="di_height !== ''">
+          <span class="leftMargin">高度:</span><span>{{di_height}}m</span>
+          <span class="leftMargin">H.S:</span><span>{{di_hSpeed}}m/s</span>
+          <span class="leftMargin">V.S:</span><span>{{di_vSpeed}}m/s</span>
+        </div>
+        <div class="realInfo rightInfo" v-show="di_battery !== ''">
+          <span>电量:</span><span class="rightMargin">{{di_battery}}%</span>
+          <span>经度:</span><span class="rightMargin">{{di_longitude}}</span>
+          <span>纬度:</span><span class="rightMargin">{{di_latitude}}</span>
+        </div>
         <div class="mapOuterBox" :class="{mapOuterBoxFullScreen:bIsFullscreenMap}">
           <div class="mapArea" :class="{mapAreaFullScreen:bIsFullscreenMap}">
             <gMap
@@ -2247,6 +2257,29 @@ export default {
       .routeBtnActive {
         background-image: url("../../../assets/images/drone/route-active.png");
       }
+    }
+    .realInfo {
+      position: absolute;
+      z-index: 3;
+      bottom: 5px;
+      height: 24px;
+      line-height: 24px;
+      color: #FFFFFF;
+      font-size: 14px;
+      .leftMargin {
+        margin-left: 35px;
+        margin-right: 3px;
+      }
+      .rightMargin {
+        margin-left: 3px;
+        margin-right: 35px;
+      }
+    }
+    .leftInfo {
+      right: 68.75%;
+    }
+    .rightInfo {
+      left: 68.75%;
     }
     .mapOuterBox,
     .smallVideoStyle {
