@@ -1297,7 +1297,11 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
-      this.activeFirstTree()
+      if (this.curVideosArray[0]) {
+        this.activeFirstTree()
+      } else {
+        this.curSelectedVideo = {}
+      }
       // this.addTitle()
     },
     // 动态渲染9个容器
