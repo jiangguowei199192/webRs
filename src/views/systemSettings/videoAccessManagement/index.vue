@@ -6,21 +6,180 @@
         视频接入管理
       </button>
       <div class="container1">
-        <div class="leftBox">
-          <!-- <div style="height: 598px; margin-left: 15px; margin-right: 15px;">
-            <el-tree
-              ref="roleTree"
-              :data="roleList"
-              :props="defaultProps"
-              node-key="roleCode"
-              :current-node-key="selectedRoleCode"
-              @node-click="roleTreeClick"
-              v-if="selectedRoleCode"
-            ></el-tree>
-          </div> -->
-        </div>
-
-        <div class="rightBox">
+        <div class="boxSty1">
+          <div class="boxSty2">
+            <el-select
+              v-model="deviceTypeSelected"
+              placeholder="设备类型"
+              clearable
+              class="selectSty1"
+            >
+              <el-option
+                v-for="(item, index) in deviceTypeList"
+                :key="index"
+                :label="item"
+                :value="index"
+              ></el-option>
+            </el-select>
+            <el-select
+              v-model="onlineStatusSelected"
+              placeholder="在线状态"
+              clearable
+              class="selectSty1"
+              style="margin-left: 77px"
+            >
+              <el-option
+                v-for="(item, index) in onlineStatusList"
+                :key="index"
+                :label="item"
+                :value="index"
+              ></el-option>
+            </el-select>
+            <el-select
+              v-model="useStatusSelected"
+              placeholder="启用状态"
+              clearable
+              class="selectSty1"
+              style="margin-left: 77px"
+            >
+              <el-option
+                v-for="(item, index) in useStatusList"
+                :key="index"
+                :label="item"
+                :value="index"
+              ></el-option>
+            </el-select>
+            <el-date-picker
+              v-model="qualityDateSelected"
+              type="date"
+              placeholder="质保日期"
+              class="selectSty1"
+              style="width: 190px; margin-left: 77px"
+            ></el-date-picker>
+          </div>
+          <div class="boxSty3">
+            <el-input
+              v-model="deviceNameInput"
+              placeholder="设备名称"
+              clearable
+              class="inputSty1"
+            ></el-input>
+            <el-input
+              v-model="deviceNoInput"
+              placeholder="设备编号"
+              clearable
+              class="inputSty1"
+              style="margin-left: 77px"
+            ></el-input>
+            <el-popover
+              placement="right"
+              width="150"
+              trigger="click"
+              popper-class="el-popover-more"
+            >
+              <div style="text-align: center">
+                <el-button class="popoverBtnSty" @click="addOrChangeInputDevice"
+                  >新增接入设备</el-button
+                >
+                <el-button class="popoverBtnSty" @click="addOrChangeInputDevice"
+                  >修改接入设备</el-button
+                >
+                <el-button class="popoverBtnSty" @click="deleteInputDevice"
+                  >删除接入设备</el-button
+                >
+              </div>
+              <div slot="reference" class="btnSty1 moreSty"></div>
+            </el-popover>
+            <div
+              @click="refreshClick"
+              class="btnSty1 refreshSty"
+              style="margin-right: 15px"
+            ></div>
+            <div
+              @click="searchClick"
+              class="btnSty1 searchSty"
+              style="margin-right: 15px"
+            ></div>
+          </div>
+          <div class="tableBox">
+            <el-table
+              @row-click="ClickTableRow"
+              :data="deviceList"
+              stripe
+              empty-text="暂无数据"
+              tooltip-effect="light"
+            >
+              <el-table-column
+                label
+                width="33"
+                align="center"
+                :resizable="false"
+              >
+                <template slot-scope="scope">
+                  <el-radio v-model="radio" :label="scope.$index">{{
+                    ""
+                  }}</el-radio>
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="设备类型"
+                prop="deviceType"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                label="设备名称"
+                prop="deviceName"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                label="设备编号"
+                prop="deivceNo"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                label="经度"
+                prop="lon"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                label="纬度"
+                prop="lat"
+              ></el-table-column>
+              <el-table-column align="center" label="启用">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="deviceList[scope.$index].useStatus"
+                    @change="activeChange(scope.$index, scope.row)"
+                  ></el-switch>
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="所属组织"
+                prop="deptName"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                label="在线状态"
+                prop="onlineStatus"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                label="离线时间"
+                prop="offlineTime"
+              ></el-table-column>
+            </el-table>
+            <el-pagination
+              class="tablePagination"
+              popper-class="pageSelect"
+              :total="pageTotal"
+              :page-size="currentPageSize"
+              :current-page.sync="currentPage"
+              layout="total, prev, pager, next, jumper"
+              @current-change="currentPageChange"
+            ></el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -32,16 +191,87 @@
 // import { Notification } from 'element-ui'
 
 export default {
-  created () {
-  },
+  created () {},
   data () {
     return {
-      backImg: require('../../../assets/images/Setting/setting-back.png')
+      backImg: require('../../../assets/images/Setting/setting-back.png'),
+
+      deviceTypeSelected: '', // 设备类型
+      deviceTypeList: ['设备类型1', '设备类型2'],
+      onlineStatusSelected: '', // 在线状态
+      onlineStatusList: ['全部', '在线', '离线'],
+      useStatusSelected: '', // 启用状态
+      useStatusList: ['全部', '未完善设备信息', '已完善设备信息'],
+      deviceNameInput: '', // 设备名称
+      deviceNoInput: '', // 设备编号
+      qualityDateSelected: '', // 质保日期
+
+      deviceList: [
+        {
+          deviceType: '无人机',
+          deviceName: '设备名称',
+          deivceNo: '0000000000',
+          lon: '000.00',
+          lat: '00.000',
+          useStatus: false,
+          deptName: '乌托邦',
+          onlineStatus: '离线',
+          offlineTime: '0000-00-00 00:00'
+        },
+        {
+          deviceType: '无人机',
+          deviceName: '设备名称',
+          deivceNo: '0000000000',
+          lon: '000.00',
+          lat: '00.000',
+          useStatus: false,
+          deptName: '乌托邦',
+          onlineStatus: '离线',
+          offlineTime: '0000-00-00 00:00'
+        }
+      ],
+      radio: '',
+
+      pageTotal: 0,
+      currentPage: 1,
+      currentPageSize: 10
     }
   },
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
+    },
+
+    refreshClick () {
+      console.log('refreshClick')
+    },
+
+    searchClick () {
+      console.log('searchClick')
+    },
+
+    addOrChangeInputDevice () {
+      console.log('deleteInputDevice')
+    },
+
+    deleteInputDevice () {
+      console.log('deleteInputDevice')
+    },
+
+    // 点击表格行
+    ClickTableRow (row) {
+      this.radio = this.deviceList.indexOf(row)
+    },
+
+    // 分页页数改变
+    currentPageChange () {
+
+    },
+
+    // 激活
+    async activeChange (index, row) {
+      console.log(index)
+      console.log(row.useStatus)
     }
   }
 }
@@ -56,7 +286,8 @@ export default {
   color: #ffffff;
   outline: none;
   display: block;
-  background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
+  background: url("../../../assets/images/plan/plan-back-background.png")
+    no-repeat;
   background-size: 100% 100%;
 }
 .container {
@@ -65,26 +296,80 @@ export default {
   margin: 55px auto 0 auto;
 }
 .container1 {
-  width: 1048px;
-  height: 685px;
-  margin: 30px auto 0 auto;
-}
-.leftBox {
-  width: 220px;
-  height: 682px;
+  width: 1039px;
+  height: 680px;
+  margin: 32px auto 0 auto;
   border: solid 2px #39a4dd;
   border-radius: 10px;
-  float: left;
-  overflow: hidden;
+  .boxSty1 {
+    width: 991px;
+    height: 626px;
+    margin: 27px auto;
+    .boxSty2 {
+      height: 36px;
+      .selectSty1 {
+        /deep/.el-input__inner {
+          width: 190px;
+          color: #ffffff;
+          border: solid 1px #1eb0fc;
+          border-radius: 0;
+          background-color: transparent;
+          font-size: 12px;
+        }
+      }
+    }
+    .boxSty3 {
+      height: 36px;
+      margin-top: 15px;
+      .inputSty1 {
+        width: 190px;
+        /deep/.el-input__inner {
+          width: 190px;
+          color: #ffffff;
+          border: solid 1px #1eb0fc;
+          border-radius: 0;
+          background-color: transparent;
+          font-size: 12px;
+        }
+      }
+      .btnSty1 {
+        width: 25px;
+        height: 25px;
+        float: right;
+        margin-top: 10px;
+      }
+      .moreSty {
+        background: url("../../../assets/images/Setting/setting-more.png")
+          no-repeat;
+        background-size: 100% 100%;
+      }
+      .refreshSty {
+        background: url("../../../assets/images/Setting/setting-refresh.png")
+          no-repeat;
+        background-size: 100% 100%;
+      }
+      .searchSty {
+        background: url("../../../assets/images/Setting/setting-search.png")
+          no-repeat;
+        background-size: 100% 100%;
+      }
+    }
+    .tableBox {
+      // background: #39a4dd;
+      // height: 216px;
+      margin-top: 27px;
+    }
+  }
 }
-.rightBox {
-  width: 796px;
-  height: 682px;
-  border: solid 2px #39a4dd;
-  border-radius: 10px;
-  margin-left: 24px;
-  float: left;
+
+.popoverBtnSty {
+  background: transparent;
+  color: white;
+  border: 0;
+  margin-left: 0px;
+  border-radius: 0px;
 }
+
 .el-table::before {
   height: 0px;
 }
@@ -134,36 +419,4 @@ export default {
 /deep/.el-table--striped .el-table__body tr.el-table__row--striped td {
   background-color: rgba(54, 143, 187, 1);
 }
-
-/* 树形列表 */
-/deep/.el-tree {
-  color: #23cefd;
-  background-color: transparent;
-  .el-tree-node {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    .el-tree-node__content {
-      height: 35px;
-      line-height: 35px;
-      border: 1px solid transparent;
-    }
-    .el-tree-node__content:hover,
-    .el-tree-node:focus > .el-tree-node__content {
-      color: #fff;
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    .el-tree-node__expand-icon {
-      color: #23cefd;
-    }
-    .el-tree-node__expand-icon.is-leaf {
-      color: transparent;
-    }
-  }
-}
-/deep/ .el-tree-node.is-current > .el-tree-node__content {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: white;
-}
-
 </style>
