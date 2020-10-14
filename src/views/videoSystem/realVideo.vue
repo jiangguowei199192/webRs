@@ -1121,8 +1121,8 @@ export default {
       this.totalVideosArray = []
       this.curVideoIndex = 1000
       this.curSelectedVideo = {}
-      this.selectedIndex = 200
       if (this.isOnline) {
+        this.selectedIndex = 200
         const divs = document.querySelectorAll('.leftContainer > div.list')
         if (!this.isPlayAll) {
           for (let i = 0; i < divs.length; i++) {
@@ -1147,7 +1147,6 @@ export default {
             }
           })
         } else {
-          this.selectedIndex = 200
           for (let i = 0; i < divs.length; i++) {
             divs[i].classList.remove('selected')
           }
