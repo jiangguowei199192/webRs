@@ -456,7 +456,7 @@ export default {
       })
       console.log(curData)
       if (!this.onlineArray[index1].children[index2].isSelected) {
-        // 关闭其它所有的选中状态
+        // 关闭其它所有的选中状态(防止其它设备通道有选中的)
         this.onlineArray.forEach(item => {
           if (item.children && item.children.length > 0) {
             item.children.forEach(list => {
@@ -1121,6 +1121,7 @@ export default {
       this.totalVideosArray = []
       this.curVideoIndex = 1000
       this.curSelectedVideo = {}
+      this.selectedIndex = 200
       if (this.isOnline) {
         const divs = document.querySelectorAll('.leftContainer > div.list')
         if (!this.isPlayAll) {
@@ -1130,6 +1131,7 @@ export default {
           this.onlineArray.forEach(item => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
+                list.isCurSelected && (list.isCurSelected = false)
                 if (list.onlineStatus === 'online') {
                   list.isSelected = true
                   const curData = Object.assign({}, list, {
@@ -1152,6 +1154,7 @@ export default {
           this.onlineArray.forEach(item => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
+                list.isCurSelected && (list.isCurSelected = false)
                 list.isSelected = false
               })
             }
