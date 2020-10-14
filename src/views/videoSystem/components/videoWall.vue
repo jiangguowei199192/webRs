@@ -1139,6 +1139,13 @@ export default {
     },
     _changeVideoAndMap (bFullscreenMap) {
       this.bIsFullscreenMap = bFullscreenMap
+      if (this.bIsFullscreenMap === false) {
+        try {
+          this.bSetPointStatus = false
+          this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(this.bSetPointStatus)
+        } catch (error) {
+        }
+      }
       this.$refs.gduMap.setBasicHighBottom(this.bIsFullscreenMap)
       this.$refs.gduMap.setPopoverAppendStyle(!this.bIsFullscreenMap)
       const tmpMap = this.$refs.gduMap.map2D

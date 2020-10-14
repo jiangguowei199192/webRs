@@ -1,4 +1,5 @@
 import { EventBus } from '@/utils/eventBus.js'
+import MqttService from '@/utils/mqttService'
 const droneInfoMixin = {
   data () {
     return {
@@ -25,6 +26,9 @@ const droneInfoMixin = {
   created () {
     EventBus.$on('droneOffline', obj => {
       this.updateDroneStatus(obj)
+    })
+    EventBus.$on('droneCmdReq', obj => {
+      this.handleDroneCmdReq(obj)
     })
     EventBus.$on('droneRealtimeInfo', obj => {
       this.updateDroneRealtimeInfo(obj)
@@ -85,6 +89,18 @@ const droneInfoMixin = {
         this.di_battery = obj.batteryLeft
         this.di_longitude = parseFloat(obj.longitude).toFixed(7)
         this.di_latitude = parseFloat(obj.latitude).toFixed(7)
+
+        if (obj.discern === '0') {
+          this.bDetectStatus = false
+        } else if (obj.discern === '1') {
+          this.bDetectStatus = true
+        }
+
+        if (obj.mappingByRealTime === '0') {
+          this.bPuzzlingStatus = false
+        } else if (obj.mappingByRealTime === '1') {
+          this.bPuzzlingStatus = true
+        }
       } else {
         this.di_height = ''
         this.di_hSpeed = ''
@@ -223,17 +239,26 @@ const droneInfoMixin = {
     },
     // 设置无人机是否开启检测算法
     switchDetectStatus () {
-      this.bDetectStatus = !this.bDetectStatus
+      let tmpStatus = this.bDetectStatus
+      tmpStatus = !tmpStatus
+      const tmpParams = { discern_open: 0 }
+      if (tmpStatus) {
+        tmpParams.discern_open = 1
+      }
+      const tmpTopic = 'gdu/discernControl/-1/' + this.curDevCode
+      const tmpStr = JSON.stringify(tmpParams)
+      console.log('switchDetectStatus ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr)
     },
     // 设置无人机是否开启检测算法
     switchPuzzlingStatus () {
-      this.bPuzzlingStatus = !this.bPuzzlingStatus
+      // this.bPuzzlingStatus = !this.bPuzzlingStatus
     },
     // 设置是否可以选定目标点
     switchSetPointStatus () {
       this.bSetPointStatus = !this.bSetPointStatus
       this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(this.bSetPointStatus)
-      if (this._changeVideoAndMap) {
+      if (this._changeVideoAndMap && this.bSetPointStatus) {
         this._changeVideoAndMap(this.bSetPointStatus)
       }
     },
@@ -244,11 +269,34 @@ const droneInfoMixin = {
     },
     // 确认设置无人机目标点事件回调
     confirmDestinationCB (lonLat) {
-      console.log('confirmDestinationCB:', lonLat)
+      const tmpParams = { gps: [lonLat] }
+      const tmpTopic = 'gdu/commandControl/-1/' + this.curDevCode
+      const tmpStr = JSON.stringify(tmpParams)
+      console.log('confirmDestinationCB ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr)
     },
     // 取消无人机目标点事件回调
     cancelDestinationCB () {
-      console.log('cancelDestinationCB')
+      const tmpParams = { gps_cancel: 1 }
+      const tmpTopic = 'gdu/commandControl/-1/' + this.curDevCode
+      const tmpStr = JSON.stringify(tmpParams)
+      console.log('cancelDestinationCB ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr)
+    },
+    // 处理无人机指令响应回复
+    handleDroneCmdReq (reqInfo) {
+      if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
+        return
+      }
+
+      if (reqInfo.snCode === this.curDevCode) {
+        if (reqInfo.cmdReq === 'gps_set') {
+          console.log('handleDroneCmdReq : reqInfo.cmdReq === "gps_set"')
+          this.$refs.gduMap.map2D.droneDestinationManager.destinationConfirmed()
+        } else if (reqInfo.cmdReq === 'gps_cancel') {
+          console.log('handleDroneCmdReq : reqInfo.cmdReq === "gps_cancel"')
+        }
+      }
     }
   }
 }

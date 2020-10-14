@@ -69,6 +69,7 @@ import { EventBus } from '@/utils/eventBus.js'
 import { loginApi } from '@/api/login'
 import globalApi from '../utils/globalApi'
 const droneOffline = 'gdu/appOutLine'
+const droneCmdReq = 'gdu/commandCtrlReq'
 export default {
   name: 'Home',
   data () {
@@ -245,6 +246,8 @@ export default {
       const object = JSON.parse(msg.payloadString)
       if (droneOffline === msg.topic) {
         EventBus.$emit('droneOffline', object)
+      } else if (droneCmdReq === msg.topic) {
+        EventBus.$emit('droneCmdReq', object)
       } else {
         const tmpArray = this.realtimeInfoTopicArray
         for (let i = 0; i < tmpArray.length; i++) {
