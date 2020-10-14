@@ -1272,7 +1272,7 @@ export default {
             item.children.forEach(list => {
               if (list.id === this.curVideosArray[0].id) {
                 this.selectedIndex = index
-                list.isSelected = true
+                list.isCurSelected = true
               }
             })
           }
@@ -1297,7 +1297,9 @@ export default {
     },
     // 上一页
     pre (cpage) {
-      this.clearCurSelected()
+      if (this.isOnline) {
+        this.clearCurSelected()
+      }
       // 始终截取当前页需要的数据
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
@@ -1319,7 +1321,9 @@ export default {
     },
     // 下一页
     next (cpage) {
-      this.clearCurSelected()
+      if (this.isOnline) {
+        this.clearCurSelected()
+      }
       // 清掉之前的选中状态
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
@@ -1338,7 +1342,11 @@ export default {
         (cpage - 1) * this.showVideoPageSize,
         cpage * this.showVideoPageSize
       )
-      this.activeFirstTree()
+      if (this.curVideosArray[0]) {
+        this.activeFirstTree()
+      } else {
+        this.curSelectedVideo = {}
+      }
       // this.addTitle()
     },
     // 动态渲染9个容器
