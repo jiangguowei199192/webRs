@@ -471,6 +471,7 @@ import globalApi from '../../../utils/globalApi'
 import { api } from '@/api/videoSystem/realVideo'
 import { timeFormat } from '@/utils/date'
 import MqttService from '@/utils/mqttService'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   data () {
     return {
@@ -1449,7 +1450,32 @@ export default {
   filters: {
     timeFormat
   },
-  created () {}
+  created () {
+    // 监听火情报警
+    EventBus.$on('getFireAlarm', info => {
+      if (this.videoInfo.deviceCode === info.deviceCode && this.videoInfo.streamType === info.channleId) {
+        this.showNotification = true
+        this.infoObj.isWarning = true
+        this.infoObj.isError = false
+        this.infoObj.isSuccess = false
+        this.infoObj.title = '警告'
+        this.infoObj.msg = '发现火情火点！'
+        setTimeout(() => {
+          this.showNotification = false
+        }, 3000)
+      }
+      // if (info.alarmStatus !== 'mistaken') {
+      //   info.bConfirmed = false
+      //   info.alarmTime = timeFormat(info.alarmTime)
+      //   this.handlingAlarmImgUrl(info)
+      //   this.fireWarningArray.push(info)
+      //   this.fireTotalNum = this.fireWarningArray.length
+      //   if (this.bShowMarkersInMap) {
+      //     this.addNewFireWarning(info)
+      //   }
+      // }
+    })
+  }
 }
 </script>
 <style lang="less" >
