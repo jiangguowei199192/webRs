@@ -1285,8 +1285,19 @@ export default {
       }
       // this.curSelectedVideo = this.curVideosArray[0]
     },
+    // 切换上一页或下一页时清除之前选中的状态
+    clearCurSelected () {
+      this.onlineArray.forEach((item, index) => {
+        if (item.children && item.children.length > 0) {
+          item.children.forEach(list => {
+            list.isCurSelected && (list.isCurSelected = false)
+          })
+        }
+      })
+    },
     // 上一页
     pre (cpage) {
+      this.clearCurSelected()
       // 始终截取当前页需要的数据
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
@@ -1308,6 +1319,7 @@ export default {
     },
     // 下一页
     next (cpage) {
+      this.clearCurSelected()
       // 清掉之前的选中状态
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
