@@ -1133,11 +1133,13 @@ export default {
      * 地图与视频全屏切换
      */
     changeVideoAndMap () {
-      this.bSetPointStatus = !this.bSetPointStatus
       this.bIsFullscreenMap = !this.bIsFullscreenMap
+      this._changeVideoAndMap(this.bIsFullscreenMap)
+    },
+    _changeVideoAndMap (bFullscreenMap) {
+      this.bIsFullscreenMap = bFullscreenMap
       this.$refs.gduMap.setBasicHighBottom(this.bIsFullscreenMap)
       this.$refs.gduMap.setPopoverAppendStyle(!this.bIsFullscreenMap)
-      this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(this.bSetPointStatus)
       const tmpMap = this.$refs.gduMap.map2D
       setTimeout(() => {
         tmpMap._map.updateSize()
