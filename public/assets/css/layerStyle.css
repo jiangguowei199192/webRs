@@ -66,10 +66,9 @@
 }
 .ddTitleImg {
   position: absolute;
-  top: 9px;
+  top: 5px;
   width: 21px;
   height: 16px;
-  background-image: url('../images/rpTitleImg.png');
 }
 .ddTitleText {
   position: absolute;

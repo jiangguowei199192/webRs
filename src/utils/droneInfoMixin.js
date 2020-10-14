@@ -183,6 +183,7 @@ const droneInfoMixin = {
         (parseFloat(droneInfo.directionAngle) * Math.PI) / 180,
         this.droneMarkerLayer
       )
+      this.$refs.gduMap.map2D.droneDestinationManager.updateDronePosition(lonLat)
       this.$refs.gduMap.map2D.droneLayerManager.updateDroneTrail(
         droneInfo.snCode,
         lonLat,
@@ -193,6 +194,7 @@ const droneInfoMixin = {
     showDroneRecordsInMap (devCode, oldRecords) {
       const pointsNum = oldRecords.length
       const tmpMgr = this.$refs.gduMap.map2D.droneLayerManager
+      const tmpMgr2 = this.$refs.gduMap.map2D.droneDestinationManager
       for (let i = 0; i < pointsNum; i++) {
         tmpMgr.updateDroneMarker(
           devCode,
@@ -200,6 +202,7 @@ const droneInfoMixin = {
           oldRecords[i].angle,
           this.droneMarkerLayer
         )
+        tmpMgr2.updateDronePosition(oldRecords[i].lonLat)
         tmpMgr.updateDroneTrail(
           devCode,
           oldRecords[i].lonLat,
