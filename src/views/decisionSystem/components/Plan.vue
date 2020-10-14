@@ -236,7 +236,12 @@ export default {
       })
     },
     goto3d () {
-      this.$router.push({ path: '/deploy3D' })
+      this.$router.push({
+        path: '/deploy3D',
+        query: {
+          enterpriseId: this.info.keyId
+        }
+      })
     },
     // 点击建筑平面图
     didClickedBuildingImage (index) {

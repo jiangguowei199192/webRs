@@ -343,6 +343,7 @@ export default {
 
   mounted () {
     this.getPlotData()
+    this.enterpriseId = this.$route.query.enterpriseId
   },
 
   beforeDestroy () {
@@ -397,17 +398,17 @@ export default {
       let save = false
       if (oldVal === 7 && val !== 7) { save = true } else if (oldVal === 4 && val !== 4) { save = true }
       if (save && this.drawControl && !stringIsNullOrEmpty(this.drawControl.toGeoJSON())) {
-        this.$confirm('当前存在未保存的标绘对象，是否保存?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          showClose: false
-        })
-          .then(() => {
+        // this.$confirm('当前存在未保存的标绘对象，是否保存?', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   showClose: false
+        // })
+        //   .then(() => {
 
-          })
-          .catch(() => {
+        //   })
+        //   .catch(() => {
 
-          })
+        //   })
       }
       var changeView = false
       var viewIndex = 0
@@ -910,10 +911,25 @@ export default {
           this.measureArea(false)
           break
         case 5:
-          if (!this.drawControl || stringIsNullOrEmpty(this.json = this.drawControl.toGeoJSON())) {
+          var json = ''
+          if (!this.drawControl || stringIsNullOrEmpty(json = this.drawControl.toGeoJSON())) {
             this.$notify.warning({ title: '提示', message: '当前未标绘任何数据' })
+          } else {
+            json.cameraViews = this.cameraViews
+            const blob = new Blob([JSON.stringify(json)], { type: 'application/json' })
+            const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+            const formData = new FormData()
+            formData.append('enterpriseId', this.enterpriseId)
+            formData.append('configFile', blob, 'plotModelData.json')
+            this.$axios.post(api.uploadModelConfig, formData, config).then((res) => {
+              if (res.data.code === 0) {
+                this.jsonPath = globalApi.headImg + res.data.data.configPath
+              }
+            }).catch(err => {
+              console.log('uploadModelConfig Err : ' + err)
+            })
+            console.log(json)
           }
-          console.log(this.json)
           break
         case 6:
           this.clearDraw()
@@ -951,32 +967,40 @@ export default {
      *  加载geoJson
      */
     loadGeoJson () {
-      if (this.json) {
-        const entities = this.drawControl.loadJson(this.json)
-        if (!this.modelList) this.modelList = []
-        entities.forEach(e => {
-          this.modelList.push(e)
-          const attr = e.attribute
-          // 编辑模式下绘制的模型
-          if (attr.edit) {
-            if (attr.type !== 'billboard') {
-              this.addModelMark(e)
-            }
-            this.markDatas[attr.editIndex].push({
-              type: attr.plotType, // 编辑模式下，模型列表的Icon类型
-              name: attr.name,
-              id: attr.id
+      if (this.jsonPath) {
+        axios.get(this.jsonPath)
+          .then(res => {
+            const data = res.data
+            this.cameraViews = data.cameraViews
+            const entities = this.drawControl.loadJson(data)
+            if (!this.modelList) this.modelList = []
+            entities.forEach(e => {
+              this.modelList.push(e)
+              const attr = e.attribute
+              // 编辑模式下绘制的模型
+              if (attr.edit) {
+                if (attr.type !== 'billboard') {
+                  this.addModelMark(e)
+                }
+                this.markDatas[attr.editIndex].push({
+                  type: attr.plotType, // 编辑模式下，模型列表的Icon类型
+                  name: attr.name,
+                  id: attr.id
+                })
+              } else {
+                // 沙盘绘制添加的模型
+                // 添加模型上方标签
+                this.addModelLabel(e, e.attribute.task)
+                // 添加模型下方矩形框
+                this.addModelRect(e)
+              }
             })
-          } else {
-            // 沙盘绘制添加的模型
-            // 添加模型上方标签
-            this.addModelLabel(e, e.attribute.task)
-            // 添加模型下方矩形框
-            this.addModelRect(e)
-          }
-        })
-        console.log('----------------------------')
-        console.log(entities)
+            console.log('----------------------------')
+            console.log(entities)
+          })
+          .catch(err => {
+            console.log('getModelConfigFile Err : ' + err)
+          })
       }
     },
 
