@@ -37,6 +37,9 @@ const droneInfoMixin = {
     // 创建飞机标记图层
     this.droneMarkerLayer = this.$refs.gduMap.map2D.droneLayerManager.add(true)
     this.$refs.gduMap.map2D.setZoom(10)
+
+    this.$refs.gduMap.map2D.droneDestinationManager.confirmDestinationClickEvent.addEventListener(this.confirmDestinationCB)
+    this.$refs.gduMap.map2D.droneDestinationManager.cancelDestinationClickEvent.addEventListener(this.cancelDestinationCB)
   },
 
   methods: {
@@ -122,7 +125,11 @@ const droneInfoMixin = {
             this.setOfflineStyle(this.curDevCode, false)
           }
         }
-        this.updateDronePosition(this.droneInfo)
+        try {
+          this.updateDronePosition(this.droneInfo)
+        } catch (error) {
+          // console.log('updateDronePosition error:', error)
+        }
       }
 
       if (this.bSaveMultiDroneInfos) {
@@ -224,14 +231,24 @@ const droneInfoMixin = {
     },
     // 设置是否可以选定目标点
     switchSetPointStatus () {
-      if (this.changeVideoAndMap) {
-        this.changeVideoAndMap()
+      this.bSetPointStatus = !this.bSetPointStatus
+      this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(this.bSetPointStatus)
+      if (this._changeVideoAndMap) {
+        this._changeVideoAndMap(this.bSetPointStatus)
       }
     },
     // 设置是否显示无人机飞行轨迹
     switchShowRouteStatus () {
       this.bShowRouteStatus = !this.bShowRouteStatus
       this.droneTrailLayer.setVisible(this.bShowRouteStatus)
+    },
+    // 确认设置无人机目标点事件回调
+    confirmDestinationCB (lonLat) {
+      console.log('confirmDestinationCB:', lonLat)
+    },
+    // 取消无人机目标点事件回调
+    cancelDestinationCB () {
+      console.log('cancelDestinationCB')
     }
   }
 }
