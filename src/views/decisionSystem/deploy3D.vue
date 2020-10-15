@@ -305,35 +305,8 @@ export default {
         '遥控水炮冷却',
         '遥控水炮灭火'
       ],
-      buildingTitle: '黄鹤楼',
-      buildingInfos: [
-        // 测试数据
-        {
-          title: '1层',
-          image:
-            'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1021768252,432753213&fm=26&gp=0.jpg'
-        },
-        {
-          title: '2层',
-          image:
-            'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2915512436,1541993188&fm=26&gp=0.jpg'
-        },
-        {
-          title: '3层',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=b46ffef3711bfd0beb0e5528f5f02b5f&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201503%2F19%2F211608ztcq7higicydxhsy.jpg'
-        },
-        {
-          title: '4层',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=53d424fa23d284b221d6f262e8ed821e&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201111%2F21%2F205700txzuacubbcy91u99.jpg'
-        },
-        {
-          title: '5层',
-          image:
-            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598501231760&di=c720648eb47f6d0cb35a13196da77dad&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F0%2F587c7e395b9a0.jpg'
-        }
-      ]
+      buildingTitle: '',
+      buildingInfos: []
     }
   },
   components: {
@@ -346,6 +319,8 @@ export default {
     this.modelPath = this.$route.query.model
     this.configPath = this.$route.query.config
     this.enterpriseId = this.$route.query.enterpriseId
+    this.buildingInfos = this.$route.query.buildingInfos
+    this.buildingTitle = this.$route.query.buildingTitle
   },
 
   beforeDestroy () {

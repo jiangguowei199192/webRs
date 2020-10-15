@@ -245,7 +245,9 @@ export default {
         query: {
           enterpriseId: this.info.keyId,
           model: this.showInfo.planEnterpriseInfo3D.modelPath,
-          config: this.showInfo.planEnterpriseInfo3D.configPath
+          config: this.showInfo.planEnterpriseInfo3D.configPath,
+          buildingInfos: this.buildingInfos,
+          buildingTitle: this.buildingTitle
         }
       })
     },
