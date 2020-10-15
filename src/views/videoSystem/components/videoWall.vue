@@ -93,13 +93,13 @@
           <div class="realPoliceInfo" v-show="showCurindex==1" @dblclick.stop="stopEvent">
             <div class="title">实时警情</div>
             <div class="content webFsScroll">
-              <div class="item" v-for="(item,index) in 9" :key="index">
+              <div class="item" v-for="(item,index) in todayFireArray" :key="index">
                 <div class="pic">
-                  <img src="../../../assets/images/type_fire.png" alt />
+                  <img :src="item.alarmPic" alt />
                 </div>
                 <div>
-                  <p>时间：2020-08-12 15:12:00</p>
-                  <p>地点：武汉市第一医院</p>
+                  <p>时间：{{item.alarmTime}}</p>
+                  <p>地点：{{item.alarmAddress}}</p>
                   <p>坐标：30.254124 114.221454</p>
                   <p>
                     类型：
@@ -487,6 +487,7 @@ export default {
         }
       ],
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
+      todayFireArray: [], // 保存火情火点数据
       showCutImg: false, // 是否显示抓拍的图片 默认不显示
       cutImgUrl: '', // 显示抓取的图片
       cutDialogVisible: false, // 抓取弹窗
@@ -772,9 +773,7 @@ export default {
           data.forEach(element => {
             element.alarmTime = timeFormat(element.alarmTime)
             if (element.alarmPicList && element.alarmPicList.length > 0) {
-              element.alarmPicList.forEach(img => {
-                img.picPath = this.picUrl + img.picPath
-              })
+              element.alarmPic = element.alarmPicList.join('')
             }
           })
           this.todayFireArray = data
