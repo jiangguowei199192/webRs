@@ -12,47 +12,52 @@
               v-model="deviceTypeSelected"
               placeholder="设备类型"
               clearable
+              @change="getDeviceList"
               class="selectSty1"
             >
               <el-option
                 v-for="(item, index) in deviceTypeList"
                 :key="index"
-                :label="item"
-                :value="index"
+                :label="item.label"
+                :value="item.value"
               ></el-option>
             </el-select>
             <el-select
               v-model="onlineStatusSelected"
               placeholder="在线状态"
               clearable
+              @change="getDeviceList"
               class="selectSty1"
               style="margin-left: 77px"
             >
               <el-option
                 v-for="(item, index) in onlineStatusList"
                 :key="index"
-                :label="item"
-                :value="index"
+                :label="item.label"
+                :value="item.value"
               ></el-option>
             </el-select>
             <el-select
               v-model="useStatusSelected"
               placeholder="启用状态"
               clearable
+              @change="getDeviceList"
               class="selectSty1"
               style="margin-left: 77px"
             >
               <el-option
                 v-for="(item, index) in useStatusList"
                 :key="index"
-                :label="item"
-                :value="index"
+                :label="item.label"
+                :value="item.value"
               ></el-option>
             </el-select>
             <el-date-picker
               v-model="qualityDateSelected"
               type="date"
               placeholder="质保日期"
+              value-format="timestamp"
+              @change="qualityDateChange"
               class="selectSty1"
               style="width: 190px; margin-left: 77px"
             ></el-date-picker>
@@ -103,11 +108,12 @@
           </div>
           <div class="tableBox">
             <el-table
-              @row-click="ClickTableRow"
+              @row-click="clickTableRow"
               :data="deviceList"
               stripe
               empty-text="暂无数据"
               tooltip-effect="light"
+              :row-class-name="tableStatusChange"
             >
               <el-table-column
                 label
@@ -187,49 +193,53 @@
 </template>
 
 <script>
-// import { settingApi } from '@/api/setting'
+import { settingApi } from '@/api/setting'
+import { timeFormat } from '@/utils/date'
 // import { Notification } from 'element-ui'
 
 export default {
-  created () {},
   data () {
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
 
       deviceTypeSelected: '', // 设备类型
-      deviceTypeList: ['设备类型1', '设备类型2'],
-      onlineStatusSelected: '', // 在线状态
-      onlineStatusList: ['全部', '在线', '离线'],
-      useStatusSelected: '', // 启用状态
-      useStatusList: ['全部', '未完善设备信息', '已完善设备信息'],
-      deviceNameInput: '', // 设备名称
-      deviceNoInput: '', // 设备编号
-      qualityDateSelected: '', // 质保日期
-
-      deviceList: [
+      deviceTypeList: [
         {
-          deviceType: '无人机',
-          deviceName: '设备名称',
-          deivceNo: '0000000000',
-          lon: '000.00',
-          lat: '00.000',
-          useStatus: false,
-          deptName: '乌托邦',
-          onlineStatus: '离线',
-          offlineTime: '0000-00-00 00:00'
+          label: '高点监控',
+          value: 'GDJK'
         },
         {
-          deviceType: '无人机',
-          deviceName: '设备名称',
-          deivceNo: '0000000000',
-          lon: '000.00',
-          lat: '00.000',
-          useStatus: false,
-          deptName: '乌托邦',
-          onlineStatus: '离线',
-          offlineTime: '0000-00-00 00:00'
+          label: '无人机',
+          value: 'WRJ'
         }
       ],
+      onlineStatusSelected: '', // 在线状态
+      onlineStatusList: [
+        {
+          label: '在线',
+          value: 'online'
+        },
+        {
+          label: '离线',
+          value: 'offline'
+        }
+      ],
+      useStatusSelected: '', // 启用状态
+      useStatusList: [
+        {
+          label: '启用',
+          value: 'enabled'
+        },
+        {
+          label: '禁用',
+          value: 'disabled'
+        }
+      ],
+      deviceNameInput: '', // 设备名称
+      deviceNoInput: '', // 设备编号
+      qualityDateSelected: null, // 质保日期
+
+      deviceList: [],
       radio: '',
 
       pageTotal: 0,
@@ -237,41 +247,135 @@ export default {
       currentPageSize: 10
     }
   },
+  created () {
+    this.getDeviceList()
+  },
   methods: {
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
 
+    getDeviceList () {
+      var param = {
+        currentPage: this.currentPage,
+        pageSize: this.currentPageSize,
+        deviceCode: this.deviceNoInput,
+        deviceName: this.deviceNameInput,
+        deviceStatus: this.useStatusSelected,
+        deviceTypeCode: this.deviceTypeSelected,
+        expirationDate: this.qualityDateSelected,
+        onlineStatus: this.onlineStatusSelected
+      }
+      console.log(param)
+      this.$axios.post(settingApi.queryDevicePage, param).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.handleDeviceListResData(res.data.data.data)
+          this.pageTotal = res.data.data.paginator.totalCount
+        }
+      })
+    },
+    handleDeviceListResData (resData) {
+      var tempArr = []
+      resData.forEach(item => {
+        var deviceType = ''
+        if (item.deviceTypeCode === 'GDJK') {
+          deviceType = '高点监控'
+        } else if (item.deviceTypeCode === 'WRJ') {
+          deviceType = '无人机'
+        }
+
+        var useStatus = ''
+        if (item.deviceStatus === 'enabled') {
+          useStatus = '启用'
+        } else if (item.deviceStatus === 'disabled') {
+          useStatus = '禁用'
+        }
+
+        var onlineStatus = ''
+        if (item.onlineStatus === 'online') {
+          onlineStatus = '在线'
+        } else if (item.onlineStatus === 'offline') {
+          onlineStatus = '离线'
+        }
+
+        var offlineTime = ''
+        if (item.offlineTime != null) {
+          offlineTime = timeFormat(item.offlineTime)
+        }
+
+        var dptName = ''
+        item.deptList.forEach(dept => {
+          dptName = dptName + dept.deptName
+        })
+
+        var device = {
+          deviceType: deviceType,
+          deviceName: item.deviceName,
+          deivceNo: item.deviceCode,
+          lon: item.deviceLongitude,
+          lat: item.deviceLatitude,
+          useStatus: useStatus,
+          deptName: dptName,
+          onlineStatus: onlineStatus,
+          offlineTime: offlineTime
+        }
+        tempArr.push(device)
+      })
+      this.deviceList = tempArr
+    },
+
+    // 质保日期搜索
+    qualityDateChange (time) {
+      this.getDeviceList()
+    },
+
+    // 刷新
     refreshClick () {
       console.log('refreshClick')
+      this.deviceNoInput = ''
+      this.deviceNameInput = ''
+      this.useStatusSelected = ''
+      this.deviceTypeSelected = ''
+      this.qualityDateSelected = null
+      this.onlineStatusSelected = ''
+      this.getDeviceList()
     },
 
+    // 搜索
     searchClick () {
-      console.log('searchClick')
+      this.getDeviceList()
     },
 
+    // 新增、修改接入设备
     addOrChangeInputDevice () {
       console.log('deleteInputDevice')
     },
 
+    // 删除接入设备
     deleteInputDevice () {
       console.log('deleteInputDevice')
     },
 
     // 点击表格行
-    ClickTableRow (row) {
+    clickTableRow (row) {
       this.radio = this.deviceList.indexOf(row)
     },
 
     // 分页页数改变
     currentPageChange () {
-
+      this.getDeviceList()
     },
 
     // 激活
     async activeChange (index, row) {
       console.log(index)
       console.log(row.useStatus)
+    },
+
+    tableStatusChange (row) {
+      if (!row.row.useStatus) {
+        return 'table-info-row'
+      }
     }
   }
 }
@@ -354,11 +458,6 @@ export default {
         background-size: 100% 100%;
       }
     }
-    .tableBox {
-      // background: #39a4dd;
-      // height: 216px;
-      margin-top: 27px;
-    }
   }
 }
 
@@ -370,6 +469,9 @@ export default {
   border-radius: 0px;
 }
 
+.tableBox {
+  margin-top: 27px;
+}
 .el-table::before {
   height: 0px;
 }
@@ -379,11 +481,11 @@ export default {
   background-color: transparent;
   /* 表格表头样式 */
   /deep/.el-table__header-wrapper th {
-    color: rgba(255, 255, 255, 1);
+    color: #ffffff;
     font-size: 14px;
     height: 26px;
     padding: 0;
-    background-color: rgba(54, 143, 187, 1);
+    background-color: #368fbb;
   }
   /* 表格每行高度*/
   /deep/.el-table__body td {
@@ -391,11 +493,14 @@ export default {
     padding: 0;
   }
   /deep/.el-table__body tr {
-    background-color: rgba(51, 105, 132, 1);
+    background-color: #336984;
+    // color: #ffffff;
+    // color: lightgray;
+    font-size: 14px;
   }
   /* 鼠标hover每行的样式*/
   /deep/.el-table__body tr:hover > td {
-    background-color: rgba(51, 105, 132, 1);
+    background-color: #336984;
   }
   /deep/td,
   /deep/th {
@@ -406,7 +511,6 @@ export default {
     border: 1px solid rgba(255, 255, 255, 1);
     background: transparent;
   }
-
   //单选框选中样式
   /deep/ .el-radio__input.is-checked .el-radio__inner::after {
     width: 7px;
@@ -417,6 +521,10 @@ export default {
 }
 /* 修改偶数行颜色*/
 /deep/.el-table--striped .el-table__body tr.el-table__row--striped td {
-  background-color: rgba(54, 143, 187, 1);
+  background-color: #368fbb;
 }
+/deep/.table-info-row td {
+  color: lightgray;
+}
+
 </style>
