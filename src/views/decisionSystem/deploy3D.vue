@@ -262,7 +262,7 @@ export default {
       isRotate: false, // 是否自动旋转
       num: 1, // 编号
       activeIndex: 0,
-      editIndex: 0,
+      editIndex: 1000,
       modelIndex: 1000,
       showViewDetail: false, // 显示视角信息
       curModelIndex: 1000, // 沙盘绘制模式下，选中模型索引
@@ -281,7 +281,7 @@ export default {
       editPopover: false, // 编辑模式Popover是否显示
       infoBox: { infoImg: '', isEdit: true, location: '', describe: '', name: '', editing: false, isVr: false },
       editBox: { department: '天门敦', number: '1', task: '- -', hide: false },
-      viewDetail: { lat: '', lon: '', alt: '', head: '', pitch: '' },
+      viewDetail: { y: '', x: '', z: '', heading: '', pitch: '' },
       markDatas: [[], [], [], []],
       topTools: ['回正', '截图', '测距', '测高', '测面积', '保存', '设置', '分享'],
       tabs: [
@@ -343,6 +343,8 @@ export default {
 
   mounted () {
     this.getPlotData()
+    this.modelPath = this.$route.query.model
+    this.configPath = this.$route.query.config
     this.enterpriseId = this.$route.query.enterpriseId
   },
 
@@ -442,7 +444,7 @@ export default {
       }
 
       if (changeView) {
-        if (this.cameraViews[viewIndex] !== '') this.viewer.mars.centerAt(this.viewDetail)
+        if (this.cameraViews[viewIndex] !== '') this.viewer.mars.centerAt(this.cameraViews[viewIndex])
         else this.returnHome()
       }
     }
@@ -485,6 +487,7 @@ export default {
         this.$refs.floorGuide.show(this.buildingInfos, 0)
       } else if (this.activeIndex === 7) {
         this.editMode = true
+        if (this.editIndex === 1000) this.editIndex = 0
       }
     },
 
@@ -923,7 +926,7 @@ export default {
             formData.append('configFile', blob, 'plotModelData.json')
             this.$axios.post(api.uploadModelConfig, formData, config).then((res) => {
               if (res.data.code === 0) {
-                this.jsonPath = globalApi.headImg + res.data.data.configPath
+                this.configPath = globalApi.headImg + res.data.data.configPath
               }
             }).catch(err => {
               console.log('uploadModelConfig Err : ' + err)
@@ -967,10 +970,11 @@ export default {
      *  加载geoJson
      */
     loadGeoJson () {
-      if (this.jsonPath) {
-        axios.get(this.jsonPath)
+      if (this.configPath) {
+        axios.get(globalApi.headImg + this.configPath)
           .then(res => {
             const data = res.data
+            console.log(data)
             this.cameraViews = data.cameraViews
             const entities = this.drawControl.loadJson(data)
             if (!this.modelList) this.modelList = []
@@ -1284,7 +1288,6 @@ export default {
         list = this.labelList.filter(item => item.opts.isGis)
         list.forEach(e => { e.visible = false })
       }
-
       if (this.modelList) {
         this.modelList.forEach(e => {
           if (index === 5) e.show = true
@@ -1315,147 +1318,6 @@ export default {
      *@param {Object} item 模型
      */
     startPlot (item) {
-      if (!this.drawControl) {
-        this.drawControl = new mars3d.Draw(this.viewer, {
-          drawShow: true,
-          hasEdit: true,
-          // nameTooltip: true,//是否在不可编辑状态时将 name名称 属性 绑定到tooltip
-          isContinued: false, // 是否连续标绘
-          isAutoEditing: false // 绘制完成后是否自动激活编辑
-        })
-
-        // 创建完成
-        this.drawControl.on(mars3d.draw.event.DrawCreated, function (e) {
-          var entity = e.entity
-          // if (!me.drawControl.isContinued) {
-          //   me.startEditing(entity)
-          // }
-          // console.log('创建完成')
-          const attr = entity.attribute
-          attr.location = ''
-          attr.describe = ''
-          if (attr.edit) {
-            entity.drawOk = true
-            if (attr.type === 'billboard') {
-              me.plotModelComplete(entity)
-            } else if (entity.loadOk && entity.drawOk) {
-              me.plotModelComplete(entity)
-            }
-          } else {
-            const id = uuid(8, 16)
-            attr.id = id
-            // 沙盘绘制的模型
-            attr.editIndex = 5
-            var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-              me.viewer.scene,
-              entity.position
-            )
-            me.curModelIndex = 1000
-            // 禁用drawControl编辑功能
-            me.enableDrawControlEdit(false)
-            me.curEntity = entity
-            // 标绘的模型列表
-            if (!me.modelList) me.modelList = []
-            me.modelList.push(entity)
-            // 显示模型任务编辑框
-            me.isPlot = true
-            me.showEditBox = true
-            me.editBox.number = me.autoFindEditBoxNum()
-            me.editBox.task = '- -'
-            me.setEditBoxPosition(point)
-          }
-        })
-
-        // 模型加载完成后事件
-        this.drawControl.on(mars3d.draw.event.LoadEnd, function (e) {
-          var entity = e.entity
-          const attr = entity.attribute
-          if (attr.edit) {
-            entity.loadOk = true
-            if (entity.loadOk && entity.drawOk) {
-              me.plotModelComplete(entity)
-            }
-          }
-          // console.log('gltf模型加载完成')
-        })
-
-        // 开始编辑
-        this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
-          if (e.entity.attribute.type !== 'billboard') {
-            me.startEditing(e.entity)
-          }
-          // console.log('开始编辑')
-        })
-
-        this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
-          if (e.entity.attribute.type !== 'billboard') {
-            me.showOrHideRect(false, e.entity)
-            me.stopEditing()
-          }
-          // console.log('EditMouseMove')
-        })
-
-        // 编辑修改了点
-        this.drawControl.on(mars3d.draw.event.EditMovePoint, function (e) {
-          var entity = e.entity
-          if (entity.attribute.type !== 'billboard') {
-            me.startEditing(entity)
-            const position = me.getModelLabelPosition(entity)
-            const attr = entity.attribute
-            // 如果是编辑模式下添加的模型
-            if (attr.edit) {
-              me.updateMarkerPosition(attr.id, position)
-            } else {
-              me.updateLabelPosition(attr.id, position)
-            }
-          }
-          // console.log('编辑修改了点')
-        })
-
-        // 停止编辑
-        this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
-          if (e.entity.attribute.type !== 'billboard') {
-            me.showOrHideRect(true, e.entity)
-            me.stopEditing()
-          }
-          // console.log('停止编辑')
-        })
-
-        // 删除了对象
-        this.drawControl.on(mars3d.draw.event.Delete, function (e) {
-          var entity = e.entity
-          const attr = entity.attribute
-
-          const index = me.modelList.indexOf(entity)
-          if (index > -1) { me.modelList.splice(index, 1) }
-          // 如果是编辑模式下添加的模型
-          if (attr.edit) {
-            me.deleteModelMarker(entity)
-          } else {
-            // 删除对应标签
-            const t = me.findModelLabel(attr.id)
-            if (t !== undefined) {
-              const index = me.labelList.indexOf(t)
-              me.labelList.splice(index, 1)
-              t.destroy()
-            }
-            // 删除矩形框列表
-            if (me.rectList) {
-              const r = me.rectList.find(t => t._name === attr.id)
-              if (r !== undefined) {
-                const index = me.rectList.indexOf(r)
-                me.rectList.splice(index, 1)
-                me.viewer.entities.remove(r)
-              }
-            }
-            me.showEditBox = false
-          }
-
-          me.stopEditing(entity)
-          // console.log('删除了对象')
-        })
-      }
-
       // 赋值默认样式
       var defStyle = this.getDefStyle(item.edittype || item.type)
       if (defStyle) {
@@ -1631,7 +1493,6 @@ export default {
         name: primitive.attribute.id,
         distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 500)
       })
-      if (!this.labelList) this.labelList = []
       this.labelList.push(label)
       return label
     },
@@ -1727,8 +1588,6 @@ export default {
           number: '1',
           task: '供水'
         }
-        // 模型标签列表
-        me.labelList = []
         const l = me.addModelLabel(modelPrimitive, task)
         l.opts.isGis = true
       })
@@ -1816,11 +1675,11 @@ export default {
       //   modelPrimitive.position = position
       //   label.position = Cesium.Cartesian3.fromDegrees(lon, lat, 16)
       // }, 1000)
-
+      const url = globalApi.headImg + this.modelPath
       var layercfg = {
         type: '3dtiles',
         name: '国博',
-        url: serverUrl + '/3dtiles/guobo/Production_1.json',
+        url: url,
         maximumScreenSpaceError: 1,
         maximumMemoryUsage: 8192,
         offset: { z: -4 },
@@ -2167,6 +2026,150 @@ export default {
     },
 
     /**
+     *  初始化drawControl
+     */
+    initDrawControl () {
+      this.drawControl = new mars3d.Draw(this.viewer, {
+        drawShow: true,
+        hasEdit: true,
+        // nameTooltip: true,//是否在不可编辑状态时将 name名称 属性 绑定到tooltip
+        isContinued: false, // 是否连续标绘
+        isAutoEditing: false // 绘制完成后是否自动激活编辑
+      })
+
+      // 创建完成
+      this.drawControl.on(mars3d.draw.event.DrawCreated, function (e) {
+        var entity = e.entity
+        // if (!me.drawControl.isContinued) {
+        //   me.startEditing(entity)
+        // }
+        // console.log('创建完成')
+        const attr = entity.attribute
+        attr.location = ''
+        attr.describe = ''
+        if (attr.edit) {
+          entity.drawOk = true
+          if (attr.type === 'billboard') {
+            me.plotModelComplete(entity)
+          } else if (entity.loadOk && entity.drawOk) {
+            me.plotModelComplete(entity)
+          }
+        } else {
+          const id = uuid(8, 16)
+          attr.id = id
+          // 沙盘绘制的模型
+          attr.editIndex = 5
+          var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+            me.viewer.scene,
+            entity.position
+          )
+          me.curModelIndex = 1000
+          // 禁用drawControl编辑功能
+          me.enableDrawControlEdit(false)
+          me.curEntity = entity
+          // 标绘的模型列表
+          if (!me.modelList) me.modelList = []
+          me.modelList.push(entity)
+          // 显示模型任务编辑框
+          me.isPlot = true
+          me.showEditBox = true
+          me.editBox.number = me.autoFindEditBoxNum()
+          me.editBox.task = '- -'
+          me.setEditBoxPosition(point)
+        }
+      })
+
+      // 模型加载完成后事件
+      this.drawControl.on(mars3d.draw.event.LoadEnd, function (e) {
+        var entity = e.entity
+        const attr = entity.attribute
+        if (attr.edit) {
+          entity.loadOk = true
+          if (entity.loadOk && entity.drawOk) {
+            me.plotModelComplete(entity)
+          }
+        }
+        // console.log('gltf模型加载完成')
+      })
+
+      // 开始编辑
+      this.drawControl.on(mars3d.draw.event.EditStart, function (e) {
+        if (e.entity.attribute.type !== 'billboard') {
+          me.startEditing(e.entity)
+        }
+        // console.log('开始编辑')
+      })
+
+      this.drawControl.on(mars3d.draw.event.EditMouseMove, function (e) {
+        if (e.entity.attribute.type !== 'billboard') {
+          me.showOrHideRect(false, e.entity)
+          me.stopEditing()
+        }
+        // console.log('EditMouseMove')
+      })
+
+      // 编辑修改了点
+      this.drawControl.on(mars3d.draw.event.EditMovePoint, function (e) {
+        var entity = e.entity
+        if (entity.attribute.type !== 'billboard') {
+          me.startEditing(entity)
+          const position = me.getModelLabelPosition(entity)
+          const attr = entity.attribute
+          // 如果是编辑模式下添加的模型
+          if (attr.edit) {
+            me.updateMarkerPosition(attr.id, position)
+          } else {
+            me.updateLabelPosition(attr.id, position)
+          }
+        }
+        // console.log('编辑修改了点')
+      })
+
+      // 停止编辑
+      this.drawControl.on(mars3d.draw.event.EditStop, function (e) {
+        if (e.entity.attribute.type !== 'billboard') {
+          me.showOrHideRect(true, e.entity)
+          me.stopEditing()
+        }
+        // console.log('停止编辑')
+      })
+
+      // 删除了对象
+      this.drawControl.on(mars3d.draw.event.Delete, function (e) {
+        var entity = e.entity
+        const attr = entity.attribute
+
+        const index = me.modelList.indexOf(entity)
+        if (index > -1) { me.modelList.splice(index, 1) }
+        // 如果是编辑模式下添加的模型
+        if (attr.edit) {
+          me.deleteModelMarker(entity)
+        } else {
+          // 删除对应标签
+          const t = me.findModelLabel(attr.id)
+          if (t !== undefined) {
+            const index = me.labelList.indexOf(t)
+            me.labelList.splice(index, 1)
+            t.destroy()
+          }
+          // 删除矩形框列表
+          if (me.rectList) {
+            const r = me.rectList.find(t => t._name === attr.id)
+            if (r !== undefined) {
+              const index = me.rectList.indexOf(r)
+              me.rectList.splice(index, 1)
+              me.viewer.entities.remove(r)
+            }
+          }
+          me.showEditBox = false
+        }
+
+        me.stopEditing(entity)
+        // console.log('删除了对象')
+      })
+    },
+
+    /**
      *  地图构造完成回调
      */
     onMapload (viewer) {
@@ -2205,11 +2208,14 @@ export default {
           background: true
         }
       })
-
+      this.initDrawControl()
+      // 模型标签列表
+      this.labelList = []
       // 地图鼠标按下
       this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
       this.measureEnd()
       this.addModel()
+      this.loadGeoJson()
     }
   }
 }
@@ -2515,7 +2521,7 @@ export default {
     > div:nth-child(2):active {
       background: #00679d;
     }
-        .add {
+      .add {
       position: absolute;
       width: 40px;
       height: 40px;

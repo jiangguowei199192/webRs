@@ -180,7 +180,7 @@ export default {
               this.showInfo.subTel = resData.enterpriseTelBackup
               this.showInfo.lat = resData.enterpriseLatitude
               this.showInfo.lon = resData.enterpriseLongitude
-
+              this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
               var baseInfosTemp = []
               resData.planEnterpriseBaseInfoPic.forEach((item) => {
                 var temp = {
@@ -236,10 +236,16 @@ export default {
       })
     },
     goto3d () {
+      if (!this.showInfo.planEnterpriseInfo3D || !this.showInfo.planEnterpriseInfo3D.modelPath) {
+        this.$notify.warning({ title: '提示', message: '三维预案不存在' })
+        return
+      }
       this.$router.push({
         path: '/deploy3D',
         query: {
-          enterpriseId: this.info.keyId
+          enterpriseId: this.info.keyId,
+          model: this.showInfo.planEnterpriseInfo3D.modelPath,
+          config: this.showInfo.planEnterpriseInfo3D.configPath
         }
       })
     },
