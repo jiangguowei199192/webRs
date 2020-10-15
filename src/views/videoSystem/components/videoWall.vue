@@ -32,7 +32,7 @@
             <a
               @mouseenter="showActive(2)"
               @mouseleave="showActive(0)"
-              @click="showCurindex=1"
+              @click.stop="getTodayFire"
               title="火情报警"
             >
               <img :src="alarmPic" alt />
@@ -469,6 +469,7 @@ import canvasArea from './canvasArea'
 import { debounce, throttle } from '../../../utils/public.js'
 import globalApi from '../../../utils/globalApi'
 import { api } from '@/api/videoSystem/realVideo'
+import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { timeFormat } from '@/utils/date'
 import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
@@ -761,6 +762,24 @@ export default {
           })
         )
       }
+    },
+    // 获取今日警情
+    getTodayFire () {
+      this.showCurindex = 1
+      this.$axios.get(fireApi.getTodayFireAlarmInfos).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          const data = res.data.data
+          data.forEach(element => {
+            element.alarmTime = timeFormat(element.alarmTime)
+            if (element.alarmPicList && element.alarmPicList.length > 0) {
+              element.alarmPicList.forEach(img => {
+                img.picPath = this.picUrl + img.picPath
+              })
+            }
+          })
+          this.todayFireArray = data
+        }
+      })
     },
     // 点击抓取，显示抓拍图片
     showImg: throttle(function () {
