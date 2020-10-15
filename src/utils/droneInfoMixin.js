@@ -295,6 +295,8 @@ const droneInfoMixin = {
           this.$refs.gduMap.map2D.droneDestinationManager.destinationConfirmed()
         } else if (reqInfo.cmdReq === 'gps_cancel') {
           console.log('handleDroneCmdReq : reqInfo.cmdReq === "gps_cancel"')
+        } else if (reqInfo.cmdReq === 'discern_set') {
+          console.log('handleDroneCmdReq : reqInfo.cmdReq === "discern_set"')
         }
       }
     }
