@@ -938,7 +938,7 @@ export default {
           this.clearDraw()
           break
         case 7:
-          this.loadGeoJson()
+          // this.loadGeoJson()
           break
         default:
           break
