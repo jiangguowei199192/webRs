@@ -247,8 +247,8 @@ const droneInfoMixin = {
       }
       const tmpTopic = 'gdu/discernControl/-1/' + this.curDevCode
       const tmpStr = JSON.stringify(tmpParams)
-      console.log('switchDetectStatus ... ' + tmpTopic + ':' + tmpStr)
-      new MqttService().client.send(tmpTopic, tmpStr)
+      // console.log('switchDetectStatus ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr, 2)
     },
     // 设置无人机是否开启检测算法
     switchPuzzlingStatus () {
@@ -272,16 +272,16 @@ const droneInfoMixin = {
       const tmpParams = { gps: [lonLat] }
       const tmpTopic = 'gdu/commandControl/-1/' + this.curDevCode
       const tmpStr = JSON.stringify(tmpParams)
-      console.log('confirmDestinationCB ... ' + tmpTopic + ':' + tmpStr)
-      new MqttService().client.send(tmpTopic, tmpStr)
+      // console.log('confirmDestinationCB ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr, 2)
     },
     // 取消无人机目标点事件回调
     cancelDestinationCB () {
       const tmpParams = { gps_cancel: 1 }
       const tmpTopic = 'gdu/commandControl/-1/' + this.curDevCode
       const tmpStr = JSON.stringify(tmpParams)
-      console.log('cancelDestinationCB ... ' + tmpTopic + ':' + tmpStr)
-      new MqttService().client.send(tmpTopic, tmpStr)
+      // console.log('cancelDestinationCB ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr, 2)
     },
     // 处理无人机指令响应回复
     handleDroneCmdReq (reqInfo) {
