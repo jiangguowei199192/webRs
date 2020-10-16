@@ -387,8 +387,7 @@ export default {
 
         //   })
       }
-      var changeView = false
-      var viewIndex = 0
+      var viewIndex = 1000
       switch (val) {
         case 0:
           this.fliterModel(5)
@@ -403,12 +402,10 @@ export default {
         case 2:
         case 3:
           this.fliterModel(val - 1)
-          changeView = true
           viewIndex = val - 1
           break
         case 5:
           this.fliterModel(3)
-          changeView = true
           viewIndex = 3
           break
         case 7:
@@ -418,10 +415,9 @@ export default {
           break
       }
 
-      if (changeView) {
-        if (this.cameraViews[viewIndex] !== '') this.viewer.mars.centerAt(this.cameraViews[viewIndex])
-        else this.returnHome()
-      }
+      if (viewIndex === 1000) this.returnHome()
+      else if (this.cameraViews[viewIndex] !== '') this.viewer.mars.centerAt(this.cameraViews[viewIndex])
+      else this.returnHome()
     }
   },
 
@@ -779,6 +775,7 @@ export default {
           this.updateLabelHtml(t)
         }
         this.curEntity.show = !this.editBox.hide
+        this.curEntity.attribute.show = !this.editBox.hide
         if (this.editBox.hide) {
           this.showOrHideRect(true, this.curEntity)
           this.stopEditing()
@@ -969,6 +966,7 @@ export default {
               } else {
                 // 沙盘绘制添加的模型
                 // 添加模型上方标签
+                e.attribute.task.hide = false
                 this.addModelLabel(e, e.attribute.task)
                 // 添加模型下方矩形框
                 this.addModelRect(e)
@@ -1265,7 +1263,10 @@ export default {
       }
       if (this.modelList) {
         this.modelList.forEach(e => {
-          if (index === 5) e.show = true
+          const attr = e.attribute
+          // 沙盘绘制的模型，且模型隐藏
+          if (attr.editIndex === 5 && attr.show === false) e.show = false
+          else if (index === 5) e.show = true
           else if (e.attribute.editIndex === index)e.show = true
           else e.show = false
         })

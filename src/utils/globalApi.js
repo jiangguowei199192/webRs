@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // 消防
   baseUrl = 'http://112.74.104.62:8850'
-  mqttServer = '111.47.13.103'
+  mqttServer = '112.74.104.62'
   mqttPort = 2883
   headImg = 'http://112.74.104.62:81'
   // 长江大保护
