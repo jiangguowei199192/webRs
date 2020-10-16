@@ -175,7 +175,7 @@
             >火点</span>
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickChangeFuncLayers"></div>
+        <div slot="reference" ref="selLayerCtrl" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickChangeFuncLayers"></div>
       </el-popover>
       <el-popover :append-to-body="bAppendToBody" ref="ctrlBasicLayer" placement="left" trigger="click" popper-class="el-popover-custom">
         <div class="mapPopover">
@@ -225,7 +225,7 @@
             >混合地图</span>
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickChangeBasicLayers"></div>
+        <div slot="reference" ref="selMapCtrl" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickChangeBasicLayers"></div>
       </el-popover>
       <div class="yDivBtn btnLocator btnActive" @click="clickLocator"></div>
       <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
@@ -1102,10 +1102,12 @@ export default {
     // 弹出切换功能图层的Popover
     clickChangeFuncLayers () {
       this.closeAndOffsetPopover(this.$refs.ctrlBasicLayer, this.$refs.ctrlFuncLayer)
+      this.$refs.selLayerCtrl.blur()
     },
     // 弹出切换底图图层的Popover
     clickChangeBasicLayers () {
       this.closeAndOffsetPopover(this.$refs.ctrlFuncLayer, this.$refs.ctrlBasicLayer)
+      this.$refs.selMapCtrl.blur()
     },
     // 关闭和偏移Popover弹窗
     closeAndOffsetPopover (closePop, offsetPop) {

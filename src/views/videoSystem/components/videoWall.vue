@@ -392,6 +392,52 @@
             </div>
           </div>
         </div>
+        <div class="puzzlingBox" v-if="bShowPuzzlingBox">
+          <div class="pbTitle">
+            <div class="titleImg"></div>
+            <div class="titleText">正射拼图</div>
+            <el-date-picker
+              v-model="puzzleDate"
+              type="date"
+              class="titleDate"
+              placeholder="选择日期"
+              format="yyyy 年 MM 月 dd 日"
+              :append-to-body="false"
+              @change="puzzleDateChange"
+              value-format="timestamp">
+            </el-date-picker>
+            <div class="titleClose" @click="bShowPuzzlingBox=false"></div>
+          </div>
+          <div class="puzzlingItems webFsScroll">
+            <div class="pItem"  v-for="(item,index) in puzzleDataArray" :key="index"
+              :class="{pItemBottom:index != puzzleDataArray.length-1}">
+              <img class="itemImg" :src="item.imgUrl"/>
+              <div class="itemTime commonText">{{item.time}}</div>
+              <div class="itemAddr commonText">{{item.addr}}</div>
+              <div class="itemStatus commonText"
+                :class="{isPuzzling:item.status === 0,puzzleDone:item.status === 1}"
+              >
+                <span v-show="item.status === 0">拼图中...</span>
+                <span v-show="item.status === 1">已完成</span>
+              </div>
+              <div class="itemDetail commonText">查看</div>
+            </div>
+            <div class="noPuzzleText"
+              v-if="puzzleDataArray&&puzzleDataArray.length==0"
+            >今日无正射拼图任务，可切换其他日期查看</div>
+          </div>
+          <div class="puzzlingPages">
+            <el-pagination
+              background
+              layout="total, prev, pager, next"
+              :total="puzzlePageInfo.total"
+              class="tablePagination"
+              :page-size="puzzlePageInfo.pageSize"
+              @current-change="puzzleCurrentPageChange"
+              :current-page.sync="puzzlePageInfo.currentPage"
+            ></el-pagination>
+          </div>
+        </div>
       </div>
       <!-- 添加标签的弹框 -->
       <div class="fullScreenMark" v-show="showMarkForm">
@@ -584,6 +630,14 @@ export default {
       },
       dateRange: [], // 保存图库日期的数组
       picStorageArray: [], // 保存图库数据
+      // 拼图的分页信息
+      puzzlePageInfo: {
+        total: 9,
+        currentPage: 1,
+        pageSize: 5
+      },
+      puzzleDataArray: [], // 拼图列表数据
+      puzzleDate: '',
       ruleForm: {
         tagName: '',
         tagType: ''
@@ -725,6 +779,28 @@ export default {
     var elementResizeDetectorMaker = require('element-resize-detector')
     this.erd = elementResizeDetectorMaker()
     this.setPlayerSizeListener()
+
+    this.puzzleDataArray = [
+      {
+        imgUrl: '',
+        time: '2020.08.22 19:32:55',
+        addr: '江夏中队无人机',
+        status: 0
+      },
+      {
+        imgUrl: '',
+        time: '2020.08.22 19:32:55',
+        addr: '江夏中队无人机',
+        status: 1
+      },
+      {
+        imgUrl: '',
+        time: '2020.08.22 19:32:55',
+        addr: '江夏中队无人机',
+        status: 1
+      }
+    ]
+    this.puzzlePageInfo.total = this.puzzleDataArray.length
   },
 
   methods: {
@@ -893,6 +969,17 @@ export default {
       this.pageInfo.currentPage = val
       console.log(`当前页: ${val}`)
       this.getSnapList()
+    },
+    // 拼图列表改变当前页
+    puzzleCurrentPageChange (val) {
+      this.puzzlePageInfo.currentPage = val
+      console.log(`puzzleCurrentPageChange当前页: ${val}`)
+      // this.getPuzzleList()
+    },
+    // 改变拼图时间
+    puzzleDateChange () {
+      console.log('puzzleDateChange:', this.puzzleDate)
+      // this.getPuzzleList()
     },
     // 编辑当前图片
     editCurPic (item) {
@@ -2391,6 +2478,142 @@ export default {
         width: 100%;
         height: 100%;
         background-color: whitesmoke;
+      }
+    }
+    .puzzlingBox {
+      position: absolute;
+      pointer-events: visible;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #121E3AD8;
+      border: 1px solid #1EB0FC;
+      z-index: 5;
+      width: 522px;
+      height: 330px;
+      padding: 0px 17px;
+      cursor: default;
+      .pbTitle {
+        position: relative;
+        width: 100%;
+        height: 45px;
+        line-height: 45px;
+        border-bottom: 1px solid #1EB0FC;;
+        .titleImg {
+          position: absolute;
+          width: 21px;
+          height: 16px;
+          top: 14px;
+          background-image: url('../../../assets/images/drone/popupTitleImg.png');
+        }
+        .titleText {
+          position: absolute;
+          top: 1px;
+          left: 32px;
+          font-size: 14px;
+        }
+        .titleDate {
+          position: absolute;
+          right: 40px;
+          width: 150px;
+          height: 30px;
+        }
+        .el-input__inner {
+          height: 26px;
+          border: 1px solid #1EB0FC;
+        }
+        .el-picker-panel {
+          position: absolute !important;
+          .el-picker-panel__icon-btn {
+            margin-top: 0;
+          }
+        }
+        .titleClose {
+          position: absolute;
+          height: 14px;
+          width: 14px;
+          background-image: url('../../../assets/images/AR/X.png');
+          cursor: pointer;
+          right: 0px;
+          top: 14px;
+        }
+      }
+      .puzzlingItems {
+        height: 235px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        .pItem {
+          position: relative;
+          height: 64px;
+          .itemImg {
+            margin-top: 9px;
+            width: 80px;
+            height: 46px;
+          }
+          .commonText {
+            position: absolute;
+            height: 20px;
+            line-height: 20px;
+            font-size: 14px;
+          }
+          .itemTime {
+            top: 9px;
+            left: 90px;
+          }
+          .itemAddr {
+            bottom: 9px;
+            left: 90px;
+          }
+          .itemStatus {
+            width: 60px;
+            text-align: center;
+            top: 9px;
+            right: 2px;
+          }
+          .isPuzzling {
+            color: #1EB0FC;
+          }
+          .puzzleDone {
+            color: #5BFF00;
+          }
+          .itemDetail {
+            width: 60px;
+            text-align: center;
+            background-color: #1EB0FC;
+            color: #FFFFFF;
+            bottom: 9px;
+            right: 2px;
+            cursor: pointer;
+          }
+        }
+        .pItemBottom {
+          border-bottom: 1px solid #3E92C2;
+        }
+        .noPuzzleText {
+          height: 235px;
+          line-height: 235px;
+          text-align: center;
+          font-size: 14px;
+          font-family: Source Han Sans CN;
+          font-weight: 500;
+          color: #1EB0FC;
+        }
+      }
+      .puzzlingPages {
+        position: relative;
+        width: 100%;
+        height: 48px;
+        .tablePagination {
+          right: 0px;
+          position: absolute;
+          button.btn-next,
+          button.btn-prev {
+            background: transparent !important;
+          }
+          button.btn-prev {
+            margin-right: 0px;
+          }
+        }
       }
     }
   }

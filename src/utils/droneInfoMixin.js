@@ -14,6 +14,7 @@ const droneInfoMixin = {
       bPuzzlingStatus: false,
       bSetPointStatus: false,
       bShowRouteStatus: true,
+      bShowPuzzlingBox: false,
       di_height: '',
       di_hSpeed: '',
       di_vSpeed: '',
@@ -253,6 +254,7 @@ const droneInfoMixin = {
     // 设置无人机是否开启检测算法
     switchPuzzlingStatus () {
       // this.bPuzzlingStatus = !this.bPuzzlingStatus
+      this.bShowPuzzlingBox = !this.bShowPuzzlingBox
     },
     // 设置是否可以选定目标点
     switchSetPointStatus () {
