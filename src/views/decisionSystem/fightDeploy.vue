@@ -29,7 +29,11 @@
         >
           <div class="edit_menu">
             <i class="el-icon-delete" title="删除"></i>
-            <i class="el-icon-folder-opened" title="保存"></i>
+            <i
+              class="el-icon-folder-opened"
+              title="保存"
+              @click.stop="saveData"
+            ></i>
             <i class="el-icon-share" title="分享"></i>
             <i class="el-icon-printer" title="打印"></i>
           </div>
@@ -127,6 +131,7 @@
 import { jsPlumb } from 'jsplumb'
 import drawNode from './components/drawNode'
 import { EventBus } from '@/utils/eventBus.js'
+import { Notification } from 'element-ui'
 
 export default {
   name: 'fightDeploy',
@@ -273,6 +278,29 @@ export default {
       EventBus.$emit('type', this.activeType)
       // console.log("点击区域以外: " + this.activeType);
     }
+
+    // // 加载页面更新nodeData
+    // const _this = this
+    // EventBus.$on('nodeList_change', (data) => {
+    //   console.log('更新后data:', data)
+    //   _this.data.nodeList = data
+    // })
+
+    // 加载页面读取nodeData并还原
+    var nodeData = JSON.parse(localStorage.getItem('nodeData'))
+    if (nodeData !== null) {
+      console.log(nodeData)
+      nodeData.forEach((item) => {
+        this.addNode(item)
+      })
+    } else {
+      Notification({
+        title: '提示',
+        message: '请先保存上传数据！',
+        type: 'warning',
+        duration: 5 * 1000
+      })
+    }
   },
 
   beforeDestroy () {
@@ -280,6 +308,11 @@ export default {
   },
 
   methods: {
+    saveData () {
+      alert(JSON.stringify(this.data.nodeList))
+      localStorage.setItem('nodeData', JSON.stringify(this.data.nodeList))
+    },
+
     init () {
       const _this = this
       this.jsPlumb.ready(() => {
@@ -329,12 +362,16 @@ export default {
       //     containment: 'parent'
       //   })
       // })
+
+      this.$nextTick(() => {
+        EventBus.$emit('nodeList', this.data.nodeList)
+      })
     },
 
     // 单击节点
     editNode (tag) {
       // console.log(this.$refs.drawNode[0].$el)
-      console.log('编辑节点', tag)
+      // console.log("编辑节点", tag);
     },
 
     // 删除节点

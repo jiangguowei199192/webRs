@@ -61,6 +61,7 @@ export default {
         rotate: 0,
         minW: [20, 1000],
         minH: [20, 1000],
+        nodeId: this.node.id,
         lock: false,
         isActive: false
       },
@@ -96,13 +97,13 @@ export default {
 
   created () {
     // 节点位置信息初始化
-    const { width, height, left, top, rotate } = this.controlled
+    const { width, height, left, top, rotate, nodeId } = this.controlled
     this.posData.width = width
     this.posData.height = height
     this.posData.left = left
     this.posData.top = top
     this.posData.rotate = rotate
-    // console.log(this.posData);
+    this.posData.nodeId = nodeId
 
     // 节点激活状态
     const _this = this
@@ -110,13 +111,28 @@ export default {
       // console.log(data)
       _this.controlled.isActive = data
     })
+
+    // 接收nodeList,并添加编辑信息
+    EventBus.$on('nodeList', (data) => {
+      // console.log("nodeList:", data);
+      data.forEach((item) => {
+        // console.log(item.id, _this.posData.nodeId);
+        if (_this.posData.nodeId === item.id) {
+          // console.log(_this.posData)
+          // data.push(_this.posData)
+        }
+      })
+      console.log('data:', data)
+      // 分发修改后的nodeList
+      EventBus.$emit('nodeList_change', data)
+    })
   },
 
   methods: {
     // 点击选中元素
     activated (pos) {
       this.controlled.isActive = true
-      console.log('当前元素' + this.node.id, pos)
+      // console.log('当前元素' + this.node.id, pos)
     },
     // 拖拽中
     onDragging (pos) {
