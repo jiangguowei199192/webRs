@@ -1273,6 +1273,8 @@ export default {
               if (list.id === this.curVideosArray[0].id) {
                 this.selectedIndex = index
                 list.isCurSelected = true
+              } else {
+                list.isCurSelected = false
               }
             })
           }
