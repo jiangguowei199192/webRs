@@ -87,6 +87,7 @@
             @change-node-site="changeNodeSite"
             @delete-node="deleteNode"
             @edit-node="editNode"
+            @resize-stop="resizeStop"
           ></drawNode>
         </div>
       </div>
@@ -346,7 +347,10 @@ export default {
         label: this.currentItem.area,
         left: event.offsetX - 105 / 2 + 'px',
         top: event.offsetY - 105 / 2 + 'px',
-        id: 'node' + index
+        id: 'node' + index,
+        rotate: 0,
+        width: 105,
+        height: 105
       }
 
       this.addNode(temp)
@@ -363,15 +367,31 @@ export default {
       //   })
       // })
 
-      this.$nextTick(() => {
-        EventBus.$emit('nodeList', this.data.nodeList)
-      })
+      // this.$nextTick(() => {
+      //   EventBus.$emit('nodeList', this.data.nodeList)
+      // })
     },
 
     // 单击节点
     editNode (tag) {
       // console.log(this.$refs.drawNode[0].$el)
       // console.log("编辑节点", tag);
+    },
+
+    resizeStop (id, pos) {
+      pos.left = pos.left + 'px'
+      pos.top = pos.top + 'px'
+      const node = this.data.nodeList.find(n => n.id === id)
+      if (node !== undefined) {
+        for (var b in pos) {
+        // 拷贝属性
+          if (Object.prototype.hasOwnProperty.call(node, b)) {
+            node[b] = pos[b]
+          }
+        }
+      }
+
+      console.log(this.data.nodeList)
     },
 
     // 删除节点

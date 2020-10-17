@@ -54,11 +54,11 @@ export default {
       mouseEnter: false,
       // 节点状态
       controlled: {
-        width: 105,
-        height: 105,
+        width: this.node.width,
+        height: this.node.height,
         left: parseInt(this.node.left.replace('px', '')),
         top: parseInt(this.node.top.replace('px', '')),
-        rotate: 0,
+        rotate: this.node.rotate,
         minW: [20, 1000],
         minH: [20, 1000],
         nodeId: this.node.id,
@@ -151,6 +151,7 @@ export default {
     // 缩放结束
     resizeStop (pos) {
       this.sizeShow = false
+      this.$emit('resize-stop', this.node.id, pos)
     },
     // 旋转停止
     rotateStop (pos) {
