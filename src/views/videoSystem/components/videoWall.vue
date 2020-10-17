@@ -95,15 +95,15 @@
             <div class="content webFsScroll">
               <div class="item" v-for="(item,index) in todayFireArray" :key="index">
                 <div class="pic">
-                  <img :src="item.alarmPic" alt />
+                  <img :src="`${picUrl}${item.alarmPic}`" alt />
                 </div>
-                <div>
+                <div class="detail">
                   <p>时间：{{item.alarmTime}}</p>
-                  <p>地点：{{item.alarmAddress}}</p>
-                  <p>坐标：30.254124 114.221454</p>
+                  <p >地点：<span :title="item.alarmAddress">{{item.alarmAddress&&item.alarmAddress.length>9?item.alarmAddress.slice(0,9)+'.':'-'}}</span></p>
+                  <p>坐标：{{item.alarmLongitude}},{{item.alarmLatitude}}</p>
                   <p>
                     类型：
-                    <span class="type">火情报警</span>
+                    <span class="type">{{item.alarmTypeCode==='HUO'?'火点报警':item.alarmTypeCode==='YANWU'?'烟雾报警':'-'}}</span>
                   </p>
                 </div>
               </div>
@@ -515,7 +515,6 @@ import canvasArea from './canvasArea'
 import { debounce, throttle } from '../../../utils/public.js'
 import globalApi from '../../../utils/globalApi'
 import { api } from '@/api/videoSystem/realVideo'
-import { fireApi } from '@/api/videoSystem/fireAlarm'
 import { timeFormat } from '@/utils/date'
 import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
@@ -843,13 +842,19 @@ export default {
     // 获取今日警情
     getTodayFire () {
       this.showCurindex = 1
-      this.$axios.get(fireApi.getTodayFireAlarmInfos).then(res => {
+      const params = {
+        deviceCode: this.videoInfo.deviceCode,
+        streamCode: this.videoInfo.streamType,
+        pageSize: 1000000,
+        timeBegin: new Date(new Date().toLocaleDateString()).getTime()
+      }
+      this.$axios.get(api.todayAlarm, { params }).then(res => {
         if (res && res.data && res.data.code === 0) {
-          const data = res.data.data
+          const data = res.data.data.data
           data.forEach(element => {
             element.alarmTime = timeFormat(element.alarmTime)
             if (element.alarmPicList && element.alarmPicList.length > 0) {
-              element.alarmPic = element.alarmPicList.join('')
+              element.alarmPic = element.alarmPicList[0].picPath
             }
           })
           this.todayFireArray = data
@@ -1565,7 +1570,11 @@ export default {
   created () {
     // 监听火情报警
     EventBus.$on('getFireAlarm', info => {
-      if (this.videoInfo.deviceCode === info.deviceCode && this.videoInfo.streamType === info.channleId) {
+      if (this.videoInfo.deviceCode === info.deviceCode && this.videoInfo.streamType === info.streamType && this.videoInfo.isShowOperate) {
+        // 如果此时火情弹框打开了
+        if (this.showCurindex === 1) {
+          this.getTodayFire()
+        }
         this.showNotification = true
         this.infoObj.isWarning = true
         this.infoObj.isError = false
@@ -1752,9 +1761,16 @@ export default {
               width: 80px;
               height: 80px;
               margin-right: 8px;
-              img {
-                width: 100%;
+              border:1px solid #eee;
+              >img {
+                width:100%;
                 height: 100%;
+              }
+            }
+            div.detail{
+              flex:1;
+              p{
+                line-height: 20px;
               }
             }
 
