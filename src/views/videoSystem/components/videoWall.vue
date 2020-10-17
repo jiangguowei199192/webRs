@@ -91,7 +91,7 @@
           </div>
           <!-- 实时警情弹框 -->
           <div class="realPoliceInfo" v-show="showCurindex==1" @dblclick.stop="stopEvent">
-            <div class="title">实时警情</div>
+            <div class="title" >实时警情</div>
             <div class="content webFsScroll">
               <div class="item" v-for="(item,index) in todayFireArray" :key="index">
                 <div class="pic">
@@ -284,9 +284,9 @@
           :style="{
           left:item.label=='0'?((Number(item.left)+Number(item.width/2))/1280*1920-51.5)+'px':(Number(item.left)+Number(item.width/2))/1280*1920+'px',
          top:item.label==0?((item.top/720)*1080-102)+'px':((item.top/720)*1080-58)+'px'}"
+         :title="item.label==0?item.labelName:''"
         >
-          <div>{{item.labelName}}</div>
-          <!-- Number(item.left)+Number(item.width/2))/720)*1080-25+'px' -->
+          <div v-show="item.label!=0">{{item.labelName}}</div>
         </div>
       </div>
       <!-- 新版云台操作 -->
