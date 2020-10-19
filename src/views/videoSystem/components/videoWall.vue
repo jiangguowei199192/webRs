@@ -1480,14 +1480,6 @@ export default {
     }, 500),
     // 鼠标松开
     stopChange: debounce(function (index) {
-      // AR操作云台通知后台
-      new MqttService().client.send(
-        'video/webControlPzt',
-        JSON.stringify({
-          deviceCode: this.videoInfo.deviceCode,
-          channelId: this.videoInfo.streamType
-        })
-      )
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType,
@@ -1567,6 +1559,14 @@ export default {
         .post('/video-service2/index/api/ptzConrol', params)
         .then(res => {
           if (res && res.data && res.data.code === 0) {
+            // AR操作云台成功后通知后台
+            new MqttService().client.send(
+              'video/webControlPzt',
+              JSON.stringify({
+                deviceCode: this.videoInfo.deviceCode,
+                channelId: this.videoInfo.streamType
+              })
+            )
             console.log('成功！')
           }
         })
