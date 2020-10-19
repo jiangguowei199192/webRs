@@ -17,6 +17,11 @@ export const settingApi = {
   countDeptUser: '/cloud-fms/sysuser/countDeptUser', // 设置：组织管理-获取未分配组织的用户数量
   queryDevicePage: '/cloud-video/device/queryPage', // 设置：设备接入-分页查询设备列表
   getDistrictList: '/cloud-video/deptAndDevice/getDistrictList', // 设置：设备接入-查询行政区列表
+  changeDeviceStatus: '/cloud-video/device/changeDeviceStatus', // 设置：设备接入-修改启用状态
+  addGDJK: '/cloud-video/device/addGDJK', // 设置：设备接入-添加高点
+  addWRJ: '/cloud-video/device/addWRJ', // 设置：设备接入-添加无人机
+  deleteDevice: '/cloud-video/device/delete', // 设置：设备接入-删除设备
+  getUsedDeviceCount: '/cloud-video/device/getUsedDeviceCount', //
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图

@@ -84,10 +84,14 @@
               popper-class="el-popover-more"
             >
               <div style="text-align: center">
-                <el-button class="popoverBtnSty" @click="addOrChangeInputDevice('新增接入设备')"
+                <el-button
+                  class="popoverBtnSty"
+                  @click="addOrChangeInputDevice('新增接入设备')"
                   >新增接入设备</el-button
                 >
-                <el-button class="popoverBtnSty" @click="addOrChangeInputDevice('修改接入设备')"
+                <el-button
+                  class="popoverBtnSty"
+                  @click="addOrChangeInputDevice('修改接入设备')"
                   >修改接入设备</el-button
                 >
                 <el-button class="popoverBtnSty" @click="deleteInputDevice"
@@ -112,7 +116,6 @@
             <el-table
               @row-click="clickTableRow"
               :data="deviceList"
-              stripe
               empty-text="暂无数据"
               tooltip-effect="light"
               :row-class-name="tableStatusChange"
@@ -160,6 +163,12 @@
                 prop="lat"
                 width="100"
               ></el-table-column>
+              <el-table-column
+                align="center"
+                label="在线状态"
+                prop="onlineStatus"
+                width="80"
+              ></el-table-column>
               <el-table-column align="center" label="启用" width="100">
                 <template slot-scope="scope">
                   <el-switch
@@ -176,15 +185,9 @@
               ></el-table-column>
               <el-table-column
                 align="center"
-                label="在线状态"
-                prop="onlineStatus"
-                width="70"
-              ></el-table-column>
-              <el-table-column
-                align="center"
                 label="离线时间"
                 prop="offlineTime"
-                width="250"
+                width="200"
               ></el-table-column>
             </el-table>
             <el-pagination
@@ -208,7 +211,7 @@
       class="addDeviceDlg"
     >
       <div>
-        <div class="addTitleSty">{{addDeviceTitle}}</div>
+        <div class="addTitleSty">{{ addDeviceTitle }}</div>
         <div class="addContentSty">
           <el-form
             ref="addDeviceRef"
@@ -228,9 +231,7 @@
             </el-form-item>
 
             <el-form-item label="设备编号" prop="deviceNo">
-              <el-input
-                v-model="addDeviceForm.deviceNo"
-              ></el-input>
+              <el-input v-model="addDeviceForm.deviceNo"></el-input>
             </el-form-item>
 
             <el-form-item
@@ -238,7 +239,11 @@
               prop="deviceType"
               style="margin-left: 48px"
             >
-              <el-select v-model="addDeviceForm.deviceType" placeholder="" @change="deviceTypeSelectChanged">
+              <el-select
+                v-model="addDeviceForm.deviceType"
+                placeholder=""
+                @change="deviceTypeSelectChanged"
+              >
                 <el-option
                   v-for="(item, index) in deviceTypeList"
                   :key="index"
@@ -248,17 +253,14 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item
-              label="所在地点"
-              prop="address"
-            >
+            <el-form-item label="所在地点" prop="address">
               <el-input v-model="addDeviceForm.address"></el-input>
             </el-form-item>
 
             <el-form-item
               label="是否启用"
               prop="enable"
-              style="margin-left: 48px;"
+              style="margin-left: 48px"
             >
               <el-select v-model="addDeviceForm.enable" placeholder="">
                 <el-option
@@ -270,10 +272,7 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item
-              label="设备品牌"
-              prop="deviceBrand"
-            >
+            <el-form-item label="设备品牌" prop="deviceBrand">
               <el-input v-model="addDeviceForm.deviceBrand"></el-input>
             </el-form-item>
 
@@ -281,16 +280,12 @@
               label="用户名"
               v-show="isGdjk"
               prop="username"
-              style="margin-left: 48px;"
+              style="margin-left: 48px"
             >
               <el-input v-model="addDeviceForm.username"></el-input>
             </el-form-item>
 
-            <el-form-item
-              label="密码"
-              v-show="isGdjk"
-              prop="password"
-            >
+            <el-form-item label="密码" v-show="isGdjk" prop="password">
               <el-input v-model="addDeviceForm.password"></el-input>
             </el-form-item>
 
@@ -298,7 +293,7 @@
               label="所属区域"
               v-show="isGdjk"
               prop="belongArea"
-              style="margin-left: 48px;"
+              style="margin-left: 48px"
             >
               <el-select v-model="addDeviceForm.belongArea" placeholder="">
                 <el-option
@@ -342,7 +337,7 @@
               <el-input v-model="addDeviceForm.directionAngle"></el-input>
             </el-form-item>
 
-            <div class="subTitleSty" style="margin-top: -20px;">
+            <div class="subTitleSty" style="margin-top: -20px">
               设备扩展信息
             </div>
 
@@ -356,12 +351,12 @@
                 type="date"
                 placeholder=""
                 value-format="timestamp"
-                style="width: 146px;"
+                style="width: 146px"
               ></el-date-picker>
             </el-form-item>
           </el-form>
           <div style="height: 32px">
-            <div class="npdConfirm" @click="addDeviceConfirm">确定</div>
+            <div class="npdConfirm" @click="addDeviceConfirm">保存</div>
             <div class="npdCancel" @click="addDeviceCancel">取消</div>
           </div>
         </div>
@@ -373,7 +368,7 @@
 <script>
 import { settingApi } from '@/api/setting'
 import { timeFormat } from '@/utils/date'
-// import { Notification } from 'element-ui'
+import { Notification } from 'element-ui'
 
 export default {
   data () {
@@ -400,6 +395,10 @@ export default {
         {
           label: '离线',
           value: 'offline'
+        },
+        {
+          label: '未接入',
+          value: 'empty'
         }
       ],
       useStatusSelected: '', // 启用状态
@@ -419,7 +418,7 @@ export default {
       showMorePopover: false,
 
       deviceList: [],
-      radio: '',
+      radio: -1,
 
       pageTotal: 0,
       currentPage: 1,
@@ -451,6 +450,7 @@ export default {
         belongArea: [{ required: true, message: '请选择所属区域' }],
         longitude: [{ required: true, message: '请输入设备经度' }],
         latitude: [{ required: true, message: '请输入设备纬度' }]
+        // directionAngle: [{ type: 'number', message: '请输入数字', trigger: 'blur' }]
       },
       addWrjRules: {
         deviceName: [{ required: true, message: '请输入设备名称' }],
@@ -502,11 +502,11 @@ export default {
           deviceType = '无人机'
         }
 
-        var useStatus = ''
+        var useStatus = false
         if (item.deviceStatus === 'enabled') {
-          useStatus = '启用'
+          useStatus = true
         } else if (item.deviceStatus === 'disabled') {
-          useStatus = '禁用'
+          useStatus = false
         }
 
         var onlineStatus = ''
@@ -514,6 +514,8 @@ export default {
           onlineStatus = '在线'
         } else if (item.onlineStatus === 'offline') {
           onlineStatus = '离线'
+        } else if (item.onlineStatus === 'empty') {
+          onlineStatus = '未接入'
         }
 
         var offlineTime = ''
@@ -535,7 +537,16 @@ export default {
           useStatus: useStatus,
           deptName: dptName,
           onlineStatus: onlineStatus,
-          offlineTime: offlineTime
+          offlineTime: offlineTime,
+          address: item.deviceAddress,
+          brand: item.deviceBrand,
+          height: item.deviceHeight,
+          expirationDate: item.deviceExpirationDate,
+          deviceSeatAz: item.deviceSeatAz,
+          deviceUserName: item.deviceUserName,
+          devicePassword: item.devicePassword,
+          deviceCode: item.deviceCode,
+          district: item.districtCode
         }
         tempArr.push(device)
       })
@@ -543,7 +554,7 @@ export default {
     },
 
     async getDistrictList () {
-      this.$axios.get(settingApi.getDistrictList).then(res => {
+      this.$axios.get(settingApi.getDistrictList).then((res) => {
         if (res && res.data && res.data.code === 0) {
           this.districtList = res.data.data[0].subDept
         }
@@ -575,19 +586,90 @@ export default {
     addOrChangeInputDevice (title) {
       this.showMorePopover = false
       this.addDeviceTitle = title
-      this.showAddDevice = true
 
-      // var selectedDevice = this.deviceList[this.radio]
-      // if (title === '修改接入设备') {
-      //   this.addDeviceForm.deviceName = selectedDevice.deviceName
-      //   this.deviceNo = selectedDevice.deivceNo
-      //   this.deviceType = selectedDevice.deviceType === '高点监控' ? 'GDJK' : 'WRJ'
-      // }
+      if (title === '新增接入设备') {
+        this.showAddDevice = true
+
+        this.addDeviceForm.deviceName = ''
+        this.addDeviceForm.deviceNo = ''
+        this.addDeviceForm.deviceType = 'GDJK'
+        this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
+        this.addDeviceForm.longitude = ''
+        this.addDeviceForm.latitude = ''
+        this.addDeviceForm.enable = ''
+        this.addDeviceForm.deviceBrand = ''
+        this.addDeviceForm.address = ''
+        this.addDeviceForm.height = ''
+        this.addDeviceForm.qualityDate = ''
+        this.addDeviceForm.directionAngle = ''
+        this.addDeviceForm.username = ''
+        this.addDeviceForm.password = ''
+      }
+
+      if (title === '修改接入设备') {
+        if (this.radio < 0) {
+          Notification({
+            title: '提示',
+            message: '请选择设备',
+            type: 'warning',
+            duration: 5 * 1000
+          })
+          return
+        }
+
+        this.showAddDevice = true
+
+        var selectedDevice = this.deviceList[this.radio]
+        this.addDeviceForm.deviceName = selectedDevice.deviceName
+        this.addDeviceForm.deviceNo = selectedDevice.deivceNo
+        this.addDeviceForm.deviceType =
+          selectedDevice.deviceType === '高点监控' ? 'GDJK' : 'WRJ'
+        this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
+        this.addDeviceForm.longitude = selectedDevice.lon
+        this.addDeviceForm.latitude = selectedDevice.lat
+        this.addDeviceForm.enable =
+          selectedDevice.useStatus ? 'enabled' : 'disabled'
+        this.addDeviceForm.deviceBrand = selectedDevice.brand
+        this.addDeviceForm.address = selectedDevice.address
+        this.addDeviceForm.height = selectedDevice.height
+        this.addDeviceForm.qualityDate = selectedDevice.expirationDate
+        this.addDeviceForm.directionAngle = selectedDevice.deviceSeatAz
+        this.addDeviceForm.username = selectedDevice.deviceUserName
+        this.addDeviceForm.password = selectedDevice.devicePassword
+        this.addDeviceForm.belongArea = selectedDevice.district
+      }
     },
 
     // 删除接入设备
     deleteInputDevice () {
       this.showMorePopover = false
+
+      if (this.radio < 0) {
+        Notification({
+          title: '提示',
+          message: '请选择设备',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return
+      }
+
+      var selectedDevice = this.deviceList[this.radio]
+      var param = {
+        deviceCode: selectedDevice.deviceCode
+      }
+      this.$axios.post(settingApi.deleteDevice, param).then((res) => {
+        if (res && res.data && res.data.code === 0) {
+          Notification({
+            title: '提示',
+            message: '删除设备成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.getDeviceList()
+          this.radio = -1
+        }
+      })
     },
 
     // 点击表格行
@@ -601,14 +683,21 @@ export default {
     },
 
     // 激活
-    async activeChange (index, row) {},
+    async activeChange (index, row) {
+      var param = {
+        deviceCode: row.deviceCode,
+        deviceStatus: row.useStatus ? 'enabled' : 'disabled'
+      }
+      this.$axios.post(settingApi.changeDeviceStatus, param).then((res) => {
+        if (res && res.data && res.data.code === 0) {
+          this.getDeviceList()
+        }
+      })
+    },
 
     tableStatusChange (row) {
-      // console.log('tableStatusChange')
-      if (!row.row.useStatus) {
+      if (row.row.onlineStatus === '未接入') {
         return 'table-info-row-disable'
-      } else {
-        return 'table-info-row-enable'
       }
     },
 
@@ -617,6 +706,60 @@ export default {
       this.$refs.addDeviceRef.validate(async (valid) => {
         if (!valid) return
         this.showAddDevice = false
+
+        if (this.addDeviceForm.deviceType === 'GDJK') {
+          var param = {
+            deptDistrictCode: this.addDeviceForm.belongArea, // 行政区
+            deviceAddress: this.addDeviceForm.address, // 地点
+            deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
+            deviceCode: this.addDeviceForm.deviceNo, // 设备编码
+            deviceHeight: this.addDeviceForm.height,
+            deviceLatitude: this.addDeviceForm.latitude,
+            deviceLongitude: this.addDeviceForm.longitude,
+            deviceName: this.addDeviceForm.deviceName,
+            devicePassword: this.addDeviceForm.password,
+            deviceSeatAz: this.addDeviceForm.directionAngle, // 底座方位角
+            deviceStatus: this.addDeviceForm.enable,
+            deviceUserName: this.addDeviceForm.username,
+            expirationDate: this.addDeviceForm.qualityDate // 质保期
+          }
+          this.$axios.post(settingApi.addGDJK, param).then((res) => {
+            if (res && res.data && res.data.code === 0) {
+              Notification({
+                title: '提示',
+                message: '新增设备成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getDeviceList()
+            }
+          })
+        }
+
+        if (this.addDeviceForm.deviceType === 'WRJ') {
+          var param1 = {
+            deviceAddress: this.addDeviceForm.address, // 地点
+            deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
+            deviceCode: this.addDeviceForm.deviceNo, // 设备编码
+            deviceHeight: parseInt(this.addDeviceForm.height),
+            deviceLatitude: this.addDeviceForm.latitude,
+            deviceLongitude: this.addDeviceForm.longitude,
+            deviceName: this.addDeviceForm.deviceName,
+            deviceStatus: this.addDeviceForm.enable,
+            expirationDate: this.addDeviceForm.qualityDate // 质保期
+          }
+          this.$axios.post(settingApi.addWRJ, param1).then((res) => {
+            if (res && res.data && res.data.code === 0) {
+              Notification({
+                title: '提示',
+                message: '新增设备成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.getDeviceList()
+            }
+          })
+        }
       })
     },
 
@@ -743,21 +886,21 @@ export default {
     font-size: 14px;
     height: 26px;
     padding: 0;
-    background-color: #368fbb;
+    background-color: #3c9bce;
   }
   /* 表格每行高度*/
   /deep/.el-table__body td {
     height: 38px;
     padding: 0;
+    background-color: #326680;
   }
   /deep/.el-table__body tr {
-    background-color: #336984;
-    // color: #ffffff;
+    color: #ffffff;
     font-size: 14px;
   }
   /* 鼠标hover每行的样式*/
   /deep/.el-table__body tr:hover > td {
-    background-color: #336984;
+    background-color: #326680;
   }
   /deep/td,
   /deep/th {
@@ -782,7 +925,7 @@ export default {
 }
 
 /deep/.table-info-row-disable td {
-  color: lightgray;
+  background: #3688B1 !important;
 }
 /deep/.table-info-row-enable td {
   color: white;
@@ -831,6 +974,7 @@ export default {
           border: solid 1px #0fbfe0;
           background-color: transparent;
           border-radius: 0;
+          font-size: 14px;
         }
       }
     }
@@ -844,7 +988,7 @@ export default {
   background: #1eb0fc;
   color: white;
   margin-right: 28px;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 32px;
   text-align: center;
   border-radius: 4px;
@@ -857,7 +1001,7 @@ export default {
   background: transparent;
   color: #1eb0fc;
   margin-right: 20px;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 32px;
   text-align: center;
   border-radius: 4px;
