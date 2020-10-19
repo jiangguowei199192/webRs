@@ -13,20 +13,20 @@
     @dragging="onDragging"
     @resizing="onResizing"
     @rotating="onRotating"
+    @dragStop="dragStop"
     @resizeStop="resizeStop"
     @rotateStop="rotateStop"
   >
     <div
       class="node-item"
       ref="node"
-      style="width: 100%; height: 100%"
       :style="
         this.editType == 0 ? 'drawNodeContainer_one' : 'drawNodeContainer_two'
       "
       @mouseenter="showDelete"
       @mouseleave="hideDelete"
     >
-      <span id="node-span">{{ node.label }}</span>
+      <span id="node-span"><img :src="node.label" alt="" /></span>
       <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
         <i class="el-icon-circle-close"></i>
       </div>
@@ -61,7 +61,6 @@ export default {
         rotate: this.node.rotate,
         minW: [20, 1000],
         minH: [20, 1000],
-        nodeId: this.node.id,
         lock: false,
         isActive: false
       },
@@ -97,34 +96,18 @@ export default {
 
   created () {
     // 节点位置信息初始化
-    const { width, height, left, top, rotate, nodeId } = this.controlled
+    const { width, height, left, top, rotate } = this.controlled
     this.posData.width = width
     this.posData.height = height
     this.posData.left = left
     this.posData.top = top
     this.posData.rotate = rotate
-    this.posData.nodeId = nodeId
 
     // 节点激活状态
     const _this = this
     EventBus.$on('type', (data) => {
       // console.log(data)
       _this.controlled.isActive = data
-    })
-
-    // 接收nodeList,并添加编辑信息
-    EventBus.$on('nodeList', (data) => {
-      // console.log("nodeList:", data);
-      data.forEach((item) => {
-        // console.log(item.id, _this.posData.nodeId);
-        if (_this.posData.nodeId === item.id) {
-          // console.log(_this.posData)
-          // data.push(_this.posData)
-        }
-      })
-      console.log('data:', data)
-      // 分发修改后的nodeList
-      EventBus.$emit('nodeList_change', data)
     })
   },
 
@@ -148,7 +131,11 @@ export default {
       this.posData = pos
       this.sizeShow = true
     },
-    // 缩放结束
+    // 拖拽停止
+    dragStop (pos) {
+      this.$emit('drag-stop', this.node.id, pos)
+    },
+    // 缩放停止
     resizeStop (pos) {
       this.sizeShow = false
       this.$emit('resize-stop', this.node.id, pos)
@@ -156,22 +143,23 @@ export default {
     // 旋转停止
     rotateStop (pos) {
       this.sizeShow = false
-    },
-
-    // 删除节点
-    deleteNode () {
-      this.$emit('delete-node', this.node.id)
+      this.$emit('rotate-stop', this.node.id, pos)
     },
 
     // 单击节点
     editNode () {
       this.editType = 1
-      this.$emit('edit-node', [this.node.id, this.editType, this.$refs.node])
+      this.$emit('edit-node', this.node.id, this.editType, this.$refs.node)
     },
 
     // 双击节点
     addWrap () {
       console.log('双击节点', this.$refs.node)
+    },
+
+    // 删除节点
+    deleteNode () {
+      this.$emit('delete-node', this.node.id)
     },
 
     // 鼠标进入
@@ -198,16 +186,20 @@ export default {
 
 <style lang="less" scope>
 .node-item {
-  width: 105px;
-  height: 105px;
-  background: rgb(30, 66, 68);
+  width: 100%;
+  height: 100%;
+  // background: rgb(30, 66, 68);
   border: 1px solid rgb(145, 145, 145);
   font-size: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
   position: relative;
   cursor: move;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 .node-del {
   position: absolute;

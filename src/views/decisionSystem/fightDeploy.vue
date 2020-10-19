@@ -28,20 +28,24 @@
           :style="'height:' + (this.workHeight - 60) + 'px;'"
         >
           <div class="edit_menu">
-            <i class="el-icon-delete" title="删除"></i>
-            <i
-              class="el-icon-folder-opened"
-              title="保存"
-              @click.stop="saveData"
-            ></i>
-            <i class="el-icon-share" title="分享"></i>
-            <i class="el-icon-printer" title="打印"></i>
+            <p><i class="el-icon-delete" title="删除"></i>删除</p>
+            <p><i class="el-icon-printer" title="打印"></i>打印</p>
+            <p><i class="el-icon-share" title="分享"></i>分享</p>
+            <p>
+              <i
+                class="el-icon-folder-opened"
+                title="保存"
+                @click.stop="saveData"
+              ></i
+              >保存
+            </p>
           </div>
           <el-select
-            placeholder="常用"
+            style="margin: 8px 0 0 4px"
             size="mini"
-            v-model="filterText"
-            @visible-change="visibleChange"
+            placeholder="请选择"
+            v-model="plotType"
+            :popper-append-to-body="false"
           >
             <el-option
               v-for="item in options"
@@ -57,13 +61,15 @@
             <ul class="fl">
               <li
                 id="list"
-                :style="{ backgroundColor: item.bgColor }"
-                v-for="item in areaList"
-                :key="item.index"
+                v-for="(item, index) in curModels"
+                :key="index"
+                :class="{ active: curModelIndex === index }"
+                :title="item.name"
                 draggable="true"
+                @click.stop="listSelected(index)"
                 @dragstart="drag(item)"
               >
-                <span>{{ item.area }}</span>
+                <img :src="item.image" alt="" />
               </li>
             </ul>
           </div>
@@ -87,41 +93,10 @@
             @change-node-site="changeNodeSite"
             @delete-node="deleteNode"
             @edit-node="editNode"
+            @drag-stop="dragStop"
             @resize-stop="resizeStop"
+            @rotate-stop="rotateStop"
           ></drawNode>
-        </div>
-      </div>
-      <!-- 右边区域/任务列表 -->
-      <div class="right">
-        <h3>停靠设置/任务分配</h3>
-        <div
-          class="task_list webFsScroll"
-          :style="'height:' + (this.workHeight - 60) + 'px;'"
-        >
-          <div class="list_wrap" v-for="item in arrList" :key="item.index">
-            <div class="list_left">
-              <el-tree
-                v-for="item in taskList"
-                :key="item.index"
-                :data="taskList"
-                :props="defaultProps"
-                node-key="id"
-                default-expand-all
-                @node-click="handleNodeClick"
-              ></el-tree>
-            </div>
-            <div class="list_right">
-              <el-tree
-                v-for="item in selectList"
-                :key="item.index"
-                :data="selectList"
-                :props="defaultProps"
-                node-key="id"
-                :default-expanded-keys="[1]"
-                @node-click="handleNodeClick"
-              ></el-tree>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -133,6 +108,8 @@ import { jsPlumb } from 'jsplumb'
 import drawNode from './components/drawNode'
 import { EventBus } from '@/utils/eventBus.js'
 import { Notification } from 'element-ui'
+import axios from 'axios'
+const serverUrl = 'http://172.16.16.101:9000/mapdata'
 
 export default {
   name: 'fightDeploy',
@@ -147,6 +124,8 @@ export default {
       fullHeight: 0,
       workHeight: 0,
       jsPlumb: null,
+      // 当前选择节点
+      currentItem: '',
       // 节点激活状态
       activeType: true,
       // 节点id
@@ -157,79 +136,25 @@ export default {
         newTemplate: '1'
       },
       areaList: [],
-      currentItem: '',
-      markList: [],
-      taskList: [
-        {
-          id: 1,
-          label: '汉口北中队: 5辆车',
-          children: [
-            {
-              label: '水罐消防车'
-            },
-            {
-              label: '云梯消防车'
-            },
-            {
-              label: '泡沫消防车'
-            }
-          ]
-        }
-      ],
-      selectList: [
-        {
-          id: 1,
-          label: '1号作业区',
-          children: [
-            {
-              id: 111,
-              label: '1区-1',
-              children: [
-                {
-                  label: '1区-1-1'
-                }
-              ]
-            },
-            {
-              id: 121,
-              label: '1区-2',
-              children: [
-                {
-                  label: '1区-2-1'
-                }
-              ]
-            },
-            {
-              id: 131,
-              label: '1区-3',
-              children: [
-                {
-                  label: '1区-3-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      arrList: [1, 1, 1, 1, 1],
-      filterText: '',
-      options: [
-        {
-          value: '1',
-          label: '广州'
-        },
-        {
-          value: '2',
-          label: '武汉'
-        },
-        {
-          value: '3',
-          label: '杭州'
-        }
-      ],
+      // 模型选择类型
+      plotType: '',
+      // 模型列表选项
+      options: [],
+      // 模型列表
+      curModels: [],
+      // 选中模型索引
+      curModelIndex: 1000,
       defaultProps: {
         children: 'children',
         label: 'label'
+      }
+    }
+  },
+
+  watch: {
+    plotType (val) {
+      if (this.options.length > 0 && val >= 0 && val < this.options.length) {
+        this.curModels = this.options[val].list
       }
     }
   },
@@ -239,26 +164,12 @@ export default {
     window.onresize = () => {
       this.setWorkAreaHeight()
     }
-
-    const items = [
-      '指挥区',
-      '作业区',
-      '集结区',
-      '休整区',
-      '入口',
-      '疏散区',
-      '1号停车区',
-      '2号停车区'
-    ]
-    for (let i = 0; i < 20; i++) {
-      this.areaList.push({
-        area: items[Math.floor(Math.random() * items.length)],
-        bgColor: '#' + Math.random().toString(16).substr(2, 6).toUpperCase()
-      })
-    }
   },
 
   mounted () {
+    // 获取模型列表
+    this.getModelData()
+
     // 节点初始化
     this.jsPlumb = jsPlumb.getInstance()
     this.$nextTick(() => {
@@ -280,24 +191,17 @@ export default {
       // console.log("点击区域以外: " + this.activeType);
     }
 
-    // // 加载页面更新nodeData
-    // const _this = this
-    // EventBus.$on('nodeList_change', (data) => {
-    //   console.log('更新后data:', data)
-    //   _this.data.nodeList = data
-    // })
-
     // 加载页面读取nodeData并还原
     var nodeData = JSON.parse(localStorage.getItem('nodeData'))
     if (nodeData !== null) {
-      console.log(nodeData)
+      // console.log(nodeData)
       nodeData.forEach((item) => {
         this.addNode(item)
       })
     } else {
       Notification({
         title: '提示',
-        message: '请先保存上传数据！',
+        message: '当前保存任何数据!',
         type: 'warning',
         duration: 5 * 1000
       })
@@ -309,15 +213,24 @@ export default {
   },
 
   methods: {
-    saveData () {
-      alert(JSON.stringify(this.data.nodeList))
-      localStorage.setItem('nodeData', JSON.stringify(this.data.nodeList))
+    // 动态设置有效操作区高度
+    setWorkAreaHeight () {
+      const h = document.documentElement.clientHeight
+      if (h < this.minHeight) this.fullHeight = this.minHeight
+      else this.fullHeight = h
+      this.workHeight = this.fullHeight - 126
+      // console.log(this.workHeight);
     },
 
+    // 返回Plan页
+    backToPlan () {
+      this.$router.back(-1)
+    },
+
+    // 加载立即重绘jsPlumb
     init () {
       const _this = this
       this.jsPlumb.ready(() => {
-        // 加载立即重绘jsPlumb
         _this.jsPlumb.setSuspendDrawing(false, true)
         _this.loadDraw()
       })
@@ -333,6 +246,11 @@ export default {
       }
     },
 
+    // 选中某个模型元素
+    listSelected (id) {
+      this.curModelIndex = id
+    },
+
     // 拖拽
     drag (item) {
       this.currentItem = item
@@ -344,13 +262,13 @@ export default {
       // console.log(event);
       const index = this.index++
       const temp = {
-        label: this.currentItem.area,
+        label: this.currentItem.image,
         left: event.offsetX - 105 / 2 + 'px',
         top: event.offsetY - 105 / 2 + 'px',
         id: 'node' + index,
-        rotate: 0,
         width: 105,
-        height: 105
+        height: 105,
+        rotate: 0
       }
 
       this.addNode(temp)
@@ -366,32 +284,12 @@ export default {
       //     containment: 'parent'
       //   })
       // })
-
-      // this.$nextTick(() => {
-      //   EventBus.$emit('nodeList', this.data.nodeList)
-      // })
     },
 
     // 单击节点
     editNode (tag) {
       // console.log(this.$refs.drawNode[0].$el)
       // console.log("编辑节点", tag);
-    },
-
-    resizeStop (id, pos) {
-      pos.left = pos.left + 'px'
-      pos.top = pos.top + 'px'
-      const node = this.data.nodeList.find(n => n.id === id)
-      if (node !== undefined) {
-        for (var b in pos) {
-        // 拷贝属性
-          if (Object.prototype.hasOwnProperty.call(node, b)) {
-            node[b] = pos[b]
-          }
-        }
-      }
-
-      console.log(this.data.nodeList)
     },
 
     // 删除节点
@@ -422,35 +320,82 @@ export default {
       }
     },
 
-    // 动态设置有效操作区高度
-    setWorkAreaHeight () {
-      const h = document.documentElement.clientHeight
-      if (h < this.minHeight) this.fullHeight = this.minHeight
-      else this.fullHeight = h
-      this.workHeight = this.fullHeight - 126
-      // console.log(this.workHeight);
+    // 拖拽结束
+    dragStop (id, data) {
+      this.updateNodeList(id, data)
+      // console.log(this.data.nodeList)
     },
 
-    // select选择框动态设置title
-    visibleChange (value) {
-      setTimeout(() => {
-        const tagTextList = document
-          .querySelector('#app')
-          .querySelectorAll('.el-input__inner')
-        // console.log(tagTextList)
-        tagTextList.forEach((item) => {
-          item.setAttribute('title', item.value)
+    // 缩放结束
+    resizeStop (id, data) {
+      this.updateNodeList(id, data)
+      // console.log(this.data.nodeList)
+    },
+
+    // 旋转结束
+    rotateStop (id, data) {
+      this.updateNodeList(id, data)
+      // console.log(this.data.nodeList);
+    },
+
+    // 更新nodeList
+    updateNodeList (index, info) {
+      info.left = info.left + 'px'
+      info.top = info.top + 'px'
+      const node = this.data.nodeList.find((n) => n.id === index)
+      if (node !== undefined) {
+        for (var b in info) {
+          // 拷贝属性
+          if (Object.prototype.hasOwnProperty.call(node, b)) {
+            node[b] = info[b]
+          }
+        }
+      }
+    },
+
+    // 保存数据
+    saveData () {
+      alert(JSON.stringify(this.data.nodeList))
+      localStorage.setItem('nodeData', JSON.stringify(this.data.nodeList))
+    },
+
+    // 获取模型列表
+    getModelData () {
+      this.options = []
+      axios
+        .get('config/plotlist.json')
+        .then((res) => {
+          console.log('模型列表:', res)
+          const data = res.data
+          let i = 0
+          for (var p in data) {
+            const array = data[p]
+            array.forEach((a) => {
+              if (a.image.startsWith('$serverURL_gltf$')) {
+                a.image = a.image.replace(
+                  '$serverURL_gltf$',
+                  serverUrl + '/gltf'
+                )
+              }
+              if (a.style.modelUrl.startsWith('$serverURL_gltf$')) {
+                a.style.modelUrl = a.style.modelUrl.replace(
+                  '$serverURL_gltf$',
+                  serverUrl + '/gltf'
+                )
+              }
+            })
+
+            const item = { value: i, label: p, list: array }
+            this.options.push(item)
+            if (i === 0) {
+              this.plotType = i
+              i += 1
+            }
+          }
         })
-      }, 100)
-    },
-
-    // 返回Plan页
-    backToPlan () {
-      this.$router.back(-1)
-    },
-
-    handleNodeClick () {
-      // console.log('出来混迟早是要还的')
+        .catch((err) => {
+          console.log('获取模型列表失败: ' + err)
+        })
     }
   }
 }
@@ -488,14 +433,16 @@ export default {
       z-index: 999;
       height: 100%;
       position: absolute;
-      left: 0;
+      left: 10px;
       top: 30px;
       .model_edit {
-        width: 260px;
+        width: 270px;
         background-color: rgba(0, 0, 0, 0.5);
         .edit_menu {
           display: flex;
           justify-content: space-between;
+          font-size: 12px;
+          text-align: center;
           padding: 8px 0;
           i {
             display: block;
@@ -506,7 +453,6 @@ export default {
             border-radius: 50%;
             line-height: 35px;
             font-size: 22px;
-            text-align: center;
             margin: 8px;
             cursor: pointer;
           }
@@ -523,18 +469,17 @@ export default {
               float: left;
               width: 105px;
               height: 105px;
-              border: 1px solid rgb(145, 145, 145);
+              border: 2px solid transparent;
               font-size: 14px;
               line-height: 100px;
               text-align: center;
               // margin-bottom: 10px;
-              margin: 0 10px 12px 0;
+              margin: 0 13px 13px 0;
               cursor: pointer;
-              i {
-                display: inline-block;
-                vertical-align: middle;
-                font-size: 34px;
-              }
+            }
+            .active {
+              border: 2px solid rgba(255, 244, 100, 1);
+              background: none;
             }
           }
         }
@@ -548,57 +493,6 @@ export default {
       width: 100%;
       height: 100%;
       background-color: rgba(255, 255, 255, 0.3);
-      #drawContent {
-        width: 100%;
-        height: 100%;
-        // position: relative;
-      }
-    }
-    .right {
-      z-index: 999;
-      width: 350px;
-      height: 100%;
-      background-color: rgba(10, 25, 57, 0.9);
-      position: absolute;
-      right: 0;
-      top: 0;
-      text-align: center;
-      padding-left: 15px;
-      h3 {
-        height: 50px;
-        line-height: 50px;
-      }
-      .task_list {
-        overflow-y: auto;
-        .list_wrap {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 20px;
-          .list_left {
-            width: 200px;
-            p {
-              font-size: 12px;
-              color: #23cefd;
-              position: absolute;
-              top: 20px;
-              left: 30px;
-            }
-          }
-          .list_right {
-            width: 130px;
-            margin-left: 10px;
-            /deep/.el-select {
-              line-height: 35px;
-              .el-input {
-                width: 80%;
-                .el-input__inner {
-                  height: 25px;
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -608,31 +502,6 @@ export default {
   margin-left: 10px;
   .el-input__inner {
     height: 28px;
-  }
-}
-/deep/.el-tree {
-  color: #23cefd;
-  background-color: transparent;
-  .el-tree-node {
-    .el-tree-node__content {
-      height: 35px;
-      line-height: 35px;
-      border: 1px solid transparent;
-    }
-    .el-tree-node__content:hover,
-    .el-tree-node:focus > .el-tree-node__content {
-      color: #fff;
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    .el-tree-node:focus > .el-tree-node__content {
-      border: 1px solid #23cefd;
-    }
-    .el-tree-node__expand-icon {
-      color: #23cefd;
-    }
-    .el-tree-node__expand-icon.is-leaf {
-      color: transparent;
-    }
   }
 }
 </style>

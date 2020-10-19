@@ -127,9 +127,12 @@ export default {
       this.currentTab = current
       //   console.log(this.info)
       this.buildInfo = this.info[1].children
-      if (current === 1) {
-        if (this.buildInfo.length === 0) {
+      // 无建筑平面图
+      if (this.buildInfo.length === 0) {
+        if (current === 1) {
           this.isDisabled = true
+        } else {
+          this.isDisabled = false
         }
       }
     },
