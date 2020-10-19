@@ -1,4 +1,5 @@
 import { api } from '@/api/videoSystem/realVideo'
+import globalApi from '@/utils/globalApi'
 import { EventBus } from '@/utils/eventBus.js'
 const videoMixin = {
   data () {
@@ -336,6 +337,18 @@ const videoMixin = {
       }
     },
 
+    replaceStreamUrl (c) {
+      if (c.streamUrl) {
+        const startI = globalApi.baseUrl.indexOf('//')
+        const endI = globalApi.baseUrl.lastIndexOf(':')
+        const url = globalApi.baseUrl.slice(startI + 2, endI)
+        const s = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).indexOf('/')
+        const stream = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).slice(s + 1)
+        c.streamUrl = 'ws://' + url + ':50011/' + stream
+        // console.log(tree[i])
+      }
+    },
+
     /**
      * 递归解析设备
      */
@@ -355,6 +368,7 @@ const videoMixin = {
               clone.children.forEach(c => {
                 Reflect.set(c, 'onlineStatus', clone.onlineStatus)
                 Reflect.set(c, 'deviceTypeCode', clone.deviceTypeCode)
+                this.replaceStreamUrl(c)
               })
               this.onlineArray.push(clone)
             } else {
@@ -388,6 +402,8 @@ const videoMixin = {
      */
     setDeviceTreeNodeID (tree) {
       if (tree == null) return
+      // console.log('tree')
+      // console.log(tree)
       for (var i = 0; i < tree.length; i++) {
         // 添加onlineStatus和deviceTypeCode属性
         if (!Object.prototype.hasOwnProperty.call(tree[i], 'onlineStatus')) {
@@ -403,6 +419,13 @@ const videoMixin = {
             })
           }
         }
+
+        if (tree[i].children) {
+          tree[i].children.forEach(c => {
+            this.replaceStreamUrl(c)
+          })
+        }
+
         this.setDeviceTreeNodeID(tree[i].children)
       }
     },
