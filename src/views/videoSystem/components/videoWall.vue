@@ -1480,6 +1480,14 @@ export default {
     }, 500),
     // 鼠标松开
     stopChange: debounce(function (index) {
+      // AR操作云台通知后台
+      new MqttService().client.send(
+        'video/webControlPzt',
+        JSON.stringify({
+          deviceCode: this.videoInfo.deviceCode,
+          channelId: this.videoInfo.streamType
+        })
+      )
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType,
