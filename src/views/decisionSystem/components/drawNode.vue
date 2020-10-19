@@ -188,7 +188,6 @@ export default {
 .node-item {
   width: 100%;
   height: 100%;
-  // background: rgb(30, 66, 68);
   border: 1px solid rgb(145, 145, 145);
   font-size: 14px;
   // display: flex;
@@ -224,10 +223,10 @@ export default {
 }
 .node-width {
   top: 0;
-  left: calc(50%-20px);
+  left: 46%;
 }
 .node-height {
-  top: calc(50%-7.5px);
+  top: 47%;
   left: 0;
 }
 .node-rotate {

@@ -44,7 +44,7 @@
             style="margin: 8px 0 0 4px"
             size="mini"
             placeholder="请选择"
-            v-model="plotType"
+            v-model="modelType"
             :popper-append-to-body="false"
           >
             <el-option
@@ -135,15 +135,14 @@ export default {
         nodeList: [],
         newTemplate: '1'
       },
-      areaList: [],
-      // 模型选择类型
-      plotType: '',
+      // 模型索引
+      modelType: '',
       // 模型列表选项
       options: [],
       // 模型列表
       curModels: [],
       // 选中模型索引
-      curModelIndex: 1000,
+      curModelIndex: 0,
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -152,7 +151,7 @@ export default {
   },
 
   watch: {
-    plotType (val) {
+    modelType (val) {
       if (this.options.length > 0 && val >= 0 && val < this.options.length) {
         this.curModels = this.options[val].list
       }
@@ -169,7 +168,6 @@ export default {
   mounted () {
     // 获取模型列表
     this.getModelData()
-
     // 节点初始化
     this.jsPlumb = jsPlumb.getInstance()
     this.$nextTick(() => {
@@ -201,7 +199,7 @@ export default {
     } else {
       Notification({
         title: '提示',
-        message: '当前保存任何数据!',
+        message: '当前未保存任何数据!',
         type: 'warning',
         duration: 5 * 1000
       })
@@ -246,7 +244,7 @@ export default {
       }
     },
 
-    // 选中某个模型元素
+    // 选中当前模型
     listSelected (id) {
       this.curModelIndex = id
     },
@@ -265,7 +263,7 @@ export default {
         label: this.currentItem.image,
         left: event.offsetX - 105 / 2 + 'px',
         top: event.offsetY - 105 / 2 + 'px',
-        id: 'node' + index,
+        id: index,
         width: 105,
         height: 105,
         rotate: 0
@@ -294,7 +292,7 @@ export default {
 
     // 删除节点
     deleteNode (nodeId) {
-      this.$confirm('确定要删除节点' + nodeId + ' ?', '提示', {
+      this.$confirm('确定要删除节点node' + nodeId + ' ?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         showClose: false
@@ -323,19 +321,16 @@ export default {
     // 拖拽结束
     dragStop (id, data) {
       this.updateNodeList(id, data)
-      // console.log(this.data.nodeList)
     },
 
     // 缩放结束
     resizeStop (id, data) {
       this.updateNodeList(id, data)
-      // console.log(this.data.nodeList)
     },
 
     // 旋转结束
     rotateStop (id, data) {
       this.updateNodeList(id, data)
-      // console.log(this.data.nodeList);
     },
 
     // 更新nodeList
@@ -387,8 +382,9 @@ export default {
 
             const item = { value: i, label: p, list: array }
             this.options.push(item)
+            // console.log(this.options)
             if (i === 0) {
-              this.plotType = i
+              this.modelType = i
               i += 1
             }
           }
@@ -493,6 +489,10 @@ export default {
       width: 100%;
       height: 100%;
       background-color: rgba(255, 255, 255, 0.3);
+      #drawContent {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }
