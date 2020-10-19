@@ -242,7 +242,7 @@
 import { gltfEdit } from '@/utils/gltfEdit.js'
 import { api } from '@/api/3d.js'
 import globalApi from '@/utils/globalApi'
-import EXIF from 'exif-js'
+// import EXIF from 'exif-js'
 import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
@@ -470,40 +470,56 @@ export default {
     },
 
     /**
+     *  上传模型详情图片
+     * @param {Object} file 图片文件
+     */
+    uploadModelImg (file) {
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      const formData = new FormData()
+      formData.append('file', file)
+      const url = this.infoBox.isVr ? api.uploadPanorama : api.uploadModelPic
+      this.$axios.post(url, formData, config).then((res) => {
+        if (res.data.code === 0) {
+          if (this.infoBox.isVr)me.infoBox.infoImg = globalApi.headImg + res.data.data
+          else me.infoBox.infoImg = globalApi.headImg + res.data.data.picPath
+          me.curEntity.attribute.infoImg = me.infoBox.infoImg
+        }
+      }).catch(err => {
+        const log = this.infoBox.isVr ? 'uploadPanorama Err : ' : 'uploadModelPic Err : '
+        console.log(log + err)
+      })
+    },
+
+    /**
      *  图片选择完毕
      */
     picFileChange (e) {
+      if (e.target.files.length <= 0) return
       const f = e.target.files[0]
       this.$refs.picFile.value = null
-      if (this.infoBox.isVr && e.target.files.length > 0) {
-        // VR图像长宽比需要2:1
-        const f = e.target.files[0]
-        EXIF.getData(f, function () {
-          let valid = true
-          const allMetaData = EXIF.getAllTags(this)
-          if (!allMetaData.PixelXDimension || !allMetaData.PixelYDimension) {
-            valid = false
-          } else if (allMetaData.PixelXDimension !== allMetaData.PixelYDimension * 2) {
-            valid = false
-          }
+      if (this.infoBox.isVr) {
+        // // VR图像长宽比需要2:1
+        // EXIF.getData(f, function () {
+        //   let valid = true
+        //   const allMetaData = EXIF.getAllTags(this)
+        //   if (!allMetaData.PixelXDimension || !allMetaData.PixelYDimension) {
+        //     valid = false
+        //   } else if (allMetaData.PixelXDimension !== allMetaData.PixelYDimension * 2) {
+        //     valid = false
+        //   }
 
-          if (!valid) me.$notify.warning({ title: '警告', message: '无效图片,全景图长宽比需要是2:1' })
-        })
-      } else {
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-        const formData = new FormData()
-        formData.append('file', f)
-        this.$axios.post(api.uploadModelPic, formData, config).then((res) => {
-          if (res.data.code === 0) {
-            me.infoBox.infoImg = globalApi.headImg + res.data.data.picPath
-            me.curEntity.attribute.infoImg = me.infoBox.infoImg
+        //   if (!valid) me.$notify.warning({ title: '警告', message: '无效图片,全景图长宽比需要是2:1' })
+        //   else me.uploadModelImg(f)
+        // })
+        var img = new Image()
+        img.onload = function () {
+          if (this.complete === true) {
+            if (this.width !== this.height * 2) me.$notify.warning({ title: '警告', message: '无效图片,全景图长宽比需要是2:1' })
+            else me.uploadModelImg(f)
           }
-        }).catch(err => {
-          console.log('uploadModelPic Err : ' + err)
-        })
-      }
-
-      this.$refs.picFile.value = null
+        }
+        img.src = window.URL.createObjectURL(f)
+      } else this.uploadModelImg(f)
     },
 
     /**
