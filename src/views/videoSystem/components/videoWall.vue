@@ -20,7 +20,12 @@
           :class="{bg:showAR}"
         >
           <!-- canvas绘图 -->
-          <canvas-area :showAR="showAR" @canvasEnd="getPosition" @canvasStart="showCurindex=1000" :showMarkForm="showMarkForm"></canvas-area>
+          <canvas-area
+            :showAR="showAR"
+            @canvasEnd="getPosition"
+            @canvasStart="showCurindex=1000"
+            :showMarkForm="showMarkForm"
+          ></canvas-area>
           <template v-if="showAR">
             <div class="header">AR实景地图指挥</div>
           </template>
@@ -91,7 +96,7 @@
           </div>
           <!-- 实时警情弹框 -->
           <div class="realPoliceInfo" v-show="showCurindex==1" @dblclick.stop="stopEvent">
-            <div class="title" >实时警情</div>
+            <div class="title">实时警情</div>
             <div class="content webFsScroll">
               <div class="item" v-for="(item,index) in todayFireArray" :key="index">
                 <div class="pic">
@@ -99,11 +104,18 @@
                 </div>
                 <div class="detail">
                   <p>时间：{{item.alarmTime}}</p>
-                  <p >地点：<span :title="item.alarmAddress">{{item.alarmAddress&&item.alarmAddress.length>9?item.alarmAddress.slice(0,9)+'.':'-'}}</span></p>
+                  <p>
+                    地点：
+                    <span
+                      :title="item.alarmAddress"
+                    >{{item.alarmAddress&&item.alarmAddress.length>9?item.alarmAddress.slice(0,9)+'.':'-'}}</span>
+                  </p>
                   <p>坐标：{{item.alarmLongitude}},{{item.alarmLatitude}}</p>
                   <p>
                     类型：
-                    <span class="type">{{item.alarmTypeCode==='HUO'?'火点报警':item.alarmTypeCode==='YANWU'?'烟雾报警':'-'}}</span>
+                    <span
+                      class="type"
+                    >{{item.alarmTypeCode==='HUO'?'火点报警':item.alarmTypeCode==='YANWU'?'烟雾报警':'-'}}</span>
                   </p>
                 </div>
               </div>
@@ -272,6 +284,23 @@
           :class="{ship:item.label==1}"
         ></span>
       </div>
+      <!-- 刻度尺 -->
+      <div class="rule" v-show="showAR">
+        <!-- x轴箭头 -->
+        <div class="horizontal">
+          <span>0</span>
+          <img :src="upPic" />
+          <div>56</div>
+          <span>360</span>
+        </div>
+        <!-- y轴箭头 -->
+        <div class="vertical">
+          <span>180</span>
+          <div>56</div>
+          <img :src="rightPic" />
+          <span>180</span>
+        </div>
+      </div>
       <!-- 显示AR标签 -->
       <div
         class="fullScreenAr"
@@ -284,7 +313,7 @@
           :style="{
           left:item.label=='0'?((Number(item.left)+Number(item.width/2))/1280*1920-51.5)+'px':(Number(item.left)+Number(item.width/2))/1280*1920+'px',
          top:item.label==0?((item.top/720)*1080-102)+'px':((item.top/720)*1080-58)+'px'}"
-         :title="item.label==0?item.labelName:''"
+          :title="item.label==0?item.labelName:''"
         >
           <div v-show="item.label!=0">{{item.labelName}}</div>
         </div>
@@ -345,14 +374,20 @@
           ></div>
         </div>
         <div class="realInfo leftInfo" v-show="di_height !== ''">
-          <span class="leftMargin">高度:</span><span>{{di_height}}m</span>
-          <span class="leftMargin">H.S:</span><span>{{di_hSpeed}}m/s</span>
-          <span class="leftMargin">V.S:</span><span>{{di_vSpeed}}m/s</span>
+          <span class="leftMargin">高度:</span>
+          <span>{{di_height}}m</span>
+          <span class="leftMargin">H.S:</span>
+          <span>{{di_hSpeed}}m/s</span>
+          <span class="leftMargin">V.S:</span>
+          <span>{{di_vSpeed}}m/s</span>
         </div>
         <div class="realInfo rightInfo" v-show="di_battery !== ''">
-          <span>电量:</span><span class="rightMargin">{{di_battery}}%</span>
-          <span>经度:</span><span class="rightMargin">{{di_longitude}}</span>
-          <span>纬度:</span><span class="rightMargin">{{di_latitude}}</span>
+          <span>电量:</span>
+          <span class="rightMargin">{{di_battery}}%</span>
+          <span>经度:</span>
+          <span class="rightMargin">{{di_longitude}}</span>
+          <span>纬度:</span>
+          <span class="rightMargin">{{di_latitude}}</span>
         </div>
         <div class="mapOuterBox" :class="{mapOuterBoxFullScreen:bIsFullscreenMap}">
           <div class="mapArea" :class="{mapAreaFullScreen:bIsFullscreenMap}">
@@ -404,17 +439,22 @@
               format="yyyy 年 MM 月 dd 日"
               :append-to-body="false"
               @change="puzzleDateChange"
-              value-format="timestamp">
-            </el-date-picker>
+              value-format="timestamp"
+            ></el-date-picker>
             <div class="titleClose" @click="bShowPuzzlingBox=false"></div>
           </div>
           <div class="puzzlingItems webFsScroll">
-            <div class="pItem"  v-for="(item,index) in puzzleDataArray" :key="index"
-              :class="{pItemBottom:index != puzzleDataArray.length-1}">
-              <img class="itemImg" :src="item.imgUrl"/>
+            <div
+              class="pItem"
+              v-for="(item,index) in puzzleDataArray"
+              :key="index"
+              :class="{pItemBottom:index != puzzleDataArray.length-1}"
+            >
+              <img class="itemImg" :src="item.imgUrl" />
               <div class="itemTime commonText">{{item.time}}</div>
               <div class="itemAddr commonText">{{item.addr}}</div>
-              <div class="itemStatus commonText"
+              <div
+                class="itemStatus commonText"
                 :class="{isPuzzling:item.status === 0,puzzleDone:item.status === 1}"
               >
                 <span v-show="item.status === 0">拼图中...</span>
@@ -422,7 +462,8 @@
               </div>
               <div class="itemDetail commonText">查看</div>
             </div>
-            <div class="noPuzzleText"
+            <div
+              class="noPuzzleText"
               v-if="puzzleDataArray&&puzzleDataArray.length==0"
             >今日无正射拼图任务，可切换其他日期查看</div>
           </div>
@@ -542,6 +583,8 @@ export default {
       active: '', // 动态显示悬停相关图标
       showAR: false, // 显示AR
       showCurindex: 1000, // 显示弹框
+      upPic: require('@/assets/images/AR/up.png'),
+      rightPic: require('@/assets/images/AR/right.png'),
       arPic: require('@/assets/images/AR/ar.png'),
       arSelectedPic: require('@/assets/images/AR/ar_selected.png'),
 
@@ -1065,30 +1108,6 @@ export default {
         this.showMarkForm = true
       }
     },
-    // 创建元素
-    createTag (ruleForm, positionObj) {
-      console.log('传递过来的顶部距离', positionObj)
-      const div = document.createElement('div')
-      div.className = 'pic'
-      div.style.position = 'absolute'
-      div.style.left = positionObj.x + 'px'
-      div.style.top = positionObj.y + 'px'
-      const span = document.createElement('span')
-      span.innerHTML = 'x'
-      span.style.color = '#ccc'
-      span.addEventListener('click', function (e) {
-        e.target.parentNode.remove()
-      })
-      const input = document.createElement('input')
-      input.style.width = '100px'
-      input.value = ruleForm.tagName
-      input.addEventListener('click', e => {
-        this.showMarkForm = true
-      })
-      div.appendChild(span)
-      div.appendChild(input)
-      this.$refs.drawBox.appendChild(div)
-    },
     // 表单提交
     submitForm (formName) {
       console.log(this.ruleForm.tagType)
@@ -1252,9 +1271,10 @@ export default {
       if (this.bIsFullscreenMap === false) {
         try {
           this.bSetPointStatus = false
-          this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(this.bSetPointStatus)
-        } catch (error) {
-        }
+          this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(
+            this.bSetPointStatus
+          )
+        } catch (error) {}
       }
       this.$refs.gduMap.setBasicHighBottom(this.bIsFullscreenMap)
       this.$refs.gduMap.setPopoverAppendStyle(!this.bIsFullscreenMap)
@@ -1578,7 +1598,11 @@ export default {
   created () {
     // 监听火情报警
     EventBus.$on('getFireAlarm', info => {
-      if (this.videoInfo.deviceCode === info.deviceCode && this.videoInfo.streamType === info.streamType && this.videoInfo.isShowOperate) {
+      if (
+        this.videoInfo.deviceCode === info.deviceCode &&
+        this.videoInfo.streamType === info.streamType &&
+        this.videoInfo.isShowOperate
+      ) {
         // 如果此时火情弹框打开了
         if (this.showCurindex === 1) {
           this.getTodayFire()
@@ -1769,15 +1793,15 @@ export default {
               width: 80px;
               height: 80px;
               margin-right: 8px;
-              border:1px solid #eee;
-              >img {
-                width:100%;
+              border: 1px solid #eee;
+              > img {
+                width: 100%;
                 height: 100%;
               }
             }
-            div.detail{
-              flex:1;
-              p{
+            div.detail {
+              flex: 1;
+              p {
                 line-height: 20px;
               }
             }
@@ -2101,6 +2125,59 @@ export default {
     }
     div.high {
       background: url(../../../assets/images/AR/high.png) no-repeat;
+    }
+  }
+  div.rule {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 802px;
+    height: 162px;
+    background: url(../../../assets/images/AR/rule.png) no-repeat;
+    .horizontal,
+    .vertical {
+      position: absolute;
+      div {
+        font-size: 14px;
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        color: #f8b652;
+      }
+    }
+    .horizontal {
+      top: 81px;
+      span {
+        position: absolute;
+        color: #00c4e0;
+      }
+      span:nth-child(1) {
+        left: -13px;
+        top: -5px;
+      }
+      span:nth-child(4) {
+        left: 804px;
+        top: -8px;
+      }
+    }
+    .vertical {
+      display: flex;
+      left: 370px;
+      > div {
+        margin-right: 2px;
+      }
+      span {
+        position: absolute;
+        color: #00c4e0;
+      }
+      span:nth-child(1) {
+        left: 16px;
+        top: -16px;
+      }
+      span:nth-child(4) {
+        left: 19px;
+        top: 164px;
+      }
     }
   }
   .fullScreenOperate {
@@ -2432,7 +2509,7 @@ export default {
       bottom: 5px;
       height: 24px;
       line-height: 24px;
-      color: #FFFFFF;
+      color: #ffffff;
       font-size: 14px;
       .leftMargin {
         margin-left: 35px;
@@ -2510,8 +2587,8 @@ export default {
       bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #121E3AD8;
-      border: 1px solid #1EB0FC;
+      background-color: #121e3ad8;
+      border: 1px solid #1eb0fc;
       z-index: 5;
       width: 522px;
       height: 330px;
@@ -2522,13 +2599,13 @@ export default {
         width: 100%;
         height: 45px;
         line-height: 45px;
-        border-bottom: 1px solid #1EB0FC;;
+        border-bottom: 1px solid #1eb0fc;
         .titleImg {
           position: absolute;
           width: 21px;
           height: 16px;
           top: 14px;
-          background-image: url('../../../assets/images/drone/popupTitleImg.png');
+          background-image: url("../../../assets/images/drone/popupTitleImg.png");
         }
         .titleText {
           position: absolute;
@@ -2544,7 +2621,7 @@ export default {
         }
         .el-input__inner {
           height: 26px;
-          border: 1px solid #1EB0FC;
+          border: 1px solid #1eb0fc;
         }
         .el-picker-panel {
           position: absolute !important;
@@ -2556,7 +2633,7 @@ export default {
           position: absolute;
           height: 14px;
           width: 14px;
-          background-image: url('../../../assets/images/AR/X.png');
+          background-image: url("../../../assets/images/AR/X.png");
           cursor: pointer;
           right: 0px;
           top: 14px;
@@ -2595,23 +2672,23 @@ export default {
             right: 2px;
           }
           .isPuzzling {
-            color: #1EB0FC;
+            color: #1eb0fc;
           }
           .puzzleDone {
-            color: #5BFF00;
+            color: #5bff00;
           }
           .itemDetail {
             width: 60px;
             text-align: center;
-            background-color: #1EB0FC;
-            color: #FFFFFF;
+            background-color: #1eb0fc;
+            color: #ffffff;
             bottom: 9px;
             right: 2px;
             cursor: pointer;
           }
         }
         .pItemBottom {
-          border-bottom: 1px solid #3E92C2;
+          border-bottom: 1px solid #3e92c2;
         }
         .noPuzzleText {
           height: 235px;
@@ -2620,7 +2697,7 @@ export default {
           font-size: 14px;
           font-family: Source Han Sans CN;
           font-weight: 500;
-          color: #1EB0FC;
+          color: #1eb0fc;
         }
       }
       .puzzlingPages {
