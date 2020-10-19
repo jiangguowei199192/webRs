@@ -217,8 +217,8 @@ export default {
         name: [{ required: true, message: '请输入姓名' }],
         phone: [{ required: true, message: '请输入手机号' }],
         active: [{ required: true }],
-        job: [{ required: true, message: '请选择职务' }],
-        organizations: [{ required: true, message: '请选择组织' }],
+        // job: [{ required: true, message: '请选择职务' }],
+        // organizations: [{ required: true, message: '请选择组织' }],
         six: [{ required: true, message: '请选择性别' }],
         password: [{ required: true, message: '请输入密码' }]
       },

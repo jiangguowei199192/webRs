@@ -44,12 +44,12 @@
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
-          <SettingRightTable
+          <!-- <SettingRightTable
             id="idRightItemMapServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemMapServe"
             v-bind:userDetail="userDetail"
-          ></SettingRightTable>
+          ></SettingRightTable> -->
           <div style="height: 100px;"></div>
         </div>
         <router-view></router-view>
@@ -63,6 +63,7 @@ import SettingLeftItem from './components/SettingLeftItem.vue'
 import SettingRightTable from './components/SettingRightTable.vue'
 import { loginApi } from '@/api/login'
 import globalApi from '../../utils/globalApi'
+import { settingApi } from '@/api/setting'
 
 export default {
   name: 'settings',
@@ -107,15 +108,15 @@ export default {
               normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
               selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
               selected: false
-            },
-            // 第一版不开放
-            {
-              id: 4,
-              title: '地图服务',
-              normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
-              selected: false
             }
+            // 第一版不开放
+            // {
+            //   id: 4,
+            //   title: '地图服务',
+            //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
+            //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
+            //   selected: false
+            // }
           ]
         }
       ],
@@ -309,10 +310,23 @@ export default {
       //   });
       sessionStorage.clear()
       this.$router.push({ path: '/login' })
+    },
+
+    async getDeviceCount () {
+      this.$axios.get(settingApi.getUsedDeviceCount).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.rightItemVideoServe.items.forEach(item => {
+            if (item.id === 20) {
+              item.text = '已接入' + res.data.data + '台设备'
+            }
+          })
+        }
+      })
     }
   },
   created () {
     this.getUserDetail()
+    this.getDeviceCount()
   },
   watch: {
     $route (to, from) {

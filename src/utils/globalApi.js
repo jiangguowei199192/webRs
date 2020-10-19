@@ -26,15 +26,17 @@ if (process.env.NODE_ENV === 'production') {
   })
 } else {
   // 消防
-  // baseUrl = 'http://112.74.104.62:8850'
-  // mqttServer = '112.74.104.62'
-  // mqttPort = 2883
-  // headImg = 'http://112.74.104.62:81'
+  baseUrl = 'http://112.74.104.62:8850'
+  mqttServer = '112.74.104.62'
+  mqttPort = 2883
+  headImg = 'http://112.74.104.62:81'
+
   // 长江大保护
-  baseUrl = 'http://111.47.13.103:40009'
-  mqttServer = '111.47.13.103'
-  mqttPort = 40011
-  headImg = 'http://111.47.13.103:40015'
+  // baseUrl = 'http://111.47.13.103:40009'
+  // mqttServer = '111.47.13.103'
+  // mqttPort = 40011
+  // headImg = 'http://111.47.13.103:40015'
+
   // baseUrl = 'http://172.16.63.148:8850'
   // mqttServer = '172.16.63.148'
   // mqttPort = 2883
