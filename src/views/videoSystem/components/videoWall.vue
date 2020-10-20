@@ -174,7 +174,12 @@ export default {
     this.setDroneDevCode(this.videoInfo.deviceCode)
 
     var elementResizeDetectorMaker = require('element-resize-detector')
-    var erd = elementResizeDetectorMaker()
+    // var erd = elementResizeDetectorMaker()
+    var erd = elementResizeDetectorMaker({
+      strategy: 'scroll', // <- For ultra performance.
+      callOnAdd: true
+      // debug: false
+    })
     var me = this
     this.startTime = new Date()
     erd.listenTo(this.$refs.playerCtrl.player.el_, function (element) {

@@ -22,10 +22,10 @@ const createServerConfig = function (compilation) {
         // headImg: 'http://58.49.169.235:50026'
       }
       // {
-      //   baseUrl: 'http://172.26.13.103:8850',
-      //   mqttServer: '172.26.13.103',
+      //   baseUrl: 'http://172.1.53.131:50020',
+      //   mqttServer: '172.1.53.131',
       //   mqttPort: 2883,
-      //   headImg: 'http://172.26.13.103:80'
+      //   headImg: 'http://172.1.53.131:80'
       // }
     ]
   }
