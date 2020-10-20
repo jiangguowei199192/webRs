@@ -825,7 +825,12 @@ export default {
     this.setDroneDevCode(this.videoInfo.deviceCode)
 
     var elementResizeDetectorMaker = require('element-resize-detector')
-    this.erd = elementResizeDetectorMaker()
+    // this.erd = elementResizeDetectorMaker()
+    this.erd = elementResizeDetectorMaker({
+      strategy: 'scroll', // <- For ultra performance.
+      callOnAdd: true
+      // debug: false
+    })
     this.setPlayerSizeListener()
 
     this.puzzleDataArray = [
