@@ -231,7 +231,7 @@
             </el-form-item>
 
             <el-form-item label="设备编号" prop="deviceNo">
-              <el-input v-model="addDeviceForm.deviceNo"></el-input>
+              <el-input v-model="addDeviceForm.deviceNo" :disabled="editDeviceNo"></el-input>
             </el-form-item>
 
             <el-form-item
@@ -243,6 +243,7 @@
                 v-model="addDeviceForm.deviceType"
                 placeholder=""
                 @change="deviceTypeSelectChanged"
+                :disabled="editDeviceType"
               >
                 <el-option
                   v-for="(item, index) in deviceTypeList"
@@ -461,7 +462,10 @@ export default {
 
       districtList: [],
       isGdjk: true,
-      addDeviceTitle: ''
+      addDeviceTitle: '',
+
+      editDeviceNo: false,
+      editDeviceType: false
     }
   },
   created () {
@@ -589,6 +593,8 @@ export default {
 
       if (title === '新增接入设备') {
         this.showAddDevice = true
+        this.editDeviceNo = false
+        this.editDeviceType = false
 
         this.addDeviceForm.deviceName = ''
         this.addDeviceForm.deviceNo = ''
@@ -618,6 +624,8 @@ export default {
         }
 
         this.showAddDevice = true
+        this.editDeviceNo = true
+        this.editDeviceType = true
 
         var selectedDevice = this.deviceList[this.radio]
         this.addDeviceForm.deviceName = selectedDevice.deviceName
