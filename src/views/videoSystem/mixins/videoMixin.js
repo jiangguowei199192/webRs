@@ -347,8 +347,7 @@ const videoMixin = {
         const url = globalApi.baseUrl.slice(startI + 2, endI)
         const s = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).indexOf('/')
         const stream = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).slice(s + 1)
-        c.streamUrl = 'ws://' + url + ':50011/' + stream
-        // console.log(tree[i])
+        c.streamUrl = 'ws://' + url + ':50010/' + stream
       }
     },
 
@@ -405,8 +404,6 @@ const videoMixin = {
      */
     setDeviceTreeNodeID (tree) {
       if (tree == null) return
-      // console.log('tree')
-      // console.log(tree)
       for (var i = 0; i < tree.length; i++) {
         // 添加onlineStatus和deviceTypeCode属性
         if (!Object.prototype.hasOwnProperty.call(tree[i], 'onlineStatus')) {
