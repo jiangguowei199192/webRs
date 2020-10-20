@@ -11,7 +11,7 @@
             <i class="el-icon-warning"></i>
             {{userCountOfNoDept}}位用户未分配所属组织
           </div>
-
+          <div class="tree-box">
           <el-tree
             :data="deptTree"
             :props="deptTreeProps"
@@ -30,7 +30,7 @@
               @mouseenter="deptTreeMouseEnter(data)"
               @mouseleave="deptTreeMouseLeave(data)"
             >
-              <span>{{ node.label + (data.children ? ('[' + data.children.length + ']') : '') }}</span>
+              <span class="nodeTitleSty">{{ node.label + (data.children ? ('[' + data.children.length + ']') : '') }}</span>
 
               <el-popover
                 placement="right"
@@ -53,6 +53,7 @@
               </el-popover>
             </span>
           </el-tree>
+          </div>
         </div>
         <div class="rightBox">
           <button type="button" class="addUser" @click="addUser">添加用户</button>
@@ -752,13 +753,14 @@ export default {
   color: #23cefd;
   background-color: transparent;
   .el-tree-node {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     .el-tree-node__content {
+      display: block !important;
       height: 35px;
       line-height: 35px;
       border: 1px solid transparent;
+    }
+    .el-tree-node__children {
+      overflow: visible !important;
     }
     .el-tree-node__content:hover,
     .el-tree-node:focus > .el-tree-node__content {
@@ -861,6 +863,8 @@ export default {
   background-color: transparent;
   color: white;
   border: none;
+  margin-bottom: 10px;
+  vertical-align: top;
 }
 .popoverBtn {
   background: transparent;
@@ -868,5 +872,18 @@ export default {
   border: 0;
   margin-left: 0px;
   border-radius: 0px;
+}
+
+.nodeTitleSty {
+  display: inline-block;
+  width: 130px;
+  height: 35px;
+  line-height: 35px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-box {
+  overflow: auto;
 }
 </style>
