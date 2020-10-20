@@ -589,11 +589,14 @@ export default {
       this.deviceTypeSelected = ''
       this.qualityDateSelected = null
       this.onlineStatusSelected = ''
+
+      this.currentPage = 1
       this.getDeviceList()
     },
 
     // 搜索
     searchClick () {
+      this.currentPage = 1
       this.getDeviceList()
     },
 

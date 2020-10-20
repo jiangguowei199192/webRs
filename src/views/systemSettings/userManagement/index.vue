@@ -28,10 +28,10 @@
         <!-- <button type="button" class="more" @click="download()">
           <img :src="downloadImg" />
         </button> -->
-        <button type="button" class="more" @click="refresh()">
+        <button type="button" class="more" @click="refresh">
           <img :src="refreshImg" />
         </button>
-        <button type="button" class="more" @click="search()">
+        <button type="button" class="more" @click="search">
           <img :src="searchImg" />
         </button>
         <div class="tableBox">
@@ -328,6 +328,7 @@ export default {
     },
     // 搜索
     refresh () {
+      this.searchInput = ''
       this.pageData.currentPage = 1
       this.getUserList()
     },
