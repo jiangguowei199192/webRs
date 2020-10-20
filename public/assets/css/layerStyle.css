@@ -123,3 +123,22 @@
   cursor: pointer;
   background-color: red;
 }
+
+/**/
+.areaBox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+}
+.areaClose {
+  font-size: 12px;
+  color: white;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 9px;
+  cursor: pointer;
+  background-color: red;
+}
