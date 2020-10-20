@@ -517,6 +517,8 @@ export default {
             if (this.width !== this.height * 2) me.$notify.warning({ title: '警告', message: '无效图片,全景图长宽比需要是2:1' })
             else me.uploadModelImg(f)
           }
+          // 清除释放
+          window.URL.revokeObjectURL(img.src)
         }
         img.src = window.URL.createObjectURL(f)
       } else this.uploadModelImg(f)
@@ -1167,7 +1169,6 @@ export default {
 
       // infobox上的图片
       item.infoImg = ''
-      // item.infoImg = 'http://120.24.12.64:80/fmsUploads/panoramic/pano_1591671612143/index.html'
       item.editIndex = this.editIndex
       item.plotType = type
       item.edit = true
