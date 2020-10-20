@@ -289,15 +289,19 @@
         <!-- x轴箭头 -->
         <div class="horizontal">
           <span>0</span>
-          <img :src="upPic" />
-          <div>56</div>
+          <div :style="{left:(horizontalValue/360*800-7)+'px'}">
+            <img :src="upPic" />
+            <div>{{horizontalValue}}</div>
+          </div>
           <span>360</span>
         </div>
         <!-- y轴箭头 -->
         <div class="vertical">
           <span>180</span>
-          <div>56</div>
-          <img :src="rightPic" />
+          <div :style="{top:verticalValue< 0 ? 73 + String(verticalValue).slice(1) / 180 * 80 +'px': (73 - verticalValue / 180 * 80)+'px'}">
+            <div>{{verticalValue>0?verticalValue:String(verticalValue).slice(1)}}</div>
+            <img :src="rightPic" />
+          </div>
           <span>180</span>
         </div>
       </div>
@@ -585,6 +589,8 @@ export default {
       showCurindex: 1000, // 显示弹框
       upPic: require('@/assets/images/AR/up.png'),
       rightPic: require('@/assets/images/AR/right.png'),
+      horizontalValue: 0, // 水平角度
+      verticalValue: 0, // 垂直角度
       arPic: require('@/assets/images/AR/ar.png'),
       arSelectedPic: require('@/assets/images/AR/ar_selected.png'),
 
@@ -855,10 +861,25 @@ export default {
     showActive (index) {
       this.active = index
     },
+    // 获取云台信息
+    getPtzInfo () {
+      const params = {
+        deviceCode: this.videoInfo.deviceCode,
+        channelId: this.videoInfo.streamType
+      }
+      this.$axios.post(api.getPtzInfo, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          const data = res.data.data
+          this.horizontalValue = data.nPTZPan
+          this.verticalValue = data.nPTZTilt
+        }
+      })
+    },
     // 显示与隐藏AR
     changeAR () {
       this.showAR = !this.showAR
       if (this.showAR) {
+        this.getPtzInfo()
         // 开启AR
         new MqttService().client.send(
           'video/start/arAlgorithm',
@@ -1508,6 +1529,8 @@ export default {
           channelId: this.videoInfo.streamType
         })
       )
+      // 显示角度
+      this.getPtzInfo()
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType,
@@ -2147,6 +2170,12 @@ export default {
     }
     .horizontal {
       top: 81px;
+      > div {
+        position: absolute;
+        div {
+          margin-left: -7px;
+        }
+      }
       span {
         position: absolute;
         color: #00c4e0;
@@ -2155,27 +2184,32 @@ export default {
         left: -13px;
         top: -5px;
       }
-      span:nth-child(4) {
+      span:nth-child(3) {
         left: 804px;
         top: -8px;
       }
     }
     .vertical {
-      display: flex;
-      left: 370px;
+      left: 360px;
       > div {
-        margin-right: 2px;
+        position: absolute;
+        display: flex;
+        width:42px;
+        justify-content: space-between;
+        // div {
+        //   margin-right: 2px;
+        // }
       }
       span {
         position: absolute;
         color: #00c4e0;
       }
       span:nth-child(1) {
-        left: 16px;
+        left: 25px;
         top: -16px;
       }
-      span:nth-child(4) {
-        left: 19px;
+      span:nth-child(3) {
+        left: 25px;
         top: 164px;
       }
     }
