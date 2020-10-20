@@ -337,6 +337,9 @@ const videoMixin = {
       }
     },
 
+    /**
+     * 根据内外网替换StreamUrl
+     */
     replaceStreamUrl (c) {
       if (c.streamUrl) {
         const startI = globalApi.baseUrl.indexOf('//')
