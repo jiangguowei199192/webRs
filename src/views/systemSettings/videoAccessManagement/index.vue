@@ -373,6 +373,13 @@ import { Notification } from 'element-ui'
 
 export default {
   data () {
+    var isNumber = (rule, value, callback) => {
+      if (!Number(value)) {
+        callback(new Error('请输入数字'))
+      }
+      callback()
+    }
+
     return {
       backImg: require('../../../assets/images/Setting/setting-back.png'),
 
@@ -449,15 +456,19 @@ export default {
         deviceType: [{ required: true, message: '请选择设备类型' }],
         enable: [{ required: true, message: '请选择是否启用' }],
         belongArea: [{ required: true, message: '请选择所属区域' }],
-        longitude: [{ required: true, message: '请输入设备经度' }],
-        latitude: [{ required: true, message: '请输入设备纬度' }]
-        // directionAngle: [{ type: 'number', message: '请输入数字', trigger: 'blur' }]
+        longitude: [{ required: true, message: '请输入设备经度' }, { validator: isNumber, trigger: 'blur' }],
+        latitude: [{ required: true, message: '请输入设备纬度' }, { validator: isNumber, trigger: 'blur' }],
+        height: [{ validator: isNumber, trigger: 'blur' }],
+        directionAngle: [{ validator: isNumber, trigger: 'blur' }]
       },
       addWrjRules: {
         deviceName: [{ required: true, message: '请输入设备名称' }],
         deviceNo: [{ required: true, message: '请输入设备编号' }],
         deviceType: [{ required: true, message: '请选择设备类型' }],
-        enable: [{ required: true, message: '请选择是否启用' }]
+        enable: [{ required: true, message: '请选择是否启用' }],
+        height: [{ validator: isNumber, trigger: 'blur' }],
+        longitude: [{ validator: isNumber, trigger: 'blur' }],
+        latitude: [{ validator: isNumber, trigger: 'blur' }]
       },
 
       districtList: [],

@@ -161,7 +161,7 @@ export default {
   data () {
     var isNumber = (rule, value, callback) => {
       if (!Number(value)) {
-        callback(new Error('请输入正整数'))
+        callback(new Error('请输入数字'))
       }
       callback()
     }
