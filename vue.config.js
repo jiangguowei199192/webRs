@@ -24,7 +24,7 @@ const createServerConfig = function (compilation) {
       // {
       //   baseUrl: 'http://172.1.53.131:50020',
       //   mqttServer: '172.1.53.131',
-      //   mqttPort: 2883,
+      //   mqttPort: 50022,
       //   headImg: 'http://172.1.53.131:80'
       // }
     ]
