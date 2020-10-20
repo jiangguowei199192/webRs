@@ -9,6 +9,7 @@
       :autoplay="true"
       oncontextmenu="return false"
       fluent
+      :stretch="true"
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
     >
