@@ -457,18 +457,18 @@ export default {
         enable: [{ required: true, message: '请选择是否启用' }],
         belongArea: [{ required: true, message: '请选择所属区域' }],
         longitude: [{ required: true, message: '请输入设备经度' }, { validator: isNumber, trigger: 'blur' }],
-        latitude: [{ required: true, message: '请输入设备纬度' }, { validator: isNumber, trigger: 'blur' }],
-        height: [{ validator: isNumber, trigger: 'blur' }],
-        directionAngle: [{ validator: isNumber, trigger: 'blur' }]
+        latitude: [{ required: true, message: '请输入设备纬度' }, { validator: isNumber, trigger: 'blur' }]
+        // height: [{ validator: isNumber, trigger: 'blur' }],
+        // directionAngle: [{ validator: isNumber, trigger: 'blur' }]
       },
       addWrjRules: {
         deviceName: [{ required: true, message: '请输入设备名称' }],
         deviceNo: [{ required: true, message: '请输入设备编号' }],
         deviceType: [{ required: true, message: '请选择设备类型' }],
-        enable: [{ required: true, message: '请选择是否启用' }],
-        height: [{ validator: isNumber, trigger: 'blur' }],
-        longitude: [{ validator: isNumber, trigger: 'blur' }],
-        latitude: [{ validator: isNumber, trigger: 'blur' }]
+        enable: [{ required: true, message: '请选择是否启用' }]
+        // height: [{ validator: isNumber, trigger: 'blur' }],
+        // longitude: [{ validator: isNumber, trigger: 'blur' }],
+        // latitude: [{ validator: isNumber, trigger: 'blur' }]
       },
 
       districtList: [],
@@ -624,6 +624,10 @@ export default {
         this.addDeviceForm.directionAngle = ''
         this.addDeviceForm.username = ''
         this.addDeviceForm.password = ''
+
+        if (this.$refs.addDeviceRef) {
+          this.$refs.addDeviceRef.resetFields()
+        }
       }
 
       if (title === '修改接入设备') {
@@ -799,6 +803,11 @@ export default {
         this.isGdjk = false
         this.addDeviceRules = this.addWrjRules
       }
+
+      var p = this
+      setTimeout(function () {
+        p.$refs.addDeviceRef.clearValidate()
+      }, 10)
     }
   }
 }
