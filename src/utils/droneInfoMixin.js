@@ -1,5 +1,6 @@
 import { EventBus } from '@/utils/eventBus.js'
 import MqttService from '@/utils/mqttService'
+import globalApi from '@/utils/globalApi'
 const droneInfoMixin = {
   data () {
     return {
@@ -15,6 +16,8 @@ const droneInfoMixin = {
       bSetPointStatus: false,
       bShowRouteStatus: true,
       bShowPuzzlingBox: false,
+      tmpPuzzleLayers: [],
+      lastPuzzleLayer: null,
       di_height: '',
       di_hSpeed: '',
       di_vSpeed: '',
@@ -33,6 +36,9 @@ const droneInfoMixin = {
     })
     EventBus.$on('droneRealtimeInfo', obj => {
       this.updateDroneRealtimeInfo(obj)
+    })
+    EventBus.$on('realMapping/realMappingResult', info => {
+      this.showPuzzlingLayer(info)
     })
   },
 
@@ -254,7 +260,7 @@ const droneInfoMixin = {
     // 设置无人机是否开启检测算法
     switchPuzzlingStatus () {
       // this.bPuzzlingStatus = !this.bPuzzlingStatus
-      this.bShowPuzzlingBox = !this.bShowPuzzlingBox
+      // this.bShowPuzzlingBox = !this.bShowPuzzlingBox
     },
     // 设置是否可以选定目标点
     switchSetPointStatus () {
@@ -299,6 +305,48 @@ const droneInfoMixin = {
           console.log('handleDroneCmdReq : reqInfo.cmdReq === "gps_cancel"')
         } else if (reqInfo.cmdReq === 'discern_set') {
           console.log('handleDroneCmdReq : reqInfo.cmdReq === "discern_set"')
+        }
+      }
+    },
+    // 显示无人机实时拼图
+    _addPuzzlingLayer (url) {
+      const tmpMap = this.$refs.gduMap
+      const tmpLayer = tmpMap.map2D._imageLayerManager.add(
+        url,
+        ly => {
+          // tmpMap.map2D.zoomToLayer(ly)
+          const layerExtent = ly.getExtent()
+          if (layerExtent.length === 4) {
+            tmpMap.map2D.zoomToCenter((layerExtent[0] + layerExtent[2]) / 2, (layerExtent[1] + layerExtent[3]) / 2)
+            tmpMap.map2D.setZoom(18) // 实时拼图切片18-20级
+            // tmpMap.lon = (layerExtent[0] + layerExtent[2]) / 2
+            // tmpMap.lat = (layerExtent[1] + layerExtent[3]) / 2
+          }
+        }
+      )
+      return tmpLayer
+    },
+    showPuzzlingLayer (info) {
+      const tmpMap = this.$refs.gduMap
+      if (tmpMap === undefined || tmpMap.map2D === undefined) {
+        return
+      }
+
+      if (info.deviceCode === this.curDevCode) {
+        console.log('showPuzzlingLayer:', info)
+        const imgUrl = `${globalApi.headImg}${info.imgUrl}/tilemapresource.xml`
+        if (info.isLastImage !== '1') {
+          this.tmpPuzzleLayers.push(this._addPuzzlingLayer(imgUrl))
+        } else { // isLastImage === '1' 表示最后一张拼图
+          if (this.lastPuzzleLayer !== null) {
+            tmpMap.map2D._map.removeLayer(this.lastPuzzleLayer)
+            this.lastPuzzleLayer = null
+          }
+          this.tmpPuzzleLayers.forEach(layer => {
+            tmpMap.map2D._map.removeLayer(layer)
+          })
+          this.tmpPuzzleLayers = []
+          this.lastPuzzleLayer = this._addPuzzlingLayer(imgUrl)
         }
       }
     }
