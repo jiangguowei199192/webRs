@@ -1096,6 +1096,7 @@ export default {
       this.curVideoIndex = 1000
       this.curSelectedVideo = {}
       if (this.isOnline) {
+        this.selectedIndex = 200
         const divs = document.querySelectorAll('.leftContainer > div.list')
         if (!this.isPlayAll) {
           for (let i = 0; i < divs.length; i++) {
