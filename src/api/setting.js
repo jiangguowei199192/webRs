@@ -23,6 +23,7 @@ export const settingApi = {
   deleteDevice: '/cloud-video/device/delete', // 设置：设备接入-删除设备
   getUsedDeviceCount: '/cloud-video/device/getUsedDeviceCount', //
   getDeviceTree: '/cloud-video/device/getDeviceTree', // 设置：绑定设备-查询组织机构已绑定设备列表和可绑定设备列表
+  updateWRJ: '/cloud-video/device/updateWRJ', // 设置：设备接入-修改无人机设备
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图

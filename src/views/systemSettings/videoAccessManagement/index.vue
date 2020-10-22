@@ -231,7 +231,10 @@
             </el-form-item>
 
             <el-form-item label="设备编号" prop="deviceNo">
-              <el-input v-model="addDeviceForm.deviceNo" :disabled="editDeviceNo"></el-input>
+              <el-input
+                v-model="addDeviceForm.deviceNo"
+                :disabled="editDeviceNo"
+              ></el-input>
             </el-form-item>
 
             <el-form-item
@@ -456,8 +459,14 @@ export default {
         deviceType: [{ required: true, message: '请选择设备类型' }],
         enable: [{ required: true, message: '请选择是否启用' }],
         belongArea: [{ required: true, message: '请选择所属区域' }],
-        longitude: [{ required: true, message: '请输入设备经度' }, { validator: isNumber, trigger: 'blur' }],
-        latitude: [{ required: true, message: '请输入设备纬度' }, { validator: isNumber, trigger: 'blur' }]
+        longitude: [
+          { required: true, message: '请输入设备经度' },
+          { validator: isNumber, trigger: 'blur' }
+        ],
+        latitude: [
+          { required: true, message: '请输入设备纬度' },
+          { validator: isNumber, trigger: 'blur' }
+        ]
         // height: [{ validator: isNumber, trigger: 'blur' }],
         // directionAngle: [{ validator: isNumber, trigger: 'blur' }]
       },
@@ -646,6 +655,7 @@ export default {
         this.editDeviceType = true
 
         var selectedDevice = this.deviceList[this.radio]
+
         this.addDeviceForm.deviceName = selectedDevice.deviceName
         this.addDeviceForm.deviceNo = selectedDevice.deivceNo
         this.addDeviceForm.deviceType =
@@ -653,8 +663,9 @@ export default {
         this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
         this.addDeviceForm.longitude = selectedDevice.lon
         this.addDeviceForm.latitude = selectedDevice.lat
-        this.addDeviceForm.enable =
-          selectedDevice.useStatus ? 'enabled' : 'disabled'
+        this.addDeviceForm.enable = selectedDevice.useStatus
+          ? 'enabled'
+          : 'disabled'
         this.addDeviceForm.deviceBrand = selectedDevice.brand
         this.addDeviceForm.address = selectedDevice.address
         this.addDeviceForm.height = selectedDevice.height
@@ -727,74 +738,112 @@ export default {
       }
     },
 
-    // 新增设备-保存
+    // 新增/修改设备-保存
     addDeviceConfirm () {
       this.$refs.addDeviceRef.validate(async (valid) => {
         if (!valid) return
         this.showAddDevice = false
 
-        if (this.addDeviceForm.deviceType === 'GDJK') {
-          var param = {
-            deptDistrictCode: this.addDeviceForm.belongArea, // 行政区
-            deviceAddress: this.addDeviceForm.address, // 地点
-            deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
-            deviceCode: this.addDeviceForm.deviceNo, // 设备编码
-            deviceHeight: this.addDeviceForm.height,
-            deviceLatitude: this.addDeviceForm.latitude,
-            deviceLongitude: this.addDeviceForm.longitude,
-            deviceName: this.addDeviceForm.deviceName,
-            devicePassword: this.addDeviceForm.password,
-            deviceSeatAz: this.addDeviceForm.directionAngle, // 底座方位角
-            deviceStatus: this.addDeviceForm.enable,
-            deviceUserName: this.addDeviceForm.username,
-            expirationDate: this.addDeviceForm.qualityDate // 质保期
-          }
-          this.$axios.post(settingApi.addGDJK, param).then((res) => {
-            if (res && res.data && res.data.code === 0) {
-              Notification({
-                title: '提示',
-                message: '新增设备成功',
-                type: 'success',
-                duration: 5 * 1000
-              })
-              this.getDeviceList()
+        if (this.addDeviceTitle === '新增接入设备') { // 新增设备
+          if (this.addDeviceForm.deviceType === 'GDJK') {
+            var param = {
+              deptDistrictCode: this.addDeviceForm.belongArea, // 行政区
+              deviceAddress: this.addDeviceForm.address, // 地点
+              deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
+              deviceCode: this.addDeviceForm.deviceNo, // 设备编码
+              deviceHeight: this.addDeviceForm.height,
+              deviceLatitude: this.addDeviceForm.latitude,
+              deviceLongitude: this.addDeviceForm.longitude,
+              deviceName: this.addDeviceForm.deviceName,
+              devicePassword: this.addDeviceForm.password,
+              deviceSeatAz: this.addDeviceForm.directionAngle, // 底座方位角
+              deviceStatus: this.addDeviceForm.enable,
+              deviceUserName: this.addDeviceForm.username,
+              expirationDate: this.addDeviceForm.qualityDate // 质保期
             }
-          })
-        }
+            this.$axios.post(settingApi.addGDJK, param).then((res) => {
+              if (res && res.data && res.data.code === 0) {
+                Notification({
+                  title: '提示',
+                  message: '新增设备成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.getDeviceList()
+              }
+            })
+          }
 
-        if (this.addDeviceForm.deviceType === 'WRJ') {
-          var param1 = {
-            deviceAddress: this.addDeviceForm.address, // 地点
-            deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
-            deviceCode: this.addDeviceForm.deviceNo, // 设备编码
-            deviceHeight: parseInt(this.addDeviceForm.height),
-            deviceLatitude: this.addDeviceForm.latitude,
-            deviceLongitude: this.addDeviceForm.longitude,
-            deviceName: this.addDeviceForm.deviceName,
-            deviceStatus: this.addDeviceForm.enable,
-            expirationDate: this.addDeviceForm.qualityDate // 质保期
+          if (this.addDeviceForm.deviceType === 'WRJ') {
+            var param1 = {
+              deviceAddress: this.addDeviceForm.address, // 地点
+              deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
+              deviceCode: this.addDeviceForm.deviceNo, // 设备编码
+              deviceHeight: parseInt(this.addDeviceForm.height),
+              deviceLatitude: this.addDeviceForm.latitude,
+              deviceLongitude: this.addDeviceForm.longitude,
+              deviceName: this.addDeviceForm.deviceName,
+              deviceStatus: this.addDeviceForm.enable,
+              expirationDate: this.addDeviceForm.qualityDate // 质保期
+            }
+            this.$axios.post(settingApi.addWRJ, param1).then((res) => {
+              if (res && res.data && res.data.code === 0) {
+                Notification({
+                  title: '提示',
+                  message: '新增设备成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.getDeviceList()
+              }
+            })
           }
-          this.$axios.post(settingApi.addWRJ, param1).then((res) => {
-            if (res && res.data && res.data.code === 0) {
+        } else { // 修改设备
+          var selectedDevice = this.deviceList[this.radio]
+          if (selectedDevice.deviceType === '无人机') {
+            var updWrjParam = {
+              deviceCode: selectedDevice.deivceNo,
+              deviceAddress: this.addDeviceForm.address,
+              deviceBrand: this.addDeviceForm.deviceBrand,
+              deviceHeight: this.addDeviceForm.height,
+              deviceLatitude: this.addDeviceForm.latitude,
+              deviceLongitude: this.addDeviceForm.longitude,
+              deviceName: this.addDeviceForm.deviceName,
+              deviceStatus: this.addDeviceForm.enable,
+              expirationDate: this.addDeviceForm.qualityDate
+            }
+            this.$axios.post(settingApi.updateWRJ, updWrjParam).then((res) => {
+              if (res && res.data && res.data.code === 0) {
+                Notification({
+                  title: '提示',
+                  message: '修改设备成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.getDeviceList()
+                return
+              }
               Notification({
                 title: '提示',
-                message: '新增设备成功',
-                type: 'success',
+                message: '修改设备失败',
+                type: 'warning',
                 duration: 5 * 1000
               })
-              this.getDeviceList()
-            }
-          })
+            })
+          }
+
+          if (selectedDevice.deviceType === '高点监控') {
+          }
         }
       })
     },
 
-    // 新增设备-取消
+    // 新增/修改设备-取消
     addDeviceCancel () {
       this.showAddDevice = false
     },
 
-    // 新增设备-设备类型改变触发
+    // 新增/修改设备-设备类型改变触发
     deviceTypeSelectChanged (value) {
       if (value === 'GDJK') {
         this.isGdjk = true
@@ -956,7 +1005,7 @@ export default {
 }
 
 /deep/.table-info-row-disable td {
-  background: #3688B1 !important;
+  background: #3688b1 !important;
 }
 /deep/.table-info-row-enable td {
   color: white;
