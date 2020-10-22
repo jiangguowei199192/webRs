@@ -270,12 +270,12 @@ export default {
               } else {
                 element.alarmStatus = ''
               }
-              // 图片URL添加baseURL
+              // 图片URL添加headImg
               if (element.alarmPicList) {
                 if (element.alarmPicList.length === 1) {
                   // 只有一张图片
                   element.alarmPicList[0].picPath =
-                    globalApi.baseUrl +
+                    globalApi.headImg +
                     '/video-service2' +
                     element.alarmPicList[0].picPath
                   element.alarmPicList[1] = { picPath: '' }
@@ -288,7 +288,7 @@ export default {
                   ) {
                     const pic = element.alarmPicList[picIndex]
                     pic.picPath =
-                      globalApi.baseUrl + '/video-service2' + pic.picPath
+                      globalApi.headImg + '/video-service2' + pic.picPath
                   }
                 }
               } else {
