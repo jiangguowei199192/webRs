@@ -274,10 +274,8 @@ export default {
               if (element.alarmPicList) {
                 if (element.alarmPicList.length === 1) {
                   // 只有一张图片
-                  element.alarmPicList[0].picPath =
-                    globalApi.headImg +
-                    '/video-service2' +
-                    element.alarmPicList[0].picPath
+                  // element.alarmPicList[0].picPath = globalApi.baseUrl + '/video-service2' + element.alarmPicList[0].picPath
+                  element.alarmPicList[0].picPath = globalApi.headImg + element.alarmPicList[0].picPath
                   element.alarmPicList[1] = { picPath: '' }
                 } else {
                   // 两张和两张以上
@@ -287,8 +285,8 @@ export default {
                     picIndex++
                   ) {
                     const pic = element.alarmPicList[picIndex]
-                    pic.picPath =
-                      globalApi.headImg + '/video-service2' + pic.picPath
+                    // pic.picPath = globalApi.baseUrl + '/video-service2' + pic.picPath
+                    pic.picPath = globalApi.headImg + pic.picPath
                   }
                 }
               } else {
@@ -296,6 +294,7 @@ export default {
                 element.alarmPicList[0] = { picPath: '' }
                 element.alarmPicList[1] = { picPath: '' }
               }
+              // console.log(element.alarmPicList)
             }
 
             this.pageData.total = res.data.data.paginator.totalCount
