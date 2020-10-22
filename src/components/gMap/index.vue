@@ -96,7 +96,7 @@
         <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
       </div>
     </div>
-    <plan class="plan ownScrollStyle" v-show="bShowPaln"></plan>
+    <plan class="plan ownScrollStyle" v-if="bShowPaln"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
