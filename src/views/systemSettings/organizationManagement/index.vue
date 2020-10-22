@@ -50,7 +50,7 @@
                       @click="organizationEdit(data)"
                       >修改组织</el-button
                     >
-                    <el-button class="popoverBtn" @click="bindDevice(data)"
+                    <el-button class="popoverBtn" @click="bindDeviceClick(data)"
                       >绑定设备</el-button
                     >
                   </div>
@@ -267,13 +267,15 @@
             :defaultProps="{ label: 'label' }"
             openAll
             height="416px"
-            @addBtn='bindDeviceAdd'
-            @removeBtn='bindDeviceRemove'
+            @addBtn="bindDeviceAdd"
+            @removeBtn="bindDeviceRemove"
           ></tree-transfer>
           <div style="height: 32px; margin-top: 20px">
-            <div class="selectedDeviceNo">已选设备
-              <span style="color: #00FF36;">{{bindSelectedDeviceNo}}</span>
-              台</div>
+            <div class="selectedDeviceNo">
+              已选设备
+              <span style="color: #00ff36">{{ bindSelectedDeviceNo }}</span>
+              台
+            </div>
             <div class="bindDialtrueBtn" @click="bindDeviceConfirm">保存</div>
             <div class="bindDialCancelBtn" @click="bindDeviceCancel">取消</div>
           </div>
@@ -615,11 +617,85 @@ export default {
       this.showAddOrganization = true
     },
     // 绑定设备
-    bindDevice (data) {
+    async bindDeviceClick (data) {
       // console.log('绑定设备')
       // console.log(data)
+      this.$axios
+        .get(settingApi.getDeviceTree, { params: { deptCode: data.deptCode } })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            // 处理数据
+            this.handleDeviceTree(res.data.data)
+          }
+        })
+
       this.showBindDevice = true
     },
+    handleDeviceTree (deviceData) {
+      var toDataTemp = []
+      if (deviceData.gdjkSelected.length > 0) {
+        deviceData.gdjkSelected.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'gdjk'
+          item.label = item.deviceName
+        })
+        var gdjkSelected = {
+          id: 'gdjk',
+          pid: '0',
+          label: '高点监控',
+          children: deviceData.gdjkSelected
+        }
+        toDataTemp.push(gdjkSelected)
+      }
+
+      if (deviceData.wrjSelected.length > 0) {
+        deviceData.wrjSelected.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'wrj'
+          item.label = item.deviceName
+        })
+        var wrjSelected = {
+          id: 'wrj',
+          pid: '0',
+          label: '无人机',
+          children: deviceData.wrjSelected
+        }
+        toDataTemp.push(wrjSelected)
+      }
+      this.toData = toDataTemp
+
+      var formDataTemp = []
+      if (deviceData.gdjkSelectAble.length > 0) {
+        deviceData.gdjkSelectAble.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'gdjk'
+          item.label = item.deviceName
+        })
+        var gdjkAble = {
+          id: 'gdjk',
+          pid: '',
+          label: '高点监控',
+          children: deviceData.gdjkSelectAble
+        }
+        formDataTemp.push(gdjkAble)
+      }
+      if (deviceData.wrjSelectAble.length > 0) {
+        deviceData.wrjSelectAble.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'wrj'
+          item.label = item.deviceName
+        })
+        var wrjAble = {
+          id: 'wrj',
+          pid: '',
+          label: '无人机',
+          children: deviceData.wrjSelectAble
+        }
+        formDataTemp.push(wrjAble)
+      }
+      this.formData = formDataTemp
+    },
+
     // 新增组织-保存
     async addOrganizationConfirm () {
       this.$refs.addOrganizationFormRef.validate(async (valid) => {
@@ -730,7 +806,7 @@ export default {
     },
     handleBindSelectedDevice (toData) {
       var count = 0
-      toData.forEach(item => {
+      toData.forEach((item) => {
         count = count + item.children.length
       })
       this.bindSelectedDeviceNo = count
