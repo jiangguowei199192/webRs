@@ -159,7 +159,7 @@
       </div>
       <span class="btn" @click.stop="setModelTask">确定</span>
       <span class="del" @click.stop="deletePlotModel" v-if="activeIndex === 4"></span>
-      <el-checkbox v-model="editBox.hide" v-if="activeIndex === 0">隐藏模型</el-checkbox>
+      <el-checkbox v-model="editBox.hide" v-if="showHideModel">隐藏模型</el-checkbox>
     </div>
     <FloorGuide ref="floorGuide" v-bind:title="buildingTitle"></FloorGuide>
     <div class="rightTool">
@@ -250,7 +250,7 @@ import { uuid } from '@/utils/public'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
-const serverUrl = 'http://172.16.16.101:9000/mapdata'
+const serverUrl = globalApi.headImg + '/cloud-video/prePlanFor3D/gltf'
 let me
 export default {
   // 所有cesium和mars3d对象 都不要绑定到data
@@ -273,6 +273,7 @@ export default {
       plotType: '',
       options: [], // 沙盘绘制选项
       curModels: [],
+      showHideModel: false, // 显示隐藏模型选项
       showInfoBox: false,
       showEditBox: false, // 是否显示模型任务编辑框
       boxLeft: 0, // 任务编辑弹窗left
@@ -409,6 +410,7 @@ export default {
           viewIndex = 3
           break
         case 7:
+          viewIndex = this.editIndex
           this.fliterModel(this.editIndex)
           break
         default:
@@ -869,8 +871,9 @@ export default {
      */
     autoFindEditBoxNum () {
       var number = 1
-      for (var i = 0; i < this.labelList.length; i++) {
-        const t = this.labelList[i]
+      const list = this.labelList.sort(function (a, b) { return parseInt(a.opts.data.number) - parseInt(b.opts.data.number) })
+      for (var i = 0; i < list.length; i++) {
+        const t = list[i]
         if (parseInt(t.opts.data.number) !== number) {
           break
         } else number += 1
@@ -1014,6 +1017,7 @@ export default {
     plot (item, index) {
       this.curModelIndex = index
       const m = JSON.parse(JSON.stringify(item))
+      if (this.plotType === 0) m.hasRect = true
       this.startPlot(m)
     },
 
@@ -1063,7 +1067,7 @@ export default {
             img: require('../../assets/images/3d/xiaofangshuan.png'),
             style: {
               modelUrl:
-                '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
+                '$serverURL_gltf$/xiaofang/xiaofangshuan/xiaofangshuan.gltf',
               scale: 0.5
             }
           }
@@ -1075,7 +1079,7 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/watertank.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
               scale: 7
             }
           }
@@ -1088,7 +1092,7 @@ export default {
             img: require('../../assets/images/3d/xiaofangshuibengjieheqi.png'),
             style: {
               modelUrl:
-                '$serverURL_gltf$/xiaofang/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
+                '$serverURL_gltf$/xiaofang/xiaofangshuibengjieheqi/xiaofangshuibengjieheqi.gltf',
               scale: 0.08
             }
           }
@@ -1100,7 +1104,7 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/pumphouse.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
               scale: 7
             }
           }
@@ -1138,7 +1142,7 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/build.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
               scale: 7
             }
           }
@@ -1151,7 +1155,7 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/vr-icon.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/xiaofang/common/gltf2.gltf',
+              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
               scale: 7
             }
           }
@@ -1161,10 +1165,7 @@ export default {
       }
       const modelUrl = item.style.modelUrl
       if (modelUrl && modelUrl.startsWith('$serverURL_gltf$')) {
-        item.style.modelUrl = item.style.modelUrl.replace(
-          '$serverURL_gltf$',
-          serverUrl + '/gltf'
-        )
+        item.style.modelUrl = item.style.modelUrl.replace('$serverURL_gltf$', serverUrl)
       }
 
       // infobox上的图片
@@ -1182,7 +1183,7 @@ export default {
       this.modelIndex = index
       const m = this.modelList.find(m => m.attribute.id === item.id)
       if (m !== undefined) {
-        this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -50 })
+        this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -30 })
       }
     },
 
@@ -1354,17 +1355,11 @@ export default {
             const array = data[p]
             array.forEach(a => {
               if (a.image.startsWith('$serverURL_gltf$')) {
-                a.image = a.image.replace(
-                  '$serverURL_gltf$',
-                  serverUrl + '/gltf'
-                )
+                a.image = a.image.replace('$serverURL_gltf$', serverUrl)
               }
 
               if (a.style.modelUrl.startsWith('$serverURL_gltf$')) {
-                a.style.modelUrl = a.style.modelUrl.replace(
-                  '$serverURL_gltf$',
-                  serverUrl + '/gltf'
-                )
+                a.style.modelUrl = a.style.modelUrl.replace('$serverURL_gltf$', serverUrl)
               }
             })
             const item = { value: i, label: p, list: array }
@@ -1495,6 +1490,7 @@ export default {
      * @param {Object} entity 模型
      */
     addModelRect (entity) {
+      if (!entity.attribute.hasRect) return
       const p = this.getModelRectPosition(entity)
       const rect = this.viewer.entities.add({
         name: entity.attribute.id,
@@ -1593,6 +1589,8 @@ export default {
      * @param {Object} entity 模型
      */
     showModelEditBox (entity) {
+      if (this.activeIndex === 0 && entity.attribute.hasRect) this.showHideModel = true
+      else this.showHideModel = false
       this.showEditBox = true
       const t = me.findModelLabel(entity.attribute.id)
       this.editBox.hide = !entity.show
@@ -1649,7 +1647,7 @@ export default {
       const lat = 30.510093
       const lon = 114.235004
       this.createGisModel({
-        url: serverUrl + '/gltf/mars/firedrill/xiaofangche.gltf',
+        url: serverUrl + '/xiaofangche/paomoche.gltf',
         x: lon,
         y: lat,
         z: 12
@@ -2065,6 +2063,7 @@ export default {
           me.modelList.push(entity)
           // 显示模型任务编辑框
           me.isPlot = true
+          me.showHideModel = false
           me.showEditBox = true
           me.editBox.number = me.autoFindEditBoxNum()
           me.editBox.task = '- -'
@@ -2167,6 +2166,8 @@ export default {
      */
     onMapload (viewer) {
       this.viewer = viewer
+      // 为了支持不同的材质类型
+      Cesium.ExpandByMars.occlusionOpen = false
       // 设置右键旋转
       viewer.scene.screenSpaceCameraController.tiltEventTypes = [
         Cesium.CameraEventType.RIGHT_DRAG,

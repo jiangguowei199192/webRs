@@ -1,138 +1,163 @@
 {
-    "车辆": [
+    "消防车辆": [
         {
-            "name": "警车",
-            "image": "$serverURL_gltf$/mars/img/jingche.jpg",
+            "name": "泡沫消防车",
+            "image": "$serverURL_gltf$/img/paomoche.jpg",
             "type": "model-p",
             "style": {
-                "scale": 3,
-                "modelUrl": "$serverURL_gltf$/mars/jingche/jingche.gltf"
+                "modelUrl": "$serverURL_gltf$/xiaofangche/paomoche.gltf"
             }
         },
         {
-            "name": "起重车",
-            "image": "$serverURL_gltf$/mars/img/qzcar.jpg",
+            "name": "水罐消防车",
+            "image": "$serverURL_gltf$/img/shuiguanche.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/qzcar/GKZY_anim.gltf"
+                "modelUrl": "$serverURL_gltf$/xiaofangche/shuiguanche.gltf"
+            }
+        },
+        {
+            "name": "抢险救援消防车",
+            "image": "$serverURL_gltf$/img/qiangxianche.jpg",
+            "type": "model-p",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/xiaofangche/qiangxianche/gltf2.gltf"
+            }
+        },
+        {
+            "name": "登高平台消防车",
+            "image": "$serverURL_gltf$/img/denggaoche.jpg",
+            "type": "model-p",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/xiaofangche/denggaoche/gltf2.gltf"
+            }
+        }
+    ],
+    "社会车辆": [
+        {
+            "name": "起重车",
+            "image": "$serverURL_gltf$/img/qzcar.jpg",
+            "type": "model-p",
+            "style": {
+                "modelUrl": "$serverURL_gltf$/car/qzcar/GKZY_anim.gltf"
             }
         },
         {
             "name": "土方车",
-            "image": "$serverURL_gltf$/mars/img/tufangche.jpg",
+            "image": "$serverURL_gltf$/img/tufangche.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/car/tufangche.glb"
+                "scale":0.6,
+                "modelUrl": "$serverURL_gltf$/car/tufangche.glb"
             }
         },
         {
             "name": "挖掘机",
-            "image": "$serverURL_gltf$/mars/img/wajueji.jpg",
+            "image": "$serverURL_gltf$/img/wajueji.jpg",
             "type": "model-p",
             "style": {
-                "scale": 3,
-                "modelUrl": "$serverURL_gltf$/mars/car/wajueji.glb"
+                "modelUrl": "$serverURL_gltf$/car/wajueji.glb"
             }
         },
         {
-            "name": "小汽车",
-            "image": "$serverURL_gltf$/mars/img/qiche.jpg",
+            "name": "铲车",
+            "image": "$serverURL_gltf$/img/chanche.jpg",
             "type": "model-p",
             "style": {
-                "scale": 0.1,
-                "modelUrl": "$serverURL_gltf$/mars/qiche.gltf"
+                "heading":90,
+                "modelUrl": "$serverURL_gltf$/car/chanche/gltf2.gltf"
             }
         },
         {
-            "name": "消防车",
-            "image": "$serverURL_gltf$/mars/img/xiaofangche.jpg",
+            "name": "救护车",
+            "image": "$serverURL_gltf$/img/jiuhuche.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangche.gltf"
+                "modelUrl": "$serverURL_gltf$/car/jiuhuche/gltf2.gltf"
             }
         },
         {
-            "name": "消防车2",
-            "image": "$serverURL_gltf$/mars/img/xiaofangche2.jpg",
+            "name": "警车",
+            "image": "$serverURL_gltf$/img/jingche.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangche2.gltf"
+                "modelUrl": "$serverURL_gltf$/car/jingche/gltf2.gltf"
             }
         },
         {
-            "name": "小货车",
-            "image": "$serverURL_gltf$/sample/img/CesiumMilkTruck.jpg",
+            "name": "警车2",
+            "image": "$serverURL_gltf$/img/jingche2.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/sample/CesiumMilkTruck/CesiumMilkTruck.gltf"
+                "modelUrl": "$serverURL_gltf$/car/jingche2/gltf2.gltf"
             }
         },
         {
-            "name": "越野车",
-            "image": "$serverURL_gltf$/sample/img/GroundVehicle.jpg",
+            "name": "警车3",
+            "image": "$serverURL_gltf$/img/jingche3.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/sample/GroundVehicle/GroundVehicle.glb"
+                "heading":90,
+                "modelUrl": "$serverURL_gltf$/car/jingche3/jingche.gltf"
             }
         },
         {
-            "name": "摩托车",
-            "image": "$serverURL_gltf$/mars/img/motorcar.jpg",
+            "name": "有轨电车",
+            "image": "$serverURL_gltf$/img/dianche.jpg",
             "type": "model-p",
             "style": {
-                "scale": 0.01,
-                "modelUrl": "$serverURL_gltf$/mars/firedrill/motorcar.glb"
+                "modelUrl": "$serverURL_gltf$/car/dianche/gltf2.gltf"
+            }
+        },
+        {
+            "name": "工地建筑车",
+            "image": "$serverURL_gltf$/img/jianzhuche.jpg",
+            "type": "model-p",
+            "style": {
+                "heading":-90,
+                "modelUrl": "$serverURL_gltf$/car/jianzhuche/gltf2.gltf"
             }
         }
     ],
     "人物": [
         {
             "name": "巡逻人员",
-            "image": "$serverURL_gltf$/mars/img/ren.jpg",
+            "image": "$serverURL_gltf$/img/ren.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/man/ren.glb"
+                "modelUrl": "$serverURL_gltf$/people/ren.glb"
             }
         },
         {
             "name": "巡逻人员",
-            "image": "$serverURL_gltf$/mars/img/gongren.jpg",
+            "image": "$serverURL_gltf$/img/gongren.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/man/gongren.glb"
+                "modelUrl": "$serverURL_gltf$/people/gongren.glb"
             }
         },
         {
             "name": "行人",
-            "image": "$serverURL_gltf$/mars/img/man.jpg",
+            "image": "$serverURL_gltf$/img/man.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/man/walk.gltf"
+                "modelUrl": "$serverURL_gltf$/people/walk.gltf"
             }
         },
         {
             "name": "消防员",
-            "image": "$serverURL_gltf$/mars/img/xiaofangyuan.jpg",
+            "image": "$serverURL_gltf$/img/xiaofangyuan.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangyuan.glb"
-            }
-        },
-        {
-            "name": "奔跑的消防员",
-            "image": "$serverURL_gltf$/mars/img/xiaofangyuan-run.jpg",
-            "type": "model-p",
-            "style": {
-                "scale": 2,
-                "modelUrl": "$serverURL_gltf$/mars/firedrill/xiaofangyuan-run.gltf"
+                "modelUrl": "$serverURL_gltf$/people/xiaofangyuan.glb"
             }
         },
         {
             "name": "步行动画_人",
-            "image": "$serverURL_gltf$/sample/img/CesiumMan.jpg",
+            "image": "$serverURL_gltf$/img/CesiumMan.jpg",
             "type": "model-p",
             "style": {
-                "modelUrl": "$serverURL_gltf$/sample/CesiumMan/Cesium_Man.gltf"
+                "modelUrl": "$serverURL_gltf$/people/Cesium_Man.gltf"
             }
         }
     ]
