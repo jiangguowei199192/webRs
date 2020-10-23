@@ -26,8 +26,6 @@
               class="custom-tree-node"
               slot-scope="{ node, data }"
               style="width: 100%"
-              @mouseenter="deptTreeMouseEnter(data)"
-              @mouseleave="deptTreeMouseLeave(data)"
             >
               <span class="nodeTitleSty">{{
                 node.label +
@@ -55,7 +53,7 @@
                 <el-button
                   slot="reference"
                   icon="el-icon-setting"
-                  v-show="data.del"
+                  v-show="data.showSetting"
                   class="settingStyle"
                 ></el-button>
               </el-popover>
@@ -348,46 +346,7 @@ export default {
 
       showBindDevice: false,
       toData: [],
-      formData: [
-        {
-          id: 'id1',
-          pid: 0,
-          label: '高点监控',
-          children: [
-            {
-              id: 'id2',
-              pid: 'id1', // 父级的id
-              label: '胜利林场',
-              children: [] // 空数组可有可无
-            },
-            {
-              id: 'id3',
-              pid: 'id1',
-              label: '后公主岭',
-              children: []
-            }
-          ]
-        },
-        {
-          id: 'id4',
-          pid: 0,
-          label: '无人机',
-          children: [
-            {
-              id: 'id5',
-              pid: 'id4',
-              label: '高新中队无人机',
-              children: []
-            },
-            {
-              id: 'id6',
-              pid: 'id4',
-              label: '洪山中队无人机',
-              children: []
-            }
-          ]
-        }
-      ],
+      formData: [],
       bindSelectedDeviceNo: 0,
 
       userCountOfNoDept: 0
@@ -425,6 +384,7 @@ export default {
           var temp = res.data.data
           // 一级
           temp.forEach((item) => {
+            item.showSetting = false
             if (item.children) {
               if (item.children.length <= 0) {
                 item.children = null
@@ -432,6 +392,7 @@ export default {
                 // 二级
                 var temp2 = item.children
                 temp2.forEach((item2) => {
+                  item2.showSetting = false
                   if (item2.children) {
                     if (item2.children.length <= 0) {
                       item2.children = null
@@ -439,6 +400,7 @@ export default {
                       // 三级
                       var temp3 = item2.children
                       temp3.forEach((item3) => {
+                        item3.showSetting = false
                         if (item3.children) {
                           if (item3.children.length <= 0) {
                             item3.children = null
@@ -452,6 +414,7 @@ export default {
             }
           })
           this.deptTree = temp
+          this.deptTree[0].showSetting = true
 
           this.selectedDeptCode = res.data.data[0].deptCode
           this.getUserList()
@@ -476,6 +439,12 @@ export default {
 
     // 选中组织
     deptTreeClick (item) {
+      this.deptTree[0].showSetting = false
+      this.deptTree[0].children.forEach(item => {
+        item.showSetting = false
+      })
+      item.showSetting = true
+
       this.selectedDeptCode = item.deptCode
       this.getUserList()
     },
@@ -578,13 +547,6 @@ export default {
       })
     },
 
-    deptTreeMouseEnter (data) {
-      this.$set(data, 'del', true)
-    },
-    deptTreeMouseLeave (data) {
-      this.$set(data, 'del', false)
-    },
-
     // 新增组织
     organizationAdd (data) {
       this.currentOrganization = data
@@ -604,85 +566,6 @@ export default {
       this.addOrganizationForm.organizationType = data.deptTypeCode
       this.addOrganizationForm.previousOrganization = data.parentDeptCode
       this.showAddOrganization = true
-    },
-    // 绑定设备
-    async bindDeviceClick (data) {
-      // console.log('绑定设备')
-      // console.log(data)
-      this.$axios
-        .get(settingApi.getDeviceTree, { params: { deptCode: data.deptCode } })
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            // 处理数据
-            this.handleDeviceTree(res.data.data)
-          }
-        })
-
-      this.showBindDevice = true
-    },
-    handleDeviceTree (deviceData) {
-      var toDataTemp = []
-      if (deviceData.gdjkSelected.length > 0) {
-        deviceData.gdjkSelected.forEach((item) => {
-          item.id = item.deviceCode
-          item.pid = 'gdjk'
-          item.label = item.deviceName
-        })
-        var gdjkSelected = {
-          id: 'gdjk',
-          pid: '0',
-          label: '高点监控',
-          children: deviceData.gdjkSelected
-        }
-        toDataTemp.push(gdjkSelected)
-      }
-
-      if (deviceData.wrjSelected.length > 0) {
-        deviceData.wrjSelected.forEach((item) => {
-          item.id = item.deviceCode
-          item.pid = 'wrj'
-          item.label = item.deviceName
-        })
-        var wrjSelected = {
-          id: 'wrj',
-          pid: '0',
-          label: '无人机',
-          children: deviceData.wrjSelected
-        }
-        toDataTemp.push(wrjSelected)
-      }
-      this.toData = toDataTemp
-
-      var formDataTemp = []
-      if (deviceData.gdjkSelectAble.length > 0) {
-        deviceData.gdjkSelectAble.forEach((item) => {
-          item.id = item.deviceCode
-          item.pid = 'gdjk'
-          item.label = item.deviceName
-        })
-        var gdjkAble = {
-          id: 'gdjk',
-          pid: '',
-          label: '高点监控',
-          children: deviceData.gdjkSelectAble
-        }
-        formDataTemp.push(gdjkAble)
-      }
-      if (deviceData.wrjSelectAble.length > 0) {
-        deviceData.wrjSelectAble.forEach((item) => {
-          item.id = item.deviceCode
-          item.pid = 'wrj'
-          item.label = item.deviceName
-        })
-        var wrjAble = {
-          id: 'wrj',
-          pid: '',
-          label: '无人机',
-          children: deviceData.wrjSelectAble
-        }
-        formDataTemp.push(wrjAble)
-      }
-      this.formData = formDataTemp
     },
 
     // 新增组织-保存
@@ -753,9 +636,118 @@ export default {
         }
       })
     },
+
+    // 绑定设备
+    async bindDeviceClick (data) {
+      this.$axios
+        .get(settingApi.getDeviceTree, { params: { deptCode: data.deptCode } })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            // 处理数据
+            this.handleDeviceTree(res.data.data)
+            this.showBindDevice = true
+          }
+        })
+    },
+    handleDeviceTree (deviceData) {
+      var toDataTemp = []
+      if (deviceData.gdjkSelected.length > 0) {
+        deviceData.gdjkSelected.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'gdjk'
+          item.label = item.deviceName
+        })
+        var gdjkSelected = {
+          id: 'gdjk',
+          pid: '0',
+          label: '高点监控',
+          children: deviceData.gdjkSelected
+        }
+        toDataTemp.push(gdjkSelected)
+      }
+      if (deviceData.wrjSelected.length > 0) {
+        deviceData.wrjSelected.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'wrj'
+          item.label = item.deviceName
+        })
+        var wrjSelected = {
+          id: 'wrj',
+          pid: '0',
+          label: '无人机',
+          children: deviceData.wrjSelected
+        }
+        toDataTemp.push(wrjSelected)
+      }
+      this.toData = toDataTemp
+
+      var formDataTemp = []
+      if (deviceData.gdjkSelectAble.length > 0) {
+        deviceData.gdjkSelectAble.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'gdjk'
+          item.label = item.deviceName
+        })
+        var gdjkAble = {
+          id: 'gdjk',
+          pid: '',
+          label: '高点监控',
+          children: deviceData.gdjkSelectAble
+        }
+        formDataTemp.push(gdjkAble)
+      }
+      if (deviceData.wrjSelectAble.length > 0) {
+        deviceData.wrjSelectAble.forEach((item) => {
+          item.id = item.deviceCode
+          item.pid = 'wrj'
+          item.label = item.deviceName
+        })
+        var wrjAble = {
+          id: 'wrj',
+          pid: '',
+          label: '无人机',
+          children: deviceData.wrjSelectAble
+        }
+        formDataTemp.push(wrjAble)
+      }
+      this.formData = formDataTemp
+
+      this.handleBindSelectedDevice(this.toData)
+    },
     // 绑定设备-保存
     async bindDeviceConfirm () {
       this.showBindDevice = false
+
+      console.log(this.toData)
+      var deviceCodes = []
+      this.toData.forEach(item => {
+        item.children.forEach(item1 => {
+          deviceCodes.push(item1.deviceCode)
+        })
+      })
+      console.log(deviceCodes)
+      var param = {
+        deptCode: this.selectedDeptCode,
+        // deviceCodeList: deviceCodes
+        deviceCodeList: JSON.stringify(deviceCodes)
+      }
+      this.$axios.post(settingApi.deptBandDevice, param).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          Notification({
+            title: '提示',
+            message: '绑定设备成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          return
+        }
+        Notification({
+          title: '提示',
+          message: '绑定设备失败',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+      })
     },
     bindDeviceCancel () {
       this.showBindDevice = false
@@ -788,9 +780,11 @@ export default {
     },
 
     bindDeviceAdd (fromData, toData, obj) {
+      this.toData = toData
       this.handleBindSelectedDevice(toData)
     },
     bindDeviceRemove (fromData, toData, obj) {
+      this.toData = toData
       this.handleBindSelectedDevice(toData)
     },
     handleBindSelectedDevice (toData) {
@@ -919,36 +913,6 @@ export default {
   background-color: rgba(54, 143, 187, 1);
 }
 
-/* 树形列表 */
-/deep/.el-tree {
-  color: #23cefd;
-  background-color: transparent;
-  .el-tree-node {
-    .el-tree-node__content {
-      display: block !important;
-      height: 35px;
-      line-height: 35px;
-      border: 1px solid transparent;
-    }
-    .el-tree-node__children {
-      overflow: visible !important;
-    }
-    .el-tree-node__content:hover,
-    .el-tree-node:focus > .el-tree-node__content {
-      color: #fff;
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    .el-tree-node__expand-icon {
-      color: transparent;
-      pointer-events: none;
-    }
-  }
-}
-/deep/ .el-tree-node.is-current > .el-tree-node__content {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: white;
-}
-
 .dialogStyle {
   min-width: 1500px;
   /deep/.el-dialog__header {
@@ -1056,6 +1020,35 @@ export default {
 
 .tree-box {
   overflow: auto;
+  /* 树形列表 */
+  /deep/.el-tree {
+    color: #23cefd;
+    background-color: transparent;
+    .el-tree-node {
+      .el-tree-node__content {
+        display: block !important;
+        height: 35px;
+        line-height: 35px;
+        border: 1px solid transparent;
+      }
+      .el-tree-node__children {
+        overflow: visible !important;
+      }
+      .el-tree-node__content:hover,
+      .el-tree-node:focus > .el-tree-node__content {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .el-tree-node__expand-icon {
+        color: transparent;
+        pointer-events: none;
+      }
+    }
+  }
+  /deep/ .el-tree-node.is-current > .el-tree-node__content {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: white;
+  }
 }
 
 .bindDeviceDlg.el-dialog__wrapper {
@@ -1080,6 +1073,34 @@ export default {
       .addContentSty {
         background-color: #346a84;
         padding: 20px;
+        /deep/.el-tree {
+          color: #23cefd;
+          background-color: transparent;
+          .el-tree-node {
+            .el-tree-node__content {
+              display: block !important;
+              height: 35px;
+              line-height: 35px;
+              border: 1px solid transparent;
+            }
+            .el-tree-node__children {
+              overflow: visible !important;
+            }
+            .el-tree-node__content:hover,
+            .el-tree-node:focus > .el-tree-node__content {
+              color: #fff;
+              background-color: rgba(255, 255, 255, 0.1);
+            }
+            .el-tree-node__expand-icon {
+              color: transparent;
+              pointer-events: none;
+            }
+          }
+        }
+        /deep/ .el-tree-node.is-current > .el-tree-node__content {
+          background: rgba(255, 255, 255, 0.1) !important;
+          color: white;
+        }
       }
       .el-button.is-circle {
         width: 40px;
