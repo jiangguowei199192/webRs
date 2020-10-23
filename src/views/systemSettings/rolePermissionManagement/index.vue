@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div class="container">
-      <button type="button" class="back" @click="back">
+      <button type="button" class="back-sty" @click="back">
         <img :src="backImg" />
         角色权限管理
       </button>
@@ -67,7 +66,6 @@
           </div>
         </div>
       </div>
-    </div>
 
     <el-dialog
       title="提示"
@@ -433,7 +431,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.back {
+.back-sty {
   width: 150px;
   height: 36px;
   border: none;
@@ -443,16 +441,14 @@ export default {
   display: block;
   background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
   background-size: 100% 100%;
+  margin-top: 30px;
+  margin-left: 30px;
 }
-.container {
-  width: 1242px;
-  height: 756px;
-  margin: 55px auto 0 auto;
-}
+
 .container1 {
   width: 1048px;
   height: 685px;
-  margin: 30px auto 0 auto;
+  margin: 50px auto 0 auto;
 }
 .leftBox {
   width: 220px;

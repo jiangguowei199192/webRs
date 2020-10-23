@@ -1,138 +1,127 @@
 <template>
   <div>
-    <div class="container">
-      <button type="button" class="back" @click="back">
-        <img :src="backImg" />
-        组织管理
-      </button>
-      <div class="container1">
-        <div class="leftBox">
-          <div class="leftTip">
-            <i class="el-icon-warning"></i>
-            {{ userCountOfNoDept }}位用户未分配所属组织
-          </div>
-          <div class="tree-box">
-            <el-tree
-              :data="deptTree"
-              :props="deptTreeProps"
-              default-expand-all
-              class="treeStyle"
-              @node-click="deptTreeClick"
-              :expand-on-click-node="false"
-              node-key="deptCode"
-              :current-node-key="selectedDeptCode"
-              v-if="selectedDeptCode"
-            >
-              <span
-                class="custom-tree-node"
-                slot-scope="{ node, data }"
-                style="width: 100%"
-                @mouseenter="deptTreeMouseEnter(data)"
-                @mouseleave="deptTreeMouseLeave(data)"
-              >
-                <span class="nodeTitleSty">{{
-                  node.label +
-                  (data.children ? "[" + data.children.length + "]" : "")
-                }}</span>
-
-                <el-popover
-                  placement="right"
-                  width="150"
-                  trigger="hover"
-                  popper-class="el-popover-more"
-                >
-                  <div style="text-align: center">
-                    <el-button class="popoverBtn" @click="organizationAdd(data)"
-                      >新增下级组织</el-button
-                    >
-                    <el-button
-                      class="popoverBtn"
-                      @click="organizationEdit(data)"
-                      >修改组织</el-button
-                    >
-                    <el-button class="popoverBtn" @click="bindDeviceClick(data)"
-                      >绑定设备</el-button
-                    >
-                  </div>
-
-                  <el-button
-                    slot="reference"
-                    icon="el-icon-setting"
-                    v-show="data.del"
-                    class="settingStyle"
-                  ></el-button>
-                </el-popover>
-              </span>
-            </el-tree>
-          </div>
+    <button type="button" class="back-sty" @click="back">
+      <img :src="backImg" />
+      组织管理
+    </button>
+    <div class="container1">
+      <div class="leftBox">
+        <div class="leftTip">
+          <i class="el-icon-warning"></i>
+          {{ userCountOfNoDept }}位用户未分配所属组织
         </div>
-        <div class="rightBox">
-          <button type="button" class="addUser" @click="addUser">
-            添加用户
-          </button>
-          <div class="tableBox">
-            <el-table
-              @row-click="ClickTableRow"
-              :data="userList"
-              stripe
-              empty-text="no data"
-              tooltip-effect="light"
+        <div class="tree-box">
+          <el-tree
+            :data="deptTree"
+            :props="deptTreeProps"
+            default-expand-all
+            class="treeStyle"
+            @node-click="deptTreeClick"
+            :expand-on-click-node="false"
+            node-key="deptCode"
+            :current-node-key="selectedDeptCode"
+            v-if="selectedDeptCode"
+          >
+            <span
+              class="custom-tree-node"
+              slot-scope="{ node, data }"
+              style="width: 100%"
+              @mouseenter="deptTreeMouseEnter(data)"
+              @mouseleave="deptTreeMouseLeave(data)"
             >
-              <el-table-column
-                label
-                width="33"
-                align="center"
-                :resizable="false"
-              >
-                <template slot-scope="scope">
-                  <el-radio v-model="radio" :label="scope.$index">{{
-                    ""
-                  }}</el-radio>
-                </template>
-              </el-table-column>
-              <el-table-column
-                align="center"
-                label="用户姓名"
-                prop="username"
-              ></el-table-column>
-              <el-table-column
-                align="center"
-                label="角色"
-                prop="roleName"
-              ></el-table-column>
-              <el-table-column
-                align="center"
-                label="手机号"
-                prop="mobile"
-              ></el-table-column>
-              <el-table-column
-                align="center"
-                label="所属组织"
-                prop="deptName"
-              ></el-table-column>
-              <el-table-column align="center" label="操作">
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    @click="deleteClick(scope.$index, scope.row)"
-                    style="width: 55px"
-                    >移除</el-button
-                  >
-                </template>
-              </el-table-column>
-            </el-table>
+              <span class="nodeTitleSty">{{
+                node.label +
+                (data.children ? "[" + data.children.length + "]" : "")
+              }}</span>
 
-            <el-pagination
-              class="tablePagination"
-              popper-class="pageSelect"
-              :total="pageData.total"
-              :page-size="pageData.pageSize"
-              layout="total, prev, pager, next, jumper"
-              :current-page.sync="pageData.currentPage"
-              @current-change="currentPageChange"
-            ></el-pagination>
-          </div>
+              <el-popover
+                placement="right"
+                width="150"
+                trigger="hover"
+                popper-class="el-popover-more"
+              >
+                <div style="text-align: center">
+                  <el-button class="popoverBtn" @click="organizationAdd(data)"
+                    >新增下级组织</el-button
+                  >
+                  <el-button class="popoverBtn" @click="organizationEdit(data)"
+                    >修改组织</el-button
+                  >
+                  <el-button class="popoverBtn" @click="bindDeviceClick(data)"
+                    >绑定设备</el-button
+                  >
+                </div>
+
+                <el-button
+                  slot="reference"
+                  icon="el-icon-setting"
+                  v-show="data.del"
+                  class="settingStyle"
+                ></el-button>
+              </el-popover>
+            </span>
+          </el-tree>
+        </div>
+      </div>
+      <div class="rightBox">
+        <button type="button" class="addUser" @click="addUser">添加用户</button>
+        <div class="tableBox">
+          <el-table
+            @row-click="ClickTableRow"
+            :data="userList"
+            stripe
+            empty-text="no data"
+            tooltip-effect="light"
+          >
+            <el-table-column label width="33" align="center" :resizable="false">
+              <template slot-scope="scope">
+                <el-radio v-model="radio" :label="scope.$index">{{
+                  ""
+                }}</el-radio>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="用户姓名"
+              prop="username"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              label="角色"
+              prop="roleName"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              label="手机号"
+              prop="mobile"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              label="所属组织"
+              prop="deptName"
+            ></el-table-column>
+            <el-table-column align="center" label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="deleteClick(scope.$index, scope.row)"
+                  style="width: 55px"
+                  >移除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <el-pagination
+            class="tablePagination"
+            popper-class="pageSelect"
+            :total="pageData.total"
+            :page-size="pageData.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :current-page.sync="pageData.currentPage"
+            @current-change="currentPageChange"
+          ></el-pagination>
         </div>
       </div>
     </div>
@@ -816,7 +805,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.back {
+.back-sty {
   width: 120px;
   height: 36px;
   border: none;
@@ -827,16 +816,14 @@ export default {
   background: url("../../../assets/images/plan/plan-back-background.png")
     no-repeat;
   background-size: 100% 100%;
+  margin-top: 30px;
+  margin-left: 30px;
 }
-.container {
-  width: 1242px;
-  height: 756px;
-  margin: 55px auto 0 auto;
-}
+
 .container1 {
   width: 1048px;
   height: 685px;
-  margin: 30px auto 0 auto;
+  margin: 50px auto 0 auto;
 }
 .leftBox {
   width: 220px;
@@ -1060,7 +1047,7 @@ export default {
 
 .nodeTitleSty {
   display: inline-block;
-  width: 130px;
+  width: 120px;
   height: 35px;
   line-height: 35px;
   overflow: hidden;

@@ -1,90 +1,118 @@
 <template>
   <div>
-    <div class="container">
-      <button type="button" class="back" @click="back">
-        <img :src="backImg" />
-        用户管理
-      </button>
-      <div class="rightBox">
-        <el-input v-model="searchInput" class="searchInput">
-          <template slot="prepend">用户名：</template>
-        </el-input>
-        <el-popover
-          placement="right"
-          width="150"
-          trigger="click"
-          popper-class="el-popover-more"
-          v-model="showMorePopover"
-        >
-          <div style="text-align: center;">
-            <el-button class="popoverBtn" @click="userAdd">新增用户</el-button>
-            <el-button class="popoverBtn" @click="userEdit">修改用户</el-button>
-            <el-button class="popoverBtn" @click="userDelete">删除用户</el-button>
-          </div>
-          <button slot="reference" type="button" class="more">
-            <img :src="moreImg" />
-          </button>
-        </el-popover>
-        <!-- <button type="button" class="more" @click="download()">
+    <button type="button" class="back-sty" @click="back">
+      <img :src="backImg" />
+      用户管理
+    </button>
+    <div class="rightBox">
+      <el-input v-model="searchInput" class="searchInput">
+        <template slot="prepend">用户名：</template>
+      </el-input>
+      <el-popover
+        placement="right"
+        width="150"
+        trigger="click"
+        popper-class="el-popover-more"
+        v-model="showMorePopover"
+      >
+        <div style="text-align: center">
+          <el-button class="popoverBtn" @click="userAdd">新增用户</el-button>
+          <el-button class="popoverBtn" @click="userEdit">修改用户</el-button>
+          <el-button class="popoverBtn" @click="userDelete">删除用户</el-button>
+        </div>
+        <button slot="reference" type="button" class="more">
+          <img :src="moreImg" />
+        </button>
+      </el-popover>
+      <!-- <button type="button" class="more" @click="download()">
           <img :src="downloadImg" />
         </button> -->
-        <button type="button" class="more" @click="refresh">
-          <img :src="refreshImg" />
-        </button>
-        <button type="button" class="more" @click="search">
-          <img :src="searchImg" />
-        </button>
-        <div class="tableBox">
-          <el-table
-            @row-click="ClickTableRow"
-            :data="userList"
-            stripe
-            empty-text="no data"
-            tooltip-effect="light"
-          >
-            <el-table-column label width="33" align="center" :resizable="false">
-              <template slot-scope="scope">
-                <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="用户名" prop="useraccount"></el-table-column>
-            <el-table-column align="center" label="用户姓名" prop="username"></el-table-column>
-            <el-table-column align="center" label="角色" prop="roleName"></el-table-column>
-            <el-table-column align="center" label="所属组织" prop="deptName"></el-table-column>
-            <el-table-column align="center" label="激活">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="userList[scope.$index].status"
-                  @change="activeChange(scope.$index, scope.row)"
-                ></el-switch>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="操作">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="resetPasswordClick(scope.$index, scope.row)"
-                  style="width: 80px;"
-                >重置密码</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            class="tablePagination"
-            popper-class="pageSelect"
-            :total="pageData.total"
-            :page-size="pageData.pageSize"
-            :current-page.sync="pageData.currentPage"
-            layout="total, prev, pager, next, jumper"
-            @current-change="currentPageChange"
-          ></el-pagination>
-        </div>
+      <button type="button" class="more" @click="refresh">
+        <img :src="refreshImg" />
+      </button>
+      <button type="button" class="more" @click="search">
+        <img :src="searchImg" />
+      </button>
+      <div class="tableBox">
+        <el-table
+          @row-click="ClickTableRow"
+          :data="userList"
+          stripe
+          empty-text="no data"
+          tooltip-effect="light"
+        >
+          <el-table-column label width="33" align="center" :resizable="false">
+            <template slot-scope="scope">
+              <el-radio v-model="radio" :label="scope.$index">{{
+                ""
+              }}</el-radio>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="用户名"
+            prop="useraccount"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="用户姓名"
+            prop="username"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="角色"
+            prop="roleName"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="所属组织"
+            prop="deptName"
+          ></el-table-column>
+          <el-table-column align="center" label="激活">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="userList[scope.$index].status"
+                @change="activeChange(scope.$index, scope.row)"
+              ></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="操作">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="danger"
+                @click="resetPasswordClick(scope.$index, scope.row)"
+                style="width: 80px"
+                >重置密码</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          class="tablePagination"
+          popper-class="pageSelect"
+          :total="pageData.total"
+          :page-size="pageData.pageSize"
+          :current-page.sync="pageData.currentPage"
+          layout="total, prev, pager, next, jumper"
+          @current-change="currentPageChange"
+        ></el-pagination>
       </div>
     </div>
 
-    <el-dialog :title="newUserTitle" :visible.sync="showNewUser" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
-      <el-form ref="newUserFormRef" :model="newUserForm" label-width="80px" :rules="newUserRules">
+    <el-dialog
+      :title="newUserTitle"
+      :visible.sync="showNewUser"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
+      <el-form
+        ref="newUserFormRef"
+        :model="newUserForm"
+        label-width="80px"
+        :rules="newUserRules"
+      >
         <el-form-item label="用户名" prop="username">
           <el-input v-model="newUserForm.username"></el-input>
         </el-form-item>
@@ -134,16 +162,28 @@
             <el-radio label="女"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="初始密码" prop="password" v-show="newUserTitle === '新增用户'">
+        <el-form-item
+          label="初始密码"
+          prop="password"
+          v-show="newUserTitle === '新增用户'"
+        >
           <el-input v-model="newUserForm.password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="newUserConfirm" class="trueBtn">保存</el-button>
+          <el-button type="primary" @click="newUserConfirm" class="trueBtn"
+            >保存</el-button
+          >
         </el-form-item>
       </el-form>
     </el-dialog>
 
-    <el-dialog title="重置密码" :visible.sync="showResetPassword" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
+    <el-dialog
+      title="重置密码"
+      :visible.sync="showResetPassword"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
       <el-form
         ref="resetPasswordFormRef"
         :model="resetPasswordForm"
@@ -151,10 +191,18 @@
         :rules="resetPasswordRules"
       >
         <el-form-item label="新密码" prop="password">
-          <el-input v-model="resetPasswordForm.password" placeholder="请输入重置密码"></el-input>
+          <el-input
+            v-model="resetPasswordForm.password"
+            placeholder="请输入重置密码"
+          ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="resetPasswordConfirm" class="trueBtn">保存</el-button>
+          <el-button
+            type="primary"
+            @click="resetPasswordConfirm"
+            class="trueBtn"
+            >保存</el-button
+          >
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -272,21 +320,21 @@ export default {
         if (res.data.code === 0) {
           var temp = res.data.data
           // 一级
-          temp.forEach(item => {
+          temp.forEach((item) => {
             if (item.children) {
               if (item.children.length <= 0) {
                 item.children = null
               } else {
                 // 二级
                 var temp2 = item.children
-                temp2.forEach(item2 => {
+                temp2.forEach((item2) => {
                   if (item2.children) {
                     if (item2.children.length <= 0) {
                       item2.children = null
                     } else {
                       // 三级
                       var temp3 = item2.children
-                      temp3.forEach(item3 => {
+                      temp3.forEach((item3) => {
                         if (item3.children) {
                           if (item3.children.length <= 0) {
                             item3.children = null
@@ -367,7 +415,7 @@ export default {
 
       var currentUser = this.userList[this.radio]
       var param = { userId: currentUser.id }
-      this.$axios.post(settingApi.getUserDetailById, param).then(res => {
+      this.$axios.post(settingApi.getUserDetailById, param).then((res) => {
         if (res.data.code === 0) {
           var userDetail = res.data.data
           this.newUserForm.username = userDetail.useraccount
@@ -400,7 +448,7 @@ export default {
       var param = {
         userId: this.userList[this.radio].id
       }
-      this.$axios.post(settingApi.delUser, param).then(res => {
+      this.$axios.post(settingApi.delUser, param).then((res) => {
         if (res.data.code === 0) {
           this.getUserList()
           Notification({
@@ -420,7 +468,9 @@ export default {
 
         if (this.newUserTitle === '新增用户') {
           var param = {
-            deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
+            deptCode: this.newUserForm.organizations[
+              this.newUserForm.organizations.length - 1
+            ],
             mobile: this.newUserForm.phone,
             password: this.newUserForm.password,
             roleCode: this.newUserForm.job,
@@ -430,32 +480,36 @@ export default {
             email: this.newUserForm.email,
             userGender: this.newUserForm.six === '男' ? 1 : 0
           }
-          this.$axios.post(settingApi.addUser, param, {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }).then(res => {
-            if (res.data.code === 0) {
-              this.getUserList()
+          this.$axios
+            .post(settingApi.addUser, param, {
+              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+            })
+            .then((res) => {
+              if (res.data.code === 0) {
+                this.getUserList()
+                Notification({
+                  title: '提示',
+                  message: '新增用户成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                return
+              }
               Notification({
                 title: '提示',
-                message: '新增用户成功',
-                type: 'success',
+                message: '新增用户失败',
+                type: 'warning',
                 duration: 5 * 1000
               })
-              return
-            }
-            Notification({
-              title: '提示',
-              message: '新增用户失败',
-              type: 'warning',
-              duration: 5 * 1000
             })
-          })
         }
 
         if (this.newUserTitle === '修改用户') {
           var param2 = {
             id: this.userList[this.radio].id,
-            deptCode: this.newUserForm.organizations[this.newUserForm.organizations.length - 1],
+            deptCode: this.newUserForm.organizations[
+              this.newUserForm.organizations.length - 1
+            ],
             mobile: this.newUserForm.phone,
             roleCode: this.newUserForm.job,
             status: this.newUserForm.active ? 1 : 0,
@@ -464,26 +518,28 @@ export default {
             email: this.newUserForm.email,
             userGender: this.newUserForm.six === '男' ? 1 : 0
           }
-          this.$axios.post(settingApi.updateUser, param2, {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }).then(res => {
-            if (res.data.code === 0) {
-              this.getUserList()
+          this.$axios
+            .post(settingApi.updateUser, param2, {
+              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+            })
+            .then((res) => {
+              if (res.data.code === 0) {
+                this.getUserList()
+                Notification({
+                  title: '提示',
+                  message: '修改用户成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                return
+              }
               Notification({
                 title: '提示',
-                message: '修改用户成功',
-                type: 'success',
+                message: '修改用户失败',
+                type: 'warning',
                 duration: 5 * 1000
               })
-              return
-            }
-            Notification({
-              title: '提示',
-              message: '修改用户失败',
-              type: 'warning',
-              duration: 5 * 1000
             })
-          })
         }
       })
     },
@@ -562,7 +618,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.back {
+.back-sty {
   width: 120px;
   height: 36px;
   border: none;
@@ -570,20 +626,19 @@ export default {
   color: #ffffff;
   outline: none;
   display: block;
-  background: url("../../../assets/images/plan/plan-back-background.png") no-repeat;
+  background: url("../../../assets/images/plan/plan-back-background.png")
+    no-repeat;
   background-size: 100% 100%;
+  margin-top: 30px;
+  margin-left: 30px;
 }
-.container {
-  width: 1242px;
-  height: 756px;
-  margin: 55px auto 0 auto;
-}
+
 .rightBox {
   width: 796px;
   height: 682px;
   border: solid 2px #39a4dd;
   border-radius: 10px;
-  margin: 30px auto 0 auto;
+  margin: 50px auto 0 auto;
   .searchInput {
     width: 253px;
     margin: 21px 0px 0px 20px;
