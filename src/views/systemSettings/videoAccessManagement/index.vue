@@ -828,6 +828,39 @@ export default {
           }
 
           if (selectedDevice.deviceType === '高点监控') {
+            var updGdjkParam = {
+              deviceCode: selectedDevice.deivceNo,
+              deviceAddress: this.addDeviceForm.address,
+              deviceBrand: this.addDeviceForm.deviceBrand,
+              deviceHeight: this.addDeviceForm.height,
+              deviceLatitude: this.addDeviceForm.latitude,
+              deviceLongitude: this.addDeviceForm.longitude,
+              deviceName: this.addDeviceForm.deviceName,
+              deviceStatus: this.addDeviceForm.enable,
+              expirationDate: this.addDeviceForm.qualityDate,
+              deptDistrictCode: this.addDeviceForm.belongArea,
+              deviceUserName: this.addDeviceForm.username,
+              devicePassword: this.addDeviceForm.password,
+              deviceSeatAz: this.addDeviceForm.directionAngle
+            }
+            this.$axios.post(settingApi.updateGDJK, updGdjkParam).then((res) => {
+              if (res && res.data && res.data.code === 0) {
+                Notification({
+                  title: '提示',
+                  message: '修改设备成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.getDeviceList()
+                return
+              }
+              Notification({
+                title: '提示',
+                message: '修改设备失败',
+                type: 'warning',
+                duration: 5 * 1000
+              })
+            })
           }
         }
       })
