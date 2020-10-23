@@ -29,7 +29,7 @@ const fireMixin = {
         info.bConfirmed = false
         info.alarmTime = timeFormat(info.alarmTime)
         this.handlingAlarmImgUrl(info)
-        this.fireWarningArray.push(info)
+        this.fireWarningArray.unshift(info)
         this.fireTotalNum = this.fireWarningArray.length
         if (this.bShowMarkersInMap) {
           this.addNewFireWarning(info)
