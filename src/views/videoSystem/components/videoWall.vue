@@ -131,8 +131,7 @@ export default {
         lrisAdd: 0,
         lrisMinus: 0
       },
-      lastState: '',
-      poster: '' // 播放器快照
+      lastState: ''
     }
   },
 
@@ -209,10 +208,7 @@ export default {
      */
     reloadVideo () {
       if (document.visibilityState === 'visible' && this.lastState === 'hidden') {
-        // 销毁之前保留快照，优化重新加载视频黑屏的现象
-        this.$refs.playerCtrl.player.snap()
         const url = this.videoInfo.streamUrl
-        // this.poster = ''
         this.videoInfo.streamUrl = ''
         this.$nextTick(() => { this.videoInfo.streamUrl = url })
       }
