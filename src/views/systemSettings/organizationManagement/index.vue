@@ -728,10 +728,11 @@ export default {
       console.log(deviceCodes)
       var param = {
         deptCode: this.selectedDeptCode,
-        // deviceCodeList: deviceCodes
-        deviceCodeList: JSON.stringify(deviceCodes)
+        deviceCodeList: deviceCodes
       }
-      this.$axios.post(settingApi.deptBandDevice, param).then(res => {
+      this.$axios.post(settingApi.deptBandDevice, param, {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }).then(res => {
         if (res && res.data && res.data.code === 0) {
           Notification({
             title: '提示',
