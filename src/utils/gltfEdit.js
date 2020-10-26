@@ -1,4 +1,5 @@
-﻿var Cesium = window.Cesium
+﻿import globalApi from '@/utils/globalApi'
+var Cesium = window.Cesium
 var mars3d = window.mars3d
 export var gltfEdit = {
   // 开始编辑
@@ -14,7 +15,7 @@ export var gltfEdit = {
     // 加载坐标轴模型
     var axisModel = viewer.scene.primitives.add(Cesium.Model.fromGltf({
       id: 'axis',
-      url: 'http://172.16.16.101:9000/mapdata/gltf' + '/mars/axis.gltf',
+      url: globalApi.headImg + '/cloud-video/prePlanFor3D/gltf/xiaofang/common/axis.gltf',
       modelMatrix: new Cesium.Matrix4(),
       colorBlendMode: Cesium.ColorBlendMode.HIGHLIGHT
     }))

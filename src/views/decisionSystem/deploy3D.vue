@@ -1079,8 +1079,8 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/watertank.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
-              scale: 7
+              modelUrl: '$serverURL_gltf$/xiaofang/common/qiqiu.gltf',
+              scale: 0.1
             }
           }
           break
@@ -1104,8 +1104,8 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/pumphouse.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
-              scale: 7
+              modelUrl: '$serverURL_gltf$/xiaofang/common/qiqiu.gltf',
+              scale: 0.1
             }
           }
           break
@@ -1142,8 +1142,8 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/build.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
-              scale: 7
+              modelUrl: '$serverURL_gltf$/xiaofang/common/qiqiu.gltf',
+              scale: 0.1
             }
           }
           break
@@ -1155,8 +1155,8 @@ export default {
             // 标签上的图片
             img: require('../../assets/images/3d/vr-icon.png'),
             style: {
-              modelUrl: '$serverURL_gltf$/xiaofang/common/gltf2.gltf',
-              scale: 7
+              modelUrl: '$serverURL_gltf$/xiaofang/common/qiqiu.gltf',
+              scale: 0.1
             }
           }
           break
