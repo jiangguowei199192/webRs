@@ -85,12 +85,12 @@
             <div style="text-align: center">
               <el-button
                 class="popoverBtnSty"
-                @click="addOrChangeInputDevice('新增接入设备')"
+                @click="addInputDevice"
                 >新增接入设备</el-button
               >
               <el-button
                 class="popoverBtnSty"
-                @click="addOrChangeInputDevice('修改接入设备')"
+                @click="changeInputDevice"
                 >修改接入设备</el-button
               >
               <el-button class="popoverBtnSty" @click="deleteInputDevice"
@@ -602,72 +602,75 @@ export default {
       this.getDeviceList()
     },
 
-    // 新增、修改接入设备
-    addOrChangeInputDevice (title) {
+    // 新增接入设备
+    addInputDevice () {
+      this.radio = -1
       this.showMorePopover = false
-      this.addDeviceTitle = title
+      this.addDeviceTitle = '新增接入设备'
 
-      if (title === '新增接入设备') {
-        this.showAddDevice = true
-        this.editDeviceNo = false
-        this.editDeviceType = false
+      this.showAddDevice = true
+      this.editDeviceNo = false
+      this.editDeviceType = false
 
-        this.addDeviceForm.deviceName = ''
-        this.addDeviceForm.deviceNo = ''
-        this.addDeviceForm.deviceType = 'GDJK'
-        this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
-        this.addDeviceForm.longitude = ''
-        this.addDeviceForm.latitude = ''
-        this.addDeviceForm.enable = ''
-        this.addDeviceForm.deviceBrand = ''
-        this.addDeviceForm.address = ''
-        this.addDeviceForm.height = ''
-        this.addDeviceForm.qualityDate = ''
-        this.addDeviceForm.directionAngle = ''
-        this.addDeviceForm.username = ''
-        this.addDeviceForm.password = ''
+      this.addDeviceForm.deviceName = ''
+      this.addDeviceForm.deviceNo = ''
+      this.addDeviceForm.deviceType = 'GDJK'
+      this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
+      this.addDeviceForm.longitude = ''
+      this.addDeviceForm.latitude = ''
+      this.addDeviceForm.enable = ''
+      this.addDeviceForm.deviceBrand = ''
+      this.addDeviceForm.address = ''
+      this.addDeviceForm.height = ''
+      this.addDeviceForm.qualityDate = ''
+      this.addDeviceForm.directionAngle = ''
+      this.addDeviceForm.username = ''
+      this.addDeviceForm.password = ''
 
-        if (this.$refs.addDeviceRef) {
-          this.$refs.addDeviceRef.resetFields()
-        }
+      if (this.$refs.addDeviceRef) {
+        this.$refs.addDeviceRef.clearValidate()
+      }
+    },
+
+    // 修改接入设备
+    changeInputDevice () {
+      this.showMorePopover = false
+      this.addDeviceTitle = '修改接入设备'
+
+      if (this.radio < 0) {
+        Notification({
+          title: '提示',
+          message: '请选择设备',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return
       }
 
-      if (title === '修改接入设备') {
-        if (this.radio < 0) {
-          Notification({
-            title: '提示',
-            message: '请选择设备',
-            type: 'warning',
-            duration: 5 * 1000
-          })
-          return
-        }
+      this.showAddDevice = true
+      this.editDeviceNo = true
+      this.editDeviceType = true
 
-        this.showAddDevice = true
-        this.editDeviceNo = true
-        this.editDeviceType = true
+      var selectedDevice = this.deviceList[this.radio]
 
-        var selectedDevice = this.deviceList[this.radio]
-
-        this.addDeviceForm.deviceName = selectedDevice.deviceName
-        this.addDeviceForm.deviceNo = selectedDevice.deivceNo
-        this.addDeviceForm.deviceType =
+      this.addDeviceForm.deviceName = selectedDevice.deviceName
+      this.addDeviceForm.deviceNo = selectedDevice.deivceNo
+      this.addDeviceForm.deviceType =
           selectedDevice.deviceType === '高点监控' ? 'GDJK' : 'WRJ'
-        this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
-        this.addDeviceForm.longitude = selectedDevice.lon
-        this.addDeviceForm.latitude = selectedDevice.lat
-        this.addDeviceForm.enable = selectedDevice.useStatus
-          ? 'enabled'
-          : 'disabled'
-        this.addDeviceForm.deviceBrand = selectedDevice.brand
-        this.addDeviceForm.address = selectedDevice.address
-        this.addDeviceForm.height = selectedDevice.height
-        this.addDeviceForm.qualityDate = selectedDevice.expirationDate
-        this.addDeviceForm.directionAngle = selectedDevice.deviceSeatAz
-        this.addDeviceForm.username = selectedDevice.deviceUserName
-        this.addDeviceForm.password = selectedDevice.devicePassword
-        this.addDeviceForm.belongArea = selectedDevice.district
-      }
+      this.deviceTypeSelectChanged(this.addDeviceForm.deviceType)
+      this.addDeviceForm.longitude = selectedDevice.lon
+      this.addDeviceForm.latitude = selectedDevice.lat
+      this.addDeviceForm.enable = selectedDevice.useStatus
+        ? 'enabled'
+        : 'disabled'
+      this.addDeviceForm.deviceBrand = selectedDevice.brand
+      this.addDeviceForm.address = selectedDevice.address
+      this.addDeviceForm.height = selectedDevice.height
+      this.addDeviceForm.qualityDate = selectedDevice.expirationDate
+      this.addDeviceForm.directionAngle = selectedDevice.deviceSeatAz
+      this.addDeviceForm.username = selectedDevice.deviceUserName
+      this.addDeviceForm.password = selectedDevice.devicePassword
+      this.addDeviceForm.belongArea = selectedDevice.district
     },
 
     // 删除接入设备
