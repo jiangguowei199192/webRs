@@ -299,7 +299,9 @@ export default {
 
     // 添加用户
     async addUser () {
-      this.addUserForm.user = []
+      if (this.$refs.addUserFormRef) {
+        this.$refs.addUserFormRef.resetFields()
+      }
 
       var param = {}
       this.$axios.post(settingApi.queryUserList, param).then((res) => {
@@ -353,6 +355,10 @@ export default {
 
     // 新建角色
     newRole () {
+      if (this.$refs.newRoleFormRef) {
+        this.$refs.newRoleFormRef.resetFields()
+      }
+
       this.$axios.post(settingApi.getMenuTree).then((res) => {
         if (res.data.code === 0) {
           var temp = res.data.data

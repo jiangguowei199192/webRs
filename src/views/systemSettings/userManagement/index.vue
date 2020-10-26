@@ -386,15 +386,13 @@ export default {
     },
     // 新增用户
     userAdd () {
-      this.newUserForm.username = ''
-      this.newUserForm.name = ''
-      this.newUserForm.phone = ''
+      if (this.$refs.newUserFormRef) {
+        this.$refs.newUserFormRef.resetFields()
+      }
+
       this.newUserForm.email = ''
-      this.newUserForm.job = ''
       this.newUserForm.active = true
-      this.newUserForm.six = ''
       this.newUserForm.password = '123456'
-      this.newUserForm.organizations = []
 
       this.showMorePopover = false
       this.showNewUser = true

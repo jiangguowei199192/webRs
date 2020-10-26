@@ -498,7 +498,9 @@ export default {
 
     // 添加用户
     addUser () {
-      this.addUserForm.user = []
+      if (this.$refs.addUserFormRef) {
+        this.$refs.addUserFormRef.resetFields()
+      }
 
       this.$axios.post(settingApi.queryUserList).then((res) => {
         if (res.data.code === 0) {
@@ -549,11 +551,12 @@ export default {
 
     // 新增组织
     organizationAdd (data) {
+      if (this.$refs.addOrganizationFormRef) {
+        this.$refs.addOrganizationFormRef.resetFields()
+      }
       this.currentOrganization = data
       this.addOrganizationTitle = '新增组织'
       this.addOrganizationForm.createTime = this.getCurrentDate()
-      this.addOrganizationForm.organizationName = ''
-      this.addOrganizationForm.organizationType = ''
       this.addOrganizationForm.previousOrganization = data.deptCode
       this.showAddOrganization = true
     },
