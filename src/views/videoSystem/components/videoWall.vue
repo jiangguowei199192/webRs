@@ -816,6 +816,7 @@ export default {
   },
 
   mounted () {
+    this.bShowPuzzleInMap = true
     // 如果是回放
     if (this.videoInfo.isLive === false) {
       this.subEnded()

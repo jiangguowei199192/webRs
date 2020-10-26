@@ -18,6 +18,7 @@ const droneInfoMixin = {
       bShowPuzzlingBox: false,
       tmpPuzzleLayers: [],
       lastPuzzleLayer: null,
+      bShowPuzzleInMap: false,
       di_height: '',
       di_hSpeed: '',
       di_vSpeed: '',
@@ -328,7 +329,7 @@ const droneInfoMixin = {
     },
     showPuzzlingLayer (info) {
       const tmpMap = this.$refs.gduMap
-      if (tmpMap === undefined || tmpMap.map2D === undefined) {
+      if (tmpMap === undefined || tmpMap.map2D === undefined || this.bShowPuzzleInMap === false) {
         return
       }
 
