@@ -130,7 +130,9 @@ export default {
         focusMinus: 0,
         lrisAdd: 0,
         lrisMinus: 0
-      }
+      },
+      lastState: '',
+      poster: '' // 播放器快照
     }
   },
 
@@ -164,6 +166,10 @@ export default {
     }
   },
 
+  destroyed () {
+    if (this.videoInfo.isLive !== false) { document.removeEventListener('visibilitychange', this.reloadVideo) }
+  },
+
   mounted () {
     // 如果是回放
     if (this.videoInfo.isLive === false) {
@@ -193,9 +199,26 @@ export default {
         me.$emit('fullscreenvideo', { info: me.videoInfo, bfull: false })
       }
     })
+    if (this.videoInfo.isLive !== false) { document.addEventListener('visibilitychange', this.reloadVideo) }
   },
 
   methods: {
+
+    /**
+     * 重新加载视频（最小化还原，或者浏览器tab页切换)
+     */
+    reloadVideo () {
+      if (document.visibilityState === 'visible' && this.lastState === 'hidden') {
+        // 销毁之前保留快照，优化重新加载视频黑屏的现象
+        this.$refs.playerCtrl.player.snap()
+        const url = this.videoInfo.streamUrl
+        // this.poster = ''
+        this.videoInfo.streamUrl = ''
+        this.$nextTick(() => { this.videoInfo.streamUrl = url })
+      }
+      this.lastState = document.visibilityState
+    },
+
     // 阻止冒泡
     stopEvent (event) {
       event.stopPropagation()
