@@ -558,7 +558,11 @@ export default {
   /deep/.el-range-separator {
     color: white;
     font-size: 12px;
-    margin-top: -5px;
+    line-height: 27px;
+  }
+  /deep/ .el-input__prefix,
+  /deep/ .el-input__icon {
+    line-height: 27px;
   }
 }
 .tableBox {

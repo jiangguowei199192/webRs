@@ -114,9 +114,16 @@ export default {
     /deep/.el-date-editor .el-range-input {
       color: white;
       background: transparent;
+      font-size: 12px;
     }
     /deep/.el-range-separator {
       color: white;
+      font-size: 12px;
+      line-height: 27px;
+    }
+    /deep/ .el-input__prefix,
+    /deep/ .el-input__icon {
+      line-height: 27px;
     }
   }
   .mapArea {
