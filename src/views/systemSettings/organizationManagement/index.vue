@@ -15,7 +15,6 @@
             :data="deptTree"
             :props="deptTreeProps"
             default-expand-all
-            class="treeStyle"
             @node-click="deptTreeClick"
             :expand-on-click-node="false"
             node-key="deptCode"
@@ -838,9 +837,6 @@ export default {
     font-size: 14px;
     text-align: center;
   }
-  .treeStyle {
-    height: 644px;
-  }
 }
 .rightBox {
   width: 796px;
@@ -1023,6 +1019,7 @@ export default {
 }
 
 .tree-box {
+  height: 644px;
   overflow: auto;
   /* 树形列表 */
   /deep/.el-tree {
