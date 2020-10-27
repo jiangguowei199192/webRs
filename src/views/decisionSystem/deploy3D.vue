@@ -2080,6 +2080,12 @@ export default {
           if (entity.loadOk && entity.drawOk) {
             me.plotModelComplete(entity)
           }
+        } else if (attr.name === '步行动画_人') {
+          entity.activeAnimations.addAll({
+            loop: Cesium.ModelAnimationLoop.REPEAT,
+            speedup: 0.5,
+            reverse: false
+          })
         }
         // console.log('gltf模型加载完成')
       })
