@@ -747,7 +747,8 @@ export default {
         focusMinus: 0,
         lrisAdd: 0,
         lrisMinus: 0
-      }
+      },
+      lastState: ''
     }
   },
 
@@ -815,6 +816,10 @@ export default {
     }
   },
 
+  destroyed () {
+    if (this.videoInfo.isLive !== false) { document.removeEventListener('visibilitychange', this.reloadVideo) }
+  },
+
   mounted () {
     this.bShowPuzzleInMap = true
     // 如果是回放
@@ -855,9 +860,23 @@ export default {
       }
     ]
     this.puzzlePageInfo.total = this.puzzleDataArray.length
+    if (this.videoInfo.isLive !== false) { document.addEventListener('visibilitychange', this.reloadVideo) }
   },
 
   methods: {
+
+    /**
+     * 重新加载视频（最小化还原，或者浏览器tab页切换)
+     */
+    reloadVideo () {
+      if (document.visibilityState === 'visible' && this.lastState === 'hidden') {
+        const url = this.videoInfo.streamUrl
+        this.videoInfo.streamUrl = ''
+        this.$nextTick(() => { this.videoInfo.streamUrl = url })
+      }
+      this.lastState = document.visibilityState
+    },
+
     // 点击步速
     addStep () {
       ++this.step
