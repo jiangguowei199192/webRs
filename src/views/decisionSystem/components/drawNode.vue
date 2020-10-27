@@ -26,7 +26,7 @@
       @mouseenter="showDelete"
       @mouseleave="hideDelete"
     >
-      <span id="node-span"><img :src="node.label" alt="" /></span>
+      <span id="node-span"><img :src="node.label" alt=""/></span>
       <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
         <i class="el-icon-circle-close"></i>
       </div>
@@ -105,9 +105,16 @@ export default {
 
     // 节点激活状态
     const _this = this
-    EventBus.$on('type', (data) => {
+    EventBus.$on('type', data => {
       // console.log(data)
       _this.controlled.isActive = data
+    })
+
+    // 获取底图(建筑平面图)
+    // const _this = this
+    EventBus.$on('selectImg', data => {
+      console.log(data)
+      // _this.controlled.isActive = data;
     })
   },
 

@@ -16,10 +16,7 @@
     <div class="main" :style="'height:' + workHeight + 'px;'">
       <!-- 底图 -->
       <div class="content">
-        <img
-          src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
-          alt
-        />
+        <img :src="buildImgUrl" alt="" />
       </div>
       <!-- 左边模型列表 -->
       <div class="left">
@@ -69,7 +66,7 @@
                 @click.stop="listSelected(index)"
                 @dragstart="drag(item)"
               >
-                <img :src="item.image" alt="" />
+                <img :src="item.image" alt="模型加载失败" />
               </li>
             </ul>
           </div>
@@ -104,12 +101,14 @@
 </template>
 
 <script>
-import { jsPlumb } from 'jsplumb'
 import drawNode from './components/drawNode'
+import { jsPlumb } from 'jsplumb'
 import { EventBus } from '@/utils/eventBus.js'
 import { Notification } from 'element-ui'
 import axios from 'axios'
-const serverUrl = 'http://172.16.16.101:9000/mapdata'
+import { api } from '@/api/2d.js'
+import globalApi from '@/utils/globalApi'
+const serverUrl = globalApi.headImg + '/cloud-video/prePlanFor3D/gltf'
 
 export default {
   name: 'fightDeploy',
@@ -143,6 +142,8 @@ export default {
       curModels: [],
       // 选中模型索引
       curModelIndex: 0,
+      // 建筑平面图底图
+      buildImgUrl: '',
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -151,6 +152,8 @@ export default {
   },
 
   watch: {
+    $route: 'getBaseImg',
+
     modelType (val) {
       if (this.options.length > 0 && val >= 0 && val < this.options.length) {
         this.curModels = this.options[val].list
@@ -168,6 +171,8 @@ export default {
   mounted () {
     // 获取模型列表
     this.getModelData()
+    // 获取底图
+    this.getBaseImg()
     // 节点初始化
     this.jsPlumb = jsPlumb.getInstance()
     this.$nextTick(() => {
@@ -193,7 +198,7 @@ export default {
     var nodeData = JSON.parse(localStorage.getItem('nodeData'))
     if (nodeData !== null) {
       // console.log(nodeData)
-      nodeData.forEach((item) => {
+      nodeData.forEach(item => {
         this.addNode(item)
       })
     } else {
@@ -298,7 +303,7 @@ export default {
         showClose: false
       })
         .then(() => {
-          this.data.nodeList = this.data.nodeList.filter((item) => {
+          this.data.nodeList = this.data.nodeList.filter(item => {
             return item.id !== nodeId
           })
         })
@@ -337,7 +342,7 @@ export default {
     updateNodeList (index, info) {
       info.left = info.left + 'px'
       info.top = info.top + 'px'
-      const node = this.data.nodeList.find((n) => n.id === index)
+      const node = this.data.nodeList.find(n => n.id === index)
       if (node !== undefined) {
         for (var b in info) {
           // 拷贝属性
@@ -351,7 +356,30 @@ export default {
     // 保存数据
     saveData () {
       alert(JSON.stringify(this.data.nodeList))
-      localStorage.setItem('nodeData', JSON.stringify(this.data.nodeList))
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      // const formData = {
+      //   enterpriseId: this.index,
+      //   configFile: JSON.stringify(this.data.nodeList)
+      // }
+      const formData = new FormData()
+      this.$axios
+        .post(api.upload2dConfig, formData, config)
+        .then(res => {
+          console.log(res)
+          // if (res.data.code === 0) {
+          //   console.log("上传成功");
+          // }
+          // Notification({
+          //   title: "提示",
+          //   message: "保存数据失败",
+          //   type: "warning",
+          //   duration: 5 * 1000
+          // });
+        })
+        .catch(err => {
+          console.log('保存接口错误: ' + err)
+        })
     },
 
     // 获取模型列表
@@ -359,23 +387,20 @@ export default {
       this.options = []
       axios
         .get('config/plotlist.json')
-        .then((res) => {
-          console.log('模型列表:', res)
+        .then(res => {
+          // console.log('模型列表:', res)
           const data = res.data
           let i = 0
           for (var p in data) {
             const array = data[p]
-            array.forEach((a) => {
+            array.forEach(a => {
               if (a.image.startsWith('$serverURL_gltf$')) {
-                a.image = a.image.replace(
-                  '$serverURL_gltf$',
-                  serverUrl + '/gltf'
-                )
+                a.image = a.image.replace('$serverURL_gltf$', serverUrl)
               }
               if (a.style.modelUrl.startsWith('$serverURL_gltf$')) {
                 a.style.modelUrl = a.style.modelUrl.replace(
                   '$serverURL_gltf$',
-                  serverUrl + '/gltf'
+                  serverUrl
                 )
               }
             })
@@ -383,15 +408,20 @@ export default {
             const item = { value: i, label: p, list: array }
             this.options.push(item)
             // console.log(this.options)
-            if (i === 0) {
-              this.modelType = i
-              i += 1
-            }
+            if (i === 0) this.modelType = i
+            i += 1
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('获取模型列表失败: ' + err)
         })
+    },
+
+    // 获取建筑平面图
+    getBaseImg () {
+      const routerParams = this.$route.query.selectBuildImg
+      // console.log(this.buildImgUrl)
+      this.buildImgUrl = routerParams.image
     }
   }
 }

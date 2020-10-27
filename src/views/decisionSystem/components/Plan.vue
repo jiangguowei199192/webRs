@@ -59,11 +59,17 @@
             <div style="margin-left: 22px">作战部署图</div>
           </template>
           <div class="itemContainer2">
-            <img
-              class="edit_img fl"
-              src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
-              @click="entryTabShow"
-            />
+            <div class="edit_div fl">
+              <img
+                v-if="this.deployImgUrl !== ''"
+                :src="deployImgUrl"
+                @click.stop="entryTabShow"
+              />
+              <div class="edit-add_div" v-else>
+                <img :src="addImg" @click.stop="entryTabShow" /><br />
+                <span>暂无缩略图(点击添加)</span>
+              </div>
+            </div>
           </div>
         </el-collapse-item>
 
@@ -147,7 +153,9 @@ export default {
           title: '实时二维',
           children: []
         }
-      ]
+      ],
+      deployImgUrl: '',
+      addImg: require('../../../assets/images/Setting/setting-addImage.png')
     }
   },
   components: {
@@ -155,6 +163,9 @@ export default {
     FloorGuide,
     BaseInfo,
     EntryTab
+  },
+  mounted () {
+    this.getDeployImage()
   },
   methods: {
     show (info) {
@@ -169,7 +180,7 @@ export default {
         }
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
-          .then((res) => {
+          .then(res => {
             // console.log(res)
             if (res.data.code === 0) {
               var resData = res.data.data
@@ -182,7 +193,7 @@ export default {
               this.showInfo.lon = resData.enterpriseLongitude
               this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
               var baseInfosTemp = []
-              resData.planEnterpriseBaseInfoPic.forEach((item) => {
+              resData.planEnterpriseBaseInfoPic.forEach(item => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -192,7 +203,7 @@ export default {
               this.baseInfos = baseInfosTemp
 
               var buildingInfosTemp = []
-              resData.planEnterpriseJzpmtPic.forEach((item) => {
+              resData.planEnterpriseJzpmtPic.forEach(item => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -236,7 +247,10 @@ export default {
       })
     },
     goto3d () {
-      if (!this.showInfo.planEnterpriseInfo3D || !this.showInfo.planEnterpriseInfo3D.modelPath) {
+      if (
+        !this.showInfo.planEnterpriseInfo3D ||
+        !this.showInfo.planEnterpriseInfo3D.modelPath
+      ) {
         this.$notify.warning({ title: '提示', message: '三维预案不存在' })
         return
       }
@@ -262,6 +276,13 @@ export default {
     // 点击作战部署图
     entryTabShow () {
       this.$refs.entryTab.show(this.deployInfos)
+    },
+    // 获取作战部署缩略图
+    getDeployImage () {
+      const buildParams = JSON.parse(localStorage.getItem('selectBuildImg'))
+      if (!buildParams) return
+      // this.$notify.warning({ title: '提示', message: '请上传缩略图' })
+      this.deployImgUrl = buildParams.image
     }
   },
 
@@ -352,11 +373,23 @@ export default {
 }
 .itemContainer2 {
   margin: 0 22px 0 22px;
-  .edit_img {
+  .edit_div {
     width: 94%;
     height: 160px;
-    margin: 0 0 10px 10px;
+    font-size: 12px;
+    margin: 0 0 15px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+    .edit-add_div {
+      text-align: center;
+      color: #fff;
+    }
   }
 }
 

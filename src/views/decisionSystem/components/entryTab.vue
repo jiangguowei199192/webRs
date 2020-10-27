@@ -25,7 +25,7 @@
             </ul>
           </div>
           <!-- 右容器 -->
-          <div class="right_tab fr">
+          <div class="right_tab fr" ref="tab_wrap">
             <!-- 上部分tab内容容器 -->
             <div class="top_img">
               <div class="tab_wrap" v-show="currentTab == 0">
@@ -48,28 +48,38 @@
                       class="tab_img_wrap fl"
                       v-for="(children_item, children_index) in item.children"
                       :key="children_index"
-                      @click="imgChecked(children_index)"
+                      @click.stop="imgChecked(children_index)"
                     >
                       <span>{{ children_item.title }}</span>
                       <div
                         style="margin-top: 5px; height: 80px; padding: 1px"
                         :class="{ active: selectClass == children_index }"
                       >
-                        <img :src="children_item.image" alt />
+                        <img :src="children_item.image" alt="图片加载失败" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="tab_wrap" v-show="currentTab == 2">
-                <img
-                  src="http://img.zcool.cn/community/0146735edf53c8a801215aa09f6def.png@2o.png"
-                  alt
-                />
+                <!-- <img src="../../../assets/images/plan/3d.png" alt /> -->
+                <div v-if="this.realImgUrl == ''" class="tab_img_wrap">
+                  <h2>暂无实时二维图</h2>
+                </div>
+                <div v-else><img :src="realImgUrl" alt="" /></div>
               </div>
             </div>
             <!-- 下部分操作按钮 -->
             <div class="bottom_btn">
+              <el-button
+                v-show="currentTab == 0"
+                type="success"
+                size="mini"
+                style="width: 70px"
+                id="screenshot"
+                @click.stop="screenshot"
+                >截屏</el-button
+              >
               <el-button
                 type="primary"
                 size="mini"
@@ -94,6 +104,10 @@
 </template>
 
 <script>
+// import kscreenshot from 'kscreenshot'
+import html2canvas from 'html2canvas'
+import { Notification } from 'element-ui'
+
 export default {
   data () {
     return {
@@ -110,11 +124,21 @@ export default {
       // 当前选中Tab的index
       currentTab: 0,
       // 当前选中建筑平面图的class
-      selectClass: 0
+      selectClass: '',
+      // 实时二维底图
+      realImgUrl: ''
     }
   },
 
+  mounted () {
+    // new kscreenshot({ key: 65, needDownload: true })
+  },
+
   methods: {
+    screenshot () {
+      alert('开始截屏')
+    },
+
     // Tab入口弹窗操作
     show (info) {
       this.info = info
@@ -123,13 +147,23 @@ export default {
 
     // 点击每个Tab选项
     tabChecked (current) {
-      this.currentClass = current
-      this.currentTab = current
-      //   console.log(this.info)
+      this.currentClass = this.currentTab = current
+      // console.log(this.info)
       this.buildInfo = this.info[1].children
+
       // 无建筑平面图
-      if (this.buildInfo.length === 0) {
-        if (current === 1) {
+      if (current === 1) {
+        if (this.buildInfo.length === 0) {
+          this.isDisabled = true
+        } else {
+          this.isDisabled = false
+        }
+      } else {
+        this.isDisabled = false
+      }
+      // 无实时二维图
+      if (current === 2) {
+        if (this.realImgUrl === '') {
           this.isDisabled = true
         } else {
           this.isDisabled = false
@@ -137,22 +171,60 @@ export default {
       }
     },
 
-    // 点击Tab图片
+    // 点击每个建筑平面图
     imgChecked (select) {
       this.selectClass = select
     },
 
     // 跳转到FightDeploy页
     goToFightDeploy () {
-      this.$router.push({ path: '/fightDeploy' })
-      setTimeout(() => {
-        this.dialogVisible = false
-      }, 300)
+      if (this.selectClass === '') {
+        Notification({
+          title: '提示',
+          message: '请选择一张建筑平面图!',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+      } else {
+        this.$router.push({
+          path: '/fightDeploy',
+          query: {
+            // key: this.selectClass,
+            selectBuildImg: this.info[1].children[this.selectClass]
+          }
+        })
+        setTimeout(() => {
+          this.dialogVisible = false
+        }, 300)
+      }
+
+      localStorage.setItem(
+        'selectBuildImg',
+        JSON.stringify(this.info[1].children[this.selectClass])
+      )
+
+      // setTimeout(() => {
+      //   console.log('开始截图')
+      //   this.toImage()
+      // }, 1000)
     },
 
     // 返回到Plan页
     backToPlan () {
       this.dialogVisible = false
+    },
+
+    // 截图
+    toImage () {
+      html2canvas(this.$refs.tab_wrap, {
+        backgroundColor: 'orange',
+        useCORS: true,
+        foreignObjectRendering: true,
+        allowTaint: false
+      }).then(canvas => {
+        const url = canvas.toDataURL('image/png')
+        this.imgUrl = url
+      })
     }
   }
 }

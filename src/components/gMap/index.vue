@@ -3,30 +3,41 @@
     <div
       :id="mapContainerID"
       class="mapContainer"
-      :class="{lineCursor:measureType==1,areaCursor:measureType==2,radiusCorner:bRadiusCorner,flatCorner:bFlatCorner}"
+      :class="{
+        lineCursor: measureType == 1,
+        areaCursor: measureType == 2,
+        radiusCorner: bRadiusCorner,
+        flatCorner: bFlatCorner,
+      }"
       @dblclick="dblClickMap"
     ></div>
-    <div class="simpleSearchCtrl"
-      :class="{simpleSearchCtrl_Mini:bMiniSearchStyle}"
-      v-if="bShowAllTools && bShowSimpleSearchTools">
+    <div
+      class="simpleSearchCtrl"
+      :class="{ simpleSearchCtrl_Mini: bMiniSearchStyle }"
+      v-if="bShowAllTools && bShowSimpleSearchTools"
+    >
       <input
         class="simpleInputText"
-        :class="{simpleInputText_Mini:bMiniSearchStyle}"
+        :class="{ simpleInputText_Mini: bMiniSearchStyle }"
         :id="simpleAddrSearchID"
         v-model="simpleFilterText"
         type="text"
         autocomplete="off"
         value
-        v-on:keyup.enter="simpleSearchAddrs(simpleFilterText,false)"
+        v-on:keyup.enter="simpleSearchAddrs(simpleFilterText, false)"
         v-on:keyup.delete="simpleResetChooseAddr"
         :placeholder="simplePlaceHolder"
       />
-      <div class="simpleInputSearch"
-        :class="{simpleInputSearch_Mini:bMiniSearchStyle}"
-        @click.stop="simpleSearchAddrs(simpleFilterText,true)">
-        <img class="simpleIcon"
-          :class="{simpleIcon_Mini:bMiniSearchStyle}"
-          src="../../assets/images/simpleAddrSearch.png"/>
+      <div
+        class="simpleInputSearch"
+        :class="{ simpleInputSearch_Mini: bMiniSearchStyle }"
+        @click.stop="simpleSearchAddrs(simpleFilterText, true)"
+      >
+        <img
+          class="simpleIcon"
+          :class="{ simpleIcon_Mini: bMiniSearchStyle }"
+          src="../../assets/images/simpleAddrSearch.png"
+        />
       </div>
     </div>
     <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
@@ -37,16 +48,27 @@
         type="text"
         autocomplete="off"
         value
-        v-on:keyup.enter="searchAddrs(filterText,false)"
+        v-on:keyup.enter="searchAddrs(filterText, false)"
         v-on:keyup.delete="resetChooseAddr"
         :placeholder="placeHolder"
       />
-      <div class="inputSearch" @click.stop="searchAddrs(filterText,true)">
-        <img class="searchIcon" src="../../assets/images/simpleAddrSearch.png"/>
+      <div class="inputSearch" @click.stop="searchAddrs(filterText, true)">
+        <img
+          class="searchIcon"
+          src="../../assets/images/simpleAddrSearch.png"
+        />
       </div>
       <div class="inputFunc" @click.stop="routeOrCloseFunc">
-        <img class="closeIcon" v-show="bRouteOrClose === false" src="../../../public/assets/images/search_close.png"/>
-        <img class="closeIcon" v-show="bRouteOrClose === true" src="../../../public/assets/images/route.png"/>
+        <img
+          class="closeIcon"
+          v-show="bRouteOrClose === false"
+          src="../../../public/assets/images/search_close.png"
+        />
+        <img
+          class="closeIcon"
+          v-show="bRouteOrClose === true"
+          src="../../../public/assets/images/route.png"
+        />
       </div>
     </div>
     <div class="routeCtrl disable-user-select" v-show="bShowRouteCtrl">
@@ -58,7 +80,7 @@
         :placeholder="startHolder"
         auto-complete="new-address"
       >
-        <div slot="prepend" style="corlor:black">起</div>
+        <div slot="prepend" style="corlor: black">起</div>
         <el-button
           slot="append"
           icon="el-icon-close"
@@ -75,7 +97,7 @@
         :placeholder="endHolder"
         auto-complete="new-address"
       >
-        <div slot="prepend" style="corlor:black">终</div>
+        <div slot="prepend" style="corlor: black">终</div>
         <el-button
           slot="append"
           icon="el-icon-close"
@@ -90,150 +112,201 @@
     <div class="searchResult webFsScroll" v-show="bShowResult">
       <div
         class="searchItem"
-        v-for="(addr,index) in addrResults"
+        v-for="(addr, index) in addrResults"
         :key="index"
-        :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
-        @click.stop="gotoAddrDetails($event,addr)"
-        @mouseenter="mouseHandler($event,addr,true)"
-        @mouseleave="mouseHandler($event,addr,false)"
+        :class="{ itemSeparator: index != 0, searchItemHover: addr._bHover }"
+        @click.stop="gotoAddrDetails($event, addr)"
+        @mouseenter="mouseHandler($event, addr, true)"
+        @mouseleave="mouseHandler($event, addr, false)"
       >
-        <div class="keyAddr"  v-show="addr.keyId != undefined"></div>
-        <img class="itemImg" v-show="addr._imgUrl != null" :src="addr._imgUrl" />
-        <div class="itemName" :title="addr.name">{{index + 1}}. {{ addr.name }}</div>
+        <div class="keyAddr" v-show="addr.keyId != undefined"></div>
+        <img
+          class="itemImg"
+          v-show="addr._imgUrl != null"
+          :src="addr._imgUrl"
+        />
+        <div class="itemName" :title="addr.name">
+          {{ index + 1 }}. {{ addr.name }}
+        </div>
         <div class="itemAddr" v-show="addr._addr != null">{{ addr._addr }}</div>
-        <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
+        <div class="itemTel" v-show="addr.tel.length > 0">
+          {{ titelTel }}{{ addr.tel }}
+        </div>
       </div>
     </div>
     <plan v-show="bShowPaln" ref="plan"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
-        :class="{btnLine:measureType!=1,btnLineSel:measureType==1}"
+        :class="{ btnLine: measureType != 1, btnLineSel: measureType == 1 }"
         @click="clickLine"
       ></div>
       <div
         class="areaBtn"
-        :class="{btnArea:measureType!=2,btnAreaSel:measureType==2}"
+        :class="{ btnArea: measureType != 2, btnAreaSel: measureType == 2 }"
         @click="clickArea"
       ></div>
     </div>
-    <div class="basicTools" :class="{basicToolsBottom:!bShowLonLat,basicToolsBottom2:bBasicHighBottom}" v-if="bShowAllTools && bShowBasic">
-      <el-popover :append-to-body="bAppendToBody" ref="ctrlFuncLayer" placement="left" trigger="click" popper-class="el-popover-custom">
+    <div
+      class="basicTools"
+      :class="{
+        basicToolsBottom: !bShowLonLat,
+        basicToolsBottom2: bBasicHighBottom,
+      }"
+      v-if="bShowAllTools && bShowBasic"
+    >
+      <el-popover
+        :append-to-body="bAppendToBody"
+        ref="ctrlFuncLayer"
+        placement="left"
+        trigger="click"
+        popper-class="el-popover-custom"
+      >
         <div class="mapPopover">
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg layerHigh"
-                :class="{mapSelBorder:bShowHighPoint}"
-                @click="showLayer('high',!bShowHighPoint)"
-              ><img class="layer_selected"
-                v-show="bShowHighPoint"
-                src="../../assets/images/layer_selected.png"/>
+                :class="{ mapSelBorder: bShowHighPoint }"
+                @click="showLayer('high', !bShowHighPoint)"
+              >
+                <img
+                  class="layer_selected"
+                  v-show="bShowHighPoint"
+                  src="../../assets/images/layer_selected.png"
+                />
               </div>
             </div>
-            <span
-              class="mapTypeName"
-              :class="{mapSelText:bShowHighPoint}"
-            >高点监控</span>
+            <span class="mapTypeName" :class="{ mapSelText: bShowHighPoint }"
+              >高点监控</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg layerDrone"
-                :class="{mapSelBorder:bShowDrone}"
-                @click="showLayer('drone',!bShowDrone)"
-              ><img class="layer_selected"
-                v-show="bShowDrone"
-                src="../../assets/images/layer_selected.png"/>
+                :class="{ mapSelBorder: bShowDrone }"
+                @click="showLayer('drone', !bShowDrone)"
+              >
+                <img
+                  class="layer_selected"
+                  v-show="bShowDrone"
+                  src="../../assets/images/layer_selected.png"
+                />
               </div>
             </div>
-            <span
-              class="mapTypeName"
-              :class="{mapSelText:bShowDrone}"
-            >无人机</span>
+            <span class="mapTypeName" :class="{ mapSelText: bShowDrone }"
+              >无人机</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg layerFire"
-                :class="{mapSelBorder:bShowFire}"
-                @click="showLayer('fire',!bShowFire)"
-              ><img class="layer_selected"
-                v-show="bShowFire"
-                src="../../assets/images/layer_selected.png"/>
+                :class="{ mapSelBorder: bShowFire }"
+                @click="showLayer('fire', !bShowFire)"
+              >
+                <img
+                  class="layer_selected"
+                  v-show="bShowFire"
+                  src="../../assets/images/layer_selected.png"
+                />
               </div>
             </div>
-            <span
-              class="mapTypeName"
-              :class="{mapSelText:bShowFire}"
-            >火点</span>
+            <span class="mapTypeName" :class="{ mapSelText: bShowFire }"
+              >火点</span
+            >
           </div>
         </div>
-        <div slot="reference" ref="selLayerCtrl" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickChangeFuncLayers"></div>
+        <div
+          slot="reference"
+          ref="selLayerCtrl"
+          class="yDivBtn btnSelLayer btnActive"
+          v-if="bShowSelLayer"
+          @click="clickChangeFuncLayers"
+        ></div>
       </el-popover>
-      <el-popover :append-to-body="bAppendToBody" ref="ctrlBasicLayer" placement="left" trigger="click" popper-class="el-popover-custom">
+      <el-popover
+        :append-to-body="bAppendToBody"
+        ref="ctrlBasicLayer"
+        placement="left"
+        trigger="click"
+        popper-class="el-popover-custom"
+      >
         <div class="mapPopover">
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg mapNormal"
-                :class="{mapSelBorder:(mapTypeCur == 3 || mapTypeCur == 6)}"
+                :class="{ mapSelBorder: mapTypeCur == 3 || mapTypeCur == 6 }"
                 @click="changeBasicMap(2)"
               ></div>
             </div>
             <span
               class="mapTypeName"
-              :class="{mapSelText:(mapTypeCur == 3 || mapTypeCur == 6)}"
-            >2D地图</span>
+              :class="{ mapSelText: mapTypeCur == 3 || mapTypeCur == 6 }"
+              >2D地图</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg mapSatellite"
-                :class="{mapSelBorder:(mapTypeCur == 2 || mapTypeCur == 5)}"
+                :class="{ mapSelBorder: mapTypeCur == 2 || mapTypeCur == 5 }"
                 @click="changeBasicMap(1)"
               ></div>
             </div>
             <span
               class="mapTypeName"
-              :class="{mapSelText:(mapTypeCur == 2 || mapTypeCur == 5)}"
-            >卫星地图</span>
+              :class="{ mapSelText: mapTypeCur == 2 || mapTypeCur == 5 }"
+              >卫星地图</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg mapHybrid"
-                :class="{mapSelBorder:(mapTypeCur == 1 || mapTypeCur == 4)}"
+                :class="{ mapSelBorder: mapTypeCur == 1 || mapTypeCur == 4 }"
                 @click="changeBasicMap(0)"
               ></div>
             </div>
             <span
               class="mapTypeName"
-              :class="{mapSelText:(mapTypeCur == 1 || mapTypeCur == 4)}"
-            >混合地图</span>
+              :class="{ mapSelText: mapTypeCur == 1 || mapTypeCur == 4 }"
+              >混合地图</span
+            >
           </div>
         </div>
-        <div slot="reference" ref="selMapCtrl" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickChangeBasicLayers"></div>
+        <div
+          slot="reference"
+          ref="selMapCtrl"
+          class="yDivBtn btnSelMap btnActive"
+          v-if="bShowSelMap"
+          @click="clickChangeBasicLayers"
+        ></div>
       </el-popover>
       <div class="yDivBtn btnLocator btnActive" @click="clickLocator"></div>
       <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
       <div class="yDivBtn btnZoomOut btnActive" @click="clickZoomOut"></div>
     </div>
-    <div class="lonLatTools disable-user-select" v-if="bShowAllTools && bShowLonLat">
-      <span style="margin:0px 15px;">{{mouseLon}}&#176;{{lonFlag}}</span>
-      <span style="margin:0px 15px;">{{mouseLat}}&#176;{{latFlag}}</span>
+    <div
+      class="lonLatTools disable-user-select"
+      v-if="bShowAllTools && bShowLonLat"
+    >
+      <span style="margin: 0px 15px">{{ mouseLon }}&#176;{{ lonFlag }}</span>
+      <span style="margin: 0px 15px">{{ mouseLat }}&#176;{{ latFlag }}</span>
     </div>
   </div>
 </template>
@@ -511,7 +584,7 @@ export default {
         let tmpMinLon = 180
         let tmpMinLat = 90
         const tmpRes = []
-        _results.forEach(addr => {
+        _results.forEach((addr) => {
           if (addr.name !== undefined && addr.address !== undefined) {
             tmpIndex += 1
             addr._index = tmpIndex
@@ -565,7 +638,7 @@ export default {
       if (_keyResult.length > 0 && this.addrResults === null) {
         this.addrResults = []
       }
-      _keyResult.forEach(k => {
+      _keyResult.forEach((k) => {
         k._bHover = false
         k._updateHoverCB = this.updateMouseHover
         k.keyId = k.id
@@ -616,16 +689,27 @@ export default {
       var that = this
       if (this.bShowSimpleSearchTools) {
         // eslint-disable-next-line
-        this.simpleAutoTips = new AMap.Autocomplete({ input: this.simpleAddrSearchID })
+        this.simpleAutoTips = new AMap.Autocomplete({
+          input: this.simpleAddrSearchID
+        })
         // eslint-disable-next-line
-        AMap.event.addListener(this.simpleAutoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
-          if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
-            that.addCustomMarker(e.poi.name, e.poi.location.lng, e.poi.location.lat)
+        AMap.event.addListener(this.simpleAutoTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
+          if (
+            e.poi.location.lng !== undefined &&
+            e.poi.location.lat !== undefined
+          ) {
+            that.addCustomMarker(
+              e.poi.name,
+              e.poi.location.lng,
+              e.poi.location.lat
+            )
             that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
           }
         })
         // eslint-disable-next-line
-        AMap.event.addListener(this.simpleAutoTips, "choose", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.simpleAutoTips, "choose", (e) => {
+          // 注册监听，当选中某条记录时会触发
           that.simpleChooseAddr = e
           that.simpleFilterText = e.poi.name
         })
@@ -634,18 +718,19 @@ export default {
       if (this.bShowSearchTools) {
         // 输入提示
         // eslint-disable-next-line
-        this.autoTips = new AMap.Autocomplete({ input: this.addrSearchID })
+        this.autoTips = new AMap.Autocomplete({ input: this.addrSearchID });
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
           that.bShowPaln = false
           AMapHelper.getPoiDetail({ id: e.poi.id })
-            .then(res => {
+            .then((res) => {
               that.chooseAddr = null
               if (res.data.status === '1') {
                 that.updateSearchResults(res.data.pois)
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.log('AMapHelper.getPoiDetail Err : ' + err)
             })
 
@@ -657,16 +742,20 @@ export default {
           }
         })
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoTips, "choose", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoTips, "choose", (e) => {
+          // 注册监听，当选中某条记录时会触发
           that.chooseAddr = e
           that.filterText = e.poi.name
         })
 
         // Init start POI
         // eslint-disable-next-line
-        this.autoStartTips = new AMap.Autocomplete({ input: this.pointStartID });
+        this.autoStartTips = new AMap.Autocomplete({
+          input: this.pointStartID
+        })
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoStartTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoStartTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
           if (
             e.poi.location.lng !== undefined &&
             e.poi.location.lat !== undefined
@@ -683,7 +772,8 @@ export default {
         // eslint-disable-next-line
         this.autoEndTips = new AMap.Autocomplete({ input: this.pointEndID });
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoEndTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoEndTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
           if (
             e.poi.location.lng !== undefined &&
             e.poi.location.lat !== undefined
@@ -703,7 +793,12 @@ export default {
     // 添加自定义位置标记
     addCustomMarker (name, lon, lat) {
       this.map2D.customMarkerLayerManager.clear()
-      this.map2D.customMarkerLayerManager.addMarker({ name: name, lon: lon, lat: lat, _bWgs2Gcj: false })
+      this.map2D.customMarkerLayerManager.addMarker({
+        name: name,
+        lon: lon,
+        lat: lat,
+        _bWgs2Gcj: false
+      })
       this.map2D.setZoom(16)
     },
     // Enter或点击搜索事件处理
@@ -725,9 +820,9 @@ export default {
           strs[0] = strs[0].trim()
           strs[1] = strs[1].trim()
           // eslint-disable-next-line
-          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/
+          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/;
           // eslint-disable-next-line
-          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/
+          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/;
           if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
             const tmpLon = parseFloat(strs[0])
             const tmpLat = parseFloat(strs[1])
@@ -748,7 +843,7 @@ export default {
 
       const that = this
       AMapHelper.getTips({ keywords: addrStr })
-        .then(res => {
+        .then((res) => {
           if (res.data.status === '1') {
             const tmpTips = res.data.tips
             for (let index = 0; index < tmpTips.length; index++) {
@@ -765,7 +860,7 @@ export default {
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('AMapHelper.getTips Err : ' + err)
         })
     },
@@ -783,22 +878,23 @@ export default {
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
       await AMapHelper.getPOIs({ keywords: addrStr })
-        .then(res => {
+        .then((res) => {
           if (res.data.status === '1') {
             this.updateSearchResults(res.data.pois)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('AMapHelper.getPOIs Err : ' + err)
         })
-      await this.$axios.get(settingApi.enterpriseList, { params: { enterpriseName: addrStr } })
+      await this.$axios
+        .get(settingApi.enterpriseList, { params: { enterpriseName: addrStr } })
         .then((res) => {
           if (res.data.code === 0) {
             var keyDatas = res.data.data.data
             this.appendKeyResults(keyDatas)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('axios.get(settingApi.enterpriseList) Err : ' + err)
         })
     },
@@ -862,7 +958,7 @@ export default {
 
     // 在地图中鼠标移入移出标记时回调刷新列表中结果项
     updateMouseHover (addr, bHover) {
-      this.addrResults.forEach(tmpAddr => {
+      this.addrResults.forEach((tmpAddr) => {
         if (tmpAddr._index === addr._index) {
           tmpAddr._bHover = bHover
         }
@@ -884,12 +980,12 @@ export default {
       const tmpStart = [this.startPoi._lon, this.startPoi._lat]
       const tmpEnd = [this.endPoi._lon, this.endPoi._lat]
       const tmpRoutes = srcData.paths
-      tmpRoutes.forEach(route => {
+      tmpRoutes.forEach((route) => {
         const polyLintArray = []
         polyLintArray.push(tmpStart)
-        route.steps.forEach(s => {
+        route.steps.forEach((s) => {
           const polyLine = s.polyline.split(';')
-          polyLine.forEach(item => {
+          polyLine.forEach((item) => {
             const ll = item.split(',')
             const tmpLL = [+ll[0], +ll[1]]
             polyLintArray.push(tmpLL)
@@ -913,12 +1009,12 @@ export default {
         strategy: 10
       }
       AMapHelper.getRoutes(tmpOption)
-        .then(res => {
+        .then((res) => {
           if (res.data.status === '1') {
             this.updateRoutes(res.data.route)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('AMapHelper.getRoutes Err : ' + err)
         })
     },
@@ -1101,12 +1197,18 @@ export default {
     },
     // 弹出切换功能图层的Popover
     clickChangeFuncLayers () {
-      this.closeAndOffsetPopover(this.$refs.ctrlBasicLayer, this.$refs.ctrlFuncLayer)
+      this.closeAndOffsetPopover(
+        this.$refs.ctrlBasicLayer,
+        this.$refs.ctrlFuncLayer
+      )
       this.$refs.selLayerCtrl.blur()
     },
     // 弹出切换底图图层的Popover
     clickChangeBasicLayers () {
-      this.closeAndOffsetPopover(this.$refs.ctrlFuncLayer, this.$refs.ctrlBasicLayer)
+      this.closeAndOffsetPopover(
+        this.$refs.ctrlFuncLayer,
+        this.$refs.ctrlBasicLayer
+      )
       this.$refs.selMapCtrl.blur()
     },
     // 关闭和偏移Popover弹窗
@@ -1123,7 +1225,12 @@ export default {
           const tmpThis = this
           setTimeout(() => {
             const tmpStyle = offsetPop.popperElm.style
-            tmpThis.offsetPopoverPosition(tmpStyle, tmpThis.popoverOffsetX, tmpThis.popoverOffsetY, tmpbOffset)
+            tmpThis.offsetPopoverPosition(
+              tmpStyle,
+              tmpThis.popoverOffsetX,
+              tmpThis.popoverOffsetY,
+              tmpbOffset
+            )
           }, 1)
         }
       })
@@ -1183,7 +1290,7 @@ export default {
 
     // 增加tif切片影像层
     addTifImgLayerByUrl (tifUrl) {
-      const tmpLayer = this.map2D._imageLayerManager.add(tifUrl, ly => {
+      const tmpLayer = this.map2D._imageLayerManager.add(tifUrl, (ly) => {
         this.map2D.zoomToLayer(ly)
       })
       return tmpLayer
@@ -1286,10 +1393,10 @@ export default {
       pointer-events: none;
     }
     .mapSelBorder {
-      border: 1px #1EB0FC solid;
+      border: 1px #1eb0fc solid;
     }
     .mapSelText {
-      color: #1EB0FC;
+      color: #1eb0fc;
     }
     .layer_selected {
       height: 45px;
@@ -1313,7 +1420,16 @@ export default {
     border-radius: 20px;
   }
   .flatCorner {
-    clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px,100% calc(100% - 20px), calc(100% - 20px) 100%,20px 100%, 0 calc(100% - 20px), 0 20px);
+    clip-path: polygon(
+      20px 0,
+      calc(100% - 20px) 0,
+      100% 20px,
+      100% calc(100% - 20px),
+      calc(100% - 20px) 100%,
+      20px 100%,
+      0 calc(100% - 20px),
+      0 20px
+    );
   }
   .lineCursor {
     cursor: url("../../assets/images/m_line.png") 3 4, auto;
@@ -1470,7 +1586,7 @@ export default {
         margin-top: 5px;
         height: 16px;
         width: 16px;
-        background-image: url('../../assets/images/keyAddr.png');
+        background-image: url("../../assets/images/keyAddr.png");
       }
       .itemName {
         font-size: 14px;
