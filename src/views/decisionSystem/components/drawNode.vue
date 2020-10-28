@@ -109,13 +109,6 @@ export default {
       // console.log(data)
       _this.controlled.isActive = data
     })
-
-    // 获取底图(建筑平面图)
-    // const _this = this
-    EventBus.$on('selectImg', data => {
-      console.log(data)
-      // _this.controlled.isActive = data;
-    })
   },
 
   methods: {
@@ -197,9 +190,6 @@ export default {
   height: 100%;
   border: 1px solid rgb(145, 145, 145);
   font-size: 14px;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
   position: relative;
   cursor: move;
   img {

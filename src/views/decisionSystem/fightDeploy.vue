@@ -144,6 +144,7 @@ export default {
       curModelIndex: 0,
       // 建筑平面图底图
       buildImgUrl: '',
+      enterpriseId: '',
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -357,12 +358,14 @@ export default {
     saveData () {
       alert(JSON.stringify(this.data.nodeList))
 
+      const blob = new Blob([JSON.stringify(this.data.nodeList)], {
+        type: 'application/json'
+      })
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-      // const formData = {
-      //   enterpriseId: this.index,
-      //   configFile: JSON.stringify(this.data.nodeList)
-      // }
       const formData = new FormData()
+      console.log('id:', this.enterpriseId)
+      formData.append('enterpriseId', this.enterpriseId)
+      formData.append('configFile', blob, '2dConfigData.json')
       this.$axios
         .post(api.upload2dConfig, formData, config)
         .then(res => {
@@ -419,9 +422,13 @@ export default {
 
     // 获取建筑平面图
     getBaseImg () {
+      const routerId = this.$route.query.enterpriseId
       const routerParams = this.$route.query.selectBuildImg
-      // console.log(this.buildImgUrl)
-      this.buildImgUrl = routerParams.image
+      if (routerParams && routerParams !== undefined) {
+        // console.log(this.buildImgUrl)
+        this.enterpriseId = routerId
+        this.buildImgUrl = routerParams.image
+      }
     }
   }
 }
