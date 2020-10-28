@@ -178,7 +178,11 @@ export default {
           localStorage.bNetWorkConn = 'false'
           console.log('AMapHelper.getLocation Err : ' + err)
         })
+    },
+    settingClick () {
+      this.showServer = !this.showServer
     }
+
   },
   created () {},
   mounted () {
