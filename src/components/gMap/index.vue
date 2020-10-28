@@ -3,24 +3,42 @@
     <div
       :id="mapContainerID"
       class="mapContainer"
-      :class="{lineCursor:measureType==1,areaCursor:measureType==2}"
+      :class="{
+        lineCursor: measureType == 1,
+        areaCursor: measureType == 2,
+        radiusCorner: bRadiusCorner,
+        flatCorner: bFlatCorner,
+      }"
       @dblclick="dblClickMap"
     ></div>
-    <div class="simpleSearchCtrl" v-if="bShowAllTools && bShowSimpleSearchTools">
+    <div
+      class="simpleSearchCtrl"
+      :class="{ simpleSearchCtrl_Mini: bMiniSearchStyle }"
+      v-if="bShowAllTools && bShowSimpleSearchTools"
+    >
       <input
         class="simpleInputText"
+        :class="{ simpleInputText_Mini: bMiniSearchStyle }"
         :id="simpleAddrSearchID"
         v-model="simpleFilterText"
         type="text"
         autocomplete="off"
         value
-        v-on:keyup.enter="simpleSearchAddrs(simpleFilterText,false)"
+        v-on:keyup.enter="simpleSearchAddrs(simpleFilterText, false)"
         v-on:keyup.delete="simpleResetChooseAddr"
         :placeholder="simplePlaceHolder"
       />
-      <div class="simpleInputSearch"
-        @click.stop="simpleSearchAddrs(simpleFilterText,true)">
-        <img class="simpleIcon" src="../../assets/images/simpleAddrSearch.png"/></div>
+      <div
+        class="simpleInputSearch"
+        :class="{ simpleInputSearch_Mini: bMiniSearchStyle }"
+        @click.stop="simpleSearchAddrs(simpleFilterText, true)"
+      >
+        <img
+          class="simpleIcon"
+          :class="{ simpleIcon_Mini: bMiniSearchStyle }"
+          src="../../assets/images/simpleAddrSearch.png"
+        />
+      </div>
     </div>
     <div class="searchCtrl" v-if="bShowAllTools && bShowSearchTools">
       <input
@@ -30,17 +48,28 @@
         type="text"
         autocomplete="off"
         value
-        v-on:keyup.enter="searchAddrs(filterText,false)"
+        v-on:keyup.enter="searchAddrs(filterText, false)"
         v-on:keyup.delete="resetChooseAddr"
         :placeholder="placeHolder"
       />
-      <div class="inputSearch"
-        @click.stop="searchAddrs(filterText,true)"/>
-      <div
-        class="inputFunc"
-        @click.stop="routeOrCloseFunc"
-        :class="{inputFunc_route:bRouteOrClose,inputFunc_close:!bRouteOrClose}"
-      />
+      <div class="inputSearch" @click.stop="searchAddrs(filterText, true)">
+        <img
+          class="searchIcon"
+          src="../../assets/images/simpleAddrSearch.png"
+        />
+      </div>
+      <div class="inputFunc" @click.stop="routeOrCloseFunc">
+        <img
+          class="closeIcon"
+          v-show="bRouteOrClose === false"
+          src="../../../public/assets/images/search_close.png"
+        />
+        <img
+          class="closeIcon"
+          v-show="bRouteOrClose === true"
+          src="../../../public/assets/images/route.png"
+        />
+      </div>
     </div>
     <div class="routeCtrl disable-user-select" v-show="bShowRouteCtrl">
       <el-input
@@ -51,7 +80,7 @@
         :placeholder="startHolder"
         auto-complete="new-address"
       >
-        <div slot="prepend" style="corlor:black">起</div>
+        <div slot="prepend" style="corlor: black">起</div>
         <el-button
           slot="append"
           icon="el-icon-close"
@@ -68,7 +97,7 @@
         :placeholder="endHolder"
         auto-complete="new-address"
       >
-        <div slot="prepend" style="corlor:black">终</div>
+        <div slot="prepend" style="corlor: black">终</div>
         <el-button
           slot="append"
           icon="el-icon-close"
@@ -80,152 +109,204 @@
       <div class="routeBtn routeClose" @click.stop="closeRouteCtrl"></div>
       <div class="routeBtn routeSwap" @click.stop="swapRoutePoint"></div>
     </div>
-    <div class="searchResult ownScrollStyle" v-show="bShowResult">
+    <div class="searchResult webFsScroll" v-show="bShowResult">
       <div
         class="searchItem"
-        v-for="(addr,index) in addrResults"
+        v-for="(addr, index) in addrResults"
         :key="index"
-        :class="{itemSeparator:index!=0,searchItemHover:addr._bHover}"
-        @click.stop="gotoAddrDetails($event,addr)"
-        @mouseenter="mouseHandler($event,addr,true)"
-        @mouseleave="mouseHandler($event,addr,false)"
+        :class="{ itemSeparator: index != 0, searchItemHover: addr._bHover }"
+        @click.stop="gotoAddrDetails($event, addr)"
+        @mouseenter="mouseHandler($event, addr, true)"
+        @mouseleave="mouseHandler($event, addr, false)"
       >
-        <img class="itemImg" v-show="addr._imgUrl != null" :src="addr._imgUrl" />
-        <div class="itemName" :title="addr.name">{{index + 1}}. {{ addr.name }}</div>
+        <div class="keyAddr" v-show="addr.keyId != undefined"></div>
+        <img
+          class="itemImg"
+          v-show="addr._imgUrl != null"
+          :src="addr._imgUrl"
+        />
+        <div class="itemName" :title="addr.name">
+          {{ index + 1 }}. {{ addr.name }}
+        </div>
         <div class="itemAddr" v-show="addr._addr != null">{{ addr._addr }}</div>
-        <div class="itemTel" v-show="addr.tel.length > 0">{{ titelTel }}{{ addr.tel }}</div>
+        <div class="itemTel" v-show="addr.tel.length > 0">
+          {{ titelTel }}{{ addr.tel }}
+        </div>
       </div>
     </div>
-    <plan class="plan ownScrollStyle" v-if="bShowPaln"></plan>
+    <plan  v-if="bShowPaln" ref="plan"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
-        :class="{btnLine:measureType!=1,btnLineSel:measureType==1}"
+        :class="{ btnLine: measureType != 1, btnLineSel: measureType == 1 }"
         @click="clickLine"
       ></div>
       <div
         class="areaBtn"
-        :class="{btnArea:measureType!=2,btnAreaSel:measureType==2}"
+        :class="{ btnArea: measureType != 2, btnAreaSel: measureType == 2 }"
         @click="clickArea"
       ></div>
     </div>
-    <div class="basicTools" :class="{basicToolsBottom:!bShowLonLat}" v-if="bShowAllTools && bShowBasic">
-      <el-popover placement="left" trigger="click" popper-class="el-popover-custom">
+    <div
+      class="basicTools"
+      :class="{
+        basicToolsBottom: !bShowLonLat,
+        basicToolsBottom2: bBasicHighBottom,
+      }"
+      v-if="bShowAllTools && bShowBasic"
+    >
+      <el-popover
+        :append-to-body="bAppendToBody"
+        ref="ctrlFuncLayer"
+        placement="left"
+        trigger="click"
+        popper-class="el-popover-custom"
+      >
         <div class="mapPopover">
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg layerHigh"
-                :class="{mapSelBorder:bShowHighPoint}"
-                @click="showLayer('high',!bShowHighPoint)"
-              ><img class="layer_selected"
-                v-show="bShowHighPoint"
-                src="../../assets/images/layer_selected.png"/>
+                :class="{ mapSelBorder: bShowHighPoint }"
+                @click="showLayer('high', !bShowHighPoint)"
+              >
+                <img
+                  class="layer_selected"
+                  v-show="bShowHighPoint"
+                  src="../../assets/images/layer_selected.png"
+                />
               </div>
             </div>
-            <span
-              class="mapTypeName"
-              :class="{mapSelText:bShowHighPoint}"
-            >高点监控</span>
+            <span class="mapTypeName" :class="{ mapSelText: bShowHighPoint }"
+              >高点监控</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg layerDrone"
-                :class="{mapSelBorder:bShowDrone}"
-                @click="showLayer('drone',!bShowDrone)"
-              ><img class="layer_selected"
-                v-show="bShowDrone"
-                src="../../assets/images/layer_selected.png"/>
+                :class="{ mapSelBorder: bShowDrone }"
+                @click="showLayer('drone', !bShowDrone)"
+              >
+                <img
+                  class="layer_selected"
+                  v-show="bShowDrone"
+                  src="../../assets/images/layer_selected.png"
+                />
               </div>
             </div>
-            <span
-              class="mapTypeName"
-              :class="{mapSelText:bShowDrone}"
-            >无人机</span>
+            <span class="mapTypeName" :class="{ mapSelText: bShowDrone }"
+              >无人机</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg layerFire"
-                :class="{mapSelBorder:bShowFire}"
-                @click="showLayer('fire',!bShowFire)"
-              ><img class="layer_selected"
-                v-show="bShowFire"
-                src="../../assets/images/layer_selected.png"/>
+                :class="{ mapSelBorder: bShowFire }"
+                @click="showLayer('fire', !bShowFire)"
+              >
+                <img
+                  class="layer_selected"
+                  v-show="bShowFire"
+                  src="../../assets/images/layer_selected.png"
+                />
               </div>
             </div>
-            <span
-              class="mapTypeName"
-              :class="{mapSelText:bShowFire}"
-            >火点</span>
+            <span class="mapTypeName" :class="{ mapSelText: bShowFire }"
+              >火点</span
+            >
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelLayer btnActive" v-if="bShowSelLayer" @click="clickSelMap"></div>
+        <div
+          slot="reference"
+          ref="selLayerCtrl"
+          class="yDivBtn btnSelLayer btnActive"
+          v-if="bShowSelLayer"
+          @click="clickChangeFuncLayers"
+        ></div>
       </el-popover>
-      <el-popover placement="left" trigger="click" popper-class="el-popover-custom">
+      <el-popover
+        :append-to-body="bAppendToBody"
+        ref="ctrlBasicLayer"
+        placement="left"
+        trigger="click"
+        popper-class="el-popover-custom"
+      >
         <div class="mapPopover">
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg mapNormal"
-                :class="{mapSelBorder:(mapTypeCur == 3 || mapTypeCur == 6)}"
+                :class="{ mapSelBorder: mapTypeCur == 3 || mapTypeCur == 6 }"
                 @click="changeBasicMap(2)"
               ></div>
             </div>
             <span
               class="mapTypeName"
-              :class="{mapSelText:(mapTypeCur == 3 || mapTypeCur == 6)}"
-            >2D地图</span>
+              :class="{ mapSelText: mapTypeCur == 3 || mapTypeCur == 6 }"
+              >2D地图</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg mapSatellite"
-                :class="{mapSelBorder:(mapTypeCur == 2 || mapTypeCur == 5)}"
+                :class="{ mapSelBorder: mapTypeCur == 2 || mapTypeCur == 5 }"
                 @click="changeBasicMap(1)"
               ></div>
             </div>
             <span
               class="mapTypeName"
-              :class="{mapSelText:(mapTypeCur == 2 || mapTypeCur == 5)}"
-            >卫星地图</span>
+              :class="{ mapSelText: mapTypeCur == 2 || mapTypeCur == 5 }"
+              >卫星地图</span
+            >
           </div>
           <div class="mapInterval">
             <div class="intervalLine"></div>
           </div>
           <div class="mapTypeContainer">
-            <div style="height:45px;position: relative;">
+            <div style="height: 45px; position: relative">
               <div
                 class="mapImg mapHybrid"
-                :class="{mapSelBorder:(mapTypeCur == 1 || mapTypeCur == 4)}"
+                :class="{ mapSelBorder: mapTypeCur == 1 || mapTypeCur == 4 }"
                 @click="changeBasicMap(0)"
               ></div>
             </div>
             <span
               class="mapTypeName"
-              :class="{mapSelText:(mapTypeCur == 1 || mapTypeCur == 4)}"
-            >混合地图</span>
+              :class="{ mapSelText: mapTypeCur == 1 || mapTypeCur == 4 }"
+              >混合地图</span
+            >
           </div>
         </div>
-        <div slot="reference" class="yDivBtn btnSelMap btnActive" v-if="bShowSelMap" @click="clickSelMap"></div>
+        <div
+          slot="reference"
+          ref="selMapCtrl"
+          class="yDivBtn btnSelMap btnActive"
+          v-if="bShowSelMap"
+          @click="clickChangeBasicLayers"
+        ></div>
       </el-popover>
       <div class="yDivBtn btnLocator btnActive" @click="clickLocator"></div>
       <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
       <div class="yDivBtn btnZoomOut btnActive" @click="clickZoomOut"></div>
     </div>
-    <div class="lonLatTools disable-user-select" v-if="bShowAllTools && bShowLonLat">
-      <span style="margin:0px 15px;">{{mouseLon}}&#176;{{lonFlag}}</span>
-      <span style="margin:0px 15px;">{{mouseLat}}&#176;{{latFlag}}</span>
+    <div
+      class="lonLatTools disable-user-select"
+      v-if="bShowAllTools && bShowLonLat"
+    >
+      <span style="margin: 0px 15px">{{ mouseLon }}&#176;{{ lonFlag }}</span>
+      <span style="margin: 0px 15px">{{ mouseLat }}&#176;{{ latFlag }}</span>
     </div>
   </div>
 </template>
@@ -233,6 +314,7 @@
 <script>
 import AMapHelper from '../../axios/amapapis'
 import Plan from '../../views/decisionSystem/components/Plan.vue'
+import { settingApi } from '@/api/setting'
 export default {
   name: 'gMap',
   components: {
@@ -262,7 +344,7 @@ export default {
       simplePlaceHolder: '请输入地点或经纬度',
       placeHolder: '请输入目的地',
       titelTel: '电话: ',
-      bRouteOrClose: true, // true:route,false:close
+      bRouteOrClose: false, // true:route,false:close
       bShowRouteCtrl: false,
       bShowResult: false,
       bShowPaln: false,
@@ -285,11 +367,35 @@ export default {
       mapTypeCur: 1,
       bShowHighPoint: true,
       bShowDrone: true,
-      bShowFire: true
+      bShowFire: true,
+      bBasicHighBottom: false, // 控制右下角基础工具条向上移动
+      bAppendToBody: true, // 控制Popover弹窗附加文档结构位置
+      popoverOffsetX: -38, // 地图右下角工具条Popover弹窗x轴偏移
+      popoverOffsetY: 33 // 地图右下角工具条Popover弹窗y轴偏移
     }
   },
 
   props: {
+    // 默认底图序号
+    baseMapIndex: {
+      type: Number,
+      default: 0
+    },
+    // 地图圆角样式
+    bRadiusCorner: {
+      type: Boolean,
+      default: false
+    },
+    // 地图平角样式
+    bFlatCorner: {
+      type: Boolean,
+      default: false
+    },
+    // 是否启用双击样式
+    bDbClickStyle: {
+      type: Boolean,
+      default: false
+    },
     // 为false时，不根据浏览器自动定位；为true时，根据浏览器定位用户当前位置。
     bAutoLocate: {
       type: Boolean,
@@ -307,6 +413,11 @@ export default {
     },
     // 简易搜索框(火情警报、设备地图页面会用到)
     bShowSimpleSearchTools: {
+      type: Boolean,
+      default: false
+    },
+    // 迷你简易搜索框样式
+    bMiniSearchStyle: {
       type: Boolean,
       default: false
     },
@@ -398,12 +509,24 @@ export default {
     // 创建地图组件
     createMap () {
       const rootUrl = this.getRootUrl()
+      this.mapTypeIndex = this.baseMapIndex
+      if (this.mapTypeIndex > 2 || this.mapTypeIndex < 0) {
+        this.mapTypeIndex = 0
+      }
       this.mapTypeCur = this.mapTypeBasic + this.mapTypeIndex
+      let bNetWorkConn = true
+      if (localStorage.bNetWorkConn !== undefined) {
+        if (localStorage.bNetWorkConn === 'false') {
+          bNetWorkConn = false
+        }
+      }
+      bNetWorkConn = true // 暂时不启用离线地图(启用离线地图需要配置好DataConfig.json中offlineLayers地址)
       // eslint-disable-next-line
       this.map2D = new D2.Map2D({
         containerId: this.mapContainerID,
         baseLayerType: this.mapTypeCur,
-        serverBaseUrl: rootUrl
+        serverBaseUrl: rootUrl,
+        bIsOnline: bNetWorkConn
       })
       this.setPositionFormatCB()
       this.map2D.setMinZoom(this.minZoom)
@@ -424,6 +547,9 @@ export default {
       this.map2D.searchLayerManager.popNavImgClickEvent.addEventListener(
         this.popNavImgClickEventCB
       )
+      this.map2D.searchLayerManager.setPopupNavVisible(false)
+
+      this.map2D.enableDoubleClickZoom(false)
     },
 
     // 自动定位当前位置回调
@@ -457,45 +583,105 @@ export default {
         let tmpMaxLat = -90
         let tmpMinLon = 180
         let tmpMinLat = 90
-        _results.forEach(addr => {
-          tmpIndex += 1
-          addr._index = tmpIndex
-          addr._bHover = false
-          addr._updateHoverCB = this.updateMouseHover
-          if (addr.photos.length > 0) {
-            addr._imgUrl = addr.photos[0].url
-          } else {
-            addr._imgUrl = null
+        const tmpRes = []
+        _results.forEach((addr) => {
+          if (addr.name !== undefined && addr.address !== undefined) {
+            tmpIndex += 1
+            addr._index = tmpIndex
+            addr._bHover = false
+            addr._updateHoverCB = this.updateMouseHover
+            if (addr.photos.length > 0) {
+              addr._imgUrl = addr.photos[0].url
+            } else {
+              addr._imgUrl = null
+            }
+            if (addr.address != null && !(addr.address instanceof Array)) {
+              addr._addr = addr.address
+            } else {
+              addr._addr = null
+            }
+            const tmpStrs = addr.location.split(',')
+            addr._lon = parseFloat(tmpStrs[0])
+            addr._lat = parseFloat(tmpStrs[1])
+            if (addr._lon > tmpMaxLon) tmpMaxLon = addr._lon
+            if (addr._lat > tmpMaxLat) tmpMaxLat = addr._lat
+            if (addr._lon < tmpMinLon) tmpMinLon = addr._lon
+            if (addr._lat < tmpMinLat) tmpMinLat = addr._lat
+            tmpRes.push(addr)
           }
-          if (addr.address != null && !(addr.address instanceof Array)) {
-            addr._addr = addr.address
-          } else {
-            addr._addr = null
-          }
-          const tmpStrs = addr.location.split(',')
-          addr._lon = parseFloat(tmpStrs[0])
-          addr._lat = parseFloat(tmpStrs[1])
-          if (addr._lon > tmpMaxLon) tmpMaxLon = addr._lon
-          if (addr._lat > tmpMaxLat) tmpMaxLat = addr._lat
-          if (addr._lon < tmpMinLon) tmpMinLon = addr._lon
-          if (addr._lat < tmpMinLat) tmpMinLat = addr._lat
         })
-        this.addrResults = _results
-        this.map2D.searchLayerManager.addSearchAddrs(_results)
-        if (_results.length > 0) {
-          this.bShowResult = true
-          this.bRouteOrClose = false
+        if (tmpRes.length > 0) {
+          this.addrResults = tmpRes
+          this.map2D.searchLayerManager.addSearchAddrs(tmpRes)
+          if (tmpRes.length > 0) {
+            this.bShowResult = true
+            this.bRouteOrClose = false
+          }
+          if (tmpRes.length > 1) {
+            this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+            this.map2D.zoomOut()
+          }
+          return
         }
-        if (_results.length > 1) {
-          this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
-          this.map2D.zoomOut()
-        }
-      } else {
-        this.addrResults = null
-        this.bShowResult = false
-        this.bRouteOrClose = true
-        this.map2D.searchLayerManager.clear()
       }
+      this.addrResults = null
+      this.bShowResult = false
+      this.bRouteOrClose = false // true (由true改为false隐藏路线导航功能)
+      this.map2D.searchLayerManager.clear()
+    },
+
+    // 重点单位搜索结果追加
+    appendKeyResults (_keyResult) {
+      if (_keyResult.length < 1) {
+        return
+      }
+      if (_keyResult.length > 0 && this.addrResults === null) {
+        this.addrResults = []
+      }
+      _keyResult.forEach((k) => {
+        k._bHover = false
+        k._updateHoverCB = this.updateMouseHover
+        k.keyId = k.id
+        if (k.poiId !== undefined) k.id = k.poiId
+        k.name = k.enterpriseName
+        k.address = k.enterpriseAddress
+        k._addr = k.enterpriseAddress
+        k._lon = k.enterpriseLongitude
+        k._lat = k.enterpriseLatitude
+        k.tel = k.enterpriseTel
+        k._imgUrl = null
+        this.addrResults.push(k)
+      })
+      const tmpRes = []
+      const totalNum = this.addrResults.length
+      let count = 0
+      const tA = this.addrResults
+      let tmpMaxLon = -180
+      let tmpMaxLat = -90
+      let tmpMinLon = 180
+      let tmpMinLat = 90
+      for (let i = totalNum - 1; i >= 0; i--) {
+        count += 1
+        tA[i]._index = count
+        if (tA[i]._lon > tmpMaxLon) tmpMaxLon = tA[i]._lon
+        if (tA[i]._lat > tmpMaxLat) tmpMaxLat = tA[i]._lat
+        if (tA[i]._lon < tmpMinLon) tmpMinLon = tA[i]._lon
+        if (tA[i]._lat < tmpMinLat) tmpMinLat = tA[i]._lat
+        tmpRes.push(tA[i])
+      }
+      this.map2D.searchLayerManager.clear()
+      this.map2D.searchLayerManager.addSearchAddrs(tmpRes)
+      if (tmpRes.length > 1) {
+        this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
+        this.map2D.zoomOut()
+      } else {
+        this.map2D.zoomToCenter(tA[0]._lon, tA[0]._lat)
+        this.map2D.setZoom(16)
+      }
+      this.addrResults = []
+      this.addrResults = tmpRes
+      this.bShowResult = true
+      this.bRouteOrClose = false
     },
 
     // 初始化搜索提示框
@@ -503,16 +689,27 @@ export default {
       var that = this
       if (this.bShowSimpleSearchTools) {
         // eslint-disable-next-line
-        this.simpleAutoTips = new AMap.Autocomplete({ input: this.simpleAddrSearchID })
+        this.simpleAutoTips = new AMap.Autocomplete({
+          input: this.simpleAddrSearchID
+        })
         // eslint-disable-next-line
-        AMap.event.addListener(this.simpleAutoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
-          if (e.poi.location.lng !== undefined && e.poi.location.lat !== undefined) {
-            that.addCustomMarker(e.poi.name, e.poi.location.lng, e.poi.location.lat)
+        AMap.event.addListener(this.simpleAutoTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
+          if (
+            e.poi.location.lng !== undefined &&
+            e.poi.location.lat !== undefined
+          ) {
+            that.addCustomMarker(
+              e.poi.name,
+              e.poi.location.lng,
+              e.poi.location.lat
+            )
             that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
           }
         })
         // eslint-disable-next-line
-        AMap.event.addListener(this.simpleAutoTips, "choose", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.simpleAutoTips, "choose", (e) => {
+          // 注册监听，当选中某条记录时会触发
           that.simpleChooseAddr = e
           that.simpleFilterText = e.poi.name
         })
@@ -521,18 +718,19 @@ export default {
       if (this.bShowSearchTools) {
         // 输入提示
         // eslint-disable-next-line
-        this.autoTips = new AMap.Autocomplete({ input: this.addrSearchID })
+        this.autoTips = new AMap.Autocomplete({ input: this.addrSearchID });
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
           that.bShowPaln = false
           AMapHelper.getPoiDetail({ id: e.poi.id })
-            .then(res => {
+            .then((res) => {
               that.chooseAddr = null
               if (res.data.status === '1') {
                 that.updateSearchResults(res.data.pois)
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.log('AMapHelper.getPoiDetail Err : ' + err)
             })
 
@@ -544,16 +742,20 @@ export default {
           }
         })
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoTips, "choose", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoTips, "choose", (e) => {
+          // 注册监听，当选中某条记录时会触发
           that.chooseAddr = e
           that.filterText = e.poi.name
         })
 
         // Init start POI
         // eslint-disable-next-line
-        this.autoStartTips = new AMap.Autocomplete({ input: this.pointStartID });
+        this.autoStartTips = new AMap.Autocomplete({
+          input: this.pointStartID
+        })
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoStartTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoStartTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
           if (
             e.poi.location.lng !== undefined &&
             e.poi.location.lat !== undefined
@@ -570,7 +772,8 @@ export default {
         // eslint-disable-next-line
         this.autoEndTips = new AMap.Autocomplete({ input: this.pointEndID });
         // eslint-disable-next-line
-        AMap.event.addListener(this.autoEndTips, "select", (e) => { // 注册监听，当选中某条记录时会触发
+        AMap.event.addListener(this.autoEndTips, "select", (e) => {
+          // 注册监听，当选中某条记录时会触发
           if (
             e.poi.location.lng !== undefined &&
             e.poi.location.lat !== undefined
@@ -590,7 +793,12 @@ export default {
     // 添加自定义位置标记
     addCustomMarker (name, lon, lat) {
       this.map2D.customMarkerLayerManager.clear()
-      this.map2D.customMarkerLayerManager.addMarker({ name: name, lon: lon, lat: lat, _bWgs2Gcj: false })
+      this.map2D.customMarkerLayerManager.addMarker({
+        name: name,
+        lon: lon,
+        lat: lat,
+        _bWgs2Gcj: false
+      })
       this.map2D.setZoom(16)
     },
     // Enter或点击搜索事件处理
@@ -612,9 +820,9 @@ export default {
           strs[0] = strs[0].trim()
           strs[1] = strs[1].trim()
           // eslint-disable-next-line
-          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,6})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,6}|180)$/
+          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/;
           // eslint-disable-next-line
-          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,6}|90\.0{0,6}|[0-8]?\d{1}|90)$/
+          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/;
           if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
             const tmpLon = parseFloat(strs[0])
             const tmpLat = parseFloat(strs[1])
@@ -635,7 +843,7 @@ export default {
 
       const that = this
       AMapHelper.getTips({ keywords: addrStr })
-        .then(res => {
+        .then((res) => {
           if (res.data.status === '1') {
             const tmpTips = res.data.tips
             for (let index = 0; index < tmpTips.length; index++) {
@@ -652,7 +860,7 @@ export default {
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('AMapHelper.getTips Err : ' + err)
         })
     },
@@ -669,14 +877,25 @@ export default {
       this.bShowPaln = false
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
-      AMapHelper.getPOIs({ keywords: addrStr })
-        .then(res => {
+      await AMapHelper.getPOIs({ keywords: addrStr })
+        .then((res) => {
           if (res.data.status === '1') {
             this.updateSearchResults(res.data.pois)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('AMapHelper.getPOIs Err : ' + err)
+        })
+      await this.$axios
+        .get(settingApi.enterpriseList, { params: { enterpriseName: addrStr } })
+        .then((res) => {
+          if (res.data.code === 0) {
+            var keyDatas = res.data.data.data
+            this.appendKeyResults(keyDatas)
+          }
+        })
+        .catch((err) => {
+          console.log('axios.get(settingApi.enterpriseList) Err : ' + err)
         })
     },
 
@@ -685,6 +904,7 @@ export default {
       this.chooseAddr = null
       if (this.filterText === '') {
         this.updateSearchResults(null)
+        this.bShowPaln = false
       }
     },
 
@@ -729,6 +949,7 @@ export default {
       this.lastResults = this.addrResults
       this.bShowResult = false
       this.bShowPaln = true
+      this.$refs.plan.show(addr)
       if (bCallHandler) {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
@@ -737,7 +958,7 @@ export default {
 
     // 在地图中鼠标移入移出标记时回调刷新列表中结果项
     updateMouseHover (addr, bHover) {
-      this.addrResults.forEach(tmpAddr => {
+      this.addrResults.forEach((tmpAddr) => {
         if (tmpAddr._index === addr._index) {
           tmpAddr._bHover = bHover
         }
@@ -759,12 +980,12 @@ export default {
       const tmpStart = [this.startPoi._lon, this.startPoi._lat]
       const tmpEnd = [this.endPoi._lon, this.endPoi._lat]
       const tmpRoutes = srcData.paths
-      tmpRoutes.forEach(route => {
+      tmpRoutes.forEach((route) => {
         const polyLintArray = []
         polyLintArray.push(tmpStart)
-        route.steps.forEach(s => {
+        route.steps.forEach((s) => {
           const polyLine = s.polyline.split(';')
-          polyLine.forEach(item => {
+          polyLine.forEach((item) => {
             const ll = item.split(',')
             const tmpLL = [+ll[0], +ll[1]]
             polyLintArray.push(tmpLL)
@@ -788,12 +1009,12 @@ export default {
         strategy: 10
       }
       AMapHelper.getRoutes(tmpOption)
-        .then(res => {
+        .then((res) => {
           if (res.data.status === '1') {
             this.updateRoutes(res.data.route)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('AMapHelper.getRoutes Err : ' + err)
         })
     },
@@ -916,6 +1137,9 @@ export default {
         this.map2D.measureTool.start()
         this.map2D.measureTool.stop()
       }
+      if (this.bDbClickStyle) {
+        this.$emit('mapDbClickEvent')
+      }
     },
 
     // 开始测量距离
@@ -948,9 +1172,85 @@ export default {
       }
     },
 
-    // 点击切换地图类型
-    clickSelMap () {
-      // do...
+    // 设置基础工具条是否向上平移
+    setBasicHighBottom (bHigh) {
+      this.bBasicHighBottom = bHigh
+    },
+    // 设置基础工具条是否向上平移
+    setPopoverAppendStyle (bAppend) {
+      this.bAppendToBody = bAppend
+    },
+    // 设置Popover弹窗偏移量
+    setPopoverPositionOffset (x, y) {
+      this.popoverOffsetX = x
+      this.popoverOffsetY = y
+    },
+
+    // 关闭切换图层的Popover
+    closeAllPopover () {
+      if (this.$refs.ctrlFuncLayer !== undefined) {
+        this.$refs.ctrlFuncLayer.doClose()
+      }
+      if (this.$refs.ctrlBasicLayer !== undefined) {
+        this.$refs.ctrlBasicLayer.doClose()
+      }
+    },
+    // 弹出切换功能图层的Popover
+    clickChangeFuncLayers () {
+      this.closeAndOffsetPopover(
+        this.$refs.ctrlBasicLayer,
+        this.$refs.ctrlFuncLayer
+      )
+      this.$refs.selLayerCtrl.blur()
+    },
+    // 弹出切换底图图层的Popover
+    clickChangeBasicLayers () {
+      this.closeAndOffsetPopover(
+        this.$refs.ctrlFuncLayer,
+        this.$refs.ctrlBasicLayer
+      )
+      this.$refs.selMapCtrl.blur()
+    },
+    // 关闭和偏移Popover弹窗
+    closeAndOffsetPopover (closePop, offsetPop) {
+      let tmpbOffset = true
+      try {
+        if (offsetPop.popperElm.ariaHidden === 'false') {
+          tmpbOffset = false
+        }
+      } catch (error) {}
+      this.$nextTick(() => {
+        closePop.doClose()
+        if (this.bAppendToBody === false) {
+          const tmpThis = this
+          setTimeout(() => {
+            const tmpStyle = offsetPop.popperElm.style
+            tmpThis.offsetPopoverPosition(
+              tmpStyle,
+              tmpThis.popoverOffsetX,
+              tmpThis.popoverOffsetY,
+              tmpbOffset
+            )
+          }, 1)
+        }
+      })
+    },
+    // 偏移Popover弹窗位置
+    offsetPopoverPosition (style, offsetx, offsety, bOffset) {
+      let tmpLeft = style.left
+      tmpLeft = tmpLeft.replace('px', '')
+      tmpLeft = parseFloat(tmpLeft)
+      let tmpTop = style.top
+      tmpTop = tmpTop.replace('px', '')
+      tmpTop = parseFloat(tmpTop)
+      tmpLeft = tmpLeft + offsetx + 'px'
+      tmpTop = tmpTop + offsety + 'px'
+      if (bOffset) {
+        style.left = tmpLeft
+        style.popoverOffsetLeft = tmpLeft
+        style.top = tmpTop
+        style.popoverOffsetTop = tmpTop
+      }
     },
 
     // 定位到地图指定坐标
@@ -990,7 +1290,7 @@ export default {
 
     // 增加tif切片影像层
     addTifImgLayerByUrl (tifUrl) {
-      const tmpLayer = this.map2D._imageLayerManager.add(tifUrl, ly => {
+      const tmpLayer = this.map2D._imageLayerManager.add(tifUrl, (ly) => {
         this.map2D.zoomToLayer(ly)
       })
       return tmpLayer
@@ -1093,10 +1393,10 @@ export default {
       pointer-events: none;
     }
     .mapSelBorder {
-      border: 1px #1EB0FC solid;
+      border: 1px #1eb0fc solid;
     }
     .mapSelText {
-      color: #1EB0FC;
+      color: #1eb0fc;
     }
     .layer_selected {
       height: 45px;
@@ -1112,6 +1412,24 @@ export default {
   .mapContainer {
     width: 100%;
     height: 100%;
+    border: 0px solid transparent;
+    overflow: hidden;
+  }
+  .radiusCorner {
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+  }
+  .flatCorner {
+    clip-path: polygon(
+      20px 0,
+      calc(100% - 20px) 0,
+      100% 20px,
+      100% calc(100% - 20px),
+      calc(100% - 20px) 100%,
+      20px 100%,
+      0 calc(100% - 20px),
+      0 20px
+    );
   }
   .lineCursor {
     cursor: url("../../assets/images/m_line.png") 3 4, auto;
@@ -1162,9 +1480,26 @@ export default {
       opacity: 0.9;
     }
   }
+  .simpleSearchCtrl_Mini {
+    height: 26px;
+    left: 7px;
+    top: 7px;
+    .simpleInputText_Mini {
+      width: 175px;
+      height: 26px;
+      padding-left: 5px;
+      padding-right: 54px; // 调整搜索提示框宽度与路线图标对齐
+    }
+    .simpleInputSearch_Mini {
+      left: 187px;
+      height: 26px;
+      .simpleIcon_Mini {
+        margin-top: -2px;
+      }
+    }
+  }
   .searchCtrl {
     position: absolute;
-    //width: 400px;
     height: 32px;
     background-color: white;
     left: 15px;
@@ -1175,48 +1510,58 @@ export default {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 326px; //326
+      width: 294px;
       height: 32px;
       border-width: 0px;
       border-radius: 4px;
       padding-left: 5px;
-      padding-right: 66px; // 调整搜索提示框宽度与路线图标对齐
+      padding-right: 102px; // 调整搜索提示框宽度与路线图标对齐
       background-color: white;
       outline: none;
     }
     .inputSearch {
       position: absolute;
-      left: 336px;
+      left: 306px;
       top: 0px;
       height: 32px;
-      width: 32px;
+      width: 48px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
       margin: 0px;
-      //border-left: 1px solid gray;
-      background-image: url("../../../public/assets/images/addrSearch.png");
+      background-color: #144683;
+      .searchIcon {
+        margin-left: 8px;
+      }
+    }
+    .inputSearch:hover {
+      opacity: 0.95;
+    }
+    .inputSearch:active {
+      opacity: 0.9;
     }
     .inputFunc {
       position: absolute;
-      left: 368px;
+      left: 354px;
       top: 0px;
       height: 32px;
-      width: 32px;
+      width: 48px;
       border-width: 0px;
       border: 0px solid transparent;
       cursor: pointer;
       padding: 0px;
       margin: 0px;
+      background-color: #144683;
+      .closeIcon {
+        margin-left: 8px;
+      }
     }
-    .inputFunc_route {
-      background-color: gray;
-      background-image: url("../../../public/assets/images/route.png");
+    .inputFunc:hover {
+      opacity: 0.95;
     }
-    .inputFunc_close {
-      background-color: white;
-      background-image: url("../../../public/assets/images/search_close.png");
+    .inputFunc:active {
+      opacity: 0.9;
     }
   }
   .searchResult {
@@ -1236,8 +1581,16 @@ export default {
       color: black;
       background: white;
       cursor: pointer;
+      .keyAddr {
+        float: left;
+        margin-top: 5px;
+        height: 16px;
+        width: 16px;
+        background-image: url("../../assets/images/keyAddr.png");
+      }
       .itemName {
         font-size: 14px;
+        margin-left: 3px;
         margin-top: 3px;
         color: rgb(63, 107, 165);
       }
@@ -1312,17 +1665,6 @@ export default {
       }
     }
   }
-  .plan {
-    position: absolute;
-    width: 400px;
-    max-height: 500px;
-    left: 15px;
-    top: 60px;
-    border-radius: 4px;
-    background-color: rgba(21, 51, 77, 0.9);
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
   .measureTools {
     position: absolute;
     height: 34px;
@@ -1385,6 +1727,9 @@ export default {
   }
   .basicToolsBottom {
     bottom: 15px;
+  }
+  .basicToolsBottom2 {
+    bottom: 145px;
   }
   .lonLatTools {
     position: absolute;

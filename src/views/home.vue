@@ -4,44 +4,49 @@
       <el-header>
         <div class="box">
           <div
-            v-for="(item,index) in systems"
+            v-for="(item, index) in systems"
             :key="index"
             class="list"
             @click.stop="jumpTo(index)"
           >
-            <div class="item" :class="{title:index==3,active:isActive==index}">
-              <span>{{item.content}}</span>
+            <div
+              class="item"
+              :class="{ title: index == 3, active: isActive == index }"
+            >
+              <span>{{ item.content }}</span>
             </div>
             <template>
-              <div class="status" v-if="index==1">
+              <div class="status" v-if="index == 1">
                 <el-button
                   type="primary"
-                  :class="{activeStatus:curActive==1}"
+                  :class="{ activeStatus: curActive == 1 }"
                   @click.stop="jumpToVideoUrl(1)"
-                >实时视频</el-button>
+                  >实时视频</el-button
+                >
                 <el-button
                   type="primary"
-                  :class="{activeStatus:curActive==2}"
+                  :class="{ activeStatus: curActive == 2 }"
                   @click.stop="jumpToVideoUrl(2)"
-                >回放</el-button>
+                  >回放</el-button
+                >
               </div>
             </template>
           </div>
         </div>
         <div class="cur">
           <div class="realTime">
-            <span class="extra">{{timeObj.year}}</span> 年
-            <span class="extra">{{timeObj.month}}</span> 月
-            <span class="extra">{{timeObj.day}}</span> 日
-            <span class="extra">{{timeObj.weekday}}</span>
-            <span class="curCity extra">{{curCity}}</span>
+            <span class="extra">{{ timeObj.year }}</span> 年
+            <span class="extra">{{ timeObj.month }}</span> 月
+            <span class="extra">{{ timeObj.day }}</span> 日
+            <span class="extra">{{ timeObj.weekday }}</span>
+            <span class="curCity extra">{{ curCity }}</span>
             <template v-if="weatherReport">
-            <span>天气：</span>
-            <span class="extra">{{weatherReport.weather}}</span>
-            <span class="extra">
-              {{weatherReport.temperature}}
-              <i>。</i>
-            </span>
+              <span>天气：</span>
+              <span class="extra">{{ weatherReport.weather }}</span>
+              <span class="extra">
+                {{ weatherReport.temperature }}
+                <i>。</i>
+              </span>
             </template>
           </div>
         </div>
@@ -64,6 +69,7 @@ import { EventBus } from '@/utils/eventBus.js'
 import { loginApi } from '@/api/login'
 import globalApi from '../utils/globalApi'
 const droneOffline = 'gdu/appOutLine'
+const droneCmdReq = 'gdu/commandCtrlReq'
 export default {
   name: 'Home',
   data () {
@@ -74,7 +80,7 @@ export default {
       isActive: 1, // 默认激活视频侦查系统
       systems: [
         {
-          content: '智慧决策系统'
+          content: '指挥决策'
         },
         {
           content: '视频侦查'
@@ -87,7 +93,7 @@ export default {
         },
 
         {
-          content: '数字化单兵'
+          content: '战评系统'
         },
         {
           content: '数字化装备'
@@ -103,31 +109,43 @@ export default {
   created () {
     this.systems[3].content = globalApi.projectTitle
     // 设备上线
-    EventBus.$on('video/device/online', info => {
+    EventBus.$on('video/device/online', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', info => {
+    EventBus.$on('video/device/offline', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', info => {
+    EventBus.$on('video/realVideo/streamStart', (info) => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', info => {
+    EventBus.$on('video/realVideo/streamEnd', (info) => {
       EventBus.$emit('streamEnd', info)
     })
     // 火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
       this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       EventBus.$emit('getFireAlarm', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', info => {
+    EventBus.$on('droneInfos', (info) => {
       this.parseDroneRealtimeInfo(info)
+    })
+    // 人员识别提示
+    EventBus.$on('video/people/found', (info) => {
+      this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
+    })
+    // 人员显示
+    EventBus.$on('video/people/real', (info) => {
+      EventBus.$emit('peopleRealChange', info)
+    })
+    // AR显示
+    EventBus.$on('video/aRAiResult', (info) => {
+      EventBus.$emit('getArChange', info)
     })
   },
   mounted () {
@@ -180,12 +198,12 @@ export default {
       else this.$router.push({ path: '/playback' })
     },
     init () {
-      amapApi.getLocation({}).then(res => {
+      amapApi.getLocation({}).then((res) => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then(res => {
+            amapApi.getWeather({ city: cityCode }).then((res) => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -199,27 +217,37 @@ export default {
       this.realtimeInfoTopicArray = []
       const tmpThis = this
       const tmpAxios = this.$axios
-      this.$axios.get(loginApi.getUserDetail).then(res => {
-        if (res.data.code === 0) {
-          tmpAxios.get(loginApi.getDeptByDeptCode, { params: { deptCode: res.data.data.deptCode } }).then(res2 => {
-            if (res2.data.code === 0) {
-              res2.data.data.forEach((deptCode) => {
-                tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
+      this.$axios
+        .get(loginApi.getUserDetail)
+        .then((res) => {
+          if (res.data.code === 0) {
+            tmpAxios
+              .get(loginApi.getDeptByDeptCode, {
+                params: { deptCode: res.data.data.deptCode }
               })
-            }
-          }).catch(err2 => {
-            console.log('loginApi.getDeptByDeptCode Err : ' + err2)
-          })
-        }
-      }).catch(err => {
-        console.log('loginApi.getUserDetail Err : ' + err)
-      })
+              .then((res2) => {
+                if (res2.data.code === 0) {
+                  res2.data.data.forEach((deptCode) => {
+                    tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
+                  })
+                }
+              })
+              .catch((err2) => {
+                console.log('loginApi.getDeptByDeptCode Err : ' + err2)
+              })
+          }
+        })
+        .catch((err) => {
+          console.log('loginApi.getUserDetail Err : ' + err)
+        })
     },
     // 解析飞机实时信息(根据主题进行分发)
     parseDroneRealtimeInfo (msg) {
       const object = JSON.parse(msg.payloadString)
       if (droneOffline === msg.topic) {
         EventBus.$emit('droneOffline', object)
+      } else if (droneCmdReq === msg.topic) {
+        EventBus.$emit('droneCmdReq', object)
       } else {
         const tmpArray = this.realtimeInfoTopicArray
         for (let i = 0; i < tmpArray.length; i++) {
@@ -241,10 +269,14 @@ export default {
     margin-top: 36px;
     height: auto !important;
     padding: 0 20px 0 20px;
+    position: relative;
+  }
+  .el-main {
+    padding: 0;
   }
   .box {
     display: flex;
-     // 临时显示菜单
+    // 临时显示菜单
     // justify-content: space-between;
     justify-content: center;
     font-size: 24px;
@@ -259,8 +291,8 @@ export default {
         position: absolute;
         z-index: 999;
         width: 300px;
-         // 临时显示菜单
-        // left: -30px;
+        // 临时显示菜单
+        // left: -40px;
         // padding-top: 30px;
         left: -75px;
         padding-top: 33px;
@@ -294,8 +326,8 @@ export default {
       height: 66px;
       line-height: 66px;
       text-align: center;
-       // 临时显示菜单 添加
-      margin:0 43px;
+      // 临时显示菜单 添加
+      margin: 0 44px;
       font-size: 36px;
       font-weight: bold;
       margin-top: -13px;
@@ -311,12 +343,13 @@ export default {
     div.list:nth-child(n + 5) .active {
       background: url(../assets/images/selected-right.png) no-repeat !important;
     }
-    // 临时显示菜单
-    div.list{
+    div.list:nth-child(3),
+    div.list:nth-child(6) {
       display: none;
     }
-    div.list:nth-child(2),div.list:nth-child(4),div.list:nth-child(7){
-      display: block;
+    div.list:nth-child(1),
+    div.list:nth-child(5) {
+      margin-right: 40px;
     }
   }
   .cur {

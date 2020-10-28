@@ -1,31 +1,30 @@
 <template>
   <div>
-    <div class="container">
-      <button type="button" class="back" @click="back">
-        <img :src="backImg">
-        火情地图
-      </button>
-      <div class="rightBox">
-        <div class="selArea">
-          <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            class="datePickerStyle">
-          </el-date-picker>
-        </div>
-        <div class="mapArea">
-          <gMap
-            ref="gduMap"
-            handleType="devMap"
-            :bShowSimpleSearchTools="true"
-            :bShowBasic="true"
-            :bShowMeasure="false"
-            :bAutoLocate="false"
-          ></gMap>
-        </div>
+    <button type="button" class="back-sty" @click="back">
+      <img :src="backImg" />
+      火情地图
+    </button>
+    <div class="rightBox">
+      <div class="selArea">
+        <el-date-picker
+          v-model="dateRange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          class="datePickerStyle"
+        >
+        </el-date-picker>
+      </div>
+      <div class="mapArea">
+        <gMap
+          ref="gduMap"
+          handleType="devMap"
+          :bShowSimpleSearchTools="true"
+          :bShowBasic="true"
+          :bShowMeasure="false"
+          :bAutoLocate="false"
+        ></gMap>
       </div>
     </div>
     <span
@@ -33,7 +32,7 @@
       v-clipboard:copy="copyCoordinate"
       v-clipboard:success="onCopyOK"
       v-clipboard:error="onCopyErr"
-      style="display:none;"
+      style="display: none"
     />
     <el-dialog
       custom-class="el-dialog-custom"
@@ -84,51 +83,56 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .back {
-    width: 170px;
-    height: 40px;
-    border: solid 1px #39a4dd;
-    font-size: 18px;
-    color: #ffffff;
-    background-color: transparent;
-    outline: none;
-    display: block;
-    cursor: pointer;
-  }
-  .container {
-    width: 1242px;
-    height: 756px;
-    margin: 55px auto 0 auto;
-  }
-  .rightBox {
-    width: 796px;
-    height: 682px;
-    border: solid 2px #39a4dd;
-    border-radius: 10px;
-    margin: 30px auto 0 auto;
-    .selArea {
-      height: 60px;
-      line-height: 60px;
-      padding-left: 15px;
-      .datePickerStyle {
-        background-color: transparent;
-        border-color: #39a4dd;
-      }
-      /deep/.el-date-editor .el-range-input {
-        color: white;
-        background: transparent;
-      }
-      /deep/.el-range-separator {
-        color: white;
-      }
+.back-sty {
+  width: 120px;
+  height: 40px;
+  border: solid 1px #39a4dd;
+  font-size: 18px;
+  color: #ffffff;
+  background-color: transparent;
+  outline: none;
+  display: block;
+  cursor: pointer;
+  margin-top: 30px;
+  margin-left: 30px;
+}
+
+.rightBox {
+  width: 796px;
+  height: 682px;
+  border: solid 2px #39a4dd;
+  border-radius: 10px;
+  margin: 50px auto 0 auto;
+  .selArea {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 15px;
+    .datePickerStyle {
+      background-color: transparent;
+      border-color: #39a4dd;
     }
-    .mapArea {
-      margin: 0px 15px;
-      height: 610px;
+    /deep/.el-date-editor .el-range-input {
+      color: white;
+      background: transparent;
+      font-size: 12px;
+    }
+    /deep/.el-range-separator {
+      color: white;
+      font-size: 12px;
+      line-height: 27px;
+    }
+    /deep/ .el-input__prefix,
+    /deep/ .el-input__icon {
+      line-height: 27px;
     }
   }
-  .dialogImg {
-    width: 100%;
-    height: 100%;
+  .mapArea {
+    margin: 0px 15px;
+    height: 610px;
   }
+}
+.dialogImg {
+  width: 100%;
+  height: 100%;
+}
 </style>

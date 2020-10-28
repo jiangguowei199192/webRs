@@ -27,7 +27,7 @@ export function validateAlphabets (str) {
 // 允许输入的合法字符
 export function isAccountValid (rule, value, callback) {
   const reg = /^[ A-Za-z0-9_.,-@()]*$/
-  if (value === '' || value === undefined || value == null) {
+  if (value === '' || value === undefined || value === null) {
     callback()
   } else {
     if ((!reg.test(value)) && value !== '') {
@@ -182,4 +182,13 @@ export function isUrl (rule, value, callback) {
       callback()
     }
   }
+}
+
+// 判断字符串是否为空
+export function stringIsNullOrEmpty (str) {
+  if (typeof str === 'undefined' || str === null || str === '') {
+    return true
+  }
+
+  return false
 }

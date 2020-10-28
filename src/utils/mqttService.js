@@ -41,8 +41,18 @@ var mqttService;
       instance.client.subscribe('video/device/offline')
       // 订阅火情火点
       instance.client.subscribe('video/deviceIid/channleID/datalink/firewarning')
+      // 订阅实时拼图
+      instance.client.subscribe('realMapping/realMappingResult')
+      // 订阅人员识别
+      instance.client.subscribe('video/people/found')
+      // 订阅人员识别数据
+      instance.client.subscribe('video/people/real')
+      // 订阅AR数据
+      instance.client.subscribe('video/aRAiResult')
       // 飞机实时信息
       instance.client.subscribe('gdu/#')
+      // 雷达实时信息
+      instance.client.subscribe('radar/realTimeInfo')
     }
 
     // mqtt client失去连接后的callback
@@ -62,7 +72,9 @@ var mqttService;
       EventBus.$emit(message.topic, object)
       if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
-      } else { console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString) }
+      } else {
+        // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+      }
     }
 
     // mqtt client连接失败callback

@@ -14,7 +14,7 @@
       ></i>
     </div>
 
-    <el-dialog title="补充信息" :visible.sync="showExtraInfo" width="30%" class="dialogStyle">
+    <el-dialog title="补充信息" :visible.sync="showExtraInfo" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="extraInfoRef" :model="extraInfoForm" :rules="extraInfoRules">
         <el-form-item prop="orgName">
           <!-- <el-input v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input> -->
@@ -35,7 +35,7 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="头像" :visible.sync="showUploadIcon" width="30%" class="dialogStyle">
+    <el-dialog title="头像" :visible.sync="showUploadIcon" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <div style="text-align:center;" class="uploadDiv">
         <el-upload
           class="avatar-uploader"
@@ -58,7 +58,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="我的信息" :visible.sync="showMyInfo" width="30%" class="dialogStyle">
+    <el-dialog title="我的信息" :visible.sync="showMyInfo" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="myInfoFormRef" :model="myInfoForm" label-width="80px" :rules="myInfoRules">
         <!-- <el-form-item
           v-for="(item, index) in myInfoForm.domains" :key="index"
@@ -116,6 +116,8 @@ export default {
   },
   data () {
     return {
+      clickfalse: false,
+
       showExtraInfo: false,
       extraInfoForm: {
         orgName: this.userDetail.orgName,
@@ -179,7 +181,16 @@ export default {
   methods: {
     // 点击行
     clicked () {
-      if (this.data.id === 10) {
+      if (this.data.id === 0) {
+        // 我的信息
+        this.showMyInfo = true
+      } else if (this.data.id === 1) {
+        // 上传头像
+        this.showUploadIcon = true
+      } else if (this.data.id === 2) {
+        // 补充信息
+        this.showExtraInfo = true
+      } else if (this.data.id === 10) {
         // 用户管理
         this.$router.push({ path: '/systemSettings/userManagement' })
       } else if (this.data.id === 11) {
@@ -188,21 +199,15 @@ export default {
       } else if (this.data.id === 12) {
         // 组织管理
         this.$router.push({ path: '/systemSettings/organizationManagement' })
-      } else if (this.data.id === 2) {
-        // 补充信息
-        this.showExtraInfo = true
-      } else if (this.data.id === 1) {
-        // 上传头像
-        this.showUploadIcon = true
-      } else if (this.data.id === 0) {
-        // 我的信息
-        this.showMyInfo = true
-      } else if (this.data.id === 31) {
-        // 火情地图
-        this.$router.push({ path: '/systemSettings/fireMap' })
+      } else if (this.data.id === 20) {
+        // 视频接入
+        this.$router.push({ path: '/systemSettings/videoAccessManagement' })
       } else if (this.data.id === 30) {
         // 火情报警
         this.$router.push({ path: '/systemSettings/firePolice' })
+      } else if (this.data.id === 31) {
+        // 火情地图
+        this.$router.push({ path: '/systemSettings/fireMap' })
       }
     },
     // 补充信息-保存
@@ -271,10 +276,11 @@ export default {
     // 上传头像-保存
     async submitUpload () {
       const formData = new FormData()
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       formData.append('id', this.userDetail.id)
       formData.append('file', this.imageFile)
       if (this.imageUrl) {
-        this.$axios.post(loginApi.updateHeadImg, formData).then((res) => {
+        this.$axios.post(loginApi.updateHeadImg, formData, config).then((res) => {
           // console.log(res)
           if (res.data.code === 0) {
             this.showUploadIcon = false
@@ -459,26 +465,26 @@ export default {
     font-size: 12px;
   }
 }
-/deep/.select-popper {
-  background-color: #3688b1;
-  font-size: 12px;
-  color: white;
-  border: none;
-  .el-select-dropdown__item.selected {
-    background-color: #3688b1;
-  }
-  .el-select-dropdown__item {
-    font-size: 12px;
-    color: white;
-  }
-  .el-select-dropdown__item.hover {
-    background-color: #3688b1;
-  }
-  .popper__arrow {
-    border-bottom-color: #3688b1;
-  }
-  .popper__arrow::after {
-    border-bottom-color: #3688b1;
-  }
-}
+// /deep/.select-popper {
+//   background-color: #3688b1;
+//   font-size: 12px;
+//   color: white;
+//   border: none;
+//   .el-select-dropdown__item.selected {
+//     background-color: #3688b1;
+//   }
+//   .el-select-dropdown__item {
+//     font-size: 12px;
+//     color: white;
+//   }
+//   .el-select-dropdown__item.hover {
+//     background-color: #3688b1;
+//   }
+//   .popper__arrow {
+//     border-bottom-color: #3688b1;
+//   }
+//   .popper__arrow::after {
+//     border-bottom-color: #3688b1;
+//   }
+// }
 </style>

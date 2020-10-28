@@ -16,36 +16,36 @@
           <!-- 默认展示在线设备 -->
           <template v-if="isOnline">
             <div class="onlineList webFsScroll">
-            <div
-              class="list"
-              v-for="(item,index1) in onlineArray"
-              :key="index1"
-              :class="{selected:selectedIndex==index1,unman:item.deviceTypeCode==='WRJ'}"
-            >
-              <p>
-                <span class="area">{{item.label}}</span>
-                <i
-                  v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"
-                ></i>
-              </p>
-              <div class="btns">
-                <!-- <div > -->
-                <el-button
-                  v-for="(list,index2) in item.children"
-                  :key="index2"
-                  :class="{visible:!list.isSelected,visibleSelected:list.isSelected}"
-                  :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
-                  @click.stop="playDeviceVideo(item,list,index1,index2)"
-                  :title="list.label"
-                >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
-                <!-- <el-button
+              <div
+                class="list"
+                v-for="(item,index1) in onlineArray"
+                :key="index1"
+                :class="{selected:selectedIndex==index1,unman:item.deviceTypeCode==='WRJ'}"
+              >
+                <p>
+                  <span class="area">{{item.label}}</span>
+                  <i
+                    v-show="item.children&&item.children.some(child=>{return child.isSelected==true})"
+                  ></i>
+                </p>
+                <div class="btns">
+                  <!-- <div > -->
+                  <el-button
+                    v-for="(list,index2) in item.children"
+                    :key="index2"
+                    :class="{visible:!list.isSelected,visibleSelected:list.isSelected,curSelected:list.isCurSelected}"
+                    :style="{backgroundColor:list.isCurSelected?'#1EB0FC':list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
+                    @click.stop="playDeviceVideo(item,list,index1,index2)"
+                    :title="list.label"
+                  >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+                  <!-- <el-button
                     :class="{infrared:list.label==='可见光'}"
                     :style="{backgroundColor:item.infraredIsclick?'rgba(0,212,15,1)':''}"
                     @click.stop="changeStatus(2,index)"
-                >{{list.label}}</el-button>-->
-                <!-- </div> -->
+                  >{{list.label}}</el-button>-->
+                  <!-- </div> -->
+                </div>
               </div>
-            </div>
             </div>
           </template>
           <!-- 全部部分 -->
@@ -92,6 +92,7 @@
               <div
                 @click.stop="operateCurVideo(item,index)"
                 :class="{active:curVideoIndex===index}"
+                ref="video"
               >
                 <VideoWall
                   :videoInfo.sync="item"
@@ -99,6 +100,8 @@
                   v-if="item.streamUrl"
                   ref="videoCtrl"
                   @fullscreenvideo="fullscreenvideo"
+                  :playerWidth="playerWidth"
+                  :playerHeight="playerHeight"
                 ></VideoWall>
               </div>
             </div>
@@ -278,7 +281,7 @@
         </div>
       </div>
     </VideoMain>
-  <!-- 弃用 -->
+    <!-- 弃用 -->
     <!-- <div class="fullContainer" v-if="dialogVisible" id="d1" ref="fullContainer">
       <div
         :style="machineStatusStyle1(showVideoPageSize)"
@@ -298,7 +301,7 @@
           ></VideoWall>
         </div>
       </div>
-    </div> -->
+    </div>-->
 
     <el-dialog
       :visible.sync="cutDialogVisible"
@@ -333,6 +336,8 @@ import VideoWall from './components/videoWall'
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '../../utils/globalApi'
 import { throttle, debounce } from '../../utils/public.js'
+import { EventBus } from '@/utils/eventBus.js'
+// import MqttService from '@/utils/mqttService'
 
 export default {
   name: 'videoContainer',
@@ -343,6 +348,8 @@ export default {
   },
   data () {
     return {
+      playerWidth: '',
+      playerHeight: '',
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       curScreenInfo: {}, // 保存当前双击的视频信息
       firePic: require('@/assets/images/fire.png'),
@@ -378,7 +385,6 @@ export default {
         focusMinus: 0,
         lrisAdd: 0,
         lrisMinus: 0
-
       },
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
@@ -404,6 +410,7 @@ export default {
         this.onlineArray.forEach(item => {
           item.children.forEach(list => {
             list.isSelected = false
+            list.isCurSelected = false
           })
         })
       }
@@ -449,14 +456,14 @@ export default {
       })
       console.log(curData)
       if (!this.onlineArray[index1].children[index2].isSelected) {
-        // 关闭其它所有的选中状态
-        // this.onlineArray.forEach(item => {
-        //   if (item.children && item.children.length > 0) {
-        //     item.children.forEach(list => {
-        //       list.isSelected = false
-        //     })
-        //   }
-        // })
+        // 关闭其它所有的选中状态(防止其它设备通道有选中的)
+        this.onlineArray.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              list.isCurSelected = false
+            })
+          }
+        })
         this.selectedIndex = index1
         this.$set(
           this.onlineArray[index1].children[index2],
@@ -470,6 +477,13 @@ export default {
           'isSelected',
           false
         )
+        this.onlineArray.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              list.isCurSelected = false
+            })
+          }
+        })
         // const result = this.onlineArray[index1].children.some(child => {
         //   return child.isSelected === true
         // })
@@ -922,11 +936,13 @@ export default {
     }, 500),
     // 云台操作
     changeViewVideo (params) {
-      this.$axios.post('/video-service2/index/api/ptzConrol', params).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          console.log('操作成功了！')
-        }
-      })
+      this.$axios
+        .post('/video-service2/index/api/ptzConrol', params)
+        .then(res => {
+          if (res && res.data && res.data.code === 0) {
+            console.log('操作成功了！')
+          }
+        })
     },
     refreshMap (video) {
       if (video !== undefined && video !== null) {
@@ -971,7 +987,9 @@ export default {
             //   this.showVideoPageSize
             // )
             // 防止当前播放不在最后一页
-            this.currentPage = Math.ceil(this.totalVideosArray.length / this.showVideoPageSize)
+            this.currentPage = Math.ceil(
+              this.totalVideosArray.length / this.showVideoPageSize
+            )
             this.next(this.currentPage)
           }
         } else {
@@ -998,6 +1016,11 @@ export default {
                     this.$set(
                       this.onlineArray[index1].children[index2],
                       'isSelected',
+                      false
+                    )
+                    this.$set(
+                      this.onlineArray[index1].children[index2],
+                      'isCurSelected',
                       false
                     )
                   }
@@ -1077,6 +1100,9 @@ export default {
                 if (list.id === curVideo.id) {
                   this.selectedIndex = index
                   list.isSelected = true
+                  list.isCurSelected = true
+                } else {
+                  list.isCurSelected = false
                 }
               })
             }
@@ -1105,6 +1131,7 @@ export default {
           this.onlineArray.forEach(item => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
+                list.isCurSelected && (list.isCurSelected = false)
                 if (list.onlineStatus === 'online') {
                   list.isSelected = true
                   const curData = Object.assign({}, list, {
@@ -1126,6 +1153,7 @@ export default {
           this.onlineArray.forEach(item => {
             if (item.children && item.children.length > 0) {
               item.children.forEach(list => {
+                list.isCurSelected && (list.isCurSelected = false)
                 list.isSelected = false
               })
             }
@@ -1244,7 +1272,9 @@ export default {
             item.children.forEach(list => {
               if (list.id === this.curVideosArray[0].id) {
                 this.selectedIndex = index
-                list.isSelected = true
+                list.isCurSelected = true
+              } else {
+                list.isCurSelected = false
               }
             })
           }
@@ -1257,8 +1287,21 @@ export default {
       }
       // this.curSelectedVideo = this.curVideosArray[0]
     },
+    // 切换上一页或下一页时清除之前选中的状态
+    clearCurSelected () {
+      this.onlineArray.forEach((item, index) => {
+        if (item.children && item.children.length > 0) {
+          item.children.forEach(list => {
+            list.isCurSelected && (list.isCurSelected = false)
+          })
+        }
+      })
+    },
     // 上一页
     pre (cpage) {
+      if (this.isOnline) {
+        this.clearCurSelected()
+      }
       // 始终截取当前页需要的数据
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
@@ -1280,6 +1323,9 @@ export default {
     },
     // 下一页
     next (cpage) {
+      if (this.isOnline) {
+        this.clearCurSelected()
+      }
       // 清掉之前的选中状态
       this.curVideoIndex = 1000
       // const divs = document.querySelectorAll('.el-tree-node')
@@ -1496,15 +1542,25 @@ export default {
         const prevBtn = document.querySelector('.el-pagination > .btn-prev')
         const nextBtn = document.querySelector('.el-pagination > .btn-next')
         if (!prevBtn.getAttribute('disabled')) {
-          prevBtn.title = `当前页${this.currentPage} / ${(Math.ceil(this.totalVideosArray.length / this.showVideoPageSize))}`
+          prevBtn.title = `当前页${this.currentPage} / ${Math.ceil(
+            this.totalVideosArray.length / this.showVideoPageSize
+          )}`
         } else {
           prevBtn.removeAttribute('title')
         }
         if (!nextBtn.getAttribute('disabled')) {
-          nextBtn.title = `当前页${this.currentPage} / ${(Math.ceil(this.totalVideosArray.length / this.showVideoPageSize))}`
+          nextBtn.title = `当前页${this.currentPage} / ${Math.ceil(
+            this.totalVideosArray.length / this.showVideoPageSize
+          )}`
         } else {
           nextBtn.removeAttribute('title')
         }
+      })
+    },
+    getPlayerStyle () {
+      this.$nextTick(() => {
+        this.playerWidth = this.$refs.video[0].clientWidth
+        this.playerHeight = this.$refs.video[0].clientHeight
       })
     }
   },
@@ -1523,6 +1579,61 @@ export default {
     })
   },
   mounted () {
+    this.getPlayerStyle()
+    EventBus.$on('peopleRealChange', info => {
+      this.totalVideosArray.forEach((item, index) => {
+        if (
+          item.deviceCode === info.deviceCode &&
+          item.streamType === info.channelId
+        ) {
+          this.$set(
+            this.totalVideosArray[index],
+            'positionList',
+            info.positionList
+          )
+        }
+      })
+      this.curVideosArray.forEach((item, index) => {
+        if (
+          item.deviceCode === info.deviceCode &&
+          item.streamType === info.channelId
+        ) {
+          this.$set(
+            this.curVideosArray[index],
+            'positionList',
+            info.positionList
+          )
+        }
+      })
+    })
+    // AR数据
+    EventBus.$on('getArChange', info => {
+      console.log('ar数据', info)
+      this.totalVideosArray.forEach((item, index) => {
+        if (
+          item.deviceCode === info.deviceCode &&
+          item.streamType === info.channelId
+        ) {
+          this.$set(
+            this.totalVideosArray[index],
+            'arPositionList',
+            info.arPositionList
+          )
+        }
+      })
+      this.curVideosArray.forEach((item, index) => {
+        if (
+          item.deviceCode === info.deviceCode &&
+          item.streamType === info.channelId
+        ) {
+          this.$set(
+            this.curVideosArray[index],
+            'arPositionList',
+            info.arPositionList
+          )
+        }
+      })
+    })
     this.bSaveMultiDroneInfos = true
   }
 }
@@ -1530,6 +1641,7 @@ export default {
 <style lang="less" scoped>
 .videoContainer {
   box-sizing: border-box;
+  padding: 20px;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;
@@ -1544,7 +1656,7 @@ export default {
       line-height: 34px;
       width: 230px;
       color: #23cefd;
-      background: #062C5D;
+      background: #062c5d;
       // text-align: center;
       div {
         width: 104px;
@@ -1584,10 +1696,10 @@ export default {
         color: #1eb0fc;
       }
     }
-    div.onlineList{
-      max-height:800px;
+    div.onlineList {
+      max-height: 800px;
       overflow-y: auto;
-      margin-right:8px;
+      margin-right: 8px;
     }
     div.list {
       margin-top: 20px;
@@ -1627,7 +1739,7 @@ export default {
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
         }
-        button.visibleSelected {
+        button.visibleSelected,button.curSelected {
           background: url(../../assets/images/visible_selected.png) no-repeat
             4px center;
         }
@@ -1658,7 +1770,7 @@ export default {
     font-family: Source Han Sans CN;
     color: rgba(255, 255, 255, 1);
     line-height: 14px;
-    padding:21px 13px 0px 23px;
+    padding: 21px 13px 0px 23px;
     .baseInfo,
     .deviceInfo {
       .info {
@@ -1783,7 +1895,7 @@ export default {
             height: 37px;
             line-height: 35px;
             text-align: center;
-            margin-left:10px;
+            margin-left: 10px;
             background: rgba(46, 108, 147, 1);
             border: 1px solid rgba(28, 161, 220, 1);
             color: #84ddff;
@@ -1819,16 +1931,16 @@ export default {
               );
             }
             span:nth-child(1):hover:after {
-              display:none
+              display: none;
             }
             span:nth-child(3):hover:before {
-               display:none
+              display: none;
             }
           }
         }
         .slider {
           display: flex;
-          padding-left:10px;
+          padding-left: 10px;
 
           span {
             line-height: 38px;
@@ -1855,16 +1967,16 @@ export default {
           /deep/.el-slider__button {
             background-color: #84ddff;
           }
-          /deep/.el-slider__button-wrapper{
-            z-index:100
+          /deep/.el-slider__button-wrapper {
+            z-index: 100;
           }
         }
-        .sliderTip{
-          font-size:14px;
+        .sliderTip {
+          font-size: 14px;
           margin-top: 2px;
-          padding-left:42px;
-          color:#fff;
-          opacity: .5;
+          padding-left: 42px;
+          color: #fff;
+          opacity: 0.5;
         }
       }
       .mapBox {
@@ -1882,7 +1994,7 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-right: 10px;
-       margin-bottom: 20px;
+      margin-bottom: 20px;
       .title {
         width: 196px;
         height: 34px;
@@ -1919,14 +2031,14 @@ export default {
       flex-wrap: wrap;
       height: 710px;
       > div {
-        >div {
+        > div {
           box-sizing: border-box;
           // height: 223px;
 
           margin-right: 10px;
           margin-bottom: 10px;
-          width:calc(100% - 10px);
-          height:calc(100% - 10px);
+          width: calc(100% - 10px);
+          height: calc(100% - 10px);
           background: url(../../assets/images/video.png) no-repeat center center;
           background-color: #00497c;
           cursor: pointer;
@@ -1938,13 +2050,13 @@ export default {
     }
     .tools {
       position: relative;
-      width:calc(100% - 10px);
+      width: calc(100% - 10px);
       height: 60px;
       background: url(../../assets/images/tool-bar.png) round;
       background-size: 100% 100%;
       display: flex;
       justify-content: space-between;
-      margin-top:20px;
+      margin-top: 20px;
       .leftTool,
       .rightTool {
         position: relative;
@@ -2046,11 +2158,11 @@ export default {
   // }
 }
 .videolistFullscreen {
-  position:fixed;
+  position: fixed;
   top: 0;
   right: 0;
   width: 100%;
-  height:100% !important;
+  height: 100% !important;
   z-index: 1000;
   background: #fff;
   display: flex;

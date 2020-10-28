@@ -22,7 +22,7 @@ const routes = [
     name: 'home',
     component: () => import('../views/home'),
     children: [
-    // 实时视频
+      // 实时视频
       {
         path: '/videoSystem',
         name: 'videoSystem',
@@ -46,6 +46,18 @@ const routes = [
         name: 'playbackSystem',
         component: () => import('../views/videoSystem/playback')
       },
+      // 实时拼图
+      {
+        path: '/pintu',
+        name: 'pinTu',
+        component: () => import('../views/videoSystem/pinTu')
+      },
+      // 三维部署
+      {
+        path: '/deploy3D',
+        name: 'deploy3D',
+        component: () => import('../views/decisionSystem/deploy3D')
+      },
       {
         path: '/decisionSystem',
         name: 'decisionSystem',
@@ -58,9 +70,9 @@ const routes = [
         component: () => import('../views/decisionSystem/PlanSetting')
       },
       {
-        path: '/FightDeploy',
-        name: 'FightDeploy',
-        component: () => import('../views/decisionSystem/FightDeploy')
+        path: '/fightDeploy',
+        name: 'fightDeploy',
+        component: () => import('../views/decisionSystem/fightDeploy')
       },
       {
         path: '/evaluationSystem',
@@ -106,6 +118,11 @@ const routes = [
             path: '/systemSettings/firePolice',
             name: 'firePolice',
             component: () => import('../views/systemSettings/firePolice')
+          },
+          {
+            path: '/systemSettings/videoAccessManagement',
+            name: 'videoAccessManagement',
+            component: () => import('../views/systemSettings/videoAccessManagement')
           }
         ]
       }

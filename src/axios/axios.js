@@ -8,7 +8,10 @@ import {
 const service = axios.create({
   timeout: 10000, // 请求超时时间
   // crossDomain: true, // 设置cross跨域
-  withCredentials: true // 设置cross跨域 并设置访问权限 允许跨域携带cookie信息
+  withCredentials: true, // 设置cross跨域 并设置访问权限 允许跨域携带cookie信息
+  paramsSerializer: function (params) {
+    return qs.stringify(params, { arrayFormat: 'repeat' })
+  }
 })
 
 // 设置 post 默认 Content-Type
@@ -23,9 +26,21 @@ service.interceptors.request.use((config) => {
     token = sessionStorage.getItem('token')
     config.headers.Authorization = token
   }
-  if (config.url !== '/cloud-fms/sysuser/updateHeadImg' && config.url !== '/cloud-fms/sysuser/updateUser') {
-    // 判断请求方式是否为POST，进行转换格式
-    config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.params = { ...config.params }// 请求发送前进行处理
+  // if (
+  //   config.url !== '/cloud-fms/sysuser/updateUser' &&
+  //   config.url !== '/cloud-fms/sysuser/addUser' &&
+  //   config.url !== '/cloud-fms/sysuser/batchUpdateUserRole' &&
+  //   config.url !== '/cloud-fms/role/add' &&
+  //   config.url !== '/cloud-fms/sysuser/batchUpdateUserDeptCode' &&
+  //   config.url !== '/cloud-fms/dept/add' &&
+  //   config.url !== '/cloud-fms/dept/update') {
+  //   // 判断请求方式是否为POST，进行转换格式
+  //   config.method === 'post' ? config.data = qs.stringify({ ...config.data }) : config.paramsSerializer = function (params) {
+  //     return qs.stringify(params, { arrayFormat: 'repeat' })
+  //   }// 请求发送前进行处理
+  // }
+  if (config.method === 'post' && config.headers['Content-Type'] !== 'application/json;charset=UTF-8' && config.headers['Content-Type'] !== 'multipart/form-data') {
+    config.data = qs.stringify({ ...config.data })
   }
   return config
 },
@@ -53,7 +68,7 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response && (error.response.status === 403 || error.response.status === 401)) {
+    if (error.response && (error.response.status === 403 || error.response.status === 401 || error.response.data.code === 401)) {
       Notification({
         title: '错误',
         message: '权限过期，请先登录后再访问！',

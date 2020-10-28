@@ -20,6 +20,6 @@ export default {
 
 <style lang="scss" scoped>
 .individual {
-  height: 800px;
+  height: 899px;
 }
 </style>

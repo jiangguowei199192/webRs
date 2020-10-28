@@ -1,8 +1,472 @@
-.el-notification{
-  border: 1px solid rgb(103,194,58);
-  background:#142943;
+.el-notification {
+  border: 1px solid rgb(103, 194, 58);
+  background: #142943;
+  z-index: 10000000 !important;
 
-  .el-notification__title,.el-notification__content ,.el-icon-close{
-    color:#fff!important
+  .el-notification__title,
+  .el-notification__content,
+  .el-icon-close {
+    color: #fff !important;
+  }
+}
+
+.el-button {
+  width: 140px;
+}
+
+// 地图组件中-路线规划输入框前后缀样式
+.el-input-group__prepend {
+  padding: 0px 10px;
+}
+
+.el-input-group__append {
+  margin: 0px;
+  padding: 0px 10px;
+}
+
+//回放视频下载弹窗中，分页组件的页面数选择下拉框的样式
+.el-select-dropdown.pageSelect {
+  border: 1px solid rgba(54, 143, 187, 1);
+  background-color: #0f283c;
+
+  .el-select-dropdown__item {
+    color: rgba(54, 143, 187, 1);
+    height: 24px;
+    line-height: 24px;
+  }
+
+  .el-select-dropdown__item.selected {
+    color: #fff;
+  }
+
+  .el-select-dropdown__item.hover,
+  .el-select-dropdown__item:hover {
+    background-color: transparent;
+  }
+
+  .popper__arrow {
+    display: none !important;
+  }
+}
+
+//表格分页组件样式
+.tablePagination.el-pagination {
+  margin-top: 10px;
+
+  .el-pagination__sizes {
+    margin: -2px 10px 0 0;
+  }
+
+  .el-pagination__total {
+    height: 24px;
+    line-height: 24px;
+  }
+
+  span {
+    color: #fff;
+    font-size: 13px;
+  }
+
+  .el-pager .more::before {
+    line-height: 24px;
+  }
+
+  .el-pager li {
+    border: 1px solid rgba(60, 154, 206, 1);
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    text-align: center;
+    line-height: 24px;
+    color: rgba(60, 154, 206, 1);
+    font-size: 13px;
+    padding: 0px;
+    min-width: 24px;
+    margin-right: 10px;
+  }
+
+  .el-pager li.active {
+    background: rgba(60, 154, 206, 1);
+    color: #fff;
+  }
+
+  .btn-prev {
+    margin-right: 10px;
+  }
+
+  button {
+    padding: 0px !important;
+    background-color: transparent;
+    min-width: 24px;
+    height: 24px;
+
+    i {
+      border: 1px solid rgba(60, 154, 206, 1);
+      border-radius: 4px;
+      width: 22px;
+      height: 22px;
+      background: transparent;
+      text-align: center;
+      line-height: 22px;
+      color: rgba(60, 154, 206, 1);
+      font-size: 16px;
+      padding: 0px;
+    }
+  }
+
+  button:active {
+    i {
+      background: rgba(60, 154, 206, 1);
+      color: #fff;
+    }
+  }
+
+  button[disabled] {
+    i {
+      background: transparent;
+      color: rgba(60, 154, 206, 1);
+    }
+  }
+
+  .el-input__inner {
+    border-radius: 0px;
+    width: 100px;
+    height: 24px;
+    line-height: 24px;
+    border: 1px solid rgba(54, 143, 187, 1);
+    padding: 0px 30px 0px 10px;
+    background: transparent;
+    color: rgba(54, 143, 187, 1);
+  }
+
+  .el-input__icon {
+    color: rgba(54, 143, 187, 1);
+    line-height: 28px;
+  }
+}
+
+// 火点火情页面图片显示弹窗样式
+.el-dialog-custom {
+  width: 1080px;
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    width: 1080px;
+    height: 720px;
+    padding: 0px;
+  }
+  #iframe {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// 地图底图选择弹窗样式
+.el-popover-custom {
+  padding: 10px 12px 4px 12px;
+  background-color: #00000066;
+  border: none;
+
+  .popper__arrow {
+    display: none;
+  }
+}
+
+.el-popover-custom:after {
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  left: 100%;
+  top: 50%;
+  margin-top: -10px;
+  border-left-color: #00000066;
+  border-width: 10px;
+}
+
+// 设置-用户管理-更多-弹窗
+.el-popover-more {
+  background-color: #00000066;
+  border: none;
+}
+
+.el-popover-more[x-placement^="right"] .popper__arrow::after {
+  border-right-color: #00000066;
+}
+
+.el-popover-more[x-placement^="right"] .popper__arrow {
+  border-right-color: #00000066;
+}
+
+.el-popover-more[x-placement^="left"] .popper__arrow::after {
+  border-left-color: #00000066;
+}
+
+.el-popover-more[x-placement^="left"] .popper__arrow {
+  border-left-color: #00000066;
+}
+
+.home {
+  .el-input__inner {
+    height: 34px;
+    line-height: 34px;
+  }
+
+  .el-input__icon {
+    line-height: 34px;
+  }
+}
+
+//三维部署中任务popover
+.taskPopover.el-popover {
+  width: 194px !important;
+  height: 175px;
+  background: rgba(3, 56, 85, 1);
+  border: none;
+  padding: 9px 4px 9px 9px;
+  box-shadow: none;
+  border-radius: 0px;
+  box-sizing: border-box;
+  margin: 0px;
+
+  .popper__arrow {
+    display: none;
+  }
+
+  .taskList {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+
+    > span {
+      cursor: pointer;
+      box-sizing: border-box;
+      margin-right: 13px;
+      margin-bottom: 14px;
+      color: #fff;
+      font-size: 14px;
+      height: 20px;
+      border: 1px solid rgba(31, 155, 223, 1);
+      border-radius: 2px;
+      min-width: 60px;
+      text-align: center;
+      padding: 0px 7px;
+      line-height: 20px;
+    }
+  }
+}
+
+//三维部署中编辑模式popover
+.editPopover.el-popover {
+  width: 338px !important;
+  height: 126px;
+  left: 449px !important;
+  top: 796px !important;
+  background: url(../assets/images/3d/add-box.png) no-repeat;
+  border: none;
+  padding: 0px;
+  box-shadow: none;
+  border-radius: 0px;
+  box-sizing: border-box;
+  margin: 0px;
+
+  .popper__arrow {
+    display: none;
+  }
+
+  .txtList {
+    font-size: 14px;
+    color: #05b4e2;
+    margin-top: 10px;
+
+    span:nth-child(1) {
+      margin-left: 21px;
+    }
+
+    span:nth-child(2) {
+      margin-left: 30px;
+    }
+
+    span:nth-child(3) {
+      margin-left: 22px;
+    }
+
+    span:nth-child(4) {
+      margin-left: 32px;
+    }
+
+    span:nth-child(5) {
+      margin-left: 16px;
+    }
+
+    span:nth-child(6) {
+      margin-left: 18px;
+    }
+
+    span:nth-child(7) {
+      margin-left: 16px;
+    }
+
+    span:nth-child(8) {
+      margin-left: 20px;
+    }
+  }
+
+  .addList {
+    display: flex;
+    align-items: center;
+    margin-top: 36px;
+
+    span {
+      cursor: pointer;
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin-right: 21px;
+      margin-left: 21px;
+    }
+
+    span:nth-child(1) {
+      background: url(../assets/images/3d/xiaofangshuan-a.png) no-repeat;
+    }
+
+    span:nth-child(1):active {
+      background: url(../assets/images/3d/xiaofangshuan-click.png) no-repeat;
+    }
+
+    span:nth-child(2) {
+      background: url(../assets/images/3d/watertank-a.png) no-repeat;
+    }
+
+    span:nth-child(2):active {
+      background: url(../assets/images/3d/watertank-click.png) no-repeat;
+    }
+
+    span:nth-child(3) {
+      background: url(../assets/images/3d/pumpadapter-a.png) no-repeat;
+    }
+
+    span:nth-child(3):active {
+      background: url(../assets/images/3d/pumpadapter-click.png) no-repeat;
+    }
+
+    span:nth-child(4) {
+      background: url(../assets/images/3d/pumphouse-a.png) no-repeat;
+    }
+
+    span:nth-child(4):active {
+      background: url(../assets/images/3d/pumphouse-click.png) no-repeat;
+    }
+
+    span:nth-child(5) {
+      background: url(../assets/images/3d/exit-a.png) no-repeat;
+    }
+
+    span:nth-child(5):active {
+      background: url(../assets/images/3d/exit-click.png) no-repeat;
+    }
+
+    span:nth-child(6) {
+      background: url(../assets/images/3d/emergencyshelters-a.png) no-repeat;
+    }
+
+    span:nth-child(6):active {
+      background: url(../assets/images/3d/emergencyshelters-click.png) no-repeat;
+    }
+
+    span:nth-child(7) {
+      background: url(../assets/images/3d/area-a.png) no-repeat;
+    }
+
+    span:nth-child(7):active {
+      background: url(../assets/images/3d/area-click.png) no-repeat;
+    }
+
+    span:nth-child(8) {
+      background: url(../assets/images/3d/vr-a.png) no-repeat;
+    }
+
+    span:nth-child(8):active {
+      background: url(../assets/images/3d/vr-click.png) no-repeat;
+    }
+  }
+
+  .close {
+    position: absolute;
+    background: url(../assets/images/3d/close.png) no-repeat;
+    top: 16px;
+    right: 16px;
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+  }
+}
+
+.el-message-box {
+  display: inline-block;
+  width: 490px;
+  height: 190px;
+  background-color: transparent;
+  background: url(../assets/images/confirm-bg.png) no-repeat;
+  border-radius: 0px;
+  border: none;
+  box-shadow: none;
+  padding-bottom: 0px;
+  position: relative;
+
+  .el-button {
+    width: 87px;
+    height: 32px;
+    border: 1px solid #1eb0fc;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 0px;
+    line-height: 32px;
+    background-color: transparent;
+    color: #1fb0fc;
+  }
+
+  .el-button--primary {
+    background-color: #1eb0fc;
+    color: #fff;
+  }
+
+  .el-message-box__header {
+    padding: 0px;
+    display: inline-block;
+    width: 202px;
+    height: 45px;
+    background: url(../assets/images/info-title.png) no-repeat;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+
+  .el-message-box__title {
+    padding-left: 40px;
+    margin-bottom: 0;
+    font-size: 16px;
+    line-height: 45px;
+    color: #ffff;
+  }
+
+  .el-message-box__content {
+    text-align: center;
+    padding: 0px;
+    color: #1fb0fc;
+    font-size: 18px;
+    padding: 18px 0px;
+  }
+
+  .el-message-box__btns {
+    position: absolute;
+    bottom: 20px;
+    padding: 0px;
+    right: 30px;
   }
 }

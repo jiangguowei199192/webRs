@@ -1,4 +1,6 @@
 import { EventBus } from '@/utils/eventBus.js'
+import MqttService from '@/utils/mqttService'
+import globalApi from '@/utils/globalApi'
 const droneInfoMixin = {
   data () {
     return {
@@ -8,7 +10,21 @@ const droneInfoMixin = {
       bSaveMultiDroneInfos: false,
       dronesInfos: {},
       droneMarkerLayer: null,
-      droneTrailLayer: null
+      droneTrailLayer: null,
+      bDetectStatus: false,
+      bPuzzlingStatus: false,
+      bSetPointStatus: false,
+      bShowRouteStatus: true,
+      bShowPuzzlingBox: false,
+      tmpPuzzleLayers: [],
+      lastPuzzleLayer: null,
+      bShowPuzzleInMap: false,
+      di_height: '',
+      di_hSpeed: '',
+      di_vSpeed: '',
+      di_battery: '',
+      di_longitude: '',
+      di_latitude: ''
     }
   },
 
@@ -16,8 +32,14 @@ const droneInfoMixin = {
     EventBus.$on('droneOffline', obj => {
       this.updateDroneStatus(obj)
     })
+    EventBus.$on('droneCmdReq', obj => {
+      this.handleDroneCmdReq(obj)
+    })
     EventBus.$on('droneRealtimeInfo', obj => {
       this.updateDroneRealtimeInfo(obj)
+    })
+    EventBus.$on('realMapping/realMappingResult', info => {
+      this.showPuzzlingLayer(info)
     })
   },
 
@@ -27,6 +49,9 @@ const droneInfoMixin = {
     // 创建飞机标记图层
     this.droneMarkerLayer = this.$refs.gduMap.map2D.droneLayerManager.add(true)
     this.$refs.gduMap.map2D.setZoom(10)
+
+    this.$refs.gduMap.map2D.droneDestinationManager.confirmDestinationClickEvent.addEventListener(this.confirmDestinationCB)
+    this.$refs.gduMap.map2D.droneDestinationManager.cancelDestinationClickEvent.addEventListener(this.cancelDestinationCB)
   },
 
   methods: {
@@ -53,6 +78,7 @@ const droneInfoMixin = {
     // 飞机下线处理
     updateDroneStatus (obj) {
       if (obj.snCode === this.curDevCode) {
+        this.updataDIparams(null)
         if (this.droneInfo !== null && this.droneInfo.offline === false) {
           this.droneInfo.offline = true
           this.setOfflineStyle(this.curDevCode, true)
@@ -63,6 +89,35 @@ const droneInfoMixin = {
         }
       }
     },
+    updataDIparams (obj) {
+      if (obj !== null) {
+        this.di_height = obj.height
+        this.di_hSpeed = obj.hSpeed
+        this.di_vSpeed = obj.vSpeed
+        this.di_battery = obj.batteryLeft
+        this.di_longitude = parseFloat(obj.longitude).toFixed(7)
+        this.di_latitude = parseFloat(obj.latitude).toFixed(7)
+
+        if (obj.discern === '0') {
+          this.bDetectStatus = false
+        } else if (obj.discern === '1') {
+          this.bDetectStatus = true
+        }
+
+        if (obj.mappingByRealTime === '0') {
+          this.bPuzzlingStatus = false
+        } else if (obj.mappingByRealTime === '1') {
+          this.bPuzzlingStatus = true
+        }
+      } else {
+        this.di_height = ''
+        this.di_hSpeed = ''
+        this.di_vSpeed = ''
+        this.di_battery = ''
+        this.di_longitude = ''
+        this.di_latitude = ''
+      }
+    },
     // 飞机实时信息处理
     updateDroneRealtimeInfo (obj) {
       if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
@@ -70,6 +125,7 @@ const droneInfoMixin = {
       }
 
       if (obj.snCode === this.curDevCode) {
+        this.updataDIparams(obj)
         if (this.droneInfo === null && this.dronesInfos[obj.snCode] === undefined) {
           this.droneInfo = obj
           this.mapMoveToDronePosition(obj)
@@ -93,7 +149,11 @@ const droneInfoMixin = {
             this.setOfflineStyle(this.curDevCode, false)
           }
         }
-        this.updateDronePosition(this.droneInfo)
+        try {
+          this.updateDronePosition(this.droneInfo)
+        } catch (error) {
+          // console.log('updateDronePosition error:', error)
+        }
       }
 
       if (this.bSaveMultiDroneInfos) {
@@ -154,6 +214,7 @@ const droneInfoMixin = {
         (parseFloat(droneInfo.directionAngle) * Math.PI) / 180,
         this.droneMarkerLayer
       )
+      this.$refs.gduMap.map2D.droneDestinationManager.updateDronePosition(lonLat)
       this.$refs.gduMap.map2D.droneLayerManager.updateDroneTrail(
         droneInfo.snCode,
         lonLat,
@@ -164,6 +225,7 @@ const droneInfoMixin = {
     showDroneRecordsInMap (devCode, oldRecords) {
       const pointsNum = oldRecords.length
       const tmpMgr = this.$refs.gduMap.map2D.droneLayerManager
+      const tmpMgr2 = this.$refs.gduMap.map2D.droneDestinationManager
       for (let i = 0; i < pointsNum; i++) {
         tmpMgr.updateDroneMarker(
           devCode,
@@ -171,6 +233,7 @@ const droneInfoMixin = {
           oldRecords[i].angle,
           this.droneMarkerLayer
         )
+        tmpMgr2.updateDronePosition(oldRecords[i].lonLat)
         tmpMgr.updateDroneTrail(
           devCode,
           oldRecords[i].lonLat,
@@ -180,6 +243,112 @@ const droneInfoMixin = {
       if (pointsNum > 0) {
         this.$refs.gduMap.map2D.zoomToCenter(oldRecords[pointsNum - 1].lonLat[0],
           oldRecords[pointsNum - 1].lonLat[1])
+      }
+    },
+    // 设置无人机是否开启检测算法
+    switchDetectStatus () {
+      let tmpStatus = this.bDetectStatus
+      tmpStatus = !tmpStatus
+      const tmpParams = { discern_open: 0 }
+      if (tmpStatus) {
+        tmpParams.discern_open = 1
+      }
+      const tmpTopic = 'gdu/discernControl/-1/' + this.curDevCode
+      const tmpStr = JSON.stringify(tmpParams)
+      // console.log('switchDetectStatus ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr, 2)
+    },
+    // 设置无人机是否开启检测算法
+    switchPuzzlingStatus () {
+      // this.bPuzzlingStatus = !this.bPuzzlingStatus
+      // this.bShowPuzzlingBox = !this.bShowPuzzlingBox
+    },
+    // 设置是否可以选定目标点
+    switchSetPointStatus () {
+      this.bSetPointStatus = !this.bSetPointStatus
+      this.$refs.gduMap.map2D.droneDestinationManager.setDestEnable(this.bSetPointStatus)
+      if (this._changeVideoAndMap && this.bSetPointStatus) {
+        this._changeVideoAndMap(this.bSetPointStatus)
+      }
+    },
+    // 设置是否显示无人机飞行轨迹
+    switchShowRouteStatus () {
+      this.bShowRouteStatus = !this.bShowRouteStatus
+      this.droneTrailLayer.setVisible(this.bShowRouteStatus)
+    },
+    // 确认设置无人机目标点事件回调
+    confirmDestinationCB (lonLat) {
+      const tmpParams = { gps: [lonLat] }
+      const tmpTopic = 'gdu/commandControl/-1/' + this.curDevCode
+      const tmpStr = JSON.stringify(tmpParams)
+      // console.log('confirmDestinationCB ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr, 2)
+    },
+    // 取消无人机目标点事件回调
+    cancelDestinationCB () {
+      const tmpParams = { gps_cancel: 1 }
+      const tmpTopic = 'gdu/commandControl/-1/' + this.curDevCode
+      const tmpStr = JSON.stringify(tmpParams)
+      // console.log('cancelDestinationCB ... ' + tmpTopic + ':' + tmpStr)
+      new MqttService().client.send(tmpTopic, tmpStr, 2)
+    },
+    // 处理无人机指令响应回复
+    handleDroneCmdReq (reqInfo) {
+      if (this.$refs.gduMap === undefined || this.$refs.gduMap.map2D === undefined) {
+        return
+      }
+
+      if (reqInfo.snCode === this.curDevCode) {
+        if (reqInfo.cmdReq === 'gps_set') {
+          console.log('handleDroneCmdReq : reqInfo.cmdReq === "gps_set"')
+          this.$refs.gduMap.map2D.droneDestinationManager.destinationConfirmed()
+        } else if (reqInfo.cmdReq === 'gps_cancel') {
+          console.log('handleDroneCmdReq : reqInfo.cmdReq === "gps_cancel"')
+        } else if (reqInfo.cmdReq === 'discern_set') {
+          console.log('handleDroneCmdReq : reqInfo.cmdReq === "discern_set"')
+        }
+      }
+    },
+    // 显示无人机实时拼图
+    _addPuzzlingLayer (url) {
+      const tmpMap = this.$refs.gduMap
+      const tmpLayer = tmpMap.map2D._imageLayerManager.add(
+        url,
+        ly => {
+          // tmpMap.map2D.zoomToLayer(ly)
+          const layerExtent = ly.getExtent()
+          if (layerExtent.length === 4) {
+            tmpMap.map2D.zoomToCenter((layerExtent[0] + layerExtent[2]) / 2, (layerExtent[1] + layerExtent[3]) / 2)
+            tmpMap.map2D.setZoom(18) // 实时拼图切片18-20级
+            // tmpMap.lon = (layerExtent[0] + layerExtent[2]) / 2
+            // tmpMap.lat = (layerExtent[1] + layerExtent[3]) / 2
+          }
+        }
+      )
+      return tmpLayer
+    },
+    showPuzzlingLayer (info) {
+      const tmpMap = this.$refs.gduMap
+      if (tmpMap === undefined || tmpMap.map2D === undefined || this.bShowPuzzleInMap === false) {
+        return
+      }
+
+      if (info.deviceCode === this.curDevCode) {
+        console.log('showPuzzlingLayer:', info)
+        const imgUrl = `${globalApi.headImg}${info.imgUrl}/tilemapresource.xml`
+        if (info.isLastImage !== '1') {
+          this.tmpPuzzleLayers.push(this._addPuzzlingLayer(imgUrl))
+        } else { // isLastImage === '1' 表示最后一张拼图
+          if (this.lastPuzzleLayer !== null) {
+            tmpMap.map2D._map.removeLayer(this.lastPuzzleLayer)
+            this.lastPuzzleLayer = null
+          }
+          this.tmpPuzzleLayers.forEach(layer => {
+            tmpMap.map2D._map.removeLayer(layer)
+          })
+          this.tmpPuzzleLayers = []
+          this.lastPuzzleLayer = this._addPuzzlingLayer(imgUrl)
+        }
       }
     }
   }

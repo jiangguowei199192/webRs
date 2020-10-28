@@ -1,103 +1,137 @@
 <template>
   <div>
-    <div class="container">
-      <button type="button" class="back" @click="back">
-        <img :src="backImg" />
-        火情报警
-      </button>
-      <div class="rightBox">
-        <div class="dateBox">
-          <el-date-picker
-            v-model="date1"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['00:00:00', '23:59:59']"
-            class="datePickerStyle"
-            @change="dateSearch"
-            popper-class="chooseDateStyle"
-          ></el-date-picker>
-          <button type="button" class="more" @click="addressSearch()">
-            <img :src="searchImg" />
-          </button>
-          <el-input
-            v-model="pageData.alarmAddress"
-            class="searchInput"
-            @keyup.enter.native="addressSearch()"
+    <button type="button" class="back" @click="back">
+      <img :src="backImg" />
+      火情报警
+    </button>
+    <div class="rightBox">
+      <div class="dateBox">
+        <el-date-picker
+          v-model="date1"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
+          class="datePickerStyle"
+          @change="dateSearch"
+          popper-class="chooseDateStyle"
+        ></el-date-picker>
+        <button type="button" class="more" @click="addressSearch()">
+          <img :src="searchImg" />
+        </button>
+        <el-input
+          v-model="pageData.alarmAddress"
+          class="searchInput"
+          @keyup.enter.native="addressSearch()"
+        >
+          <template slot="prepend">地点：</template>
+        </el-input>
+      </div>
+      <div class="tableBox">
+        <el-table
+          class="webFsScroll"
+          v-if="firePoliceList"
+          @row-click="ClickTableRow"
+          :data="firePoliceList"
+          stripe
+          empty-text="暂无数据"
+          tooltip-effect="light"
+        >
+          <el-table-column label width="33" align="center" :resizable="false">
+            <template slot-scope="scope">
+              <el-radio v-model="radio" :label="scope.$index">{{
+                ""
+              }}</el-radio>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="报警时间"
+            prop="alarmTime"
+            width="180px"
+          ></el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            align="center"
+            label="报警地点"
+            prop="alarmAddress"
+            width="200px"
+            title="alarmAddress"
           >
-            <template slot="prepend">地点：</template>
-          </el-input>
-        </div>
-        <div class="tableBox">
-          <el-table
-            class="webFsScroll"
-            v-if="firePoliceList"
-            @row-click="ClickTableRow"
-            :data="firePoliceList"
-            stripe
-            empty-text="no data"
-            tooltip-effect="light"
+            <template slot-scope="scope">
+              <div
+                style="
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  overflow: hidden;
+                "
+              >
+                {{ scope.row.alarmAddress }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="类型"
+            prop="alarmTypeName"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="报警图片"
+            prop="alarmPicList"
+            width="100px"
           >
-            <el-table-column label width="33" align="center" :resizable="false">
-              <template slot-scope="scope">
-                <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="报警时间" prop="alarmTime" width="180px"></el-table-column>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              align="center"
-              label="报警地点"
-              prop="alarmAddress"
-              width="200px"
-              title="alarmAddress"
-            >
-              <template slot-scope="scope">
-                <div
-                  style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
-                >{{ scope.row.alarmAddress }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="类型" prop="alarmTypeName"></el-table-column>
-            <el-table-column align="center" label="报警图片" prop="alarmPicList" width="100px">
-              <template slot-scope="scope">
-                <el-image
-                  fit="fill"
-                  :src="scope.row.alarmPicList[0].picPath"
-                  style="width: 30px; height: 30px; margin-top: 7px;"
-                >
-                  <div slot="placeholder"></div>
-                  <!-- 图片未加载时的占位内容 -->
-                  <div slot="error"></div>
-                  <!-- 图片加载失败时的占位内容 -->
-                </el-image>
-                <el-image
-                  fit="fill"
-                  :src="scope.row.alarmPicList[1].picPath"
-                  style="width: 30px; height: 30px; margin-left: 10px;"
-                >
-                  <div slot="placeholder"></div>
-                  <!-- 图片未加载时的占位内容 -->
-                  <div slot="error"></div>
-                  <!-- 图片加载失败时的占位内容 -->
-                </el-image>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="报警设备" prop="deviceName" width="200px"></el-table-column>
-            <el-table-column align="center" label="状态" prop="alarmStatus"></el-table-column>
-            <el-table-column align="center" label="确认时间" prop="updateTime" width="180px"></el-table-column>
-          </el-table>
-          <el-pagination
-            class="tablePagination"
-            popper-class="pageSelect"
-            :total="pageData.total"
-            :page-size="pageData.pageSize"
-            :current-page.sync="pageData.currentPage"
-            layout="total, prev, pager, next, jumper"
-            @current-change="currentPageChange"
-          ></el-pagination>
-        </div>
+            <template slot-scope="scope">
+              <el-image
+                fit="fill"
+                :src="scope.row.alarmPicList[0].picPath"
+                style="width: 30px; height: 30px; margin-top: 7px"
+              >
+                <div slot="placeholder"></div>
+                <!-- 图片未加载时的占位内容 -->
+                <div slot="error"></div>
+                <!-- 图片加载失败时的占位内容 -->
+              </el-image>
+              <el-image
+                fit="fill"
+                :src="scope.row.alarmPicList[1].picPath"
+                style="width: 30px; height: 30px; margin-left: 10px"
+              >
+                <div slot="placeholder"></div>
+                <!-- 图片未加载时的占位内容 -->
+                <div slot="error"></div>
+                <!-- 图片加载失败时的占位内容 -->
+              </el-image>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="报警设备"
+            prop="deviceName"
+            width="200px"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="状态"
+            prop="alarmStatus"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="确认时间"
+            prop="updateTime"
+            width="180px"
+          ></el-table-column>
+        </el-table>
+        <el-pagination
+          class="tablePagination"
+          popper-class="pageSelect"
+          :total="pageData.total"
+          :page-size="pageData.pageSize"
+          :current-page.sync="pageData.currentPage"
+          layout="total, prev, pager, next, jumper"
+          @current-change="currentPageChange"
+        ></el-pagination>
       </div>
     </div>
 
@@ -128,7 +162,12 @@
               @click="tipShow(1)"
               fit="fill"
               :src="fireDetailInfo.image1"
-              style="width: 196px; height: 151px; margin-top: 3px; margin-left: 5px;"
+              style="
+                width: 196px;
+                height: 151px;
+                margin-top: 3px;
+                margin-left: 5px;
+              "
             >
               <div slot="placeholder"></div>
               <!-- 图片未加载时的占位内容 -->
@@ -139,7 +178,12 @@
               @click.stop="tipShow(2)"
               fit="fill"
               :src="fireDetailInfo.image2"
-              style="width: 196px; height: 151px; margin-top: 3px; margin-left: 5px;"
+              style="
+                width: 196px;
+                height: 151px;
+                margin-top: 3px;
+                margin-left: 5px;
+              "
             >
               <div slot="placeholder"></div>
               <!-- 图片未加载时的占位内容 -->
@@ -149,10 +193,17 @@
           </div>
         </div>
         <div>
-          <div class="textDiv6">报警地点：{{ fireDetailInfo.alarmAddress }}</div>
+          <div class="textDiv6">
+            报警地点：{{ fireDetailInfo.alarmAddress }}
+          </div>
           <div class="textDiv5">
             <div
-              style="width: 395px; height: 147px; background-color: gray; margin:6px 8px 5px 7px;"
+              style="
+                width: 395px;
+                height: 147px;
+                background-color: gray;
+                margin: 6px 8px 5px 7px;
+              "
             >
               <gMap
                 ref="gduMap"
@@ -167,9 +218,20 @@
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer" v-show="fireDetailInfo.showConfirm">
-        <el-button type="primary" @click="confirmFireDetail('confirmed')" class="trueBtn">确 认</el-button>
-        <el-button @click="confirmFireDetail('mistaken')" class="falseBtn">误 报</el-button>
+      <span
+        slot="footer"
+        class="dialog-footer"
+        v-show="fireDetailInfo.showConfirm"
+      >
+        <el-button
+          type="primary"
+          @click="confirmFireDetail('confirmed')"
+          class="trueBtn"
+          >确 认</el-button
+        >
+        <el-button @click="confirmFireDetail('mistaken')" class="falseBtn"
+          >误 报</el-button
+        >
       </span>
     </el-dialog>
 
@@ -182,7 +244,13 @@
     >
       <img :src="clickImgUrl" alt />
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="mini" @click="cutDialogVisible=false" style="width:87px;">关闭</el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          @click="cutDialogVisible = false"
+          style="width: 87px"
+          >关闭</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -271,13 +339,16 @@ export default {
                 element.alarmStatus = ''
               }
               // 图片URL添加headImg
-              if (element.alarmPicList) {
+              if (element.alarmPicList === null) {
+                // 没有图片
+                element.alarmPicList = [{ picPath: '' }, { picPath: '' }]
+              } else {
                 if (element.alarmPicList.length === 1) {
                   // 只有一张图片
                   // element.alarmPicList[0].picPath = globalApi.baseUrl + '/video-service2' + element.alarmPicList[0].picPath
                   element.alarmPicList[0].picPath = globalApi.headImg + element.alarmPicList[0].picPath
                   element.alarmPicList[1] = { picPath: '' }
-                } else {
+                } else if (element.alarmPicList.length >= 2) {
                   // 两张和两张以上
                   for (
                     let picIndex = 0;
@@ -289,10 +360,6 @@ export default {
                     pic.picPath = globalApi.headImg + pic.picPath
                   }
                 }
-              } else {
-                // 没有图片
-                element.alarmPicList[0] = { picPath: '' }
-                element.alarmPicList[1] = { picPath: '' }
               }
               // console.log(element.alarmPicList)
             }
@@ -457,7 +524,7 @@ export default {
 
 <style lang="scss" scoped>
 .back {
-  width: 170px;
+  width: 120px;
   height: 40px;
   border: solid 1px #39a4dd;
   font-size: 18px;
@@ -466,18 +533,16 @@ export default {
   outline: none;
   display: block;
   cursor: pointer;
+  margin-top: 30px;
+  margin-left: 30px;
 }
-.container {
-  width: 1242px;
-  height: 756px;
-  margin: 55px auto 0 auto;
-}
+
 .rightBox {
   width: 796px;
   height: 682px;
   border: solid 2px #39a4dd;
   border-radius: 10px;
-  margin: 30px auto 0 auto;
+  margin: 50px auto 0 auto;
 }
 .dateBox {
   width: 760px;
@@ -494,7 +559,11 @@ export default {
   /deep/.el-range-separator {
     color: white;
     font-size: 12px;
-    margin-top: -5px;
+    line-height: 27px;
+  }
+  /deep/ .el-input__prefix,
+  /deep/ .el-input__icon {
+    line-height: 27px;
   }
 }
 .tableBox {

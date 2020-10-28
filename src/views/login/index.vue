@@ -92,7 +92,7 @@
 import { loginApi } from '@/api/login'
 import { Notification } from 'element-ui'
 import globalApi from '../../utils/globalApi'
-
+import AMapHelper from '../../axios/amapapis'
 export default {
   name: 'login',
   data () {
@@ -147,6 +147,7 @@ export default {
       }
       this.$axios.post(loginApi.login, info).then((res) => {
         if (res.data.code === 0) {
+          this.checkMapNetwork()
           if (this.checked) {
             // 记住密码
             localStorage.setItem('username', this.loginInfo.username)
@@ -166,8 +167,17 @@ export default {
         }
       })
     },
-    settingClick () {
-      this.showServer = !this.showServer
+    async checkMapNetwork () {
+      await AMapHelper.getLocation({})
+        .then(res => {
+          if (res.data.status === '1') {
+            localStorage.bNetWorkConn = 'true'
+          }
+        })
+        .catch(err => {
+          localStorage.bNetWorkConn = 'false'
+          console.log('AMapHelper.getLocation Err : ' + err)
+        })
     }
   },
   created () {},
@@ -214,7 +224,7 @@ export default {
       text-align: center;
       line-height: 150px;
       color: white;
-      font-size: 38px;
+      font-size: 34px;
     }
     .username {
       width: 403px;

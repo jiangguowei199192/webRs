@@ -33,6 +33,39 @@
         "url": "http://mt2.google.com/maps/vt/lyrs=m@333000000&hl=en&s=Galil&x={x}&y={y}&z={z}",
         "code":6
       }
+    ],
+    "traficLayer":"http://tm.amap.com/trafficengine/mapabc/traffictile?v=1.0&x={x}&y={y}&z={z}&t={T}",
+    "offlineLayers": [
+      {
+        "description": "谷歌中国混合地图（默认）",
+        "url": "http://172.16.63.155:8989/hybrid/{z}/{x}/{y}.png",
+        "code":1
+      },
+      {
+        "description": "谷歌中国卫星地图",
+        "url": "http://172.16.63.155:8989/satellite/{z}/{x}/{y}.png",
+        "code":2
+      },
+      {
+        "description": "谷歌中国普通地图",
+        "url": "http://172.16.63.155:8989/normal/{z}/{x}/{y}.png",
+        "code":3
+      },
+      {
+        "description": "谷歌混合地图",
+        "url": "http://172.16.63.155:8989/hybrid-en/{z}/{x}/{y}.png",
+        "code":4
+      },
+      {
+        "description": "谷歌卫星地图",
+        "url": "http://172.16.63.155:8989/satellite-en/{z}/{x}/{y}.png",
+        "code":5
+      },
+      {
+        "description": "谷歌普通地图",
+        "url": "http://172.16.63.155:8989/normal-en/{z}/{x}/{y}.png",
+        "code":6
+      }
     ]
   }
 }

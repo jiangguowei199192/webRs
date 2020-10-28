@@ -43,29 +43,6 @@
   border-top-color: #ffcc33;
 }
 
-/* ---------------------------------------- */
-
-/* 显示经纬度样式 */
-
-.custom-mouse-position {
-  float: right;
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  width: 200px;
-  height: 20px;
-  z-index: 2000;
-}
-
-.custom-mouse-position {
-  float: right;
-  color: red;
-  font-size: 16px;
-  font-family: "微软雅黑";
-}
-
-/* ---------------------------------------- */
-
 /* ol 默认样式 */
 
 .ol-box {

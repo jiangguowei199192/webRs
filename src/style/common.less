@@ -3,23 +3,8 @@
   padding: 0;
 }
 
-.el-button {
-  width: 140px;
-}
-
 ul {
   list-style: none;
-}
-
-.home {
-  .el-input__inner {
-    height: 34px;
-    line-height: 34px;
-  }
-
-  .el-input__icon {
-    line-height: 34px;
-  }
 }
 
 .disable-user-select {
@@ -46,9 +31,21 @@ ul {
   float: right;
 }
 
+.disable-user-select {
+  //以下四行取消双击选中文字效果
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 /* --- 改变滚动条样式 --- */
 .webFsScroll::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
+}
+
+.browserScroll::-webkit-scrollbar {
+  display: none;
 }
 
 .browserScroll::-webkit-scrollbar {

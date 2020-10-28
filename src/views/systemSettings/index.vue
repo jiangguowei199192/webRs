@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top:-5px;">
+  <div style="margin-top:-5px;padding:20px;">
     <div class="leftBox">
       <div style="height: 800px;">
         <SettingLeftItem
@@ -25,17 +25,18 @@
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
-          <!-- <SettingRightTable
+          <SettingRightTable
             id="idRightItemUserPermission"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
-          ></SettingRightTable>-->
-          <!-- <SettingRightTable
+          ></SettingRightTable>
+          <SettingRightTable
             id="idRightItemVideoServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemVideoServe"
-          ></SettingRightTable>-->
+            v-bind:userDetail="userDetail"
+          ></SettingRightTable>
           <SettingRightTable
             id="idRightItemSmartFunction"
             style="margin-top: 44px;"
@@ -47,8 +48,9 @@
             id="idRightItemMapServe"
             style="margin-top: 44px;"
             v-bind:itemData="rightItemMapServe"
-          ></SettingRightTable>-->
-          <!-- <div style="height: 500px;"></div> -->
+            v-bind:userDetail="userDetail"
+          ></SettingRightTable> -->
+          <div style="height: 100px;"></div>
         </div>
         <router-view></router-view>
       </div>
@@ -61,6 +63,7 @@ import SettingLeftItem from './components/SettingLeftItem.vue'
 import SettingRightTable from './components/SettingRightTable.vue'
 import { loginApi } from '@/api/login'
 import globalApi from '../../utils/globalApi'
+import { settingApi } from '@/api/setting'
 
 export default {
   name: 'settings',
@@ -85,20 +88,20 @@ export default {
           headerTitle: '高级',
           info: [
             // 第一版不开放
-            // {
-            //   id: 1,
-            //   title: '用户权限',
-            //   normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
-            //   selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
-            //   selected: false
-            // },
-            // {
-            //   id: 2,
-            //   title: '视频服务',
-            //   normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
-            //   selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
-            //   selected: false
-            // },
+            {
+              id: 1,
+              title: '用户权限',
+              normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
+              selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
+              selected: false
+            },
+            {
+              id: 2,
+              title: '视频服务',
+              normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
+              selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
+              selected: false
+            },
             {
               id: 3,
               title: '智能功能管理',
@@ -307,10 +310,23 @@ export default {
       //   });
       sessionStorage.clear()
       this.$router.push({ path: '/login' })
+    },
+
+    async getDeviceCount () {
+      this.$axios.get(settingApi.getUsedDeviceCount).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.rightItemVideoServe.items.forEach(item => {
+            if (item.id === 20) {
+              item.text = '已接入' + res.data.data + '台设备'
+            }
+          })
+        }
+      })
     }
   },
   created () {
     this.getUserDetail()
+    this.getDeviceCount()
   },
   watch: {
     $route (to, from) {
@@ -345,8 +361,7 @@ export default {
   background-size: 100% 100%;
   .rightBoxBase {
     height: 879px;
-    // margin: 10px 10px 10px 10px;
-    margin: 0 10px 10px 10px;
+    border: solid 10px transparent;
     overflow: auto;
   }
 }
