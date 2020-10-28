@@ -505,9 +505,7 @@ export default {
         if (this.newUserTitle === '修改用户') {
           var param2 = {
             id: this.userList[this.radio].id,
-            deptCode: this.newUserForm.organizations[
-              this.newUserForm.organizations.length - 1
-            ],
+            deptCode: this.newUserForm.organizations ? this.newUserForm.organizations[this.newUserForm.organizations.length - 1] : '',
             mobile: this.newUserForm.phone,
             roleCode: this.newUserForm.job,
             status: this.newUserForm.active ? 1 : 0,

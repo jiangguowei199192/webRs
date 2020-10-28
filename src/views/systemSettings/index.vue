@@ -17,40 +17,34 @@
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll" v-if="userDetail">
         <div v-if="isShow">
+          <div id="idRightItemUserSetting" style="height: 44px;"></div>
           <SettingRightTable
-            id="idRightItemUserSetting"
-            style="margin-top: 44px;"
             v-bind:itemData="rightItemUserSetting"
             v-bind:userDetail="userDetail"
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
-          <!-- 第一版不开放 -->
+          <div id="idRightItemUserPermission" style="height: 44px;"></div>
           <SettingRightTable
-            id="idRightItemUserPermission"
-            style="margin-top: 44px;"
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
+          <div id="idRightItemVideoServe" style="height: 44px;"></div>
           <SettingRightTable
-            id="idRightItemVideoServe"
-            style="margin-top: 44px;"
             v-bind:itemData="rightItemVideoServe"
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
+          <div id="idRightItemSmartFunction" style="height: 44px;"></div>
           <SettingRightTable
-            id="idRightItemSmartFunction"
-            style="margin-top: 44px;"
             v-bind:itemData="rightItemSmartFunction"
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
           <!-- 第一版不开放 -->
-          <!-- <SettingRightTable
-            id="idRightItemMapServe"
-            style="margin-top: 44px;"
+          <!-- <div id="idRightItemMapServe" style="height: 44px;"></div>
+          <SettingRightTable
             v-bind:itemData="rightItemMapServe"
             v-bind:userDetail="userDetail"
           ></SettingRightTable> -->
-          <div style="height: 100px;"></div>
+          <div style="height: 800px;"></div>
         </div>
         <router-view></router-view>
       </div>
@@ -87,7 +81,6 @@ export default {
         {
           headerTitle: '高级',
           info: [
-            // 第一版不开放
             {
               id: 1,
               title: '用户权限',
@@ -280,18 +273,18 @@ export default {
           }
         }
       }
-      // 第一版不开放
-      // if (id === 0) {
-      //   document.getElementById('idRightItemUserSetting').scrollIntoView()
-      // } else if (id === 1) {
-      //   document.getElementById('idRightItemUserPermission').scrollIntoView()
-      // } else if (id === 2) {
-      //   document.getElementById('idRightItemVideoServe').scrollIntoView()
-      // } else if (id === 3) {
-      //   document.getElementById('idRightItemSmartFunction').scrollIntoView()
-      // } else if (id === 4) {
-      //   document.getElementById('idRightItemMapServe').scrollIntoView()
-      // }
+
+      if (id === 0) {
+        document.getElementById('idRightItemUserSetting').scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } else if (id === 1) {
+        document.getElementById('idRightItemUserPermission').scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } else if (id === 2) {
+        document.getElementById('idRightItemVideoServe').scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } else if (id === 3) {
+        document.getElementById('idRightItemSmartFunction').scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } else if (id === 4) {
+        document.getElementById('idRightItemMapServe').scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     },
     async logoutClick () {
       // this.$axios
