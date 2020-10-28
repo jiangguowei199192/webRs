@@ -127,7 +127,8 @@ export default {
       selectClass: '',
       // 实时二维底图
       realImgUrl: '',
-      enterpriseId: ''
+      enterpriseId: '',
+      configPath: ''
     }
   },
 
@@ -141,9 +142,10 @@ export default {
     },
 
     // Tab入口弹窗操作
-    show (info, id) {
+    show (info, id, path) {
       this.info = info
       this.enterpriseId = id
+      this.configPath = path
       this.dialogVisible = true
     },
 
@@ -192,7 +194,8 @@ export default {
           path: '/fightDeploy',
           query: {
             enterpriseId: this.enterpriseId,
-            selectBuildImg: this.info[1].children[this.selectClass]
+            selectBuildImg: this.info[1].children[this.selectClass],
+            configPath: this.configPath
           }
         })
         setTimeout(() => {

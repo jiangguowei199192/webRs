@@ -180,7 +180,7 @@ export default {
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
           .then(res => {
-            // console.log(res)
+            console.log(res)
             if (res.data.code === 0) {
               var resData = res.data.data
               this.showInfo.name = resData.enterpriseName
@@ -191,6 +191,7 @@ export default {
               this.showInfo.lat = resData.enterpriseLatitude
               this.showInfo.lon = resData.enterpriseLongitude
               this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
+              this.showInfo.planEnterpriseInfo2D = resData.planEnterpriseInfo2D
               var baseInfosTemp = []
               resData.planEnterpriseBaseInfoPic.forEach(item => {
                 var temp = {
@@ -274,7 +275,11 @@ export default {
     },
     // 点击作战部署图
     entryTabShow () {
-      this.$refs.entryTab.show(this.deployInfos, this.info.keyId)
+      this.$refs.entryTab.show(
+        this.deployInfos,
+        this.info.keyId,
+        this.showInfo.planEnterpriseInfo2D.configPath
+      )
     },
     // 获取作战部署缩略图
     getDeployImage () {
