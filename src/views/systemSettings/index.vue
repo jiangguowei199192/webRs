@@ -17,27 +17,34 @@
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll" v-if="userDetail">
         <div v-if="isShow">
+
           <div id="idRightItemUserSetting" style="height: 44px;"></div>
           <SettingRightTable
             v-bind:itemData="rightItemUserSetting"
             v-bind:userDetail="userDetail"
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
-          <div id="idRightItemUserPermission" style="height: 44px;"></div>
+
+          <div v-show="showPermissionItem" id="idRightItemUserPermission" style="height: 44px;"></div>
           <SettingRightTable
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
+            v-show="showPermissionItem"
           ></SettingRightTable>
-          <div id="idRightItemVideoServe" style="height: 44px;"></div>
+
+          <div v-show="showVideoItem" id="idRightItemVideoServe" style="height: 44px;"></div>
           <SettingRightTable
             v-bind:itemData="rightItemVideoServe"
             v-bind:userDetail="userDetail"
+            v-show="showVideoItem"
           ></SettingRightTable>
+
           <div id="idRightItemSmartFunction" style="height: 44px;"></div>
           <SettingRightTable
             v-bind:itemData="rightItemSmartFunction"
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
+
           <!-- 第一版不开放 -->
           <!-- <div id="idRightItemMapServe" style="height: 44px;"></div>
           <SettingRightTable
@@ -235,14 +242,16 @@ export default {
         ]
       },
 
-      logoutIcon: require('../../assets/images/Login/logout-Icon.png')
+      logoutIcon: require('../../assets/images/Login/logout-Icon.png'),
+
+      showPermissionItem: true,
+      showVideoItem: true
     }
   },
   methods: {
     // 获取用户详情
     async getUserDetail () {
       this.$axios.post(loginApi.getUserDetail).then((res) => {
-        // console.log(res)
         if (res.data.code === 0) {
           this.userDetail = res.data.data
           if (this.userDetail.username) {
@@ -256,6 +265,22 @@ export default {
           this.rightItemUserSetting.items[2].text =
             this.userDetail.orgName + '、' + this.userDetail.jobDesc
           localStorage.setItem('userDetail', JSON.stringify(res.data.data))
+
+          // 根据用户角色显示不同功能
+          if (this.userDetail.roleCode === 2001) {
+            // 系统管理员
+          } else if (this.userDetail.roleCode === 2002) {
+            // 组织架构管理员
+            this.showVideoItem = false
+          } else if (this.userDetail.roleCode === 2003) {
+            // 组织成员
+            this.showPermissionItem = false
+            this.showVideoItem = false
+          } else {
+            // 其他自定义的角色
+            this.showPermissionItem = false
+            this.showVideoItem = false
+          }
         }
       })
     },
