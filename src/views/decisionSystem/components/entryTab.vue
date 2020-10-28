@@ -105,7 +105,7 @@
 
 <script>
 // import kscreenshot from 'kscreenshot'
-import html2canvas from 'html2canvas'
+// import html2canvas from 'html2canvas'
 import { Notification } from 'element-ui'
 
 export default {
@@ -126,7 +126,8 @@ export default {
       // 当前选中建筑平面图的class
       selectClass: '',
       // 实时二维底图
-      realImgUrl: ''
+      realImgUrl: '',
+      enterpriseId: ''
     }
   },
 
@@ -140,8 +141,9 @@ export default {
     },
 
     // Tab入口弹窗操作
-    show (info) {
+    show (info, id) {
       this.info = info
+      this.enterpriseId = id
       this.dialogVisible = true
     },
 
@@ -178,10 +180,10 @@ export default {
 
     // 跳转到FightDeploy页
     goToFightDeploy () {
-      if (this.selectClass === '') {
+      if (this.currentTab === 1 && this.selectClass === '') {
         Notification({
           title: '提示',
-          message: '请选择一张建筑平面图!',
+          message: '请选择一张图片!',
           type: 'warning',
           duration: 5 * 1000
         })
@@ -189,7 +191,7 @@ export default {
         this.$router.push({
           path: '/fightDeploy',
           query: {
-            // key: this.selectClass,
+            enterpriseId: this.enterpriseId,
             selectBuildImg: this.info[1].children[this.selectClass]
           }
         })
@@ -197,7 +199,6 @@ export default {
           this.dialogVisible = false
         }, 300)
       }
-
       localStorage.setItem(
         'selectBuildImg',
         JSON.stringify(this.info[1].children[this.selectClass])
@@ -212,20 +213,20 @@ export default {
     // 返回到Plan页
     backToPlan () {
       this.dialogVisible = false
-    },
+    }
 
     // 截图
-    toImage () {
-      html2canvas(this.$refs.tab_wrap, {
-        backgroundColor: 'orange',
-        useCORS: true,
-        foreignObjectRendering: true,
-        allowTaint: false
-      }).then(canvas => {
-        const url = canvas.toDataURL('image/png')
-        this.imgUrl = url
-      })
-    }
+    // toImage () {
+    //   html2canvas(this.$refs.tab_wrap, {
+    //     backgroundColor: 'orange',
+    //     useCORS: true,
+    //     foreignObjectRendering: true,
+    //     allowTaint: false
+    //   }).then(canvas => {
+    //     const url = canvas.toDataURL('image/png')
+    //     this.imgUrl = url
+    //   })
+    // }
   }
 }
 </script>

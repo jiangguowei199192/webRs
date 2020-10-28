@@ -164,13 +164,12 @@ export default {
     BaseInfo,
     EntryTab
   },
-  mounted () {
-    this.getDeployImage()
-  },
+
   methods: {
     show (info) {
       this.info = info
       this.getData()
+      this.getDeployImage()
     },
     async getData () {
       if (this.info.keyId) {
@@ -275,14 +274,14 @@ export default {
     },
     // 点击作战部署图
     entryTabShow () {
-      this.$refs.entryTab.show(this.deployInfos)
+      this.$refs.entryTab.show(this.deployInfos, this.info.keyId)
     },
     // 获取作战部署缩略图
     getDeployImage () {
       const buildParams = JSON.parse(localStorage.getItem('selectBuildImg'))
-      if (!buildParams) return
-      // this.$notify.warning({ title: '提示', message: '请上传缩略图' })
-      this.deployImgUrl = buildParams.image
+      if (buildParams && buildParams !== undefined) {
+        this.deployImgUrl = buildParams.image
+      }
     }
   },
 
