@@ -180,7 +180,7 @@ export default {
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
           .then(res => {
-            console.log(res)
+            // console.log(res)
             if (res.data.code === 0) {
               var resData = res.data.data
               this.showInfo.name = resData.enterpriseName
