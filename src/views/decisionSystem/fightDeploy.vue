@@ -145,6 +145,7 @@ export default {
       // 建筑平面图底图
       buildImgUrl: '',
       enterpriseId: '',
+      loadJsonPath: '',
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -174,6 +175,9 @@ export default {
     this.getModelData()
     // 获取底图
     this.getBaseImg()
+    // 获取保存的数据
+    this.getSavedData()
+
     // 节点初始化
     this.jsPlumb = jsPlumb.getInstance()
     this.$nextTick(() => {
@@ -193,22 +197,6 @@ export default {
       this.activeType = false
       EventBus.$emit('type', this.activeType)
       // console.log("点击区域以外: " + this.activeType);
-    }
-
-    // 加载页面读取nodeData并还原
-    var nodeData = JSON.parse(localStorage.getItem('nodeData'))
-    if (nodeData !== null) {
-      // console.log(nodeData)
-      nodeData.forEach(item => {
-        this.addNode(item)
-      })
-    } else {
-      Notification({
-        title: '提示',
-        message: '当前未保存任何数据!',
-        type: 'warning',
-        duration: 5 * 1000
-      })
     }
   },
 
@@ -354,7 +342,7 @@ export default {
       }
     },
 
-    // 保存数据
+    // 保存json数据
     saveData () {
       alert(JSON.stringify(this.data.nodeList))
 
@@ -363,26 +351,53 @@ export default {
       })
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
-      console.log('id:', this.enterpriseId)
+      // console.log('enterpriseId:', this.enterpriseId)
       formData.append('enterpriseId', this.enterpriseId)
       formData.append('configFile', blob, '2dConfigData.json')
       this.$axios
         .post(api.upload2dConfig, formData, config)
         .then(res => {
           console.log(res)
-          // if (res.data.code === 0) {
-          //   console.log("上传成功");
-          // }
-          // Notification({
-          //   title: "提示",
-          //   message: "保存数据失败",
-          //   type: "warning",
-          //   duration: 5 * 1000
-          // });
+          if (res.data.code === 0) {
+            this.configPath = globalApi.headImg + res.data.data.configPath
+          }
+          Notification({
+            title: '提示',
+            message: '保存数据失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
         })
         .catch(err => {
           console.log('保存接口错误: ' + err)
         })
+    },
+
+    // 加载json数据
+    getSavedData () {
+      if (this.loadJsonPath) {
+        axios
+          .get(globalApi.headImg + this.loadJsonPath)
+          .then(res => {
+            const nodeData = res.data
+            if (nodeData || nodeData.length !== 0) {
+              // console.log(nodeData)
+              nodeData.forEach(item => {
+                this.addNode(item)
+              })
+            } else {
+              Notification({
+                title: '提示',
+                message: '当前未保存任何数据!',
+                type: 'warning',
+                duration: 5 * 1000
+              })
+            }
+          })
+          .catch(err => {
+            console.log('加载json数据失败: ' + err)
+          })
+      }
     },
 
     // 获取模型列表
@@ -424,10 +439,11 @@ export default {
     getBaseImg () {
       const routerId = this.$route.query.enterpriseId
       const routerParams = this.$route.query.selectBuildImg
+      const routerPath = this.$route.query.configPath
       if (routerParams && routerParams !== undefined) {
-        // console.log(this.buildImgUrl)
         this.enterpriseId = routerId
         this.buildImgUrl = routerParams.image
+        this.loadJsonPath = routerPath
       }
     }
   }
