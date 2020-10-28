@@ -375,7 +375,7 @@ export default {
 
     // 加载json数据
     getSavedData () {
-      if (this.loadJsonPath) {
+      if (this.loadJsonPath || this.loadJsonPath !== '') {
         axios
           .get(globalApi.headImg + this.loadJsonPath)
           .then(res => {
@@ -397,6 +397,13 @@ export default {
           .catch(err => {
             console.log('加载json数据失败: ' + err)
           })
+      } else {
+        Notification({
+          title: '提示',
+          message: '请先绘制图形并保存!',
+          type: 'warning',
+          duration: 5 * 1000
+        })
       }
     },
 
@@ -435,7 +442,7 @@ export default {
         })
     },
 
-    // 获取建筑平面图
+    // 获取底图
     getBaseImg () {
       const routerId = this.$route.query.enterpriseId
       const routerParams = this.$route.query.selectBuildImg
