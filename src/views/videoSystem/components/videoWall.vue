@@ -298,7 +298,9 @@
         <!-- y轴箭头 -->
         <div class="vertical">
           <span>180</span>
-          <div :style="{top:verticalValue< 0 ? 73 + String(verticalValue).slice(1) / 180 * 80 +'px': (73 - verticalValue / 180 * 80)+'px'}">
+          <div
+            :style="{top:verticalValue< 0 ? 73 + String(verticalValue).slice(1) / 180 * 80 +'px': (73 - verticalValue / 180 * 80)+'px'}"
+          >
             <div>{{verticalValue>0?verticalValue:String(verticalValue).slice(1)}}</div>
             <img :src="rightPic" />
           </div>
@@ -566,16 +568,7 @@ import { EventBus } from '@/utils/eventBus.js'
 export default {
   data () {
     return {
-      arPositionList: [
-        {
-          top: '144.67',
-          left: '834.67',
-          width: '66.67',
-          label: '0',
-          labelName: '标签名称',
-          height: '79.33'
-        }
-      ],
+      timer: null, // 保存计时器
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       todayFireArray: [], // 保存火情火点数据
       showCutImg: false, // 是否显示抓拍的图片 默认不显示
@@ -817,7 +810,9 @@ export default {
   },
 
   destroyed () {
-    if (this.videoInfo.isLive !== false) { document.removeEventListener('visibilitychange', this.reloadVideo) }
+    if (this.videoInfo.isLive !== false) {
+      document.removeEventListener('visibilitychange', this.reloadVideo)
+    }
   },
 
   mounted () {
@@ -860,19 +855,25 @@ export default {
       }
     ]
     this.puzzlePageInfo.total = this.puzzleDataArray.length
-    if (this.videoInfo.isLive !== false) { document.addEventListener('visibilitychange', this.reloadVideo) }
+    if (this.videoInfo.isLive !== false) {
+      document.addEventListener('visibilitychange', this.reloadVideo)
+    }
   },
 
   methods: {
-
     /**
      * 重新加载视频（最小化还原，或者浏览器tab页切换)
      */
     reloadVideo () {
-      if (document.visibilityState === 'visible' && this.lastState === 'hidden') {
+      if (
+        document.visibilityState === 'visible' &&
+        this.lastState === 'hidden'
+      ) {
         const url = this.videoInfo.streamUrl
         this.videoInfo.streamUrl = ''
-        this.$nextTick(() => { this.videoInfo.streamUrl = url })
+        this.$nextTick(() => {
+          this.videoInfo.streamUrl = url
+        })
       }
       this.lastState = document.visibilityState
     },
@@ -1427,6 +1428,17 @@ export default {
     },
     // 鼠标按下
     startChange: debounce(function (index) {
+      // 鼠标按下每隔一秒通知后台获取云台信息
+      this.timer = setInterval(() => {
+        // 按住期间执行的代码
+        new MqttService().client.send(
+          'video/webControlPzt',
+          JSON.stringify({
+            deviceCode: this.videoInfo.deviceCode,
+            channelId: this.videoInfo.streamType
+          })
+        )
+      }, 1000)
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType
@@ -1546,6 +1558,7 @@ export default {
     }, 500),
     // 鼠标松开
     stopChange: debounce(function (index) {
+      clearInterval(this.timer)
       // 通知后台获取云台信息
       new MqttService().client.send(
         'video/webControlPzt',
@@ -2219,7 +2232,7 @@ export default {
       > div {
         position: absolute;
         display: flex;
-        width:42px;
+        width: 42px;
         justify-content: space-between;
         // div {
         //   margin-right: 2px;
