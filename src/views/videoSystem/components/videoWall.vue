@@ -1559,6 +1559,7 @@ export default {
     // 鼠标松开
     stopChange: debounce(function (index) {
       clearInterval(this.timer)
+      this.timer = null
       // 通知后台获取云台信息
       new MqttService().client.send(
         'video/webControlPzt',
