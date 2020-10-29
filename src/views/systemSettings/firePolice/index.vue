@@ -73,6 +73,18 @@
           </el-table-column>
           <el-table-column
             align="center"
+            label="经度"
+            prop="alarmLongitude"
+            width="130px"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="纬度"
+            prop="alarmLatitude"
+            width="130px"
+          ></el-table-column>
+          <el-table-column
+            align="center"
             label="类型"
             prop="alarmTypeName"
           ></el-table-column>
@@ -139,6 +151,7 @@
       v-if="fireDetailInfo"
       title="火情详情"
       :visible.sync="showFireDetail"
+      :close-on-click-modal="clickfalse"
       width="30%"
       class="dialogStyle"
     >
@@ -154,6 +167,10 @@
         <div class="textDiv1">
           <div class="textDiv2">报警设备：</div>
           <div class="textDiv3">{{ fireDetailInfo.deviceName }}</div>
+        </div>
+        <div class="textDiv1">
+          <div class="textDiv2">经纬度：</div>
+          <div class="textDiv3">{{ fireDetailInfo.alarmLongitude + ',' + fireDetailInfo.alarmLatitude }}</div>
         </div>
         <div>
           <div class="textDiv4">报警图片</div>
@@ -291,9 +308,13 @@ export default {
         updateTime: 0,
         image1: '',
         image2: '',
-        showConfirm: true
+        showConfirm: true,
+        alarmLatitude: 0,
+        alarmLongitude: 0
       },
-      searchImg: require('../../../assets/images/Setting/setting-search.png')
+      searchImg: require('../../../assets/images/Setting/setting-search.png'),
+
+      clickfalse: false
     }
   },
   methods: {
@@ -416,6 +437,8 @@ export default {
         this.fireDetailInfo.showConfirm = true
       }
       this.showFireDetail = true
+      this.fireDetailInfo.alarmLongitude = detail.alarmLongitude
+      this.fireDetailInfo.alarmLatitude = detail.alarmLatitude
 
       const p = this
       setTimeout(() => {
