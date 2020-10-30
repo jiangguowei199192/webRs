@@ -19,8 +19,9 @@
             ></el-tree>
           </div>
 
-          <div @click="newRole">
-            <el-button class="newRoleStyle" icon="el-icon-circle-plus">自定义管理角色</el-button>
+          <!-- <div @click="newRole"> -->
+          <div>
+            <el-button disabled class="newRoleStyle" icon="el-icon-circle-plus">自定义管理角色</el-button>
           </div>
         </div>
 
