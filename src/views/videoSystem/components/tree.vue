@@ -4,7 +4,7 @@
       :data="treeData"
       highlight-current
       node-key="id"
-     :default-expanded-keys="[2, 3]"
+     :default-expanded-keys="expandedKeys"
       ref="tree"
       :props="defaultProps"
       :filter-node-method="filterNode"
@@ -35,6 +35,12 @@
 export default {
   props: {
     treeData: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    expandedKeys: {
       type: Array,
       default: () => {
         return []

@@ -58,7 +58,7 @@
                 suffix-icon="el-icon-search"
               ></el-input>
             </div>
-            <tree-data :treeData="treeData" ref="tree" @videoChange="playOrClose"></tree-data>
+            <tree-data :treeData="treeData" :expandedKeys="expandedKeys" ref="tree" @videoChange="playOrClose"></tree-data>
           </template>
           <div
             v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0"

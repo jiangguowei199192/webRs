@@ -49,7 +49,7 @@
                 suffix-icon="el-icon-search"
               ></el-input>
             </div>
-            <Tree :treeData="treeData" :isLive="false" @selectedChange="getSelectedData" ref="tree"></Tree>
+            <Tree :treeData="treeData" :isLive="false" :expandedKeys="expandedKeys"  @selectedChange="getSelectedData" ref="tree"></Tree>
           </template>
         </div>
       </div>

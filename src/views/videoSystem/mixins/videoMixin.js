@@ -3,6 +3,7 @@ import { EventBus } from '@/utils/eventBus.js'
 const videoMixin = {
   data () {
     return {
+      expandedKeys: [],
       isLive: true, // 是否是实时页面
       showLeft: true, // 是否展开左侧部分
       showRight: true, // 是否展开右侧部分
@@ -439,6 +440,7 @@ const videoMixin = {
             p.children.forEach(c => {
               total += c.deviceCountTotal
               online += c.deviceCountOnline
+              this.expandedKeys.push(c.id)
             })
             Reflect.set(p, 'deviceCountTotal', total)
             Reflect.set(p, 'deviceCountOnline', online)
@@ -448,7 +450,7 @@ const videoMixin = {
 
           // console.log(this.onlineArray)
           // console.log(this.cameraDevArray)
-          // console.log(this.droneDevArray)
+          // console.log(this.treeData)
           EventBus.$emit('GetAllDeptDevices_Done', true)
         }
       })
