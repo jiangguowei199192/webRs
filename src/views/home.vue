@@ -185,7 +185,8 @@ export default {
         } else if (index === 2) {
           this.$router.push({ path: '/evaluationSystem' })
         } else if (index === 4) {
-          this.$router.push({ path: '/digitalIndividual' })
+          this.$notify.info({ title: '提示', message: '功能未开放' })
+          // this.$router.push({ path: '/digitalIndividual' })
         } else if (index === 5) {
           this.$router.push({ path: '/digitalEquipment' })
         } else if (index === 6) this.$router.push({ path: '/systemSettings' })
