@@ -1,7 +1,7 @@
 <template>
-  <div style="margin-top:-5px;padding:20px;">
+  <div style="margin-top: -5px; padding: 20px">
     <div class="leftBox">
-      <div style="height: 800px;">
+      <div style="height: 800px">
         <SettingLeftItem
           v-for="data in leftItemData"
           :key="data.headerTitle"
@@ -17,29 +17,36 @@
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll" v-if="userDetail">
         <div v-if="isShow">
-
-          <div id="idRightItemUserSetting" style="height: 44px;"></div>
+          <div id="idRightItemUserSetting" style="height: 44px"></div>
           <SettingRightTable
             v-bind:itemData="rightItemUserSetting"
             v-bind:userDetail="userDetail"
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
 
-          <div v-show="showPermissionItem" id="idRightItemUserPermission" style="height: 44px;"></div>
+          <div
+            v-show="showPermissionItem"
+            id="idRightItemUserPermission"
+            style="height: 44px"
+          ></div>
           <SettingRightTable
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
             v-show="showPermissionItem"
           ></SettingRightTable>
 
-          <div v-show="showVideoItem" id="idRightItemVideoServe" style="height: 44px;"></div>
+          <div
+            v-show="showVideoItem"
+            id="idRightItemVideoServe"
+            style="height: 44px"
+          ></div>
           <SettingRightTable
             v-bind:itemData="rightItemVideoServe"
             v-bind:userDetail="userDetail"
             v-show="showVideoItem"
           ></SettingRightTable>
 
-          <div id="idRightItemSmartFunction" style="height: 44px;"></div>
+          <div id="idRightItemSmartFunction" style="height: 44px"></div>
           <SettingRightTable
             v-bind:itemData="rightItemSmartFunction"
             v-bind:userDetail="userDetail"
@@ -51,7 +58,7 @@
             v-bind:itemData="rightItemMapServe"
             v-bind:userDetail="userDetail"
           ></SettingRightTable> -->
-          <div style="height: 800px;"></div>
+          <div style="height: 800px"></div>
         </div>
         <router-view></router-view>
       </div>
@@ -72,54 +79,55 @@ export default {
     return {
       userDetail: '',
       isShow: true,
-      leftItemData: [
-        {
-          headerTitle: '账号设置',
-          info: [
-            {
-              id: 0,
-              title: '我的信息',
-              normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
-              selected: true
-            }
-          ]
-        },
-        {
-          headerTitle: '高级',
-          info: [
-            {
-              id: 1,
-              title: '用户权限',
-              normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
-              selected: false
-            },
-            {
-              id: 2,
-              title: '视频服务',
-              normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
-              selected: false
-            },
-            {
-              id: 3,
-              title: '智能功能管理',
-              normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
-              selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
-              selected: false
-            }
-            // 第一版不开放
-            // {
-            //   id: 4,
-            //   title: '地图服务',
-            //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
-            //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
-            //   selected: false
-            // }
-          ]
-        }
-      ],
+      leftItemData: [],
+      // leftItemData: [
+      //   {
+      //     headerTitle: '账号设置',
+      //     info: [
+      //       {
+      //         id: 0,
+      //         title: '我的信息',
+      //         normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
+      //         selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
+      //         selected: true
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     headerTitle: '高级',
+      //     info: [
+      //       {
+      //         id: 1,
+      //         title: '用户权限',
+      //         normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
+      //         selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
+      //         selected: false
+      //       },
+      //       {
+      //         id: 2,
+      //         title: '视频服务',
+      //         normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
+      //         selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
+      //         selected: false
+      //       },
+      //       {
+      //         id: 3,
+      //         title: '智能功能管理',
+      //         normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
+      //         selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
+      //         selected: false
+      //       }
+      //       // 第一版不开放
+      //       // {
+      //       //   id: 4,
+      //       //   title: '地图服务',
+      //       //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
+      //       //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
+      //       //   selected: false
+      //       // }
+      //     ]
+      //   }
+      // ],
       rightItemUserSetting: {
         headerTitle: '账号设置',
         items: [
@@ -262,24 +270,169 @@ export default {
           this.rightItemUserSetting.items[0].subTitle = this.userDetail.mobile
           this.rightItemUserSetting.items[0].headerImg =
             globalApi.headImg + this.userDetail.headImg
-          this.rightItemUserSetting.items[2].text =
-            this.userDetail.orgName + '、' + this.userDetail.jobDesc
+
+          if (this.userDetail.orgName && this.userDetail.jobDesc) {
+            this.rightItemUserSetting.items[2].text = this.userDetail.orgName + '、' + this.userDetail.jobDesc
+          }
+          if (this.userDetail.orgName === null && this.userDetail.jobDesc) {
+            this.rightItemUserSetting.items[2].text = this.userDetail.jobDesc
+          }
+          if (this.userDetail.jobDesc === null && this.userDetail.orgName) {
+            this.rightItemUserSetting.items[2].text = this.userDetail.orgName
+          }
+
           localStorage.setItem('userDetail', JSON.stringify(res.data.data))
 
           // 根据用户角色显示不同功能
           if (this.userDetail.roleCode === 2001) {
             // 系统管理员
+            this.leftItemData = [
+              {
+                headerTitle: '账号设置',
+                info: [
+                  {
+                    id: 0,
+                    title: '我的信息',
+                    normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
+                    selected: true
+                  }
+                ]
+              },
+              {
+                headerTitle: '高级',
+                info: [
+                  {
+                    id: 1,
+                    title: '用户权限',
+                    normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
+                    selected: false
+                  },
+                  {
+                    id: 2,
+                    title: '视频服务',
+                    normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
+                    selected: false
+                  },
+                  {
+                    id: 3,
+                    title: '智能功能管理',
+                    normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
+                    selected: false
+                  }
+                  // 第一版不开放
+                  // {
+                  //   id: 4,
+                  //   title: '地图服务',
+                  //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
+                  //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
+                  //   selected: false
+                  // }
+                ]
+              }
+            ]
           } else if (this.userDetail.roleCode === 2002) {
             // 组织架构管理员
             this.showVideoItem = false
+
+            this.leftItemData = [
+              {
+                headerTitle: '账号设置',
+                info: [
+                  {
+                    id: 0,
+                    title: '我的信息',
+                    normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
+                    selected: true
+                  }
+                ]
+              },
+              {
+                headerTitle: '高级',
+                info: [
+                  {
+                    id: 1,
+                    title: '用户权限',
+                    normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
+                    selected: false
+                  },
+                  {
+                    id: 3,
+                    title: '智能功能管理',
+                    normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
+                    selected: false
+                  }
+                ]
+              }
+            ]
           } else if (this.userDetail.roleCode === 2003) {
             // 组织成员
             this.showPermissionItem = false
             this.showVideoItem = false
+
+            this.leftItemData = [
+              {
+                headerTitle: '账号设置',
+                info: [
+                  {
+                    id: 0,
+                    title: '我的信息',
+                    normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
+                    selected: true
+                  }
+                ]
+              },
+              {
+                headerTitle: '高级',
+                info: [
+                  {
+                    id: 3,
+                    title: '智能功能管理',
+                    normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
+                    selected: false
+                  }
+                ]
+              }
+            ]
           } else {
             // 其他自定义的角色
             this.showPermissionItem = false
             this.showVideoItem = false
+
+            this.leftItemData = [
+              {
+                headerTitle: '账号设置',
+                info: [
+                  {
+                    id: 0,
+                    title: '我的信息',
+                    normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
+                    selected: true
+                  }
+                ]
+              },
+              {
+                headerTitle: '高级',
+                info: [
+                  {
+                    id: 3,
+                    title: '智能功能管理',
+                    normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
+                    selected: false
+                  }
+                ]
+              }
+            ]
           }
         }
       })
@@ -300,15 +453,25 @@ export default {
       }
 
       if (id === 0) {
-        document.getElementById('idRightItemUserSetting').scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('idRightItemUserSetting')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' })
       } else if (id === 1) {
-        document.getElementById('idRightItemUserPermission').scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('idRightItemUserPermission')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' })
       } else if (id === 2) {
-        document.getElementById('idRightItemVideoServe').scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('idRightItemVideoServe')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' })
       } else if (id === 3) {
-        document.getElementById('idRightItemSmartFunction').scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('idRightItemSmartFunction')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' })
       } else if (id === 4) {
-        document.getElementById('idRightItemMapServe').scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('idRightItemMapServe')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     },
     async logoutClick () {
@@ -331,9 +494,9 @@ export default {
     },
 
     async getDeviceCount () {
-      this.$axios.get(settingApi.getUsedDeviceCount).then(res => {
+      this.$axios.get(settingApi.getUsedDeviceCount).then((res) => {
         if (res && res.data && res.data.code === 0) {
-          this.rightItemVideoServe.items.forEach(item => {
+          this.rightItemVideoServe.items.forEach((item) => {
             if (item.id === 20) {
               item.text = '已接入' + res.data.data + '台设备'
             }

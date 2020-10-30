@@ -82,7 +82,6 @@ export default {
         this.loginInfo.username.length <= 0 ||
         this.loginInfo.password.length <= 0
       ) {
-        // this.$message.error('请输入用户名和密码')
         Notification({
           title: '错误',
           message: '请输入用户名和密码',
