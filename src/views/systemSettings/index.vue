@@ -323,17 +323,11 @@ export default {
                     selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
                     selected: false
                   }
-                  // 第一版不开放
-                  // {
-                  //   id: 4,
-                  //   title: '地图服务',
-                  //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
-                  //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
-                  //   selected: false
-                  // }
                 ]
               }
             ]
+
+            this.getDeviceCount()
           } else if (this.userDetail.roleCode === 2002) {
             // 组织架构管理员
             this.showVideoItem = false
@@ -507,7 +501,6 @@ export default {
   },
   created () {
     this.getUserDetail()
-    this.getDeviceCount()
   },
   watch: {
     $route (to, from) {
