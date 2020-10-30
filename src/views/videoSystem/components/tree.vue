@@ -4,7 +4,7 @@
       :data="treeData"
       highlight-current
       node-key="id"
-      default-expand-all
+     :default-expanded-keys="[2, 3]"
       ref="tree"
       :props="defaultProps"
       :filter-node-method="filterNode"
@@ -157,7 +157,7 @@ export default {
 <style lang="less" scoped>
 // 修改树形控件样式
 .tree {
-  font-size: 18px;
+  font-size: 16px;
   font-family: Source Han Sans CN;
   // font-weight: bold;
   margin-top: 20px;
