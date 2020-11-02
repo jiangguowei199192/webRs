@@ -1,8 +1,8 @@
 <template>
   <div class="mapcontainer mars3d" @click.capture="containerClick">
     <Map :url="configUrl" @onload="onMapload"/>
-    <div class="back">
-      <span @click.stop="back"></span>
+    <div class="back" @click.stop="back">
+      <span></span>
       <span>三维预案</span>
     </div>
     <div class="bottom"></div>
@@ -2294,12 +2294,12 @@ export default {
     top:20px;
     left:37px;
     align-items: center;
+    cursor: pointer;
     span:nth-child(1) {
     display: inline-block;
     width: 20px;
     height: 16px;
     background: url(../../assets/images/Setting/setting-back.png) no-repeat;
-    cursor: pointer;
     margin-left: 16px;
     margin-right: 13px;
     }
