@@ -627,6 +627,7 @@ export default {
   background-size: 100% 100%;
   margin-top: 30px;
   margin-left: 30px;
+  cursor: pointer;
 }
 
 .rightBox {
@@ -663,6 +664,7 @@ export default {
     float: right;
     margin: 28px 20px 0px 0px;
     border: 0;
+    cursor: pointer;
   }
   .tableBox {
     width: 760px;

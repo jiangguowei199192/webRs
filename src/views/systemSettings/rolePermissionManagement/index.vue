@@ -450,6 +450,7 @@ export default {
   background-size: 100% 100%;
   margin-top: 30px;
   margin-left: 30px;
+  cursor: pointer;
 }
 
 .container1 {
@@ -499,6 +500,7 @@ export default {
     display: block;
     float: right;
     margin: 21px 18px 0px 0px;
+    cursor: pointer;
   }
   .tableBox {
     width: 760px;
