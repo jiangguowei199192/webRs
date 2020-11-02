@@ -48,6 +48,7 @@ export default {
   .item {
     height: 24px;
     margin-top: 16px;
+    cursor: pointer;
     .itemImg {
       width:24px;
       height:24px;

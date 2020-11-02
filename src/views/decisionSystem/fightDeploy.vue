@@ -357,7 +357,7 @@ export default {
       this.$axios
         .post(api.upload2dConfig, formData, config)
         .then(res => {
-          console.log(res)
+          console.log('二维部署保存接口返回: ', res)
           if (res.data.code === 0) {
             this.configPath = globalApi.headImg + res.data.data.configPath
             Notification({
@@ -454,7 +454,7 @@ export default {
       const routerId = this.$route.query.enterpriseId
       const routerParams = this.$route.query.selectBuildImg
       const routerPath = this.$route.query.configPath
-      if (routerParams && routerParams !== undefined) {
+      if (routerParams || routerParams !== undefined) {
         this.enterpriseId = routerId
         this.buildImgUrl = routerParams.image
         this.loadJsonPath = routerPath
