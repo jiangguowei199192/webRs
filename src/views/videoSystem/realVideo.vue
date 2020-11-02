@@ -130,6 +130,7 @@
                 @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"
                 title="设备地图"
               />
+              <img :src="playbackClick?playbackSelected:playback" @click.stop="playbackClick=true;$router.push({name:'playbackSystem'})" title="回放" />
               <!-- 用于显示截取的图片 -->
               <img
                 :src="`${picUrl}${cutImgUrl}`"
@@ -357,6 +358,7 @@ export default {
       zoomSpeed: 0, // 变倍
       focusSpeed: 0, // 变焦
       lrisSpeed: 0, // 光圈
+      playbackClick: false, // 回放
       mapClicked: false, // 设备地图
       photoClicked: false, // 拍照
       showCutImg: false,
@@ -389,7 +391,9 @@ export default {
       isPlayAll: false, // 是否播放所有 控制预览全部
       curSelectedVideo: {}, // 当前选中
       imgId: '', // 保存抓取图片id
-      bHasFullVideo: false // 有全屏播放视频
+      bHasFullVideo: false, // 有全屏播放视频
+      playback: require('../../assets/images/playback.png'),
+      playbackSelected: require('../../assets/images/playback_selected.png')
     }
   },
   mixins: [videoMixin, fireMixin, droneInfoMixin],
@@ -437,6 +441,7 @@ export default {
         lrisMinus: 0
       }
       this.step = 4 // 步速值
+      this.playbackClick = false // 回放
       this.mapClicked = false // 设备地图
       this.photoClicked = false // 拍照
       this.isPlayAll = false // 是否播放所有 控制预览全部
@@ -1642,6 +1647,7 @@ export default {
 .videoContainer {
   box-sizing: border-box;
   padding: 20px;
+  padding-top: 0px;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;
@@ -2066,13 +2072,15 @@ export default {
           margin-right: 20px;
           cursor: pointer;
         }
-        img:nth-child(n + 4) {
+        img:nth-child(n + 6) {
           // margin-left: 22px;
           margin-right: 0;
+          position: relative;
+          top: -2px;
         }
-        img:nth-child(4) {
-          margin-right: 20px;
-        }
+        // img:nth-child(4) {
+        //   margin-right: 20px;
+        // }
       }
       .rightTool {
         margin-right: 70px;
