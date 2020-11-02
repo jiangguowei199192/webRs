@@ -15,22 +15,6 @@
             >
               <span>{{ item.content }}</span>
             </div>
-            <template>
-              <div class="status" v-if="index == 1">
-                <el-button
-                  type="primary"
-                  :class="{ activeStatus: curActive == 1 }"
-                  @click.stop="jumpToVideoUrl(1)"
-                  >实时视频</el-button
-                >
-                <el-button
-                  type="primary"
-                  :class="{ activeStatus: curActive == 2 }"
-                  @click.stop="jumpToVideoUrl(2)"
-                  >回放</el-button
-                >
-              </div>
-            </template>
           </div>
         </div>
         <div class="cur">
@@ -103,7 +87,6 @@ export default {
           content: '系统设置'
         }
       ],
-      curActive: 1, // 激活实时视频还是回放视频 1实时 2回放
       realtimeInfoTopicArray: [] // 需要监听的飞机实时信息主题
     }
   },
@@ -162,26 +145,13 @@ export default {
     // 获取飞机实时信息所需订阅主题
     this.getRealtimeInfoTopics()
   },
-  watch: {
-    // 监听,当路由发生变化的时候执行
-    $route: 'getPath'
-  },
   methods: {
-    // 路由发生变化
-    getPath () {
-      // 激活实时视频还是回放视频 1实时 2回放
-      if (this.$route.path === '/playback') {
-        this.curActive = 2
-      } else if (this.$route.path === '/videoSystem') {
-        this.curActive = 1
-      }
-    },
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
         if (index === 0) this.$router.push({ path: '/decisionSystem' })
         else if (index === 1) {
-          this.jumpToVideoUrl(this.curActive)
+          this.$router.push({ path: '/videoSystem' })
         } else if (index === 2) {
           this.$router.push({ path: '/evaluationSystem' })
         } else if (index === 4) {
@@ -192,13 +162,6 @@ export default {
         } else if (index === 6) this.$router.push({ path: '/systemSettings' })
         this.isActive = index
       }
-    },
-    // 视频侦查二级菜单跳转
-    jumpToVideoUrl (type) {
-      this.isActive = 1
-      this.curActive = type
-      if (type === 1) this.$router.push({ path: '/videoSystem' })
-      else this.$router.push({ path: '/playback' })
     },
     init () {
       amapApi.getLocation({}).then((res) => {

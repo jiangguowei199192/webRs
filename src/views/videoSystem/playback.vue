@@ -56,7 +56,10 @@
       <div slot="center">
         <div class="video">
           <div class="box">
-            <div class="title">回放</div>
+            <div class="back" @click.stop="backToRealVideo">
+              <span></span>
+              <span>回放</span>
+            </div>
             <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
           </div>
           <div class="videoList" :class="{videolistFullscreenStyle:dialogVisible}">
@@ -297,6 +300,14 @@ export default {
   },
 
   methods: {
+
+    /**
+     * 返回实时视频页面
+     */
+    backToRealVideo () {
+      this.$router.push({ path: '/videoSystem' })
+    },
+
     /**
      * 回放当前页数改变
      */
@@ -1258,6 +1269,7 @@ export default {
 <style lang="less" scoped>
 .playBack{
   padding:20px;
+  padding-top: 0px;
 }
 .leftContainer {
   box-sizing: border-box;
@@ -1404,13 +1416,28 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-right: 64px;
-    .title {
-        width: 196px;
-        height: 34px;
-        background: url(../../assets/images/device/info-title.png) no-repeat;
-        line-height: 34px;
-        padding-left: 30px;
-        margin-bottom: 11px;
+    .back{
+      display: flex;
+      box-sizing: border-box;
+      width: 98px;
+      height: 36px;
+      border: 1px solid #39A4DD;
+      background: rgba(18, 30, 58, 0.85);
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 11px;
+      span:nth-child(1) {
+      display: inline-block;
+      width: 20px;
+      height: 16px;
+      background: url(../../assets/images/Setting/setting-back.png) no-repeat;
+      margin-left: 16px;
+      margin-right: 13px;
+      }
+      span:nth-child(2) {
+      font-size: 16px;
+      color: #FFFFFF;
+      }
     }
   }
   .videoList {

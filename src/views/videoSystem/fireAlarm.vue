@@ -194,6 +194,7 @@ export default {
 .fireAlarm {
   box-sizing: border-box;
   padding:20px;
+  padding-top: 0px;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;

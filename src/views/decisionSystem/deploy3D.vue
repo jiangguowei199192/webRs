@@ -2280,7 +2280,6 @@ export default {
 
 .mapcontainer {
   position: relative;
-  margin-top: 20px;
   height: 899px;
   overflow: hidden;
   .back{
