@@ -275,6 +275,13 @@ export default {
     },
     // 点击作战部署图
     entryTabShow () {
+      if (
+        !this.showInfo.planEnterpriseInfo2D ||
+        !this.showInfo.planEnterpriseInfo2D.modelPath
+      ) {
+        this.$notify.warning({ title: '提示', message: '二维作战部署不存在' })
+        return
+      }
       this.$refs.entryTab.show(
         this.deployInfos,
         this.info.keyId,

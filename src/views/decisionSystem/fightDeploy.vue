@@ -360,16 +360,23 @@ export default {
           console.log(res)
           if (res.data.code === 0) {
             this.configPath = globalApi.headImg + res.data.data.configPath
+            Notification({
+              title: '提示',
+              message: '保存成功',
+              type: 'success',
+              duration: 5 * 1000
+            })
+          } else {
+            Notification({
+              title: '提示',
+              message: '保存失败',
+              type: 'danger',
+              duration: 5 * 1000
+            })
           }
-          Notification({
-            title: '提示',
-            message: '保存数据失败',
-            type: 'warning',
-            duration: 5 * 1000
-          })
         })
         .catch(err => {
-          console.log('保存接口错误: ' + err)
+          console.log('接口错误: ' + err)
         })
     },
 
