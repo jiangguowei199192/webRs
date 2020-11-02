@@ -803,6 +803,9 @@ export default {
     },
     // Enter或点击搜索事件处理
     async simpleSearchAddrs (addrStr, bDetail) {
+      if (addrStr === '') {
+        return
+      }
       if (this.simpleChooseAddr != null && bDetail !== true) {
         return
       }
@@ -871,6 +874,9 @@ export default {
 
     // 根据输入搜索位置信息
     async searchAddrs (addrStr, bDetail) {
+      if (addrStr === '') {
+        return
+      }
       if (this.chooseAddr != null && bDetail !== true) {
         return
       }
