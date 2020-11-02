@@ -308,7 +308,7 @@ export default {
         return
       }
       if (this.companyPhone.length <= 0) {
-        this.warnAlert('请输入单位地址')
+        this.warnAlert('请输入联系电话')
         return
       }
 
@@ -340,8 +340,14 @@ export default {
         basicPaths.push(item.path)
       })
       this.buildingPlan.forEach((item) => {
-        buildingPaths.push(item.path)
+        if (item && item.path && item.path.length > 0) {
+          buildingPaths.push(item.path)
+        }
       })
+      if (buildingPaths.length <= 0) {
+        this.warnAlert('请上传建筑平面图')
+        return
+      }
       var param = {
         enterpriseName: this.companyName,
         enterpriseTypeCode: this.companyType,
