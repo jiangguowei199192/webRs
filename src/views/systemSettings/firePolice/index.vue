@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button type="button" class="back" @click="back">
+    <button type="button" class="back-sty" @click="back">
       <img :src="backImg" />
       火情报警
     </button>
@@ -17,7 +17,7 @@
           @change="dateSearch"
           popper-class="chooseDateStyle"
         ></el-date-picker>
-        <button type="button" class="more" @click="addressSearch()">
+        <button type="button" class="search-sty" @click="addressSearch()">
           <img :src="searchImg" />
         </button>
         <el-input
@@ -545,7 +545,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.back {
+.back-sty {
   width: 120px;
   height: 40px;
   border: solid 1px #39a4dd;
@@ -557,6 +557,7 @@ export default {
   cursor: pointer;
   margin-top: 30px;
   margin-left: 30px;
+  cursor: pointer;
 }
 
 .rightBox {
@@ -759,7 +760,7 @@ export default {
     border-bottom: solid 1px #368fbb;
   }
 }
-.more {
+.search-sty {
   width: 25px;
   height: 25px;
   background-color: transparent;
@@ -767,6 +768,7 @@ export default {
   float: right;
   margin-top: 9px;
   border: 0;
+  cursor: pointer;
 }
 
 .cutDialog {
