@@ -470,7 +470,7 @@ export default {
               this.newUserForm.organizations.length - 1
             ],
             mobile: this.newUserForm.phone,
-            password: this.newUserForm.password,
+            password: this.$md5(this.newUserForm.password),
             roleCode: this.newUserForm.job,
             status: this.newUserForm.active ? 1 : 0,
             useraccount: this.newUserForm.username,

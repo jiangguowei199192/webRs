@@ -67,7 +67,7 @@
             @row-click="ClickTableRow"
             :data="userList"
             stripe
-            empty-text="no data"
+            empty-text="暂无数据"
             tooltip-effect="light"
           >
             <el-table-column label width="33" align="center" :resizable="false">
@@ -477,6 +477,7 @@ export default {
         })
         .then((res) => {
           if (res.data.code === 0) {
+            this.radio = -1
             this.getUserList()
             Notification({
               title: '提示',
