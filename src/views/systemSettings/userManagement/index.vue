@@ -365,7 +365,7 @@ export default {
       if (this.searchInput.length <= 0) {
         Notification({
           title: '提示',
-          message: '请输入地址后查询',
+          message: '请输入用户名后查询',
           type: 'warning',
           duration: 5 * 1000
         })
