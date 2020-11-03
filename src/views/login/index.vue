@@ -2,7 +2,7 @@
   <div>
     <div class="login">
       <div class="content">
-        <div class="title">{{loginTitle}}</div>
+        <div class="title">{{ configJson.projectTitle }}</div>
         <el-input
           placeholder="用户名"
           auto-complete="new-password"
@@ -27,11 +27,44 @@
         ></el-input>
         <div class="checkDiv">
           <el-checkbox v-model="checked" class="check">记住密码</el-checkbox>
-          <el-button type="text" size="mini" class="forgot" @click="dialogVisible = true">忘记密码？</el-button>
+          <el-button
+            type="text"
+            size="mini"
+            class="forgot"
+            @click="dialogVisible = true"
+            >忘记密码？</el-button
+          >
         </div>
         <el-button class="loginBtn" @click="jumpToMain">登 录</el-button>
+
+        <div class="settingBoxStyle">
+          <div class="settingStyle" @click="settingClick">
+            <div class="settingIconSty">
+              <i class="el-icon-setting"></i>
+            </div>
+            <div class="settingTitleStyle">高级设置</div>
+          </div>
+        </div>
+
+        <div class="serverAddressBoxSty" v-show="showServer">
+          <div class="serverTitleSty">服务器：</div>
+          <el-select v-model="selectedServerIndex" class="serverSelectSty">
+            <el-option
+              v-for="(item, index) in configJson.baseUrlList"
+              :key="index"
+              :label="item.baseUrl"
+              :value="index"
+            ></el-option>
+          </el-select>
+        </div>
       </div>
-      <el-dialog title="忘记密码" :visible.sync="dialogVisible" width="30%" class="dialogStyle">
+
+      <el-dialog
+        title="忘记密码"
+        :visible.sync="dialogVisible"
+        width="30%"
+        class="dialogStyle"
+      >
         <p>
           <span>普通用户请联系管理员重置密码。</span>
         </p>
@@ -43,7 +76,12 @@
       </p>
         <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p>-->
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="dialogVisible = false" class="trueBtn">确 定</el-button>
+          <el-button
+            type="primary"
+            @click="dialogVisible = false"
+            class="trueBtn"
+            >确 定</el-button
+          >
         </span>
       </el-dialog>
     </div>
@@ -59,14 +97,17 @@ export default {
   name: 'login',
   data () {
     return {
-      loginTitle: globalApi.projectTitle || '消防救援现场指挥系统',
       passwordInputType: 'text',
       loginInfo: {
         username: '',
         password: ''
       },
       checked: true,
-      dialogVisible: false
+      dialogVisible: false,
+
+      showServer: false,
+      configJson: globalApi.configJson,
+      selectedServerIndex: 0
     }
   },
   methods: {
@@ -78,6 +119,16 @@ export default {
       }
     },
     async jumpToMain () {
+      // 登录前，配置baseUrl
+      var selectedAddr = this.configJson.baseUrlList[this.selectedServerIndex]
+      globalApi.baseUrl = selectedAddr.baseUrl
+      globalApi.mqttServer = selectedAddr.mqttServer
+      globalApi.mqttPort = selectedAddr.mqttPort
+      globalApi.headImg = selectedAddr.headImg
+      globalApi.projectTitle = this.configJson.projectTitle
+      // 将selectedServerIndex保存至本地，当没走登录页时，读取本地selectedServerIndex来配置baseUrl
+      localStorage.setItem('selectedServerIndex', this.selectedServerIndex)
+
       if (
         this.loginInfo.username.length <= 0 ||
         this.loginInfo.password.length <= 0
@@ -127,7 +178,11 @@ export default {
           localStorage.bNetWorkConn = 'false'
           console.log('AMapHelper.getLocation Err : ' + err)
         })
+    },
+    settingClick () {
+      this.showServer = !this.showServer
     }
+
   },
   created () {},
   mounted () {
@@ -158,7 +213,9 @@ export default {
   background-size: 100% 100%;
   .content {
     width: 500px;
-    height: 502px;
+    // height: 502px;
+    // height: 534px;
+    padding-bottom: 30px;
     background: url(../../assets/images/Login/login-contentBg.png) no-repeat;
     background-size: 100% 100%;
     position: absolute;
@@ -206,6 +263,47 @@ export default {
       background-color: #00b8ff;
       border: 0;
       margin-top: 30px;
+    }
+    .settingBoxStyle {
+      width: 403px;
+      height: 20px;
+      margin: 20px auto;
+      .settingStyle {
+        cursor: pointer;
+        width: 100px;
+        height: 20px;
+        .settingIconSty {
+          width: 20px;
+          height: 20px;
+          float: left;
+          margin-left: -10;
+        }
+        .settingTitleStyle {
+          height: 20px;
+          float: right;
+          line-height: 20px;
+          vertical-align: top;
+          font-size: 19px;
+        }
+      }
+    }
+    .serverAddressBoxSty {
+      width: 403px;
+      height: 36px;
+      margin: 20px auto;
+      .serverTitleSty {
+        font-size: 16px;
+        line-height: 36px;
+        float: left;
+      }
+      .serverSelectSty {
+        /deep/ .el-input__inner {
+          background: url(../../assets/images/Login/login-usernameBox.png)
+            no-repeat;
+          background-size: 100% 100%;
+          color: white;
+        }
+      }
     }
   }
 }

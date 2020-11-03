@@ -877,7 +877,6 @@ export default {
       }
       this.lastState = document.visibilityState
     },
-
     // 点击步速
     addStep () {
       ++this.step

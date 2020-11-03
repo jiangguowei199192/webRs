@@ -8,7 +8,31 @@ function resolve (dir) {
 const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
   // const cfgJson = { baseUrl: 'http://172.16.63.148:8850', mqttServer: '172.16.63.148', mqttPort: 2883, headImg: 'http://172.16.63.148', projectTitle: '武汉市公安局安保防控系统' }
-  const cfgJson = { baseUrl: 'http://111.47.13.103:40009', mqttServer: '111.47.13.103', mqttPort: 40011, headImg: 'http://111.47.13.103:40015', projectTitle: '天地一体化预警侦查系统' }
+  const cfgJson = {
+    projectTitle: '天地一体化预警侦查系统',
+    baseUrlList: [
+      {
+        // 消防外网
+        // baseUrl: 'http://58.49.169.235:50020',
+        // mqttServer: '58.49.169.235',
+        // mqttPort: 50022,
+        // headImg: 'http://58.49.169.235:50026'
+
+        // 消防v2.0开发环境
+        baseUrl: 'http://111.47.13.103:40025',
+        mqttServer: '111.47.13.103',
+        mqttPort: 40027,
+        headImg: 'http://111.47.13.103:40031'
+      }
+      // 消防内网
+      // {
+      //   baseUrl: 'http://172.1.53.131:50020',
+      //   mqttServer: '172.1.53.131',
+      //   mqttPort: 50022,
+      //   headImg: 'http://172.1.53.131:80'
+      // }
+    ]
+  }
   return JSON.stringify(cfgJson)
 }
 const CopyWebpackPlugin = require('copy-webpack-plugin')

@@ -2176,7 +2176,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   overflow: visible;
-  background-image: url("../../assets/images/bg.png");
+  background-image: url('../../assets/images/bg.png');
 }
 .cutDialog {
   background: rgba(0, 0, 0, 0.6);

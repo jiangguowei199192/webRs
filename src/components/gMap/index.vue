@@ -134,7 +134,7 @@
         </div>
       </div>
     </div>
-    <plan v-show="bShowPaln" ref="plan"></plan>
+    <plan  v-if="bShowPaln" ref="plan"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -955,7 +955,9 @@ export default {
       this.lastResults = this.addrResults
       this.bShowResult = false
       this.bShowPaln = true
-      this.$refs.plan.show(addr)
+      this.$nextTick(() => {
+        this.$refs.plan.show(addr)
+      })
       if (bCallHandler) {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)

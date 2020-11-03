@@ -382,6 +382,7 @@ export default {
                   }
                 }
               }
+              // console.log(element.alarmPicList)
             }
 
             this.pageData.total = res.data.data.paginator.totalCount
