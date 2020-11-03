@@ -52,7 +52,7 @@
                     >
                       <span>{{ children_item.title }}</span>
                       <div
-                        style="margin-top: 5px; height: 80px; padding: 1px"
+                        style="margin-top: 5px; height: 80px;"
                         :class="{ active: selectClass == children_index }"
                       >
                         <img :src="children_item.image" alt="图片加载失败" />
@@ -124,7 +124,7 @@ export default {
       // 当前选中Tab的index
       currentTab: 0,
       // 当前选中建筑平面图的class
-      selectClass: '',
+      selectClass: null,
       // 实时二维底图
       realImgUrl: '',
       enterpriseId: '',
@@ -182,7 +182,7 @@ export default {
 
     // 跳转到FightDeploy页
     goToFightDeploy () {
-      if (this.currentTab === 1 && this.selectClass === '') {
+      if (this.currentTab === 1 && this.selectClass === null) {
         Notification({
           title: '提示',
           message: '请选择一张图片!',
@@ -201,11 +201,12 @@ export default {
         setTimeout(() => {
           this.dialogVisible = false
         }, 300)
+
+        localStorage.setItem(
+          'selectBuildImg',
+          JSON.stringify(this.info[1].children[this.selectClass])
+        )
       }
-      localStorage.setItem(
-        'selectBuildImg',
-        JSON.stringify(this.info[1].children[this.selectClass])
-      )
 
       // setTimeout(() => {
       //   console.log('开始截图')
@@ -316,15 +317,15 @@ export default {
               height: 100%;
               cursor: pointer;
             }
-          }
-          .tab_img_wrap {
-            width: 23%;
-            margin: 0 13px 20px 0;
-            text-align: center;
-            font-size: 13px;
-          }
-          .tab_img_wrap > div.active {
-            border: 1.5px solid #eb3030;
+            .tab_img_wrap {
+              width: 23%;
+              margin: 0 13px 20px 0;
+              text-align: center;
+              font-size: 13px;
+              .active {
+                border: 2px solid #eb3030;
+              }
+            }
           }
         }
         .bottom_btn {

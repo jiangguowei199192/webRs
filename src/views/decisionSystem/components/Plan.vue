@@ -277,23 +277,23 @@ export default {
     entryTabShow () {
       if (
         !this.showInfo.planEnterpriseInfo2D ||
-        !this.showInfo.planEnterpriseInfo2D.modelPath
+        !this.showInfo.planEnterpriseInfo2D.configPath
       ) {
-        this.$notify.warning({ title: '提示', message: '二维作战部署不存在' })
-        return
+        this.$refs.entryTab.show(this.deployInfos, this.info.keyId, '')
+      } else {
+        this.$refs.entryTab.show(
+          this.deployInfos,
+          this.info.keyId,
+          this.showInfo.planEnterpriseInfo2D.configPath
+        )
       }
-      this.$refs.entryTab.show(
-        this.deployInfos,
-        this.info.keyId,
-        this.showInfo.planEnterpriseInfo2D.configPath
-      )
     },
     // 获取作战部署缩略图
     getDeployImage () {
-      const buildParams = JSON.parse(localStorage.getItem('selectBuildImg'))
-      if (buildParams && buildParams !== undefined) {
-        this.deployImgUrl = buildParams.image
-      }
+      const json = localStorage.getItem('selectBuildImg')
+      if (!json || json === 'undefined') return
+      const buildParams = JSON.parse(json)
+      this.deployImgUrl = buildParams.image
     }
   },
 
