@@ -89,19 +89,23 @@
                 :src="showVideoPageSize==9?nineSelectedPalace:ninePalace"
                 @click.stop="changeVideosType(9)"
               /> -->
-              <img
-                :src="showVideoPageSize==4?fourSelectedPalace:fourPalace"
-                @click.stop="changeVideosType(4)"
-              />
-              <img
-                :src="showVideoPageSize==1?oneSelectedPalace:onePalace"
-                @click.stop="changeVideosType(1)"
-              />
+              <el-tooltip popper-class="gTooltip" content="4宫格" placement="top" :open-delay="500">
+                <img :src="showVideoPageSize==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)"/>
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="1宫格" placement="top" :open-delay="500">
+                <img :src="showVideoPageSize==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)"/>
+              </el-tooltip>
             </div>
             <div class="centerTool">
-              <img :src="stop" @click="stopPlayRecord" />
-              <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay" />
-              <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
+              <el-tooltip popper-class="gTooltip" content="停止" placement="top" :open-delay="500">
+                <img :src="stop" @click="stopPlayRecord" />
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="播放" placement="top" :open-delay="500">
+                <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay" />
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="暂停" placement="top" :open-delay="500">
+                <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
+              </el-tooltip>
             </div>
             <div class="rightTool">
               <!-- <div class="pagination">
@@ -114,8 +118,12 @@
                   @next-click="next"
                 ></el-pagination>
               </div>-->
-              <div class="download" @click="download" />
-              <img :src="fullScreen" @click.stop="showFullScreen" />
+              <el-tooltip popper-class="gTooltip" content="下载" placement="top" :open-delay="500">
+                <div class="download" @click="download" />
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="全屏" placement="top" :open-delay="500">
+                <img :src="fullScreen" @click.stop="showFullScreen" />
+              </el-tooltip>
             </div>
           </div>
           <TimeBar

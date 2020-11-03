@@ -109,28 +109,24 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <img
-                :src="palace==9?nineSelectedPalace:ninePalace"
-                @click.stop="changeVideosType(9)"
-                title="9宫格"
-              />
-              <img
-                :src="palace==4?fourSelectedPalace:fourPalace"
-                @click.stop="changeVideosType(4)"
-                title="4宫格"
-              />
-              <img
-                :src="palace==1?oneSelectedPalace:onePalace"
-                @click.stop="changeVideosType(1)"
-                title="1宫格"
-              />
-              <img :src="photoClicked?photoSelected:photo" @click.stop="showImg" title="抓取" />
-              <img
-                :src="mapClicked?mapSelected:map"
-                @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"
-                title="设备地图"
-              />
-              <img :src="playbackClick?playbackSelected:playback" @click.stop="playbackClick=true;$router.push({name:'playbackSystem'})" title="回放" />
+              <el-tooltip popper-class="gTooltip" content="9宫格" placement="top" :open-delay="500">
+                <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)"/>
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="4宫格" placement="top" :open-delay="500">
+                <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)"/>
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="1宫格" placement="top" :open-delay="500">
+                <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)"/>
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="抓取" placement="top" :open-delay="500">
+                <img :src="photoClicked?photoSelected:photo" @click.stop="showImg"/>
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="设备地图" placement="top" :open-delay="500">
+                <img :src="mapClicked?mapSelected:map" @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"/>
+              </el-tooltip>
+              <el-tooltip popper-class="gTooltip" content="回放" placement="top" :open-delay="500">
+                <img :src="playbackClick?playbackSelected:playback" @click.stop="playbackClick=true;$router.push({name:'playbackSystem'})"/>
+              </el-tooltip>
               <!-- 用于显示截取的图片 -->
               <img
                 :src="`${picUrl}${cutImgUrl}`"
@@ -141,11 +137,9 @@
               />
             </div>
             <div class="rightTool">
-              <img
-                :src="!isPlayAll?playAll:closeAll"
-                @click.stop="playAllVideos"
-                :title="!isPlayAll?'预览全部':'取消预览全部'"
-              />
+              <el-tooltip popper-class="gTooltip" :content="!isPlayAll?'预览全部':'取消预览全部'" placement="top" :open-delay="500">
+                <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos"/>
+              </el-tooltip>
               <div class="pagination">
                 <el-pagination
                   :page-size="showVideoPageSize"
@@ -156,12 +150,9 @@
                   @next-click="next"
                 ></el-pagination>
               </div>
-
-              <img
-                :src="!dialogVisible?fullScreen:fullScreenSelected"
-                :title="!dialogVisible?'全屏':'取消全屏'"
-                @click.stop="openDialog()"
-              />
+              <el-tooltip popper-class="gTooltip" :content="!dialogVisible?'全屏':'取消全屏'" placement="top" :open-delay="500">
+                <img :src="!dialogVisible?fullScreen:fullScreenSelected" @click.stop="openDialog()"/>
+              </el-tooltip>
             </div>
           </div>
         </div>

@@ -26,16 +26,15 @@
         ></el-option>
       </el-select>
       <div class="models">
-        <div
-          v-for="(item,index) in curModels"
-          :key="index"
-          class="outer"
-          @click="plot(item,index)"
-          :class="{active:curModelIndex===index}"
-          :title="item.name"
-        >
-          <div :style="{background: 'url('+ item.image +') no-repeat'}"></div>
-        </div>
+        <el-tooltip  v-for="(item,index) in curModels" :key="index" popper-class="gTooltip plotTooltip" :content="item.name" placement="top" :open-delay="500">
+          <div
+            class="outer"
+            @click="plot(item,index)"
+            :class="{active:curModelIndex===index}"
+          >
+            <div :style="{background: 'url('+ item.image +') no-repeat'}"></div>
+          </div>
+        </el-tooltip>
       </div>
     </div>
     <div class="edit" v-show="editMode">
@@ -221,9 +220,13 @@
       ></span>
     </div>
     <div class="topTool">
-      <span v-for="(item,index) in topTools" :key="index" @click.stop="topToolClick(index)" :title='item'></span>
+      <el-tooltip v-for="(item,index) in topTools" :key="index" popper-class="gTooltip marsTooltip" :content="item" placement="top" :open-delay="500">
+        <span @click.stop="topToolClick(index)"></span>
+      </el-tooltip>
     </div>
-    <div class="rotate" :class="{active:isRotate}" @click.stop="autoRotate" title="自动旋转"></div>
+    <el-tooltip popper-class="gTooltip marsTooltip" content="自动旋转" placement="top" :open-delay="500">
+      <div class="rotate" :class="{active:isRotate}" @click.stop="autoRotate"></div>
+    </el-tooltip>
     <el-dialog
       custom-class="el-dialog-custom"
       :visible.sync="imgDialogVisible"
