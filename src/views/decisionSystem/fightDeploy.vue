@@ -56,18 +56,24 @@
             :style="'height:' + (this.workHeight - 60 - 110) + 'px;'"
           >
             <ul class="fl">
-              <li
-                id="list"
+              <el-tooltip
                 v-for="(item, index) in curModels"
                 :key="index"
-                :class="{ active: curModelIndex === index }"
-                :title="item.name"
-                draggable="true"
-                @click.stop="listSelected(index)"
-                @dragstart="drag(item)"
+                popper-class="gTooltip plotTooltip"
+                :content="item.name"
+                placement="top"
+                :open-delay="500"
               >
-                <img :src="item.image" alt="模型加载失败" />
-              </li>
+                <li
+                  id="list"
+                  :class="{ active: curModelIndex === index }"
+                  draggable="true"
+                  @click.stop="listSelected(index)"
+                  @dragstart="drag(item)"
+                >
+                  <img :src="item.image" alt="模型加载失败" />
+                </li>
+              </el-tooltip>
             </ul>
           </div>
         </div>
