@@ -923,8 +923,10 @@ export default {
             this.$axios.post(api.uploadModelConfig, formData, config).then((res) => {
               if (res.data.code === 0) {
                 this.configPath = globalApi.headImg + res.data.data.configPath
+                this.$notify.info({ title: '提示', message: '保存成功' })
               }
             }).catch(err => {
+              this.$notify.info({ title: '提示', message: '保存失败' })
               console.log('uploadModelConfig Err : ' + err)
             })
             console.log(json)
