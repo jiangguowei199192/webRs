@@ -509,6 +509,12 @@ export default {
       } else {
         this.isShow = false
       }
+
+      if (to.path === '/systemSettings' && from.path === '/systemSettings/videoAccessManagement') {
+        if (this.userDetail.roleCode === 2001) {
+          this.getDeviceCount()
+        }
+      }
     }
   },
   components: {
