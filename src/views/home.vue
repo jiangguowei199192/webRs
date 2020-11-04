@@ -110,12 +110,6 @@ export default {
     EventBus.$on('video/realVideo/streamEnd', (info) => {
       EventBus.$emit('streamEnd', info)
     })
-    // 火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
-      this.$notify.warning({ title: '警告', message: '发现火点火情！' })
-      this.$refs.player.play()
-      EventBus.$emit('getFireAlarm', info)
-    })
     // 飞机实时信息
     EventBus.$on('droneInfos', (info) => {
       this.parseDroneRealtimeInfo(info)
@@ -134,6 +128,14 @@ export default {
     })
   },
   mounted () {
+    // 火情火点
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
+      this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+      this.$nextTick(() => {
+        this.$refs.player.play()
+      })
+      EventBus.$emit('getFireAlarm', info)
+    })
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()

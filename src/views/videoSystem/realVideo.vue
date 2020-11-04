@@ -1604,7 +1604,7 @@ export default {
     })
     // AR数据
     EventBus.$on('getArChange', info => {
-      console.log('ar数据', info)
+      // console.log('ar数据', info)
       this.totalVideosArray.forEach((item, index) => {
         if (
           item.deviceCode === info.deviceCode &&
