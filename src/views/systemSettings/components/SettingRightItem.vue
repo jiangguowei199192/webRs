@@ -17,11 +17,9 @@
     <el-dialog title="补充信息" :visible.sync="showExtraInfo" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
       <el-form ref="extraInfoRef" :model="extraInfoForm" :rules="extraInfoRules">
         <el-form-item prop="orgName">
-          <!-- <el-input v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input> -->
           <el-input class="orgNameInput" v-model="extraInfoForm.orgName" placeholder="公司/组织/所属机构"></el-input>
         </el-form-item>
         <el-form-item prop="jobDesc">
-          <!-- <el-input v-model="extraInfoForm.jobDesc" placeholder="职务/岗位"></el-input> -->
           <el-input class="jobDescInput" v-model="extraInfoForm.jobDesc" placeholder="职务/岗位"></el-input>
         </el-form-item>
         <el-form-item>
@@ -120,8 +118,8 @@ export default {
 
       showExtraInfo: false,
       extraInfoForm: {
-        orgName: this.userDetail.orgName,
-        jobDesc: this.userDetail.jobDesc
+        orgName: '',
+        jobDesc: ''
       },
       extraInfoRules: {
         orgName: isNotNull('请输入组织').concat(limitLength(1, 15)),
@@ -184,12 +182,22 @@ export default {
       if (this.data.id === 0) {
         // 我的信息
         this.showMyInfo = true
+        this.myInfoForm.username = this.userDetail.username
+        this.myInfoForm.mobile = this.userDetail.mobile
+        if (this.$refs.myInfoFormRef) {
+          this.$refs.myInfoFormRef.clearValidate()
+        }
       } else if (this.data.id === 1) {
         // 上传头像
         this.showUploadIcon = true
       } else if (this.data.id === 2) {
         // 补充信息
         this.showExtraInfo = true
+        this.extraInfoForm.orgName = this.userDetail.orgName
+        this.extraInfoForm.jobDesc = this.userDetail.jobDesc
+        if (this.$refs.extraInfoRef) {
+          this.$refs.extraInfoRef.clearValidate()
+        }
       } else if (this.data.id === 10) {
         // 用户管理
         this.$router.push({ path: '/systemSettings/userManagement' })
