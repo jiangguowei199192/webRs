@@ -612,6 +612,7 @@ export default {
         })
         if (tmpRes.length > 0) {
           this.addrResults = tmpRes
+          this.map2D.searchLayerManager.clear()
           this.map2D.searchLayerManager.addSearchAddrs(tmpRes)
           if (tmpRes.length > 0) {
             this.bShowResult = true
@@ -641,8 +642,10 @@ export default {
       _keyResult.forEach((k) => {
         k._bHover = false
         k._updateHoverCB = this.updateMouseHover
-        k.keyId = k.id
-        if (k.poiId !== undefined) k.id = k.poiId
+        if (k.enterpriseOtherInfo !== null) {
+          const tmpInfo = JSON.parse(k.enterpriseOtherInfo)
+          k.keyId = tmpInfo.mapId
+        }
         k.name = k.enterpriseName
         k.address = k.enterpriseAddress
         k._addr = k.enterpriseAddress
@@ -684,6 +687,53 @@ export default {
       this.bRouteOrClose = false
     },
 
+    // 根据网络结果查询预案
+    async handleAutoTipsPoi (poi) {
+      var that = this
+      if (poi.id === '' || poi.id === null || poi.id === undefined) {
+        that.searchAddrs(poi.name, true)
+        return
+      }
+
+      let bFoundKey = false
+      await this.$axios
+        .get(settingApi.enterpriseList, { params: { enterpriseOtherInfo: poi.id } })
+        .then((res) => {
+          if (res.data.code === 0) {
+            var keyDatas = res.data.data.data
+            if (keyDatas.length > 0) {
+              bFoundKey = true
+              that.addrResults = []
+              that.appendKeyResults(keyDatas)
+            }
+          }
+        })
+        .catch((err) => {
+          console.log('handleAutoTipsPoi.enterpriseList Err : ' + err)
+        })
+      if (bFoundKey) {
+        return
+      }
+
+      AMapHelper.getPoiDetail({ id: poi.id })
+        .then((res) => {
+          that.chooseAddr = null
+          if (res.data.status === '1') {
+            that.updateSearchResults(res.data.pois)
+          }
+        })
+        .catch((err) => {
+          console.log('handleAutoTipsPoi.AMapHelper.getPoiDetail Err : ' + err)
+        })
+
+      if (
+        poi.location.lng !== undefined &&
+        poi.location.lat !== undefined
+      ) {
+        that.mapMoveTo(poi.location.lng, poi.location.lat, false)
+      }
+    },
+
     // 初始化搜索提示框
     initSearchBox () {
       var that = this
@@ -723,23 +773,7 @@ export default {
         AMap.event.addListener(this.autoTips, "select", (e) => {
           // 注册监听，当选中某条记录时会触发
           that.bShowPaln = false
-          AMapHelper.getPoiDetail({ id: e.poi.id })
-            .then((res) => {
-              that.chooseAddr = null
-              if (res.data.status === '1') {
-                that.updateSearchResults(res.data.pois)
-              }
-            })
-            .catch((err) => {
-              console.log('AMapHelper.getPoiDetail Err : ' + err)
-            })
-
-          if (
-            e.poi.location.lng !== undefined &&
-            e.poi.location.lat !== undefined
-          ) {
-            that.mapMoveTo(e.poi.location.lng, e.poi.location.lat, false)
-          }
+          that.handleAutoTipsPoi(e.poi)
         })
         // eslint-disable-next-line
         AMap.event.addListener(this.autoTips, "choose", (e) => {
