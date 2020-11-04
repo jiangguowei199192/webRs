@@ -132,7 +132,7 @@ export default {
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
       this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       this.$nextTick(() => {
-        this.$refs.player.play()
+        document.querySelector('audio').play()
       })
       EventBus.$emit('getFireAlarm', info)
     })
