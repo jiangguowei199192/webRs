@@ -1437,7 +1437,7 @@ export default {
             channelId: this.videoInfo.streamType
           })
         )
-      }, 1000)
+      }, 2000)
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType
@@ -1446,7 +1446,7 @@ export default {
         case 0:
           // 上移
           params.cmd_type = 0
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1454,7 +1454,7 @@ export default {
         case 1:
           // 右上
           params.cmd_type = 33
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1462,7 +1462,7 @@ export default {
         case 2:
           // 右移
           params.cmd_type = 3
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1470,7 +1470,7 @@ export default {
         case 3:
           // 右下
           params.cmd_type = 35
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1478,7 +1478,7 @@ export default {
         case 4:
           // 下
           params.cmd_type = 1
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1486,7 +1486,7 @@ export default {
         case 5:
           // 左下
           params.cmd_type = 34
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1494,7 +1494,7 @@ export default {
         case 6:
           // 左
           params.cmd_type = 2
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1502,7 +1502,7 @@ export default {
         case 7:
           // 左上
           params.cmd_type = 32
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1516,7 +1516,7 @@ export default {
             // 变焦+
             params.cmd_type = 6
           }
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
@@ -1530,7 +1530,7 @@ export default {
             // 变焦-
             params.cmd_type = 7
           }
-          params.step = this.step
+          params.step = this.showAR ? 1 : this.step
           params.stop = 0
           console.dir(params)
           this.changeViewVideo(params)
