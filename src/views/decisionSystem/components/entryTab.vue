@@ -9,7 +9,7 @@
       <div class="container">
         <div class="content">
           <!-- 头部标题 -->
-          <h3 class="title">选择图片</h3>
+          <div class="title"><p>选择图片</p></div>
           <!-- 左容器 -->
           <div class="left_tab fl">
             <ul v-for="(item, index) in info" :key="index">
@@ -19,7 +19,6 @@
                 :class="{ active: currentClass == index }"
                 @click="tabChecked(index)"
               >
-                <span class="fl"></span>
                 {{ item.title }}
               </li>
             </ul>
@@ -29,14 +28,21 @@
             <!-- 上部分tab内容容器 -->
             <div class="top_img">
               <div class="tab_wrap" v-show="currentTab == 0">
-                <gMap
+                <!-- <gMap
                   ref="gduMap"
+                  id="gduMap"
+                  class="map"
                   handleType="devMap"
                   :bShowSimpleSearchTools="true"
                   :bShowBasic="true"
                   :bShowMeasure="false"
                   :bAutoLocate="false"
-                ></gMap>
+                ></gMap> -->
+                <div
+                  id="map"
+                  class="map"
+                  style="width: 100%; height: 100%"
+                ></div>
               </div>
               <div class="tab_wrap" v-show="currentTab == 1">
                 <div v-if="this.buildInfo.length == 0" class="tab_img_wrap">
@@ -52,7 +58,7 @@
                     >
                       <span>{{ children_item.title }}</span>
                       <div
-                        style="margin-top: 5px; height: 80px;"
+                        style="margin-top: 5px; height: 80px"
                         :class="{ active: selectClass == children_index }"
                       >
                         <img :src="children_item.image" alt="图片加载失败" />
@@ -81,19 +87,19 @@
                 >截屏</el-button
               >
               <el-button
+                type="info"
+                size="mini"
+                style="width: 70px; color: #1EB0FC; background: transparent; border: 1px solid #1EB0FC;"
+                @click="backToPlan"
+                >取消</el-button
+              >
+              <el-button
                 type="primary"
                 size="mini"
-                style="width: 70px"
+                style="width: 70px; background: #1EB0FC; border: none;"
                 @click="goToFightDeploy"
                 :disabled="isDisabled"
                 >确定</el-button
-              >
-              <el-button
-                type="info"
-                size="mini"
-                style="width: 70px"
-                @click="backToPlan"
-                >取消</el-button
               >
             </div>
           </div>
@@ -105,7 +111,8 @@
 
 <script>
 // import kscreenshot from 'kscreenshot'
-// import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas'
+import $ from 'jquery'
 import { Notification } from 'element-ui'
 
 export default {
@@ -139,6 +146,9 @@ export default {
   methods: {
     screenshot () {
       alert('开始截屏')
+      this.PrtScn('#map').then(result => {
+        this.download(result)
+      })
     },
 
     // Tab入口弹窗操作
@@ -147,6 +157,10 @@ export default {
       this.enterpriseId = id
       this.configPath = path
       this.dialogVisible = true
+
+      this.$nextTick(() => {
+        this.loadMap()
+      })
     },
 
     // 点击每个Tab选项
@@ -207,30 +221,185 @@ export default {
           JSON.stringify(this.info[1].children[this.selectClass])
         )
       }
-
-      // setTimeout(() => {
-      //   console.log('开始截图')
-      //   this.toImage()
-      // }, 1000)
     },
 
     // 返回到Plan页
     backToPlan () {
       this.dialogVisible = false
-    }
+    },
 
-    // 截图
-    // toImage () {
-    //   html2canvas(this.$refs.tab_wrap, {
-    //     backgroundColor: 'orange',
-    //     useCORS: true,
-    //     foreignObjectRendering: true,
-    //     allowTaint: false
-    //   }).then(canvas => {
-    //     const url = canvas.toDataURL('image/png')
-    //     this.imgUrl = url
-    //   })
-    // }
+    loadMap () {
+      // eslint-disable-next-line no-undef
+      const map = new AMap.Map('map', {
+        zoom: 14, // 级别
+        center: [116.397428, 39.90923], // 中心点坐标
+        viewMode: '3D', // 使用3D视图
+        layers: [
+          // 使用多个图层
+          // eslint-disable-next-line no-undef
+          new AMap.TileLayer.Satellite(),
+          // eslint-disable-next-line no-undef
+          new AMap.TileLayer.RoadNet(),
+          // eslint-disable-next-line no-undef
+          new AMap.Buildings()
+        ],
+        zooms: [4, 18] // 设置地图级别范围
+      })
+      console.log(map)
+
+      // eslint-disable-next-line no-undef
+      AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
+        var autoOptions = {
+          // 城市，默认全国
+          city: '北京',
+          // 使用联想输入的input的id
+          input: 'input'
+        }
+        // eslint-disable-next-line no-undef
+        var autocomplete = new AMap.Autocomplete(autoOptions)
+        // eslint-disable-next-line no-undef
+        var placeSearch = new AMap.PlaceSearch({
+          city: '北京',
+          map: map
+        })
+        // eslint-disable-next-line no-undef
+        AMap.event.addListener(autocomplete, 'select', function (e) {
+          // TODO 针对选中的poi实现自己的功能
+          placeSearch.search(e.poi.name)
+        })
+      })
+    },
+
+    /* 截图核心方法封装，获取base64 */
+    PrtScn (domName) {
+      if (domName == null || domName === '') {
+        // eslint-disable-next-line no-throw-literal
+        throw 'dom name should not be null'
+      }
+      if (domName.charAt(0) !== '#' && domName.charAt(0) !== '.') {
+        // eslint-disable-next-line no-throw-literal
+        throw 'dom element only supports id or class'
+      }
+      let domIsNull = null
+      switch (domName.charAt(0)) {
+        case '#':
+          domIsNull = document.getElementById(domName.substr(1))
+          break
+        case '.':
+          domIsNull = document.getElementsByClassName(domName.substr(1))[0]
+          break
+        default:
+          break
+      }
+      if (domIsNull == null) {
+        // eslint-disable-next-line no-throw-literal
+        throw 'dom element should not be null'
+      }
+      // svg转canvas
+      const nodesToRecover = []
+      const nodesToRemove = []
+      let svgElem
+      switch (domName.charAt(0)) {
+        case '#':
+          svgElem = document
+            .getElementById(domName.substr(1))
+            .getElementsByTagName('svg')
+          break
+        case '.':
+          svgElem = document
+            .getElementsByClassName(domName.substr(1))[0]
+            .getElementsByTagName('svg')
+          break
+        default:
+          break
+      }
+      const prepare = []
+      for (let i = 0; i < svgElem.length; i++) {
+        prepare.push(0)
+      }
+      for (let i = 0; i < svgElem.length; i++) {
+        const parentNode = svgElem[i].parentNode
+        const canvas = document.createElement('canvas')
+        canvas.style.position = svgElem[i].style.position
+        canvas.width = parseInt(svgElem[i].style.width)
+        canvas.height = parseInt(svgElem[i].style.height)
+        canvas.style.left = 0
+        canvas.style.top = 0 // 生成与svg对应尺寸的canvas
+        const ctx = canvas.getContext('2d')
+        // eslint-disable-next-line camelcase
+        const svg_xml = new XMLSerializer().serializeToString(svgElem[i])
+        const img = new Image()
+        img.src = 'data:image/svg+xml;base64,' + window.btoa(svg_xml)
+        img.onload = function () {
+          ctx.drawImage(img, 0, 0)
+          prepare[i] = 1
+          // download(canvas.toDataURL("image/png")); // 调试用
+        }
+        parentNode.appendChild(canvas) // 使用canvas代替svg进行截图
+        nodesToRemove.push({
+          // 完成截图后删除canvas
+          parent: parentNode,
+          child: canvas
+        })
+        nodesToRecover.push({
+          // 完成截图后恢复svg
+          parent: parentNode,
+          child: svgElem[i]
+        })
+        parentNode.removeChild(svgElem[i]) // 暂时移除svg
+      }
+      return new Promise(resolve => {
+        const waitInterval = setInterval(() => {
+          let isComplete = true // 创建定时器，等待上面img.onload的异步操作
+          for (let i = 0; i < prepare.length; i++) {
+            if (prepare[i] === 0) {
+              isComplete = false
+              break
+            }
+          }
+          if (isComplete) {
+            clearInterval(waitInterval)
+            // div转canvas截图
+            let domElem
+            switch (domName.charAt(0)) {
+              case '#':
+                domElem = document.getElementById(domName.substr(1))
+                break
+              case '.':
+                domElem = document.getElementsByClassName(domName.substr(1))[0]
+                break
+              default:
+                break
+            }
+            html2canvas(domElem, {
+              useCORS: true,
+              logging: true
+            }).then(cnv => {
+              const imgUrl = cnv.toDataURL('image/png') // 将canvas转换成img的src流，base64
+              for (let i = 0; i < nodesToRecover.length; i++) {
+                nodesToRecover[i].parent.appendChild(nodesToRecover[i].child)
+              }
+              for (let i = 0; i < nodesToRemove.length; i++) {
+                nodesToRemove[i].parent.removeChild(nodesToRemove[i].child)
+              }
+              resolve(imgUrl)
+            })
+          }
+        }, 5)
+      })
+    },
+
+    /* 下载图片的方法 */
+    download (url) {
+      const a = document.createElement('a')
+      a.style.display = 'none'
+      document.body.appendChild(a)
+      const triggerDownload = $(a)
+        .attr('href', url)
+        .attr('download', 'gmap.png')
+      triggerDownload[0].click()
+      document.body.removeChild(a)
+    }
   }
 }
 </script>
@@ -255,54 +424,59 @@ export default {
     width: 100%;
     margin: 0 auto;
     .content {
-      margin-top: 50px;
-      width: 70%;
-      height: 550px;
-      border: 1px solid #eee;
+      width: 1032px;
+      height: 686px;
       margin-left: 15%;
-      background: #fff;
+      background: url("../../../assets/images/2d/entrytab_dialog.png") no-repeat;
+      background-size: 100% 100%;
+      padding-left: 8px;
+      padding-right: 8px;
       .title {
-        text-align: left;
-        line-height: 40px;
-        background-color: #fff;
-        padding: 0 15px;
-        border-bottom: 1px solid #eee;
+        padding: 20px 0 15px 15px;
+        border-bottom: 1px solid#35B3ED;
+        p {
+          background: url("../../../assets/images/device/info-title.png")
+            no-repeat;
+          width: 196px;
+          height: 34px;
+          line-height: 34px;
+          padding-left: 30px;
+          color: #fff;
+        }
       }
       .left_tab {
-        width: 19%;
+        width: 17%;
         overflow: hidden;
+        padding: 0 10px;
+        text-align: center;
         .item_li {
-          width: 100%;
-          line-height: 30px;
+          width: 140px;
+          height: 40px;
+          line-height: 40px;
+          margin: 25px 0 0 22px;
           font-size: 14px;
-          color: rgb(99, 99, 99);
-          margin-top: 15px;
-          display: flex;
-          align-items: center;
+          color: #aef0f4;
           cursor: pointer;
-          span {
-            display: block;
-            width: 3px;
-            height: 24px;
-            background-color: transparent;
-            margin-right: 20px;
-          }
+          background: url("../../../assets/images/2d/entrytab_unchecked.png")
+            no-repeat;
+          background-size: 100% 100%;
         }
         .item_li.active {
-          color: #eb3030;
-          span {
-            background-color: #eb3030;
-          }
+          color: #fff;
+          background: url("../../../assets/images/2d/entrytab_checked.png")
+            no-repeat;
+          background-size: 100% 100%;
         }
       }
       .right_tab {
         width: 80%;
-        height: calc(100% - 43px);
-        border: 1px solid #eee;
+        height: calc(100% - 75px);
+        border-left: 1px solid #35b3ed;
         .top_img {
           position: relative;
-          border-bottom: 1px solid #eee;
-          height: 90%;
+          border-bottom: 1px solid #35b3ed;
+          height: 89%;
+          color: #aef0f4;
           .tab_wrap {
             width: 90%;
             height: 80%;
@@ -329,7 +503,7 @@ export default {
           }
         }
         .bottom_btn {
-          padding: 10px 15px;
+          padding: 18px 20px;
           text-align: right;
         }
       }

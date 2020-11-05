@@ -26,7 +26,7 @@
       @mouseenter="showDelete"
       @mouseleave="hideDelete"
     >
-      <span id="node-span"><img :src="node.label" alt=""/></span>
+      <span id="node-span"><img :src="node.label" alt="" /></span>
       <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
         <i class="el-icon-circle-close"></i>
       </div>
@@ -59,8 +59,8 @@ export default {
         left: parseInt(this.node.left.replace('px', '')),
         top: parseInt(this.node.top.replace('px', '')),
         rotate: this.node.rotate,
-        minW: [20, 1000],
-        minH: [20, 1000],
+        minW: [10, 1000],
+        minH: [10, 1000],
         lock: false,
         isActive: false
       },
@@ -105,7 +105,7 @@ export default {
 
     // 节点激活状态
     const _this = this
-    EventBus.$on('type', data => {
+    EventBus.$on('type', (data) => {
       // console.log(data)
       _this.controlled.isActive = data
     })

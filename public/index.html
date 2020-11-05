@@ -1,35 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="./logo.ico">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="./logo.ico" />
   </head>
-<style>
-  @import url(/webFs/assets/css/ms.css);
-  @import url(/webFs/assets/css/layerStyle.css);
-</style>
+  <style>
+    @import url(/webFs/assets/css/ms.css);
+    @import url(/webFs/assets/css/layerStyle.css);
+  </style>
 
-<body class="browserScroll">
-  <noscript>
-    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
-      Please enable it to continue.</strong>
-  </noscript>
-  <div id="app"></div>
-  <!-- built files will be auto injected -->
-  <script src="/webFs/liveplayer-lib.min.js"></script>
-  <script src="/webFs/D2.js"></script>
-  <script src="/webFs/paho-mqtt.js"></script>
-  <!-- 第3方lib -->
-  <script type="text/javascript" src="lib/include-lib.js" libpath="lib/"
-    include="jquery,font-awesome,web-icons,layer,haoutil,nprogress,toastr,turf,mars3d"></script>
-</body>
-
+  <body class="browserScroll">
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <script src="/webFs/liveplayer-lib.min.js"></script>
+    <script src="/webFs/D2.js"></script>
+    <script src="/webFs/paho-mqtt.js"></script>
+    <!-- 第3方lib -->
+    <script
+      type="text/javascript"
+      src="lib/include-lib.js"
+      libpath="lib/"
+      include="jquery,font-awesome,web-icons,layer,haoutil,nprogress,toastr,turf,mars3d"
+    ></script>
+    <!-- <script src="http://api.map.baidu.com/api?v=3.0&ak=PgNHPqzIRsGR1yhs8nkoCtXOZLbwmawp"></script> -->
+    <!-- <script src="http://ditu.google.cn/maps/api/js?key=AIzaSyBp&language=zh-CN"></script> -->
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=liangkai_Lee&plugin=AMap.Autocomplete"></script>
+  </body>
 </html>
 <style>
   body {
-    margin: 0
+    margin: 0;
   }
 
   html,

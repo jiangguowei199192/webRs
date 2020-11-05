@@ -3,13 +3,10 @@
     <!-- 头部返回 -->
     <div class="header">
       <div class="back">
-        <el-button
-          type="primary"
-          size="mini"
-          icon="el-icon-arrow-left"
-          @click="backToPlan"
-          >指挥决策</el-button
-        >
+        <button type="button" class="backStyle" @click="backToPlan">
+          <img :src="backImg" />
+          指挥决策
+        </button>
       </div>
     </div>
     <!-- main容器 -->
@@ -22,23 +19,25 @@
       <div class="left">
         <div
           class="model_edit"
-          :style="'height:' + (this.workHeight - 60) + 'px;'"
+          :style="'height:' + (this.workHeight - 220) + 'px;'"
         >
           <div class="edit_menu">
-            <p><i class="el-icon-delete" title="删除"></i>删除</p>
-            <p><i class="el-icon-printer" title="打印"></i>打印</p>
-            <p><i class="el-icon-share" title="分享"></i>分享</p>
-            <p>
-              <i
-                class="el-icon-folder-opened"
-                title="保存"
-                @click.stop="saveData"
-              ></i
-              >保存
-            </p>
+            <el-tooltip
+              v-for="(item, index) in curIcons"
+              :key="index"
+              popper-class="gTooltip plotTooltip"
+              :content="item.title"
+              placement="top"
+              :open-delay="500"
+            >
+              <span v-if="index == 2" @click.stop="saveData"
+                ><img :src="item.img" alt="" />{{ item.title }}</span
+              >
+              <span v-else><img :src="item.img" alt="" />{{ item.title }}</span>
+            </el-tooltip>
           </div>
           <el-select
-            style="margin: 8px 0 0 4px"
+            style="margin: 5px 0 0 0"
             size="mini"
             placeholder="请选择"
             v-model="modelType"
@@ -58,7 +57,7 @@
             <ul class="fl">
               <el-tooltip
                 v-for="(item, index) in curModels"
-                :key="index"
+                :key="index + '-node'"
                 popper-class="gTooltip plotTooltip"
                 :content="item.name"
                 placement="top"
@@ -140,6 +139,16 @@ export default {
         nodeList: [],
         newTemplate: '1'
       },
+      curIcons: [
+        {
+          title: '背景',
+          img: require('../../assets/images/2d/background.png')
+        },
+        { title: '删除', img: require('../../assets/images/2d/delete.png') },
+        { title: '保存', img: require('../../assets/images/2d/save.png') },
+        { title: '分享', img: require('../../assets/images/2d/share.png') },
+        { title: '打印', img: require('../../assets/images/2d/print.png') }
+      ],
       // 模型索引
       modelType: '',
       // 模型列表选项
@@ -155,7 +164,8 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      backImg: require('../../assets/images/2d/back.png')
     }
   },
 
@@ -261,11 +271,11 @@ export default {
       const index = this.index++
       const temp = {
         label: this.currentItem.image,
-        left: event.offsetX - 105 / 2 + 'px',
-        top: event.offsetY - 105 / 2 + 'px',
-        id: index,
-        width: 105,
-        height: 105,
+        left: event.offsetX - 130 / 2 + 'px',
+        top: event.offsetY - 64 / 2 + 'px',
+        id: index + '-node',
+        width: 130,
+        height: 64,
         rotate: 0
       }
 
@@ -298,7 +308,7 @@ export default {
         showClose: false
       })
         .then(() => {
-          this.data.nodeList = this.data.nodeList.filter(item => {
+          this.data.nodeList = this.data.nodeList.filter((item) => {
             return item.id !== nodeId
           })
         })
@@ -337,7 +347,7 @@ export default {
     updateNodeList (index, info) {
       info.left = info.left + 'px'
       info.top = info.top + 'px'
-      const node = this.data.nodeList.find(n => n.id === index)
+      const node = this.data.nodeList.find((n) => n.id === index)
       if (node !== undefined) {
         for (var b in info) {
           // 拷贝属性
@@ -350,8 +360,7 @@ export default {
 
     // 保存json数据
     saveData () {
-      alert(JSON.stringify(this.data.nodeList))
-
+      // alert(JSON.stringify(this.data.nodeList))
       const blob = new Blob([JSON.stringify(this.data.nodeList)], {
         type: 'application/json'
       })
@@ -362,7 +371,7 @@ export default {
       formData.append('configFile', blob, '2dConfigData.json')
       this.$axios
         .post(api.upload2dConfig, formData, config)
-        .then(res => {
+        .then((res) => {
           console.log('二维部署保存接口返回: ', res)
           if (res.data.code === 0) {
             this.configPath = globalApi.headImg + res.data.data.configPath
@@ -381,7 +390,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('接口错误: ' + err)
         })
     },
@@ -391,11 +400,11 @@ export default {
       if (this.loadJsonPath || this.loadJsonPath !== '') {
         axios
           .get(globalApi.headImg + this.loadJsonPath)
-          .then(res => {
+          .then((res) => {
             const nodeData = res.data
             if (nodeData || nodeData.length !== 0) {
               // console.log(nodeData)
-              nodeData.forEach(item => {
+              nodeData.forEach((item) => {
                 this.addNode(item)
               })
             } else {
@@ -407,7 +416,7 @@ export default {
               })
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.log('加载json数据失败: ' + err)
           })
       } else {
@@ -425,13 +434,13 @@ export default {
       this.options = []
       axios
         .get('config/plotlist.json')
-        .then(res => {
+        .then((res) => {
           // console.log('模型列表:', res)
           const data = res.data
           let i = 0
           for (var p in data) {
             const array = data[p]
-            array.forEach(a => {
+            array.forEach((a) => {
               if (a.image.startsWith('$serverURL_gltf$')) {
                 a.image = a.image.replace('$serverURL_gltf$', serverUrl)
               }
@@ -450,7 +459,7 @@ export default {
             i += 1
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('获取模型列表失败: ' + err)
         })
     },
@@ -483,12 +492,25 @@ export default {
     height: 50px;
     line-height: 50px;
     position: absolute;
-    top: 110px;
+    top: 115px;
     .back {
       margin-left: 20px;
-      /deep/.el-button {
-        width: 120px;
-        font-size: 14px;
+      .backStyle {
+        width: 134px;
+        height: 40px;
+        border: none;
+        font-size: 18px;
+        color: #fff;
+        outline: none;
+        display: block;
+        cursor: pointer;
+        background: url("../../assets/images/plan/plan-back-background.png")
+          no-repeat;
+        background-size: 100% 100%;
+        img {
+          width: 20px;
+          height: 16px;
+        }
       }
     }
   }
@@ -502,53 +524,65 @@ export default {
       z-index: 999;
       height: 100%;
       position: absolute;
-      left: 10px;
-      top: 30px;
+      left: 15px;
+      top: 50px;
       .model_edit {
-        width: 270px;
-        background-color: rgba(0, 0, 0, 0.5);
+        width: 328px;
+        background: url("../../assets/images/2d/model_wrap.png") no-repeat;
+        background-size: 100% 100%;
+        padding: 10px 20px;
         .edit_menu {
           display: flex;
           justify-content: space-between;
           font-size: 12px;
           text-align: center;
           padding: 8px 0;
-          i {
+          span {
             display: block;
-            width: 35px;
-            height: 35px;
-            background-color: rgba(255, 255, 255, 0.8);
-            color: rgb(108, 140, 243);
-            border-radius: 50%;
-            line-height: 35px;
-            font-size: 22px;
+            outline: none;
+            color: #fff;
             margin: 8px;
             cursor: pointer;
+            img {
+              width: 46px;
+              height: 46px;
+              margin-bottom: 3px;
+            }
           }
         }
         /deep/.el-input {
-          width: 232px;
+          width: 308px;
+        }
+        /deep/.el-input__inner {
+          height: 38px;
+          line-height: 38px;
+          background: transparent;
+          border: 1px solid #35b3ed;
+          color: #fff;
         }
         .edit_list {
           overflow-y: auto;
-          margin-top: 15px;
+          margin-top: 20px;
           ul {
             margin-left: 13px;
             li {
               float: left;
-              width: 105px;
-              height: 105px;
+              width: 130px;
+              height: 64px;
+              line-height: 64px;
               border: 2px solid transparent;
+              outline: none;
               font-size: 14px;
-              line-height: 100px;
               text-align: center;
-              // margin-bottom: 10px;
-              margin: 0 13px 13px 0;
+              margin: 0 36px 13px 0;
               cursor: pointer;
             }
             .active {
               border: 2px solid rgba(255, 244, 100, 1);
               background: none;
+            }
+            li:nth-child(2n) {
+              margin: 0 0 13px 0;
             }
           }
         }
