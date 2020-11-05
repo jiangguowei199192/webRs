@@ -444,6 +444,7 @@ export default {
       if (this.$refs.editbox.contains(event.target)) return
       else if (this.isPlot && this.showEditBox) {
         // 如果第一次编辑任务
+        this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请先添加任务' })
         event.stopPropagation()
         return
@@ -621,6 +622,7 @@ export default {
      */
     closeEditBox () {
       if (this.isPlot && this.showEditBox) {
+        this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请先添加任务' })
         return
       }
@@ -771,10 +773,12 @@ export default {
      */
     setModelTask () {
       if (stringIsNullOrEmpty(this.editBox.department)) {
+        this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请输入单位' })
         return
       }
       if (stringIsNullOrEmpty(this.editBox.number)) {
+        this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请输入序号' })
         return
       }
@@ -782,6 +786,7 @@ export default {
         stringIsNullOrEmpty(this.editBox.task) ||
         this.editBox.task === '- -'
       ) {
+        this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请输入任务' })
         return
       }
@@ -918,6 +923,7 @@ export default {
         case 5:
           var json = ''
           if (!this.drawControl || stringIsNullOrEmpty(json = this.drawControl.toGeoJSON())) {
+            this.$notify.closeAll()
             this.$notify.warning({ title: '提示', message: '当前未标绘任何数据' })
           } else {
             json.cameraViews = this.cameraViews
@@ -929,13 +935,15 @@ export default {
             this.$axios.post(api.uploadModelConfig, formData, config).then((res) => {
               if (res.data.code === 0) {
                 this.configPath = globalApi.headImg + res.data.data.configPath
+                this.$notify.closeAll()
                 this.$notify.info({ title: '提示', message: '保存成功' })
               }
             }).catch(err => {
+              this.$notify.closeAll()
               this.$notify.info({ title: '提示', message: '保存失败' })
               console.log('uploadModelConfig Err : ' + err)
             })
-            console.log(json)
+            // console.log(json)
           }
           break
         case 6:
@@ -978,7 +986,7 @@ export default {
         axios.get(globalApi.headImg + this.configPath)
           .then(res => {
             const data = res.data
-            console.log(data)
+            // console.log(data)
             this.cameraViews = data.cameraViews
             const entities = this.drawControl.loadJson(data)
             if (!this.modelList) this.modelList = []
@@ -1004,8 +1012,8 @@ export default {
                 this.addModelRect(e)
               }
             })
-            console.log('----------------------------')
-            console.log(entities)
+            // console.log('----------------------------')
+            // console.log(entities)
           })
           .catch(err => {
             console.log('getModelConfigFile Err : ' + err)
@@ -1845,6 +1853,7 @@ export default {
         me.showInfoBox = false
         // 如果正在编辑第一次绘制模型的任务
         if (me.isPlot && me.showEditBox) {
+          this.$notify.closeAll()
           me.$notify.warning({ title: '警告', message: '请先添加任务' })
           return
         }

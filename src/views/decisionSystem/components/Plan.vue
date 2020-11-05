@@ -251,6 +251,7 @@ export default {
         !this.showInfo.planEnterpriseInfo3D ||
         !this.showInfo.planEnterpriseInfo3D.modelPath
       ) {
+        this.$notify.closeAll()
         this.$notify.warning({ title: '提示', message: '三维预案不存在' })
         return
       }
