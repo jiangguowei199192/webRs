@@ -642,9 +642,10 @@ export default {
       _keyResult.forEach((k) => {
         k._bHover = false
         k._updateHoverCB = this.updateMouseHover
+        k.keyId = k.id
         if (k.enterpriseOtherInfo !== null) {
           const tmpInfo = JSON.parse(k.enterpriseOtherInfo)
-          k.keyId = tmpInfo.mapId
+          k.id = tmpInfo.mapId
         }
         k.name = k.enterpriseName
         k.address = k.enterpriseAddress

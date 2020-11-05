@@ -116,6 +116,7 @@ export default {
     })
     // 人员识别提示
     EventBus.$on('video/people/found', (info) => {
+      this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
@@ -127,12 +128,30 @@ export default {
       EventBus.$emit('getArChange', info)
     })
   },
+  destroyed () {
+    EventBus.$off('video/device/online')
+    EventBus.$off('video/device/offline')
+    EventBus.$off('video/realVideo/streamStart')
+    EventBus.$off('video/realVideo/streamEnd')
+    EventBus.$off('droneInfos')
+    EventBus.$off('video/people/found')
+    EventBus.$off('video/people/real')
+    EventBus.$off('video/aRAiResult')
+    EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
+    // 退出时，关闭mqtt连接
+    if (this.mqtt) {
+      this.mqtt.needReconnect = false
+      if (this.mqtt.isConnect) this.mqtt.disconnect()
+    }
+  },
   mounted () {
     // 火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+      this.$notify.closeAll()
       this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       this.$nextTick(() => {
-        document.querySelector('audio').play()
+        const dom = document.querySelector('audio')
+        dom && dom.play()
       })
       EventBus.$emit('getFireAlarm', info)
     })
@@ -143,7 +162,9 @@ export default {
     this.init()
     // 通过构造函数，创建mqtt连接
     // eslint-disable-next-line no-unused-vars
-    var mqtt = new MqttService()
+    this.mqtt = new MqttService()
+    // 如果mqtt已经创建过
+    if (this.mqtt.created) { this.mqtt.mqttConnect() }
     // 获取飞机实时信息所需订阅主题
     this.getRealtimeInfoTopics()
   },
@@ -157,6 +178,7 @@ export default {
         } else if (index === 2) {
           this.$router.push({ path: '/evaluationSystem' })
         } else if (index === 4) {
+          this.$notify.closeAll()
           this.$notify.info({ title: '提示', message: '功能未开放' })
           // this.$router.push({ path: '/digitalIndividual' })
         } else if (index === 5) {

@@ -5,15 +5,18 @@ var mqttService;
   var instance
   mqttService = function (name) {
     if (instance) {
+      instance.created = true
       return instance
     }
 
     instance = this
+    this.created = false
     this.reconnecting = false
     this.reconnectTimeout = ''
     this.client = ''
     this.failTimes = 0
     this.isConnect = false
+    this.needReconnect = true
 
     var clearReconnect = function () {
       console.log('clearReconnect')
@@ -25,6 +28,12 @@ var mqttService;
         instance.reconnecting = false
       }
     }
+
+    this.disconnect = function () {
+      clearReconnect()
+      if (instance.isConnect) { instance.client.disconnect() }
+    }
+
     // mqtt client连接上后的callback
     var onConnect = function () {
       // Once a connection has been made, make a subscription and send a message.
@@ -59,7 +68,7 @@ var mqttService;
     var onConnectionLost = function (responseObject) {
       console.log('onConnectionLost')
       instance.isConnect = false
-      mqttReconnect()
+      if (instance.needReconnect) mqttReconnect()
       if (responseObject.errorCode !== 0) {
         console.log('errorMessage:' + responseObject.errorMessage)
       }
@@ -115,7 +124,8 @@ var mqttService;
     }
 
     // eslint-disable-next-line no-unused-vars
-    var mqttConnect = (function () {
+    this.mqttConnect = function () {
+      instance.needReconnect = true
       clearReconnect()
       var clientID =
         'pc_' +
@@ -138,7 +148,8 @@ var mqttService;
         userName: 'admin',
         password: 'admin'
       })
-    }())
+    }
+    instance.mqttConnect()
 
     /**
 * Subscribe for messages, request receipt of a copy of messages sent to the destinations described by the filter.
