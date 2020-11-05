@@ -651,15 +651,21 @@ export default {
     saveModelInfo (save) {
       if (!this.curEntity) return
       let dst = ''
-      if (this.curEntity instanceof Cesium.Entity) {
-        dst = this.curEntity.attribute
-      } else if (this.curEntity instanceof Cesium.Model) {
+      if (this.curEntity instanceof Cesium.Entity || this.curEntity instanceof Cesium.Model) {
         dst = this.curEntity.attribute
       } else if (this.curEntity && this.curEntity instanceof Cesium.Billboard) {
         dst = this.curEntity.id.attribute
       }
-      if (save === true) this.copyData(this.infoBox, dst)
-      else this.copyData(this.curEntity.attribute, this.infoBox)
+      if (save === true) {
+        this.copyData(this.infoBox, dst)
+        // 更新marker上的文字
+        if (!(this.curEntity instanceof Cesium.Billboard) && !dst.isVr) {
+          this.updateMarkerLabel(dst.id, this.curEntity)
+        }
+        const list = this.markDatas[dst.editIndex]
+        const l = list.find(r => r.id === dst.id)
+        if (l !== undefined) { l.name = dst.name }
+      } else this.copyData(this.curEntity.attribute, this.infoBox)
       this.infoBox.editing = false
     },
 
@@ -1437,6 +1443,24 @@ export default {
       const t = this.findModelMarker(name)
       if (t !== undefined) {
         t.position = position
+      }
+    },
+
+    /**
+     *  更新Marker的文字
+     * @param {Object} name 标签名称
+     * @param {Object} entity 标签对应的模型
+     */
+    updateMarkerLabel (name, entity) {
+      const t = this.findModelMarker(name)
+      if (t !== undefined) {
+        // t.position = position
+        const attr = entity.attribute
+        const innerhtml = ` <div class="label labelxfs">
+                  <img src="${attr.img}"></img>
+                  <span>${attr.name}</span>
+                </div>`
+        t.html = innerhtml
       }
     },
 
