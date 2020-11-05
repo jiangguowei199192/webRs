@@ -261,6 +261,7 @@ export default {
      */
     isStopPlayerFirst () {
       if (this.player) {
+        this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请先停止当前回放' })
         return true
       }

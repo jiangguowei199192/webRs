@@ -20,7 +20,6 @@ import md5 from 'js-md5'
 // 去掉mars3d控制台版本输出
 console.clear()
 VueDragResize.name = 'vdr'
-
 Vue.use(ElementUI)
 Vue.component('gMap', gMap)
 Vue.use(VueClipboard)

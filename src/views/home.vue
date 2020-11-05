@@ -116,6 +116,7 @@ export default {
     })
     // 人员识别提示
     EventBus.$on('video/people/found', (info) => {
+      this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
@@ -145,10 +146,12 @@ export default {
   },
   mounted () {
     // 火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+      this.$notify.closeAll()
       this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       this.$nextTick(() => {
-        document.querySelector('audio').play()
+        const dom = document.querySelector('audio')
+        dom && dom.play()
       })
       EventBus.$emit('getFireAlarm', info)
     })
@@ -175,6 +178,7 @@ export default {
         } else if (index === 2) {
           this.$router.push({ path: '/evaluationSystem' })
         } else if (index === 4) {
+          this.$notify.closeAll()
           this.$notify.info({ title: '提示', message: '功能未开放' })
           // this.$router.push({ path: '/digitalIndividual' })
         } else if (index === 5) {
