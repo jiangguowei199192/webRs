@@ -23,6 +23,8 @@
 
 <script>
 import { Notification } from 'element-ui'
+import globalApi from '@/utils/globalApi'
+
 export default {
   props: {
     info: {
@@ -34,7 +36,7 @@ export default {
     return {
       addImg: require('../../../assets/images/Setting/setting-addImage.png'),
 
-      imageUrl: ''
+      imageUrl: (this.info.path === '') ? '' : (globalApi.headImg + this.info.path)
     }
   },
   methods: {
