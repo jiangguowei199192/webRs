@@ -150,6 +150,8 @@ const videoMixin = {
               device.children.push(item)
             }
           })
+          // 通道按可见光、红外排序
+          device.children.sort(function (a, b) { return (a.streamType - b.streamType) })
         }
       } else if (isOnline) {
         // 设备不存在，新设备上线
@@ -306,7 +308,11 @@ const videoMixin = {
                   }
                 }
                 this.setTreeNodeDisabled(!isOnline, child.id)
-              } else device.children.push(item)
+              } else {
+                device.children.push(item)
+                // 通道按可见光、红外排序
+                device.children.sort(function (a, b) { return (a.streamType - b.streamType) })
+              }
             })
           }
           if (!isOnline) { this.deviceOffline(device) }
