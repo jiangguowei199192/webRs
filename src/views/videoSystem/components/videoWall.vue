@@ -12,6 +12,7 @@
       :stretch="true"
       :live="videoInfo.isLive !==false"
       aspect="fullscreen"
+      :poster="poster"
     >
       <div ref="playerArea" class="pointLayer" @dblclick="fullScreen">
         <div
@@ -741,7 +742,8 @@ export default {
         lrisAdd: 0,
         lrisMinus: 0
       },
-      lastState: ''
+      lastState: '',
+      poster: require('../../../assets/images/loading.gif')
     }
   },
 

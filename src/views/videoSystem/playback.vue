@@ -30,8 +30,8 @@
                 <el-button
                   v-for="(list,index2) in item.children"
                   :key="index2"
-                  :class="{visible:!list.isSelected,visibleSelected:list.isSelected}"
-                  :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
+                  :class="{visible:!list.isSelected,visibleSelected:list.isSelected,curSelected:list.isCurSelected}"
+                  :style="{backgroundColor:list.isCurSelected?'#1EB0FC':list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                   @click.stop="playDeviceVideo(item,list,index1,index2)"
                   :title="list.label"
                 >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>

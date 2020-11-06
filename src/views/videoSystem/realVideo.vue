@@ -31,10 +31,13 @@
                 <div class="btns">
                   <!-- <div > -->
                   <el-button
+                    :disabled="list.onlineStatus==='offline'"
                     v-for="(list,index2) in item.children"
                     :key="index2"
-                    :class="{visible:!list.isSelected,visibleSelected:list.isSelected,curSelected:list.isCurSelected}"
-                    :style="{backgroundColor:list.isCurSelected?'#1EB0FC':list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
+                    :class="{visibleOffline:list.onlineStatus==='offline',visible:!list.isSelected && list.onlineStatus==='online',visibleSelected:list.isSelected,curSelected:list.isCurSelected}"
+                    :style="{backgroundColor:list.isCurSelected?'#1EB0FC':list.isSelected?'rgba(0,212,15,1)':''
+                    ,color:list.onlineStatus==='offline'?'#999999':list.isSelected?'#fff':'#1EB0FC',
+                    border:list.onlineStatus==='offline'?'1px solid #999999':'1px solid rgba(30, 176, 252, 1)'}"
                     @click.stop="playDeviceVideo(item,list,index1,index2)"
                     :title="list.label"
                   >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
@@ -1735,6 +1738,10 @@ export default {
         }
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
+        }
+        button.visibleOffline {
+          cursor: not-allowed;
+          background: url(../../assets/images/visible_offline.png) no-repeat 4px center;
         }
         button.visibleSelected,button.curSelected {
           background: url(../../assets/images/visible_selected.png) no-repeat

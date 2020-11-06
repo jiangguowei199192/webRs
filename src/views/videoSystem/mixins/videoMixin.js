@@ -143,7 +143,8 @@ const videoMixin = {
               var i = device.children.indexOf(stream)
               // 通道上线
               if (isOnline) { device.children.splice(i, 1, item) } else {
-                device.children.splice(i, 1)
+                // device.children.splice(i, 1)
+                Reflect.set(device.children[i], 'onlineStatus', 'offline')
               }
             } else if (isOnline) {
               // 通道不存在，新通道上线
