@@ -32,7 +32,7 @@
               @row-click="ClickTableRow"
               :data="userList"
               stripe
-              empty-text="no data"
+              empty-text="暂无数据"
               tooltip-effect="light"
             >
               <el-table-column label width="33" align="center" :resizable="false">

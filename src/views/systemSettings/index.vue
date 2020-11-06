@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: -5px;padding: 0 20px 20px 20px;">
+  <div style="margin-top: -5px; padding: 0 20px 20px 20px">
     <div class="leftBox">
       <div style="height: 800px">
         <SettingLeftItem
@@ -46,7 +46,11 @@
             v-show="showVideoItem"
           ></SettingRightTable>
 
-          <div id="idRightItemSmartFunction" style="height: 44px"></div>
+          <div
+            ref="smartFunctionRef"
+            id="idRightItemSmartFunction"
+            style="height: 44px"
+          ></div>
           <SettingRightTable
             v-bind:itemData="rightItemSmartFunction"
             v-bind:userDetail="userDetail"
@@ -272,7 +276,8 @@ export default {
             globalApi.headImg + this.userDetail.headImg
 
           if (this.userDetail.orgName && this.userDetail.jobDesc) {
-            this.rightItemUserSetting.items[2].text = this.userDetail.orgName + '、' + this.userDetail.jobDesc
+            this.rightItemUserSetting.items[2].text =
+              this.userDetail.orgName + '、' + this.userDetail.jobDesc
           }
           if (this.userDetail.orgName === null && this.userDetail.jobDesc) {
             this.rightItemUserSetting.items[2].text = this.userDetail.jobDesc
@@ -434,6 +439,11 @@ export default {
     // 点击左侧边栏的item
     leftBoxDidSelectedItem: function (id) {
       // console.log(id)
+      // console.log(this.$route.path)
+      if (this.$route.path !== '/systemSettings') {
+        this.$router.push({ path: '/systemSettings' })
+      }
+
       for (let i = 0; i < this.leftItemData.length; i++) {
         const group = this.leftItemData[i]
         for (let j = 0; j < group.info.length; j++) {
@@ -446,27 +456,29 @@ export default {
         }
       }
 
-      if (id === 0) {
-        document
-          .getElementById('idRightItemUserSetting')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } else if (id === 1) {
-        document
-          .getElementById('idRightItemUserPermission')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } else if (id === 2) {
-        document
-          .getElementById('idRightItemVideoServe')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } else if (id === 3) {
-        document
-          .getElementById('idRightItemSmartFunction')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } else if (id === 4) {
-        document
-          .getElementById('idRightItemMapServe')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
+      setTimeout(() => {
+        if (id === 0) {
+          document
+            .getElementById('idRightItemUserSetting')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else if (id === 1) {
+          document
+            .getElementById('idRightItemUserPermission')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else if (id === 2) {
+          document
+            .getElementById('idRightItemVideoServe')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else if (id === 3) {
+          document
+            .getElementById('idRightItemSmartFunction')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else if (id === 4) {
+          document
+            .getElementById('idRightItemMapServe')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 50)
     },
     async logoutClick () {
       // this.$axios
@@ -510,7 +522,10 @@ export default {
         this.isShow = false
       }
 
-      if (to.path === '/systemSettings' && from.path === '/systemSettings/videoAccessManagement') {
+      if (
+        to.path === '/systemSettings' &&
+        from.path === '/systemSettings/videoAccessManagement'
+      ) {
         if (this.userDetail.roleCode === 2001) {
           this.getDeviceCount()
         }
