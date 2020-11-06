@@ -1,9 +1,14 @@
 <template>
-  <div>
+  <div style="height: 908px">
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll">
+        <button type="button" class="back-sty" @click.stop="backClick">
+          <img :src="backImg" />
+          返回
+        </button>
+
         <div class="container">
-          <div style="margin-top: 50px;">
+          <div style="margin-top: 50px">
             <div>
               <div class="titleArrowStyle"></div>
               <div class="titleStyle">单位基础信息</div>
@@ -41,9 +46,16 @@
                 class="textInputStyle baseInfoInput"
               ></el-input>
             </div>
-            <div style="height: 200px; margin-top: 20px;">
+            <div style="height: 200px; margin-top: 20px">
               <div class="coordinatesTitleStyle">地理坐标</div>
-              <div style="width: 376px; height: 198px; background: white; display: inline-block;">
+              <div
+                style="
+                  width: 376px;
+                  height: 198px;
+                  background: white;
+                  display: inline-block;
+                "
+              >
                 <gMap
                   ref="gduMap"
                   handleType="devMap"
@@ -70,24 +82,35 @@
               ></el-input>
             </div>
           </div>
-          <div style="margin-top: 50px;">
+          <div style="margin-top: 50px">
             <div>
               <div class="titleArrowStyle"></div>
               <div class="titleStyle">基本情况说明</div>
             </div>
             <div>
-              <div class="basicSituationStyle" v-for="(item, index) in basicSituation" :key="index">
-                <UploadImage v-bind:info="item" v-on:doUploadImage="basicSituationDoUploadImage"></UploadImage>
+              <div
+                class="basicSituationStyle"
+                v-for="(item, index) in basicSituation"
+                :key="index"
+              >
+                <UploadImage
+                  v-bind:info="item"
+                  v-on:doUploadImage="basicSituationDoUploadImage"
+                ></UploadImage>
               </div>
             </div>
           </div>
-          <div style="margin-top: 50px;">
+          <div style="margin-top: 50px">
             <div>
               <div class="titleArrowStyle"></div>
               <div class="titleStyle">建筑平面图</div>
             </div>
             <div>
-              <div class="basicSituationStyle" v-for="(item, index) in buildingPlan" :key="index">
+              <div
+                class="basicSituationStyle"
+                v-for="(item, index) in buildingPlan"
+                :key="index"
+              >
                 <UploadImageMore
                   v-bind:info="item"
                   v-bind:index="index"
@@ -101,7 +124,9 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" @click="saveClick" class="saveStyle">保 存</el-button>
+            <el-button type="primary" @click="saveClick" class="saveStyle"
+              >保 存</el-button
+            >
           </div>
         </div>
       </div>
@@ -115,6 +140,7 @@ import UploadImageMore from './components/PlanSettingUploadImageMore.vue'
 import { settingApi } from '@/api/setting'
 import { api } from '@/api/3d.js'
 import { Notification } from 'element-ui'
+import globalApi from '../../utils/globalApi'
 
 export default {
   components: {
@@ -123,6 +149,7 @@ export default {
   },
   data () {
     return {
+      backImg: require('../../assets/images/Setting/setting-back.png'),
       addImg: require('../../assets/images/Setting/setting-addImage.png'),
       planInfo: '',
 
@@ -136,40 +163,7 @@ export default {
       companyPhone: '', // 联系电话
       companySubPhone: '', // 备用电话
 
-      basicSituation: [
-        // 基本情况说明
-        {
-          id: 'JBQK001',
-          title: '《基本情况》',
-          subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
-          path: ''
-        },
-        {
-          id: 'JBQK002',
-          title: '《供水系统》',
-          subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
-          path: ''
-        },
-        {
-          id: 'JBQK003',
-          title: '《行车路线》',
-          subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
-          path: ''
-        },
-        {
-          id: 'JBQK004',
-          title: '《防火设计》',
-          subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
-          path: ''
-        },
-        {
-          id: 'JBQK005',
-          title: '《重点部位》',
-          subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
-          path: ''
-        }
-      ],
-
+      basicSituation: [], // 基本情况说明
       buildingPlan: [
         // 建筑平面图
         // {
@@ -199,6 +193,10 @@ export default {
     this.getEnterpriseTypeList()
   },
   methods: {
+    backClick () {
+      this.$router.push({ path: '/decisionSystem' })
+    },
+
     // 获取单位类型集合
     async getEnterpriseTypeList () {
       // var p = this
@@ -237,19 +235,21 @@ export default {
       const formData = new FormData()
       formData.append('picName', item.name)
       formData.append('file', imageFile)
-      this.$axios.post(settingApi.jzpmtPicUpload, formData, config).then((res) => {
-        if (res.data.code === 0) {
-          var receive = res.data.data
-          item.path = receive.picPath
-          return
-        }
-        Notification({
-          title: '提示',
-          message: '头像上传失败',
-          type: 'warning',
-          duration: 5 * 1000
+      this.$axios
+        .post(settingApi.jzpmtPicUpload, formData, config)
+        .then((res) => {
+          if (res.data.code === 0) {
+            var receive = res.data.data
+            item.path = receive.picPath
+            return
+          }
+          Notification({
+            title: '提示',
+            message: '头像上传失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
         })
-      })
     },
 
     // 基本情况说明-上传图片
@@ -258,35 +258,42 @@ export default {
       const formData = new FormData()
       formData.append('picTypeCode', item.id)
       formData.append('file', imageFile)
-      this.$axios.post(settingApi.baseInfoPicUpload, formData, config).then((res) => {
-        if (res.data.code === 0) {
-          var receive = res.data.data
-          item.path = receive.picPath
-          return
-        }
-        Notification({
-          title: '提示',
-          message: '头像上传失败',
-          type: 'warning',
-          duration: 5 * 1000
+      this.$axios
+        .post(settingApi.baseInfoPicUpload, formData, config)
+        .then((res) => {
+          if (res.data.code === 0) {
+            var receive = res.data.data
+            item.path = receive.picPath
+            // console.log(receive.picPath)
+            return
+          }
+          Notification({
+            title: '提示',
+            message: '头像上传失败',
+            type: 'warning',
+            duration: 5 * 1000
+          })
         })
-      })
     },
 
     // 新增三维预案
     addPlan3D (id) {
-      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
       var data = {
         enterpriseId: id,
         modelPath: '/cloud-video/prePlanFor3D/3dtiles/guobo/Production_1.json'
       }
-      this.$axios.post(api.add3dPlan, data, config).then((res) => {
-        if (res.data.code === 0) {
-
-        }
-      }).catch(err => {
-        console.log('add3dPlan Err : ' + err)
-      })
+      this.$axios
+        .post(api.add3dPlan, data, config)
+        .then((res) => {
+          if (res.data.code === 0) {
+          }
+        })
+        .catch((err) => {
+          console.log('add3dPlan Err : ' + err)
+        })
     },
 
     // 保存
@@ -336,47 +343,104 @@ export default {
 
       var basicPaths = []
       var buildingPaths = []
-      this.basicSituation.forEach((item) => {
-        basicPaths.push(item.path)
-      })
-      this.buildingPlan.forEach((item) => {
-        if (item && item.path && item.path.length > 0) {
-          buildingPaths.push(item.path)
-        }
-      })
-      if (buildingPaths.length <= 0) {
-        this.warnAlert('请上传建筑平面图')
-        return
-      }
-      var param = {
-        enterpriseName: this.companyName,
-        enterpriseTypeCode: this.companyType,
-        enterpriseAddress: this.companyAddress,
-        enterpriseLatitude: this.companyLat,
-        enterpriseLongitude: this.companyLog,
-        enterpriseTel: this.companyPhone,
-        enterpriseTelBackup: this.companySubPhone,
-        baseInfoPicList: basicPaths,
-        jzpmtPicList: buildingPaths,
-        enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
-      }
-      this.$axios
-        .post(settingApi.addEnterprise, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+
+      if (this.planInfo.id) {
+        // 编辑预案
+        // console.log('编辑预案')
+        this.basicSituation.forEach((item) => {
+          var basicDict = {
+            picTypeCode: item.id,
+            picPath: item.path
+          }
+          basicPaths.push(basicDict)
         })
-        .then((res) => {
-          if (res.data.code === 0) {
-            localStorage.removeItem('PlanInfo')
-            Notification({
-              title: '提示',
-              message: '保存成功',
-              type: 'success',
-              duration: 5 * 1000
-            })
-            this.$router.push({ path: '/decisionSystem' })
-            this.addPlan3D(res.data.data.id)
+        this.buildingPlan.forEach((item) => {
+          if (item && item.path && item.path.length > 0) {
+            var buildDict = {
+              picPath: item.path,
+              picName: item.name
+            }
+            buildingPaths.push(buildDict)
           }
         })
+        if (buildingPaths.length <= 0) {
+          this.warnAlert('请上传建筑平面图')
+          return
+        }
+        var param1 = {
+          id: this.planInfo.id,
+          enterpriseName: this.companyName,
+          enterpriseTypeCode: this.companyType,
+          enterpriseAddress: this.companyAddress,
+          enterpriseLatitude: this.companyLat,
+          enterpriseLongitude: this.companyLog,
+          enterpriseTel: this.companyPhone,
+          enterpriseTelBackup: this.companySubPhone,
+          baseInfoPicRecordList: basicPaths,
+          jzpmtPicRecordList: buildingPaths,
+          enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
+        }
+        this.$axios
+          .post(settingApi.updateEnterprise, param1, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              localStorage.removeItem('PlanInfo')
+              Notification({
+                title: '提示',
+                message: '修改成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.$router.push({ path: '/decisionSystem' })
+            }
+          })
+      } else {
+        // 新增预案
+        // console.log('新增预案')
+        this.basicSituation.forEach((item) => {
+          basicPaths.push(item.path)
+        })
+        this.buildingPlan.forEach((item) => {
+          if (item && item.path && item.path.length > 0) {
+            buildingPaths.push(item.path)
+          }
+        })
+        if (buildingPaths.length <= 0) {
+          this.warnAlert('请上传建筑平面图')
+          return
+        }
+        var param = {
+          enterpriseName: this.companyName,
+          enterpriseTypeCode: this.companyType,
+          enterpriseAddress: this.companyAddress,
+          enterpriseLatitude: this.companyLat,
+          enterpriseLongitude: this.companyLog,
+          enterpriseTel: this.companyPhone,
+          enterpriseTelBackup: this.companySubPhone,
+          baseInfoPicList: basicPaths,
+          jzpmtPicList: buildingPaths,
+          enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
+        }
+        this.$axios
+          .post(settingApi.addEnterprise, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              localStorage.removeItem('PlanInfo')
+              Notification({
+                title: '提示',
+                message: '保存成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.$router.push({ path: '/decisionSystem' })
+              this.addPlan3D(res.data.data.id)
+            }
+          })
+      }
     },
     warnAlert (msg) {
       Notification({
@@ -405,14 +469,123 @@ export default {
         return [tmpMap.lon, tmpMap.lat]
       }
     },
+
+    // 初始化数据
     initBasicInfo () {
       this.planInfo = JSON.parse(localStorage.getItem('PlanInfo'))
+
       if (this.planInfo) {
         this.companyName = this.planInfo.name
         this.companyAddress = this.planInfo.address
         this.companyPhone = this.planInfo.tel
         this.companyLog = this.planInfo.lon
         this.companyLat = this.planInfo.lat
+        if (this.planInfo.typeCode) {
+          this.companyType = this.planInfo.typeCode
+        }
+        if (this.planInfo.baseInfoPic) {
+          var jbqk1Path = ''
+          var jbqk2Path = ''
+          var jbqk3Path = ''
+          var jbqk4Path = ''
+          var jbqk5Path = ''
+          this.planInfo.baseInfoPic.forEach((item) => {
+            if (item.picTypeCode === 'JBQK001') {
+              jbqk1Path = item.picPath
+            } else if (item.picTypeCode === 'JBQK002') {
+              jbqk2Path = item.picPath
+            } else if (item.picTypeCode === 'JBQK003') {
+              jbqk3Path = item.picPath
+            } else if (item.picTypeCode === 'JBQK004') {
+              jbqk4Path = item.picPath
+            } else if (item.picTypeCode === 'JBQK005') {
+              jbqk5Path = item.picPath
+            }
+          })
+          var basicTemp = [
+            // 基本情况说明
+            {
+              id: 'JBQK001',
+              title: '《基本情况》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: jbqk1Path
+            },
+            {
+              id: 'JBQK002',
+              title: '《供水系统》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: jbqk2Path
+            },
+            {
+              id: 'JBQK003',
+              title: '《行车路线》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: jbqk3Path
+            },
+            {
+              id: 'JBQK004',
+              title: '《防火设计》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: jbqk4Path
+            },
+            {
+              id: 'JBQK005',
+              title: '《重点部位》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: jbqk5Path
+            }
+          ]
+          this.basicSituation = basicTemp
+        } else {
+          var basicTemp2 = [
+            // 基本情况说明
+            {
+              id: 'JBQK001',
+              title: '《基本情况》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: ''
+            },
+            {
+              id: 'JBQK002',
+              title: '《供水系统》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: ''
+            },
+            {
+              id: 'JBQK003',
+              title: '《行车路线》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: ''
+            },
+            {
+              id: 'JBQK004',
+              title: '《防火设计》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: ''
+            },
+            {
+              id: 'JBQK005',
+              title: '《重点部位》',
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: ''
+            }
+          ]
+          this.basicSituation = basicTemp2
+        }
+
+        if (this.planInfo.jzpmtPic) {
+          var jzpmtPicTemp = []
+          this.planInfo.jzpmtPic.forEach((item) => {
+            var dict = {
+              subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
+              path: item.picPath,
+              name: item.picName,
+              imageUrl: globalApi.headImg + item.picPath
+            }
+            jzpmtPicTemp.push(dict)
+          })
+          this.buildingPlan = jzpmtPicTemp
+        }
 
         const tmpMap = this.$refs.gduMap
         tmpMap.mapMoveTo(this.planInfo.lon, this.planInfo.lat, false)
@@ -431,6 +604,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.back-sty {
+  width: 120px;
+  height: 36px;
+  border: none;
+  font-size: 18px;
+  color: #ffffff;
+  outline: none;
+  display: block;
+  background: url("../../assets/images/plan/plan-back-background.png") no-repeat;
+  background-size: 100% 100%;
+  margin-top: 30px;
+  margin-left: 30px;
+  cursor: pointer;
+}
+
 .rightBox {
   width: 1490px;
   height: 888px;
@@ -514,10 +702,10 @@ export default {
 
 .saveStyle {
   background-color: #1eb0fc;
-  font-size: 24px;
+  font-size: 20px;
   color: white;
-  width: 150px;
-  height: 50px;
+  width: 100px;
+  height: 40px;
   padding: 0;
   float: right;
   margin-top: 50px;

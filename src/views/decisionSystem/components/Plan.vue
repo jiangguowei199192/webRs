@@ -87,12 +87,7 @@
         </el-collapse-item>
       </el-collapse>
       <div style="height: 50px">
-        <button
-          v-show="info.keyId === undefined"
-          type="button"
-          class="editPlanStyle"
-          @click="editPlanClick"
-        >
+        <button type="button" class="editPlanStyle" @click="editPlanClick">
           预案编辑
         </button>
       </div>
@@ -179,21 +174,39 @@ export default {
         }
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
-          .then(res => {
-            // console.log(res)
+          .then((res) => {
             if (res.data.code === 0) {
               var resData = res.data.data
-              this.showInfo.name = resData.enterpriseName
-              this.showInfo.type = resData.enterpriseTypeName
-              this.showInfo.address = resData.enterpriseAddress
-              this.showInfo.tel = resData.enterpriseTel
-              this.showInfo.subTel = resData.enterpriseTelBackup
-              this.showInfo.lat = resData.enterpriseLatitude
-              this.showInfo.lon = resData.enterpriseLongitude
-              this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
-              this.showInfo.planEnterpriseInfo2D = resData.planEnterpriseInfo2D
+              // this.showInfo.name = resData.enterpriseName
+              // this.showInfo.type = resData.enterpriseTypeName
+              // this.showInfo.address = resData.enterpriseAddress
+              // this.showInfo.tel = resData.enterpriseTel
+              // this.showInfo.subTel = resData.enterpriseTelBackup
+              // this.showInfo.lat = resData.enterpriseLatitude
+              // this.showInfo.lon = resData.enterpriseLongitude
+              // this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
+              // this.showInfo.planEnterpriseInfo2D = resData.planEnterpriseInfo2D
+              var showInfoTemp = {
+                id: this.info.keyId,
+                name: resData.enterpriseName,
+                type: resData.enterpriseTypeName,
+                typeCode: resData.enterpriseTypeCode,
+                address: resData.enterpriseAddress,
+                tel: resData.enterpriseTel,
+                subTel: resData.enterpriseTelBackup,
+                lon: resData.enterpriseLongitude,
+                lat: resData.enterpriseLatitude,
+                mapId: this.info.id,
+                baseInfoPic: resData.planEnterpriseBaseInfoPic,
+                jzpmtPic: resData.planEnterpriseJzpmtPic,
+                planEnterpriseInfo3D: resData.planEnterpriseInfo3D,
+                planEnterpriseInfo2D: resData.planEnterpriseInfo2D
+              }
+              this.showInfo = showInfoTemp
+              localStorage.setItem('PlanInfo', JSON.stringify(showInfoTemp))
+
               var baseInfosTemp = []
-              resData.planEnterpriseBaseInfoPic.forEach(item => {
+              resData.planEnterpriseBaseInfoPic.forEach((item) => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -203,7 +216,7 @@ export default {
               this.baseInfos = baseInfosTemp
 
               var buildingInfosTemp = []
-              resData.planEnterpriseJzpmtPic.forEach(item => {
+              resData.planEnterpriseJzpmtPic.forEach((item) => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -211,8 +224,8 @@ export default {
                 buildingInfosTemp.push(temp)
               })
               this.buildingInfos = buildingInfosTemp
+
               this.deployInfos[1].children = buildingInfosTemp
-              // console.log(this.deployInfos)
             }
           })
       } else {
@@ -236,9 +249,10 @@ export default {
         const location = this.info.location.split(',')
         this.showInfo.lon = location[0]
         this.showInfo.lat = location[1]
+
+        this.showInfo.mapId = this.info.id
+        localStorage.setItem('PlanInfo', JSON.stringify(this.showInfo))
       }
-      this.showInfo.mapId = this.info.id
-      localStorage.setItem('PlanInfo', JSON.stringify(this.showInfo))
     },
 
     editPlanClick () {
@@ -454,5 +468,6 @@ export default {
   margin-right: 10px;
   margin-top: 15px;
   outline: none;
+  cursor: pointer;
 }
 </style>
