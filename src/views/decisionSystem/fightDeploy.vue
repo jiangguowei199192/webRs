@@ -109,7 +109,6 @@
 import drawNode from './components/drawNode'
 import { jsPlumb } from 'jsplumb'
 import { EventBus } from '@/utils/eventBus.js'
-import { Notification } from 'element-ui'
 import axios from 'axios'
 import { api } from '@/api/2d.js'
 import globalApi from '@/utils/globalApi'
@@ -139,16 +138,6 @@ export default {
         nodeList: [],
         newTemplate: '1'
       },
-      curIcons: [
-        {
-          title: '背景',
-          img: require('../../assets/images/2d/background.png')
-        },
-        { title: '删除', img: require('../../assets/images/2d/delete.png') },
-        { title: '保存', img: require('../../assets/images/2d/save.png') },
-        { title: '分享', img: require('../../assets/images/2d/share.png') },
-        { title: '打印', img: require('../../assets/images/2d/print.png') }
-      ],
       // 模型索引
       modelType: '',
       // 模型列表选项
@@ -159,13 +148,26 @@ export default {
       curModelIndex: 0,
       // 建筑平面图底图
       buildImgUrl: '',
+      // 二维预案查询id
       enterpriseId: '',
+      // 二维预案保存返回路径
       loadJsonPath: '',
+      backImg: require('../../assets/images/2d/back.png'),
+      // 模型列表标题选项
+      curIcons: [
+        {
+          title: '背景',
+          img: require('../../assets/images/2d/background.png')
+        },
+        { title: '删除', img: require('../../assets/images/2d/delete.png') },
+        { title: '保存', img: require('../../assets/images/2d/save.png') },
+        { title: '分享', img: require('../../assets/images/2d/share.png') },
+        { title: '打印', img: require('../../assets/images/2d/print.png') }
+      ],
       defaultProps: {
         children: 'children',
         label: 'label'
-      },
-      backImg: require('../../assets/images/2d/back.png')
+      }
     }
   },
 
@@ -361,38 +363,44 @@ export default {
     // 保存json数据
     saveData () {
       // alert(JSON.stringify(this.data.nodeList))
-      const blob = new Blob([JSON.stringify(this.data.nodeList)], {
-        type: 'application/json'
-      })
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-      const formData = new FormData()
-      // console.log('enterpriseId:', this.enterpriseId)
-      formData.append('enterpriseId', this.enterpriseId)
-      formData.append('configFile', blob, '2dConfigData.json')
-      this.$axios
-        .post(api.upload2dConfig, formData, config)
-        .then((res) => {
-          console.log('二维部署保存接口返回: ', res)
-          if (res.data.code === 0) {
-            this.configPath = globalApi.headImg + res.data.data.configPath
-            Notification({
-              title: '提示',
-              message: '保存成功',
-              type: 'success',
-              duration: 5 * 1000
-            })
-          } else {
-            Notification({
-              title: '提示',
-              message: '保存失败',
-              type: 'danger',
-              duration: 5 * 1000
-            })
-          }
+      if (!this.data.nodeList || this.data.nodeList.length === 0) {
+        this.$notify.warning({
+          title: '提示',
+          message: '请先创建数据!',
+          duration: 5 * 1000
         })
-        .catch((err) => {
-          console.log('接口错误: ' + err)
+      } else {
+        const blob = new Blob([JSON.stringify(this.data.nodeList)], {
+          type: 'application/json'
         })
+        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+        const formData = new FormData()
+        // console.log('enterpriseId:', this.enterpriseId)
+        formData.append('enterpriseId', this.enterpriseId)
+        formData.append('configFile', blob, '2dConfigData.json')
+        this.$axios
+          .post(api.upload2dConfig, formData, config)
+          .then((res) => {
+            console.log('保存接口返回: ', res)
+            if (res.data.code === 0) {
+              this.configPath = globalApi.headImg + res.data.data.configPath
+              this.$notify.success({
+                title: '提示',
+                message: '保存成功',
+                duration: 5 * 1000
+              })
+            } else {
+              this.$notify.error({
+                title: '提示',
+                message: '保存失败',
+                duration: 5 * 1000
+              })
+            }
+          })
+          .catch((err) => {
+            console.log('接口错误: ' + err)
+          })
+      }
     },
 
     // 加载json数据
@@ -407,23 +415,15 @@ export default {
               nodeData.forEach((item) => {
                 this.addNode(item)
               })
-            } else {
-              Notification({
-                title: '提示',
-                message: '当前未保存任何数据!',
-                type: 'warning',
-                duration: 5 * 1000
-              })
             }
           })
           .catch((err) => {
             console.log('加载json数据失败: ' + err)
           })
       } else {
-        Notification({
+        this.$notify.warning({
           title: '提示',
-          message: '请先绘制图形并保存!',
-          type: 'warning',
+          message: '当前未保存任何数据!',
           duration: 5 * 1000
         })
       }
