@@ -2508,7 +2508,7 @@ export default {
       z-index: 3;
     }
     .menu {
-      visibility: hidden;
+      // visibility: hidden;
       position: absolute;
       bottom: 0px;
       width: 100%;
