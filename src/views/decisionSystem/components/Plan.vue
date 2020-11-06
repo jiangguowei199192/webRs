@@ -177,15 +177,15 @@ export default {
           .then((res) => {
             if (res.data.code === 0) {
               var resData = res.data.data
-              this.showInfo.name = resData.enterpriseName
-              this.showInfo.type = resData.enterpriseTypeName
-              this.showInfo.address = resData.enterpriseAddress
-              this.showInfo.tel = resData.enterpriseTel
-              this.showInfo.subTel = resData.enterpriseTelBackup
-              this.showInfo.lat = resData.enterpriseLatitude
-              this.showInfo.lon = resData.enterpriseLongitude
-              this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
-              this.showInfo.planEnterpriseInfo2D = resData.planEnterpriseInfo2D
+              // this.showInfo.name = resData.enterpriseName
+              // this.showInfo.type = resData.enterpriseTypeName
+              // this.showInfo.address = resData.enterpriseAddress
+              // this.showInfo.tel = resData.enterpriseTel
+              // this.showInfo.subTel = resData.enterpriseTelBackup
+              // this.showInfo.lat = resData.enterpriseLatitude
+              // this.showInfo.lon = resData.enterpriseLongitude
+              // this.showInfo.planEnterpriseInfo3D = resData.planEnterpriseInfo3D
+              // this.showInfo.planEnterpriseInfo2D = resData.planEnterpriseInfo2D
               var showInfoTemp = {
                 id: this.info.keyId,
                 name: resData.enterpriseName,
@@ -198,7 +198,9 @@ export default {
                 lat: resData.enterpriseLatitude,
                 mapId: this.info.id,
                 baseInfoPic: resData.planEnterpriseBaseInfoPic,
-                jzpmtPic: resData.planEnterpriseJzpmtPic
+                jzpmtPic: resData.planEnterpriseJzpmtPic,
+                planEnterpriseInfo3D: resData.planEnterpriseInfo3D,
+                planEnterpriseInfo2D: resData.planEnterpriseInfo2D
               }
               this.showInfo = showInfoTemp
               localStorage.setItem('PlanInfo', JSON.stringify(showInfoTemp))

@@ -343,47 +343,104 @@ export default {
 
       var basicPaths = []
       var buildingPaths = []
-      this.basicSituation.forEach((item) => {
-        basicPaths.push(item.path)
-      })
-      this.buildingPlan.forEach((item) => {
-        if (item && item.path && item.path.length > 0) {
-          buildingPaths.push(item.path)
-        }
-      })
-      if (buildingPaths.length <= 0) {
-        this.warnAlert('请上传建筑平面图')
-        return
-      }
-      var param = {
-        enterpriseName: this.companyName,
-        enterpriseTypeCode: this.companyType,
-        enterpriseAddress: this.companyAddress,
-        enterpriseLatitude: this.companyLat,
-        enterpriseLongitude: this.companyLog,
-        enterpriseTel: this.companyPhone,
-        enterpriseTelBackup: this.companySubPhone,
-        baseInfoPicList: basicPaths,
-        jzpmtPicList: buildingPaths,
-        enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
-      }
-      this.$axios
-        .post(settingApi.addEnterprise, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+
+      if (this.planInfo.id) {
+        // 编辑预案
+        // console.log('编辑预案')
+        this.basicSituation.forEach((item) => {
+          var basicDict = {
+            picTypeCode: item.id,
+            picPath: item.path
+          }
+          basicPaths.push(basicDict)
         })
-        .then((res) => {
-          if (res.data.code === 0) {
-            localStorage.removeItem('PlanInfo')
-            Notification({
-              title: '提示',
-              message: '保存成功',
-              type: 'success',
-              duration: 5 * 1000
-            })
-            this.$router.push({ path: '/decisionSystem' })
-            this.addPlan3D(res.data.data.id)
+        this.buildingPlan.forEach((item) => {
+          if (item && item.path && item.path.length > 0) {
+            var buildDict = {
+              picPath: item.path,
+              picName: item.name
+            }
+            buildingPaths.push(buildDict)
           }
         })
+        if (buildingPaths.length <= 0) {
+          this.warnAlert('请上传建筑平面图')
+          return
+        }
+        var param1 = {
+          id: this.planInfo.id,
+          enterpriseName: this.companyName,
+          enterpriseTypeCode: this.companyType,
+          enterpriseAddress: this.companyAddress,
+          enterpriseLatitude: this.companyLat,
+          enterpriseLongitude: this.companyLog,
+          enterpriseTel: this.companyPhone,
+          enterpriseTelBackup: this.companySubPhone,
+          baseInfoPicRecordList: basicPaths,
+          jzpmtPicRecordList: buildingPaths,
+          enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
+        }
+        this.$axios
+          .post(settingApi.updateEnterprise, param1, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              localStorage.removeItem('PlanInfo')
+              Notification({
+                title: '提示',
+                message: '修改成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.$router.push({ path: '/decisionSystem' })
+            }
+          })
+      } else {
+        // 新增预案
+        // console.log('新增预案')
+        this.basicSituation.forEach((item) => {
+          basicPaths.push(item.path)
+        })
+        this.buildingPlan.forEach((item) => {
+          if (item && item.path && item.path.length > 0) {
+            buildingPaths.push(item.path)
+          }
+        })
+        if (buildingPaths.length <= 0) {
+          this.warnAlert('请上传建筑平面图')
+          return
+        }
+        var param = {
+          enterpriseName: this.companyName,
+          enterpriseTypeCode: this.companyType,
+          enterpriseAddress: this.companyAddress,
+          enterpriseLatitude: this.companyLat,
+          enterpriseLongitude: this.companyLog,
+          enterpriseTel: this.companyPhone,
+          enterpriseTelBackup: this.companySubPhone,
+          baseInfoPicList: basicPaths,
+          jzpmtPicList: buildingPaths,
+          enterpriseOtherInfo: JSON.stringify({ mapId: this.planInfo.mapId })
+        }
+        this.$axios
+          .post(settingApi.addEnterprise, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              localStorage.removeItem('PlanInfo')
+              Notification({
+                title: '提示',
+                message: '保存成功',
+                type: 'success',
+                duration: 5 * 1000
+              })
+              this.$router.push({ path: '/decisionSystem' })
+              this.addPlan3D(res.data.data.id)
+            }
+          })
+      }
     },
     warnAlert (msg) {
       Notification({
@@ -518,7 +575,7 @@ export default {
 
         if (this.planInfo.jzpmtPic) {
           var jzpmtPicTemp = []
-          this.planInfo.jzpmtPic.forEach(item => {
+          this.planInfo.jzpmtPic.forEach((item) => {
             var dict = {
               subTitle: 'JPG、JPEG、PNG单张图片大小不超过5M',
               path: item.picPath,
