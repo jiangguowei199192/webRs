@@ -9,10 +9,7 @@
             class="list"
             @click.stop="jumpTo(index)"
           >
-            <div
-              class="item"
-              :class="{ title: index == 3, active: isActive == index }"
-            >
+            <div class="item" :class="{ title: index == 3, active: isActive == index }">
               <span>{{ item.content }}</span>
             </div>
           </div>
@@ -35,6 +32,60 @@
           </div>
         </div>
         <audio src="./audio.mp3" ref="player"></audio>
+        <div class="fireNotice">
+          <div class="title">
+            <div>
+              <img src="../assets/images/fire_title.png" class="fire_title" alt />
+              <span>火情通知</span>
+            </div>
+            <img src="../assets/images/fire_close.png" alt />
+          </div>
+          <div class="content">
+            <div class="detail">
+              <div class="info">
+                <ul>
+                  <li>
+                    <span>时间：</span>2020-04-05 10:06:50
+                  </li>
+                  <li>
+                    <span>报警设备：</span>高点1号
+                  </li>
+                </ul>
+                <ul>
+                  <li>
+                    <span>地点：</span>湖北省武汉市江夏区郑店街道上屋许96号
+                  </li>
+                  <li>
+                    <span>坐标：</span>
+                    <span>30.278766 114.2541245</span>
+                    <el-button class="copy">复制坐标</el-button>
+                  </li>
+                </ul>
+              </div>
+              <div class="pics">
+                <img
+                  src="http://111.47.13.103:40031/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg"
+                  alt
+                />
+                <img
+                  src="http://111.47.13.103:40031/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg"
+                  alt
+                />
+              </div>
+              <div style="text-align:right;margin-top:8px;">
+                <el-button class="copy">火情详情</el-button>
+              </div>
+              <div class="pagination">
+                <el-pagination
+                  :page-size="1"
+                  layout="prev,next"
+                  :total="10"
+                  :current-page.sync="currentPage"
+                ></el-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
       </el-header>
       <el-main>
         <!-- <router-view /> -->
@@ -93,38 +144,38 @@ export default {
   created () {
     this.systems[3].content = globalApi.projectTitle
     // 设备上线
-    EventBus.$on('video/device/online', (info) => {
+    EventBus.$on('video/device/online', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', (info) => {
+    EventBus.$on('video/device/offline', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', (info) => {
+    EventBus.$on('video/realVideo/streamStart', info => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', (info) => {
+    EventBus.$on('video/realVideo/streamEnd', info => {
       EventBus.$emit('streamEnd', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', (info) => {
+    EventBus.$on('droneInfos', info => {
       this.parseDroneRealtimeInfo(info)
     })
     // 人员识别提示
-    EventBus.$on('video/people/found', (info) => {
+    EventBus.$on('video/people/found', info => {
       this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
-    EventBus.$on('video/people/real', (info) => {
+    EventBus.$on('video/people/real', info => {
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示
-    EventBus.$on('video/aRAiResult', (info) => {
+    EventBus.$on('video/aRAiResult', info => {
       EventBus.$emit('getArChange', info)
     })
   },
@@ -155,6 +206,44 @@ export default {
       })
       EventBus.$emit('getFireAlarm', info)
     })
+    // setInterval(() => {
+    //   const info = {
+    //     alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
+    //     alarmCity: '武汉市',
+    //     alarmDistrict: '江夏区',
+    //     alarmId: '2374',
+    //     alarmLatitude: 30.466848,
+    //     alarmLongitude: 114.425584,
+    //     alarmPicList: [
+    //       {
+    //         alarmMsgId: 244,
+    //         id: 487,
+    //         picPath:
+    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
+    //         streamCode: '0',
+    //         streamName: null
+    //       },
+    //       {
+    //         alarmMsgId: 244,
+    //         id: 488,
+    //         picPath:
+    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
+    //         streamCode: '1',
+    //         streamName: null
+    //       }
+    //     ],
+    //     alarmProvince: '湖北省',
+    //     alarmStatus: 'confirmed',
+    //     alarmTime: 1604640698000,
+    //     alarmTypeCode: 'HUO',
+    //     alarmTypeName: '火情报警',
+    //     deviceCode: '6C01728PA4A9A6F',
+    //     deviceName: '高点监控大',
+    //     id: 244,
+    //     updateTime: 1604640708000
+    //   }
+    //   EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
+    // }, 1000)
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()
@@ -164,7 +253,9 @@ export default {
     // eslint-disable-next-line no-unused-vars
     this.mqtt = new MqttService()
     // 如果mqtt已经创建过
-    if (this.mqtt.created) { this.mqtt.mqttConnect() }
+    if (this.mqtt.created) {
+      this.mqtt.mqttConnect()
+    }
     // 获取飞机实时信息所需订阅主题
     this.getRealtimeInfoTopics()
   },
@@ -188,12 +279,12 @@ export default {
       }
     },
     init () {
-      amapApi.getLocation({}).then((res) => {
+      amapApi.getLocation({}).then(res => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then((res) => {
+            amapApi.getWeather({ city: cityCode }).then(res => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -209,25 +300,25 @@ export default {
       const tmpAxios = this.$axios
       this.$axios
         .get(loginApi.getUserDetail)
-        .then((res) => {
+        .then(res => {
           if (res.data.code === 0) {
             tmpAxios
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
               })
-              .then((res2) => {
+              .then(res2 => {
                 if (res2.data.code === 0) {
-                  res2.data.data.forEach((deptCode) => {
+                  res2.data.data.forEach(deptCode => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
                 }
               })
-              .catch((err2) => {
+              .catch(err2 => {
                 console.log('loginApi.getDeptByDeptCode Err : ' + err2)
               })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('loginApi.getUserDetail Err : ' + err)
         })
     },
@@ -372,6 +463,100 @@ export default {
       span.curCity {
         margin-left: 30px;
         margin-right: 25px;
+      }
+    }
+  }
+  .fireNotice {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    width: 530px;
+    height: 316px;
+    background: url(../assets/images/fire_notice.png) no-repeat;
+    z-index: 10000;
+    box-sizing: border-box;
+    padding: 14px;
+    font-family: Source Han Sans CN;
+    .title {
+      display: flex;
+      justify-content: space-between;
+      img.fire_title {
+        margin-right: 15px;
+      }
+      span {
+        font-weight: 400;
+        color: #ffffff;
+        font-size: 18px;
+      }
+      div + img {
+        height: 18px;
+        cursor: pointer;
+      }
+    }
+    .content {
+      padding-top: 26px;
+      padding-left: 18px;
+      .detail {
+        div.info {
+          display: flex;
+          justify-content: space-between;
+          ul {
+            li {
+              font-size: 12px;
+              font-weight: bold;
+              color: #ffffff;
+              line-height: 24px;
+              line-height: 26px;
+            }
+          }
+        }
+        .copy {
+          width: 80px;
+          height: 24px;
+          background: #1eb0fc;
+          border: 1px solid #1eb0fc;
+          border-radius: 4px;
+          padding: 0;
+          color: #fff;
+        }
+        div.pics {
+          display: flex;
+          justify-content: space-around;
+          margin-top: 20px;
+          img {
+            width: 170px;
+            height: 110px;
+          }
+        }
+        .pagination {
+          display: inline-block;
+          margin-right: 5px;
+          /deep/.el-pagination {
+            padding: 0;
+            button {
+              background-color: transparent !important;
+              i {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #23cefd;
+                text-align: center;
+                line-height: 20px;
+                color: #1c638b;
+              }
+            }
+            button.btn-next,
+            button.btn-prev {
+              padding: 0;
+            }
+            button[disabled] {
+              i {
+                background: #999;
+                color: #2d506f;
+              }
+            }
+          }
+        }
       }
     }
   }
