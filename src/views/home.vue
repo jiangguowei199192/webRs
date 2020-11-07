@@ -32,13 +32,13 @@
           </div>
         </div>
         <audio src="./audio.mp3" ref="player"></audio>
-        <div class="fireNotice">
+        <div class="fireNotice" v-show="showFireDialog">
           <div class="title">
             <div>
               <img src="../assets/images/fire_title.png" class="fire_title" alt />
               <span>火情通知</span>
             </div>
-            <img src="../assets/images/fire_close.png" alt />
+            <img src="../assets/images/fire_close.png" alt @click.stop="showFireDialog=false" />
           </div>
           <div class="content">
             <div class="detail">
@@ -110,6 +110,8 @@ export default {
   name: 'Home',
   data () {
     return {
+      showFireDialog: true, // 显示火情弹框
+      currentPage: 1, // 当前页
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
       weatherReport: '', // 天气情况
