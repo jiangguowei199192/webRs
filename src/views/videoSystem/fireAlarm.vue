@@ -11,25 +11,25 @@
           <!-- 默认展示在线设备 -->
           <template v-if="isOnline">
             <div class="onlineList webFsScroll">
-            <div
-              class="list"
-              v-for="(item,index) in onlineArray"
-              :key="index"
-              :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
-              @click.stop="selectOnlineDeviceItem(item,index)"
-            >
-              <p>
-                <span class="area">{{item.label}}</span>
-              </p>
-              <div class="btns">
-                <el-button
-                  v-for="(list,index2) in item.children"
-                  :key="index2"
-                  class="visible"
-                  :title="list.label"
-                >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+              <div
+                class="list"
+                v-for="(item,index) in onlineArray"
+                :key="index"
+                :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
+                @click.stop="selectOnlineDeviceItem(item,index)"
+              >
+                <p>
+                  <span class="area">{{item.label}}</span>
+                </p>
+                <div class="btns">
+                  <el-button
+                    v-for="(list,index2) in item.children"
+                    :key="index2"
+                    class="visible"
+                    :title="list.label"
+                  >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+                </div>
               </div>
-            </div>
             </div>
           </template>
           <!-- 全部部分 -->
@@ -58,8 +58,8 @@
       <div slot="center">
         <div class="video">
           <div class="fireAlarmBox">
-            <div class="title"  @click.stop="$router.go(-1)" >
-              <img src="@/assets/images/back.png"/>监控报警
+            <div class="title" @click.stop="$router.go(-1)">
+              <img src="@/assets/images/back.png" />监控报警
             </div>
             <div class="container">
               <gMap
@@ -136,11 +136,15 @@ export default {
     return {
       isShowRight: false,
       bShowMarkersInMap: true, // 在地图中加载显示设备、火情标记
-      bRealTimeFireWarning: true // 实时更新火情警报个数
+      bRealTimeFireWarning: true, // 实时更新火情警报个数
+      id: '' // 火情id
     }
   },
   mixins: [videoMixin, fireMixin],
   methods: {
+    getPath () {
+      console.log(21312)
+    },
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
@@ -187,13 +191,30 @@ export default {
     clickAnDeviceItem (curDeviceInfo) {
       this.showDeviceDetailInfo(curDeviceInfo)
     }
+  },
+  watch: {
+    $route: {
+      deep: true,
+      immediate: true,
+      handler () {
+        this.id = this.$route.query.id
+        console.log(this.id)
+      }
+    },
+    id: {
+      deep: true,
+      immediate: true,
+      handler () {
+        console.log('相关操作')
+      }
+    }
   }
 }
 </script>
 <style lang="less" scoped>
 .fireAlarm {
   box-sizing: border-box;
-  padding:20px;
+  padding: 20px;
   padding-top: 0px;
   .leftContainer {
     box-sizing: border-box;
@@ -211,15 +232,15 @@ export default {
       color: #23cefd;
       background: #1a3e68;
       // text-align: center;
-      div{
+      div {
         width: 104px;
         box-sizing: border-box;
       }
-      div:nth-child(1){
-        padding-left:30px
+      div:nth-child(1) {
+        padding-left: 30px;
       }
-      div:nth-child(2){
-         padding-left:20px
+      div:nth-child(2) {
+        padding-left: 20px;
       }
       div.active {
         width: 126px !important;
@@ -229,7 +250,7 @@ export default {
         background: url(../../assets/images/left.png) no-repeat;
       }
       div:nth-child(2).active {
-        padding-left:42px;
+        padding-left: 42px;
         background: url(../../assets/images/right.png) no-repeat;
       }
     }
@@ -248,10 +269,10 @@ export default {
         color: #1eb0fc;
       }
     }
-     div.onlineList{
-      max-height:800px;
+    div.onlineList {
+      max-height: 800px;
       overflow-y: auto;
-      margin-right:8px;
+      margin-right: 8px;
     }
     div.list {
       cursor: pointer;
@@ -327,7 +348,7 @@ export default {
       // justify-content: space-between;
       margin-right: 24px;
       > .title {
-         width: 128px;
+        width: 128px;
         height: 36px;
         border: 1px solid rgba(57, 164, 221, 1);
         text-align: center;
@@ -337,8 +358,8 @@ export default {
         line-height: 36px;
         // padding-left: 30px;
         margin-bottom: 20px;
-         cursor: pointer;
-         img {
+        cursor: pointer;
+        img {
           margin-right: 10px;
           vertical-align: middle;
         }

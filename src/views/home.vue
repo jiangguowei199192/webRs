@@ -267,7 +267,7 @@ export default {
     // 跳转到今日警情
     jumpToTodayFire () {
       this.$router.push({
-        name: 'fireAlarm',
+        path: '/fireAlarm',
         query: {
           id: 244
         }
