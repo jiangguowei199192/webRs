@@ -1,6 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 import globalApi from '../utils/globalApi'
+import errorCode from '../utils/errorCode'
 import {
   Notification
 } from 'element-ui'
@@ -54,12 +55,20 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use(
   (response) => {
     if (response.data.code !== 0) {
+      var errorMsg = '网络异常'
+      errorCode.forEach(item => {
+        if (item.code === response.data.code) {
+          errorMsg = item.str
+          return false
+        }
+      })
       Notification({
         title: '错误',
-        message: response.data.msg,
+        message: errorMsg,
         type: 'error',
         duration: 5 * 1000
       })
+
       if (response.data.code === 401) {
         window.location.href = '/webFs/login'
       }
