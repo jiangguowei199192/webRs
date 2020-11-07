@@ -639,6 +639,7 @@ export default {
       if (_keyResult.length > 0 && this.addrResults === null) {
         this.addrResults = []
       }
+      const tmpKeyRes = []
       _keyResult.forEach((k) => {
         k._bHover = false
         k._updateHoverCB = this.updateMouseHover
@@ -654,8 +655,22 @@ export default {
         k._lat = k.enterpriseLatitude
         k.tel = k.enterpriseTel
         k._imgUrl = null
-        this.addrResults.push(k)
+        tmpKeyRes.push(k)
       })
+      if (this.addrResults.length > 0 && tmpKeyRes.length > 0) {
+        for (let j = 0; j < tmpKeyRes.length; j++) {
+          for (let k = 0; k < this.addrResults.length; k++) {
+            if (tmpKeyRes[j].id === this.addrResults[k].id) {
+              this.addrResults.splice(k, 1)
+              break
+            }
+          }
+          if (this.addrResults.length < 1) {
+            break
+          }
+        }
+      }
+      this.addrResults.push.apply(this.addrResults, tmpKeyRes)
       const tmpRes = []
       const totalNum = this.addrResults.length
       let count = 0
@@ -907,6 +922,41 @@ export default {
       this.simpleChooseAddr = null
     },
 
+    // 分级搜索位置信息
+    async searchAMapAddrs (addrStr) {
+      const tmpParams1 = { keywords: addrStr }
+      const tmpParams2 = { keywords: addrStr, citylimit: true }
+      if (localStorage.location_city_adcode !== undefined) {
+        tmpParams1.city = localStorage.location_city_adcode
+      }
+      let bTmpFound = false
+      await AMapHelper.getPOIs(tmpParams1)
+        .then((res) => {
+          if (res.data.status === '1') {
+            if (res.data.pois.length > 0) {
+              this.updateSearchResults(res.data.pois)
+              bTmpFound = true
+            }
+          }
+        })
+        .catch((err) => {
+          console.log('searchAMapAddrs.AMapHelper.getPOIs1 Err : ' + err)
+        })
+
+      if (bTmpFound) {
+        return
+      }
+
+      await AMapHelper.getPOIs(tmpParams2)
+        .then((res) => {
+          if (res.data.status === '1') {
+            this.updateSearchResults(res.data.pois)
+          }
+        })
+        .catch((err) => {
+          console.log('searchAMapAddrs.AMapHelper.getPOIs2 Err : ' + err)
+        })
+    },
     // 根据输入搜索位置信息
     async searchAddrs (addrStr, bDetail) {
       if (addrStr === '') {
@@ -918,15 +968,8 @@ export default {
       this.bShowPaln = false
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
-      await AMapHelper.getPOIs({ keywords: addrStr })
-        .then((res) => {
-          if (res.data.status === '1') {
-            this.updateSearchResults(res.data.pois)
-          }
-        })
-        .catch((err) => {
-          console.log('AMapHelper.getPOIs Err : ' + err)
-        })
+      await this.searchAMapAddrs(addrStr)
+
       await this.$axios
         .get(settingApi.enterpriseList, { params: { enterpriseName: addrStr } })
         .then((res) => {

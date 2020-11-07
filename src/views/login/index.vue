@@ -171,6 +171,7 @@ export default {
       await AMapHelper.getLocation({})
         .then(res => {
           if (res.data.status === '1') {
+            localStorage.location_city_adcode = res.data.adcode
             localStorage.bNetWorkConn = 'true'
           }
         })
