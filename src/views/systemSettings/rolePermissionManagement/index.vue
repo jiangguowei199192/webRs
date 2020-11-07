@@ -77,7 +77,7 @@
     >
       <div
         style="height: 50px;"
-      >是否从{{ radio >= 0 ? userList[radio].roleName : '' }}角色中移除用户{{ radio >= 0 ? userList[radio].username : '' }}</div>
+      >是否从{{ radio >= 0 ? userList[radio].roleName : '' }}角色中移除用户 {{ radio >= 0 ? userList[radio].username : '' }} ?</div>
       <div style="height: 30px;">
         <el-button type="primary" @click="deleteTipSave" class="trueBtn">确 定</el-button>
       </div>
@@ -275,12 +275,13 @@ export default {
         roleCode: null
       }
       this.$axios
-        .post(settingApi.updateUser, param, {
+        .post(settingApi.updateUserRole, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
         .then((res) => {
           if (res.data.code === 0) {
             this.getUserList()
+            this.radio = -1
             Notification({
               title: '提示',
               message: '移除成功',
