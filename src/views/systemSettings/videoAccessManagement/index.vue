@@ -359,6 +359,21 @@
         </div>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="showDeleteTip"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
+      <div
+        style="height: 50px;"
+      >是否确认删除设备 {{ radio >= 0 ? deviceList[radio].deviceName : '' }} ?</div>
+      <div style="height: 30px;">
+        <el-button type="primary" @click="deleteTipSave" class="trueBtn">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -478,7 +493,10 @@ export default {
       addDeviceTitle: '',
 
       editDeviceNo: false,
-      editDeviceType: false
+      editDeviceType: false,
+
+      showDeleteTip: false,
+      clickfalse: false
     }
   },
   created () {
@@ -686,6 +704,11 @@ export default {
         })
         return
       }
+      this.showDeleteTip = true
+    },
+    // 删除接入设备-确定
+    deleteTipSave () {
+      this.showDeleteTip = false
 
       var selectedDevice = this.deviceList[this.radio]
       var param = {
@@ -1118,5 +1141,42 @@ export default {
   border-radius: 4px;
   border: solid 1px #1eb0fc;
   cursor: pointer;
+}
+
+.dialogStyle {
+  min-width: 1500px;
+  /deep/.el-dialog__header {
+    // 头部
+    background-color: #39a4dd;
+  }
+  /deep/.el-dialog__title {
+    // 头部-标题
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  /deep/.el-dialog__body {
+    // 内部
+    background-color: #336984;
+    color: white;
+  }
+  /deep/.el-dialog__footer {
+    // 尾部
+    background-color: #336984;
+  }
+  /deep/.el-icon-close:before {
+    // 头部-关闭
+    color: white;
+  }
+  .trueBtn {
+    // 按钮
+    background-color: #1eb0fc;
+    font-size: 14px;
+    color: white;
+    width: 66px;
+    height: 30px;
+    padding: 0;
+    float: right;
+  }
 }
 </style>

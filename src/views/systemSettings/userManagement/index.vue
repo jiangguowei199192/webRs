@@ -206,6 +206,21 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="showDeleteTip"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
+      <div
+        style="height: 50px; color: white;"
+      >是否确认删除用户 {{ radio >= 0 ? userList[radio].username : '' }} ?</div>
+      <div style="height: 30px;">
+        <el-button type="primary" @click="deleteTipSave" class="trueBtn">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -277,7 +292,9 @@ export default {
       resetPasswordRules: {
         password: [{ required: true, message: '请输入密码' }]
       },
-      radio: -1
+      radio: -1,
+
+      showDeleteTip: false
     }
   },
   methods: {
@@ -442,13 +459,18 @@ export default {
         })
         return ''
       }
-
+      this.showDeleteTip = true
+    },
+    // 删除用户-保存
+    deleteTipSave () {
+      this.showDeleteTip = false
       var param = {
         userId: this.userList[this.radio].id
       }
       this.$axios.post(settingApi.delUser, param).then((res) => {
         if (res.data.code === 0) {
           this.getUserList()
+          this.radio = -1
           Notification({
             title: '提示',
             message: '删除用户成功',

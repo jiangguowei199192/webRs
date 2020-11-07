@@ -169,9 +169,9 @@
       class="dialogStyle"
     >
       <div style="height: 50px">
-        是否从{{ radio >= 0 ? userList[radio].deptName : "" }}中移除用户{{
+        是否从{{ radio >= 0 ? userList[radio].deptName : "" }}中移除用户 {{
           radio >= 0 ? userList[radio].username : ""
-        }}
+        }} ?
       </div>
       <div style="height: 30px">
         <el-button type="primary" @click="deleteTipSave" class="trueBtn"
