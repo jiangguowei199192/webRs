@@ -114,7 +114,7 @@
         :rules="newUserRules"
       >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="newUserForm.username"></el-input>
+          <el-input v-model="newUserForm.username" :disabled="disableUsername"></el-input>
         </el-form-item>
         <el-form-item label="用户姓名" prop="name">
           <el-input v-model="newUserForm.name"></el-input>
@@ -294,7 +294,8 @@ export default {
       },
       radio: -1,
 
-      showDeleteTip: false
+      showDeleteTip: false,
+      disableUsername: false
     }
   },
   methods: {
@@ -407,6 +408,8 @@ export default {
         this.$refs.newUserFormRef.resetFields()
       }
 
+      this.disableUsername = false
+
       this.newUserForm.email = ''
       this.newUserForm.active = true
       this.newUserForm.password = '123456'
@@ -427,6 +430,8 @@ export default {
         })
         return ''
       }
+
+      this.disableUsername = true
 
       var currentUser = this.userList[this.radio]
       var param = { userId: currentUser.id }
