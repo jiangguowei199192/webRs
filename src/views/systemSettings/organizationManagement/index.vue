@@ -70,13 +70,13 @@
             empty-text="暂无数据"
             tooltip-effect="light"
           >
-            <el-table-column label width="33" align="center" :resizable="false">
+            <!-- <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
                 <el-radio v-model="radio" :label="scope.$index">{{
                   ""
                 }}</el-radio>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               align="center"
               label="用户姓名"
