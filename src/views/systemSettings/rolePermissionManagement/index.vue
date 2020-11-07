@@ -275,12 +275,13 @@ export default {
         roleCode: null
       }
       this.$axios
-        .post(settingApi.updateUser, param, {
+        .post(settingApi.updateUserRole, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
         .then((res) => {
           if (res.data.code === 0) {
             this.getUserList()
+            this.radio = -1
             Notification({
               title: '提示',
               message: '移除成功',
