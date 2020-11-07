@@ -35,9 +35,7 @@
                     v-for="(list,index2) in item.children"
                     :key="index2"
                     :class="{visibleOffline:list.onlineStatus==='offline',visible:!list.isSelected && list.onlineStatus==='online',visibleSelected:list.isSelected,curSelected:list.isCurSelected}"
-                    :style="{backgroundColor:list.isCurSelected?'#1EB0FC':list.isSelected?'rgba(0,212,15,1)':''
-                    ,color:list.onlineStatus==='offline'?'#999999':list.isSelected?'#fff':'#1EB0FC',
-                    border:list.onlineStatus==='offline'?'1px solid #999999':'1px solid rgba(30, 176, 252, 1)'}"
+                    :style="{backgroundColor:list.isCurSelected?'#1EB0FC':list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
                     @click.stop="playDeviceVideo(item,list,index1,index2)"
                     :title="list.label"
                   >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
@@ -61,7 +59,12 @@
                 suffix-icon="el-icon-search"
               ></el-input>
             </div>
-            <tree-data :treeData="treeData" :expandedKeys="expandedKeys" ref="tree" @videoChange="playOrClose"></tree-data>
+            <tree-data
+              :treeData="treeData"
+              :expandedKeys="expandedKeys"
+              ref="tree"
+              @videoChange="playOrClose"
+            ></tree-data>
           </template>
           <div
             v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0"
@@ -112,7 +115,7 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-              <el-tooltip popper-class="gTooltip" content="9宫格" placement="top" :open-delay="500">
+             <el-tooltip popper-class="gTooltip" content="9宫格" placement="top" :open-delay="500">
                 <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)"/>
               </el-tooltip>
               <el-tooltip popper-class="gTooltip" content="4宫格" placement="top" :open-delay="500">
@@ -1419,14 +1422,35 @@ export default {
     },
     // 设备下线
     deviceOffline (device) {
-      if (device.id === this.curSelectedVideo.deviceCode) {
-        if (this.isOnline) {
+      if (this.isOnline) {
+        if (device.id === this.curSelectedVideo.deviceCode && device.children[0].streamType === this.curSelectedVideo.streamType) {
           this.selectedIndex = 200
+          this.curSelectedVideo = {}
+          this.onlineArray.forEach(item => {
+            item.children.forEach(list => {
+              if (list.id === device.children[0].id) {
+                list.isSelected = false
+                list.isCurSelected = false
+              }
+            })
+          })
+        } else {
+          this.onlineArray.forEach(item => {
+            item.children.forEach(list => {
+              if (list.id === device.children[0].id) {
+                list.isSelected = false
+              }
+            })
+          })
         }
-        this.curSelectedVideo = {}
       }
+
       this.totalVideosArray.forEach((item, index) => {
-        if (item.deviceCode === device.id) {
+        // 删除对应通道
+        if (
+          item.deviceCode === device.id &&
+          item.streamType === device.children[0].streamType
+        ) {
           this.totalVideosArray.splice(index, 1, '')
         }
       })
@@ -1739,13 +1763,15 @@ export default {
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
         }
-        button.visibleOffline {
-          cursor: not-allowed;
-          background: url(../../assets/images/visible_offline.png) no-repeat 4px center;
-        }
-        button.visibleSelected,button.curSelected {
+        button.visibleSelected,
+        button.curSelected {
           background: url(../../assets/images/visible_selected.png) no-repeat
             4px center;
+        }
+        button.visibleOffline {
+          cursor: not-allowed;
+          opacity: 0.5;
+          background: url(../../assets/images/visible.png) no-repeat 4px center;
         }
       }
     }

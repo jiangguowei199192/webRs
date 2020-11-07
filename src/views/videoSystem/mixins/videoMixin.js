@@ -316,7 +316,7 @@ const videoMixin = {
               }
             })
           }
-          if (!isOnline) { this.deviceOffline(device) }
+          if (!isOnline) { this.deviceOffline(info) }
         } else if (isOnline) {
           // 设备不存在，新设备上线
           dept.children.push(info)
