@@ -32,13 +32,13 @@
           </div>
         </div>
         <audio src="./audio.mp3" ref="player"></audio>
-        <div class="fireNotice" v-show="showFireDialog">
+        <div class="fireNotice" :class="{curFire:realNotice}">
           <div class="title">
             <div>
               <img src="../assets/images/fire_title.png" class="fire_title" alt />
               <span>火情通知</span>
             </div>
-            <img src="../assets/images/fire_close.png" alt @click.stop="showFireDialog=false" />
+            <img src="../assets/images/fire_close.png" alt @click.stop="realNotice=false" />
           </div>
           <div class="content">
             <div class="detail">
@@ -57,7 +57,7 @@
                   </li>
                   <li>
                     <span>坐标：</span>
-                    <span>30.278766 114.2541245</span>
+                    <span style="margin-right: 17px;">30.278766 114.2541245</span>
                     <el-button class="copy">复制坐标</el-button>
                   </li>
                 </ul>
@@ -72,8 +72,8 @@
                   alt
                 />
               </div>
-              <div style="text-align:right;margin-top:8px;">
-                <el-button class="copy">火情详情</el-button>
+              <div style="text-align:right;margin-top:12px;">
+                <el-button class="copy" @click.stop="jumpToTodayFire">火情详情</el-button>
               </div>
               <div class="pagination">
                 <el-pagination
@@ -111,6 +111,7 @@ export default {
   data () {
     return {
       showFireDialog: true, // 显示火情弹框
+      realNotice: false,
       currentPage: 1, // 当前页
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
@@ -200,52 +201,53 @@ export default {
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
-      this.$notify.closeAll()
-      this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+      // this.$notify.closeAll()
+      // this.$notify.warning({ title: '警告', message: '发现火点火情！' })
       this.$nextTick(() => {
         const dom = document.querySelector('audio')
         dom && dom.play()
       })
       EventBus.$emit('getFireAlarm', info)
     })
-    // setInterval(() => {
-    //   const info = {
-    //     alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
-    //     alarmCity: '武汉市',
-    //     alarmDistrict: '江夏区',
-    //     alarmId: '2374',
-    //     alarmLatitude: 30.466848,
-    //     alarmLongitude: 114.425584,
-    //     alarmPicList: [
-    //       {
-    //         alarmMsgId: 244,
-    //         id: 487,
-    //         picPath:
-    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
-    //         streamCode: '0',
-    //         streamName: null
-    //       },
-    //       {
-    //         alarmMsgId: 244,
-    //         id: 488,
-    //         picPath:
-    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
-    //         streamCode: '1',
-    //         streamName: null
-    //       }
-    //     ],
-    //     alarmProvince: '湖北省',
-    //     alarmStatus: 'confirmed',
-    //     alarmTime: 1604640698000,
-    //     alarmTypeCode: 'HUO',
-    //     alarmTypeName: '火情报警',
-    //     deviceCode: '6C01728PA4A9A6F',
-    //     deviceName: '高点监控大',
-    //     id: 244,
-    //     updateTime: 1604640708000
-    //   }
-    //   EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
-    // }, 1000)
+    setInterval(() => {
+      const info = {
+        alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
+        alarmCity: '武汉市',
+        alarmDistrict: '江夏区',
+        alarmId: '2374',
+        alarmLatitude: 30.466848,
+        alarmLongitude: 114.425584,
+        alarmPicList: [
+          {
+            alarmMsgId: 244,
+            id: 487,
+            picPath:
+              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
+            streamCode: '0',
+            streamName: null
+          },
+          {
+            alarmMsgId: 244,
+            id: 488,
+            picPath:
+              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
+            streamCode: '1',
+            streamName: null
+          }
+        ],
+        alarmProvince: '湖北省',
+        alarmStatus: 'confirmed',
+        alarmTime: 1604640698000,
+        alarmTypeCode: 'HUO',
+        alarmTypeName: '火情报警',
+        deviceCode: '6C01728PA4A9A6F',
+        deviceName: '高点监控大',
+        id: 244,
+        updateTime: 1604640708000
+      }
+      !this.realNotice && (this.realNotice = true)
+      EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
+    }, 5000)
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()
@@ -262,6 +264,15 @@ export default {
     this.getRealtimeInfoTopics()
   },
   methods: {
+    // 跳转到今日警情
+    jumpToTodayFire () {
+      this.$router.push({
+        name: 'fireAlarm',
+        query: {
+          id: 244
+        }
+      })
+    },
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
@@ -469,9 +480,10 @@ export default {
     }
   }
   .fireNotice {
+    transition: 1s linear;
     position: fixed;
     bottom: 0px;
-    right: 0px;
+    right: -530px;
     width: 530px;
     height: 316px;
     background: url(../assets/images/fire_notice.png) no-repeat;
@@ -561,6 +573,9 @@ export default {
         }
       }
     }
+  }
+  .curFire {
+    right: 0px;
   }
 }
 </style>
