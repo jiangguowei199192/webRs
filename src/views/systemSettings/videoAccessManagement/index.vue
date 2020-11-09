@@ -799,7 +799,7 @@ export default {
               deviceAddress: this.addDeviceForm.address, // 地点
               deviceBrand: this.addDeviceForm.deviceBrand, // 品牌
               deviceCode: this.addDeviceForm.deviceNo, // 设备编码
-              deviceHeight: parseInt(this.addDeviceForm.height),
+              deviceHeight: this.addDeviceForm.height,
               deviceLatitude: this.addDeviceForm.latitude,
               deviceLongitude: this.addDeviceForm.longitude,
               deviceName: this.addDeviceForm.deviceName,

@@ -169,11 +169,12 @@ export default {
       subTitle.style.display = 'block'
       subTitle.style.margin = '43px 0px 0px -150px'
       icon.style.margin = '28px 25px 0px 0px'
-    } else if (this.data.type === 'RightItemType_SubTitle') {
-      // text.style.display = 'inline-block'
     }
+    // else if (this.data.type === 'RightItemType_SubTitle') {
+    // text.style.display = 'inline-block'
+    // }
     // eslint-disable-next-line no-unused-vars
-    const userDetail = JSON.parse(localStorage.getItem('userDetail'))
+    // const userDetail = JSON.parse(localStorage.getItem('userDetail'))
     // console.log(userDetail);
   },
   methods: {
