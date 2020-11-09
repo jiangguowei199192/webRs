@@ -44,6 +44,9 @@
                   <el-button class="popoverBtn" @click="organizationEdit(data)"
                     >修改组织</el-button
                   >
+                  <el-button v-show="data.showDelOrg" class="popoverBtn" @click="organizationDelete(data)"
+                    >删除组织</el-button
+                  >
                   <el-button class="popoverBtn" @click="bindDeviceClick(data)"
                     >绑定设备</el-button
                   >
@@ -386,6 +389,7 @@ export default {
           // 一级
           temp.forEach((item) => {
             item.showSetting = false
+            item.showDelOrg = true
             if (item.children) {
               if (item.children.length <= 0) {
                 item.children = null
@@ -394,6 +398,7 @@ export default {
                 var temp2 = item.children
                 temp2.forEach((item2) => {
                   item2.showSetting = false
+                  item2.showDelOrg = true
                   if (item2.children) {
                     if (item2.children.length <= 0) {
                       item2.children = null
@@ -402,6 +407,7 @@ export default {
                       var temp3 = item2.children
                       temp3.forEach((item3) => {
                         item3.showSetting = false
+                        item3.showDelOrg = true
                         if (item3.children) {
                           if (item3.children.length <= 0) {
                             item3.children = null
@@ -416,6 +422,7 @@ export default {
           })
           this.deptTree = temp
           this.deptTree[0].showSetting = true
+          this.deptTree[0].showDelOrg = false
 
           this.selectedDeptCode = res.data.data[0].deptCode
           this.getUserList()
@@ -443,6 +450,11 @@ export default {
       this.deptTree[0].showSetting = false
       this.deptTree[0].children.forEach(item => {
         item.showSetting = false
+        if (item.children) {
+          item.children.forEach(item => {
+            item.showSetting = false
+          })
+        }
       })
       item.showSetting = true
 
@@ -580,6 +592,32 @@ export default {
         this.hidePreOrg = false
         this.addOrganizationForm.previousOrganization = data.parentDeptCode
       }
+    },
+    // 删除组织
+    organizationDelete (data) {
+      console.log(data)
+      if (this.userList.length) {
+        Notification({
+          title: '提示',
+          message: '请先移除该组织下的所有用户',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return
+      }
+
+      var param = { id: data.id }
+      this.$axios.post(settingApi.deleteDept, param).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.getDeptTree()
+          Notification({
+            title: '提示',
+            message: '删除成功',
+            type: 'success',
+            duration: 5 * 1000
+          })
+        }
+      })
     },
 
     // 新增组织-保存
@@ -1025,7 +1063,7 @@ export default {
 
 .nodeTitleSty {
   display: inline-block;
-  width: 120px;
+  width: 110px;
   height: 35px;
   line-height: 35px;
   overflow: hidden;
