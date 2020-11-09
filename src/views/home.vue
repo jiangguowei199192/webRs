@@ -38,37 +38,42 @@
               <img src="../assets/images/fire_title.png" class="fire_title" alt />
               <span>火情通知</span>
             </div>
-            <img src="../assets/images/fire_close.png" alt @click.stop="realNotice=false" />
+            <img src="../assets/images/fire_close.png" alt @click.stop="realNotice=false;" />
           </div>
-          <div class="content">
+          <div class="content" v-if="Object.keys(curFireObj).length>0">
             <div class="detail">
               <div class="info">
                 <ul>
                   <li>
-                    <span>时间：</span>2020-04-05 10:06:50
+                    <span>时间：</span>
+                    {{timeFormat(curFireObj.alarmTime)}}
                   </li>
                   <li>
-                    <span>报警设备：</span>高点1号
+                    <span>报警设备：</span>
+                    {{curFireObj.deviceName||'-'}}
                   </li>
                 </ul>
                 <ul>
                   <li>
-                    <span>地点：</span>湖北省武汉市江夏区郑店街道上屋许96号
+                    <span>地点：</span>
+                    <span
+                      :title="curFireObj.alarmAddress"
+                    >{{curFireObj.alarmAddress&&curFireObj.alarmAddress.length>22?curFireObj.alarmAddress.slice(0,22)+'.':(curFireObj.alarmAddress?curFireObj.alarmAddress:'-')}}</span>
                   </li>
                   <li>
                     <span>坐标：</span>
-                    <span style="margin-right: 17px;">30.278766 114.2541245</span>
-                    <el-button class="copy">复制坐标</el-button>
+                    <span
+                      style="margin-right: 17px;"
+                    >{{curFireObj.alarmLatitude}} {{curFireObj.alarmLongitude}}</span>
+                    <el-button class="copy">复制坐标{{curFireObj.n}}</el-button>
                   </li>
                 </ul>
               </div>
               <div class="pics">
                 <img
-                  src="http://111.47.13.103:40031/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg"
-                  alt
-                />
-                <img
-                  src="http://111.47.13.103:40031/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg"
+                  v-for="(item,index) in curFireObj.alarmPicList"
+                  :src="item.picPath"
+                  :key="index"
                   alt
                 />
               </div>
@@ -79,8 +84,10 @@
                 <el-pagination
                   :page-size="1"
                   layout="prev,next"
-                  :total="10"
+                  :total="curFireArray.length"
                   :current-page.sync="currentPage"
+                  @prev-click="pre"
+                  @next-click="next"
                 ></el-pagination>
               </div>
             </div>
@@ -98,7 +105,7 @@
   </div>
 </template>
 <script>
-import { getTime } from '@/utils/date'
+import { getTime, timeFormat } from '@/utils/date'
 import amapApi from '@/axios/amapapis'
 import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
@@ -110,8 +117,9 @@ export default {
   name: 'Home',
   data () {
     return {
-      showFireDialog: true, // 显示火情弹框
-      realNotice: false,
+      realNotice: false, // 显示火情弹框
+      curFireArray: [], // 火情数据
+      curFireObj: {}, // 当前火情信息
       currentPage: 1, // 当前页
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
@@ -201,18 +209,23 @@ export default {
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
-      // this.$notify.closeAll()
-      // this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+      const curObj = JSON.parse(JSON.stringify(info))
+      EventBus.$emit('getFireAlarm', curObj)
+      info.alarmPicList.forEach(item => {
+        item.picPath = globalApi.headImg + item.picPath
+      })
       if (this.$route.path !== '/fireAlarm') {
         !this.realNotice && (this.realNotice = true)
       }
+
+      this.curFireArray.unshift(info)
+      this.currentPage = 1
+      this.curFireObj = this.curFireArray[this.currentPage - 1]
       this.$nextTick(() => {
         const dom = document.querySelector('audio')
         dom && dom.play()
       })
-      EventBus.$emit('getFireAlarm', info)
     })
-    this.testId = 150
     setInterval(() => {
       const info = {
         alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
@@ -241,16 +254,15 @@ export default {
         ],
         alarmProvince: '湖北省',
         alarmStatus: 'confirmed',
-        alarmTime: new Date().getTime(),
+        alarmTime: 1604640698000,
         alarmTypeCode: 'HUO',
         alarmTypeName: '火情报警',
         deviceCode: '6C01728PA4A9A6F',
         deviceName: '高点监控大',
-        id: this.testId,
-        updateTime: new Date().getTime()
+        id: 244,
+        updateTime: 1604640708000
       }
       EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
-      this.testId++
     }, 5000)
     this.jumpTo(this.isActive)
     setInterval(() => {
@@ -268,13 +280,31 @@ export default {
     this.getRealtimeInfoTopics()
   },
   methods: {
+    timeFormat,
+    // 上一页
+    pre (cpage) {
+      this.curFireObj = this.curFireArray[cpage - 1]
+      this.currentPage = cpage
+    },
+    // 下一页
+    next (cpage) {
+      this.curFireObj = this.curFireArray[cpage - 1]
+      this.currentPage = cpage
+    },
     // 跳转到今日警情
     jumpToTodayFire () {
-      this.realNotice = false
+      this.curFireArray.splice(this.currentPage - 1, 1)
+      if (this.curFireArray.length > 0) {
+        this.curFireObj = this.curFireArray[0]
+      } else {
+        this.curFireObj = {}
+        this.realNotice = false
+      }
+      this.currentPage = 1
       this.$router.push({
         path: '/fireAlarm',
         query: {
-          id: 145
+          id: this.curFireObj.id
         }
       })
     },
@@ -354,6 +384,15 @@ export default {
             EventBus.$emit('droneRealtimeInfo', object)
             break
           }
+        }
+      }
+    }
+  },
+  watch: {
+    $route (to) {
+      if (to) {
+        if (to.path === '/fireAlarm') {
+          this.realNotice = false
         }
       }
     }
