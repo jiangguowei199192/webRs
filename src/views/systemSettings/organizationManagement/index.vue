@@ -211,7 +211,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="上级组织" prop="previousOrganization">
+        <el-form-item label="上级组织" prop="previousOrganization" :hidden="hidePreOrg">
           <el-cascader
             placeholder
             :options="deptTree"
@@ -348,7 +348,9 @@ export default {
       formData: [],
       bindSelectedDeviceNo: 0,
 
-      userCountOfNoDept: 0
+      userCountOfNoDept: 0,
+
+      hidePreOrg: false // 修改组织弹窗隐藏上级组织
     }
   },
   methods: {
@@ -567,8 +569,17 @@ export default {
       this.addOrganizationForm.createTime = this.getCurrentDate()
       this.addOrganizationForm.organizationName = data.deptName
       this.addOrganizationForm.organizationType = data.deptTypeCode
-      this.addOrganizationForm.previousOrganization = data.parentDeptCode
+
       this.showAddOrganization = true
+
+      // 第一级没有上级组织，所以隐藏上级组织
+      if (data.deptCode === 'department_fire_220') {
+        this.hidePreOrg = true
+        this.addOrganizationForm.previousOrganization = 'parent_001'
+      } else {
+        this.hidePreOrg = false
+        this.addOrganizationForm.previousOrganization = data.parentDeptCode
+      }
     },
 
     // 新增组织-保存
