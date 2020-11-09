@@ -94,7 +94,7 @@
           </div>
         </div>
       </el-header>
-      <el-main>
+      <el-main :style="machineMainStyle($route.path)">
         <!-- <router-view /> -->
         <keep-alive>
           <router-view v-if="$route.meta.keepAlive"></router-view>
@@ -291,6 +291,19 @@ export default {
       this.curFireObj = this.curFireArray[cpage - 1]
       this.currentPage = cpage
     },
+    // 路由发生变化
+    machineMainStyle (path) {
+      if (path === '/decisionSystem' || path === '/fightDeploy' || path === '/deploy3D') {
+        return {
+          margin: '-65px 0px 0px 0px'
+        }
+      } else {
+        return {
+          margin: '0px'
+        }
+      }
+    },
+
     // 跳转到今日警情
     jumpToTodayFire () {
       this.curFireArray.splice(this.currentPage - 1, 1)
@@ -499,6 +512,8 @@ export default {
     height: 40px;
     line-height: 40px;
     text-align: center;
+    z-index: 1000;
+    pointer-events: none;
     .realTime {
       width: 936px;
       background: url(../assets/images/logo.png) no-repeat;

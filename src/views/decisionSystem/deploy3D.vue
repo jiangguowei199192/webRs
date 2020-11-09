@@ -2318,7 +2318,7 @@ export default {
 
 .mapcontainer {
   position: relative;
-  height: 899px;
+  height: 929px;
   overflow: hidden;
   .back{
     display: flex;
