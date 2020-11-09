@@ -28,6 +28,7 @@ export const settingApi = {
   deptBandDevice: '/cloud-video/deptAndDevice/deptBandDevice', // 设置：组织绑定设备
   updateUserRole: '/cloud-fms/sysuser/updateUserRole', // 设置：修改用户角色
   deleteDept: '/cloud-fms/dept/del', // 设置：删除组织
+  updateUserDept: '/cloud-fms/sysuser/updateUserDept', // 设置：修改用户组织
 
   baseInfoPicUpload: '/cloud-video/prePlan/enterprise/baseInfoPicUpload', // 预案：上传基本情况说明图片材料
   jzpmtPicUpload: '/cloud-video/prePlan/enterprise/jzpmtPicUpload', // 预案：上传建筑平面图

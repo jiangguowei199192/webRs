@@ -486,7 +486,7 @@ export default {
         deptCode: null
       }
       this.$axios
-        .post(settingApi.updateUser, param, {
+        .post(settingApi.updateUserDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
         .then((res) => {
