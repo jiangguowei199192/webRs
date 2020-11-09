@@ -546,6 +546,10 @@ const videoMixin = {
           this.droneDevArray
         )
 
+        if (this.jumpFireId !== undefined && this.jumpFireId !== '') {
+          this.jumpFireId = undefined
+          return
+        }
         this.autoLocator()
       }
     },

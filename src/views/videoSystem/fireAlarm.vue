@@ -137,7 +137,7 @@ export default {
       isShowRight: false,
       bShowMarkersInMap: true, // 在地图中加载显示设备、火情标记
       bRealTimeFireWarning: true, // 实时更新火情警报个数
-      id: '' // 火情id
+      jumpFireId: '' // 火情id
     }
   },
   mixins: [videoMixin, fireMixin],
@@ -197,15 +197,7 @@ export default {
       deep: true,
       immediate: true,
       handler () {
-        this.id = this.$route.query.id
-        console.log(this.id)
-      }
-    },
-    id: {
-      deep: true,
-      immediate: true,
-      handler () {
-        console.log('相关操作')
+        this.jumpFireId = this.$route.query.id
       }
     }
   }

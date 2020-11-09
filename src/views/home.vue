@@ -203,12 +203,16 @@ export default {
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
       // this.$notify.closeAll()
       // this.$notify.warning({ title: '警告', message: '发现火点火情！' })
+      if (this.$route.path !== '/fireAlarm') {
+        !this.realNotice && (this.realNotice = true)
+      }
       this.$nextTick(() => {
         const dom = document.querySelector('audio')
         dom && dom.play()
       })
       EventBus.$emit('getFireAlarm', info)
     })
+    this.testId = 150
     setInterval(() => {
       const info = {
         alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
@@ -237,16 +241,16 @@ export default {
         ],
         alarmProvince: '湖北省',
         alarmStatus: 'confirmed',
-        alarmTime: 1604640698000,
+        alarmTime: new Date().getTime(),
         alarmTypeCode: 'HUO',
         alarmTypeName: '火情报警',
         deviceCode: '6C01728PA4A9A6F',
         deviceName: '高点监控大',
-        id: 244,
-        updateTime: 1604640708000
+        id: this.testId,
+        updateTime: new Date().getTime()
       }
-      !this.realNotice && (this.realNotice = true)
       EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
+      this.testId++
     }, 5000)
     this.jumpTo(this.isActive)
     setInterval(() => {
@@ -266,10 +270,11 @@ export default {
   methods: {
     // 跳转到今日警情
     jumpToTodayFire () {
+      this.realNotice = false
       this.$router.push({
         path: '/fireAlarm',
         query: {
-          id: 244
+          id: 145
         }
       })
     },

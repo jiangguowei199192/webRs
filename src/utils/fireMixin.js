@@ -21,6 +21,14 @@ const fireMixin = {
       // 监控获取火情报警信息完毕事件
       EventBus.$on('getFireAlarmInfos_Done', bFlag => {
         this.markFireWarnings()
+        if (this.jumpFireId !== undefined && this.jumpFireId !== '') {
+          for (let i = 0; i < this.fireWarningArray.length; i++) {
+            if (this.fireWarningArray[i].id === this.jumpFireId) {
+              this.selectFireWarningHandler(this.fireWarningArray[i])
+              break
+            }
+          }
+        }
       })
     }
     // 实时监控火情火点
