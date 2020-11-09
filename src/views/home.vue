@@ -83,7 +83,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="1"
-                  layout="prev,pager,next"
+                  layout="prev,next"
                   :total="curFireArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
