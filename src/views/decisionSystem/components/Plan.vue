@@ -17,7 +17,7 @@
         </div>
         <div class="addressInfoDetail telStyle">
           <i class="el-icon-phone"></i>
-          {{ showInfo.tel }}
+          {{ showInfo.tel + ' ' + showInfo.subTel }}
         </div>
       </div>
 

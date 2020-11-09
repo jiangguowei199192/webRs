@@ -478,6 +478,7 @@ export default {
         this.companyName = this.planInfo.name
         this.companyAddress = this.planInfo.address
         this.companyPhone = this.planInfo.tel
+        this.companySubPhone = this.planInfo.subTel
         this.companyLog = this.planInfo.lon
         this.companyLat = this.planInfo.lat
         if (this.planInfo.typeCode) {
