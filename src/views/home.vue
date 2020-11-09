@@ -38,7 +38,7 @@
               <img src="../assets/images/fire_title.png" class="fire_title" alt />
               <span>火情通知</span>
             </div>
-            <img src="../assets/images/fire_close.png" alt @click.stop="realNotice=false" />
+            <img src="../assets/images/fire_close.png" alt @click.stop="realNotice=false;" />
           </div>
           <div class="content" v-if="Object.keys(curFireObj).length>0">
             <div class="detail">
@@ -83,7 +83,7 @@
               <div class="pagination">
                 <el-pagination
                   :page-size="1"
-                  layout="prev,next"
+                  layout="prev,pager,next"
                   :total="curFireArray.length"
                   :current-page.sync="currentPage"
                   @prev-click="pre"
@@ -214,7 +214,10 @@ export default {
       info.alarmPicList.forEach(item => {
         item.picPath = globalApi.headImg + item.picPath
       })
-      !this.realNotice && (this.realNotice = true)
+      if (this.$route.path !== '/fireAlarm') {
+        !this.realNotice && (this.realNotice = true)
+      }
+
       this.curFireArray.unshift(info)
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
@@ -381,6 +384,15 @@ export default {
             EventBus.$emit('droneRealtimeInfo', object)
             break
           }
+        }
+      }
+    }
+  },
+  watch: {
+    $route (to) {
+      if (to) {
+        if (to.path === '/fireAlarm') {
+          this.realNotice = false
         }
       }
     }
