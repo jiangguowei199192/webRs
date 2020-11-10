@@ -82,7 +82,7 @@ var mqttService;
       if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
       } else {
-        // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+        console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }
     }
 
