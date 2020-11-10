@@ -133,14 +133,14 @@ export default {
           content: '视频侦查'
         },
         {
-          content: '评战系统'
+          content: '数字化单兵'
         },
         {
           content: '消防救援现场指挥系统'
         },
 
         {
-          content: '数字化单兵'
+          content: '战评系统'
         },
         {
           content: '数字化装备'
