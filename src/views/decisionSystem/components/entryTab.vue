@@ -13,11 +13,23 @@
           <!-- 左容器 -->
           <div class="left_tab fl">
             <ul v-for="(item, index) in info" :key="index">
+              <!-- 临时禁用 -->
               <li
+                v-if="index == 0 || index == 2"
+                type="button"
+                class="item_li disabled"
+              >
+                {{ item.title }}
+              </li>
+              <!-- 正常切换 -->
+              <li
+                v-else
                 type="button"
                 class="item_li"
-                :class="{ active: currentClass == index }"
-                @click="tabChecked(index)"
+                :class="{
+                  active: currentClass == index,
+                }"
+                @click.stop="tabChecked(index)"
               >
                 {{ item.title }}
               </li>
@@ -159,7 +171,7 @@ export default {
       this.enterpriseId = id
       this.configPath = path
       this.dialogVisible = true
-      this.tabChecked(0)
+      this.tabChecked(1)
     },
 
     // 点击每个Tab选项
@@ -301,6 +313,9 @@ export default {
           background: url("../../../assets/images/2d/entrytab_checked.png")
             no-repeat;
           background-size: 100% 100%;
+        }
+        .item_li.disabled {
+          cursor: not-allowed;
         }
       }
       .right_tab {
