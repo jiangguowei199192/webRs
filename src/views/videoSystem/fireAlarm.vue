@@ -142,9 +142,6 @@ export default {
   },
   mixins: [videoMixin, fireMixin],
   methods: {
-    getPath () {
-      console.log(21312)
-    },
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
       if (Number(this.isOnline) === Number(isOnline)) return
