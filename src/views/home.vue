@@ -64,8 +64,8 @@
                     <span>坐标：</span>
                     <span
                       style="margin-right: 17px;"
-                    >{{curFireObj.alarmLatitude}} {{curFireObj.alarmLongitude}}</span>
-                    <el-button class="copy">复制坐标{{curFireObj.n}}</el-button>
+                    >{{curFireObj.alarmLatitude||'-'}} {{curFireObj.alarmLongitude||'-'}}</span>
+                    <el-button class="copy">复制坐标</el-button>
                   </li>
                 </ul>
               </div>
@@ -140,7 +140,7 @@ export default {
         },
 
         {
-          content: '战评系统'
+          content: '数字化单兵'
         },
         {
           content: '数字化装备'
@@ -217,7 +217,6 @@ export default {
       if (this.$route.path !== '/fireAlarm') {
         !this.realNotice && (this.realNotice = true)
       }
-
       this.curFireArray.unshift(info)
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
@@ -226,44 +225,44 @@ export default {
         dom && dom.play()
       })
     })
-    setInterval(() => {
-      const info = {
-        alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
-        alarmCity: '武汉市',
-        alarmDistrict: '江夏区',
-        alarmId: '2374',
-        alarmLatitude: 30.466848,
-        alarmLongitude: 114.425584,
-        alarmPicList: [
-          {
-            alarmMsgId: 244,
-            id: 487,
-            picPath:
-              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
-            streamCode: '0',
-            streamName: null
-          },
-          {
-            alarmMsgId: 244,
-            id: 488,
-            picPath:
-              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
-            streamCode: '1',
-            streamName: null
-          }
-        ],
-        alarmProvince: '湖北省',
-        alarmStatus: 'confirmed',
-        alarmTime: 1604640698000,
-        alarmTypeCode: 'HUO',
-        alarmTypeName: '火情报警',
-        deviceCode: '6C01728PA4A9A6F',
-        deviceName: '高点监控大',
-        id: 244,
-        updateTime: 1604640708000
-      }
-      EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
-    }, 5000)
+    // setInterval(() => {
+    //   const info = {
+    //     alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
+    //     alarmCity: '武汉市',
+    //     alarmDistrict: '江夏区',
+    //     alarmId: '2374',
+    //     alarmLatitude: 30.466848,
+    //     alarmLongitude: 114.425584,
+    //     alarmPicList: [
+    //       {
+    //         alarmMsgId: 244,
+    //         id: 487,
+    //         picPath:
+    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
+    //         streamCode: '0',
+    //         streamName: null
+    //       },
+    //       {
+    //         alarmMsgId: 244,
+    //         id: 488,
+    //         picPath:
+    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
+    //         streamCode: '1',
+    //         streamName: null
+    //       }
+    //     ],
+    //     alarmProvince: '湖北省',
+    //     alarmStatus: 'confirmed',
+    //     alarmTime: 1604640698000,
+    //     alarmTypeCode: 'HUO',
+    //     alarmTypeName: '火情报警',
+    //     deviceCode: '6C01728PA4A9A6F',
+    //     deviceName: '高点监控大',
+    //     id: 244,
+    //     updateTime: 1604640708000
+    //   }
+    //   EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
+    // }, 5000)
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()
