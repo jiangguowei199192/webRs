@@ -65,7 +65,10 @@
                     <span
                       style="margin-right: 17px;"
                     >{{curFireObj.alarmLatitude||'-'}} {{curFireObj.alarmLongitude||'-'}}</span>
-                    <el-button class="copy" @click.stop="copy(curFireObj.alarmLatitude,curFireObj.alarmLongitude)">复制坐标</el-button>
+                    <el-button
+                      class="copy"
+                      @click.stop="copy(curFireObj.alarmLatitude,curFireObj.alarmLongitude)"
+                    >复制坐标</el-button>
                   </li>
                 </ul>
               </div>
@@ -212,6 +215,7 @@ export default {
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+      console.log('火情数据', info)
       const curObj = JSON.parse(JSON.stringify(info))
       EventBus.$emit('getFireAlarm', curObj)
       if (this.$route.path !== '/fireAlarm') {
@@ -220,6 +224,7 @@ export default {
       this.curFireArray.unshift(info)
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
+      console.log(this.curFireObj)
       this.addTitle()
       this.$nextTick(() => {
         const dom = document.querySelector('audio')
@@ -291,21 +296,14 @@ export default {
     next (cpage) {
       this.showCurFire(cpage)
     },
-    // 路由发生变化
-    machineMainStyle (path) {
-      if (path === '/decisionSystem' || path === '/fightDeploy' || path === '/deploy3D') {
-        return {
-          margin: '-65px 0px 0px 0px'
-        }
-      } else {
-        return {
-          margin: '0px'
-        }
-      }
-    },
-
     // 跳转到今日警情
     jumpToTodayFire () {
+      this.$router.push({
+        path: '/fireAlarm',
+        query: {
+          id: this.curFireObj.id
+        }
+      })
       this.curFireArray.splice(this.currentPage - 1, 1)
       if (this.curFireArray.length > 0) {
         this.curFireObj = this.curFireArray[0]
@@ -314,12 +312,22 @@ export default {
         this.realNotice = false
       }
       this.currentPage = 1
-      this.$router.push({
-        path: '/fireAlarm',
-        query: {
-          id: this.curFireObj.id
+    },
+    // 路由发生变化
+    machineMainStyle (path) {
+      if (
+        path === '/decisionSystem' ||
+        path === '/fightDeploy' ||
+        path === '/deploy3D'
+      ) {
+        return {
+          margin: '-65px 0px 0px 0px'
         }
-      })
+      } else {
+        return {
+          margin: '0px'
+        }
+      }
     },
     // 点击激活当前系统
     jumpTo (index) {
