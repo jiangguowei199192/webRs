@@ -65,7 +65,7 @@
                     <span
                       style="margin-right: 17px;"
                     >{{curFireObj.alarmLatitude||'-'}} {{curFireObj.alarmLongitude||'-'}}</span>
-                    <el-button class="copy">复制坐标</el-button>
+                    <el-button class="copy" @click.stop="copy(curFireObj.alarmLatitude,curFireObj.alarmLongitude)">复制坐标</el-button>
                   </li>
                 </ul>
               </div>
@@ -282,6 +282,23 @@ export default {
   },
   methods: {
     timeFormat,
+    // 复制经纬度
+    copy (la, lo) {
+      const text = `${la},${lo}`
+      const oInput = document.createElement('input')
+      oInput.value = text
+      document.body.appendChild(oInput)
+      oInput.select() // 选择对象;
+      console.log(oInput.value)
+      document.execCommand('Copy') // 执行浏览器复制命令
+      this.$notify.closeAll()
+      this.$notify({
+        title: '成功',
+        message: '复制坐标成功',
+        type: 'success'
+      })
+      oInput.remove()
+    },
     // 给分页添加提示
     addTitle () {
       this.$nextTick(() => {
