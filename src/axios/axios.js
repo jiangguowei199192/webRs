@@ -62,6 +62,7 @@ service.interceptors.response.use(
           return false
         }
       })
+      Notification.closeAll()
       Notification({
         title: '错误',
         message: errorMsg,
@@ -78,6 +79,7 @@ service.interceptors.response.use(
   },
   (error) => {
     if (error.response && (error.response.status === 403 || error.response.status === 401 || error.response.data.code === 401)) {
+      Notification.closeAll()
       Notification({
         title: '错误',
         message: '权限过期，请先登录后再访问！',
@@ -87,6 +89,7 @@ service.interceptors.response.use(
       window.location.href = '/webFs/login'
       return
     }
+    Notification.closeAll()
     Notification({
       title: '错误',
       message: error.response || '请求无响应，网络出错啦！',
