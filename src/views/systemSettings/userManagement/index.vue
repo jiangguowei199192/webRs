@@ -511,6 +511,7 @@ export default {
             })
             .then((res) => {
               if (res.data.code === 0) {
+                this.radio = -1
                 this.getUserList()
                 Notification({
                   title: '提示',
@@ -547,6 +548,7 @@ export default {
             })
             .then((res) => {
               if (res.data.code === 0) {
+                this.radio = -1
                 this.getUserList()
                 Notification({
                   title: '提示',
