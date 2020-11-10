@@ -224,7 +224,6 @@ export default {
       this.curFireArray.unshift(info)
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
-      console.log(this.curFireObj)
       this.addTitle()
       this.$nextTick(() => {
         const dom = document.querySelector('audio')
