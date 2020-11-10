@@ -184,6 +184,23 @@
     </el-dialog>
 
     <el-dialog
+      title="提示"
+      :visible.sync="showDeleteOrgTip"
+      :close-on-click-modal="clickfalse"
+      width="30%"
+      class="dialogStyle"
+    >
+      <div style="height: 50px">
+        确认移除该组织吗?
+      </div>
+      <div style="height: 30px">
+        <el-button type="primary" @click="deleteOrgConfirm" class="trueBtn"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
+
+    <el-dialog
       :title="addOrganizationTitle"
       :visible.sync="showAddOrganization"
       :close-on-click-modal="clickfalse"
@@ -353,7 +370,8 @@ export default {
 
       userCountOfNoDept: 0,
 
-      hidePreOrg: false // 修改组织弹窗隐藏上级组织
+      hidePreOrg: false, // 修改组织弹窗隐藏上级组织
+      showDeleteOrgTip: false
     }
   },
   methods: {
@@ -595,7 +613,8 @@ export default {
     },
     // 删除组织
     organizationDelete (data) {
-      console.log(data)
+      // console.log(data)
+      this.currentOrganization = data
       if (this.userList.length) {
         Notification({
           title: '提示',
@@ -606,7 +625,12 @@ export default {
         return
       }
 
-      var param = { id: data.id }
+      this.showDeleteOrgTip = true
+    },
+
+    deleteOrgConfirm () {
+      this.showDeleteOrgTip = false
+      var param = { id: this.currentOrganization.id }
       this.$axios.post(settingApi.deleteDept, param).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.getDeptTree()
