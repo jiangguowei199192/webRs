@@ -117,7 +117,6 @@ export default {
   name: 'Home',
   data () {
     return {
-      timer: null,
       realNotice: false, // 显示火情弹框
       curFireArray: [], // 火情数据
       curFireObj: {}, // 当前火情信息
@@ -218,7 +217,6 @@ export default {
       if (this.$route.path !== '/fireAlarm') {
         !this.realNotice && (this.realNotice = true)
       }
-
       this.curFireArray.unshift(info)
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
@@ -228,43 +226,6 @@ export default {
         dom && dom.play()
       })
     })
-    this.timer = setInterval(() => {
-      const fireObj = {
-        alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
-        alarmCity: '武汉市',
-        alarmDistrict: '江夏区',
-        alarmId: '2374',
-        alarmLatitude: 30.466848,
-        alarmLongitude: 114.425584,
-        alarmPicList: [
-          {
-            alarmMsgId: 244,
-            id: 487,
-            picPath:
-              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
-            streamCode: '0',
-            streamName: null
-          },
-          {
-            alarmMsgId: 244,
-            id: 488,
-            picPath:
-              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
-            streamCode: '1',
-            streamName: null
-          }
-        ],
-        alarmProvince: '湖北省',
-        alarmTime: 1604640698000,
-        alarmTypeCode: 'HUO',
-        alarmTypeName: '火情报警',
-        deviceCode: '6C01728PA4A9A6F',
-        deviceName: '高点监控大',
-        id: 244,
-        updateTime: 1604640708000
-      }
-      EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', fireObj)
-    }, 5000)
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()
