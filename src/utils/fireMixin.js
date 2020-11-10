@@ -32,8 +32,8 @@ const fireMixin = {
       })
     }
     // 实时监控火情火点
-    EventBus.$on('getFireAlarm', info => {
-      console.log('收到了', info)
+    EventBus.$on('getFireAlarm', obj => {
+      const info = JSON.parse(JSON.stringify(obj))
       if (info.alarmStatus !== 'mistaken') {
         info.bConfirmed = false
         info.alarmTime = timeFormat(info.alarmTime)

@@ -72,7 +72,7 @@
               <div class="pics">
                 <img
                   v-for="(item,index) in curFireObj.alarmPicList"
-                  :src="item.picPath"
+                  :src="`${picUrl}${item.picPath}`"
                   :key="index"
                   alt
                 />
@@ -122,6 +122,7 @@ export default {
       curFireArray: [], // 火情数据
       curFireObj: {}, // 当前火情信息
       currentPage: 1, // 当前页
+      picUrl: globalApi.headImg, // 图片前缀
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
       weatherReport: '', // 天气情况
@@ -212,26 +213,22 @@ export default {
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
-      console.log('收到的值', info)
       const curObj = JSON.parse(JSON.stringify(info))
-      console.log('深拷贝之后传过去之前', curObj)
-      EventBus.$emit('getFireAlarm', info)
-      console.log('深拷贝之后传过去之后', info)
-      // info.alarmPicList.forEach(item => {
-      //   item.picPath = globalApi.headImg + item.picPath
-      // })
-      // if (this.$route.path !== '/fireAlarm') {
-      //   !this.realNotice && (this.realNotice = true)
-      // }
-      // this.curFireArray.unshift(info)
-      // this.currentPage = 1
-      // this.curFireObj = this.curFireArray[this.currentPage - 1]
-      // this.$nextTick(() => {
-      //   const dom = document.querySelector('audio')
-      //   dom && dom.play()
-      // })
+      EventBus.$emit('getFireAlarm', curObj)
+      if (this.$route.path !== '/fireAlarm') {
+        !this.realNotice && (this.realNotice = true)
+      }
+
+      this.curFireArray.unshift(info)
+      this.currentPage = 1
+      this.curFireObj = this.curFireArray[this.currentPage - 1]
+      this.addTitle()
+      this.$nextTick(() => {
+        const dom = document.querySelector('audio')
+        dom && dom.play()
+      })
     })
-    this.timer = setTimeout(() => {
+    this.timer = setInterval(() => {
       const fireObj = {
         alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
         alarmCity: '武汉市',
@@ -266,7 +263,6 @@ export default {
         id: 244,
         updateTime: 1604640708000
       }
-      console.log('传出去的信息', fireObj)
       EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', fireObj)
     }, 5000)
     this.jumpTo(this.isActive)
@@ -286,15 +282,36 @@ export default {
   },
   methods: {
     timeFormat,
-    // 上一页
-    pre (cpage) {
+    // 给分页添加提示
+    addTitle () {
+      this.$nextTick(() => {
+        const prevBtn = document.querySelector('.el-pagination > .btn-prev')
+        const nextBtn = document.querySelector('.el-pagination > .btn-next')
+        if (!prevBtn.getAttribute('disabled')) {
+          prevBtn.title = `当前页${this.currentPage} /${this.curFireArray.length} `
+        } else {
+          prevBtn.removeAttribute('title')
+        }
+        if (!nextBtn.getAttribute('disabled')) {
+          nextBtn.title = `当前页${this.currentPage} / ${this.curFireArray.length}`
+        } else {
+          nextBtn.removeAttribute('title')
+        }
+      })
+    },
+    // 展示当前火情信息
+    showCurFire (cpage) {
       this.curFireObj = this.curFireArray[cpage - 1]
       this.currentPage = cpage
+      this.addTitle()
+    },
+    // 上一页
+    pre (cpage) {
+      this.showCurFire(cpage)
     },
     // 下一页
     next (cpage) {
-      this.curFireObj = this.curFireArray[cpage - 1]
-      this.currentPage = cpage
+      this.showCurFire(cpage)
     },
     // 路由发生变化
     machineMainStyle (path) {
