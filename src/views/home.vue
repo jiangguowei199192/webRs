@@ -117,6 +117,7 @@ export default {
   name: 'Home',
   data () {
     return {
+      timer: null,
       realNotice: false, // 显示火情弹框
       curFireArray: [], // 火情数据
       curFireObj: {}, // 当前火情信息
@@ -205,64 +206,69 @@ export default {
       this.mqtt.needReconnect = false
       if (this.mqtt.isConnect) this.mqtt.disconnect()
     }
+    clearInterval(this.timer)
+    this.timer = null
   },
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+      console.log('收到的值', info)
       const curObj = JSON.parse(JSON.stringify(info))
-      EventBus.$emit('getFireAlarm', curObj)
-      info.alarmPicList.forEach(item => {
-        item.picPath = globalApi.headImg + item.picPath
-      })
-      if (this.$route.path !== '/fireAlarm') {
-        !this.realNotice && (this.realNotice = true)
-      }
-      this.curFireArray.unshift(info)
-      this.currentPage = 1
-      this.curFireObj = this.curFireArray[this.currentPage - 1]
-      this.$nextTick(() => {
-        const dom = document.querySelector('audio')
-        dom && dom.play()
-      })
+      console.log('深拷贝之后传过去之前', curObj)
+      EventBus.$emit('getFireAlarm', info)
+      console.log('深拷贝之后传过去之后', info)
+      // info.alarmPicList.forEach(item => {
+      //   item.picPath = globalApi.headImg + item.picPath
+      // })
+      // if (this.$route.path !== '/fireAlarm') {
+      //   !this.realNotice && (this.realNotice = true)
+      // }
+      // this.curFireArray.unshift(info)
+      // this.currentPage = 1
+      // this.curFireObj = this.curFireArray[this.currentPage - 1]
+      // this.$nextTick(() => {
+      //   const dom = document.querySelector('audio')
+      //   dom && dom.play()
+      // })
     })
-    // setInterval(() => {
-    //   const info = {
-    //     alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
-    //     alarmCity: '武汉市',
-    //     alarmDistrict: '江夏区',
-    //     alarmId: '2374',
-    //     alarmLatitude: 30.466848,
-    //     alarmLongitude: 114.425584,
-    //     alarmPicList: [
-    //       {
-    //         alarmMsgId: 244,
-    //         id: 487,
-    //         picPath:
-    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
-    //         streamCode: '0',
-    //         streamName: null
-    //       },
-    //       {
-    //         alarmMsgId: 244,
-    //         id: 488,
-    //         picPath:
-    //           '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
-    //         streamCode: '1',
-    //         streamName: null
-    //       }
-    //     ],
-    //     alarmProvince: '湖北省',
-    //     alarmStatus: 'confirmed',
-    //     alarmTime: 1604640698000,
-    //     alarmTypeCode: 'HUO',
-    //     alarmTypeName: '火情报警',
-    //     deviceCode: '6C01728PA4A9A6F',
-    //     deviceName: '高点监控大',
-    //     id: 244,
-    //     updateTime: 1604640708000
-    //   }
-    //   EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', info)
-    // }, 5000)
+    this.timer = setTimeout(() => {
+      const fireObj = {
+        alarmAddress: '湖北省武汉市江夏区武汉高德红外股份有限公司(黄龙山南路)',
+        alarmCity: '武汉市',
+        alarmDistrict: '江夏区',
+        alarmId: '2374',
+        alarmLatitude: 30.466848,
+        alarmLongitude: 114.425584,
+        alarmPicList: [
+          {
+            alarmMsgId: 244,
+            id: 487,
+            picPath:
+              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_15_bfilos.jpg',
+            streamCode: '0',
+            streamName: null
+          },
+          {
+            alarmMsgId: 244,
+            id: 488,
+            picPath:
+              '/cloud-video/firewarning/6C01728PA4A9A6F/20201106133140_16_bfilos.jpg',
+            streamCode: '1',
+            streamName: null
+          }
+        ],
+        alarmProvince: '湖北省',
+        alarmTime: 1604640698000,
+        alarmTypeCode: 'HUO',
+        alarmTypeName: '火情报警',
+        deviceCode: '6C01728PA4A9A6F',
+        deviceName: '高点监控大',
+        id: 244,
+        updateTime: 1604640708000
+      }
+      console.log('传出去的信息', fireObj)
+      EventBus.$emit('video/deviceIid/channleID/datalink/firewarning', fireObj)
+    }, 5000)
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()

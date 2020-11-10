@@ -1695,6 +1695,9 @@ export default {
       //   }
       // }
     })
+  },
+  beforeDestroy () {
+    EventBus.$off('getFireAlarm')
   }
 }
 </script>
