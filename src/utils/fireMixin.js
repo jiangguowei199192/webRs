@@ -31,20 +31,6 @@ const fireMixin = {
         }
       })
     }
-    // 实时监控火情火点
-    EventBus.$on('getFireAlarm', obj => {
-      const info = JSON.parse(JSON.stringify(obj))
-      if (info.alarmStatus !== 'mistaken') {
-        info.bConfirmed = false
-        info.alarmTime = timeFormat(info.alarmTime)
-        this.handlingAlarmImgUrl(info)
-        this.fireWarningArray.unshift(info)
-        this.fireTotalNum = this.fireWarningArray.length
-        if (this.bShowMarkersInMap) {
-          this.addNewFireWarning(info)
-        }
-      }
-    })
     // 获取火情报警信息
     this.getTodayFireAlarmInfos()
   },
@@ -53,9 +39,7 @@ const fireMixin = {
     if (this.bShowMarkersInMap) {
       EventBus.$off('getFireAlarmInfos_Done')
     }
-    if (this.bRealTimeFireWarning) {
-      EventBus.$off('getFireAlarm')
-    }
+    EventBus.$off('getFireAlarm')
   },
 
   mounted () {
@@ -85,6 +69,20 @@ const fireMixin = {
         this.callbackConfirmed
       )
     }
+    // 实时监控火情火点
+    EventBus.$on('getFireAlarm', obj => {
+      const info = JSON.parse(JSON.stringify(obj))
+      if (info.alarmStatus !== 'mistaken') {
+        info.bConfirmed = false
+        info.alarmTime = timeFormat(info.alarmTime)
+        this.handlingAlarmImgUrl(info)
+        this.fireWarningArray.unshift(info)
+        this.fireTotalNum = this.fireWarningArray.length
+        if (this.bShowMarkersInMap) {
+          this.addNewFireWarning(info)
+        }
+      }
+    })
   },
 
   methods: {
