@@ -654,6 +654,9 @@ export default {
         k._lon = k.enterpriseLongitude
         k._lat = k.enterpriseLatitude
         k.tel = k.enterpriseTel
+        if (k.enterpriseTelBackup !== undefined && k.enterpriseTelBackup !== '') {
+          k.tel += ';' + k.enterpriseTelBackup
+        }
         k._imgUrl = null
         tmpKeyRes.push(k)
       })
