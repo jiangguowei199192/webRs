@@ -412,6 +412,8 @@ export default {
     $route (to) {
       if (to) {
         if (to.path === '/fireAlarm') {
+          this.curFireArray = []
+          this.currentPage = 1
           this.realNotice = false
         }
       }
