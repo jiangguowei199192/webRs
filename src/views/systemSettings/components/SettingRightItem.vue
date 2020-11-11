@@ -85,7 +85,7 @@
           </el-select>
         </el-form-item>
         <el-form-item prop="mobile" label="手机">
-          <el-input v-model="myInfoForm.mobile"></el-input>
+          <el-input v-model="myInfoForm.mobile" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="myInfoConfirm" style="float: right;" class="trueBtn">保存</el-button>

@@ -7,6 +7,7 @@
           placeholder="用户名"
           auto-complete="new-password"
           clearable
+          maxlength="35"
           prefix-icon="el-icon-user"
           v-model="loginInfo.username"
           class="username"
@@ -19,6 +20,7 @@
           @input.native="changePasswordInputType"
           auto-complete="new-password"
           clearable
+          maxlength="35"
           prefix-icon="el-icon-lock"
           v-model="loginInfo.password"
           class="username password"

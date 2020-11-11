@@ -114,13 +114,13 @@
         :rules="newUserRules"
       >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="newUserForm.username" :disabled="disableUsername"></el-input>
+          <el-input v-model="newUserForm.username" :disabled="disableUsername" maxlength="35"></el-input>
         </el-form-item>
         <el-form-item label="用户姓名" prop="name">
-          <el-input v-model="newUserForm.name"></el-input>
+          <el-input v-model="newUserForm.name" maxlength="35"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
-          <el-input v-model="newUserForm.phone"></el-input>
+          <el-input v-model="newUserForm.phone" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="newUserForm.email"></el-input>
@@ -167,7 +167,7 @@
           prop="password"
           v-show="newUserTitle === '新增用户'"
         >
-          <el-input v-model="newUserForm.password"></el-input>
+          <el-input v-model="newUserForm.password" maxlength="35"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="newUserConfirm" class="trueBtn"
@@ -194,6 +194,7 @@
           <el-input
             v-model="resetPasswordForm.password"
             placeholder="请输入重置密码"
+            maxlength="35"
           ></el-input>
         </el-form-item>
         <el-form-item>
