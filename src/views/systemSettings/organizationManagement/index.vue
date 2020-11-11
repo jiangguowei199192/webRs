@@ -26,7 +26,7 @@
               slot-scope="{ node, data }"
               style="width: 100%"
             >
-              <span class="nodeTitleSty">{{
+              <span class="nodeTitleSty" :title="node.label">{{
                 node.label +
                 (data.children ? "[" + data.children.length + "]" : "")
               }}</span>
