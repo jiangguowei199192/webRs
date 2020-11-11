@@ -1,112 +1,117 @@
 <template>
-  <div class="container">
+  <!-- container容器 -->
+  <div class="container" :style="'height:' + workHeight + 'px;'">
     <!-- 头部返回 -->
     <div class="header">
       <div class="back">
         <button type="button" class="backStyle" @click="backToPlan">
-          <img :src="backImg" />
+          <img :src="backImg" alt="" />
           指挥决策
         </button>
       </div>
     </div>
-    <!-- main容器 -->
-    <div class="main" :style="'height:' + workHeight + 'px;'">
-      <!-- 底图 -->
-      <div class="content">
-        <img :src="buildImgUrl" alt="" />
-      </div>
-      <!-- 左边模型列表 -->
-      <div class="left">
-        <div
-          class="model_edit"
-          :style="'height:' + (this.workHeight - 220) + 'px;'"
+    <!-- 底图 -->
+    <div class="content">
+      <img :src="buildImgUrl" alt="" />
+    </div>
+    <!-- 左边模型列表 -->
+    <div class="left">
+      <div
+        class="model_edit"
+        :style="'height:' + (this.workHeight - 280) + 'px;'"
+      >
+        <div class="edit_menu">
+          <el-tooltip
+            v-for="(item, index) in curIcons"
+            :key="index"
+            popper-class="gTooltip plotTooltip"
+            :content="item.title"
+            placement="top"
+            :open-delay="500"
+          >
+            <!-- <span v-if="index == 0" @click.stop="entryTabShow"
+              ><img :src="item.img" alt="" />{{ item.title }}</span
+            > -->
+            <span v-if="index == 2" @click.stop="saveData"
+              ><img :src="item.img" alt="" />{{ item.title }}</span
+            >
+            <span v-else><img :src="item.img" alt="" />{{ item.title }}</span>
+          </el-tooltip>
+        </div>
+        <el-select
+          style="margin: 5px 0 0 0"
+          size="mini"
+          placeholder="请选择"
+          v-model="modelType"
+          :popper-append-to-body="false"
         >
-          <div class="edit_menu">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+        <div
+          class="edit_list webFsScroll"
+          :style="'height:' + (this.workHeight - 280 - 170) + 'px;'"
+        >
+          <ul class="fl">
             <el-tooltip
-              v-for="(item, index) in curIcons"
+              v-for="(item, index) in curModels"
               :key="index"
               popper-class="gTooltip plotTooltip"
-              :content="item.title"
+              :content="item.name"
               placement="top"
               :open-delay="500"
             >
-              <span v-if="index == 2" @click.stop="saveData"
-                ><img :src="item.img" alt="" />{{ item.title }}</span
+              <li
+                id="list"
+                :class="{ active: curModelIndex === index }"
+                draggable="true"
+                @click.stop="listSelected(index)"
+                @dragstart="drag(item)"
               >
-              <span v-else><img :src="item.img" alt="" />{{ item.title }}</span>
+                <img :src="item.image" alt="模型加载失败" />
+              </li>
             </el-tooltip>
-          </div>
-          <el-select
-            style="margin: 5px 0 0 0"
-            size="mini"
-            placeholder="请选择"
-            v-model="modelType"
-            :popper-append-to-body="false"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-          <div
-            class="edit_list webFsScroll"
-            :style="'height:' + (this.workHeight - 60 - 110) + 'px;'"
-          >
-            <ul class="fl">
-              <el-tooltip
-                v-for="(item, index) in curModels"
-                :key="index + '-node'"
-                popper-class="gTooltip plotTooltip"
-                :content="item.name"
-                placement="top"
-                :open-delay="500"
-              >
-                <li
-                  id="list"
-                  :class="{ active: curModelIndex === index }"
-                  draggable="true"
-                  @click.stop="listSelected(index)"
-                  @dragstart="drag(item)"
-                >
-                  <img :src="item.image" alt="模型加载失败" />
-                </li>
-              </el-tooltip>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- 画布编辑区 -->
-      <div class="detail">
-        <div
-          id="drawContent"
-          ref="drawContent"
-          @drop="drop($event)"
-          @dragover.prevent
-        >
-          <drawNode
-            class="drawNode"
-            ref="drawNode"
-            v-for="node in data.nodeList"
-            :key="node.id"
-            :node="node"
-            :id="node.id"
-            @change-node-site="changeNodeSite"
-            @delete-node="deleteNode"
-            @edit-node="editNode"
-            @drag-stop="dragStop"
-            @resize-stop="resizeStop"
-            @rotate-stop="rotateStop"
-          ></drawNode>
+          </ul>
         </div>
       </div>
     </div>
+    <!-- 画布编辑区 -->
+    <div class="detail">
+      <div
+        id="drawContent"
+        ref="drawContent"
+        @drop="drop($event)"
+        @dragover.prevent
+      >
+        <drawNode
+          class="drawNode"
+          ref="drawNode"
+          v-for="node in data.nodeList"
+          :key="node.id"
+          :node="node"
+          :id="node.id"
+          @change-node-site="changeNodeSite"
+          @delete-node="deleteNode"
+          @edit-node="editNode"
+          @drag-stop="dragStop"
+          @resize-stop="resizeStop"
+          @rotate-stop="rotateStop"
+        ></drawNode>
+      </div>
+    </div>
+
+    <!-- 底图选择入口 -->
+    <!-- <EntryTab ref="entryTab" :info="deployInfos"></EntryTab> -->
   </div>
 </template>
 
 <script>
 import drawNode from './components/drawNode'
+// import EntryTab from './components/entryTab'
 import { jsPlumb } from 'jsplumb'
 import { EventBus } from '@/utils/eventBus.js'
 import axios from 'axios'
@@ -119,6 +124,7 @@ export default {
 
   components: {
     drawNode
+    // EntryTab
   },
 
   data () {
@@ -164,6 +170,21 @@ export default {
         { title: '分享', img: require('../../assets/images/2d/share.png') },
         { title: '打印', img: require('../../assets/images/2d/print.png') }
       ],
+      // deployInfos: [
+      //   {
+      //     title: '地图',
+      //     children: []
+      //   },
+      //   {
+      //     title: '建筑平面图',
+      //     children: []
+      //   },
+      //   {
+      //     title: '实时二维',
+      //     children: []
+      //   }
+      // ],
+
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -223,12 +244,17 @@ export default {
   },
 
   methods: {
+    // 点击背景按钮
+    entryTabShow () {
+      this.$refs.entryTab.show(this.deployInfos)
+    },
+
     // 动态设置有效操作区高度
     setWorkAreaHeight () {
       const h = document.documentElement.clientHeight
       if (h < this.minHeight) this.fullHeight = this.minHeight
       else this.fullHeight = h
-      this.workHeight = this.fullHeight - 126
+      this.workHeight = this.fullHeight - 126 + 65
       // console.log(this.workHeight);
     },
 
@@ -469,10 +495,12 @@ export default {
       const routerId = this.$route.query.enterpriseId
       const routerParams = this.$route.query.selectBuildImg
       const routerPath = this.$route.query.configPath
+      // const routerInfo = this.$route.query.buildingInfo
       if (routerParams || routerParams !== undefined) {
         this.enterpriseId = routerId
         this.buildImgUrl = routerParams.image
         this.loadJsonPath = routerPath
+        // this.deployInfos[1].children = routerInfo
       }
     }
   }
@@ -483,6 +511,8 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+  position: relative;
+  overflow-y: hidden;
   img {
     width: 100%;
     height: 100%;
@@ -492,9 +522,10 @@ export default {
     height: 50px;
     line-height: 50px;
     position: absolute;
-    top: 115px;
+    top: 20px;
+    z-index: 999;
     .back {
-      margin-left: 20px;
+      margin-left: 30px;
       .backStyle {
         width: 134px;
         height: 40px;
@@ -514,92 +545,88 @@ export default {
       }
     }
   }
-  .main {
-    position: relative;
-    overflow-y: hidden;
-    .content {
-      height: 100%;
-    }
-    .left {
-      z-index: 999;
-      height: 100%;
-      position: absolute;
-      left: 15px;
-      top: 50px;
-      .model_edit {
-        width: 328px;
-        background: url("../../assets/images/2d/model_wrap.png") no-repeat;
-        background-size: 100% 100%;
-        padding: 10px 20px;
-        .edit_menu {
-          display: flex;
-          justify-content: space-between;
-          font-size: 12px;
-          text-align: center;
-          padding: 8px 0;
-          span {
-            display: block;
-            outline: none;
-            color: #fff;
-            margin: 8px;
-            cursor: pointer;
-            img {
-              width: 46px;
-              height: 46px;
-              margin-bottom: 3px;
-            }
+  .content {
+    height: 100%;
+  }
+  .left {
+    z-index: 999;
+    height: 100%;
+    position: absolute;
+    left: 30px;
+    top: 90px;
+    .model_edit {
+      width: 328px;
+      background: url("../../assets/images/2d/model_wrap.png") no-repeat;
+      background-size: 100% 100%;
+      padding: 10px 20px;
+      .edit_menu {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        text-align: center;
+        padding: 8px 0;
+        span {
+          display: block;
+          outline: none;
+          color: #fff;
+          margin: 8px;
+          cursor: pointer;
+          img {
+            width: 46px;
+            height: 46px;
+            margin-bottom: 3px;
           }
         }
-        /deep/.el-input {
-          width: 308px;
-        }
-        /deep/.el-input__inner {
-          height: 38px;
-          line-height: 38px;
-          background: transparent;
-          border: 1px solid #35b3ed;
-          color: #fff;
-        }
-        .edit_list {
-          overflow-y: auto;
-          margin-top: 20px;
-          ul {
-            margin-left: 13px;
-            li {
-              float: left;
-              width: 130px;
-              height: 64px;
-              line-height: 64px;
-              border: 2px solid transparent;
-              outline: none;
-              font-size: 14px;
-              text-align: center;
-              margin: 0 36px 13px 0;
-              cursor: pointer;
-            }
-            .active {
-              border: 2px solid rgba(255, 244, 100, 1);
-              background: none;
-            }
-            li:nth-child(2n) {
-              margin: 0 0 13px 0;
-            }
+      }
+      /deep/.el-input {
+        width: 308px;
+      }
+      /deep/.el-input__inner {
+        height: 38px;
+        line-height: 38px;
+        background: transparent;
+        border: 1px solid #35b3ed;
+        color: #fff;
+      }
+      .edit_list {
+        overflow-y: auto;
+        margin-top: 20px;
+        ul {
+          margin-left: 13px;
+          li {
+            float: left;
+            width: 130px;
+            height: 64px;
+            line-height: 64px;
+            border: 2px solid transparent;
+            outline: none;
+            font-size: 14px;
+            text-align: center;
+            margin: 0 36px 13px 0;
+            cursor: pointer;
+          }
+          .active {
+            border: 2px solid rgba(255, 244, 100, 1);
+            background: none;
+          }
+          li:nth-child(2n) {
+            margin: 0 0 13px 0;
           }
         }
       }
     }
-    .detail {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
+  }
+  .detail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    #drawContent {
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.3);
-      #drawContent {
-        width: 100%;
-        height: 100%;
-      }
     }
   }
 }

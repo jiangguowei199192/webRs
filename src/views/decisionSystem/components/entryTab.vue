@@ -229,7 +229,8 @@ export default {
           query: {
             enterpriseId: this.enterpriseId,
             selectBuildImg: this.info[1].children[this.selectClass],
-            configPath: this.configPath
+            configPath: this.configPath,
+            buildingInfo: this.info[1].children
           }
         })
         setTimeout(() => {

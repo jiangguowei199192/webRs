@@ -17,7 +17,7 @@
         </div>
         <div class="addressInfoDetail telStyle">
           <i class="el-icon-phone"></i>
-          {{ showInfo.tel + ' ' + showInfo.subTel }}
+          {{ showInfo.tel + " " + showInfo.subTel }}
         </div>
       </div>
 
@@ -301,6 +301,17 @@ export default {
           this.info.keyId,
           this.showInfo.planEnterpriseInfo2D.configPath
         )
+        // this.$router.push({
+        //   path: '/fightDeploy',
+        //   query: {
+        //     enterpriseId: this.info.keyId,
+        //     selectBuildImg: this.deployImgUrl,
+        //     configPath: this.showInfo.planEnterpriseInfo2D.configPath
+        //   }
+        // })
+        // setTimeout(() => {
+        //   this.dialogVisible = false
+        // }, 300)
       }
     },
     // 获取作战部署缩略图
