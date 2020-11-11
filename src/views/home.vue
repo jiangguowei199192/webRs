@@ -9,7 +9,10 @@
             class="list"
             @click.stop="jumpTo(index)"
           >
-            <div class="item" :class="{ title: index == 3, active: isActive == index }">
+            <div
+              class="item"
+              :class="{ title: index == 3, active: isActive == index }"
+            >
               <span>{{ item.content }}</span>
             </div>
           </div>
@@ -32,56 +35,78 @@
           </div>
         </div>
         <audio src="./audio.mp3" ref="player"></audio>
-        <div class="fireNotice" :class="{curFire:realNotice}">
+        <div class="fireNotice" :class="{ curFire: realNotice }">
           <div class="title">
             <div>
-              <img src="../assets/images/fire_title.png" class="fire_title" alt />
+              <img
+                src="../assets/images/fire_title.png"
+                class="fire_title"
+                alt
+              />
               <span>火情通知</span>
             </div>
-            <img src="../assets/images/fire_close.png" alt @click.stop="realNotice=false;" />
+            <img
+              src="../assets/images/fire_close.png"
+              alt
+              @click.stop="realNotice = false"
+            />
           </div>
-          <div class="content" v-if="Object.keys(curFireObj).length>0">
+          <div class="content" v-if="Object.keys(curFireObj).length > 0">
             <div class="detail">
               <div class="info">
                 <ul>
                   <li>
                     <span>时间：</span>
-                    {{timeFormat(curFireObj.alarmTime)}}
+                    {{ timeFormat(curFireObj.alarmTime) }}
                   </li>
                   <li>
                     <span>报警设备：</span>
-                    {{curFireObj.deviceName||'-'}}
+                    {{ curFireObj.deviceName || "-" }}
                   </li>
                 </ul>
                 <ul>
                   <li>
                     <span>地点：</span>
-                    <span
-                      :title="curFireObj.alarmAddress"
-                    >{{curFireObj.alarmAddress&&curFireObj.alarmAddress.length>22?curFireObj.alarmAddress.slice(0,22)+'.':(curFireObj.alarmAddress?curFireObj.alarmAddress:'-')}}</span>
+                    <span :title="curFireObj.alarmAddress">{{
+                      curFireObj.alarmAddress &&
+                      curFireObj.alarmAddress.length > 22
+                        ? curFireObj.alarmAddress.slice(0, 22) + "."
+                        : curFireObj.alarmAddress
+                        ? curFireObj.alarmAddress
+                        : "-"
+                    }}</span>
                   </li>
                   <li>
                     <span>坐标：</span>
-                    <span
-                      style="margin-right: 17px;"
-                    >{{curFireObj.alarmLatitude||'-'}} {{curFireObj.alarmLongitude||'-'}}</span>
+                    <span style="margin-right: 17px"
+                      >{{ curFireObj.alarmLatitude || "-" }}
+                      {{ curFireObj.alarmLongitude || "-" }}</span
+                    >
                     <el-button
                       class="copy"
-                      @click.stop="copy(curFireObj.alarmLatitude,curFireObj.alarmLongitude)"
-                    >复制坐标</el-button>
+                      @click.stop="
+                        copy(
+                          curFireObj.alarmLatitude,
+                          curFireObj.alarmLongitude
+                        )
+                      "
+                      >复制坐标</el-button
+                    >
                   </li>
                 </ul>
               </div>
               <div class="pics">
                 <img
-                  v-for="(item,index) in curFireObj.alarmPicList"
+                  v-for="(item, index) in curFireObj.alarmPicList"
                   :src="`${picUrl}${item.picPath}`"
                   :key="index"
                   alt
                 />
               </div>
-              <div style="text-align:right;margin-top:12px;">
-                <el-button class="copy" @click.stop="jumpToTodayFire">火情详情</el-button>
+              <div style="text-align: right; margin-top: 12px">
+                <el-button class="copy" @click.stop="jumpToTodayFire"
+                  >火情详情</el-button
+                >
               </div>
               <div class="pagination">
                 <el-pagination
@@ -99,10 +124,10 @@
       </el-header>
       <el-main :style="machineMainStyle($route.path)">
         <!-- <router-view /> -->
-        <keep-alive>
-          <router-view v-if="$route.meta.keepAlive"></router-view>
+        <keep-alive v-if="$route.meta.keepAlive">
+          <router-view></router-view>
         </keep-alive>
-        <router-view v-if="!$route.meta.keepAlive"></router-view>
+        <router-view v-else></router-view>
       </el-main>
     </el-container>
   </div>
@@ -159,38 +184,38 @@ export default {
   created () {
     this.systems[3].content = globalApi.projectTitle
     // 设备上线
-    EventBus.$on('video/device/online', info => {
+    EventBus.$on('video/device/online', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', info => {
+    EventBus.$on('video/device/offline', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', info => {
+    EventBus.$on('video/realVideo/streamStart', (info) => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', info => {
+    EventBus.$on('video/realVideo/streamEnd', (info) => {
       EventBus.$emit('streamEnd', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', info => {
+    EventBus.$on('droneInfos', (info) => {
       this.parseDroneRealtimeInfo(info)
     })
     // 人员识别提示
-    EventBus.$on('video/people/found', info => {
+    EventBus.$on('video/people/found', (info) => {
       this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
-    EventBus.$on('video/people/real', info => {
+    EventBus.$on('video/people/real', (info) => {
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示
-    EventBus.$on('video/aRAiResult', info => {
+    EventBus.$on('video/aRAiResult', (info) => {
       EventBus.$emit('getArChange', info)
     })
   },
@@ -214,7 +239,7 @@ export default {
   },
   mounted () {
     // 火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
       console.log('火情数据', info)
       const curObj = JSON.parse(JSON.stringify(info))
       EventBus.$emit('getFireAlarm', curObj)
@@ -347,12 +372,12 @@ export default {
       }
     },
     init () {
-      amapApi.getLocation({}).then(res => {
+      amapApi.getLocation({}).then((res) => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then(res => {
+            amapApi.getWeather({ city: cityCode }).then((res) => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -368,25 +393,25 @@ export default {
       const tmpAxios = this.$axios
       this.$axios
         .get(loginApi.getUserDetail)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             tmpAxios
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
               })
-              .then(res2 => {
+              .then((res2) => {
                 if (res2.data.code === 0) {
-                  res2.data.data.forEach(deptCode => {
+                  res2.data.data.forEach((deptCode) => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
                 }
               })
-              .catch(err2 => {
+              .catch((err2) => {
                 console.log('loginApi.getDeptByDeptCode Err : ' + err2)
               })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('loginApi.getUserDetail Err : ' + err)
         })
     },

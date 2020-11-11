@@ -4,7 +4,7 @@
     <!-- 头部返回 -->
     <div class="header">
       <div class="back">
-        <button type="button" class="backStyle" @click="backToPlan">
+        <button type="button" class="backStyle" @click.stop="backToPlan">
           <img :src="backImg" alt="" />
           指挥决策
         </button>
@@ -243,11 +243,6 @@ export default {
   },
 
   methods: {
-    // 点击背景按钮
-    entryTabShow () {
-      this.$refs.entryTab.show(this.deployInfos)
-    },
-
     // 动态设置有效操作区高度
     setWorkAreaHeight () {
       const h = document.documentElement.clientHeight
@@ -259,7 +254,7 @@ export default {
 
     // 返回Plan页
     backToPlan () {
-      this.$router.back(-1)
+      this.$router.push({ path: '/decisionSystem' })
     },
 
     // 加载立即重绘jsPlumb
@@ -502,6 +497,11 @@ export default {
         this.loadJsonPath = routerPath
         this.deployInfos[1].children = routerInfo
       }
+    },
+
+    // 点击背景按钮
+    entryTabShow () {
+      this.$refs.entryTab.show(this.deployInfos)
     }
   }
 }
