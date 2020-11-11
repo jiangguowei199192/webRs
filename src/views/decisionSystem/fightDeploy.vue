@@ -29,10 +29,10 @@
             placement="top"
             :open-delay="500"
           >
-            <!-- <span v-if="index == 0" @click.stop="entryTabShow"
+            <span v-if="index == 0" @click.stop="entryTabShow"
               ><img :src="item.img" alt="" />{{ item.title }}</span
-            > -->
-            <span v-if="index == 2" @click.stop="saveData"
+            >
+            <span v-else-if="index == 2" @click.stop="saveData"
               ><img :src="item.img" alt="" />{{ item.title }}</span
             >
             <span v-else><img :src="item.img" alt="" />{{ item.title }}</span>
@@ -103,15 +103,14 @@
         ></drawNode>
       </div>
     </div>
-
     <!-- 底图选择入口 -->
-    <!-- <EntryTab ref="entryTab" :info="deployInfos"></EntryTab> -->
+    <EntryTab ref="entryTab" :info="deployInfos"></EntryTab>
   </div>
 </template>
 
 <script>
 import drawNode from './components/drawNode'
-// import EntryTab from './components/entryTab'
+import EntryTab from './components/entryTab'
 import { jsPlumb } from 'jsplumb'
 import { EventBus } from '@/utils/eventBus.js'
 import axios from 'axios'
@@ -123,8 +122,8 @@ export default {
   name: 'fightDeploy',
 
   components: {
-    drawNode
-    // EntryTab
+    drawNode,
+    EntryTab
   },
 
   data () {
@@ -170,20 +169,20 @@ export default {
         { title: '分享', img: require('../../assets/images/2d/share.png') },
         { title: '打印', img: require('../../assets/images/2d/print.png') }
       ],
-      // deployInfos: [
-      //   {
-      //     title: '地图',
-      //     children: []
-      //   },
-      //   {
-      //     title: '建筑平面图',
-      //     children: []
-      //   },
-      //   {
-      //     title: '实时二维',
-      //     children: []
-      //   }
-      // ],
+      deployInfos: [
+        {
+          title: '地图',
+          children: []
+        },
+        {
+          title: '建筑平面图',
+          children: []
+        },
+        {
+          title: '实时二维',
+          children: []
+        }
+      ],
 
       defaultProps: {
         children: 'children',
@@ -495,12 +494,13 @@ export default {
       const routerId = this.$route.query.enterpriseId
       const routerParams = this.$route.query.selectBuildImg
       const routerPath = this.$route.query.configPath
-      // const routerInfo = this.$route.query.buildingInfo
+      const routerInfo = this.$route.query.buildingInfo
+
       if (routerParams || routerParams !== undefined) {
         this.enterpriseId = routerId
-        this.buildImgUrl = routerParams.image
+        this.buildImgUrl = routerParams.image || routerParams
         this.loadJsonPath = routerPath
-        // this.deployInfos[1].children = routerInfo
+        this.deployInfos[1].children = routerInfo
       }
     }
   }

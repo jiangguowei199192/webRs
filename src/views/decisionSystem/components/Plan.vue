@@ -63,7 +63,7 @@
               <img
                 v-if="this.deployImgUrl !== ''"
                 :src="deployImgUrl"
-                @click.stop="entryTabShow"
+                @click.stop="goToFightDeploy"
               />
               <div class="edit-add_div" v-else>
                 <img :src="addImg" @click.stop="entryTabShow" /><br />
@@ -288,6 +288,7 @@ export default {
     didClickedBaseInfo (index) {
       this.$refs.baseInfo.show(index)
     },
+
     // 点击作战部署图
     entryTabShow () {
       if (
@@ -301,18 +302,21 @@ export default {
           this.info.keyId,
           this.showInfo.planEnterpriseInfo2D.configPath
         )
-        // this.$router.push({
-        //   path: '/fightDeploy',
-        //   query: {
-        //     enterpriseId: this.info.keyId,
-        //     selectBuildImg: this.deployImgUrl,
-        //     configPath: this.showInfo.planEnterpriseInfo2D.configPath
-        //   }
-        // })
-        // setTimeout(() => {
-        //   this.dialogVisible = false
-        // }, 300)
       }
+    },
+    // 跳转到FightDeploy页
+    goToFightDeploy () {
+      setTimeout(() => {
+        this.$router.push({
+          path: '/fightDeploy',
+          query: {
+            enterpriseId: this.info.keyId,
+            selectBuildImg: this.deployImgUrl,
+            configPath: this.showInfo.planEnterpriseInfo2D.configPath,
+            buildingInfo: this.deployInfos[1].children
+          }
+        })
+      }, 500)
     },
     // 获取作战部署缩略图
     getDeployImage () {
