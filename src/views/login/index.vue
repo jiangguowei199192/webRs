@@ -167,6 +167,8 @@ export default {
           )
           this.$router.push({ path: '/videoSystem' })
         }
+      }).catch(() => {
+
       })
     },
     async checkMapNetwork () {

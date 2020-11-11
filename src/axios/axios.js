@@ -70,7 +70,7 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
 
-      if (response.data.code === 401) {
+      if (response.data.code === 401 && window.location.href.indexOf('/login') === -1) {
         window.location.href = '/webFs/login'
       }
     } else {
