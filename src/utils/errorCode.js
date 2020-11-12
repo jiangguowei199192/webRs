@@ -1,9 +1,6 @@
 const error = [
   {
-    code: 400, desc: 'user_not_exist', str: '用户不存在'
-  },
-  {
-    code: 401, desc: '', str: '该用户角色未授权'
+    code: 401, desc: '', str: ''
   },
   {
     code: 1001, desc: 'user_status_forbidden', str: '用户被禁用'
