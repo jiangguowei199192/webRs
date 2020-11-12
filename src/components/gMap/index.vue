@@ -134,7 +134,7 @@
         </div>
       </div>
     </div>
-    <plan  v-if="bShowPaln" ref="plan"></plan>
+    <plan v-if="bShowPaln" ref="plan" id="plan"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -315,6 +315,7 @@
 import AMapHelper from '../../axios/amapapis'
 import Plan from '../../views/decisionSystem/components/Plan.vue'
 import { settingApi } from '@/api/setting'
+
 export default {
   name: 'gMap',
   components: {
@@ -494,10 +495,35 @@ export default {
           this.DrawStop()
         }
       }
-    }
+    },
+
+    $route: 'domIsExist'
   },
 
   methods: {
+    // 目标是否存在
+    domIsExist () {
+      var dom = document.querySelector('#plan')
+      if (dom) this.clickDomChange()
+    },
+    // 目标切换
+    clickDomChange () {
+      const _this = this
+      this.$nextTick(() => {
+        const plan = document.querySelector('#plan')
+        const input = document.querySelector('.searchCtrl')
+        document.onclick = function (e) {
+          _this.bShowPaln = false
+        }
+        plan.onclick = function (e) {
+          e.stopPropagation()
+        }
+        input.onclick = function (e) {
+          e.stopPropagation()
+        }
+      })
+    },
+
     getRootUrl () {
       var curWwwPath = window.document.location.href
       var pathName = window.document.location.pathname
@@ -654,7 +680,10 @@ export default {
         k._lon = k.enterpriseLongitude
         k._lat = k.enterpriseLatitude
         k.tel = k.enterpriseTel
-        if (k.enterpriseTelBackup !== undefined && k.enterpriseTelBackup !== '') {
+        if (
+          k.enterpriseTelBackup !== undefined &&
+          k.enterpriseTelBackup !== ''
+        ) {
           k.tel += ';' + k.enterpriseTelBackup
         }
         k._imgUrl = null
@@ -716,7 +745,9 @@ export default {
 
       let bFoundKey = false
       await this.$axios
-        .get(settingApi.enterpriseList, { params: { enterpriseOtherInfo: poi.id } })
+        .get(settingApi.enterpriseList, {
+          params: { enterpriseOtherInfo: poi.id }
+        })
         .then((res) => {
           if (res.data.code === 0) {
             var keyDatas = res.data.data.data
@@ -745,10 +776,7 @@ export default {
           console.log('handleAutoTipsPoi.AMapHelper.getPoiDetail Err : ' + err)
         })
 
-      if (
-        poi.location.lng !== undefined &&
-        poi.location.lat !== undefined
-      ) {
+      if (poi.location.lng !== undefined && poi.location.lat !== undefined) {
         that.mapMoveTo(poi.location.lng, poi.location.lat, false)
       }
     },
@@ -1008,7 +1036,7 @@ export default {
       this.chooseAddr = null
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
-      this.bShowPaln = false
+      // this.bShowPaln = false
     },
 
     // 隐藏导航框
@@ -1043,6 +1071,7 @@ export default {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
       }
+      this.clickDomChange()
     },
 
     // 在地图中鼠标移入移出标记时回调刷新列表中结果项

@@ -125,9 +125,9 @@
       <el-main :style="machineMainStyle($route.path)">
         <!-- <router-view /> -->
         <keep-alive v-if="$route.meta.keepAlive">
-          <router-view></router-view>
+          <router-view />
         </keep-alive>
-        <router-view v-else></router-view>
+        <router-view v-else />
       </el-main>
     </el-container>
   </div>

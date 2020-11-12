@@ -316,7 +316,7 @@ export default {
             buildingInfo: this.deployInfos[1].children
           }
         })
-      }, 500)
+      }, 300)
     },
     // 获取作战部署缩略图
     getDeployImage () {
@@ -325,12 +325,6 @@ export default {
       const buildParams = JSON.parse(json)
       this.deployImgUrl = buildParams.image
     }
-  },
-
-  // 设置下一个路由的meta,让列表缓存不刷新
-  beforeRouteLeave (to, from, next) {
-    to.meta.keepAlive = true
-    next()
   }
 }
 </script>

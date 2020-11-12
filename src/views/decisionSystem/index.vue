@@ -1,6 +1,12 @@
 <template>
   <div class="decision">
-    <gMap ref="gduMap" handleType="search_route" :bShowSearchTools="true" :bShowBasic="true" :bShowMeasure="false"></gMap>
+    <gMap
+      ref="gduMap"
+      handleType="search_route"
+      :bShowSearchTools="true"
+      :bShowBasic="true"
+      :bShowMeasure="false"
+    ></gMap>
   </div>
 </template>
 
@@ -11,8 +17,7 @@ export default {
     $route: 'refresh'
   },
   data () {
-    return {
-    }
+    return {}
   },
   methods: {
     refresh () {
@@ -28,14 +33,19 @@ export default {
       }
     }
   },
-  created () {
-  },
   activated () {
     this.refreshWinSize()
     const tmpMap = this.$refs.gduMap.map2D
     setTimeout(() => {
       tmpMap._map.updateSize()
     }, 200)
+  },
+
+  beforeRouteLeave (to, from, next) {
+    if (to.name === 'fightDeploy') {
+      to.meta.keepAlive = true
+    }
+    next()
   }
 }
 </script>
