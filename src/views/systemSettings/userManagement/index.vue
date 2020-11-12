@@ -79,6 +79,7 @@
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button
+                :disabled="disableResetPwdBtn(scope.row)"
                 size="mini"
                 type="danger"
                 @click="resetPasswordClick(scope.$index, scope.row)"
@@ -229,6 +230,7 @@
 import { Notification } from 'element-ui'
 import { settingApi } from '@/api/setting'
 import { loginApi } from '@/api/login'
+
 export default {
   created () {
     this.getUserList()
@@ -296,10 +298,20 @@ export default {
       radio: -1,
 
       showDeleteTip: false,
-      disableUsername: false
+      disableUsername: false,
+      roleCode: JSON.parse(localStorage.getItem('userDetail')).roleCode // 当前登录用户的角色
     }
   },
   methods: {
+    // 禁用重置密码按钮
+    // 1.系统管理员只能通过后台数据库重置密码，不能通过其他系统管理员或者组织架构管理员重置密码
+    // 2.系统管理员可重置组织架构管理员和组织成员的密码，组织架构管理员只可重置组织成员的密码
+    disableResetPwdBtn (row) {
+      if (!row.roleCode) return false
+      else if (this.roleCode >= row.roleCode) return true
+      else return false
+    },
+
     back () {
       this.$router.push({ path: '/systemSettings' })
     },

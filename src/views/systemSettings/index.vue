@@ -289,7 +289,7 @@ export default {
           localStorage.setItem('userDetail', JSON.stringify(res.data.data))
 
           // 根据用户角色显示不同功能
-          if (this.userDetail.roleCode === 2001) {
+          if (this.userDetail.roleCode === globalApi.systemAdmin) {
             // 系统管理员
             this.leftItemData = [
               {
@@ -333,7 +333,7 @@ export default {
             ]
 
             this.getDeviceCount()
-          } else if (this.userDetail.roleCode === 2002) {
+          } else if (this.userDetail.roleCode === globalApi.organAdmin) {
             // 组织架构管理员
             this.showVideoItem = false
 
@@ -370,7 +370,7 @@ export default {
                 ]
               }
             ]
-          } else if (this.userDetail.roleCode === 2003) {
+          } else if (this.userDetail.roleCode === globalApi.organMember) {
             // 组织成员
             this.showPermissionItem = false
             this.showVideoItem = false
@@ -526,7 +526,7 @@ export default {
         to.path === '/systemSettings' &&
         from.path === '/systemSettings/videoAccessManagement'
       ) {
-        if (this.userDetail.roleCode === 2001) {
+        if (this.userDetail.roleCode === globalApi.systemAdmin) {
           this.getDeviceCount()
         }
       }

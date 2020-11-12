@@ -63,11 +63,17 @@ if (selectedServerIndex !== null) {
 //   // headImg = 'http://172.16.63.148'
 //   projectTitle = '武汉市公安局安保防控系统'
 // }
+const systemAdmin = 2001// 系统管理员
+const organAdmin = 2002// 组织架构管理员
+const organMember = 2003// 组织成员
 export default {
   baseUrl,
   mqttServer,
   mqttPort,
   headImg,
   projectTitle,
-  configJson
+  configJson,
+  systemAdmin,
+  organAdmin,
+  organMember
 }
