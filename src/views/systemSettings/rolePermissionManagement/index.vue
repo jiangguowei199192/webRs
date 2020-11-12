@@ -26,7 +26,7 @@
         </div>
 
         <div class="rightBox">
-          <button type="button" class="addUser" @click="addUser">添加用户</button>
+          <button type="button" class="addUser" @click="addUser" :disabled='disableAddUser'>添加用户</button>
           <div class="tableBox">
             <el-table
               @row-click="ClickTableRow"
@@ -46,6 +46,7 @@
               <el-table-column align="center" label="操作">
                 <template slot-scope="scope">
                   <el-button
+                    :disabled="disableRemoveBtn(scope.row)"
                     size="mini"
                     type="danger"
                     @click="deleteClick(scope.$index, scope.row)"
@@ -217,10 +218,25 @@ export default {
         ],
         permission: [{ required: true, message: '请选择权限' }]
       },
-      permissionOptions: []
+      permissionOptions: [],
+      roleCode: JSON.parse(localStorage.getItem('userDetail')).roleCode, // 当前登录用户的角色
+      disableAddUser: false// 禁用添加用户按钮
+    }
+  },
+  watch: {
+    selectedRoleCode (val) {
+      if (!val || this.roleCode <= val) this.disableAddUser = false
+      else this.disableAddUser = true
     }
   },
   methods: {
+    // 禁用移除按钮
+    // 组织架构管理员不能编辑或移除系统管理员，只有查看权限
+    disableRemoveBtn (row) {
+      if (!row.roleCode || this.roleCode > row.roleCode) return true
+      else return false
+    },
+
     back () {
       this.$router.push({ path: '/systemSettings' })
     },
@@ -502,6 +518,10 @@ export default {
     float: right;
     margin: 21px 18px 0px 0px;
     cursor: pointer;
+  }
+  .addUser:disabled{
+    cursor: not-allowed;
+    opacity: 0.5;
   }
   .tableBox {
     width: 760px;
