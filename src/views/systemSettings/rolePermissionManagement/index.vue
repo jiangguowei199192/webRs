@@ -331,9 +331,10 @@ export default {
       var param = {}
       this.$axios.post(settingApi.queryUserList, param).then((res) => {
         if (res.data.code === 0) {
+          // 当前用户是组织架构管理员
           if (this.roleCode !== globalApi.systemAdmin) {
-            this.addUser_userList = res.data.data.filter(t => t.roleCode >= this.selectedRoleCode)
-          } else this.addUser_userList = res.data.data
+            this.addUser_userList = res.data.data.filter(t => !t.roleCode)
+          } else this.addUser_userList = res.data.data.filter(t => !t.roleCode || t.roleCode !== this.selectedRoleCode)
           this.showAddUser = true
         }
       })
