@@ -116,7 +116,7 @@
             @row-click="clickTableRow"
             :data="deviceList"
             empty-text="暂无数据"
-            tooltip-effect="light"
+            tooltip-effect="dark"
             :row-class-name="tableStatusChange"
             class="webFsScroll"
           >

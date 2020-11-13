@@ -71,7 +71,7 @@
             :data="userList"
             stripe
             empty-text="暂无数据"
-            tooltip-effect="light"
+            tooltip-effect="dark"
           >
             <!-- <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
@@ -84,6 +84,7 @@
               align="center"
               label="用户姓名"
               prop="username"
+              :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column
               align="center"

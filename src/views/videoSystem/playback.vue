@@ -173,7 +173,7 @@
             :data="curPageRecord"
             stripe
             empty-text="no data"
-            tooltip-effect="light"
+            tooltip-effect="dark"
             height="216px"
           >
             <el-table-column label width="33" align="center" :resizable="false">

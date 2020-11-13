@@ -36,7 +36,7 @@
           :data="firePoliceList"
           stripe
           empty-text="暂无数据"
-          tooltip-effect="light"
+          tooltip-effect="dark"
         >
           <el-table-column label width="33" align="center" :resizable="false">
             <template slot-scope="scope">

@@ -472,9 +472,16 @@
 }
 
 //tooltip样式
-.gTooltip.el-tooltip__popper .popper__arrow, .gTooltip.el-tooltip__popper .popper__arrow::after {
+.el-tooltip__popper .popper__arrow,.el-tooltip__popper .popper__arrow::after {
   display: none;
 }
+.el-tooltip__popper.is-dark {
+  background: #2E6C93;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #FFF;
+}
+
 .gTooltip.el-tooltip__popper.is-dark {
   margin-bottom: 20px;
   padding: 3px 10px;
