@@ -153,6 +153,7 @@
 <script>
 import { settingApi } from '@/api/setting'
 import { Notification } from 'element-ui'
+import globalApi from '@/utils/globalApi'
 
 export default {
   created () {
@@ -224,16 +225,22 @@ export default {
     }
   },
   watch: {
+    // 禁用添加用户按钮
+    // 组织架构管理员不能编辑或移除系统管理员，只有查看权限
+    // 组织架构管理员只能由系统管理员创建
     selectedRoleCode (val) {
-      if (!val || this.roleCode <= val) this.disableAddUser = false
-      else this.disableAddUser = true
+      if (!val || this.roleCode === globalApi.systemAdmin) this.disableAddUser = false
+      else if (this.roleCode >= val) this.disableAddUser = true
+      else this.disableAddUser = false
     }
   },
   methods: {
     // 禁用移除按钮
     // 组织架构管理员不能编辑或移除系统管理员，只有查看权限
+    // 组织架构管理员只能由系统管理员创建
     disableRemoveBtn (row) {
-      if (!row.roleCode || this.roleCode > row.roleCode) return true
+      if (!row.roleCode || this.roleCode === globalApi.systemAdmin) return false
+      else if (this.roleCode >= row.roleCode) return true
       else return false
     },
 
@@ -324,7 +331,9 @@ export default {
       var param = {}
       this.$axios.post(settingApi.queryUserList, param).then((res) => {
         if (res.data.code === 0) {
-          this.addUser_userList = res.data.data
+          if (this.roleCode !== globalApi.systemAdmin) {
+            this.addUser_userList = res.data.data.filter(t => t.roleCode >= this.selectedRoleCode)
+          } else this.addUser_userList = res.data.data
           this.showAddUser = true
         }
       })

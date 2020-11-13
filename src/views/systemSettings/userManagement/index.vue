@@ -139,6 +139,7 @@
               :key="item.id"
               :label="item.roleName"
               :value="item.roleCode"
+              :disabled = "item.disabled === true"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -230,6 +231,7 @@
 import { Notification } from 'element-ui'
 import { settingApi } from '@/api/setting'
 import { loginApi } from '@/api/login'
+import globalApi from '@/utils/globalApi'
 
 export default {
   created () {
@@ -421,8 +423,12 @@ export default {
         this.$refs.newUserFormRef.resetFields()
       }
 
+      if (this.roleCode !== globalApi.systemAdmin) {
+        this.roleList.forEach(r => {
+          r.disabled = r.roleCode <= this.roleCode
+        })
+      }
       this.disableUsername = false
-
       this.newUserForm.email = ''
       this.newUserForm.active = true
       this.newUserForm.password = '123456'
@@ -459,9 +465,16 @@ export default {
           this.newUserForm.active = userDetail.status !== 0
           this.newUserForm.six = userDetail.userGender === 0 ? '女' : '男'
           this.newUserForm.organizations = userDetail.deptCodes
-
-          this.showNewUser = true
           this.newUserTitle = '修改用户'
+          if (this.roleCode !== globalApi.systemAdmin) {
+            // 当前用户角色是组织成员或者空
+            if (!userDetail.roleCode || userDetail.roleCode === globalApi.organMember) {
+              this.roleList.forEach(r => { r.disabled = r.roleCode < globalApi.organMember })
+            } else {
+              this.roleList.forEach(r => { r.disabled = true })
+            }
+          }
+          this.showNewUser = true
         }
       })
     },

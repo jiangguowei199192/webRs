@@ -38,7 +38,7 @@
                 popper-class="el-popover-more"
               >
                 <div style="text-align: center">
-                  <el-button class="popoverBtn" @click="organizationAdd(data)"
+                  <el-button class="popoverBtn" @click="organizationAdd(data)" v-show="data.showOrgAdd !== false"
                     >新增下级组织</el-button
                   >
                   <el-button class="popoverBtn" @click="organizationEdit(data)"
@@ -424,6 +424,8 @@ export default {
                       // 三级
                       var temp3 = item2.children
                       temp3.forEach((item3) => {
+                        // 是否显示新增下级组织
+                        item3.showOrgAdd = false
                         item3.showSetting = false
                         item3.showDelOrg = true
                         if (item3.children) {
@@ -794,14 +796,14 @@ export default {
     async bindDeviceConfirm () {
       this.showBindDevice = false
 
-      console.log(this.toData)
+      // console.log(this.toData)
       var deviceCodes = []
       this.toData.forEach(item => {
         item.children.forEach(item1 => {
           deviceCodes.push(item1.deviceCode)
         })
       })
-      console.log(deviceCodes)
+      // console.log(deviceCodes)
       var param = {
         deptCode: this.selectedDeptCode,
         deviceCodeList: deviceCodes
