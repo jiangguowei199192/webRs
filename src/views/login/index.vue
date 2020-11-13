@@ -86,6 +86,25 @@
           >
         </span>
       </el-dialog>
+      <!-- 粒子漂浮物 -->
+      <vue-particles
+        style="height: 1084px"
+        color="#01A9DB"
+        :particleOpacity="0.7"
+        :particlesNumber="60"
+        shapeType="star"
+        :particleSize="7"
+        linesColor="#58D3F7"
+        :linesWidth="2"
+        :lineLinked="true"
+        :lineOpacity="0.4"
+        :linesDistance="150"
+        :moveSpeed="3"
+        :hoverEffect="true"
+        hoverMode="grab"
+        :clickEffect="true"
+        clickMode="push"
+      ></vue-particles>
     </div>
   </div>
 </template>
@@ -95,6 +114,10 @@ import { loginApi } from '@/api/login'
 import { Notification } from 'element-ui'
 import globalApi from '../../utils/globalApi'
 import AMapHelper from '../../axios/amapapis'
+import VueParticles from 'vue-particles'
+import Vue from 'vue'
+Vue.use(VueParticles)
+
 export default {
   name: 'login',
   data () {
@@ -147,39 +170,43 @@ export default {
         username: this.loginInfo.username,
         password: this.$md5(this.loginInfo.password)
       }
-      this.$axios.post(loginApi.login, info).then((res) => {
-        if (res.data.code === 0) {
-          this.checkMapNetwork()
-          if (this.checked) {
-            // 记住密码
-            localStorage.setItem('username', this.loginInfo.username)
-            localStorage.setItem('password', this.loginInfo.password)
-            localStorage.setItem('time', Math.round(new Date() / 1000))
-          } else {
-            localStorage.removeItem('username')
-            localStorage.removeItem('password')
-            localStorage.removeItem('time')
+      this.$axios
+        .post(loginApi.login, info)
+        .then((res) => {
+          if (res.data.code === 0) {
+            this.checkMapNetwork()
+            if (this.checked) {
+              // 记住密码
+              localStorage.setItem('username', this.loginInfo.username)
+              localStorage.setItem('password', this.loginInfo.password)
+              localStorage.setItem('time', Math.round(new Date() / 1000))
+            } else {
+              localStorage.removeItem('username')
+              localStorage.removeItem('password')
+              localStorage.removeItem('time')
+            }
+            localStorage.setItem(
+              'token',
+              'Bearer ' + res.data.data.access_token
+            )
+            sessionStorage.setItem(
+              'token',
+              'Bearer ' + res.data.data.access_token
+            )
+            this.$router.push({ path: '/videoSystem' })
           }
-          localStorage.setItem('token', 'Bearer ' + res.data.data.access_token)
-          sessionStorage.setItem(
-            'token',
-            'Bearer ' + res.data.data.access_token
-          )
-          this.$router.push({ path: '/videoSystem' })
-        }
-      }).catch(() => {
-
-      })
+        })
+        .catch(() => {})
     },
     async checkMapNetwork () {
       await AMapHelper.getLocation({})
-        .then(res => {
+        .then((res) => {
           if (res.data.status === '1') {
             localStorage.location_city_adcode = res.data.adcode
             localStorage.bNetWorkConn = 'true'
           }
         })
-        .catch(err => {
+        .catch((err) => {
           localStorage.bNetWorkConn = 'false'
           console.log('AMapHelper.getLocation Err : ' + err)
         })
@@ -187,7 +214,6 @@ export default {
     settingClick () {
       this.showServer = !this.showServer
     }
-
   },
   created () {},
   mounted () {
