@@ -106,14 +106,14 @@
                   background: transparent;
                   border: 1px solid #1eb0fc;
                 "
-                @click="backToPlan"
+                @click.stop="backToPlan"
                 >取消</el-button
               >
               <el-button
                 type="primary"
                 size="mini"
                 style="width: 70px; background: #1eb0fc; border: none"
-                @click="goToFightDeploy"
+                @click.stop="goToFightDeploy"
                 :disabled="isDisabled"
                 >确定</el-button
               >
@@ -236,11 +236,6 @@ export default {
         setTimeout(() => {
           this.dialogVisible = false
         }, 300)
-
-        localStorage.setItem(
-          'selectBuildImg',
-          JSON.stringify(this.info[1].children[this.selectClass])
-        )
       }
     },
 

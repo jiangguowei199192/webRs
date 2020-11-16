@@ -114,6 +114,7 @@ import FloorGuide from './FloorGuide'
 import BaseInfo from './BaseInfo'
 import EntryTab from './entryTab'
 import { settingApi } from '@/api/setting'
+import axios from 'axios'
 import globalApi from '@/utils/globalApi'
 
 export default {
@@ -164,7 +165,6 @@ export default {
     show (info) {
       this.info = info
       this.getData()
-      this.getDeployImage()
     },
     async getData () {
       if (this.info.keyId) {
@@ -175,6 +175,7 @@ export default {
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
           .then((res) => {
+            // console.log(res)
             if (res.data.code === 0) {
               var resData = res.data.data
               // this.showInfo.name = resData.enterpriseName
@@ -226,6 +227,14 @@ export default {
               this.buildingInfos = buildingInfosTemp
 
               this.deployInfos[1].children = buildingInfosTemp
+              if (
+                showInfoTemp.planEnterpriseInfo2D ||
+                showInfoTemp.planEnterpriseInfo2D !== null
+              ) {
+                this.$nextTick(() => {
+                  this.getDeployImage()
+                })
+              }
             }
           })
       } else {
@@ -320,10 +329,17 @@ export default {
     },
     // 获取作战部署缩略图
     getDeployImage () {
-      const json = localStorage.getItem('selectBuildImg')
-      if (!json || json === 'undefined') return
-      const buildParams = JSON.parse(json)
-      this.deployImgUrl = buildParams.image
+      const imgPath = this.showInfo.planEnterpriseInfo2D.picthumbPath
+      if (!imgPath || imgPath === 'undefined') return
+      axios
+        .get(globalApi.headImg + imgPath)
+        .then((res) => {
+          // console.log('返回picPath: ', res)
+          this.deployImgUrl = res.data
+        })
+        .catch((err) => {
+          console.log('加载picPath失败: ' + err)
+        })
     }
   }
 }
