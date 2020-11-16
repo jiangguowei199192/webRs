@@ -201,27 +201,23 @@ export default {
     }
   },
 
-  created () {
+  mounted () {
+    // 初始化操作区域高度
     this.setWorkAreaHeight()
     window.onresize = () => {
       this.setWorkAreaHeight()
     }
-  },
-
-  mounted () {
     // 获取模型列表
     this.getModelData()
     // 获取底图
     this.getBaseImg()
     // 获取保存的数据
     this.getSavedData()
-
     // 节点初始化
     this.jsPlumb = jsPlumb.getInstance()
     this.$nextTick(() => {
       this.init()
     })
-
     // 点击节点以外区域
     document.onclick = function (event) {
       var e = event || window.event
