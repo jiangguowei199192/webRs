@@ -160,7 +160,9 @@ export default {
     BaseInfo,
     EntryTab
   },
-
+  activated () {
+    this.getData()
+  },
   methods: {
     show (info) {
       this.info = info
