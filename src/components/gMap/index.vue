@@ -508,17 +508,16 @@ export default {
     },
     // 目标切换
     clickDomChange () {
-      const _this = this
       this.$nextTick(() => {
         const plan = document.querySelector('#plan')
         const input = document.querySelector('.searchCtrl')
-        document.onclick = function (e) {
-          _this.bShowPaln = false
+        document.onclick = (e) => {
+          this.bShowPaln = false
         }
-        plan.onclick = function (e) {
+        plan.onclick = (e) => {
           e.stopPropagation()
         }
-        input.onclick = function (e) {
+        input.onclick = (e) => {
           e.stopPropagation()
         }
       })

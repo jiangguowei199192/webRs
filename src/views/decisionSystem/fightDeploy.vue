@@ -151,10 +151,8 @@ export default {
       curModels: [],
       // 选中模型索引
       curModelIndex: 0,
-      // 建筑平面图底图
+      // 底图(缩略图)
       buildImgUrl: '',
-      // 入口缩略图
-      thumbImgUrl: '',
       // 二维预案查询id
       enterpriseId: '',
       // 二维预案保存返回路径
@@ -437,7 +435,6 @@ export default {
             // console.log('解析后json: ', res)
             const nodeData = res.data
             if (nodeData || nodeData.length !== 0) {
-              // console.log(nodeData)
               nodeData.forEach((item) => {
                 this.addNode(item)
               })
@@ -507,7 +504,11 @@ export default {
 
     // 点击背景按钮
     entryTabShow () {
-      this.$refs.entryTab.show(this.deployInfos)
+      this.$refs.entryTab.show(
+        this.deployInfos,
+        this.enterpriseId,
+        this.loadJsonPath
+      )
     }
   }
 }
