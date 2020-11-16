@@ -1,5 +1,5 @@
 <template>
-  <div class="decision">
+  <div :style="'height:'+fullHeight+'px;'">
     <gMap
       ref="gduMap"
       handleType="search_route"
@@ -17,9 +17,22 @@ export default {
     $route: 'refresh'
   },
   data () {
-    return {}
+    return {
+      minHeight: 964,
+      fullHeight: 0
+    }
   },
   methods: {
+    // 设置地图高度，避免F11全屏时，底部有空白
+    setMapHeight () {
+      const tmpMap = this.$refs.gduMap.map2D
+      var h = document.documentElement.clientHeight - 96
+      if (h < this.minHeight) this.fullHeight = this.minHeight
+      else this.fullHeight = h
+      setTimeout(() => {
+        tmpMap._map.updateSize()
+      }, 200)
+    },
     refresh () {
       this.$refs.gduMap.routeOrCloseFunc()
     },
@@ -35,14 +48,20 @@ export default {
   },
   activated () {
     this.refreshWinSize()
-    const tmpMap = this.$refs.gduMap.map2D
-    setTimeout(() => {
-      tmpMap._map.updateSize()
-    }, 200)
+    this.setMapHeight()
+    const me = this
+    window.onresize = () => {
+      me.setMapHeight()
+    }
+  },
+  deactivated () {
+    window.onresize = null
+  },
+  mounted () {
   },
 
   beforeRouteLeave (to, from, next) {
-    if (to.name === 'fightDeploy') {
+    if (to.name === 'fightDeploy' || to.name === 'deploy3D') {
       to.meta.keepAlive = true
     }
     next()
@@ -51,7 +70,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.decision {
-  height: 964px;
-}
+
 </style>

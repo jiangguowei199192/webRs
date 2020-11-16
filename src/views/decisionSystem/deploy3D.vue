@@ -1,5 +1,5 @@
 <template>
-  <div class="mapcontainer mars3d" @click.capture="containerClick">
+  <div class="mapcontainer mars3d" @click.capture="containerClick" :style="'height:'+fullHeight+'px;'">
     <Map :url="configUrl" @onload="onMapload"/>
     <div class="back" @click.stop="back">
       <span></span>
@@ -259,6 +259,8 @@ export default {
   // 所有cesium和mars3d对象 都不要绑定到data
   data () {
     return {
+      minHeight: 929,
+      fullHeight: 0,
       homeView: '',
       cameraViews: ['', '', '', ''], // 编辑模式下的视角
       imgDialogVisible: false,
@@ -325,9 +327,15 @@ export default {
     this.enterpriseId = this.$route.query.enterpriseId
     this.buildingInfos = this.$route.query.buildingInfos
     this.buildingTitle = this.$route.query.buildingTitle
+    this.setMapHeight()
+    const me = this
+    window.onresize = () => {
+      me.setMapHeight()
+    }
   },
 
   beforeDestroy () {
+    window.onresize = null
     if (this.drawControl) {
       this.endPlot()
     }
@@ -427,6 +435,13 @@ export default {
   },
 
   methods: {
+    // 设置地图高度，避免F11全屏时，底部有空白
+    setMapHeight () {
+      var h = document.documentElement.clientHeight - 96
+      if (h < this.minHeight) this.fullHeight = this.minHeight
+      else this.fullHeight = h
+    },
+
     containerClick (event) {
       if (!this.viewer) {
         event.stopPropagation()
@@ -1025,7 +1040,7 @@ export default {
      *  返回
      */
     back () {
-      this.$router.push({ path: '/decisionSystem' })
+      this.$router.go(-1)
     },
 
     /**
@@ -2318,7 +2333,6 @@ export default {
 
 .mapcontainer {
   position: relative;
-  height: 929px;
   overflow: hidden;
   .back{
     display: flex;
