@@ -510,6 +510,7 @@ export default {
     },
 
     async getDeviceList () {
+      this.radio = -1
       var param = {
         currentPage: this.currentPage,
         pageSize: this.currentPageSize,
