@@ -7,11 +7,14 @@
       <div class="title" id="title">{{data.title}}</div>
       <div class="subTitle" id="subTitle">{{data.subTitle}}</div>
       <div class="text" id="text">{{data.text}}</div>
-      <i
+      <i v-if="data.type !== 'RightItemType_Switch'"
         class="el-icon-caret-right"
         style="float: right; margin: 18px 25px 0px 0px; color: #39a4dd;"
         id="icon"
       ></i>
+      <el-switch v-if="data.type === 'RightItemType_Switch'"
+      style="float: right; margin: 16px 25px 0px 0px;"
+      v-model="data.switch"></el-switch>
     </div>
 
     <el-dialog title="补充信息" :visible.sync="showExtraInfo" :close-on-click-modal="clickfalse" width="30%" class="dialogStyle">
@@ -473,6 +476,24 @@ export default {
   /deep/.el-input__inner {
     font-size: 12px;
   }
+}
+
+/deep/.el-switch__core {
+  border: 1px solid #00C0FF;
+  background: none;
+}
+
+/deep/ .el-switch__core:after {
+  background-color: #00C0FF;
+}
+
+/deep/.el-switch.is-checked .el-switch__core {
+  border-color: #00C0FF;
+  background: #00C0FF;
+}
+
+/deep/.el-switch.is-checked .el-switch__core:after {
+  background-color: #fff;
 }
 // /deep/.select-popper {
 //   background-color: #3688b1;

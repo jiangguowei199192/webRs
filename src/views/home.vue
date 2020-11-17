@@ -251,10 +251,12 @@ export default {
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
       this.addTitle()
-      this.$nextTick(() => {
-        const dom = document.querySelector('audio')
-        dom && dom.play()
-      })
+      if (globalApi.voiceOpen === true) {
+        this.$nextTick(() => {
+          const dom = document.querySelector('audio')
+          dom && dom.play()
+        })
+      }
     })
     this.jumpTo(this.isActive)
     setInterval(() => {

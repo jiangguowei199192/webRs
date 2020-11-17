@@ -23,7 +23,11 @@
             v-bind:userDetail="userDetail"
             v-on:refreshData="getUserDetail"
           ></SettingRightTable>
-
+          <div id="idRightItemMessageSetting" style="height: 44px"></div>
+          <SettingRightTable
+            v-bind:itemData="rightItemMessageSetting"
+            v-bind:userDetail="userDetail"
+          ></SettingRightTable>
           <div
             v-show="showPermissionItem"
             id="idRightItemUserPermission"
@@ -161,6 +165,20 @@ export default {
           }
         ]
       },
+      rightItemMessageSetting: {
+        headerTitle: '消息设置',
+        items: [
+          {
+            id: 50,
+            title: '是否开启声音提示',
+            subTitle: '',
+            text: '',
+            headerImg: '',
+            switch: true,
+            type: 'RightItemType_Switch'
+          }
+        ]
+      },
       rightItemUserPermission: {
         headerTitle: '用户权限',
         items: [
@@ -260,6 +278,11 @@ export default {
       showVideoItem: true
     }
   },
+  computed: {
+    voiceOpen () {
+      return this.rightItemMessageSetting.items[0].switch
+    }
+  },
   methods: {
     // 获取用户详情
     async getUserDetail () {
@@ -301,6 +324,13 @@ export default {
                     normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
                     selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
                     selected: true
+                  },
+                  {
+                    id: 5,
+                    title: '消息设置',
+                    normalImgPath: require('../../assets/images/Setting/message-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/message-selected.png'),
+                    selected: false
                   }
                 ]
               },
@@ -347,6 +377,13 @@ export default {
                     normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
                     selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
                     selected: true
+                  },
+                  {
+                    id: 5,
+                    title: '消息设置',
+                    normalImgPath: require('../../assets/images/Setting/message-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/message-selected.png'),
+                    selected: false
                   }
                 ]
               },
@@ -385,6 +422,13 @@ export default {
                     normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
                     selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
                     selected: true
+                  },
+                  {
+                    id: 5,
+                    title: '消息设置',
+                    normalImgPath: require('../../assets/images/Setting/message-normal.png'),
+                    selectedImgPath: require('../../assets/images/Setting/message-selected.png'),
+                    selected: false
                   }
                 ]
               },
@@ -477,6 +521,10 @@ export default {
           document
             .getElementById('idRightItemMapServe')
             .scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else if (id === 5) {
+          document
+            .getElementById('idRightItemMessageSetting')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
       }, 50)
     },
@@ -530,6 +578,9 @@ export default {
           this.getDeviceCount()
         }
       }
+    },
+    voiceOpen (value) {
+      globalApi.voiceOpen = value
     }
   },
   components: {
