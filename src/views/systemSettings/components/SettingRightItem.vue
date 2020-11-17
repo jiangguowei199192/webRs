@@ -483,18 +483,10 @@ export default {
   background: #aeaeae;
 }
 
-// /deep/ .el-switch__core:after {
-//   background-color: #fff;
-// }
-
 /deep/.el-switch.is-checked .el-switch__core {
   border-color: #00C0FF;
   background: #00C0FF;
 }
-
-// /deep/.el-switch.is-checked .el-switch__core:after {
-//   background-color: #fff;
-// }
 // /deep/.select-popper {
 //   background-color: #3688b1;
 //   font-size: 12px;
