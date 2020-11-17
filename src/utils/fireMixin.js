@@ -124,7 +124,7 @@ const fireMixin = {
     /** 获取指定时间段内火情警报信息 */
     getDurationFireAlarmInfos (begin, end) {
       this.fireWarningArray = []
-      const tmpDuration = { timeBegin: begin, timeEnd: end }
+      const tmpDuration = { timeBegin: begin, timeEnd: end, pageSize: 1000 }
       this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: tmpDuration }).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.handlingFireWarningData(res.data.data.data)
