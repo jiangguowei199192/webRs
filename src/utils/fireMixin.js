@@ -127,7 +127,7 @@ const fireMixin = {
       const tmpDuration = { timeBegin: begin, timeEnd: end }
       this.$axios.get(fireApi.getDurationFireAlarmInfos, { params: tmpDuration }).then(res => {
         if (res && res.data && res.data.code === 0) {
-          this.handlingFireWarningData(res.data.data)
+          this.handlingFireWarningData(res.data.data.data)
         }
       })
     },
