@@ -418,6 +418,7 @@ export default {
                   res2.data.data.forEach((deptCode) => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
+                  tmpThis.realtimeInfoTopicArray.unshift('gdu/' + res.data.data.deptCode)
                 }
               })
               .catch((err2) => {
