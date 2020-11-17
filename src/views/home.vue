@@ -178,6 +178,7 @@ export default {
           content: '系统设置'
         }
       ],
+      todayEndTime: new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1), // 今日23:59分时间戳
       realtimeInfoTopicArray: [] // 需要监听的飞机实时信息主题
     }
   },
@@ -240,7 +241,7 @@ export default {
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
-      console.log('火情数据', info)
+      // console.log('火情数据', info)
       const curObj = JSON.parse(JSON.stringify(info))
       EventBus.$emit('getFireAlarm', curObj)
       if (this.$route.path !== '/fireAlarm') {
@@ -258,6 +259,7 @@ export default {
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()
+      this.refreshTodayFireAlarm()
     }, 1000)
     this.init()
     // 通过构造函数，创建mqtt连接
@@ -272,6 +274,16 @@ export default {
   },
   methods: {
     timeFormat,
+
+    // 刷新今日报警(过了24点)
+    refreshTodayFireAlarm () {
+      const timestamp = new Date().getTime()
+      if (timestamp > this.todayEndTime.getTime()) {
+        this.todayEndTime = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)
+        EventBus.$emit('refreshTodayFireAlarm')
+      }
+    },
+
     // 复制经纬度
     copy (la, lo) {
       const text = `${la},${lo}`
@@ -279,7 +291,7 @@ export default {
       oInput.value = text
       document.body.appendChild(oInput)
       oInput.select() // 选择对象;
-      console.log(oInput.value)
+      // console.log(oInput.value)
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$notify.closeAll()
       this.$notify({

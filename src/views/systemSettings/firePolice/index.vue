@@ -277,6 +277,7 @@
 import { fireApi } from '@/api/videoSystem/fireAlarm.js'
 import globalApi from '@/utils/globalApi'
 import { Notification } from 'element-ui'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   created () {
     this.getFirePoliceList()
@@ -316,6 +317,15 @@ export default {
 
       clickfalse: false
     }
+  },
+  mounted () {
+    // 刷新火情列表(过了24点)
+    EventBus.$on('refreshTodayFireAlarm', () => {
+      this.getFirePoliceList()
+    })
+  },
+  beforeDestroy () {
+    EventBus.$off('refreshTodayFireAlarm')
   },
   methods: {
     tipShow (index) {

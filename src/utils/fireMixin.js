@@ -40,6 +40,7 @@ const fireMixin = {
       EventBus.$off('getFireAlarmInfos_Done')
     }
     EventBus.$off('getFireAlarm')
+    EventBus.$off('refreshTodayFireAlarm')
   },
 
   mounted () {
@@ -82,6 +83,11 @@ const fireMixin = {
           this.addNewFireWarning(info)
         }
       }
+    })
+
+    // 刷新火情列表(过了24点)
+    EventBus.$on('refreshTodayFireAlarm', () => {
+      this.getFirePoliceList()
     })
   },
 
