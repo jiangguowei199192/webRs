@@ -361,7 +361,8 @@ const videoMixin = {
         const url = globalApi.baseUrl.slice(startI + 2, endI)
         const s = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).indexOf('/')
         const stream = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).slice(s + 1)
-        c.streamUrl = 'ws://' + url + ':40021/' + stream
+        c.streamUrl = 'ws://' + url + ':40021/' + stream // 消防视频端口
+        // c.streamUrl = 'ws://' + url + ':40007/' + stream // 长江大保护视频端口
       }
     },
 
