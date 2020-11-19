@@ -548,7 +548,6 @@ const videoMixin = {
         )
 
         if (this.jumpFireId !== undefined && this.jumpFireId !== '') {
-          this.jumpFireId = undefined
           return
         }
         this.autoLocator()
