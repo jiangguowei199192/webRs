@@ -61,7 +61,7 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    if (to.name === 'fightDeploy' || to.name === 'deploy3D') {
+    if (to.name === 'fightDeploy') {
       to.meta.keepAlive = true
     }
     next()

@@ -451,8 +451,10 @@ const videoMixin = {
     getAllDeptDevices () {
       this.onlineArray = []
       this.treeData = []
+      console.log((new Date()).format('yyyy-MM-dd hh:mm:ss.S') + '  请求所有设备列表接口之前')
       this.$axios.get(api.getDeptsAndDevicesAxios).then(res => {
         if (res && res.data && res.data.code === 0) {
+          console.log((new Date()).format('yyyy-MM-dd hh:mm:ss.S') + '  接口返回数据')
           var data = res.data.data
           data.forEach(item => {
             if (item.deviceTypeCode === 'GDJK') {
