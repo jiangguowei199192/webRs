@@ -87,7 +87,7 @@ const fireMixin = {
 
     // 刷新火情列表(过了24点)
     EventBus.$on('refreshTodayFireAlarm', () => {
-      this.getFirePoliceList()
+      this.getTodayFireAlarmInfos()
     })
   },
 
