@@ -1959,8 +1959,8 @@ export default {
           // 可以自定义样式
           lineType: 'solid',
           color: '#00A8FF',
-          width: 3,
-          clampToGround: true // 是否贴地
+          width: 3
+          // clampToGround: true // 是否贴地
         }
       })
     },
@@ -2001,8 +2001,8 @@ export default {
           // 可以自定义样式
           lineType: 'solid',
           color: '#00A8FF',
-          width: 3,
-          clampToGround: true // 是否贴地
+          width: 3
+          // clampToGround: true // 是否贴地
         }
       })
     },
