@@ -754,6 +754,7 @@ export default {
 .searchInput {
   width: 253px;
   float: right;
+  margin-right: 20px;
   /deep/ .el-input__inner {
     background-color: transparent;
     font-size: 12px;
