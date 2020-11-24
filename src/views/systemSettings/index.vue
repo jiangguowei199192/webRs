@@ -17,17 +17,20 @@
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll" v-if="userDetail">
         <div v-if="isShow">
+
           <div id="idRightItemUserSetting" style="height: 44px"></div>
           <SettingRightTable
             v-bind:itemData="rightItemUserSetting"
             v-bind:userDetail="userDetail"
-            v-on:refreshData="getUserDetail"
+            v-on:refreshData="refreshData"
           ></SettingRightTable>
+
           <div id="idRightItemMessageSetting" style="height: 44px"></div>
           <SettingRightTable
             v-bind:itemData="rightItemMessageSetting"
             v-bind:userDetail="userDetail"
           ></SettingRightTable>
+
           <div
             v-show="showPermissionItem"
             id="idRightItemUserPermission"
@@ -37,6 +40,7 @@
             v-bind:itemData="rightItemUserPermission"
             v-bind:userDetail="userDetail"
             v-show="showPermissionItem"
+            v-on:refreshData="refreshData"
           ></SettingRightTable>
 
           <div
@@ -48,6 +52,7 @@
             v-bind:itemData="rightItemVideoServe"
             v-bind:userDetail="userDetail"
             v-show="showVideoItem"
+            v-on:refreshData="refreshData"
           ></SettingRightTable>
 
           <div
@@ -58,6 +63,7 @@
           <SettingRightTable
             v-bind:itemData="rightItemSmartFunction"
             v-bind:userDetail="userDetail"
+            v-on:refreshData="refreshData"
           ></SettingRightTable>
 
           <!-- 第一版不开放 -->
@@ -88,54 +94,6 @@ export default {
       userDetail: '',
       isShow: true,
       leftItemData: [],
-      // leftItemData: [
-      //   {
-      //     headerTitle: '账号设置',
-      //     info: [
-      //       {
-      //         id: 0,
-      //         title: '我的信息',
-      //         normalImgPath: require('../../assets/images/Setting/setting-myInfo-normal.png'),
-      //         selectedImgPath: require('../../assets/images/Setting/setting-myInfo-selected.png'),
-      //         selected: true
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     headerTitle: '高级',
-      //     info: [
-      //       {
-      //         id: 1,
-      //         title: '用户权限',
-      //         normalImgPath: require('../../assets/images/Setting/setting-userPermission-normal.png'),
-      //         selectedImgPath: require('../../assets/images/Setting/setting-userPermission-selected.png'),
-      //         selected: false
-      //       },
-      //       {
-      //         id: 2,
-      //         title: '视频服务',
-      //         normalImgPath: require('../../assets/images/Setting/setting-videoServe-normal.png'),
-      //         selectedImgPath: require('../../assets/images/Setting/setting-videoServe-selected.png'),
-      //         selected: false
-      //       },
-      //       {
-      //         id: 3,
-      //         title: '智能功能管理',
-      //         normalImgPath: require('../../assets/images/Setting/setting-smartManager-normal.png'),
-      //         selectedImgPath: require('../../assets/images/Setting/setting-smartManager-selected.png'),
-      //         selected: false
-      //       }
-      //       // 第一版不开放
-      //       // {
-      //       //   id: 4,
-      //       //   title: '地图服务',
-      //       //   normalImgPath: require('../../assets/images/Setting/setting-mapServe-normal.png'),
-      //       //   selectedImgPath: require('../../assets/images/Setting/setting-mapServe-selected.png'),
-      //       //   selected: false
-      //       // }
-      //     ]
-      //   }
-      // ],
       rightItemUserSetting: {
         headerTitle: '账号设置',
         items: [
@@ -488,17 +446,7 @@ export default {
         this.$router.push({ path: '/systemSettings' })
       }
 
-      for (let i = 0; i < this.leftItemData.length; i++) {
-        const group = this.leftItemData[i]
-        for (let j = 0; j < group.info.length; j++) {
-          const item = group.info[j]
-          if (item.id === id) {
-            item.selected = true
-          } else {
-            item.selected = false
-          }
-        }
-      }
+      this.setLeftItemStatus(id)
 
       setTimeout(() => {
         if (id === 0) {
@@ -557,6 +505,49 @@ export default {
           })
         }
       })
+    },
+
+    refreshData (itemId) {
+      console.log(itemId)
+      switch (itemId) {
+        case 0:
+        case 1:
+        case 2:
+          this.getUserDetail()
+          break
+
+        case 10:
+        case 11:
+        case 12:
+          this.setLeftItemStatus(1)
+          break
+
+        case 20:
+          this.setLeftItemStatus(2)
+          break
+
+        case 30:
+        case 31:
+          this.setLeftItemStatus(3)
+          break
+
+        default:
+          break
+      }
+    },
+
+    setLeftItemStatus (leftId) {
+      for (let i = 0; i < this.leftItemData.length; i++) {
+        const group = this.leftItemData[i]
+        for (let j = 0; j < group.info.length; j++) {
+          const item = group.info[j]
+          if (item.id === leftId) {
+            item.selected = true
+          } else {
+            item.selected = false
+          }
+        }
+      }
     }
   },
   created () {

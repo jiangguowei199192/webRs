@@ -204,21 +204,27 @@ export default {
         }
       } else if (this.data.id === 10) {
         // 用户管理
+        this.$emit('refreshData', 10)
         this.$router.push({ path: '/systemSettings/userManagement' })
       } else if (this.data.id === 11) {
         // 角色权限管理
+        this.$emit('refreshData', 11)
         this.$router.push({ path: '/systemSettings/rolePermissionManagement' })
       } else if (this.data.id === 12) {
         // 组织管理
+        this.$emit('refreshData', 12)
         this.$router.push({ path: '/systemSettings/organizationManagement' })
       } else if (this.data.id === 20) {
         // 视频接入
+        this.$emit('refreshData', 20)
         this.$router.push({ path: '/systemSettings/videoAccessManagement' })
       } else if (this.data.id === 30) {
         // 火情报警
+        this.$emit('refreshData', 30)
         this.$router.push({ path: '/systemSettings/firePolice' })
       } else if (this.data.id === 31) {
         // 火情地图
+        this.$emit('refreshData', 31)
         this.$router.push({ path: '/systemSettings/fireMap' })
       }
     },
@@ -238,7 +244,7 @@ export default {
           .then((res) => {
             if (res.data.code === 0) {
               this.showExtraInfo = false
-              this.$emit('refreshData')
+              this.$emit('refreshData', 2)
               Notification({
                 title: '提示',
                 message: '用户修改成功',
@@ -296,7 +302,7 @@ export default {
           // console.log(res)
           if (res.data.code === 0) {
             this.showUploadIcon = false
-            this.$emit('refreshData')
+            this.$emit('refreshData', 1)
             Notification({
               title: '提示',
               message: '头像上传成功',
@@ -345,7 +351,7 @@ export default {
           .then((res) => {
             if (res.data.code === 0) {
               this.showMyInfo = false
-              this.$emit('refreshData')
+              this.$emit('refreshData', 0)
               Notification({
                 title: '提示',
                 message: '更新成功',
