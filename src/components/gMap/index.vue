@@ -308,6 +308,46 @@
       <span style="margin: 0px 15px">{{ mouseLon }}&#176;{{ lonFlag }}</span>
       <span style="margin: 0px 15px">{{ mouseLat }}&#176;{{ latFlag }}</span>
     </div>
+    <div class="rpBottomBox" v-if="bShowBottomMenu">
+      <div class="rpBottomMenu">
+        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerCamera}"
+          @click="setRpLayerVisible('Camera')">
+          <div class="itemImgBox">
+            <div class="itemImg itemCamera"></div>
+          </div>
+          <div class="itemTextBox">
+            <div class="itemText">红外设备</div>
+          </div>
+        </div>
+        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerDrone}"
+          @click="setRpLayerVisible('Drone')">
+          <div class="itemImgBox">
+            <div class="itemImg itemDrone"></div>
+          </div>
+          <div class="itemTextBox">
+            <div class="itemText">无人机</div>
+          </div>
+        </div>
+        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerPolice}"
+          @click="setRpLayerVisible('Police')">
+          <div class="itemImgBox">
+            <div class="itemImg itemPolice"></div>
+          </div>
+          <div class="itemTextBox">
+            <div class="itemText">消防人员</div>
+          </div>
+        </div>
+        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerInstitution}"
+          @click="setRpLayerVisible('Institution')">
+          <div class="itemImgBox">
+            <div class="itemImg itemInstitution"></div>
+          </div>
+          <div class="itemTextBox">
+            <div class="itemText">消防机构</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -372,7 +412,11 @@ export default {
       bBasicHighBottom: false, // 控制右下角基础工具条向上移动
       bAppendToBody: true, // 控制Popover弹窗附加文档结构位置
       popoverOffsetX: -38, // 地图右下角工具条Popover弹窗x轴偏移
-      popoverOffsetY: 33 // 地图右下角工具条Popover弹窗y轴偏移
+      popoverOffsetY: 33, // 地图右下角工具条Popover弹窗y轴偏移
+      bShowRpLayerInstitution: true,
+      bShowRpLayerPolice: true,
+      bShowRpLayerDrone: true,
+      bShowRpLayerCamera: true
     }
   },
 
@@ -464,6 +508,11 @@ export default {
     doLocator: {
       type: Boolean,
       default: true
+    },
+    // 是否显示底部图层显示隐藏菜单
+    bShowBottomMenu: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -551,7 +600,8 @@ export default {
         containerId: this.mapContainerID,
         baseLayerType: this.mapTypeCur,
         serverBaseUrl: rootUrl,
-        bIsOnline: bNetWorkConn
+        bIsOnline: bNetWorkConn,
+        rpClickSelect: true
       })
       this.setPositionFormatCB()
       this.map2D.setMinZoom(this.minZoom)
@@ -1437,6 +1487,23 @@ export default {
     // 删除所有团队标记
     delAllTeamMarkers () {
       this.map2D._markerLayerManager.clear()
+    },
+
+    // 显示隐藏RpLayers
+    setRpLayerVisible (type) {
+      if (type === 'Institution') {
+        this.bShowRpLayerInstitution = !this.bShowRpLayerInstitution
+        this.map2D.riverProtectionManager.setLayerInstitutionVisible(this.bShowRpLayerInstitution)
+      } else if (type === 'Police') {
+        this.bShowRpLayerPolice = !this.bShowRpLayerPolice
+        this.map2D.riverProtectionManager.setLayerPoliceVisible(this.bShowRpLayerPolice)
+      } else if (type === 'Drone') {
+        this.bShowRpLayerDrone = !this.bShowRpLayerDrone
+        this.map2D.riverProtectionManager.setLayerDroneVisible(this.bShowRpLayerDrone)
+      } else if (type === 'Camera') {
+        this.bShowRpLayerCamera = !this.bShowRpLayerCamera
+        this.map2D.riverProtectionManager.setLayerCameraVisible(this.bShowRpLayerCamera)
+      }
     }
   }
 }
@@ -1859,6 +1926,69 @@ export default {
     cursor: default;
     border-radius: 4px;
     pointer-events: none;
+  }
+    .rpBottomBox {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0px;
+    width: 100%;
+    height: 84px;
+    .rpBottomMenu {
+      width: 1207px;
+      height: 84px;
+      background-image: url('../../assets/images/map/mapBottomMenuBg.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .menuItem {
+        margin-top: 10px;
+        margin-left: 22px;
+        margin-right: 22px;
+        display: inline-block;
+        cursor: pointer;
+        width: 68px;
+        height: 64px;
+        .itemImgBox {
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .itemImg {
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+          }
+          .itemInstitution {
+            background-image: url('../../assets/images/map/institution.png');
+          }
+          .itemPolice {
+            background-image: url('../../assets/images/map/police.png');
+          }
+          .itemDrone {
+            background-image: url('../../assets/images/map/drone.png');
+          }
+          .itemCamera {
+            background-image: url('../../assets/images/map/camera.png');
+          }
+        }
+        .itemTextBox {
+          margin-top: 2px;
+          height: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .itemText {
+            color: #00CCFF;
+            display: inline-block;
+          }
+        }
+      }
+      .unSelectItem {
+        opacity: 0.35;
+      }
+    }
   }
 }
 </style>

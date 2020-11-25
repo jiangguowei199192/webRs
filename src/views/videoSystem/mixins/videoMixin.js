@@ -325,6 +325,10 @@ const videoMixin = {
           } else if (info.deviceTypeCode === 'GDJK') {
             this.cameraDevArray.push(info)
           }
+          // For Rp
+          if (this.addDeviceCallback !== undefined) {
+            this.addDeviceCallback(info)
+          }
         }
       }
     },
@@ -485,6 +489,10 @@ const videoMixin = {
           // console.log(this.cameraDevArray)
           // console.log(this.treeData)
           EventBus.$emit('GetAllDeptDevices_Done', true)
+          // For Rp
+          if (this.getAllDeviceDoneCallback !== undefined) {
+            this.getAllDeviceDoneCallback(this.cameraDevArray, this.droneDevArray)
+          }
         }
       })
     },
