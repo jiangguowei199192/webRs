@@ -108,6 +108,10 @@ export default {
     window.onresize = null
   },
 
+  beforeDestroy () {
+    this.$refs.gduMap.map2D.riverProtectionManager.removeAll()
+  },
+
   beforeRouteLeave (to, from, next) {
     if (to.name === 'fightDeploy') {
       to.meta.keepAlive = true
