@@ -23,7 +23,7 @@
         <div class="edit_menu">
           <el-tooltip
             v-for="(item, index) in curIcons"
-            :key="index"
+            :key="index + 'i'"
             popper-class="gTooltip plotTooltip"
             :content="item.title"
             placement="top"
@@ -44,6 +44,7 @@
           placeholder="请选择"
           v-model="modelType"
           :popper-append-to-body="false"
+          @change="optionValueChange"
         >
           <el-option
             v-for="item in options"
@@ -59,7 +60,7 @@
           <ul class="fl">
             <el-tooltip
               v-for="(item, index) in curModels"
-              :key="index"
+              :key="index + '_j'"
               popper-class="gTooltip plotTooltip"
               :content="item.name"
               placement="top"
@@ -68,11 +69,22 @@
               <li
                 id="list"
                 :class="{ active: curModelIndex === index }"
+                :style="'background:' + item.background"
                 draggable="true"
                 @click.stop="listSelected(index)"
                 @dragstart="drag(item)"
               >
-                <img :src="item.image" alt="模型加载失败" />
+                <div v-if="modelType == 0" class="model-list_one">
+                  <img :src="item.image" alt="模型加载失败" />
+                  <span>{{ item.name }}</span>
+                </div>
+                <div v-else-if="modelType == 1" class="model-list_two">
+                  <img :src="item.image" alt="模型加载失败" />
+                  <span>{{ item.name }}</span>
+                </div>
+                <div v-else-if="modelType == 2" class="model-list_three">
+                  <img :src="item.image" alt="模型加载失败" />
+                </div>
               </li>
             </el-tooltip>
           </ul>
@@ -88,12 +100,13 @@
         @dragover.prevent
       >
         <drawNode
+          v-show="modelType == 0"
           class="drawNode"
           ref="drawNode"
           v-for="node in data.nodeList"
-          :key="node.id"
+          :key="node.id + '_k'"
           :node="node"
-          :id="node.id"
+          :id="node.id + '_k'"
           @change-node-site="changeNodeSite"
           @delete-node="deleteNode"
           @edit-node="editNode"
@@ -101,6 +114,36 @@
           @resize-stop="resizeStop"
           @rotate-stop="rotateStop"
         ></drawNode>
+        <drawNode2
+          v-show="modelType == 1"
+          class="drawNode"
+          ref="drawNode"
+          v-for="node in data.nodeList"
+          :key="node.id + '_m'"
+          :node="node"
+          :id="node.id + '_m'"
+          @change-node-site="changeNodeSite"
+          @delete-node="deleteNode"
+          @edit-node="editNode"
+          @drag-stop="dragStop"
+          @resize-stop="resizeStop"
+          @rotate-stop="rotateStop"
+        ></drawNode2>
+        <drawNode3
+          v-show="modelType == 2"
+          class="drawNode"
+          ref="drawNode"
+          v-for="node in data.nodeList"
+          :key="node.id + '_n'"
+          :node="node"
+          :id="node.id + '_n'"
+          @change-node-site="changeNodeSite"
+          @delete-node="deleteNode"
+          @edit-node="editNode"
+          @drag-stop="dragStop"
+          @resize-stop="resizeStop"
+          @rotate-stop="rotateStop"
+        ></drawNode3>
       </div>
     </div>
     <!-- 底图选择入口 -->
@@ -110,19 +153,23 @@
 
 <script>
 import drawNode from './components/drawNode'
+import drawNode2 from './components/drawNode_2'
+import drawNode3 from './components/drawNode_3'
 import EntryTab from './components/entryTab'
 import { jsPlumb } from 'jsplumb'
 import { EventBus } from '@/utils/eventBus.js'
 import axios from 'axios'
 import { api } from '@/api/2d.js'
 import globalApi from '@/utils/globalApi'
-const serverUrl = globalApi.headImg + '/cloud-video/prePlanFor3D/gltf'
+import modelList from './utils/modelList'
 
 export default {
   name: 'fightDeploy',
 
   components: {
     drawNode,
+    drawNode2,
+    drawNode3,
     EntryTab
   },
 
@@ -197,6 +244,7 @@ export default {
     modelType (val) {
       if (this.options.length > 0 && val >= 0 && val < this.options.length) {
         this.curModels = this.options[val].list
+        // console.log(this.curModels);
       }
     }
   },
@@ -248,11 +296,6 @@ export default {
       // console.log(this.workHeight);
     },
 
-    // 返回Plan页
-    backToPlan () {
-      this.$router.push({ path: '/decisionSystem' })
-    },
-
     // 加载立即重绘jsPlumb
     init () {
       const _this = this
@@ -272,6 +315,11 @@ export default {
       }
     },
 
+    // 返回Plan页
+    backToPlan () {
+      this.$router.push({ path: '/decisionSystem' })
+    },
+
     // 选中当前模型
     listSelected (id) {
       this.curModelIndex = id
@@ -285,13 +333,15 @@ export default {
 
     // 拖放
     drop (event) {
-      // console.log(event);
+      // console.log(event)
       const index = this.index++
       const temp = {
-        label: this.currentItem.image,
+        value: this.currentItem.name,
+        icon: this.currentItem.image,
+        background: this.currentItem.background,
         left: event.offsetX - 130 / 2 + 'px',
         top: event.offsetY - 64 / 2 + 'px',
-        id: index + '-node',
+        id: index,
         width: 130,
         height: 64,
         rotate: 0
@@ -320,7 +370,7 @@ export default {
 
     // 删除节点
     deleteNode (nodeId) {
-      this.$confirm('确定要删除节点node' + nodeId + ' ?', '提示', {
+      this.$confirm('确定要删除该模型吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         showClose: false
@@ -450,37 +500,41 @@ export default {
 
     // 获取模型列表
     getModelData () {
+      // console.log(modelList)
       this.options = []
-      axios
-        .get('config/plotlist.json')
-        .then((res) => {
-          // console.log('模型列表:', res)
-          const data = res.data
-          let i = 0
-          for (var p in data) {
-            const array = data[p]
-            array.forEach((a) => {
-              if (a.image.startsWith('$serverURL_gltf$')) {
-                a.image = a.image.replace('$serverURL_gltf$', serverUrl)
-              }
-              if (a.style.modelUrl.startsWith('$serverURL_gltf$')) {
-                a.style.modelUrl = a.style.modelUrl.replace(
-                  '$serverURL_gltf$',
-                  serverUrl
-                )
-              }
-            })
+      let i = 0
+      for (var k in modelList) {
+        let text = null
+        let title = null
+        switch (parseInt(k)) {
+          case 0:
+            text = '灾情区域'
+            break
+          case 1:
+            text = '灾情标识'
+            break
+          case 2:
+            text = '联动力量'
+            break
+          default:
+            text = '灾情区域'
+            break
+        }
+        title = text
+        const arr = modelList[k]
+        const item = { value: i, label: title, list: arr }
+        this.options.push(item)
 
-            const item = { value: i, label: p, list: array }
-            this.options.push(item)
-            // console.log(this.options)
-            if (i === 0) this.modelType = i
-            i += 1
-          }
-        })
-        .catch((err) => {
-          console.log('获取模型列表失败: ' + err)
-        })
+        if (i === 0) this.modelType = i
+        i += 1
+      }
+      // console.log("options: ", this.options);
+    },
+
+    // 模型类型改变
+    optionValueChange () {
+      EventBus.$emit('optionId', this.modelType)
+      // console.log(this.modelType)
     },
 
     // 获取底图
@@ -510,7 +564,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .container {
   width: 100%;
   height: 100%;
@@ -600,16 +654,47 @@ export default {
             float: left;
             width: 130px;
             height: 64px;
-            line-height: 64px;
-            border: 2px solid transparent;
+            border: 1px solid #00ccff;
             outline: none;
             font-size: 14px;
-            text-align: center;
             margin: 0 36px 13px 0;
             cursor: pointer;
+            position: relative;
+            span {
+              line-height: 20px;
+              position: absolute;
+              top: 25px;
+              right: 25px;
+            }
+            .model-list_one {
+              img {
+                width: 32px;
+                height: 32px;
+                position: absolute;
+                top: 18px;
+                left: 9px;
+              }
+            }
+            .model-list_two {
+              img {
+                width: 37%;
+                height: 43%;
+                position: absolute;
+                top: 18px;
+                left: 7px;
+              }
+            }
+            .model-list_three {
+              text-align: center;
+              line-height: 85px;
+              img {
+                width: 81px;
+                height: 33px;
+              }
+            }
           }
           .active {
-            border: 2px solid rgba(255, 244, 100, 1);
+            border: 1.5px solid rgba(255, 244, 100, 1);
             background: none;
           }
           li:nth-child(2n) {
