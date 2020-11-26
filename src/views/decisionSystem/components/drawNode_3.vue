@@ -2,9 +2,9 @@
  * @Descripttion: 出来混迟早是要还的
  * @version: v_2.0
  * @Author: liangkaiLee
- * @Date: 2020-11-24 09:57:41
+ * @Date: 2020-11-26 08:59:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-11-26 08:59:40
+ * @LastEditTime: 2020-11-26 15:35:05
 -->
 <template>
   <vdr
@@ -209,7 +209,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .node-item_thr {
   img {
     width: 81px;

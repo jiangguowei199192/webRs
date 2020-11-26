@@ -1,13 +1,5 @@
-<!--
- * @Descripttion: 出来混迟早是要还的
- * @version: v_2.0
- * @Author: liangkaiLee
- * @Date: 2020-11-03 14:44:56
- * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-11-25 10:04:18
--->
 <template>
-  <div :style="'height:' + fullHeight + 'px;'">
+  <div :style="'height:' + fullHeight + 'px;'" style="position: relative">
     <gMap
       ref="gduMap"
       handleType="search_route"
@@ -18,13 +10,22 @@
       :bShowMeasure="false"
       :bShowBottomMenu="true"
     ></gMap>
+    <!-- 火情列表 -->
+    <FireList class="fire-list" ref="fireList"></FireList>
   </div>
 </template>
 
 <script>
 import videoMixin from '../videoSystem/mixins/videoMixin'
+import FireList from './components/fireList'
+
 export default {
   name: 'decision',
+
+  components: {
+    FireList
+  },
+
   watch: {
     $route: 'refresh'
   },
@@ -78,11 +79,11 @@ export default {
     },
     // 显示高点设备和无人机设备
     getAllDeviceDoneCallback (cameraDevs, droneDevs) {
-      cameraDevs.forEach(dev => {
+      cameraDevs.forEach((dev) => {
         this.handerVideoDevice(dev)
       })
       this.showRpDatas(cameraDevs)
-      droneDevs.forEach(dev => {
+      droneDevs.forEach((dev) => {
         this.handerVideoDevice(dev)
       })
       this.showRpDatas(droneDevs)
@@ -92,7 +93,10 @@ export default {
       if (this.$refs.gduMap === undefined) return
       this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(tmpDatas)
       if (tmpDatas.length > 0) {
-        this.$refs.gduMap.map2D.zoomToCenter(tmpDatas[0].longitude, tmpDatas[0].latitude)
+        this.$refs.gduMap.map2D.zoomToCenter(
+          tmpDatas[0].longitude,
+          tmpDatas[0].latitude
+        )
         this.$refs.gduMap.map2D.setZoom(12)
       }
     }
@@ -123,4 +127,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.fire-list {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+}
 </style>
