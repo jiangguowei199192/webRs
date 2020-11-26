@@ -1,5 +1,13 @@
+<!--
+ * @Descripttion: 出来混迟早是要还的
+ * @version: v_2.0
+ * @Author: liangkaiLee
+ * @Date: 2020-11-03 14:44:56
+ * @LastEditors: liangkaiLee
+ * @LastEditTime: 2020-11-25 10:04:18
+-->
 <template>
-  <div :style="'height:'+fullHeight+'px;'">
+  <div :style="'height:' + fullHeight + 'px;'">
     <gMap
       ref="gduMap"
       handleType="search_route"
@@ -99,8 +107,6 @@ export default {
   deactivated () {
     window.onresize = null
   },
-  mounted () {
-  },
 
   beforeRouteLeave (to, from, next) {
     if (to.name === 'fightDeploy') {
@@ -112,5 +118,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

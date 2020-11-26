@@ -1,4 +1,3 @@
-
 // 让打包的时候输出可配置的文件
 const webpack = require('webpack')
 const path = require('path')

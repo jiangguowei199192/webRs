@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 出来混迟早是要还的
+ * @version: v_2.0
+ * @Author: liangkaiLee
+ * @Date: 2020-11-24 09:57:41
+ * @LastEditors: liangkaiLee
+ * @LastEditTime: 2020-11-26 08:59:40
+-->
 <template>
   <vdr
     :active="controlled.isActive"
@@ -31,8 +39,8 @@
       @mouseenter="showDelete"
       @mouseleave="hideDelete"
     >
-      <div class="node-item_one" id="node-span">
-        <span>{{ node.value }}</span>
+      <div class="node-item_thr" id="node-span">
+        <img :src="node.icon" alt="" />
       </div>
       <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
         <i class="el-icon-circle-close"></i>
@@ -120,13 +128,13 @@ export default {
     })
   },
 
-  mounted () {
-    // 所选模型类型
-    EventBus.$on('optionId', (data) => {
-      // console.log(data)
-      this.modelType = data
-    })
-  },
+  //   mounted () {
+  //     // 所选模型类型
+  //     EventBus.$on('optionId', (data) => {
+  //       // console.log(data)
+  //       this.modelType = data
+  //     })
+  //   },
 
   methods: {
     // 点击选中元素
@@ -202,6 +210,12 @@ export default {
 </script>
 
 <style lang="scss" scope>
+.node-item_thr {
+  img {
+    width: 81px;
+    height: 33px;
+  }
+}
 .node-del {
   position: absolute;
   color: #fff;
