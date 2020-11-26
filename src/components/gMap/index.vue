@@ -1890,6 +1890,7 @@ export default {
     width: 30px;
     right: 15px;
     bottom: 45px;
+    z-index: 10;
     .btnActive:active {
       opacity: 0.8;
     }
