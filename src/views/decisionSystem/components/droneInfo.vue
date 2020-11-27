@@ -9,7 +9,7 @@
       <LivePlayer
       v-if="dataInfo.isOnline"
       ref="playerCtrl"
-      :videoUrl="dataInfo.url"
+      :videoUrl="dataInfo.streamUrl"
       :show-custom-button="false"
       :muted="false"
       :controls="false"
@@ -39,22 +39,22 @@
           <span>飞行状态</span>
         </li>
         <li>
-          <span>经度：</span>
+          <span>经度： {{info.longitude}}</span>
         </li>
         <li>
-          <span>纬度：</span>
+          <span>纬度： {{info.latitude}}</span>
 
         </li>
         <li>
-          <span>水平速度：</span>
-          <span>高度：</span>
+          <span>水平速度： {{info.hSpeed ? info.hSpeed+'m/s':info.hSpeed}}</span>
+          <span>高度： {{info.height ? info.height+'m':info.height}}</span>
         </li>
         <li>
-          <span>垂直速度：</span>
-          <span>航向角：</span>
+          <span>垂直速度： {{info.vSpeed ? info.vSpeed+'m/s':info.vSpeed}}</span>
+          <span>航向角： {{info.directionAngle}}</span>
         </li>
         <li>
-          <span>电量：</span>
+          <span>电量： {{info.batteryLeft ? info.batteryLeft+'%':info.batteryLeft}}</span>
           <span>飞手：</span>
         </li>
       </ul>
@@ -64,12 +64,20 @@
 
 <script>
 import LivePlayer from '@liveqing/liveplayer'
+import { EventBus } from '@/utils/eventBus.js'
+import { copyData } from '@/utils/public'
 export default {
   name: 'droneInfo',
   data () {
     return {
       info: {
-        streamUrl: 'ws://122.112.217.132:8888/live/6C01728PA4A9A6F0.flv'
+        longitude: '',
+        latitude: '',
+        height: '',
+        hSpeed: '',
+        vSpeed: '',
+        batteryLeft: '',
+        directionAngle: ''
       },
       poster: require('../../../assets/images/loading.gif')
     }
@@ -83,7 +91,18 @@ export default {
     LivePlayer
   },
   mounted () {
+    EventBus.$on('droneOffline', obj => {
 
+    })
+    EventBus.$on('droneRealtimeInfo', obj => {
+      if (obj.snCode !== this.dataInfo.id) return
+      // 更新飞机数据
+      copyData(obj, this.info)
+    })
+  },
+  beforeDestroy () {
+    EventBus.$off('droneOffline')
+    EventBus.$off('droneRealtimeInfo')
   },
   methods: {
     close () {

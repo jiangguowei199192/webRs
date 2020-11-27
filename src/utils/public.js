@@ -69,3 +69,17 @@ export function uuid (len, radix) {
 
   return uuid.join('')
 }
+
+/**
+     *  拷贝数据
+     * @param {Object} src
+     * @param {Object} dst
+     */
+export function copyData (src, dst) {
+  for (var b in dst) {
+    // 拷贝属性
+    if (Object.prototype.hasOwnProperty.call(src, b)) {
+      dst[b] = src[b]
+    }
+  }
+}
