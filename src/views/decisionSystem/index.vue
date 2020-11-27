@@ -17,7 +17,9 @@
 
 <script>
 import videoMixin from '../videoSystem/mixins/videoMixin'
+import createVueCompFunc from '@/utils/createVueComp'
 import FireList from './components/fireList'
+import droneInfo from './components/droneInfo'
 
 export default {
   name: 'decision',
@@ -65,6 +67,8 @@ export default {
         dev.type = 'RP_Camera'
       } else if (dev.deviceTypeCode === 'WRJ') {
         dev.type = 'RP_Drone'
+        dev.isOnline = dev.onlineStatus === 'online'
+        if (dev.children && dev.children.length > 0) { dev.url = dev.children[0].streamUrl }
       }
       dev.name = dev.label
       dev.address = dev.deviceAddress
@@ -88,7 +92,7 @@ export default {
       })
       this.showRpDatas(droneDevs)
     },
-    // 显示长江大保护数据层信息
+    // 显示地图图层数据
     showRpDatas (tmpDatas) {
       if (this.$refs.gduMap === undefined) return
       this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(tmpDatas)
@@ -99,7 +103,14 @@ export default {
         )
         this.$refs.gduMap.map2D.setZoom(12)
       }
+    },
+    // 动态创建droneInfo组件
+    createDroneInfoCom (props) {
+      return createVueCompFunc(droneInfo, props)
     }
+  },
+  mounted () {
+    this.$refs.gduMap.map2D.riverProtectionManager.setCreateVueCompFunc(this.createDroneInfoCom)
   },
   activated () {
     this.refreshWinSize()
