@@ -92,11 +92,18 @@ export default {
   },
   mounted () {
     EventBus.$on('droneOffline', obj => {
-
+      if (obj.snCode !== this.dataInfo.id) return
+      // 清空飞机信息
+      for (var b in this.info) { this.info[b] = '' }
     })
     EventBus.$on('droneRealtimeInfo', obj => {
       if (obj.snCode !== this.dataInfo.id) return
       // 更新飞机数据
+      obj.longitude = parseFloat(obj.longitude).toFixed(7)
+      obj.latitude = parseFloat(obj.latitude).toFixed(7)
+      obj.hSpeed = parseFloat(obj.hSpeed).toFixed(1)
+      obj.vSpeed = parseFloat(obj.vSpeed).toFixed(1)
+      obj.directionAngle = parseFloat(obj.directionAngle).toFixed(2)
       copyData(obj, this.info)
     })
   },

@@ -311,7 +311,7 @@
     <div class="rpBottomBox" v-if="bShowBottomMenu">
       <div class="rpBottomMenu">
         <div class="menuItem" :class="{unSelectItem:!bShowRpLayerCamera}"
-          @click="setRpLayerVisible('Camera')">
+          @click="setRpLayerVisible('RP_Camera')">
           <div class="itemImgBox">
             <div class="itemImg itemCamera"></div>
           </div>
@@ -320,7 +320,7 @@
           </div>
         </div>
         <div class="menuItem" :class="{unSelectItem:!bShowRpLayerDrone}"
-          @click="setRpLayerVisible('Drone')">
+          @click="setRpLayerVisible('RP_Drone')">
           <div class="itemImgBox">
             <div class="itemImg itemDrone"></div>
           </div>
@@ -329,7 +329,7 @@
           </div>
         </div>
         <div class="menuItem" :class="{unSelectItem:!bShowRpLayerPolice}"
-          @click="setRpLayerVisible('Police')">
+          @click="setRpLayerVisible('RP_Police')">
           <div class="itemImgBox">
             <div class="itemImg itemPolice"></div>
           </div>
@@ -338,7 +338,7 @@
           </div>
         </div>
         <div class="menuItem" :class="{unSelectItem:!bShowRpLayerInstitution}"
-          @click="setRpLayerVisible('Institution')">
+          @click="setRpLayerVisible('RP_Institution')">
           <div class="itemImgBox">
             <div class="itemImg itemInstitution"></div>
           </div>
@@ -1489,20 +1489,24 @@ export default {
       this.map2D._markerLayerManager.clear()
     },
 
-    // 显示隐藏RpLayers
+    // 显示隐藏Layers
     setRpLayerVisible (type) {
-      if (type === 'Institution') {
+      if (type === 'RP_Institution') {
         this.bShowRpLayerInstitution = !this.bShowRpLayerInstitution
         this.map2D.riverProtectionManager.setLayerInstitutionVisible(this.bShowRpLayerInstitution)
-      } else if (type === 'Police') {
+        if (!this.bShowRpLayerInstitution) this.map2D.riverProtectionManager.hideOverlaysByType(type)
+      } else if (type === 'RP_Police') {
         this.bShowRpLayerPolice = !this.bShowRpLayerPolice
         this.map2D.riverProtectionManager.setLayerPoliceVisible(this.bShowRpLayerPolice)
-      } else if (type === 'Drone') {
+        if (!this.bShowRpLayerPolice) this.map2D.riverProtectionManager.hideOverlaysByType(type)
+      } else if (type === 'RP_Drone') {
         this.bShowRpLayerDrone = !this.bShowRpLayerDrone
         this.map2D.riverProtectionManager.setLayerDroneVisible(this.bShowRpLayerDrone)
-      } else if (type === 'Camera') {
+        if (!this.bShowRpLayerDrone) this.map2D.riverProtectionManager.hideOverlaysByType(type)
+      } else if (type === 'RP_Camera') {
         this.bShowRpLayerCamera = !this.bShowRpLayerCamera
         this.map2D.riverProtectionManager.setLayerCameraVisible(this.bShowRpLayerCamera)
+        if (!this.bShowRpLayerCamera) this.map2D.riverProtectionManager.hideOverlaysByType(type)
       }
     }
   }
