@@ -1,4 +1,4 @@
 export const decisionApi = {
-  getDeptList: '/cloud-video/deptAndDevice/getDeptList',
+  getSimpleDeptList: '/cloud-video/deptAndDevice/getSimpleDeptList',
   getFireManList: '/cloud-video/fireMan/list'
 }

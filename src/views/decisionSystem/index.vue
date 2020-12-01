@@ -141,10 +141,21 @@ export default {
      *  获取消防机构列表
      */
     getDeptList () {
-      this.$axios.get(decisionApi.getDeptList).then(res => {
+      this.$axios.get(decisionApi.getSimpleDeptList).then(res => {
         if (res.data.code === 0) {
-
+          if (res.data.code === 0 && res.data.data) {
+            let list = res.data.data
+            list = JSON.parse(JSON.stringify(list).replace(/deptLatitude/g, 'latitude'))
+            list = JSON.parse(JSON.stringify(list).replace(/deptLongitude/g, 'longitude'))
+            list.forEach((m) => {
+              m.type = 'RP_Institution'
+            })
+            if (this.$refs.gduMap === undefined) return
+            this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(list)
+          }
         }
+      }).catch((error) => {
+        console.log('decisionApi.getSimpleDeptList Err : ' + error)
       })
     },
     /**
@@ -162,6 +173,8 @@ export default {
           if (this.$refs.gduMap === undefined) return
           this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(list)
         }
+      }).catch((error) => {
+        console.log('decisionApi.getFireManList Err : ' + error)
       })
     }
   },
