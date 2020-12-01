@@ -96,25 +96,12 @@ export default {
       cameraDevs.forEach((dev) => {
         this.handerVideoDevice(dev)
       })
-      this.showRpDatas(cameraDevs)
       droneDevs.forEach((dev) => {
         this.handerVideoDevice(dev)
       })
-      this.showRpDatas(droneDevs)
-    },
-    /**
-     *  显示地图图层数据
-     */
-    showRpDatas (tmpDatas) {
       if (this.$refs.gduMap === undefined) return
-      this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(tmpDatas)
-      if (tmpDatas.length > 0) {
-        this.$refs.gduMap.map2D.zoomToCenter(
-          tmpDatas[0].longitude,
-          tmpDatas[0].latitude
-        )
-        this.$refs.gduMap.map2D.setZoom(12)
-      }
+      this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(cameraDevs)
+      this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(droneDevs)
     },
     /**
      *  动态创建droneInfo组件

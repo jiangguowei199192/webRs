@@ -203,3 +203,8 @@
 {
   margin-left: 48px;
 }
+
+/* overlay在最上层 */
+.ol-overlaycontainer-stopevent {
+  z-index: 100 !important;
+}
