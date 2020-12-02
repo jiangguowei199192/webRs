@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2020-11-26 15:31:30
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-12-02 16:19:53
+ * @LastEditTime: 2020-12-02 17:35:21
 -->
 <template>
   <div>
@@ -299,6 +299,8 @@ export default {
               setTimeout(() => {
                 this.dialogVisible = false
               }, 300)
+              this.addFireForm.number = this.addFireForm.name = this.addFireForm.source = this.addFireForm.person = this.addFireForm.phone = this.addFireForm.address = this.addFireForm.time = this.addFireForm.description = this.addFireForm.record = this.addFireForm.coord =
+                ''
               this.getTodayFire()
               return
             }
