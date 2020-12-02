@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2020-11-26 15:31:30
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-12-02 14:22:40
+ * @LastEditTime: 2020-12-02 16:19:53
 -->
 <template>
   <div>
@@ -34,7 +34,7 @@
               placement="top"
               :open-delay="500"
             >
-              <span
+              <span class="divEllipsis"
                 ><img :src="fireImg" alt="" />{{ fire_item.deviceName }}</span
               ></el-tooltip
             >
@@ -48,7 +48,9 @@
                 :content="fire_item.alarmAddress"
                 placement="top"
                 :open-delay="500"
-                ><span>地点：{{ fire_item.alarmAddress }}</span></el-tooltip
+                ><span class="divEllipsis"
+                  >地点：{{ fire_item.alarmAddress }}</span
+                ></el-tooltip
               >
             </div>
             <div>出动</div>
@@ -70,7 +72,7 @@
         class="dialog_wrap"
       >
         <div class="add_header">
-          <div class="title">新增案件</div>
+          <div class="title">新增火情</div>
           <div class="close" @click.stop="closeDialog">×</div>
         </div>
         <div class="add_content">
@@ -339,11 +341,30 @@ export default {
               this.todayFireInfos.push(fire)
             })
             if (!reportedDatas || reportedDatas.length === 0) return
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportAddr/g, 'alarmAddress'))
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName'))
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime'))
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/longitude/g, 'alarmLongitude'))
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/latitude/g, 'alarmLatitude'))
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(
+                /reportAddr/g,
+                'alarmAddress'
+              )
+            )
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName')
+            )
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime')
+            )
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(
+                /longitude/g,
+                'alarmLongitude'
+              )
+            )
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(
+                /latitude/g,
+                'alarmLatitude'
+              )
+            )
             reportedDatas.forEach((fire) => {
               fire.alarmTime = timeFormat(fire.alarmTime)
               this.todayFireInfos.push(fire)
@@ -385,9 +406,10 @@ export default {
     width: 415px;
     height: 96px;
     border: 1px solid #1eb0fc;
-    margin: 15px 0 0 4px;
+    margin: 10px 0 0 4px;
     padding: 12px 15px;
     overflow-y: auto;
+    background-color: rgba(30, 176, 252, 0.2);
     .top,
     .bottom {
       display: flex;
@@ -397,10 +419,7 @@ export default {
     .top {
       span:nth-child(1) {
         color: #ffd800;
-        width: 250px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        width: 180px;
         img {
           width: 34px;
           height: 34px;
@@ -429,9 +448,6 @@ export default {
         span:nth-child(2) {
           margin-top: 5px;
           width: 250px;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
         }
       }
       div:nth-child(2) {
@@ -447,7 +463,7 @@ export default {
   .list_bottom {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
+    margin-top: 10px;
     font-size: 15px;
     span {
       width: 144px;
