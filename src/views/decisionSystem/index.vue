@@ -163,18 +163,28 @@ export default {
       }).catch((error) => {
         console.log('decisionApi.getFireManList Err : ' + error)
       })
+    },
+    /**
+     *  更新飞机在线状态
+     */
+    updateDroneOnlineStatus (obj, isOnline) {
+      obj = JSON.parse(JSON.stringify(obj).replace(/deviceCode/g, 'snCode'))
+      if (this.hasDrone(obj.snCode) === false || this.$refs.gduMap === undefined) return
+      const d = this.getDrone(obj.snCode)
+      d.isOnline = isOnline
+      this.$refs.gduMap.map2D.riverProtectionManager.updateDroneOnlineStatus(obj.snCode, isOnline)
     }
   },
   mounted () {
     this.$refs.gduMap.map2D.riverProtectionManager.setCreateVueCompFunc(this.createDroneInfoCom)
     EventBus.$on('droneOffline', obj => {
-      if (this.hasDrone(obj.snCode) === false) return
-      const d = this.getDrone(obj.snCode)
-      d.isOnline = false
-      this.$refs.gduMap.map2D.riverProtectionManager.updateDroneOnlineStatus(obj.snCode, false)
+      this.updateDroneOnlineStatus(obj, false)
+    })
+    EventBus.$on('droneOnline', obj => {
+      this.updateDroneOnlineStatus(obj, true)
     })
     EventBus.$on('droneRealtimeInfo', obj => {
-      if (this.hasDrone(obj.snCode) === false) return
+      if (this.hasDrone(obj.snCode) === false || this.$refs.gduMap === undefined) return
       const d = this.getDrone(obj.snCode)
       if (d.isOnline === false) return
       // 更新飞机经纬度和方向角
@@ -198,6 +208,7 @@ export default {
   beforeDestroy () {
     this.$refs.gduMap.map2D.riverProtectionManager.removeAll()
     EventBus.$off('droneOffline')
+    EventBus.$off('droneOnline')
     EventBus.$off('droneRealtimeInfo')
   },
 

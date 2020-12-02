@@ -434,8 +434,10 @@ export default {
     // 解析飞机实时信息(根据主题进行分发)
     parseDroneRealtimeInfo (msg) {
       const object = JSON.parse(msg.payloadString)
-      if (droneOffline === msg.topic) {
+      if (droneOffline === msg.topic || msg.topic === 'gdu/device/offline') {
         EventBus.$emit('droneOffline', object)
+      } else if (msg.topic === 'gdu/device/online') {
+        EventBus.$emit('droneOnline', object)
       } else if (droneCmdReq === msg.topic) {
         EventBus.$emit('droneCmdReq', object)
       } else {

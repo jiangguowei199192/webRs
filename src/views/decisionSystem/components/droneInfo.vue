@@ -7,7 +7,7 @@
     </div>
     <div class="playerBox">
       <LivePlayer
-      v-if="dataInfo.isOnline"
+      v-if="isOnline"
       ref="playerCtrl"
       :videoUrl="dataInfo.streamUrl"
       :show-custom-button="false"
@@ -70,6 +70,7 @@ export default {
   name: 'droneInfo',
   data () {
     return {
+      isOnline: false,
       info: {
         longitude: '',
         latitude: '',
@@ -84,20 +85,16 @@ export default {
   },
   props: {
     dataInfo: {
-      default: () => {}
+      default: () => {
+      }
     }
   },
   components: {
     LivePlayer
   },
   mounted () {
-    EventBus.$on('droneOffline', obj => {
-      if (obj.snCode !== this.dataInfo.id) return
-      // 清空飞机信息
-      for (var b in this.info) { this.info[b] = '' }
-    })
     EventBus.$on('droneRealtimeInfo', obj => {
-      if (obj.snCode !== this.dataInfo.id) return
+      if (obj.snCode !== this.dataInfo.id || !this.isOnline) return
       // 更新飞机数据
       obj.longitude = parseFloat(obj.longitude).toFixed(7)
       obj.latitude = parseFloat(obj.latitude).toFixed(7)
@@ -116,8 +113,14 @@ export default {
       if (this.closeOverlay) {
         this.closeOverlay()
       }
+    },
+    updateDroneOnlineStatus (online) {
+      this.isOnline = online
+      if (!online) {
+        // 清空飞机信息
+        for (var b in this.info) { this.info[b] = '' }
+      }
     }
-
   }
 }
 </script>
