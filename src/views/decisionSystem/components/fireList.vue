@@ -331,26 +331,23 @@ export default {
           // console.log('今日火情接口返回：', res)
           if (res && res.data && res.data.code === 0) {
             const fireDatas = res.data.data.deviceDetectedFire
-            const reportedDatas = res.data.data.reportedFire
+            let reportedDatas = res.data.data.reportedFire
             if (!fireDatas || fireDatas.length === 0) return
             fireDatas.forEach((fire) => {
+              fire.deviceName = '自动报警'
               fire.alarmTime = timeFormat(fire.alarmTime)
               this.todayFireInfos.push(fire)
             })
             if (!reportedDatas || reportedDatas.length === 0) return
-            reportedDatas.forEach(
-              ({
-                reportTime: alarmTime,
-                fireName: deviceName,
-                reportAddr: alarmAddress
-              }) => {
-                this.todayFireInfos.push({
-                  alarmTime,
-                  deviceName,
-                  alarmAddress
-                })
-              }
-            )
+            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportAddr/g, 'alarmAddress'))
+            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName'))
+            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime'))
+            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/longitude/g, 'alarmLongitude'))
+            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/latitude/g, 'alarmLatitude'))
+            reportedDatas.forEach((fire) => {
+              fire.alarmTime = timeFormat(fire.alarmTime)
+              this.todayFireInfos.push(fire)
+            })
             return
           }
           this.$notify.warning({
