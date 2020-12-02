@@ -11,7 +11,7 @@
       :bShowBottomMenu="true"
     ></gMap>
     <!-- 火情列表 -->
-    <FireList class="fire-list" ref="fireList"></FireList>
+    <FireList class="fire-list" ref="fireList" @getTodayFireInfosDone="getTodayFireInfos"></FireList>
   </div>
 </template>
 
@@ -173,6 +173,14 @@ export default {
       const d = this.getDrone(obj.snCode)
       d.isOnline = isOnline
       this.$refs.gduMap.map2D.riverProtectionManager.updateDroneOnlineStatus(obj.snCode, isOnline)
+    },
+    /**
+     *  获取火情列表完毕
+     */
+    getTodayFireInfos (fires) {
+      if (this.$refs.gduMap === undefined) return
+      this.$refs.gduMap.map2D.riverProtectionManager.removeAllFires()
+      this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(fires)
     }
   },
   mounted () {
