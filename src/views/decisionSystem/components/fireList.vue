@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2020-11-26 15:31:30
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-12-02 17:35:21
+ * @LastEditTime: 2020-12-02 17:39:22
 -->
 <template>
   <div>
@@ -296,12 +296,12 @@ export default {
                 message: '新增成功!',
                 duration: 5 * 1000
               })
+              this.getTodayFire()
               setTimeout(() => {
                 this.dialogVisible = false
               }, 300)
               this.addFireForm.number = this.addFireForm.name = this.addFireForm.source = this.addFireForm.person = this.addFireForm.phone = this.addFireForm.address = this.addFireForm.time = this.addFireForm.description = this.addFireForm.record = this.addFireForm.coord =
                 ''
-              this.getTodayFire()
               return
             }
             this.$notify.warning({
@@ -338,8 +338,12 @@ export default {
             let fireDatas = res.data.data.deviceDetectedFire
             let reportedDatas = res.data.data.reportedFire
             if (!fireDatas || fireDatas.length === 0) return
-            fireDatas = JSON.parse(JSON.stringify(fireDatas).replace(/alarmLongitude/g, 'longitude'))
-            fireDatas = JSON.parse(JSON.stringify(fireDatas).replace(/alarmLatitude/g, 'latitude'))
+            fireDatas = JSON.parse(
+              JSON.stringify(fireDatas).replace(/alarmLongitude/g, 'longitude')
+            )
+            fireDatas = JSON.parse(
+              JSON.stringify(fireDatas).replace(/alarmLatitude/g, 'latitude')
+            )
             fireDatas.forEach((fire) => {
               fire.deviceName = '自动报警'
               fire.alarmTime = timeFormat(fire.alarmTime)
@@ -347,9 +351,18 @@ export default {
               this.todayFireInfos.push(fire)
             })
             if (!reportedDatas || reportedDatas.length === 0) return
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportAddr/g, 'alarmAddress'))
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName'))
-            reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime'))
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(
+                /reportAddr/g,
+                'alarmAddress'
+              )
+            )
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName')
+            )
+            reportedDatas = JSON.parse(
+              JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime')
+            )
             reportedDatas.forEach((fire) => {
               fire.alarmTime = timeFormat(fire.alarmTime)
               fire.type = 'RP_Fire'
