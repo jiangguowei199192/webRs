@@ -67,7 +67,6 @@ export function formatMinutes (minutes) {
 }
 
 // 将时间戳转化成年月日时分秒
-
 export function timeFormat (timestamp) {
   // timestamp是整数，否则要parseInt转换,不会出现少个0的情况
   const add0 = function (m) { return m < 10 ? '0' + m : m }
