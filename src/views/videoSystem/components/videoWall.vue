@@ -560,7 +560,7 @@
 import LivePlayer from '@liveqing/liveplayer'
 import droneInfoMixin from '../../../utils/droneInfoMixin'
 import canvasArea from './canvasArea'
-import { throttle } from '../../../utils/public.js'
+import { throttle, replaceStreamUrl } from '../../../utils/public.js'
 import globalApi from '../../../utils/globalApi'
 import { api } from '@/api/videoSystem/realVideo'
 import { timeFormat } from '@/utils/date'
@@ -813,7 +813,9 @@ export default {
 
   destroyed () {
     if (this.videoInfo.isLive !== false) {
+      console.log('destroyed')
       document.removeEventListener('visibilitychange', this.reloadVideo)
+      EventBus.$off('streamHadNotData')
     }
   },
 
@@ -859,7 +861,23 @@ export default {
     this.puzzlePageInfo.total = this.puzzleDataArray.length
     if (this.videoInfo.isLive !== false) {
       document.addEventListener('visibilitychange', this.reloadVideo)
+      EventBus.$on('streamHadNotData', (info) => {
+        info.url = replaceStreamUrl(info.url, globalApi.baseUrl)
+        if (info.url === this.videoInfo.streamUrl) {
+          console.log((new Date()).format('yyyy-MM-dd hh:mm:ss.S') + '  receive streamHadNotData and reloadVideo')
+          this.videoInfo.streamUrl = ''
+          this.$nextTick(() => {
+            this.videoInfo.streamUrl = info.url
+          })
+        }
+      })
     }
+    const me = this
+    this.$refs.playerCtrl.player.on('error', function (error) {
+      if (me.videoInfo.isLive === false) {
+        console.log(me.curUrl + 'error: ' + JSON.stringify(error))
+      } else console.log(me.videoInfo.streamUrl + 'error: ' + JSON.stringify(error))
+    })
   },
 
   methods: {

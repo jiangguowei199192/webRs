@@ -79,7 +79,10 @@ var mqttService;
       // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
-      if (message.topic.substr(0, 4) === 'gdu/') {
+      if (message.topic === 'gdu/realVideo/streamHadNotData') {
+        console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+        EventBus.$emit('streamHadNotData', object)
+      } else if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
       } else {
         console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)

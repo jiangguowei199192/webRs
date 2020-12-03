@@ -83,3 +83,20 @@ export function copyData (src, dst) {
     }
   }
 }
+
+/**
+     * 根据内外网替换StreamUrl
+     */
+export function replaceStreamUrl (streamUrl, baseUrl) {
+  if (streamUrl) {
+    const startI = baseUrl.indexOf('//')
+    const endI = baseUrl.lastIndexOf(':')
+    const url = baseUrl.slice(startI + 2, endI)
+    const s = streamUrl.slice(streamUrl.lastIndexOf(':') + 1).indexOf('/')
+    const stream = streamUrl.slice(streamUrl.lastIndexOf(':') + 1).slice(s + 1)
+
+    // return 'ws://' + url + ':50010/' + stream // 消防10楼视频端口
+    return 'ws://' + url + ':40021/' + stream // 消防测试环境视频端口
+    // return 'ws://' + url + ':40007/' + stream // 长江大保护视频端口
+  }
+}

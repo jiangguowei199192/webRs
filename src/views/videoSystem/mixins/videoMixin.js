@@ -1,6 +1,7 @@
 import { api } from '@/api/videoSystem/realVideo'
 import globalApi from '@/utils/globalApi'
 import { EventBus } from '@/utils/eventBus.js'
+import { replaceStreamUrl } from '@/utils/public'
 const videoMixin = {
   data () {
     return {
@@ -140,11 +141,14 @@ const videoMixin = {
             var stream = device.children.find(c => c.id === item.id)
             if (stream !== undefined) {
               // 通道存在
-              var i = device.children.indexOf(stream)
-              // 通道上线
-              if (isOnline) { device.children.splice(i, 1, item) } else {
+              // 通道在线状态发生改变
+              if (stream.onlineStatus !== on) {
+                var i = device.children.indexOf(stream)
+                // 通道上线
+                if (isOnline) { device.children.splice(i, 1, item) } else {
                 // device.children.splice(i, 1)
-                Reflect.set(device.children[i], 'onlineStatus', 'offline')
+                  Reflect.set(device.children[i], 'onlineStatus', 'offline')
+                }
               }
             } else if (isOnline) {
               // 通道不存在，新通道上线
@@ -308,7 +312,8 @@ const videoMixin = {
                     child[b] = item[b]
                   }
                 }
-                this.setTreeNodeDisabled(!isOnline, child.id)
+                // 通道在线状态发生改变
+                if (child.onlineStatus !== on) this.setTreeNodeDisabled(!isOnline, child.id)
               } else {
                 device.children.push(item)
                 // 通道按可见光、红外排序
@@ -356,21 +361,6 @@ const videoMixin = {
     },
 
     /**
-     * 根据内外网替换StreamUrl
-     */
-    replaceStreamUrl (c) {
-      if (c.streamUrl) {
-        const startI = globalApi.baseUrl.indexOf('//')
-        const endI = globalApi.baseUrl.lastIndexOf(':')
-        const url = globalApi.baseUrl.slice(startI + 2, endI)
-        const s = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).indexOf('/')
-        const stream = c.streamUrl.slice(c.streamUrl.lastIndexOf(':') + 1).slice(s + 1)
-        c.streamUrl = 'ws://' + url + ':40021/' + stream // 消防视频端口
-        // c.streamUrl = 'ws://' + url + ':40007/' + stream // 长江大保护视频端口
-      }
-    },
-
-    /**
      * 递归解析设备
      */
     parseDeviceList (data) {
@@ -389,7 +379,7 @@ const videoMixin = {
               clone.children.forEach(c => {
                 Reflect.set(c, 'onlineStatus', clone.onlineStatus)
                 Reflect.set(c, 'deviceTypeCode', clone.deviceTypeCode)
-                this.replaceStreamUrl(c)
+                c.streamUrl = replaceStreamUrl(c.streamUrl, globalApi.baseUrl)
               })
               this.onlineArray.push(clone)
             } else {
@@ -441,7 +431,7 @@ const videoMixin = {
 
         if (tree[i].children) {
           tree[i].children.forEach(c => {
-            this.replaceStreamUrl(c)
+            c.streamUrl = replaceStreamUrl(c.streamUrl, globalApi.baseUrl)
           })
         }
 
