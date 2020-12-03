@@ -337,38 +337,27 @@ export default {
             this.todayFireInfos = []
             let fireDatas = res.data.data.deviceDetectedFire
             let reportedDatas = res.data.data.reportedFire
-            if (!fireDatas || fireDatas.length === 0) return
-            fireDatas = JSON.parse(
-              JSON.stringify(fireDatas).replace(/alarmLongitude/g, 'longitude')
-            )
-            fireDatas = JSON.parse(
-              JSON.stringify(fireDatas).replace(/alarmLatitude/g, 'latitude')
-            )
-            fireDatas.forEach((fire) => {
-              fire.deviceName = '自动报警'
-              fire.alarmTime = timeFormat(fire.alarmTime)
-              fire.type = 'RP_Fire'
-              this.todayFireInfos.push(fire)
-            })
-            if (!reportedDatas || reportedDatas.length === 0) return
-            reportedDatas = JSON.parse(
-              JSON.stringify(reportedDatas).replace(
-                /reportAddr/g,
-                'alarmAddress'
-              )
-            )
-            reportedDatas = JSON.parse(
-              JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName')
-            )
-            reportedDatas = JSON.parse(
-              JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime')
-            )
-            reportedDatas.forEach((fire) => {
-              fire.alarmTime = timeFormat(fire.alarmTime)
-              fire.type = 'RP_Fire'
-              fire.id = fire.fireNo
-              this.todayFireInfos.push(fire)
-            })
+            if (fireDatas && fireDatas.length > 0) {
+              fireDatas = JSON.parse(JSON.stringify(fireDatas).replace(/alarmLongitude/g, 'longitude'))
+              fireDatas = JSON.parse(JSON.stringify(fireDatas).replace(/alarmLatitude/g, 'latitude'))
+              fireDatas.forEach((fire) => {
+                fire.deviceName = '自动报警'
+                fire.alarmTime = timeFormat(fire.alarmTime)
+                fire.type = 'RP_Fire'
+                this.todayFireInfos.push(fire)
+              })
+            }
+            if (reportedDatas && reportedDatas.length > 0) {
+              reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportAddr/g, 'alarmAddress'))
+              reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/fireName/g, 'deviceName'))
+              reportedDatas = JSON.parse(JSON.stringify(reportedDatas).replace(/reportTime/g, 'alarmTime'))
+              reportedDatas.forEach((fire) => {
+                fire.alarmTime = timeFormat(fire.alarmTime)
+                fire.type = 'RP_Fire'
+                fire.id = fire.fireNo
+                this.todayFireInfos.push(fire)
+              })
+            }
             this.$emit('getTodayFireInfosDone', this.todayFireInfos)
             return
           }
