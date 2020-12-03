@@ -994,6 +994,18 @@ export default {
     },
 
     /**
+     *  替换地址，避免内外网切换问题
+     */
+    replaceUrl (srcUrl) {
+      let url = srcUrl
+      let startI = url.indexOf('//')
+      url = url.slice(startI + 2)
+      startI = url.indexOf('/')
+      url = url.slice(startI)
+      return globalApi.headImg + url
+    },
+
+    /**
      *  加载geoJson
      */
     loadGeoJson () {
@@ -1002,6 +1014,19 @@ export default {
           .then(res => {
             const data = res.data
             // console.log(data)
+            if (data.features && data.features.length > 0) {
+              // 需要替换模型地址和infoImg地址，避免内外网问题
+              data.features.forEach(f => {
+                if (f.properties && f.properties.type === 'model-p' && f.properties.style && f.properties.style.modelUrl) {
+                  const url = f.properties.style.modelUrl
+                  f.properties.style.modelUrl = this.replaceUrl(url)
+                }
+                if (f.properties && f.properties.infoImg) {
+                  const url = f.properties.infoImg
+                  f.properties.infoImg = this.replaceUrl(url)
+                }
+              })
+            }
             this.cameraViews = data.cameraViews
             const entities = this.drawControl.loadJson(data)
             if (!this.modelList) this.modelList = []
