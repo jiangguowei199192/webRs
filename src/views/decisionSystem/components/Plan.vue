@@ -337,11 +337,23 @@ export default {
         .get(globalApi.headImg + imgPath)
         .then((res) => {
           // console.log('返回picPath: ', res)
+          const url = res.data
+          res.data = this.replaceUrl(url)
+          // console.log('imgPath: ', res.data)
           this.deployImgUrl = res.data
         })
         .catch((err) => {
           console.log('加载picPath失败: ' + err)
         })
+    },
+    //  替换地址，避免内外网切换问题
+    replaceUrl (srcUrl) {
+      let url = srcUrl
+      let startI = url.indexOf('//')
+      url = url.slice(startI + 2)
+      startI = url.indexOf('/')
+      url = url.slice(startI)
+      return globalApi.headImg + url
     }
   }
 }

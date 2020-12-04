@@ -18,7 +18,7 @@
     <div class="left">
       <div
         class="model_edit"
-        :style="'height:' + (this.workHeight - 250) + 'px;'"
+        :style="'height:' + (this.workHeight - 230) + 'px;'"
       >
         <div class="edit_menu">
           <el-tooltip
@@ -55,7 +55,7 @@
         </el-select>
         <div
           class="edit_list webFsScroll"
-          :style="'height:' + (this.workHeight - 250 - 170) + 'px;'"
+          :style="'height:' + (this.workHeight - 230 - 170) + 'px;'"
         >
           <ul class="fl">
             <el-tooltip

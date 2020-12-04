@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2020-11-26 15:31:30
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-12-03 09:35:31
+ * @LastEditTime: 2020-12-03 14:29:54
 -->
 <template>
   <div>
@@ -239,8 +239,7 @@ export default {
     // 关闭/取消
     closeDialog () {
       this.dialogVisible = false
-      this.addFireForm.number = this.addFireForm.name = this.addFireForm.source = this.addFireForm.person = this.addFireForm.phone = this.addFireForm.address = this.addFireForm.time = this.addFireForm.description = this.addFireForm.record = this.addFireForm.coord =
-        ''
+      this.addFireForm = {}
       this.$refs.addFireRef.resetFields()
     },
 
@@ -272,7 +271,7 @@ export default {
       this.$refs.addFireRef.validate((valid) => {
         if (!valid) return
 
-        if (!this.addFireForm.time || this.addFireForm.time.length === '') {
+        if (!this.addFireForm.time || this.addFireForm.time === '') {
           this.addFireForm.time = timeFormat(new Date())
         }
         const lonlat = this.getSelectedLocation()
@@ -298,20 +297,19 @@ export default {
               this.$notify.success({
                 title: '提示',
                 message: '新增成功!',
-                duration: 5 * 1000
+                duration: 3 * 1000
               })
               this.getTodayFire()
               setTimeout(() => {
                 this.dialogVisible = false
               }, 300)
-              this.addFireForm.number = this.addFireForm.name = this.addFireForm.source = this.addFireForm.person = this.addFireForm.phone = this.addFireForm.address = this.addFireForm.time = this.addFireForm.description = this.addFireForm.record = this.addFireForm.coord =
-                ''
+              this.addFireForm = {}
               return
             }
             this.$notify.warning({
               title: '提示',
               message: '新增失败!',
-              duration: 5 * 1000
+              duration: 3 * 1000
             })
           })
           .catch((err) => {
@@ -387,7 +385,7 @@ export default {
           this.$notify.warning({
             title: '提示',
             message: '暂无火情数据!',
-            duration: 5 * 1000
+            duration: 3 * 1000
           })
         })
         .catch((err) => {
