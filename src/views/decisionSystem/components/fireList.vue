@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2020-11-26 15:31:30
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2020-12-03 14:29:54
+ * @LastEditTime: 2020-12-04 09:44:51
 -->
 <template>
   <div>
@@ -23,7 +23,7 @@
         </div>
         <div
           v-else
-          style="margin-bottom: 13px"
+          style="margin-bottom: 10px"
           v-for="(fire_item, fire_index) in todayFireInfos"
           :key="fire_index"
         >
@@ -415,10 +415,10 @@ export default {
   }
   .list_content {
     width: 415px;
-    height: 96px;
+    height: 103px;
     border: 1px solid #1eb0fc;
     margin: 10px 0 0 4px;
-    padding: 12px 15px;
+    padding: 8px 15px;
     overflow-y: auto;
     background-color: rgba(30, 176, 252, 0.2);
     .top,
