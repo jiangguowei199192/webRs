@@ -813,7 +813,6 @@ export default {
 
   destroyed () {
     if (this.videoInfo.isLive !== false) {
-      console.log('destroyed')
       document.removeEventListener('visibilitychange', this.reloadVideo)
       EventBus.$off('streamHadNotData')
     }
