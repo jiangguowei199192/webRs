@@ -43,6 +43,13 @@ const droneInfoMixin = {
     })
   },
 
+  beforeDestroy () {
+    EventBus.$off('droneOffline')
+    EventBus.$off('droneCmdReq')
+    EventBus.$off('droneCmdReq')
+    EventBus.$off('realMapping/realMappingResult')
+  },
+
   mounted () {
     // 创建飞机轨迹图层
     this.droneTrailLayer = this.$refs.gduMap.map2D.droneLayerManager.addTrailLayer(true)
