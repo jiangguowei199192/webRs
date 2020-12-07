@@ -688,7 +688,7 @@ export default {
 }
 
 .rightBox {
-  width: 796px;
+  width: 1040px;
   height: 682px;
   border: solid 2px #39a4dd;
   border-radius: 10px;
@@ -724,7 +724,7 @@ export default {
     cursor: pointer;
   }
   .tableBox {
-    width: 760px;
+    width: 1000px;
     height: 598px;
     margin: 12px auto 20px auto;
   }

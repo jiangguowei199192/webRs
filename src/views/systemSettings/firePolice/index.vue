@@ -572,14 +572,14 @@ export default {
 }
 
 .rightBox {
-  width: 796px;
+  width: 1040px;
   height: 682px;
   border: solid 2px #39a4dd;
   border-radius: 10px;
   margin: 50px auto 0 auto;
 }
 .dateBox {
-  width: 760px;
+  width: 1000px;
   margin: 20px auto 0 auto;
   .datePickerStyle {
     background-color: transparent;
@@ -601,7 +601,7 @@ export default {
   }
 }
 .tableBox {
-  width: 760px;
+  width: 1000px;
   height: 600px;
   // margin: 12px auto 20px auto;
   margin: 30px 0 0 18px;
