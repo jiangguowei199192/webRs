@@ -251,7 +251,8 @@ export default {
       this.currentPage = 1
       this.curFireObj = this.curFireArray[this.currentPage - 1]
       this.addTitle()
-      if (globalApi.voiceOpen === true) {
+      const voiceOpen = sessionStorage.getItem('voiceOpen')
+      if (!voiceOpen || voiceOpen === 'true') {
         this.$nextTick(() => {
           const dom = document.querySelector('audio')
           dom && dom.play()

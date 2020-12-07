@@ -5,7 +5,6 @@ var mqttPort = ''
 var projectTitle = ''
 var headImg = ''
 var configJson = ''
-var voiceOpen = true // 是否开启声音提示
 console.log(process.env.NODE_ENV)
 
 $.ajax({
@@ -76,6 +75,5 @@ export default {
   configJson,
   systemAdmin,
   organAdmin,
-  organMember,
-  voiceOpen
+  organMember
 }

@@ -552,6 +552,8 @@ export default {
   },
   created () {
     this.getUserDetail()
+    const voiceOpen = sessionStorage.getItem('voiceOpen')
+    if (voiceOpen) { this.rightItemMessageSetting.items[0].switch = voiceOpen === 'true' }
   },
   watch: {
     $route (to, from) {
@@ -571,7 +573,7 @@ export default {
       }
     },
     voiceOpen (value) {
-      globalApi.voiceOpen = value
+      sessionStorage.setItem('voiceOpen', value)
     }
   },
   components: {
