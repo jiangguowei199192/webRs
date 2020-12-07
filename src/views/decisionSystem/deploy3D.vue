@@ -3,7 +3,7 @@
     <Map :url="configUrl" @onload="onMapload"/>
     <div class="back" @click.stop="back">
       <span></span>
-      <span>三维预案</span>
+      <span>三维作战部署图</span>
     </div>
     <div class="bottom"></div>
     <div class="tabs">

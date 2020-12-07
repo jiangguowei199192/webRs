@@ -75,7 +75,7 @@
 
         <el-collapse-item name="4">
           <template slot="title">
-            <div style="margin-left: 22px">三维预案</div>
+            <div style="margin-left: 22px">三维作战部署图</div>
           </template>
           <div class="itemContainer2">
             <img
