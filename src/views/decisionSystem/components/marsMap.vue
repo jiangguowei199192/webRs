@@ -44,6 +44,18 @@ export default {
     customClass: {
       type: String,
       default: ''
+    },
+
+    // 是否显示开场动画
+    showOpenAnimation: {
+      type: Boolean,
+      default: true
+    },
+
+    // 是否显示导航球
+    showCompass: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -85,6 +97,32 @@ export default {
       })
     },
 
+    mapLoad (viewer) {
+      // 为了支持不同的材质类型
+      Cesium.ExpandByMars.occlusionOpen = false
+      // 设置右键旋转
+      viewer.scene.screenSpaceCameraController.tiltEventTypes = [
+        Cesium.CameraEventType.RIGHT_DRAG,
+        Cesium.CameraEventType.PINCH,
+        {
+          eventType: Cesium.CameraEventType.RIGHT_DRAG,
+          modifier: Cesium.KeyboardEventModifier.CTRL
+        },
+        {
+          eventType: Cesium.CameraEventType.MIDDLE_DRAG,
+          modifier: Cesium.KeyboardEventModifier.CTRL
+        }
+      ]
+      viewer.mars.keyboardRoam.bind({
+        moveStep: 10, // 平移步长 (米)。
+        dirStep: 25, // 相机原地旋转步长，值越大步长越小。
+        rotateStep: 1.0, // 相机围绕目标点旋转速率，0.3-2.0
+        minPitch: 0.1, // 最小仰角  0-1
+        maxPitch: 0.95 // 最大仰角  0-1
+      })
+      this.$emit('onload', viewer)
+    },
+
     initMars3d (options) {
       const me = this
       if (this[`viewer${this.mapKey}`]) return
@@ -99,11 +137,16 @@ export default {
           viewer.mars.location.show = false
           // 隐藏比例尺
           $('#distanceLegendDiv').hide()
+          if (!me.showCompass) $('.compass').hide()
+          if (me.showOpenAnimation) {
           // 开场动画
-          viewer.mars.openFlyAnimation(function () {
+            viewer.mars.openFlyAnimation(function () {
             // 动画播放完成后回调
-            me.$emit('onload', viewer)
-          })
+              me.mapLoad(viewer)
+            })
+          } else {
+            me.mapLoad(viewer)
+          }
         }
       })
 

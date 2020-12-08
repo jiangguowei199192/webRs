@@ -356,9 +356,8 @@ export default {
     // 路由发生变化
     machineMainStyle (path) {
       if (
-        path === '/decisionSystem' ||
-        path === '/fightDeploy' ||
-        path === '/deploy3D'
+        path === '/decisionSystem' || path === '/fightDeploy' ||
+        path === '/deploy3D' || path === '/fireBattle'
       ) {
         return {
           margin: '-65px 0px 0px 0px'
@@ -379,8 +378,8 @@ export default {
           this.$router.push({ path: '/evaluationSystem' })
         } else if (index === 4) {
           this.$notify.closeAll()
-          this.$notify.info({ title: '提示', message: '功能未开放' })
-          // this.$router.push({ path: '/digitalIndividual' })
+          // this.$notify.info({ title: '提示', message: '功能未开放' })
+          this.$router.push({ path: '/fireBattle' })
         } else if (index === 5) {
           this.$router.push({ path: '/digitalEquipment' })
         } else if (index === 6) this.$router.push({ path: '/systemSettings' })

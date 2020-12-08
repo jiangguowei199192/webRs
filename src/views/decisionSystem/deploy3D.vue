@@ -3,7 +3,7 @@
     <Map :url="configUrl" @onload="onMapload"/>
     <div class="back" @click.stop="back">
       <span></span>
-      <span>三维作战部署图</span>
+      <span>三维作战</span>
     </div>
     <div class="bottom"></div>
     <div class="tabs">
@@ -2250,29 +2250,6 @@ export default {
      */
     onMapload (viewer) {
       this.viewer = viewer
-      // 为了支持不同的材质类型
-      Cesium.ExpandByMars.occlusionOpen = false
-      // 设置右键旋转
-      viewer.scene.screenSpaceCameraController.tiltEventTypes = [
-        Cesium.CameraEventType.RIGHT_DRAG,
-        Cesium.CameraEventType.PINCH,
-        {
-          eventType: Cesium.CameraEventType.RIGHT_DRAG,
-          modifier: Cesium.KeyboardEventModifier.CTRL
-        },
-        {
-          eventType: Cesium.CameraEventType.MIDDLE_DRAG,
-          modifier: Cesium.KeyboardEventModifier.CTRL
-        }
-      ]
-      viewer.mars.keyboardRoam.bind({
-        moveStep: 10, // 平移步长 (米)。
-        dirStep: 25, // 相机原地旋转步长，值越大步长越小。
-        rotateStep: 1.0, // 相机围绕目标点旋转速率，0.3-2.0
-        minPitch: 0.1, // 最小仰角  0-1
-        maxPitch: 0.95 // 最大仰角  0-1
-      })
-
       this.measureSurface = new mars3d.analysi.Measure({
         viewer: viewer,
         removeScreenSpaceEvent: true,

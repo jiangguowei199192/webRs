@@ -74,6 +74,12 @@ const routes = [
         name: 'fightDeploy',
         component: () => import('../views/decisionSystem/fightDeploy')
       },
+      // 战评
+      {
+        path: '/fireBattle',
+        name: 'fireBattle',
+        component: () => import('../views/evaluationSystem/fireBattle')
+      },
       {
         path: '/evaluationSystem',
         name: 'evaluationSystem',

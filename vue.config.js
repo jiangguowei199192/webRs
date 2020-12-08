@@ -18,16 +18,16 @@ const createServerConfig = function (compilation) {
         // headImg: 'http://58.49.169.235:50026'
 
         // 消防v2.0开发环境
-        // baseUrl: 'http://111.47.13.103:40025',
-        // mqttServer: '111.47.13.103',
-        // mqttPort: 40027,
-        // headImg: 'http://111.47.13.103:40031'
+        baseUrl: 'http://111.47.13.103:40025',
+        mqttServer: '111.47.13.103',
+        mqttPort: 40027,
+        headImg: 'http://111.47.13.103:40031'
 
         // v3.0开发环境
-        baseUrl: 'http://112.74.104.62:8850',
-        mqttServer: '112.74.104.62',
-        mqttPort: 2883,
-        headImg: 'http://112.74.104.62:81'
+        // baseUrl: 'http://112.74.104.62:8850',
+        // mqttServer: '112.74.104.62',
+        // mqttPort: 2883,
+        // headImg: 'http://112.74.104.62:81'
       }
       // 消防内网
       // {
