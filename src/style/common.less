@@ -89,3 +89,29 @@ ul {
   /*滚动条基准颜色*/
   scrollbar-base-color: #0099dd;
 }
+
+.backDiv {
+  display: flex;
+  box-sizing: border-box;
+  width: 120px;
+  height: 40px;
+  background: #0A2549;
+  border: 1px solid #39a4dd;
+  position: absolute;
+  top: 10px;
+  left: 37px;
+  align-items: center;
+  cursor: pointer;
+  span:nth-child(1) {
+    display: inline-block;
+    width: 20px;
+    height: 16px;
+    background: url(../assets/images/Setting/setting-back.png) no-repeat;
+    margin-left: 16px;
+    margin-right: 13px;
+  }
+  span:nth-child(2) {
+    font-size: 18px;
+    color: #ffffff;
+  }
+}

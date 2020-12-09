@@ -1,7 +1,7 @@
 <template>
   <div class="mapcontainer mars3d" @click.capture="containerClick" :style="'height:'+fullHeight+'px;'">
     <Map :url="configUrl" @onload="onMapload"/>
-    <div class="back" @click.stop="back">
+    <div class="backDiv back" @click.stop="back">
       <span></span>
       <span>三维作战</span>
     </div>
@@ -2337,29 +2337,9 @@ export default {
   position: relative;
   overflow: hidden;
   .back{
-    display: flex;
-    box-sizing: border-box;
     width: 134px;
-    height: 40px;
-    border: 1px solid #39A4DD;
-    background: rgba(18, 30, 58, 0.85);
-    position: absolute;
     top:20px;
-    left:37px;
-    align-items: center;
-    cursor: pointer;
-    span:nth-child(1) {
-    display: inline-block;
-    width: 20px;
-    height: 16px;
-    background: url(../../assets/images/Setting/setting-back.png) no-repeat;
-    margin-left: 16px;
-    margin-right: 13px;
-    }
-    span:nth-child(2) {
-    font-size: 18px;
-    color: #FFFFFF;
-    }
+    background: rgba(18, 30, 58, 0.85);
   }
 
   .bottom {
