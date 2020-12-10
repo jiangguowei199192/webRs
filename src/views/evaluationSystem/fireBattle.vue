@@ -362,7 +362,7 @@ export default {
     box-sizing: border-box;
     width: 363px;
     height: 359px;
-    bottom: 79px;
+    top: 544px;
     left: 37px;
     background: url(../../assets/images/fireBattle/box.png) no-repeat;
     padding: 0px 30px;
