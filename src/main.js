@@ -17,6 +17,7 @@ import './assets/font/iconfont.css'
 import './style/element.less'
 
 import md5 from 'js-md5'
+import echarts from 'echarts'
 // 去掉mars3d控制台版本输出
 console.clear()
 VueDragResize.name = 'vdr'
@@ -30,6 +31,7 @@ Vue.prototype.$ = $
 Vue.config.productionTip = false
 Vue.prototype.$md5 = md5
 Vue.prototype.$confirm = ElementUI.MessageBox.confirm
+Vue.prototype.$echarts = echarts
 
 new Vue({
   router,

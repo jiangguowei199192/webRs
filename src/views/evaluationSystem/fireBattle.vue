@@ -81,6 +81,7 @@
         <span></span>
         <span>救援物资统计</span>
       </div>
+      <div class="chartBox" id="chart"></div>
     </div>
     <div class="mapBox">
       <div class="map">
@@ -122,6 +123,7 @@ export default {
     window.onresize = () => {
       me.setMapHeight()
     }
+    this.setChartData()
   },
   beforeDestroy () {
     window.onresize = null
@@ -144,6 +146,134 @@ export default {
      */
     back () {
       // this.$router.go(-1)
+    },
+    /**
+     *  设置图表数据
+     */
+    setChartData () {
+      const lineStyle = {
+        color: '#27bce5',
+        width: 1,
+        type: 'solid',
+        opacity: 0.2
+      }
+      const textStyle = {
+        color: '#27BCE5',
+        fontSize: 14
+      }
+      const data = [45, 18, 10, 43]
+      const mainChart = this.$echarts.init(document.getElementById('chart'))
+      const option = {
+        tooltip: {},
+        grid: {
+          top: 10,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          containLabel: true
+        },
+        xAxis: {
+          data: ['水源', '泡沫', '干粉', '灭火器'],
+          // 坐标轴刻度
+          axisTick: {
+            show: false
+          },
+          // 坐标轴线
+          axisLine: {
+            lineStyle: lineStyle
+          },
+          // 坐标轴文本标签
+          axisLabel: {
+            margin: 12,
+            textStyle: textStyle
+          }
+        },
+        yAxis: {
+          type: 'value',
+          minInterval: 20,
+          interval: 20,
+          // 分隔线
+          splitLine: {
+            show: true,
+            lineStyle: lineStyle
+          },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            lineStyle: lineStyle
+          },
+          axisLabel: {
+            textStyle: textStyle
+          },
+          // 分隔区域
+          splitArea: {
+            show: true,
+            areaStyle: {
+              color: 'rgba(39, 188, 229, 0.2)'
+            }
+          }
+        },
+        series: [
+          {
+            type: 'pictorialBar',
+            symbolSize: [23, 12],
+            z: 12,
+            itemStyle: {
+              normal: {
+                color: '#62d8f9',
+                label: {
+                  show: true,
+                  position: 'top',
+                  textStyle: {
+                    color: '#fff',
+                    fontSize: 14
+                  }
+                }
+              },
+              // 高亮样式
+              emphasis: {
+                color: '#62d8f9'
+              }
+            },
+            symbolPosition: 'end',
+            data: data
+          },
+          {
+            type: 'pictorialBar',
+            symbolSize: [23, 12],
+            symbolOffset: [0, 6],
+            z: 12,
+            itemStyle: {
+              normal: {
+                color: '#289bba'
+              },
+              // 高亮样式
+              emphasis: {
+                color: '#289bba'
+              }
+            },
+            data: data
+          },
+          {
+            type: 'bar',
+            itemStyle: {
+              normal: {
+                color: '#27BCE5'
+              },
+              // 高亮样式
+              emphasis: {
+                color: '#27BCE5'
+              }
+            },
+            // 图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件
+            silent: false,
+            barWidth: 23,
+            data: [43, 16, 8, 41]
+          }
+        ]
+      }
+      mainChart.setOption(option)
     }
   }
 }
@@ -308,7 +438,7 @@ export default {
       margin-top: 30px;
       margin-bottom: 30px;
       li {
-        margin-bottom: 20px;
+        margin-bottom: 38px;
         .img {
           display: inline-block;
           width: 74px;
@@ -380,6 +510,13 @@ export default {
     span:nth-child(2) {
       line-height: 21px;
     }
+  }
+  .chartBox {
+    position: relative;
+    top: 10px;
+    width: 312px;
+    height: 168px;
+    box-sizing: border-box;
   }
 }
 </style>
