@@ -366,4 +366,8 @@ export default {
 .toolbar-dropdown-menu i {
   padding-right: 5px;
 }
+
+.cesium-widget, .cesium-widget canvas:focus {
+    outline: none;
+}
 </style>

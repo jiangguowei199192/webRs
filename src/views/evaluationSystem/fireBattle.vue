@@ -1,9 +1,20 @@
 <template>
   <div class="battleBox" :style="'height:'+fullHeight+'px;'">
-    <Map :url="configUrl" :showOpenAnimation="false" :showCompass="false" @onload="onMapload" />
-    <div class="backDiv" @click.stop="back">
-      <span></span>
-      <span>返回</span>
+    <div class="marsBox" :class="{marsBoxSmallScreen:fullscreenMap}" @dblclick.capture="masDbClick">
+      <Map :url="configUrl" :showOpenAnimation="false" :showCompass="false" @onload="onMapload" />
+    </div>
+    <div class="mapBox" :class="{mapBoxFullScreen:fullscreenMap}">
+      <div class="map" @dblclick.capture="mapDbClick">
+        <gMap
+          ref="gduMap"
+          :baseMapIndex="0"
+          :bShowSimpleSearchTools="false"
+          :bShowBasic="fullscreenMap"
+          :bShowSelLayer="false"
+          :bShowMeasure="false"
+          :bShowLonLat="false"
+        ></gMap>
+      </div>
     </div>
     <div class="list webFsScroll">
       <div v-for="(item,index) in commentList" :key="index" :class="{active:activeIndex==index}">
@@ -83,18 +94,9 @@
       </div>
       <div class="chartBox" id="chart"></div>
     </div>
-    <div class="mapBox">
-      <div class="map">
-        <gMap
-          ref="gduMap"
-          :baseMapIndex="0"
-          :bShowSimpleSearchTools="false"
-          :bShowBasic="bIsFullscreenMap"
-          :bShowSelLayer="false"
-          :bShowMeasure="false"
-          :bShowLonLat="false"
-        ></gMap>
-      </div>
+    <div class="backDiv" @click.stop="back">
+      <span></span>
+      <span>返回</span>
     </div>
   </div>
 </template>
@@ -110,7 +112,7 @@ export default {
       configUrl: 'config/config.json',
       commentList: 2,
       activeIndex: 0,
-      bIsFullscreenMap: false
+      fullscreenMap: false
     }
   },
   components: {
@@ -136,7 +138,7 @@ export default {
       else this.fullHeight = h
     },
     /**
-     *  地图构造完成回调
+     *  三维地图构造完成回调
      */
     onMapload (viewer) {
       this.viewer = viewer
@@ -146,6 +148,29 @@ export default {
      */
     back () {
       // this.$router.go(-1)
+    },
+    /**
+     * 二维地图、三维地图切换
+     */
+    changeMap () {
+      this.fullscreenMap = !this.fullscreenMap
+      this.$nextTick(() => {
+        this.$refs.gduMap.map2D._map.updateSize()
+      })
+    },
+    /**
+     * 二维地图双击事件
+     */
+    mapDbClick (bFullscreenMap) {
+      if (this.fullscreenMap) return
+      this.changeMap()
+    },
+    /**
+     * 三维地图双击事件
+     */
+    masDbClick () {
+      if (!this.fullscreenMap) return
+      this.changeMap()
     },
     /**
      *  设置图表数据
@@ -479,6 +504,11 @@ export default {
       }
     }
   }
+  .marsBox {
+    height: 100%;
+    background: none;
+  }
+  .marsBoxSmallScreen,
   .mapBox {
     position: absolute;
     box-sizing: border-box;
@@ -488,9 +518,22 @@ export default {
     height: 183px;
     background: url("../../assets/images/drone/map-box.png") no-repeat;
     padding: 17px 17px;
+  }
+  .marsBoxSmallScreen {
+    z-index: 10;
+  }
+  .mapBox {
     .map {
       height: 100%;
     }
+  }
+  .mapBoxFullScreen {
+    right: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    background: none;
   }
   .title {
     width: 100%;
