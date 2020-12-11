@@ -98,39 +98,167 @@
       <span></span>
       <span>返回</span>
     </div>
+    <div class="timeBox">
+      <span>{{timeFormat(timeStart)}}</span>
+      <span>{{timeFormat(timeEnd)}}</span>
+      <span v-drag="me" id="pointer"></span>
+      <transition name="fade">
+        <span id="curTime" v-show="showCurTime">{{timeFormat(curTime)}}</span>
+      </transition>
+      <div
+        class="time"
+        id="timeBar"
+        @click.stop="timeBarClick"
+        @mouseenter="timeBarMousemove"
+        @mousemove="timeBarMousemove"
+        @mouseleave="showCurTime = false"
+      ></div>
+    </div>
   </div>
 </template>
 
 <script>
 import Map from '../decisionSystem/components/marsMap.vue'
+import { timeFormat } from '@/utils/date'
 export default {
   name: 'evaluation',
   data () {
     return {
-      minHeight: 929,
+      minHeight: 982,
       fullHeight: 0,
       configUrl: 'config/config.json',
       commentList: 2,
       activeIndex: 0,
-      fullscreenMap: false
+      fullscreenMap: false,
+      me: '',
+      minLeft: 0,
+      maxLeft: 0,
+      showCurTime: false,
+      hideTimeout: '',
+      timeStart: 1607655869000,
+      timeEnd: 1607738700000,
+      curTime: ''
     }
   },
   components: {
     Map
   },
+  // 注册局部组件指令
+  directives: {
+    drag: function (el, binding) {
+      const me = binding.value
+      const dragBox = el // 获取当前元素
+      dragBox.onmousedown = e => {
+        me.isDrag = true
+        // 阻止事件冒泡
+        if (e.stopPropagation) e.stopPropagation()
+        else e.cancelBubble = true
 
+        // 算出鼠标相对元素的位置
+        const disX = e.clientX - dragBox.offsetLeft
+        me.setCurrentTime(dragBox.offsetLeft + dragBox.clientWidth / 2)
+        document.onmousemove = e => {
+          // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+          let left = e.clientX - disX
+          // 左边界限制
+          if (left < me.minLeft) {
+            left = me.minLeft
+          } else if (left > me.maxLeft) { // 右边限制
+            left = me.maxLeft
+          }
+          // 移动当前元素
+          dragBox.style.left = left + 'px'
+          me.setCurrentTime(left + dragBox.clientWidth / 2)
+        }
+        document.onmouseup = e => {
+          // 鼠标弹起来的时候不再移动
+          document.onmousemove = null
+          // 预防鼠标弹起来后还会循环（即预防鼠标放上去的时候还会移动）
+          document.onmouseup = null
+          me.isDrag = false
+          me.hideCurrentTime()
+        }
+      }
+    }
+  },
   mounted () {
+    this.getDragParam()
     this.setMapHeight()
     const me = this
     window.onresize = () => {
       me.setMapHeight()
+      me.getDragParam()
     }
     this.setChartData()
+    this.me = this
   },
   beforeDestroy () {
     window.onresize = null
   },
   methods: {
+    timeFormat,
+    /**
+     *  鼠标在时间轴上移动
+     */
+    timeBarMousemove (event) {
+      const left = event.offsetX + event.target.offsetLeft
+      this.setCurrentTime(left)
+    },
+    /**
+     *  单击时间轴
+     */
+    timeBarClick (event) {
+      const left = event.offsetX + event.target.offsetLeft
+      const dom = document.querySelector('#pointer')
+      if (dom) {
+        dom.style.left = left - dom.clientWidth / 2 + 'px'
+      }
+      this.hideCurrentTime()
+    },
+    /**
+     *  隐藏时间
+     */
+    hideCurrentTime (left) {
+      const me = this
+      this.hideTimeout = setTimeout(() => {
+        me.showCurTime = false
+      }, 2 * 1000)
+    },
+    /**
+     *  设置当前时间
+     */
+    setCurrentTime (left) {
+      if (this.hideTimeout) clearTimeout(this.hideTimeout)
+      const dom = document.querySelector('#timeBar')
+      if (dom) {
+        if (left < dom.offsetLeft) left = dom.offsetLeft
+        else if (left > dom.offsetLeft + dom.clientWidth) {
+          left = dom.offsetLeft + dom.clientWidth
+        }
+        const timeSpan = Math.round(
+          ((this.timeEnd - this.timeStart) * (left - dom.offsetLeft)) /
+            dom.clientWidth +
+            this.timeStart
+        )
+        this.curTime = timeFormat(timeSpan)
+      }
+      this.showCurTime = true
+      this.$nextTick(() => {
+        const dom = document.querySelector('#curTime')
+        if (dom) dom.style.left = left - dom.clientWidth / 2 + 'px'
+      })
+    },
+    /**
+     *  获取时间轴拖拽参数
+     */
+    getDragParam () {
+      const dom = document.querySelector('#timeBar')
+      const dom2 = document.querySelector('#pointer')
+      if (dom && dom2) {
+        this.minLeft = dom.offsetLeft - dom2.clientWidth / 2
+        this.maxLeft = dom.offsetLeft + dom.clientWidth - dom2.clientWidth / 2
+      }
+    },
     // 设置地图高度，避免F11全屏时，底部有空白
     setMapHeight () {
       var h = document.documentElement.clientHeight - 96
@@ -560,6 +688,71 @@ export default {
     width: 312px;
     height: 168px;
     box-sizing: border-box;
+  }
+  .timeBox {
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    box-sizing: border-box;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0px;
+    width: 1304px;
+    height: 61px;
+    background: url("../../assets/images/fireBattle/time-box.png") no-repeat;
+    .time {
+      position: absolute;
+      left: 90px;
+      top: 15px;
+      width: 1124px;
+      height: 14px;
+      background: url("../../assets/images/fireBattle/time.png") no-repeat;
+    }
+    span:nth-child(1),
+    span:nth-child(2) {
+      font-size: 13px;
+      color: #d2d2d2;
+      position: absolute;
+      top: 33px;
+      display: inline-block;
+      width: 130px;
+      pointer-events: none;
+    }
+    span:nth-child(1) {
+      left: 46px;
+    }
+    span:nth-child(2) {
+      right: 46px;
+    }
+    span:nth-child(3) {
+      display: inline-block;
+      height: 17px;
+      width: 19px;
+      background: url("../../assets/images/fireBattle/pointer.png") no-repeat;
+      position: absolute;
+      top: 3px;
+      left: 177px;
+      cursor: pointer;
+    }
+    span:nth-child(4) {
+      display: inline-block;
+      color: #f5fafd;
+      background: #00ccff;
+      border-radius: 2px;
+      position: absolute;
+      top: -16px;
+      left: 0px;
+      font-size: 12px;
+      padding: 0px 2px;
+    }
+  }
+  .fade-leave-to {
+    opacity: 0;
+  }
+  .fade-leave-active {
+    transition: opacity 1s;
   }
 }
 </style>
