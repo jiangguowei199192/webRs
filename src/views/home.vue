@@ -379,7 +379,8 @@ export default {
         } else if (index === 4) {
           this.$notify.closeAll()
           // this.$notify.info({ title: '提示', message: '功能未开放' })
-          this.$router.push({ path: '/fireBattle' })
+          // this.$router.push({ path: '/fireBattle' })
+          this.$router.push({ path: '/battleReview' })
         } else if (index === 5) {
           this.$router.push({ path: '/digitalEquipment' })
         } else if (index === 6) this.$router.push({ path: '/systemSettings' })

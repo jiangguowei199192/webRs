@@ -76,6 +76,11 @@ const routes = [
       },
       // 战评
       {
+        path: '/battleReview',
+        name: 'battleReview',
+        component: () => import('../views/evaluationSystem/battleReviewList')
+      },
+      {
         path: '/fireBattle',
         name: 'fireBattle',
         component: () => import('../views/evaluationSystem/fireBattle')

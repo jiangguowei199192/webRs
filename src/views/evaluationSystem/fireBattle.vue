@@ -276,6 +276,7 @@ export default {
      */
     back () {
       // this.$router.go(-1)
+      this.$router.push({ path: '/battleReview' })
     },
     /**
      * 二维地图、三维地图切换
