@@ -79,3 +79,9 @@ export function timeFormat (timestamp) {
   var seconds = time.getSeconds()
   return year + '-' + add0(month) + '-' + add0(date) + ' ' + add0(hours) + ':' + add0(minutes) + ':' + add0(seconds)
 }
+
+// 将时间戳转化成月日时分秒
+export function timeFormat2 (timestamp) {
+  const time = timeFormat(timestamp)
+  return time.substr(5)
+}
