@@ -197,7 +197,7 @@ export default {
   methods: {
     // 新增战评
     addBattleReview () {
-      console.log('addBattleReview-------------------------')
+      this.$router.push({ path: '/addBattleReview' })
     },
     // 显示战评
     showReviewDetail (item) {

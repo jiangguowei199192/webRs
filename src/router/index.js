@@ -81,6 +81,11 @@ const routes = [
         component: () => import('../views/evaluationSystem/battleReviewList')
       },
       {
+        path: '/addBattleReview',
+        name: 'addBattleReview',
+        component: () => import('../views/evaluationSystem/addBattleReview')
+      },
+      {
         path: '/fireBattle',
         name: 'fireBattle',
         component: () => import('../views/evaluationSystem/fireBattle')
