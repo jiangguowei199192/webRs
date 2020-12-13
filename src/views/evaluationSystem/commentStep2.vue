@@ -1,7 +1,5 @@
 <template>
-  <div class="timeBox">
     <div class="commentBox">
-      <div class="title">新增战评</div>
       <div class="stepBox">
         <el-steps direction="vertical" :active="activeStep" :space="80">
           <el-step :title="activity.content" v-for="(activity, index) in activities" :key="index">
@@ -51,7 +49,6 @@
         </el-steps>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -154,28 +151,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.timeBox {
-  height: 900px;
   .commentBox {
-    width: 1503px;
-    height: 899px;
+    width: 100%;
+    height: 786px;
     position: absolute;
-    background: url("../../assets/images/Setting/setting-rightBox.png")
-      no-repeat;
     left: 50%;
     transform: translateX(-50%);
-    .title {
-      width: 196px;
-      height: 34px;
-      background: url(../../assets/images/device/info-title.png) no-repeat;
-      line-height: 34px;
-      padding-left: 18px;
-      margin-left: 20px;
-      margin-top: 20px;
-    }
     .stepBox {
-      margin-top: 216px;
-      margin-left: 353px;
+       margin-top: 216px;
+       margin-left: 353px;
       width: 220px;
       box-sizing: border-box;
       /deep/.el-step__icon.is-text {
@@ -309,5 +293,4 @@ export default {
       }
     }
   }
-}
 </style>

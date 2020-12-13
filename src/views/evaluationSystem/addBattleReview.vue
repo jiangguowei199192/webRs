@@ -69,13 +69,15 @@
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
-        <div class="battleEvents" v-show="bNext"></div>
+        <!-- <div class="battleEvents" v-show="bNext"></div> -->
+        <commentStep2 v-show="bNext"></commentStep2>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import commentStep2 from './commentStep2.vue'
 export default {
   name: 'addBattle',
   data () {
@@ -94,6 +96,7 @@ export default {
     }
   },
   components: {
+    commentStep2
   },
 
   mounted () {
