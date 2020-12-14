@@ -1,6 +1,7 @@
 <template>
-    <div class="commentBox">
-      <div class="stepBox">
+  <div class="commentBox">
+    <div class="stepContainer">
+      <div class="stepBox webFsScroll">
         <el-steps direction="vertical" :active="activeStep" :space="80">
           <el-step :title="activity.content" v-for="(activity, index) in activities" :key="index">
             <template slot="description">
@@ -48,7 +49,69 @@
           </el-step>
         </el-steps>
       </div>
+      <div class="addBox" @click.stop="addComment">
+        <div></div>
+        <div>
+          <span></span>
+        </div>
+      </div>
     </div>
+    <div class="dataBox">
+      <div class="title">
+        <span></span>
+        <span>数据</span>
+      </div>
+      <div class="data">
+        <div v-for="(item, index) in datas" :key="index">
+          <span class="text">{{item.text}}</span>
+          <el-input v-model="item.value"></el-input>
+        </div>
+      </div>
+      <div class="title" style="margin-top:0px">
+        <span></span>
+        <span>描述</span>
+      </div>
+      <el-input type="textarea" resize="none" v-model="describe" class="describe" maxlength="100"></el-input>
+      <div class="title">
+        <span></span>
+        <span>文件</span>
+      </div>
+      <div class="fileBox">
+        <div class="upload" @click.stop="upload">
+          <span></span>
+          <span>上传文件</span>
+        </div>
+        <span class="fileDesc">可上传文件和视频</span>
+        <span class="car"></span>
+        <el-popover
+          placement="top"
+          trigger="click"
+          popper-class="iconPopover"
+          v-model="showPopover"
+        >
+          <div class="iconBox">
+            <span class="close" @click.stop="showPopover = false"></span>
+            <span
+              @click.stop="selectIcon"
+              class="icon"
+              v-for="(item, index) in icons"
+              :key="index"
+              :style="{background: 'url('+ item.path +') no-repeat'}"
+            ></span>
+          </div>
+          <div slot="reference" class="upload uploadIcon">
+            <span></span>
+            <span>选择图标</span>
+          </div>
+        </el-popover>
+      </div>
+      <input type="file" ref="uploadFile" style="display:none" />
+      <div class="btns">
+        <span @click.stop="$router.go(-1)">取消</span>
+        <span>完成</span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -56,9 +119,67 @@ import { timeFormat2 } from '@/utils/date'
 export default {
   data () {
     return {
+      showPopover: false,
       activeStep: 0,
       monthBg: '',
       monthEnd: '',
+      describe: '',
+      icons: [
+        {
+          path: require('../../assets/images/fireBattle/fire2.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/kzhq.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/zddc.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/pyjr.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/vehicle.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/jhc.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/nbss.png')
+        },
+        {
+          path: require('../../assets/images/fireBattle/default.png')
+        }
+      ],
+      datas: [
+        {
+          text: '出勤车辆',
+          value: ''
+        },
+        {
+          text: '出勤人数',
+          value: ''
+        },
+        {
+          text: '出勤无人机',
+          value: ''
+        },
+        {
+          text: '水源',
+          value: ''
+        },
+        {
+          text: '泡沫',
+          value: ''
+        },
+        {
+          text: '干粉',
+          value: ''
+        },
+        {
+          text: '灭火器',
+          value: ''
+        }
+      ],
       activities: [
         {
           title: '发现火灾发现火灾发现',
@@ -119,16 +240,25 @@ export default {
      * 删除战评
      */
     deleteComment (index) {
-      this.activities[index].title = ''
-      this.activities[index].timestamp = ''
-      this.showDeleteButton(index)
+      if (index < 5) {
+        this.activities[index].title = ''
+        this.activities[index].timestamp = ''
+        this.showDeleteButton(index)
+      } else {
+        this.activities.splice(index, 1)
+        if (this.activeStep > this.activities.length - 1) {
+          this.activeStep = this.activities.length - 1
+        }
+      }
     },
     /**
      * datePicker失去或获得焦点
      */
     datePickerBlur (isBlur, index) {
       this.activities[index].dateBlur = isBlur
-      if (isBlur) { this.showDeleteButton(index) }
+      if (isBlur) {
+        this.showDeleteButton(index)
+      }
     },
     /**
      * input失去焦点
@@ -144,6 +274,31 @@ export default {
       if (this.activities[index].timestamp && this.activities[index].title) {
         this.activities[index].showDelete = true
       } else this.activities[index].showDelete = false
+    },
+    /**
+     *  上传图片或视频
+     */
+    upload () {
+      this.$refs.uploadFile.click()
+    },
+    /**
+     *  新增站评
+     */
+    addComment () {
+      this.activities.push({
+        title: '',
+        timestamp: '',
+        readonly: true,
+        dateBlur: true,
+        showDelete: false
+      })
+      this.activeStep = this.activities.length - 1
+    },
+    /**
+     *  选择图标
+     */
+    selectIcon () {
+      this.showPopover = false
     }
   },
   created () {}
@@ -151,17 +306,60 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .commentBox {
-    width: 100%;
-    height: 786px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.commentBox {
+  width: 100%;
+  height: 786px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  .stepContainer {
+    display: flex;
+    flex-direction: column;
+    .addBox {
+      position: relative;
+      top: -46px;
+      left: 180px;
+      width: 34px;
+      div:nth-child(1) {
+        width: 1px;
+        height: 46px;
+        background: #00ccff;
+        margin-left: 17px;
+      }
+      div:nth-child(2) {
+        cursor: pointer;
+        width: 34px;
+        height: 34px;
+        border: 1px solid #00ccff;
+        border-radius: 50%;
+        box-sizing: border-box;
+        span {
+          margin-top: 8px;
+          margin-left: 8px;
+          display: inline-block;
+          width: 15px;
+          height: 15px;
+          background: url(../../assets/images/fireBattle/+.png) no-repeat;
+        }
+      }
+      div:nth-child(2):active {
+        background: #00ccff;
+        span {
+          background: url(../../assets/images/fireBattle/+-select.png) no-repeat;
+        }
+      }
+    }
     .stepBox {
-       margin-top: 216px;
-       margin-left: 353px;
-      width: 220px;
+      overflow-y: auto;
+      max-height: 640px;
+      margin-top: 90px;
+      margin-left: 80px;
+      width: 350px;
+      padding: 0px 10px 0px 0px;
       box-sizing: border-box;
+      /deep/.el-step {
+        margin-left: 100px;
+      }
       /deep/.el-step__icon.is-text {
         border: 1px solid #00ccff;
       }
@@ -293,4 +491,153 @@ export default {
       }
     }
   }
+  .dataBox {
+    width: 749px;
+    height: 487px;
+    border: 1px solid #00ccff;
+    position: absolute;
+    top: 80px;
+    left: 440px;
+    background: linear-gradient(90deg, #08111f7f, #1339637f);
+    .title {
+      width: 100%;
+      height: 21px;
+      box-sizing: border-box;
+      margin-top: 16px;
+      margin-left: 21px;
+      span:nth-child(1) {
+        display: inline-block;
+        width: 21px;
+        height: 16px;
+        background-image: url("../../assets/images/fire_title.png");
+        margin-right: 10px;
+        position: relative;
+        top: 2px;
+      }
+      span:nth-child(2) {
+        line-height: 21px;
+      }
+    }
+    .data {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: 52px;
+      > div {
+        display: flex;
+        font-size: 14px;
+        height: 26px;
+        margin-bottom: 24px;
+        box-sizing: border-box;
+        .text {
+          display: inline-block;
+          width: 80px;
+          line-height: 26px;
+        }
+        /deep/.el-input {
+          width: 112px;
+          height: 100%;
+          background: #09546d4c;
+          margin-right: 40px;
+          .el-input__inner {
+            background-color: transparent;
+            border-radius: 0px;
+            border: 1px solid #27bce5;
+            color: #00ccff;
+            height: 26px;
+            line-height: 26px;
+          }
+        }
+      }
+    }
+    /deep/.describe.el-textarea {
+      width: 668px;
+      height: 70px;
+      background: #09546d4c;
+      margin-top: 18px;
+      margin-left: 50px;
+      .el-textarea__inner {
+        height: 100%;
+        background-color: transparent;
+        border-radius: 0px;
+        border: 1px solid #27bce5;
+        color: #00ccff;
+        line-height: 26px;
+      }
+    }
+    .fileBox {
+      display: flex;
+      align-items: center;
+      margin-left: 51px;
+      margin-top: 18px;
+      .fileDesc {
+        font-size: 12px;
+        color: #ffffff;
+        opacity: 0.4;
+        margin-left: 16px;
+      }
+      .car {
+        display: inline-block;
+        height: 28px;
+        width: 28px;
+        background: url("../../assets/images/fireBattle/jhc.png") no-repeat;
+        margin-left: 70px;
+      }
+      .upload {
+        width: 100px;
+        height: 32px;
+        border: 1px solid #27bce5;
+        box-sizing: border-box;
+        background: #09546d4c;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        span:nth-child(1) {
+          display: inline-block;
+          width: 14px;
+          height: 13px;
+          background: url("../../assets/images/fireBattle/upload.png") no-repeat;
+          margin-right: 11px;
+        }
+      }
+      .uploadIcon {
+        margin-left: 15px;
+        span:nth-child(1) {
+          width: 15px;
+          height: 15px;
+          background: url("../../assets/images/fireBattle/selectIcon.png")
+            no-repeat;
+        }
+      }
+    }
+    .btns {
+      position: absolute;
+      bottom: 17px;
+      right: 30px;
+      span {
+        cursor: pointer;
+        box-sizing: border-box;
+        display: inline-block;
+        width: 87px;
+        height: 32px;
+        border: 1px solid #1eb0fc;
+        border-radius: 4px;
+        font-size: 16px;
+        line-height: 32px;
+        color: #1eb0fc;
+        text-align: center;
+      }
+      span:active {
+        opacity: 0.8;
+      }
+      span:nth-child(2) {
+        margin-left: 20px;
+        background: #1eb0fc;
+        color: #fff;
+      }
+    }
+  }
+}
 </style>
