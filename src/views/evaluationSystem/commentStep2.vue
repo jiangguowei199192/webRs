@@ -307,7 +307,7 @@ export default {
 
 <style lang="scss" scoped>
 .commentBox {
-  width: 100%;
+  width: 1121px;
   height: 786px;
   position: absolute;
   left: 50%;
@@ -318,7 +318,7 @@ export default {
     .addBox {
       position: relative;
       top: -46px;
-      left: 180px;
+      left: 100px;
       width: 34px;
       div:nth-child(1) {
         width: 1px;
@@ -353,7 +353,6 @@ export default {
       overflow-y: auto;
       max-height: 640px;
       margin-top: 90px;
-      margin-left: 80px;
       width: 350px;
       padding: 0px 10px 0px 0px;
       box-sizing: border-box;
@@ -497,7 +496,7 @@ export default {
     border: 1px solid #00ccff;
     position: absolute;
     top: 80px;
-    left: 440px;
+    left: 370px;
     background: linear-gradient(90deg, #08111f7f, #1339637f);
     .title {
       width: 100%;
