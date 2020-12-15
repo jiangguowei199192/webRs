@@ -81,11 +81,12 @@
               <gMap
                 ref="gduMap"
                 handleType="devMap"
-                :bShowSimpleSearchTools="false"
+                :bShowSimpleSearchTools="true"
+                :bMiniSearchStyle="true"
                 :bShowBasic="false"
                 :bShowMeasure="false"
-                :bShowLonLat="false"
                 :bAutoLocate="false"
+                :bShowLonLat="false"
               ></gMap>
             </div>
           </div>
@@ -143,6 +144,18 @@ export default {
   },
 
   mounted () {
+    const tmpMap = this.$refs.gduMap.map2D
+    tmpMap.clickEvent.addEventListener((lonlat) => {
+      const tmpName = this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
+      tmpMap.customMarkerLayerManager.clear()
+      tmpMap.customMarkerLayerManager.addMarker({
+        name: tmpName,
+        lon: lonlat[0],
+        lat: lonlat[1],
+        _bWgs2Gcj: false
+      })
+    })
+
     this.fireList = [
       {
         id: 1,
@@ -203,6 +216,15 @@ export default {
     selectModel (info) {
       this.modelInfo = info
       this.showPopover = false
+    },
+    getSelectedLocation () {
+      const tmpMap = this.$refs.gduMap
+      const tmpFs = tmpMap.map2D.customMarkerLayerManager._source.getFeatures()
+      if (tmpFs.length > 0) {
+        return tmpFs[0].getGeometry().getCoordinates()
+      } else {
+        return null
+      }
     }
   }
 }
