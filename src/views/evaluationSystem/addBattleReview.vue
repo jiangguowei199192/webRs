@@ -187,6 +187,7 @@ export default {
   mounted () {
     const tmpMap = this.$refs.gduMap.map2D
     tmpMap.clickEvent.addEventListener((lonlat) => {
+      this.fireData.lonLat = lonlat
       const tmpName = this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
       tmpMap.customMarkerLayerManager.clear()
       tmpMap.customMarkerLayerManager.addMarker({
