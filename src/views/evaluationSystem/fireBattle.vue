@@ -98,21 +98,25 @@
       <span></span>
       <span>返回</span>
     </div>
-    <div class="timeBox">
-      <span>{{timeFormat(timeStart)}}</span>
-      <span>{{timeFormat(timeEnd)}}</span>
-      <span v-drag="me" id="pointer"></span>
-      <transition name="fade">
-        <span id="curTime" v-show="showCurTime">{{timeFormat(curTime)}}</span>
-      </transition>
-      <div
-        class="time"
-        id="timeBar"
-        @click.stop="timeBarClick"
-        @mouseenter="timeBarMousemove"
-        @mousemove="timeBarMousemove"
-        @mouseleave="showCurTime = false"
-      ></div>
+    <div class="bar">
+      <span class="play" v-show="!isPlay" @click.stop="play(true)"></span>
+      <span class="play pause" v-show="isPlay" @click.stop="play(false)"></span>
+      <div class="timeBox">
+        <span>{{timeFormat(timeStart)}}</span>
+        <span>{{timeFormat(timeEnd)}}</span>
+        <span v-drag="me" id="pointer"></span>
+        <transition name="fade">
+          <span id="curTime" v-show="showCurTime">{{timeFormat(curTime)}}</span>
+        </transition>
+        <div
+          class="time"
+          id="timeBar"
+          @click.stop="timeBarClick"
+          @mouseenter="timeBarMousemove"
+          @mousemove="timeBarMousemove"
+          @mouseleave="showCurTime = false"
+        ></div>
+      </div>
     </div>
   </div>
 </template>
@@ -137,7 +141,8 @@ export default {
       hideTimeout: '',
       timeStart: 1607655869000,
       timeEnd: 1607738700000,
-      curTime: ''
+      curTime: '',
+      isPlay: false // 播放战评
     }
   },
   components: {
@@ -163,7 +168,8 @@ export default {
           // 左边界限制
           if (left < me.minLeft) {
             left = me.minLeft
-          } else if (left > me.maxLeft) { // 右边限制
+          } else if (left > me.maxLeft) {
+            // 右边限制
             left = me.maxLeft
           }
           // 移动当前元素
@@ -275,8 +281,13 @@ export default {
      *  返回
      */
     back () {
-      // this.$router.go(-1)
-      this.$router.push({ path: '/battleReview' })
+      this.$router.go(-1)
+    },
+    /**
+     *  返回
+     */
+    play (isPlay) {
+      this.isPlay = isPlay
     },
     /**
      * 二维地图、三维地图切换
@@ -690,63 +701,79 @@ export default {
     height: 168px;
     box-sizing: border-box;
   }
-  .timeBox {
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-    position: absolute;
-    box-sizing: border-box;
+  .bar {
     left: 50%;
     transform: translateX(-50%);
     bottom: 0px;
     width: 1304px;
     height: 61px;
+    position: absolute;
     background: url("../../assets/images/fireBattle/time-box.png") no-repeat;
-    .time {
-      position: absolute;
-      left: 90px;
-      top: 15px;
-      width: 1124px;
-      height: 14px;
-      background: url("../../assets/images/fireBattle/time.png") no-repeat;
-    }
-    span:nth-child(1),
-    span:nth-child(2) {
-      font-size: 13px;
-      color: #d2d2d2;
-      position: absolute;
-      top: 33px;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    .play {
       display: inline-block;
-      width: 130px;
-      pointer-events: none;
-    }
-    span:nth-child(1) {
-      left: 46px;
-    }
-    span:nth-child(2) {
-      right: 46px;
-    }
-    span:nth-child(3) {
-      display: inline-block;
-      height: 17px;
-      width: 19px;
-      background: url("../../assets/images/fireBattle/pointer.png") no-repeat;
+      width: 99px;
+      height: 42px;
       position: absolute;
-      top: 3px;
-      left: 177px;
+      background: url("../../assets/images/fireBattle/play2.png") no-repeat;
+      left: -55px;
       cursor: pointer;
     }
-    span:nth-child(4) {
-      display: inline-block;
-      color: #f5fafd;
-      background: #00ccff;
-      border-radius: 2px;
-      position: absolute;
-      top: -16px;
-      left: 0px;
-      font-size: 12px;
-      padding: 0px 2px;
+    .pause {
+      background: url("../../assets/images/fireBattle/pause.png") no-repeat;
+    }
+    .timeBox {
+      box-sizing: border-box;
+      height: 100%;
+      width: 100%;
+      .time {
+        position: absolute;
+        left: 90px;
+        top: 15px;
+        width: 1124px;
+        height: 14px;
+        background: url("../../assets/images/fireBattle/time.png") no-repeat;
+      }
+      span:nth-child(1),
+      span:nth-child(2) {
+        font-size: 13px;
+        color: #d2d2d2;
+        position: absolute;
+        top: 33px;
+        display: inline-block;
+        width: 130px;
+        pointer-events: none;
+      }
+      span:nth-child(1) {
+        left: 46px;
+      }
+      span:nth-child(2) {
+        right: 46px;
+      }
+      span:nth-child(3) {
+        display: inline-block;
+        height: 17px;
+        width: 19px;
+        background: url("../../assets/images/fireBattle/pointer.png") no-repeat;
+        position: absolute;
+        top: 3px;
+        left: 177px;
+        cursor: pointer;
+      }
+      span:nth-child(4) {
+        display: inline-block;
+        color: #f5fafd;
+        background: #00ccff;
+        border-radius: 2px;
+        position: absolute;
+        top: -16px;
+        left: 0px;
+        font-size: 12px;
+        padding: 0px 2px;
+      }
     }
   }
   .fade-leave-to {
