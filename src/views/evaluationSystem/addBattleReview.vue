@@ -9,6 +9,30 @@
           <div style="margin-left:15px;margin-top:15px;">
             <div class="imgFlag"></div>
             <span class="titleText">火灾描述</span>
+            <el-popover
+              placement="bottom"
+              trigger="click"
+              popper-class="iconPopover"
+              v-model="showPopover"
+            >
+              <div class="selectBox">
+                <el-input placeholder="输入三维数据名称进行搜索"
+                          v-model="inputModelName"
+                          class="searchModel">
+                  <el-button @click="searchModel" slot="append" icon="el-icon-search"></el-button>
+                </el-input>
+                <div class="modelList webFsScroll">
+                  <div class="modelItem" v-for="item in modelList"
+                       :key="item.id"
+                       @click="selectModel(item)"
+                  >{{ item.name }}</div>
+                </div>
+              </div>
+              <div slot="reference" class="selectModel">
+                <div></div>
+                <div>{{ modelInfo.name }}</div>
+              </div>
+            </el-popover>
           </div>
           <div class="itemComm">
             <span style="margin-right:15px">火灾名称</span>
@@ -37,8 +61,13 @@
             </el-date-picker>
           </div>
           <div class="itemComm">
-            <span style="margin-right:15px">火灾描述</span>
-            <el-input v-model="fireData.fireDescribe" class="describeInputStyle baseInfoInput"></el-input>
+            <span style="margin-right:15px;vertical-align:top;">火灾描述</span>
+            <el-input type="textarea"
+                      resize="none"
+                      v-model="fireData.fireDescribe"
+                      maxlength="200"
+                      class="describeInputStyle"
+            ></el-input>
           </div>
           <div class="itemComm">
             <span style="margin-right:15px;vertical-align:top;">火灾地址</span>
@@ -82,6 +111,13 @@ export default {
   name: 'addBattle',
   data () {
     return {
+      showPopover: false,
+      inputModelName: '',
+      modelInfo: {
+        id: 1,
+        name: '高德红外园区三维'
+      },
+      modelList: [],
       bNext: false,
       fireList: [],
       fireData: {
@@ -110,6 +146,40 @@ export default {
         name: '孝感大森林火灾'
       }
     ]
+    this.modelList = [
+      {
+        id: 1,
+        name: '高德红外三维模型1'
+      },
+      {
+        id: 2,
+        name: '高德红外三维模型2'
+      },
+      {
+        id: 3,
+        name: '高德红外三维模型3'
+      },
+      {
+        id: 4,
+        name: '高德红外三维模型4'
+      },
+      {
+        id: 5,
+        name: '高德红外三维模型5'
+      },
+      {
+        id: 6,
+        name: '高德红外三维模型6'
+      },
+      {
+        id: 7,
+        name: '高德红外三维模型7'
+      },
+      {
+        id: 8,
+        name: '高德红外三维模型8'
+      }
+    ]
   },
   beforeDestroy () {
   },
@@ -119,6 +189,13 @@ export default {
     },
     addNext () {
       this.bNext = true
+    },
+    searchModel () {
+      console.log('searchModel:', this.inputModelName)
+    },
+    selectModel (info) {
+      this.modelInfo = info
+      this.showPopover = false
     }
   }
 }
@@ -185,6 +262,32 @@ export default {
           color: #FFFFFF;
           height: 16px;
           line-height: 16px;
+        }
+        .selectModel {
+          position: absolute;
+          right: 30px;
+          top: 16px;
+          height: 16px;
+          line-height: 16px;
+          cursor: pointer;
+          div:nth-child(1) {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: url("../../assets/images/fireBattle/modelLink.png")
+              no-repeat;
+          }
+          div:nth-child(2) {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 1px 0px;
+            font-size: 12px;
+            height: 16px;
+            line-height: 16px;
+            vertical-align: top;
+            background: #27BCE5;
+            border-radius: 2px;
+          }
         }
         .itemComm {
           margin-left:51px;
@@ -279,11 +382,20 @@ export default {
 
 .describeInputStyle {
   width: 590px;
-  height: 26px;
+  height: 52px;
+  /deep/ .el-textarea__inner {
+    height: 100%;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #27bce5;
+    color: #ffffff;
+    line-height: 26px;
+    overflow-y: hidden;
+  }
 }
 .fireMap {
   width: 590px;
-  height: 220px;
+  height: 200px;
   display: inline-block;
 }
 </style>
