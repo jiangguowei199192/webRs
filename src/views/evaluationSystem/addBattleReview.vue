@@ -28,7 +28,7 @@
                   >{{ item.name }}</div>
                 </div>
               </div>
-              <div slot="reference" class="selectModel">
+              <div slot="reference" class="selectModel" title="关联三维预案">
                 <div></div>
                 <div>{{ selectModelName }}</div>
               </div>
