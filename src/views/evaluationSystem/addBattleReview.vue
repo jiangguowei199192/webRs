@@ -71,6 +71,12 @@
           </div>
           <div class="itemComm">
             <span style="margin-right:15px;vertical-align:top;">火灾地址</span>
+            <el-input v-model="fireData.fireAddress"
+                      class="addressInputStyle baseInfoInput"
+            ></el-input>
+          </div>
+          <div class="itemComm">
+            <span style="margin-right:15px;vertical-align:top;">火灾经纬</span>
             <div class="fireMap">
               <gMap
                 ref="gduMap"
@@ -122,8 +128,9 @@ export default {
       fireList: [],
       fireData: {
         fireName: '',
-        dateRange: '',
+        dateRange: [new Date(2020, 12, 15, 16, 14, 52), new Date(2020, 12, 16, 16, 14, 52)],
         fireDescribe: '',
+        fireAddress: '',
         lonLat: '',
         vehicle: '',
         people: '',
@@ -393,9 +400,13 @@ export default {
     overflow-y: hidden;
   }
 }
+.addressInputStyle {
+  width: 590px;
+  height: 26px;
+}
 .fireMap {
   width: 590px;
-  height: 200px;
+  height: 160px;
   display: inline-block;
 }
 </style>
