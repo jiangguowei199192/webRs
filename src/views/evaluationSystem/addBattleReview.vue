@@ -34,74 +34,104 @@
               </div>
             </el-popover>
           </div>
-          <div class="itemComm">
-            <span style="margin-right:15px">火灾名称</span>
-            <el-select
-              :popper-append-to-body="false"
-              v-model="fireData.fireName"
-              placeholder="请选择火灾"
-              class="fireSelectStyle baseInfoInput"
-            >
-              <el-option
-                v-for="item in fireList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
-            </el-select>
-            <span style="margin-left:15px;margin-right:15px;">火灾时间</span>
-            <el-date-picker
-              v-model="fireData.dateRange"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              class="datePickerStyle baseInfoInput"
-            >
-            </el-date-picker>
-          </div>
-          <div class="itemComm">
-            <span style="margin-right:15px;vertical-align:top;">火灾描述</span>
-            <el-input type="textarea"
-                      resize="none"
-                      v-model="fireData.fireDescribe"
-                      maxlength="200"
-                      class="describeInputStyle"
-            ></el-input>
-          </div>
-          <div class="itemComm">
-            <span style="margin-right:15px;vertical-align:top;">火灾地址</span>
-            <el-input v-model="fireData.fireAddress"
-                      class="addressInputStyle baseInfoInput"
-            ></el-input>
-          </div>
-          <div class="itemComm">
-            <span style="margin-right:15px;vertical-align:top;">火灾经纬</span>
-            <div class="fireMap">
-              <gMap
-                ref="gduMap"
-                handleType="devMap"
-                :bShowSimpleSearchTools="true"
-                :bMiniSearchStyle="true"
-                :bShowBasic="false"
-                :bShowMeasure="false"
-                :bAutoLocate="false"
-                :bShowLonLat="false"
-              ></gMap>
+          <el-form
+            ref="addBattleRef"
+            :inline="true"
+            :model="fireData"
+            :rules="addBattleRules"
+          >
+            <div class="itemComm">
+              <span style="color:red;">*</span>
+              <span style="margin-right:15px">火灾名称</span>
+              <el-form-item prop="fireName">
+                <el-select
+                  :popper-append-to-body="false"
+                  v-model="fireData.fireName"
+                  placeholder="请选择火灾"
+                  class="fireSelectStyle baseInfoInput"
+                >
+                  <el-option
+                    v-for="item in fireList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+              <span style="margin-left:15px;color:red;">*</span>
+              <span style="margin-right:15px;">火灾时间</span>
+              <el-form-item prop="dateRange">
+                <el-date-picker
+                  v-model="fireData.dateRange"
+                  type="datetimerange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  class="datePickerStyle baseInfoInput"
+                ></el-date-picker>
+              </el-form-item>
             </div>
-          </div>
-          <div style="margin-left:15px;margin-top:25px;">
-            <div class="imgFlag"></div>
-            <span class="titleText">出勤总数</span>
-          </div>
-          <div class="itemComm">
-            <span style="margin-right:15px">出勤车辆</span>
-            <el-input v-model="fireData.vehicle" style="width:112px;" class="baseInfoInput"></el-input>
-            <span style="margin-left:40px;margin-right:15px">出勤人数</span>
-            <el-input v-model="fireData.people" style="width:112px;" class="baseInfoInput"></el-input>
-            <span style="margin-left:40px;margin-right:15px">出勤无人机</span>
-            <el-input v-model="fireData.drone" style="width:112px;" class="baseInfoInput"></el-input>
-          </div>
+            <div class="itemComm">
+              <span style="color:red;vertical-align:top;">*</span>
+              <span style="margin-right:15px;vertical-align:top;">火灾描述</span>
+              <el-form-item prop="fireDescribe">
+                <el-input type="textarea"
+                          resize="none"
+                          v-model="fireData.fireDescribe"
+                          maxlength="200"
+                          class="describeInputStyle"
+                ></el-input>
+              </el-form-item>
+            </div>
+            <div class="itemComm">
+              <span style="color:red;">*</span>
+              <span style="margin-right:15px;vertical-align:top;">火灾地址</span>
+              <el-form-item prop="fireAddress">
+                <el-input v-model="fireData.fireAddress"
+                          class="addressInputStyle baseInfoInput"
+                ></el-input>
+              </el-form-item>
+            </div>
+            <div class="itemComm">
+              <span style="color:red;vertical-align:top;">*</span>
+              <span style="margin-right:15px;vertical-align:top;">火灾经纬</span>
+              <el-form-item prop="lonLat">
+                <div class="fireMap">
+                  <gMap
+                    ref="gduMap"
+                    handleType="devMap"
+                    :bShowSimpleSearchTools="true"
+                    :bMiniSearchStyle="true"
+                    :bShowBasic="false"
+                    :bShowMeasure="false"
+                    :bAutoLocate="false"
+                    :bShowLonLat="false"
+                  ></gMap>
+                </div>
+              </el-form-item>
+            </div>
+            <div style="margin-left:15px;margin-top:25px;">
+              <div class="imgFlag"></div>
+              <span class="titleText">出勤总数</span>
+            </div>
+            <div class="itemComm">
+              <span style="color:red;">*</span>
+              <span style="margin-right:15px">出勤车辆</span>
+              <el-form-item prop="vehicle">
+                <el-input v-model="fireData.vehicle" style="width:112px;" class="baseInfoInput"></el-input>
+              </el-form-item>
+              <span style="margin-left:31px;color:red;">*</span>
+              <span style="margin-right:15px">出勤人数</span>
+              <el-form-item prop="people">
+                <el-input v-model="fireData.people" style="width:112px;" class="baseInfoInput"></el-input>
+              </el-form-item>
+              <span style="margin-left:31px;color:red;">*</span>
+              <span style="margin-right:15px">出勤无人机</span>
+              <el-form-item prop="drone">
+                <el-input v-model="fireData.drone" style="width:112px;" class="baseInfoInput"></el-input>
+              </el-form-item>
+            </div>
+          </el-form>
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
@@ -113,6 +143,7 @@
 </template>
 
 <script>
+import { isNotNull, limitLength } from '@/utils/validate'
 import commentStep2 from './commentStep2.vue'
 export default {
   name: 'addBattle',
@@ -136,6 +167,16 @@ export default {
         vehicle: '',
         people: '',
         drone: ''
+      },
+      addBattleRules: {
+        fireName: isNotNull('请输入火灾名称').concat(limitLength(1, 60)),
+        dateRange: isNotNull('请输入火灾时间'),
+        fireDescribe: isNotNull('请输入火灾描述'),
+        fireAddress: isNotNull('请输入火灾地址'),
+        lonLat: isNotNull('请点选火灾经纬度位置'),
+        vehicle: isNotNull('请输入总车辆'),
+        people: isNotNull('请输入总人数'),
+        drone: isNotNull('请输入总无人机数')
       }
     }
   },
@@ -208,7 +249,10 @@ export default {
       this.$router.push({ path: '/battleReview' })
     },
     addNext () {
-      this.bNext = true
+      this.$refs.addBattleRef.validate((valid) => {
+        if (!valid) return
+        this.bNext = true
+      })
     },
     searchModel () {
       console.log('searchModel:', this.inputModelName)
@@ -360,7 +404,7 @@ export default {
 }
 
 .fireSelectStyle {
-  width: 190px;
+  width: 179px;
   height: 26px;
   font-size: 16px;
 }
@@ -410,7 +454,7 @@ export default {
 }
 
 .describeInputStyle {
-  width: 590px;
+  width: 584px;
   height: 52px;
   /deep/ .el-textarea__inner {
     height: 100%;
@@ -423,12 +467,28 @@ export default {
   }
 }
 .addressInputStyle {
-  width: 590px;
+  width: 584px;
   height: 26px;
 }
 .fireMap {
-  width: 590px;
+  width: 584px;
   height: 160px;
   display: inline-block;
+}
+
+/deep/ .el-form--inline .el-form-item {
+  margin-right: 0px;
+}
+/deep/ .el-form-item {
+  margin-bottom: 0px;
+  .el-form-item__content {
+    line-height: 26px;
+    .el-input__inner {
+      border-color: #1daffb;
+    }
+    .el-form-item__error {
+      padding-top: 2px;
+    }
+  }
 }
 </style>
