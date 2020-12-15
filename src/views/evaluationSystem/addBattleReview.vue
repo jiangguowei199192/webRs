@@ -30,7 +30,7 @@
               </div>
               <div slot="reference" class="selectModel">
                 <div></div>
-                <div>{{ modelInfo.name }}</div>
+                <div>{{ selectModelName }}</div>
               </div>
             </el-popover>
           </div>
@@ -43,10 +43,9 @@
             <div class="itemComm">
               <span style="color:red;">*</span>
               <span style="margin-right:15px">火灾名称</span>
-              <el-form-item prop="fireName">
+              <el-form-item prop="fireId">
                 <el-select
-                  :popper-append-to-body="false"
-                  v-model="fireData.fireName"
+                  v-model="fireData.fireId"
                   placeholder="请选择火灾"
                   class="fireSelectStyle baseInfoInput"
                 >
@@ -151,28 +150,26 @@ export default {
     return {
       showPopover: false,
       inputModelName: '',
-      modelInfo: {
-        id: 1,
-        name: '高德红外园区三维'
-      },
+      selectModelName: '',
       modelList: [],
       bNext: false,
       fireList: [],
       fireData: {
-        fireName: '',
+        fireId: '',
         dateRange: [new Date(2020, 12, 15, 16, 14, 52), new Date(2020, 12, 16, 16, 14, 52)],
         fireDescribe: '',
         fireAddress: '',
         lonLat: '',
         vehicle: '',
         people: '',
-        drone: ''
+        drone: '',
+        modelId: ''
       },
       addBattleRules: {
-        fireName: isNotNull('请输入火灾名称').concat(limitLength(1, 60)),
+        fireId: isNotNull('请选择火灾名称'),
         dateRange: isNotNull('请输入火灾时间'),
         fireDescribe: isNotNull('请输入火灾描述'),
-        fireAddress: isNotNull('请输入火灾地址'),
+        fireAddress: isNotNull('请输入火灾地址').concat(limitLength(1, 60)),
         lonLat: isNotNull('请点选火灾经纬度位置'),
         vehicle: isNotNull('请输入总车辆'),
         people: isNotNull('请输入总人数'),
@@ -259,7 +256,8 @@ export default {
       console.log('searchModel:', this.inputModelName)
     },
     selectModel (info) {
-      this.modelInfo = info
+      this.selectModelName = info.name
+      this.fireData.modelId = info.id
       this.showPopover = false
     },
     getSelectedLocation () {
