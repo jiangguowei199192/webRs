@@ -27,11 +27,16 @@
                   :class="{active:!activity.readonly}"
                   @blur="inputBlur(index)"
                 ></el-input>
-                <span @click.stop="setEditMode(true,index)" :class="{disable:index !== activeStep}"></span>
+                <span
+                  @click.stop="setEditMode(true,index)"
+                  :class="{disable:index !== activeStep}"
+                  @mousedown="editMouseDown($event)"
+                ></span>
                 <span
                   v-show="!activity.timestamp"
                   @click.stop="showDatePicker(index)"
                   :class="{disable:index !== activeStep}"
+                  @mousedown="editMouseDown($event)"
                 ></span>
                 <span
                   v-show="activity.showDelete"
@@ -42,6 +47,7 @@
                   v-show="activity.timestamp"
                   @click.stop="showDatePicker(index)"
                   :class="{disable:index !== activeStep}"
+                  @mousedown="editMouseDown($event)"
                 >{{timeFormat2(activity.timestamp)}}</span>
                 <span class="num" @click.stop="activeStep=index"></span>
               </div>
@@ -185,35 +191,30 @@ export default {
           title: '发现火灾发现火灾发现',
           timestamp: '',
           readonly: true,
-          dateBlur: true,
           showDelete: false
         },
         {
           title: '',
           timestamp: '',
           readonly: true,
-          dateBlur: true,
           showDelete: false
         },
         {
           title: '',
           timestamp: '',
           readonly: true,
-          dateBlur: true,
           showDelete: false
         },
         {
           title: '',
           timestamp: '',
           readonly: true,
-          dateBlur: true,
           showDelete: false
         },
         {
           title: '',
           timestamp: '',
           readonly: true,
-          dateBlur: true,
           showDelete: false
         }
       ]
@@ -226,6 +227,12 @@ export default {
      */
     showDatePicker (index) {
       this.$refs.datepicker[index].focus()
+    },
+    /**
+     * 阻止编辑按钮按下时，input失去焦点
+     */
+    editMouseDown (event) {
+      event.preventDefault()
     },
     /**
      * 设置编辑模式
@@ -255,7 +262,6 @@ export default {
      * datePicker失去或获得焦点
      */
     datePickerBlur (isBlur, index) {
-      this.activities[index].dateBlur = isBlur
       if (isBlur) {
         this.showDeleteButton(index)
       }
@@ -289,7 +295,6 @@ export default {
         title: '',
         timestamp: '',
         readonly: true,
-        dateBlur: true,
         showDelete: false
       })
       this.activeStep = this.activities.length - 1
