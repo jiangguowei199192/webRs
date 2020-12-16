@@ -117,24 +117,44 @@
               <span style="color:red;">*</span>
               <span style="margin-right:15px">出勤车辆</span>
               <el-form-item prop="vehicle">
-                <el-input v-model="fireData.vehicle" style="width:112px;" class="baseInfoInput"></el-input>
+                <el-input type="number"
+                          v-model="fireData.vehicle"
+                          @blur="fireData.vehicle = onlyPositiveInt(fireData.vehicle)"
+                          style="width:112px;"
+                          class="baseInfoInput"
+                ></el-input>
               </el-form-item>
               <span style="margin-left:31px;color:red;">*</span>
               <span style="margin-right:15px">出勤人数</span>
               <el-form-item prop="people">
-                <el-input v-model="fireData.people" style="width:112px;" class="baseInfoInput"></el-input>
+                <el-input type="number"
+                          v-model="fireData.people"
+                          @blur="fireData.people = onlyPositiveInt(fireData.people)"
+                          style="width:112px;"
+                          class="baseInfoInput"
+                ></el-input>
               </el-form-item>
               <span style="margin-left:31px;color:red;">*</span>
               <span style="margin-right:15px">出勤无人机</span>
               <el-form-item prop="drone">
-                <el-input v-model="fireData.drone" style="width:112px;" class="baseInfoInput"></el-input>
+                <el-input type="number"
+                          v-model="fireData.drone"
+                          @blur="fireData.drone = onlyPositiveInt(fireData.drone)"
+                          style="width:112px;"
+                          class="baseInfoInput"
+                ></el-input>
               </el-form-item>
             </div>
             <div class="itemComm">
               <span style="color:red;">*</span>
               <span style="margin-right:15px">受灾面积</span>
               <el-form-item prop="area">
-                <el-input v-model="fireData.area" style="width:112px;" class="baseInfoInput"></el-input>
+                <el-input type="number"
+                          v-model="fireData.area"
+                          @blur="fireData.area = onlyPositiveFloat(fireData.area)"
+                          style="width:112px;"
+                          class="baseInfoInput"
+                ></el-input>
               </el-form-item>
             </div>
           </el-form>
@@ -268,6 +288,18 @@ export default {
       this.selectModelName = info.name
       this.fireData.modelId = info.id
       this.showPopover = false
+    },
+    onlyPositiveInt (value) {
+      if (value !== '' && value !== undefined && value !== null) {
+        const val = value
+        const newValue = val.toString().replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
+        return Math.abs(parseInt(newValue === '' ? 0 : newValue))
+      } else return ''
+    },
+    onlyPositiveFloat (value) {
+      if (value !== '' && value !== undefined && value !== null) {
+        return Math.abs(parseFloat(value))
+      } else return ''
     },
     getSelectedLocation () {
       const tmpMap = this.$refs.gduMap
