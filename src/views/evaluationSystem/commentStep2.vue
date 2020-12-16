@@ -70,7 +70,7 @@
       <div class="data">
         <div v-for="(item, index) in datas" :key="index">
           <span class="text">{{item.text}}</span>
-          <el-input v-model="item.value"></el-input>
+          <el-input v-model="item.value" type="number"></el-input>
         </div>
       </div>
       <div class="title" style="margin-top:0px">
