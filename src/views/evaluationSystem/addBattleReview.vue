@@ -130,6 +130,13 @@
                 <el-input v-model="fireData.drone" style="width:112px;" class="baseInfoInput"></el-input>
               </el-form-item>
             </div>
+            <div class="itemComm">
+              <span style="color:red;">*</span>
+              <span style="margin-right:15px">受灾面积</span>
+              <el-form-item prop="area">
+                <el-input v-model="fireData.area" style="width:112px;" class="baseInfoInput"></el-input>
+              </el-form-item>
+            </div>
           </el-form>
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
@@ -163,6 +170,7 @@ export default {
         vehicle: '',
         people: '',
         drone: '',
+        area: '',
         modelId: ''
       },
       addBattleRules: {
@@ -173,7 +181,8 @@ export default {
         lonLat: isNotNull('请点选火灾经纬度位置'),
         vehicle: isNotNull('请输入总车辆'),
         people: isNotNull('请输入总人数'),
-        drone: isNotNull('请输入总无人机数')
+        drone: isNotNull('请输入总无人机数'),
+        area: isNotNull('请输入受灾面积')
       }
     }
   },
@@ -374,7 +383,7 @@ export default {
           width: 87px;
           height: 32px;
           line-height: 32px;
-          bottom: 30px;
+          bottom: 16px;
           text-align: center;
           cursor: pointer;
         }
