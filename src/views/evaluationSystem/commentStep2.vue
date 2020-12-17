@@ -88,7 +88,7 @@
           <span>上传文件</span>
         </div>
         <span class="fileDesc">可上传文件和视频</span>
-        <span class="car"></span>
+        <span class="car" :style="{background: 'url('+ curIcon.path +') no-repeat'}"></span>
         <el-popover
           placement="top"
           trigger="click"
@@ -98,7 +98,7 @@
           <div class="iconBox">
             <span class="close" @click.stop="showPopover = false"></span>
             <span
-              @click.stop="selectIcon"
+              @click.stop="selectIcon(item)"
               class="icon"
               v-for="(item, index) in icons"
               :key="index"
@@ -130,6 +130,7 @@ export default {
       monthBg: '',
       monthEnd: '',
       describe: '',
+      curIcon: '',
       icons: [
         {
           path: require('../../assets/images/fireBattle/fire2.png')
@@ -302,11 +303,14 @@ export default {
     /**
      *  选择图标
      */
-    selectIcon () {
+    selectIcon (item) {
       this.showPopover = false
+      this.curIcon = item
     }
   },
-  created () {}
+  mounted () {
+    this.curIcon = this.icons[0]
+  }
 }
 </script>
 
@@ -473,6 +477,7 @@ export default {
           left: -100px;
           /deep/.el-input__inner {
             opacity: 0;
+            pointer-events: none;
           }
           /deep/.el-input__prefix {
             display: none;
@@ -584,7 +589,6 @@ export default {
         display: inline-block;
         height: 28px;
         width: 28px;
-        background: url("../../assets/images/fireBattle/jhc.png") no-repeat;
         margin-left: 70px;
       }
       .upload {
