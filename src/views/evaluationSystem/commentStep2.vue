@@ -16,6 +16,7 @@
                   @blur="datePickerBlur(true,index)"
                   @focus="datePickerBlur(false,index)"
                   :clearable="false"
+                  value-format="timestamp"
                 ></el-date-picker>
                 <el-input
                   ref="input"
@@ -33,7 +34,7 @@
                   @mousedown="editMouseDown($event)"
                 ></span>
                 <span
-                  v-show="!activity.timestamp"
+                  v-show="!activity.eventTime"
                   @click.stop="showDatePicker(index)"
                   :class="{disable:index !== activeStep}"
                   @mousedown="editMouseDown($event)"
@@ -70,7 +71,7 @@
       <div class="data">
         <div v-for="(item, index) in datas" :key="index">
           <span class="text">{{item.text}}</span>
-          <el-input v-model="item.value" type="number"></el-input>
+          <el-input v-model.number="item.value" type="number"></el-input>
         </div>
       </div>
       <div class="title" style="margin-top:0px">
@@ -87,7 +88,9 @@
           <span></span>
           <span>上传文件</span>
         </div>
-        <span class="fileDesc">{{ curFileName || defaultName}}</span>
+        <span
+          class="fileDesc"
+        >{{ (activities.length > 0 && activities[activeStep].fileName) || defaultName}}</span>
         <span class="car" :style="{background: 'url('+ curIcon.path +') no-repeat'}"></span>
         <el-popover
           placement="top"
@@ -114,7 +117,7 @@
       <input type="file" ref="uploadFile" style="display:none" @change="fileChange" />
       <div class="btns">
         <span @click.stop="$router.go(-1)">取消</span>
-        <span>完成</span>
+        <span @click.stop="submitEvent">完成</span>
       </div>
     </div>
   </div>
@@ -122,6 +125,8 @@
 
 <script>
 import { timeFormat2 } from '@/utils/date'
+import { battleApi } from '@/api/battle.js'
+import { stringIsNullOrEmpty } from '@/utils/validate'
 export default {
   data () {
     return {
@@ -129,7 +134,6 @@ export default {
       activeStep: 0,
       describe: '',
       curIcon: '',
-      curFileName: '',
       defaultName: '可上传文件和视频',
       icons: [
         {
@@ -199,6 +203,7 @@ export default {
         eventTime: '',
         readonly: true,
         showDelete: false,
+        fileName: '',
         eventFileUrl: '', // 文件URL
         attendancePeople: '', // 到达人数
         attendanceUav: '', // 到达无人机
@@ -208,10 +213,10 @@ export default {
         fireExtinguisher: '', // 灭火器
         foam: '', // 泡沫
         icon: '', // 图标
-        temperature: '', // 温度
         waterSource: '' // 水源
       },
-      activities: []
+      activities: [],
+      fileTypes: ['mp4', 'png', 'jpg', 'jpeg']
     }
   },
   props: {
@@ -254,14 +259,18 @@ export default {
      */
     deleteComment (index) {
       if (index < 5) {
-        this.activities[index].title = ''
-        this.activities[index].eventTime = ''
+        this.activities.splice(
+          index,
+          1,
+          JSON.parse(JSON.stringify(this.event))
+        )
+        this.setEventData(index)
         this.showDeleteButton(index)
       } else {
         this.activities.splice(index, 1)
         if (this.activeStep > this.activities.length - 1) {
           this.activeStep = this.activities.length - 1
-        }
+        } else this.setEventData(this.activeStep)
       }
     },
     /**
@@ -283,7 +292,10 @@ export default {
      * 显示删除按钮
      */
     showDeleteButton (index) {
-      if (this.activities[index].eventTime && this.activities[index].title) {
+      if (
+        this.activities[index].eventTime &&
+        this.activities[index].eventName
+      ) {
         this.activities[index].showDelete = true
       } else this.activities[index].showDelete = false
     },
@@ -314,12 +326,32 @@ export default {
     fileChange (e) {
       if (e.target.files.length <= 0) return
       const f = e.target.files[0]
-      this.curFileName = f.name
+      const fileType = (f.name.substring(f.name.lastIndexOf('.') + 1, f.name.length)).toLowerCase()
+      if (this.fileTypes.indexOf(fileType) === -1) {
+        this.$notify.closeAll()
+        this.$notify.warning({ title: '警告', message: '只能上传图片或者视频' })
+        return
+      }
+      this.activities[this.activeStep].fileName = f.name
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      const formData = new FormData()
+      formData.append('file', f)
+      this.$axios
+        .post(battleApi.combatEventUpload, formData, config)
+        .then(res => {
+          if (res.data.code === 0) {
+            this.activities[this.activeStep].eventFileUrl = res.data.data
+          }
+        })
+        .catch(err => {
+          console.log('combatUpload Err : ' + err)
+        })
     },
     /**
      *  设置事件的数据
      */
     setEventData (index) {
+      if (index >= this.activities.length) return
       const data = this.activities[index]
       for (var b in data) {
         const a = this.datas.find(a => a.type === b)
@@ -331,12 +363,66 @@ export default {
      *  缓存事件的数据
      */
     saveEventData (index) {
+      if (index >= this.activities.length) return
       const activity = this.activities[index]
       for (var b in activity) {
         const a = this.datas.find(a => a.type === b)
         if (a !== undefined) activity[b] = a.value
       }
       activity.eventDescription = this.describe
+    },
+    /**
+     *  提交事件
+     */
+    submitEvent () {
+      this.saveEventData(this.activeStep)
+      // 检查是否有未填写的内容
+      let valid = true
+      let i = 0
+      const data = []
+      for (; i < this.activities.length; i++) {
+        const ac = JSON.parse(JSON.stringify(this.activities[i]))
+        delete ac.readonly
+        delete ac.showDelete
+        delete ac.fileName
+        delete ac.icon
+        // 判断属性是否都不为空
+        const result = Object.values(ac).every(item => !stringIsNullOrEmpty(item))
+        if (result) {
+          ac.combatId = this.combatId
+          data.push(ac)
+        } else if (!Object.values(ac).every(item => stringIsNullOrEmpty(item))) {
+          // 属性不都为空
+          valid = false
+          break
+        }
+      }
+      if (!valid) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '步骤' + (i + 1) + '有未填写内容，请填写后保存'
+        })
+        return
+      }
+      if (data.length === 0) {
+        this.$notify.closeAll()
+        this.$notify.warning({ title: '警告', message: '请先填写步骤后保存' })
+        return
+      }
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
+      this.$axios
+        .post(battleApi.combatEventAdd, data, config)
+        .then(res => {
+          if (res.data.code === 0) {
+            this.$router.push({ path: '/battleReview' })
+          }
+        })
+        .catch(err => {
+          console.log('combatEventAdd Err : ' + err)
+        })
     }
   },
   mounted () {
