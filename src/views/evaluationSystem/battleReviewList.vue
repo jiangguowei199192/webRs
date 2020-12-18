@@ -12,43 +12,47 @@
       <div class="reviewList browserScroll">
         <div class="reviewItem" v-for="(item, index) in reviewList" :key="index">
           <div class="item">
-            <img class="img" :src="item.imgUrl"/>
+            <img class="img" :src="item.eventFileUrl"/>
             <div class="info1">
-              <div class="name">{{ item.name }}</div>
-              <div class="time">时间: {{ item.time }}</div>
-              <div class="address">地点: {{ item.address }}</div>
+              <div class="name">{{ item.fireName }}</div>
+              <div class="time">时间: {{ item.fireTimeStart }}</div>
+              <div class="address">地点: {{ item.fireAddress }}</div>
             </div>
             <div class="info2">
               <div class="infoCom">
                 <div class="img"><img src="../../assets/images/fireBattle/duration.png"/></div>
                 <div class="text">
                   <div class="title">作战时间</div>
-                  <div class="value">{{ item.duration }}</div>
+                  <div class="value">{{ item.durationStr }}</div>
                 </div>
               </div>
               <div class="infoCom">
                 <div class="img"><img src="../../assets/images/fireBattle/vehicle.png"/></div>
                 <div class="text">
                   <div class="title">出勤车辆</div>
-                  <div class="value">{{ item.vehicle }}辆</div>
+                  <div class="value">{{ item.attendanceVehicle }}辆</div>
                 </div>
               </div>
               <div class="infoCom">
                 <div class="img"><img src="../../assets/images/fireBattle/area.png"/></div>
                 <div class="text">
                   <div class="title">受灾面积</div>
-                  <div class="value">{{ item.area }}m²</div>
+                  <div class="value">{{ item.damageArea }}m²</div>
                 </div>
               </div>
               <div class="infoCom">
                 <div class="img"><img src="../../assets/images/fireBattle/people.png"/></div>
                 <div class="text">
                   <div class="title">出勤人数</div>
-                  <div class="value">{{ item.people }}人</div>
+                  <div class="value">{{ item.attendancePeople }}人</div>
                 </div>
               </div>
             </div>
-            <div class="show" @click="showReviewDetail(item)"></div>
+            <div class="show">
+              <div class="listBtn play" @click="showReviewDetail(item)"></div>
+              <div class="listBtn edit" @click="editBattleReview(item)"></div>
+              <div class="listBtn del" @click="delBattleReview(item)"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -70,6 +74,8 @@
 </template>
 
 <script>
+import { battleApi } from '@/api/battle'
+import globalApi from '@/utils/globalApi'
 export default {
   name: 'evaluation',
   data () {
@@ -88,113 +94,73 @@ export default {
   },
 
   mounted () {
-    this.reviewList = [
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道2222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      },
-      {
-        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607676053840&di=9d781057ef302167873578b29e28bd24&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F06%2F02%2F19300534106437134465026151672.jpg',
-        name: '*******大型火灾战评',
-        time: '2020-12-12',
-        address: '武昌区沙湖大道222号',
-        duration: '3h21min',
-        vehicle: 13,
-        area: 132,
-        people: 33
-      }
-    ]
+    this.getBattleReviewList()
   },
   beforeDestroy () {
 
   },
   methods: {
+    // 获取战评列表
+    getBattleReviewList () {
+      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+      this.$axios.post(battleApi.getBattleReviewList, this.reviewPageInfo, config).then(res => {
+        if (res.data.code === 0) {
+          if (res.data.code === 0 && res.data.data) {
+            const tmpDatas = res.data.data.records
+            tmpDatas.forEach(d => {
+              d.eventFileUrl = globalApi.headImg + d.eventFileUrl
+              if (d.damageArea === null) {
+                d.damageArea = 0
+              }
+              const tmpH = Math.floor(parseFloat(d.combatDuration) / 60)
+              const tmpM = Math.floor(parseFloat(d.combatDuration) % 60)
+              d.durationStr = ''
+              if (tmpH > 0) {
+                d.durationStr = tmpH + 'h'
+              }
+              if (tmpM > 0) {
+                d.durationStr += tmpM + 'm'
+              }
+              if (d.durationStr === '') {
+                d.durationStr = '0m'
+              }
+            })
+            console.log('getBattleReviewList:', tmpDatas)
+            this.reviewList = tmpDatas
+            this.reviewPageInfo.total = res.data.data.total
+          }
+        }
+      }).catch((error) => {
+        console.log('battleApi.getBattleReviewList Err : ' + error)
+      })
+    },
+    // 删除指定战评
+    delBattleReview (item) {
+      console.log('delBattleReview:', item)
+      if (item) {
+        return
+      }
+      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+      this.$axios.post(battleApi.deleteBattleReview, { id: item.id }, config).then(res => {
+        if (res.data.code === 0) {
+          const size = this.reviewList.length
+          for (let i = size - 1; i >= 0; i--) {
+            if (this.reviewList[i].id === item.id) {
+              this.reviewList.splice(i, 1)
+              break
+            }
+          }
+        } else {
+          console.log('delete failed : ', res)
+        }
+      }).catch((error) => {
+        console.log('battleApi.deleteBattleReview Err : ' + error)
+      })
+    },
+    // 编辑战评
+    editBattleReview (item) {
+      this.$router.push({ path: '/addBattleReview' })
+    },
     // 新增战评
     addBattleReview () {
       this.$router.push({ path: '/addBattleReview' })
@@ -264,7 +230,7 @@ export default {
       border: 1px solid #00CCFF;
       display: flex;
       flex-wrap: wrap;
-      justify-content: left;
+      align-content: flex-start;
       .reviewItem {
         margin: 32px 0px 0px 32px;
         width: 47%;
@@ -320,13 +286,30 @@ export default {
             }
           }
           .show {
-            margin-left: 46px;
-            margin-top: 32px;
-            width: 44px;
-            height: 44px;
-            background: url(../../assets/images/fireBattle/play.png) no-repeat;
-            background-size: 100% 100%;
-            cursor: pointer;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            margin-top: -4px;
+            margin-left: 24px;
+            .listBtn {
+              margin-top: 8px;
+              width: 28px;
+              height: 28px;
+              background-size: 100% 100%;
+              cursor: pointer;
+            }
+            .listBtn:active {
+              opacity: 0.8;
+            }
+            .play{
+              background: url(../../assets/images/fireBattle/listPlay.png) no-repeat;
+            }
+            .edit{
+              background: url(../../assets/images/fireBattle/listEdit.png) no-repeat;
+            }
+            .del{
+              background: url(../../assets/images/fireBattle/listDelete.png) no-repeat;
+            }
           }
         }
       }
