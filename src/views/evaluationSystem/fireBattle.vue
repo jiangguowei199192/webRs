@@ -197,6 +197,28 @@ export default {
     }
     this.setChartData()
     this.me = this
+
+    /* const tmpBattleData = {
+      id: 123,
+      coordinate: [114.261503, 30.633130],
+      _bWgs2Gcj: false,
+      angle: 0 * Math.PI / 180,
+      iconParams: {
+        anchor: [0.5, 0.5],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1608112539613&di=cda5ca25b72e0f1e536c82e9aa7c270d&imgtype=0&src=http%3A%2F%2Fa1.att.hudong.com%2F08%2F22%2F01300000242726125670225939875.jpg',
+        rotation: 0 * Math.PI / 180,
+        imgScale: 0.016 // 单位：米/Pixel    8米/500Pixel
+      }
+    }
+    this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker(tmpBattleData, { color: '#BCBCBC', width: 2 })
+    this.$refs.gduMap.map2D.zoomToCenter(114.261503, 30.633130)
+    this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker({ id: 123, coordinate: [114.262503, 30.634130], angle: 90 * Math.PI / 180 })
+    this.$refs.gduMap.map2D.battleReviewLayerManager.removeMarker({id:123})
+    this.$refs.gduMap.map2D.battleReviewLayerManager.removeAll()
+    this.$refs.gduMap.map2D.battleReviewLayerManager.setVisible(true)
+    this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false) */
   },
   beforeDestroy () {
     window.onresize = null
