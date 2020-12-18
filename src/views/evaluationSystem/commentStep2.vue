@@ -10,7 +10,7 @@
                   ref="datepicker"
                   class="date"
                   :class="{disable:index !== activeStep}"
-                  v-model="activity.timestamp"
+                  v-model="activity.eventTime"
                   type="datetime"
                   placeholder="选择日期时间"
                   @blur="datePickerBlur(true,index)"
@@ -21,7 +21,7 @@
                   ref="input"
                   :readonly="activity.readonly"
                   class="name"
-                  v-model="activity.title"
+                  v-model="activity.eventName"
                   placeholder="自定义事件"
                   maxlength="10"
                   :class="{active:!activity.readonly}"
@@ -44,11 +44,11 @@
                   :class="{disable:index !== activeStep}"
                 ></span>
                 <span
-                  v-show="activity.timestamp"
+                  v-show="activity.eventTime"
                   @click.stop="showDatePicker(index)"
                   :class="{disable:index !== activeStep}"
                   @mousedown="editMouseDown($event)"
-                >{{timeFormat2(activity.timestamp)}}</span>
+                >{{timeFormat2(activity.eventTime)}}</span>
                 <span class="num" @click.stop="activeStep=index"></span>
               </div>
             </template>
@@ -87,7 +87,7 @@
           <span></span>
           <span>上传文件</span>
         </div>
-        <span class="fileDesc">可上传文件和视频</span>
+        <span class="fileDesc">{{ curFileName || defaultName}}</span>
         <span class="car" :style="{background: 'url('+ curIcon.path +') no-repeat'}"></span>
         <el-popover
           placement="top"
@@ -111,7 +111,7 @@
           </div>
         </el-popover>
       </div>
-      <input type="file" ref="uploadFile" style="display:none" />
+      <input type="file" ref="uploadFile" style="display:none" @change="fileChange" />
       <div class="btns">
         <span @click.stop="$router.go(-1)">取消</span>
         <span>完成</span>
@@ -127,10 +127,10 @@ export default {
     return {
       showPopover: false,
       activeStep: 0,
-      monthBg: '',
-      monthEnd: '',
       describe: '',
       curIcon: '',
+      curFileName: '',
+      defaultName: '可上传文件和视频',
       icons: [
         {
           path: require('../../assets/images/fireBattle/fire2.png')
@@ -160,65 +160,70 @@ export default {
       datas: [
         {
           text: '出勤车辆',
-          value: ''
+          value: '',
+          type: 'attendanceVehicle'
         },
         {
           text: '出勤人数',
-          value: ''
+          value: '',
+          type: 'attendancePeople'
         },
         {
           text: '出勤无人机',
-          value: ''
+          value: '',
+          type: 'attendanceUav'
         },
         {
           text: '水源',
-          value: ''
+          value: '',
+          type: 'waterSource'
         },
         {
           text: '泡沫',
-          value: ''
+          value: '',
+          type: 'foam'
         },
         {
           text: '干粉',
-          value: ''
+          value: '',
+          type: 'dryPowder'
         },
         {
           text: '灭火器',
-          value: ''
+          value: '',
+          type: 'fireExtinguisher'
         }
       ],
-      activities: [
-        {
-          title: '发现火灾发现火灾发现',
-          timestamp: '',
-          readonly: true,
-          showDelete: false
-        },
-        {
-          title: '',
-          timestamp: '',
-          readonly: true,
-          showDelete: false
-        },
-        {
-          title: '',
-          timestamp: '',
-          readonly: true,
-          showDelete: false
-        },
-        {
-          title: '',
-          timestamp: '',
-          readonly: true,
-          showDelete: false
-        },
-        {
-          title: '',
-          timestamp: '',
-          readonly: true,
-          showDelete: false
-        }
-      ]
+      event: {
+        eventName: '',
+        eventTime: '',
+        readonly: true,
+        showDelete: false,
+        eventFileUrl: '', // 文件URL
+        attendancePeople: '', // 到达人数
+        attendanceUav: '', // 到达无人机
+        attendanceVehicle: '', // 到达车辆
+        dryPowder: '', // 干粉
+        eventDescription: '', // 描述
+        fireExtinguisher: '', // 灭火器
+        foam: '', // 泡沫
+        icon: '', // 图标
+        temperature: '', // 温度
+        waterSource: '' // 水源
+      },
+      activities: []
+    }
+  },
+  props: {
+    combatId: {
+      type: Number,
+      required: true
+    }
+  },
+  watch: {
+    activeStep (val, oldVal) {
+      this.saveEventData(oldVal)
+      this.setEventData(val)
     }
   },
   methods: {
@@ -250,7 +255,7 @@ export default {
     deleteComment (index) {
       if (index < 5) {
         this.activities[index].title = ''
-        this.activities[index].timestamp = ''
+        this.activities[index].eventTime = ''
         this.showDeleteButton(index)
       } else {
         this.activities.splice(index, 1)
@@ -278,7 +283,7 @@ export default {
      * 显示删除按钮
      */
     showDeleteButton (index) {
-      if (this.activities[index].timestamp && this.activities[index].title) {
+      if (this.activities[index].eventTime && this.activities[index].title) {
         this.activities[index].showDelete = true
       } else this.activities[index].showDelete = false
     },
@@ -292,12 +297,8 @@ export default {
      *  新增站评
      */
     addComment () {
-      this.activities.push({
-        title: '',
-        timestamp: '',
-        readonly: true,
-        showDelete: false
-      })
+      var clone = JSON.parse(JSON.stringify(this.event))
+      this.activities.push(clone)
       this.activeStep = this.activities.length - 1
     },
     /**
@@ -306,10 +307,45 @@ export default {
     selectIcon (item) {
       this.showPopover = false
       this.curIcon = item
+    },
+    /**
+     *  文件选择完毕
+     */
+    fileChange (e) {
+      if (e.target.files.length <= 0) return
+      const f = e.target.files[0]
+      this.curFileName = f.name
+    },
+    /**
+     *  设置事件的数据
+     */
+    setEventData (index) {
+      const data = this.activities[index]
+      for (var b in data) {
+        const a = this.datas.find(a => a.type === b)
+        if (a !== undefined) a.value = data[b]
+      }
+      this.describe = data.eventDescription
+    },
+    /**
+     *  缓存事件的数据
+     */
+    saveEventData (index) {
+      const activity = this.activities[index]
+      for (var b in activity) {
+        const a = this.datas.find(a => a.type === b)
+        if (a !== undefined) activity[b] = a.value
+      }
+      activity.eventDescription = this.describe
     }
   },
   mounted () {
     this.curIcon = this.icons[0]
+    for (let i = 0; i < 5; i++) {
+      var clone = JSON.parse(JSON.stringify(this.event))
+      this.activities.push(clone)
+    }
+    this.activities[0].eventName = '发现火情'
   }
 }
 </script>

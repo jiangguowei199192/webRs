@@ -161,8 +161,7 @@
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
-        <!-- <div class="battleEvents" v-show="bNext"></div> -->
-        <commentStep2 v-show="bNext"></commentStep2>
+        <commentStep2 v-show="bNext" :combatId="0"></commentStep2>
       </div>
     </div>
   </div>
