@@ -43,9 +43,9 @@
             <div class="itemComm">
               <span style="color:red;">*</span>
               <span style="margin-right:15px">火灾名称</span>
-              <el-form-item prop="fireId">
+              <el-form-item prop="fireItem">
                 <el-select
-                  v-model="fireData.fireId"
+                  v-model="fireData.fireItem"
                   placeholder="请选择火灾"
                   class="fireSelectStyle baseInfoInput"
                 >
@@ -53,7 +53,7 @@
                     v-for="item in fireList"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.id"
+                    :value="item"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -116,30 +116,30 @@
             <div class="itemComm">
               <span style="color:red;">*</span>
               <span style="margin-right:15px">出勤车辆</span>
-              <el-form-item prop="vehicle">
+              <el-form-item prop="attendanceVehicle">
                 <el-input type="number"
-                          v-model="fireData.vehicle"
-                          @blur="fireData.vehicle = onlyPositiveInt(fireData.vehicle)"
+                          v-model="fireData.attendanceVehicle"
+                          @blur="fireData.attendanceVehicle = onlyPositiveInt(fireData.attendanceVehicle)"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
               </el-form-item>
               <span style="margin-left:31px;color:red;">*</span>
               <span style="margin-right:15px">出勤人数</span>
-              <el-form-item prop="people">
+              <el-form-item prop="attendancePeople">
                 <el-input type="number"
-                          v-model="fireData.people"
-                          @blur="fireData.people = onlyPositiveInt(fireData.people)"
+                          v-model="fireData.attendancePeople"
+                          @blur="fireData.attendancePeople = onlyPositiveInt(fireData.attendancePeople)"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
               </el-form-item>
               <span style="margin-left:31px;color:red;">*</span>
               <span style="margin-right:15px">出勤无人机</span>
-              <el-form-item prop="drone">
+              <el-form-item prop="attendanceUav">
                 <el-input type="number"
-                          v-model="fireData.drone"
-                          @blur="fireData.drone = onlyPositiveInt(fireData.drone)"
+                          v-model="fireData.attendanceUav"
+                          @blur="fireData.attendanceUav = onlyPositiveInt(fireData.attendanceUav)"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
@@ -148,10 +148,10 @@
             <div class="itemComm">
               <span style="color:red;">*</span>
               <span style="margin-right:15px">受灾面积</span>
-              <el-form-item prop="area">
+              <el-form-item prop="damageArea">
                 <el-input type="number"
-                          v-model="fireData.area"
-                          @blur="fireData.area = onlyPositiveFloat(fireData.area)"
+                          v-model="fireData.damageArea"
+                          @blur="fireData.damageArea = onlyPositiveFloat(fireData.damageArea)"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
@@ -170,6 +170,8 @@
 <script>
 import { isNotNull, limitLength } from '@/utils/validate'
 import commentStep2 from './commentStep2.vue'
+import { battleApi } from '@/api/battle'
+import { timeFormat } from '@/utils/date'
 export default {
   name: 'addBattle',
   data () {
@@ -181,27 +183,35 @@ export default {
       bNext: false,
       fireList: [],
       fireData: {
+        fireItem: '',
         fireId: '',
-        dateRange: [new Date(2020, 12, 15, 16, 14, 52), new Date(2020, 12, 16, 16, 14, 52)],
+        fireName: '',
+        // dateRange: [new Date(), new Date()],
+        dateRange: '',
+        fireTimeStart: '',
+        fireTimeEnd: '',
         fireDescribe: '',
         fireAddress: '',
         lonLat: '',
-        vehicle: '',
-        people: '',
-        drone: '',
-        area: '',
-        modelId: ''
+        fireLongitude: '',
+        fireLatitude: '',
+        attendanceVehicle: '',
+        attendancePeople: '',
+        attendanceUav: '',
+        damageArea: '',
+        enterpriseId: '',
+        enterpriseName: ''
       },
       addBattleRules: {
-        fireId: isNotNull('请选择火灾名称'),
+        fireItem: isNotNull('请选择火灾名称'),
         dateRange: isNotNull('请输入火灾时间'),
         fireDescribe: isNotNull('请输入火灾描述'),
         fireAddress: isNotNull('请输入火灾地址').concat(limitLength(1, 60)),
         lonLat: isNotNull('请点选火灾经纬度位置'),
-        vehicle: isNotNull('请输入总车辆'),
-        people: isNotNull('请输入总人数'),
-        drone: isNotNull('请输入总无人机数'),
-        area: isNotNull('请输入受灾面积')
+        attendanceVehicle: isNotNull('请输入总车辆'),
+        attendancePeople: isNotNull('请输入总人数'),
+        attendanceUav: isNotNull('请输入总无人机数'),
+        damageArea: isNotNull('请输入受灾面积')
       }
     }
   },
@@ -213,6 +223,8 @@ export default {
     const tmpMap = this.$refs.gduMap.map2D
     tmpMap.clickEvent.addEventListener((lonlat) => {
       this.fireData.lonLat = lonlat
+      this.fireData.fireLongitude = lonlat[0]
+      this.fireData.fireLatitude = lonlat[1]
       const tmpName = this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
       tmpMap.customMarkerLayerManager.clear()
       tmpMap.customMarkerLayerManager.addMarker({
@@ -271,23 +283,73 @@ export default {
   beforeDestroy () {
   },
   methods: {
+    // 获取火灾列表
+    getFireCaseList () {
+      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+      this.$axios.post(battleApi.getFireCaseList, { }, config).then(res => {
+        if (res.data.code === 0) {
+          if (res.data.code === 0 && res.data.data) {
+            const tmpDatas = res.data.data
+            console.log('getFireCaseList:', tmpDatas)
+          }
+        }
+      }).catch((error) => {
+        console.log('battleApi.getFireCaseList Err : ' + error)
+      })
+    },
+    // 获取三维预案列表
+    getEnterpriseModelList () {
+      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+      this.$axios.post(battleApi.getEnterprise3dInfoList, { enterpriseName: '' }, config).then(res => {
+        if (res.data.code === 0) {
+          if (res.data.code === 0 && res.data.data) {
+            const tmpDatas = res.data.data
+            console.log('getEnterpriseModelList:', tmpDatas)
+          }
+        }
+      }).catch((error) => {
+        console.log('battleApi.getEnterprise3dInfoList Err : ' + error)
+      })
+    },
+    // 取消，回退到战评列表页面
     addCancel () {
       this.$router.push({ path: '/battleReview' })
     },
+    // 新增一个战评并显示新增事件页面
     addNext () {
       this.$refs.addBattleRef.validate((valid) => {
         if (!valid) return
-        this.bNext = true
+
+        this.fireData.fireId = this.fireData.fireItem.id
+        this.fireData.fireName = this.fireData.fireItem.name
+        this.fireData.fireTimeStart = timeFormat(this.fireData.dateRange[0])
+        this.fireData.fireTimeEnd = timeFormat(this.fireData.dateRange[1])
+        console.log('addNewBattleReview.fireData:', this.fireData)
+        const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+        this.$axios.post(battleApi.addNewBattleReview, this.fireData, config).then(res => {
+          if (res.data.code === 0) {
+            console.log('addNewBattleReview.Ok:', res)
+            this.bNext = true
+          } else {
+            console.log('addNewBattleReview.Err:', res)
+          }
+        }).catch((error) => {
+          console.log('battleApi.addNewBattleReview Err : ' + error)
+        })
       })
     },
+    // 搜索三维预案
     searchModel () {
       console.log('searchModel:', this.inputModelName)
     },
+    // 选择一个三维预案
     selectModel (info) {
       this.selectModelName = info.name
-      this.fireData.modelId = info.id
+      this.fireData.enterpriseId = info.id
+      this.fireData.enterpriseName = info.name
       this.showPopover = false
     },
+    // 限制输入框输入大于等于0的整数
     onlyPositiveInt (value) {
       if (value !== '' && value !== undefined && value !== null) {
         const val = value
@@ -295,11 +357,13 @@ export default {
         return Math.abs(parseInt(newValue === '' ? 0 : newValue))
       } else return ''
     },
+    // 限制输入框输入大于等于0的浮点数
     onlyPositiveFloat (value) {
       if (value !== '' && value !== undefined && value !== null) {
         return Math.abs(parseFloat(value))
       } else return ''
     },
+    // 获取地图中选择的经纬度，没有选择时返回null
     getSelectedLocation () {
       const tmpMap = this.$refs.gduMap
       const tmpFs = tmpMap.map2D.customMarkerLayerManager._source.getFeatures()

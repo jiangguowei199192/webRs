@@ -1,5 +1,6 @@
 export const battleApi = {
   getBattleReviewList: 'fms-one-map/combatAssessment/selectList',
+  getBattleReviewDetail: 'fms-one-map/combatAssessment/selectDetail',
   addNewBattleReview: 'fms-one-map/combatAssessment/add',
   updateBattleReview: 'fms-one-map/combatAssessment/update',
   deleteBattleReview: 'fms-one-map/combatAssessment/delete',
