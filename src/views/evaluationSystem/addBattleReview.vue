@@ -269,12 +269,25 @@ export default {
             this.$refs.gduMap.map2D.setZoom(16)
             this.$refs.gduMap.map2D.zoomToCenter(tmpData.fireLongitude, tmpData.fireLatitude)
             this.bIsEdit = true
-            console.log('getBattleReviewDetail:', this.fireData)
+            this.matchEnterpriseModel()
           }
         }
       }).catch((error) => {
         console.log('battleApi.getBattleReviewDetail Err : ' + error)
       })
+    },
+    // 编辑时匹配三维预案
+    matchEnterpriseModel () {
+      const tmpNum = this.modelList.length
+      if (this.fireData.enterpriseId !== '' && tmpNum > 0) {
+        for (let i = 0; i < tmpNum; i++) {
+          if (this.modelList[i].enterpriseId === this.fireData.enterpriseId) {
+            this.selectModelName = this.modelList[i].enterpriseName
+            this.fireData.enterpriseName = this.modelList[i].enterpriseName
+            break
+          }
+        }
+      }
     },
     // 获取火灾列表
     getFireCaseList () {
@@ -297,6 +310,7 @@ export default {
         if (res.data.code === 0) {
           if (res.data.code === 0 && res.data.data) {
             this.modelList = res.data.data
+            this.matchEnterpriseModel()
           }
         }
       }).catch((error) => {
