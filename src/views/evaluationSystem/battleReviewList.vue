@@ -106,6 +106,9 @@ export default {
   methods: {
     // 获取战评列表
     getBattleReviewList () {
+      this.reviewList.forEach(r => {
+        r.eventFileUrl = ''
+      })
       const config = {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' }
       }
