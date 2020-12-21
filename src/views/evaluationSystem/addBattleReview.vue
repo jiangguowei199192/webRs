@@ -23,9 +23,9 @@
                 </el-input>
                 <div class="modelList webFsScroll">
                   <div class="modelItem" v-for="item in modelList"
-                       :key="item.id"
+                       :key="item.enterpriseId"
                        @click="selectModel(item)"
-                  >{{ item.name }}</div>
+                  >{{ item.enterpriseName }}</div>
                 </div>
               </div>
               <div slot="reference" class="selectModel" title="关联三维预案">
@@ -245,40 +245,7 @@ export default {
         name: '孝感大森林火灾'
       }
     ]
-    this.modelList = [
-      {
-        id: 1,
-        name: '高德红外三维模型1'
-      },
-      {
-        id: 2,
-        name: '高德红外三维模型2'
-      },
-      {
-        id: 3,
-        name: '高德红外三维模型3'
-      },
-      {
-        id: 4,
-        name: '高德红外三维模型4'
-      },
-      {
-        id: 5,
-        name: '高德红外三维模型5'
-      },
-      {
-        id: 6,
-        name: '高德红外三维模型6'
-      },
-      {
-        id: 7,
-        name: '高德红外三维模型7'
-      },
-      {
-        id: 8,
-        name: '高德红外三维模型8'
-      }
-    ]
+    this.getEnterpriseModelList()
   },
   beforeDestroy () {
   },
@@ -298,13 +265,13 @@ export default {
       })
     },
     // 获取三维预案列表
-    getEnterpriseModelList () {
-      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
-      this.$axios.post(battleApi.getEnterprise3dInfoList, { enterpriseName: '' }, config).then(res => {
+    getEnterpriseModelList (name = '') {
+      this.modelList = []
+      this.$axios.post(battleApi.getEnterprise3dInfoList, { enterpriseName: name }).then(res => {
         if (res.data.code === 0) {
           if (res.data.code === 0 && res.data.data) {
-            const tmpDatas = res.data.data
-            console.log('getEnterpriseModelList:', tmpDatas)
+            this.modelList = res.data.data
+            console.log('getEnterpriseModelList:', this.modelList)
           }
         }
       }).catch((error) => {
@@ -340,13 +307,13 @@ export default {
     },
     // 搜索三维预案
     searchModel () {
-      console.log('searchModel:', this.inputModelName)
+      this.getEnterpriseModelList(this.inputModelName)
     },
     // 选择一个三维预案
     selectModel (info) {
-      this.selectModelName = info.name
-      this.fireData.enterpriseId = info.id
-      this.fireData.enterpriseName = info.name
+      this.selectModelName = info.enterpriseName
+      this.fireData.enterpriseId = info.enterpriseId
+      this.fireData.enterpriseName = info.enterpriseName
       this.showPopover = false
     },
     // 限制输入框输入大于等于0的整数
