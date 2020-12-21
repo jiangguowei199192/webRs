@@ -50,7 +50,7 @@
           oncontextmenu="return false"
           fluent
           :stretch="true"
-          :live="true"
+          :live="false"
           aspect="fullscreen"
           :poster="poster"
         ></LivePlayer>
@@ -183,7 +183,8 @@ export default {
       show3d: true, // 是否显示三维
       curEvent: '',
       imgPath: '',
-      videoUrl: ''
+      videoUrl: '',
+      poster: require('../../assets/images/loading.gif')
     }
   },
   components: {
