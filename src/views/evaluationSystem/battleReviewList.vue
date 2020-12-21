@@ -145,31 +145,36 @@ export default {
     },
     // 删除指定战评
     delBattleReview (item) {
-      console.log('delBattleReview:', item)
-      if (item) {
-        return
-      }
-      const config = {
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-      }
-      this.$axios
-        .post(battleApi.deleteBattleReview, { id: item.id }, config)
-        .then(res => {
-          if (res.data.code === 0) {
-            const size = this.reviewList.length
-            for (let i = size - 1; i >= 0; i--) {
-              if (this.reviewList[i].id === item.id) {
-                this.reviewList.splice(i, 1)
-                break
-              }
-            }
-          } else {
-            console.log('delete failed : ', res)
+      this.$confirm('确定要删除此战评吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false
+      })
+        .then(() => {
+          console.log('delBattleReview:', item)
+          const config = {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
           }
+          this.$axios
+            .post(battleApi.deleteBattleReview, { id: item.id }, config)
+            .then(res => {
+              if (res.data.code === 0) {
+                const size = this.reviewList.length
+                for (let i = size - 1; i >= 0; i--) {
+                  if (this.reviewList[i].id === item.id) {
+                    this.reviewList.splice(i, 1)
+                    break
+                  }
+                }
+              } else {
+                console.log('delete failed : ', res)
+              }
+            })
+            .catch(error => {
+              console.log('battleApi.deleteBattleReview Err : ' + error)
+            })
         })
-        .catch(error => {
-          console.log('battleApi.deleteBattleReview Err : ' + error)
-        })
+        .catch(() => {})
     },
     // 编辑战评
     editBattleReview (item) {
