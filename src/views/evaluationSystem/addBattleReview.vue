@@ -161,7 +161,7 @@
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
-        <commentStep2 v-show="bNext" :combatId="0"></commentStep2>
+        <commentStep2 v-show="bNext" :combatId="combatId"></commentStep2>
       </div>
     </div>
   </div>
@@ -176,6 +176,7 @@ export default {
   name: 'addBattle',
   data () {
     return {
+      combatId: 0,
       showPopover: false,
       inputModelName: '',
       selectModelName: '',
@@ -296,6 +297,7 @@ export default {
         this.$axios.post(battleApi.addNewBattleReview, this.fireData, config).then(res => {
           if (res.data.code === 0) {
             console.log('addNewBattleReview.Ok:', res)
+            this.combatId = res.data.data
             this.bNext = true
           } else {
             console.log('addNewBattleReview.Err:', res)

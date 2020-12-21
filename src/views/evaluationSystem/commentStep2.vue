@@ -50,7 +50,7 @@
                   :class="{disable:index !== activeStep}"
                   @mousedown="editMouseDown($event)"
                 >{{timeFormat2(activity.eventTime)}}</span>
-                <span class="num" @click.stop="activeStep=index"></span>
+                <span class="num" @click.stop="stepNumClick(index)"></span>
               </div>
             </template>
           </el-step>
@@ -91,7 +91,7 @@
         <span
           class="fileDesc"
         >{{ (activities.length > 0 && activities[activeStep].fileName) || defaultName}}</span>
-        <span class="car" :style="{background: 'url('+ curIcon.path +') no-repeat'}"></span>
+        <span class="car" :style="{background: 'url('+ serverUrl + curIcon +') no-repeat'}"></span>
         <el-popover
           placement="top"
           trigger="click"
@@ -105,7 +105,7 @@
               class="icon"
               v-for="(item, index) in icons"
               :key="index"
-              :style="{background: 'url('+ item.path +') no-repeat'}"
+              :style="{background: 'url('+ serverUrl + item.path +') no-repeat'}"
             ></span>
           </div>
           <div slot="reference" class="upload uploadIcon">
@@ -127,6 +127,7 @@
 import { timeFormat2 } from '@/utils/date'
 import { battleApi } from '@/api/battle.js'
 import { stringIsNullOrEmpty } from '@/utils/validate'
+import globalApi from '@/utils/globalApi'
 export default {
   data () {
     return {
@@ -135,30 +136,31 @@ export default {
       describe: '',
       curIcon: '',
       defaultName: '可上传文件和视频',
+      serverUrl: globalApi.headImg,
       icons: [
         {
-          path: require('../../assets/images/fireBattle/fire2.png')
+          path: '/cloud-oneMap/combatEvent/1608349933941_1608349933941.png'
         },
         {
-          path: require('../../assets/images/fireBattle/kzhq.png')
+          path: '/cloud-oneMap/combatEvent/1608350408597_1608350408597.png'
         },
         {
-          path: require('../../assets/images/fireBattle/zddc.png')
+          path: '/cloud-oneMap/combatEvent/1608350573010_1608350573010.png'
         },
         {
-          path: require('../../assets/images/fireBattle/pyjr.png')
+          path: '/cloud-oneMap/combatEvent/1608350504537_1608350504537.png'
         },
         {
-          path: require('../../assets/images/fireBattle/vehicle.png')
+          path: '/cloud-oneMap/combatEvent/1608350546000_1608350546000.png'
         },
         {
-          path: require('../../assets/images/fireBattle/jhc.png')
+          path: '/cloud-oneMap/combatEvent/1608350378214_1608350378214.png'
         },
         {
-          path: require('../../assets/images/fireBattle/nbss.png')
+          path: '/cloud-oneMap/combatEvent/1608350440076_1608350440076.png'
         },
         {
-          path: require('../../assets/images/fireBattle/default.png')
+          path: '/cloud-oneMap/combatEvent/1608350478586_1608350478586.png'
         }
       ],
       datas: [
@@ -243,6 +245,7 @@ export default {
      * 阻止编辑按钮按下时，input失去焦点
      */
     editMouseDown (event) {
+      this.showPopover = false
       event.preventDefault()
     },
     /**
@@ -258,6 +261,7 @@ export default {
      * 删除战评
      */
     deleteComment (index) {
+      this.showPopover = false
       if (index < 5) {
         this.activities.splice(
           index,
@@ -309,6 +313,7 @@ export default {
      *  新增站评
      */
     addComment () {
+      this.showPopover = false
       var clone = JSON.parse(JSON.stringify(this.event))
       this.activities.push(clone)
       this.activeStep = this.activities.length - 1
@@ -318,7 +323,7 @@ export default {
      */
     selectIcon (item) {
       this.showPopover = false
-      this.curIcon = item
+      this.curIcon = item.path
     },
     /**
      *  文件选择完毕
@@ -326,10 +331,15 @@ export default {
     fileChange (e) {
       if (e.target.files.length <= 0) return
       const f = e.target.files[0]
-      const fileType = (f.name.substring(f.name.lastIndexOf('.') + 1, f.name.length)).toLowerCase()
+      const fileType = f.name
+        .substring(f.name.lastIndexOf('.') + 1, f.name.length)
+        .toLowerCase()
       if (this.fileTypes.indexOf(fileType) === -1) {
         this.$notify.closeAll()
-        this.$notify.warning({ title: '警告', message: '只能上传图片或者视频' })
+        this.$notify.warning({
+          title: '警告',
+          message: '只能上传图片或者视频'
+        })
         return
       }
       this.activities[this.activeStep].fileName = f.name
@@ -348,6 +358,13 @@ export default {
         })
     },
     /**
+     *  点击步骤
+     */
+    stepNumClick (index) {
+      this.activeStep = index
+      this.showPopover = false
+    },
+    /**
      *  设置事件的数据
      */
     setEventData (index) {
@@ -358,6 +375,7 @@ export default {
         if (a !== undefined) a.value = data[b]
       }
       this.describe = data.eventDescription
+      this.curIcon = data.icon
     },
     /**
      *  缓存事件的数据
@@ -370,6 +388,7 @@ export default {
         if (a !== undefined) activity[b] = a.value
       }
       activity.eventDescription = this.describe
+      activity.icon = this.curIcon
     },
     /**
      *  提交事件
@@ -385,13 +404,16 @@ export default {
         delete ac.readonly
         delete ac.showDelete
         delete ac.fileName
-        delete ac.icon
         // 判断属性是否都不为空
-        const result = Object.values(ac).every(item => !stringIsNullOrEmpty(item))
+        const result = Object.values(ac).every(
+          item => !stringIsNullOrEmpty(item)
+        )
         if (result) {
           ac.combatId = this.combatId
           data.push(ac)
-        } else if (!Object.values(ac).every(item => stringIsNullOrEmpty(item))) {
+        } else if (
+          !Object.values(ac).every(item => stringIsNullOrEmpty(item))
+        ) {
           // 属性不都为空
           valid = false
           break
@@ -426,7 +448,8 @@ export default {
     }
   },
   mounted () {
-    this.curIcon = this.icons[0]
+    this.curIcon = this.icons[0].path
+    this.event.icon = this.icons[0].path
     for (let i = 0; i < 5; i++) {
       var clone = JSON.parse(JSON.stringify(this.event))
       this.activities.push(clone)
