@@ -179,11 +179,11 @@ export default {
           value: '',
           type: 'attendanceUav'
         },
-        {
-          text: '水源',
-          value: '',
-          type: 'waterSource'
-        },
+        // {
+        //   text: '水源',
+        //   value: '',
+        //   type: 'waterSource'
+        // },
         {
           text: '泡沫',
           value: '',

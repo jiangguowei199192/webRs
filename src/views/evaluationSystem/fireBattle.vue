@@ -1,6 +1,11 @@
 <template>
   <div class="battleBox" :style="'height:'+fullHeight+'px;'">
-    <div class="marsBox" :class="{marsBoxSmallScreen:fullscreenMap}" @dblclick.capture="masDbClick" v-show="show3d">
+    <div
+      class="marsBox"
+      :class="{marsBoxSmallScreen:fullscreenMap}"
+      @dblclick.capture="masDbClick"
+      v-show="show3d"
+    >
       <Map :url="configUrl" :showOpenAnimation="false" :showCompass="false" @onload="onMapload" />
     </div>
     <div class="mapBox" :class="{mapBoxFullScreen:fullscreenMap}">
@@ -17,8 +22,13 @@
       </div>
     </div>
     <div class="list webFsScroll">
-      <div v-for="(item,index) in combatEvents" :key="index" :class="{active:activeIndex==index}">
-        <span :style="{background: 'url('+ serverUrl + item.icon +') no-repeat'}"></span>
+      <div
+        v-for="(item,index) in combatEvents"
+        :key="index"
+        :class="{active:activeIndex==index}"
+        @click="changeEvent(index)"
+      >
+        <span :style="{background: 'url('+ serverUrl + item.icon +')'}"></span>
         <span></span>
         <span>{{item.eventName}}</span>
       </div>
@@ -26,10 +36,25 @@
     <div class="describeBox">
       <div class="title">
         <span></span>
-        <span>第一阶段</span>
+        <span>{{curEvent.eventName}}</span>
       </div>
-      <span class="txt">现场发现起火后，保安人员立即使用灭火器和室内消防栓系统灭火，向119指挥中心报警，同时疏散现场观众</span>
-      <span class="img"></span>
+      <span class="txt">{{curEvent.eventDescription}}</span>
+      <img class="img" :src="serverUrl + imgPath" v-show="imgPath"/>
+      <div class="playerBox" v-show="videoUrl">
+        <LivePlayer
+          :videoUrl="videoUrl"
+          :show-custom-button="false"
+          :muted="false"
+          :controls="false"
+          :autoplay="true"
+          oncontextmenu="return false"
+          fluent
+          :stretch="true"
+          :live="true"
+          aspect="fullscreen"
+          :poster="poster"
+        ></LivePlayer>
+      </div>
     </div>
     <span class="ball"></span>
     <div class="titleBox">
@@ -57,7 +82,7 @@
             </div>
             <div>
               <span>未到</span>
-              <span class="redTxt">1辆</span>
+              <span class="redTxt">{{unCar}}辆</span>
             </div>
           </div>
         </li>
@@ -70,7 +95,7 @@
             </div>
             <div>
               <span>未到</span>
-              <span class="redTxt">11人</span>
+              <span class="redTxt">{{unPeople}}人</span>
             </div>
           </div>
         </li>
@@ -83,7 +108,7 @@
             </div>
             <div>
               <span>未到</span>
-              <span class="redTxt">2架</span>
+              <span class="redTxt">{{unUav}}架</span>
             </div>
           </div>
         </li>
@@ -125,6 +150,7 @@
 import Map from '../decisionSystem/components/marsMap.vue'
 import { timeFormat } from '@/utils/date'
 import globalApi from '@/utils/globalApi'
+import LivePlayer from '@liveqing/liveplayer'
 var mars3d = window.mars3d
 export default {
   name: 'evaluation',
@@ -147,15 +173,22 @@ export default {
       people: 0,
       uav: 0,
       car: 0,
+      unPeople: 0, // 未到人数
+      unUav: 0, // 未到无人机
+      unCar: 0, // 未到车辆
       fireName: '',
       duration: 0,
       combatEvents: [],
       serverUrl: globalApi.headImg,
-      show3d: true// 是否显示三维
+      show3d: true, // 是否显示三维
+      curEvent: '',
+      imgPath: '',
+      videoUrl: ''
     }
   },
   components: {
-    Map
+    Map,
+    LivePlayer
   },
   // 注册局部组件指令
   directives: {
@@ -197,6 +230,7 @@ export default {
     }
   },
   mounted () {
+    this.initChartData()
     this.setBattleInitData()
     this.getDragParam()
     this.setMapHeight()
@@ -205,7 +239,6 @@ export default {
       me.setMapHeight()
       me.getDragParam()
     }
-    this.setChartData()
     this.me = this
 
     /* const tmpBattleData = {
@@ -309,7 +342,9 @@ export default {
     onMapload (viewer) {
       this.viewer = viewer
       if (this.show3d) {
-        const url = globalApi.headImg + this.$route.query.detail.planEnterpriseInfo3d.modelPath
+        const url =
+          globalApi.headImg +
+          this.$route.query.detail.planEnterpriseInfo3d.modelPath
         var layercfg = {
           type: '3dtiles',
           name: '国博',
@@ -363,6 +398,60 @@ export default {
       this.changeMap()
     },
     /**
+     * 切换事件
+     */
+    changeEvent (index) {
+      this.activeIndex = index
+      this.setEventData(this.combatEvents[index])
+    },
+    /**
+     * 设置战评事件数据
+     */
+    setEventData (event) {
+      // const data = [
+      //   event.waterSource,
+      //   event.foam,
+      //   event.dryPowder,
+      //   event.fireExtinguisher
+      // ]
+      // const option = {
+      //   series: [
+      //     {
+      //       name: 'pictorialBar1',
+      //       data: data
+      //     },
+      //     {
+      //       name: 'pictorialBar2',
+      //       data: data
+      //     },
+      //     {
+      //       name: 'bar',
+      //       data: data
+      //     }
+      //   ]
+      // }
+      // const mainChart = this.$echarts.init(document.getElementById('chart'))
+      // mainChart.setOption(option)
+      this.curEvent = event
+      const file = event.eventFileUrl
+      this.unCar =
+        this.car >= event.attendanceVehicle
+          ? this.car - event.attendanceVehicle
+          : 0
+      this.unPeople =
+        this.people >= event.attendancePeople
+          ? this.people - event.attendancePeople
+          : 0
+      this.unUav =
+        this.uav >= event.attendanceUav ? this.uav - event.attendanceUav : 0
+      const fileType = file
+        .substring(file.lastIndexOf('.') + 1, file.length)
+        .toLowerCase()
+      if (fileType === 'mp4') {
+        this.videoUrl = this.serverUrl + file
+      } else this.imgPath = file
+    },
+    /**
      * 设置战评初始数据
      */
     setBattleInitData () {
@@ -374,18 +463,21 @@ export default {
       this.timeStart = new Date(detail.fireTimeStart).getTime()
       this.timeEnd = new Date(detail.fireTimeEnd).getTime()
       this.duration = this.$route.query.duration
-      if (detail.combatEventList) this.combatEvents = detail.combatEventList
+      if (detail.combatEventList && detail.combatEventList.length > 0) {
+        this.combatEvents = detail.combatEventList
+        this.changeEvent(0)
+      }
       // 没有三维预案，只显示二维地图
       if (!detail.planEnterpriseInfo3d) {
         this.show3d = false
         this.changeMap()
       }
-      // console.log(detail)
+      console.log(detail)
     },
     /**
-     *  设置图表数据
+     *  初始化图表数据
      */
-    setChartData () {
+    initChartData () {
       const lineStyle = {
         color: '#27bce5',
         width: 1,
@@ -396,7 +488,7 @@ export default {
         color: '#27BCE5',
         fontSize: 14
       }
-      const data = [45, 18, 10, 43]
+      const data = [0, 0, 0, 0]
       const mainChart = this.$echarts.init(document.getElementById('chart'))
       const option = {
         tooltip: {},
@@ -472,7 +564,8 @@ export default {
               }
             },
             symbolPosition: 'end',
-            data: data
+            data: data,
+            name: 'pictorialBar1'
           },
           {
             type: 'pictorialBar',
@@ -488,7 +581,8 @@ export default {
                 color: '#289bba'
               }
             },
-            data: data
+            data: data,
+            name: 'pictorialBar2'
           },
           {
             type: 'bar',
@@ -504,7 +598,8 @@ export default {
             // 图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件
             silent: false,
             barWidth: 23,
-            data: [43, 16, 8, 41]
+            data: [0, 0, 0, 0],
+            name: 'bar'
           }
         ]
       }
@@ -578,13 +673,19 @@ export default {
     .txt {
       font-size: 14px;
       line-height: 24px;
+      height: 72px;
     }
     .img {
       margin-top: 10px;
       display: inline-block;
       width: 293px;
       height: 170px;
-      background-image: url("../../assets/images/fireBattle/layer.png");
+    }
+    .playerBox {
+      margin-top: 10px;
+      width: 293px;
+      height: 170px;
+      position: relative;
     }
   }
   .ball {
