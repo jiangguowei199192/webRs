@@ -1,6 +1,6 @@
 <template>
   <div class="battleBox" :style="'height:'+fullHeight+'px;'">
-    <div class="marsBox" :class="{marsBoxSmallScreen:fullscreenMap}" @dblclick.capture="masDbClick">
+    <div class="marsBox" :class="{marsBoxSmallScreen:fullscreenMap}" @dblclick.capture="masDbClick" v-show="show3d">
       <Map :url="configUrl" :showOpenAnimation="false" :showCompass="false" @onload="onMapload" />
     </div>
     <div class="mapBox" :class="{mapBoxFullScreen:fullscreenMap}">
@@ -125,6 +125,7 @@
 import Map from '../decisionSystem/components/marsMap.vue'
 import { timeFormat } from '@/utils/date'
 import globalApi from '@/utils/globalApi'
+var mars3d = window.mars3d
 export default {
   name: 'evaluation',
   data () {
@@ -149,7 +150,8 @@ export default {
       fireName: '',
       duration: 0,
       combatEvents: [],
-      serverUrl: globalApi.headImg
+      serverUrl: globalApi.headImg,
+      show3d: true// 是否显示三维
     }
   },
   components: {
@@ -306,6 +308,24 @@ export default {
      */
     onMapload (viewer) {
       this.viewer = viewer
+      if (this.show3d) {
+        const url = globalApi.headImg + this.$route.query.detail.planEnterpriseInfo3d.modelPath
+        var layercfg = {
+          type: '3dtiles',
+          name: '国博',
+          url: url,
+          maximumScreenSpaceError: 1,
+          maximumMemoryUsage: 8192,
+          offset: { z: -4 },
+          dynamicScreenSpaceError: true,
+          cullWithChildrenBounds: false,
+          luminanceAtZenith: 0.6
+        }
+        layercfg.visible = true
+        layercfg.flyTo = true
+        this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
+        this.layerModel.centerAt()
+      }
     },
     /**
      *  返回
@@ -351,12 +371,16 @@ export default {
       this.people = detail.attendancePeople
       this.uav = detail.attendanceUav
       this.fireName = detail.fireName
-      this.timeStart = new Date(detail.fireTimeStart)
-      this.timeEnd = new Date(detail.fireTimeEnd)
+      this.timeStart = new Date(detail.fireTimeStart).getTime()
+      this.timeEnd = new Date(detail.fireTimeEnd).getTime()
       this.duration = this.$route.query.duration
       if (detail.combatEventList) this.combatEvents = detail.combatEventList
-      else this.combatEvents = []
-      console.log(detail)
+      // 没有三维预案，只显示二维地图
+      if (!detail.planEnterpriseInfo3d) {
+        this.show3d = false
+        this.changeMap()
+      }
+      // console.log(detail)
     },
     /**
      *  设置图表数据

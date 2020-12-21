@@ -133,7 +133,7 @@ export default {
                   d.durationStr = '0m'
                 }
               })
-              console.log('getBattleReviewList:', tmpDatas)
+              // console.log('getBattleReviewList:', tmpDatas)
               this.reviewList = tmpDatas
               this.reviewPageInfo.total = res.data.data.total
             }
@@ -206,14 +206,14 @@ export default {
     // 每页显示记录改变
     handleSizeChange (val) {
       this.reviewPageInfo.pageSize = val
-      console.log(`reviewCurrentPageChange.pageSize: ${val}`)
+      // console.log(`reviewCurrentPageChange.pageSize: ${val}`)
       // get selected page info ...
       this.getBattleReviewList()
     },
     // 列表页面改变
     reviewCurrentPageChange (val) {
       this.reviewPageInfo.currentPage = val
-      console.log(`reviewCurrentPageChange.currentPage: ${val}`)
+      // console.log(`reviewCurrentPageChange.currentPage: ${val}`)
       // get selected page info ...
       this.getBattleReviewList()
     }
