@@ -43,11 +43,13 @@
             <div class="itemComm">
               <span style="color:red;">*</span>
               <span style="margin-right:15px">火灾名称</span>
-              <el-form-item prop="fireItem">
+              <el-form-item prop="fireName">
                 <el-select
-                  v-model="fireData.fireItem"
+                  v-model="fireData.fireName"
                   placeholder="请选择火灾"
                   class="fireSelectStyle baseInfoInput"
+                  :disabled="bIsEdit"
+                  @change="selectFire"
                 >
                   <el-option
                     v-for="item in fireList"
@@ -73,10 +75,10 @@
             <div class="itemComm">
               <span style="color:red;vertical-align:top;">*</span>
               <span style="margin-right:15px;vertical-align:top;">火灾描述</span>
-              <el-form-item prop="fireDescribe">
+              <el-form-item prop="fireDescription">
                 <el-input type="textarea"
                           resize="none"
-                          v-model="fireData.fireDescribe"
+                          v-model="fireData.fireDescription"
                           maxlength="200"
                           class="describeInputStyle"
                 ></el-input>
@@ -177,6 +179,7 @@ export default {
   data () {
     return {
       combatId: 0,
+      bIsEdit: false,
       showPopover: false,
       inputModelName: '',
       selectModelName: '',
@@ -184,14 +187,13 @@ export default {
       bNext: false,
       fireList: [],
       fireData: {
-        fireItem: '',
-        fireId: '',
+        fireNo: '',
         fireName: '',
         // dateRange: [new Date(), new Date()],
         dateRange: '',
         fireTimeStart: '',
         fireTimeEnd: '',
-        fireDescribe: '',
+        fireDescription: '',
         fireAddress: '',
         lonLat: '',
         fireLongitude: '',
@@ -204,37 +206,35 @@ export default {
         enterpriseName: ''
       },
       addBattleRules: {
-        fireItem: isNotNull('请选择火灾名称'),
+        fireName: isNotNull('请选择火灾名称'),
         dateRange: isNotNull('请输入火灾时间'),
-        fireDescribe: isNotNull('请输入火灾描述'),
+        fireDescription: isNotNull('请输入火灾描述'),
         fireAddress: isNotNull('请输入火灾地址').concat(limitLength(1, 60)),
         lonLat: isNotNull('请点选火灾经纬度位置'),
         attendanceVehicle: isNotNull('请输入总车辆'),
         attendancePeople: isNotNull('请输入总人数'),
         attendanceUav: isNotNull('请输入总无人机数'),
         damageArea: isNotNull('请输入受灾面积')
-      }
+      },
+      jumpReviewId: '' // 此id有值时表示要编辑战评
     }
   },
   components: {
     commentStep2
   },
-
+  watch: {
+    $route: {
+      deep: true,
+      immediate: true,
+      handler () {
+        this.jumpReviewId = this.$route.query.id
+        console.log('jumpReviewId:', this.jumpReviewId)
+      }
+    }
+  },
   mounted () {
     const tmpMap = this.$refs.gduMap.map2D
-    tmpMap.clickEvent.addEventListener((lonlat) => {
-      this.fireData.lonLat = lonlat
-      this.fireData.fireLongitude = lonlat[0]
-      this.fireData.fireLatitude = lonlat[1]
-      const tmpName = this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
-      tmpMap.customMarkerLayerManager.clear()
-      tmpMap.customMarkerLayerManager.addMarker({
-        name: tmpName,
-        lon: lonlat[0],
-        lat: lonlat[1],
-        _bWgs2Gcj: false
-      })
-    })
+    tmpMap.clickEvent.addEventListener(this.mapClickCallback.bind(this))
 
     this.fireList = [
       {
@@ -247,10 +247,35 @@ export default {
       }
     ]
     this.getEnterpriseModelList()
+    this.getBattleReviewDetail()
   },
   beforeDestroy () {
   },
   methods: {
+    // 获取战评详情
+    getBattleReviewDetail () {
+      if (this.jumpReviewId === '' || this.jumpReviewId === undefined) {
+        return
+      }
+
+      this.$axios.post(battleApi.getBattleReviewDetail, { id: this.jumpReviewId }).then(res => {
+        if (res.data.code === 0) {
+          if (res.data.code === 0 && res.data.data) {
+            const tmpData = res.data.data
+            tmpData.lonLat = [tmpData.fireLongitude, tmpData.fireLatitude]
+            tmpData.dateRange = [new Date(tmpData.fireTimeStart), new Date(tmpData.fireTimeEnd)]
+            this.fireData = tmpData
+            this.mapClickCallback(tmpData.lonLat)
+            this.$refs.gduMap.map2D.setZoom(16)
+            this.$refs.gduMap.map2D.zoomToCenter(tmpData.fireLongitude, tmpData.fireLatitude)
+            this.bIsEdit = true
+            console.log('getBattleReviewDetail:', this.fireData)
+          }
+        }
+      }).catch((error) => {
+        console.log('battleApi.getBattleReviewDetail Err : ' + error)
+      })
+    },
     // 获取火灾列表
     getFireCaseList () {
       const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
@@ -272,7 +297,6 @@ export default {
         if (res.data.code === 0) {
           if (res.data.code === 0 && res.data.data) {
             this.modelList = res.data.data
-            console.log('getEnterpriseModelList:', this.modelList)
           }
         }
       }).catch((error) => {
@@ -288,24 +312,35 @@ export default {
       this.$refs.addBattleRef.validate((valid) => {
         if (!valid) return
 
-        this.fireData.fireId = this.fireData.fireItem.id
-        this.fireData.fireName = this.fireData.fireItem.name
+        let tmpApi = battleApi.addNewBattleReview
+        if (this.bIsEdit) {
+          tmpApi = battleApi.updateBattleReview
+        }
+
         this.fireData.fireTimeStart = timeFormat(this.fireData.dateRange[0])
         this.fireData.fireTimeEnd = timeFormat(this.fireData.dateRange[1])
-        console.log('addNewBattleReview.fireData:', this.fireData)
         const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
-        this.$axios.post(battleApi.addNewBattleReview, this.fireData, config).then(res => {
+        this.$axios.post(tmpApi, this.fireData, config).then(res => {
           if (res.data.code === 0) {
-            console.log('addNewBattleReview.Ok:', res)
-            this.combatId = res.data.data
+            console.log(tmpApi + '.Ok:', res)
+            if (this.bIsEdit) {
+              this.combatId = this.jumpReviewId
+            } else {
+              this.combatId = res.data.data
+            }
             this.bNext = true
           } else {
-            console.log('addNewBattleReview.Err:', res)
+            console.log(tmpApi + '.Err:', res)
           }
         }).catch((error) => {
-          console.log('battleApi.addNewBattleReview Err : ' + error)
+          console.log(tmpApi + '.Excep : ' + error)
         })
       })
+    },
+    // 选择火灾
+    selectFire (item) {
+      this.fireData.fireNo = item.id
+      this.fireData.fireName = item.name
     },
     // 搜索三维预案
     searchModel () {
@@ -331,6 +366,21 @@ export default {
       if (value !== '' && value !== undefined && value !== null) {
         return Math.abs(parseFloat(value))
       } else return ''
+    },
+    // 点击地图回调事件
+    mapClickCallback (lonlat) {
+      const tmpMap = this.$refs.gduMap.map2D
+      this.fireData.lonLat = lonlat
+      this.fireData.fireLongitude = lonlat[0]
+      this.fireData.fireLatitude = lonlat[1]
+      const tmpName = this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
+      tmpMap.customMarkerLayerManager.clear()
+      tmpMap.customMarkerLayerManager.addMarker({
+        name: tmpName,
+        lon: lonlat[0],
+        lat: lonlat[1],
+        _bWgs2Gcj: false
+      })
     },
     // 获取地图中选择的经纬度，没有选择时返回null
     getSelectedLocation () {

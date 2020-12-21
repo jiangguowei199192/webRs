@@ -159,7 +159,12 @@ export default {
     },
     // 编辑战评
     editBattleReview (item) {
-      this.$router.push({ path: '/addBattleReview' })
+      this.$router.push({
+        path: '/addBattleReview',
+        query: {
+          id: item.id
+        }
+      })
     },
     // 新增战评
     addBattleReview () {
