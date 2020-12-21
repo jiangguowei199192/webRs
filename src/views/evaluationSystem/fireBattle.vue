@@ -17,10 +17,10 @@
       </div>
     </div>
     <div class="list webFsScroll">
-      <div v-for="(item,index) in commentList" :key="index" :class="{active:activeIndex==index}">
+      <div v-for="(item,index) in combatEvents" :key="index" :class="{active:activeIndex==index}">
+        <span :style="{background: 'url('+ serverUrl + item.icon +') no-repeat'}"></span>
         <span></span>
-        <span></span>
-        <span>发现灾情</span>
+        <span>{{item.eventName}}</span>
       </div>
     </div>
     <div class="describeBox">
@@ -33,9 +33,9 @@
     </div>
     <span class="ball"></span>
     <div class="titleBox">
-      <span>2020/05/04 14:02</span>
+      <span>{{timeFormat(timeStart)}}</span>
       <span></span>
-      <span>武汉国际会展中心</span>
+      <span>{{fireName}}</span>
     </div>
     <span class="more"></span>
     <div class="dataBox">
@@ -45,7 +45,7 @@
         <span>当前</span>
         <span></span>
       </div>
-      <div class="time" style="margin-right:40px;">135min</div>
+      <div class="time" style="margin-right:40px;">{{duration}}min</div>
       <div class="time">74min</div>
       <ul>
         <li>
@@ -53,7 +53,7 @@
             <span class="img"></span>
             <div>
               <span>出勤车辆</span>
-              <span>11辆</span>
+              <span>{{car}}辆</span>
             </div>
             <div>
               <span>未到</span>
@@ -66,7 +66,7 @@
             <span class="img fireman"></span>
             <div>
               <span>出勤人数</span>
-              <span>63人</span>
+              <span>{{people}}人</span>
             </div>
             <div>
               <span>未到</span>
@@ -79,7 +79,7 @@
             <span class="img drone"></span>
             <div>
               <span>出勤无人机</span>
-              <span>8架</span>
+              <span>{{uav}}架</span>
             </div>
             <div>
               <span>未到</span>
@@ -124,6 +124,7 @@
 <script>
 import Map from '../decisionSystem/components/marsMap.vue'
 import { timeFormat } from '@/utils/date'
+import globalApi from '@/utils/globalApi'
 export default {
   name: 'evaluation',
   data () {
@@ -131,7 +132,6 @@ export default {
       minHeight: 982,
       fullHeight: 0,
       configUrl: 'config/config.json',
-      commentList: 2,
       activeIndex: 0,
       fullscreenMap: false,
       me: '',
@@ -139,10 +139,17 @@ export default {
       maxLeft: 0,
       showCurTime: false,
       hideTimeout: '',
-      timeStart: 1607655869000,
-      timeEnd: 1607738700000,
+      timeStart: 0,
+      timeEnd: 0,
       curTime: '',
-      isPlay: false // 播放战评
+      isPlay: false, // 播放战评
+      people: 0,
+      uav: 0,
+      car: 0,
+      fireName: '',
+      duration: 0,
+      combatEvents: [],
+      serverUrl: globalApi.headImg
     }
   },
   components: {
@@ -188,6 +195,7 @@ export default {
     }
   },
   mounted () {
+    this.setBattleInitData()
     this.getDragParam()
     this.setMapHeight()
     const me = this
@@ -333,6 +341,22 @@ export default {
     masDbClick () {
       if (!this.fullscreenMap) return
       this.changeMap()
+    },
+    /**
+     * 设置战评初始数据
+     */
+    setBattleInitData () {
+      const detail = this.$route.query.detail
+      this.car = detail.attendanceVehicle
+      this.people = detail.attendancePeople
+      this.uav = detail.attendanceUav
+      this.fireName = detail.fireName
+      this.timeStart = new Date(detail.fireTimeStart)
+      this.timeEnd = new Date(detail.fireTimeEnd)
+      this.duration = this.$route.query.duration
+      if (detail.combatEventList) this.combatEvents = detail.combatEventList
+      else this.combatEvents = []
+      console.log(detail)
     },
     /**
      *  设置图表数据
@@ -491,9 +515,8 @@ export default {
       cursor: pointer;
       span:nth-child(1) {
         display: inline-block;
-        width: 34px;
-        height: 34px;
-        background: url(../../assets/images/fireBattle/fire.png) no-repeat;
+        width: 28px;
+        height: 28px;
       }
       span:nth-child(2) {
         margin-left: 12px;

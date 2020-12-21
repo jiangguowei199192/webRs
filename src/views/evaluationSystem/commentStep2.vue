@@ -404,6 +404,8 @@ export default {
         delete ac.readonly
         delete ac.showDelete
         delete ac.fileName
+        const ac2 = JSON.parse(JSON.stringify(ac))
+        delete ac2.icon
         // 判断属性是否都不为空
         const result = Object.values(ac).every(
           item => !stringIsNullOrEmpty(item)
@@ -412,7 +414,7 @@ export default {
           ac.combatId = this.combatId
           data.push(ac)
         } else if (
-          !Object.values(ac).every(item => stringIsNullOrEmpty(item))
+          !Object.values(ac2).every(item => stringIsNullOrEmpty(item))
         ) {
           // 属性不都为空
           valid = false

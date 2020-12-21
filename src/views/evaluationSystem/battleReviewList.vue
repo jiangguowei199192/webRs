@@ -12,7 +12,7 @@
       <div class="reviewList browserScroll">
         <div class="reviewItem" v-for="(item, index) in reviewList" :key="index">
           <div class="item">
-            <img class="img" :src="item.eventFileUrl"/>
+            <img class="img" :src="item.eventFileUrl" />
             <div class="info1">
               <div class="name">{{ item.fireName }}</div>
               <div class="time">时间: {{ item.fireTimeStart }}</div>
@@ -20,28 +20,36 @@
             </div>
             <div class="info2">
               <div class="infoCom">
-                <div class="img"><img src="../../assets/images/fireBattle/duration.png"/></div>
+                <div class="img">
+                  <img src="../../assets/images/fireBattle/duration.png" />
+                </div>
                 <div class="text">
                   <div class="title">作战时间</div>
                   <div class="value">{{ item.durationStr }}</div>
                 </div>
               </div>
               <div class="infoCom">
-                <div class="img"><img src="../../assets/images/fireBattle/vehicle.png"/></div>
+                <div class="img">
+                  <img src="../../assets/images/fireBattle/vehicle.png" />
+                </div>
                 <div class="text">
                   <div class="title">出勤车辆</div>
                   <div class="value">{{ item.attendanceVehicle }}辆</div>
                 </div>
               </div>
               <div class="infoCom">
-                <div class="img"><img src="../../assets/images/fireBattle/area.png"/></div>
+                <div class="img">
+                  <img src="../../assets/images/fireBattle/area.png" />
+                </div>
                 <div class="text">
                   <div class="title">受灾面积</div>
                   <div class="value">{{ item.damageArea }}m²</div>
                 </div>
               </div>
               <div class="infoCom">
-                <div class="img"><img src="../../assets/images/fireBattle/people.png"/></div>
+                <div class="img">
+                  <img src="../../assets/images/fireBattle/people.png" />
+                </div>
                 <div class="text">
                   <div class="title">出勤人数</div>
                   <div class="value">{{ item.attendancePeople }}人</div>
@@ -89,50 +97,51 @@ export default {
       }
     }
   },
-  components: {
-
-  },
+  components: {},
 
   mounted () {
     this.getBattleReviewList()
   },
-  beforeDestroy () {
-
-  },
+  beforeDestroy () {},
   methods: {
     // 获取战评列表
     getBattleReviewList () {
-      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
-      this.$axios.post(battleApi.getBattleReviewList, this.reviewPageInfo, config).then(res => {
-        if (res.data.code === 0) {
-          if (res.data.code === 0 && res.data.data) {
-            const tmpDatas = res.data.data.records
-            tmpDatas.forEach(d => {
-              d.eventFileUrl = globalApi.headImg + d.eventFileUrl
-              if (d.damageArea === null) {
-                d.damageArea = 0
-              }
-              const tmpH = Math.floor(parseFloat(d.combatDuration) / 60)
-              const tmpM = Math.floor(parseFloat(d.combatDuration) % 60)
-              d.durationStr = ''
-              if (tmpH > 0) {
-                d.durationStr = tmpH + 'h'
-              }
-              if (tmpM > 0) {
-                d.durationStr += tmpM + 'm'
-              }
-              if (d.durationStr === '') {
-                d.durationStr = '0m'
-              }
-            })
-            console.log('getBattleReviewList:', tmpDatas)
-            this.reviewList = tmpDatas
-            this.reviewPageInfo.total = res.data.data.total
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
+      this.$axios
+        .post(battleApi.getBattleReviewList, this.reviewPageInfo, config)
+        .then(res => {
+          if (res.data.code === 0) {
+            if (res.data.code === 0 && res.data.data) {
+              const tmpDatas = res.data.data.records
+              tmpDatas.forEach(d => {
+                d.eventFileUrl = globalApi.headImg + d.eventFileUrl
+                if (d.damageArea === null) {
+                  d.damageArea = 0
+                }
+                const tmpH = Math.floor(parseFloat(d.combatDuration) / 60)
+                const tmpM = Math.floor(parseFloat(d.combatDuration) % 60)
+                d.durationStr = ''
+                if (tmpH > 0) {
+                  d.durationStr = tmpH + 'h'
+                }
+                if (tmpM > 0) {
+                  d.durationStr += tmpM + 'm'
+                }
+                if (d.durationStr === '') {
+                  d.durationStr = '0m'
+                }
+              })
+              console.log('getBattleReviewList:', tmpDatas)
+              this.reviewList = tmpDatas
+              this.reviewPageInfo.total = res.data.data.total
+            }
           }
-        }
-      }).catch((error) => {
-        console.log('battleApi.getBattleReviewList Err : ' + error)
-      })
+        })
+        .catch(error => {
+          console.log('battleApi.getBattleReviewList Err : ' + error)
+        })
     },
     // 删除指定战评
     delBattleReview (item) {
@@ -140,22 +149,27 @@ export default {
       if (item) {
         return
       }
-      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
-      this.$axios.post(battleApi.deleteBattleReview, { id: item.id }, config).then(res => {
-        if (res.data.code === 0) {
-          const size = this.reviewList.length
-          for (let i = size - 1; i >= 0; i--) {
-            if (this.reviewList[i].id === item.id) {
-              this.reviewList.splice(i, 1)
-              break
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
+      this.$axios
+        .post(battleApi.deleteBattleReview, { id: item.id }, config)
+        .then(res => {
+          if (res.data.code === 0) {
+            const size = this.reviewList.length
+            for (let i = size - 1; i >= 0; i--) {
+              if (this.reviewList[i].id === item.id) {
+                this.reviewList.splice(i, 1)
+                break
+              }
             }
+          } else {
+            console.log('delete failed : ', res)
           }
-        } else {
-          console.log('delete failed : ', res)
-        }
-      }).catch((error) => {
-        console.log('battleApi.deleteBattleReview Err : ' + error)
-      })
+        })
+        .catch(error => {
+          console.log('battleApi.deleteBattleReview Err : ' + error)
+        })
     },
     // 编辑战评
     editBattleReview (item) {
@@ -172,20 +186,36 @@ export default {
     },
     // 显示战评
     showReviewDetail (item) {
-      console.log('showReviewDetail:', item)
-      this.$router.push({ path: '/fireBattle' })
+      this.$axios
+        .post(battleApi.getBattleReviewDetail, { id: item.id })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.$router.push({
+              path: '/fireBattle',
+              query: {
+                detail: res.data.data,
+                duration: item.combatDuration
+              }
+            })
+          }
+        })
+        .catch(error => {
+          console.log('battleApi.getBattleReviewDetail Err : ' + error)
+        })
     },
     // 每页显示记录改变
     handleSizeChange (val) {
       this.reviewPageInfo.pageSize = val
       console.log(`reviewCurrentPageChange.pageSize: ${val}`)
       // get selected page info ...
+      this.getBattleReviewList()
     },
     // 列表页面改变
     reviewCurrentPageChange (val) {
       this.reviewPageInfo.currentPage = val
       console.log(`reviewCurrentPageChange.currentPage: ${val}`)
       // get selected page info ...
+      this.getBattleReviewList()
     }
   }
 }
@@ -223,7 +253,7 @@ export default {
         width: 134px;
         height: 34px;
         line-height: 34px;
-        border: 1px solid #1EB0FC9C;
+        border: 1px solid #1eb0fc9c;
         cursor: pointer;
       }
     }
@@ -232,7 +262,7 @@ export default {
       height: 725px;
       overflow-x: hidden;
       overflow-y: auto;
-      border: 1px solid #00CCFF;
+      border: 1px solid #00ccff;
       display: flex;
       flex-wrap: wrap;
       align-content: flex-start;
@@ -240,7 +270,7 @@ export default {
         margin: 32px 0px 0px 32px;
         width: 47%;
         height: 132px;
-        border: 1px solid #00CCFF;
+        border: 1px solid #00ccff;
         .item {
           margin: 12px;
           width: 782px;
@@ -255,9 +285,11 @@ export default {
             margin-left: 20px;
             width: 180px;
             height: 108px;
-            color: #FFFFFF;
+            color: #ffffff;
             font-size: 14px;
-            .name,.time,.address {
+            .name,
+            .time,
+            .address {
               margin-bottom: 10px;
             }
           }
@@ -265,7 +297,7 @@ export default {
             margin-left: 40px;
             width: 300px;
             height: 108px;
-            color: #FFFFFF;
+            color: #ffffff;
             font-size: 14px;
             display: flex;
             flex-wrap: wrap;
@@ -274,7 +306,7 @@ export default {
               height: 54px;
               display: flex;
               flex-wrap: wrap;
-              align-items:center;
+              align-items: center;
               .img {
                 width: 36px;
                 height: 36px;
@@ -285,7 +317,7 @@ export default {
                   color: #999999;
                 }
                 .value {
-                  color: #AEF0F4;
+                  color: #aef0f4;
                 }
               }
             }
@@ -306,14 +338,17 @@ export default {
             .listBtn:active {
               opacity: 0.8;
             }
-            .play{
-              background: url(../../assets/images/fireBattle/listPlay.png) no-repeat;
+            .play {
+              background: url(../../assets/images/fireBattle/listPlay.png)
+                no-repeat;
             }
-            .edit{
-              background: url(../../assets/images/fireBattle/listEdit.png) no-repeat;
+            .edit {
+              background: url(../../assets/images/fireBattle/listEdit.png)
+                no-repeat;
             }
-            .del{
-              background: url(../../assets/images/fireBattle/listDelete.png) no-repeat;
+            .del {
+              background: url(../../assets/images/fireBattle/listDelete.png)
+                no-repeat;
             }
           }
         }
