@@ -170,6 +170,7 @@ export default {
       timeEnd: 0,
       curTime: '',
       isPlay: false, // 播放战评
+      detail: '', // 战评详情
       people: 0,
       uav: 0,
       car: 0,
@@ -435,45 +436,48 @@ export default {
       // mainChart.setOption(option)
       this.curEvent = event
       const file = event.eventFileUrl
+      this.car = event.attendanceVehicle
+      this.people = event.attendancePeople
+      this.uav = event.attendanceUav
       this.unCar =
-        this.car >= event.attendanceVehicle
-          ? this.car - event.attendanceVehicle
+        this.detail.attendanceVehicle > this.car
+          ? this.detail.attendanceVehicle - this.car
           : 0
       this.unPeople =
-        this.people >= event.attendancePeople
-          ? this.people - event.attendancePeople
+        this.detail.attendancePeople > this.people
+          ? this.detail.attendancePeople - this.people
           : 0
       this.unUav =
-        this.uav >= event.attendanceUav ? this.uav - event.attendanceUav : 0
+        this.detail.attendanceUav > this.uav ? this.detail.attendanceUav - this.uav : 0
       const fileType = file
         .substring(file.lastIndexOf('.') + 1, file.length)
         .toLowerCase()
       if (fileType === 'mp4') {
         this.videoUrl = this.serverUrl + file
-      } else this.imgPath = file
+        this.imgPath = ''
+      } else {
+        this.imgPath = file
+        this.videoUrl = ''
+      }
     },
     /**
      * 设置战评初始数据
      */
     setBattleInitData () {
-      const detail = this.$route.query.detail
-      this.car = detail.attendanceVehicle
-      this.people = detail.attendancePeople
-      this.uav = detail.attendanceUav
-      this.fireName = detail.fireName
-      this.timeStart = new Date(detail.fireTimeStart).getTime()
-      this.timeEnd = new Date(detail.fireTimeEnd).getTime()
+      this.detail = this.$route.query.detail
+      this.fireName = this.detail.fireName
+      this.timeStart = new Date(this.detail.fireTimeStart).getTime()
+      this.timeEnd = new Date(this.detail.fireTimeEnd).getTime()
       this.duration = this.$route.query.duration
-      if (detail.combatEventList && detail.combatEventList.length > 0) {
-        this.combatEvents = detail.combatEventList
+      if (this.detail.combatEventList && this.detail.combatEventList.length > 0) {
+        this.combatEvents = this.detail.combatEventList
         this.changeEvent(0)
       }
       // 没有三维预案，只显示二维地图
-      if (!detail.planEnterpriseInfo3d) {
+      if (!this.detail.planEnterpriseInfo3d) {
         this.show3d = false
         this.changeMap()
       }
-      console.log(detail)
     },
     /**
      *  初始化图表数据

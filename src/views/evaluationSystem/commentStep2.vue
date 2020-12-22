@@ -225,6 +225,14 @@ export default {
     combatId: {
       type: Number,
       required: true
+    },
+    isEdit: {
+      type: Boolean,
+      required: true
+    },
+    eventDatas: {
+      type: Array,
+      required: true
     }
   },
   watch: {
@@ -432,7 +440,6 @@ export default {
       if (data.length === 0) {
         this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请先填写步骤后保存' })
-        return
       }
       const config = {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' }
@@ -450,13 +457,36 @@ export default {
     }
   },
   mounted () {
-    this.curIcon = this.icons[0].path
     this.event.icon = this.icons[0].path
-    for (let i = 0; i < 5; i++) {
-      var clone = JSON.parse(JSON.stringify(this.event))
-      this.activities.push(clone)
+    console.log(this.eventDatas)
+    if (this.isEdit) {
+      this.eventDatas.forEach(e => {
+        var data = JSON.parse(JSON.stringify(this.event))
+        for (var b in data) {
+          if (Object.prototype.hasOwnProperty.call(e, b)) {
+            data[b] = e[b]
+          }
+        }
+        var pos = e.eventFileUrl.lastIndexOf('/')
+        data.fileName = e.eventFileUrl.substring(pos + 1)
+        this.activities.push(data)
+      })
+      const len = 5 - this.activities.length
+      if (len > 0) {
+        for (let i = 0; i < len; i++) {
+          var c = JSON.parse(JSON.stringify(this.event))
+          this.activities.push(c)
+        }
+      }
+      this.setEventData(0)
+    } else {
+      this.curIcon = this.icons[0].path
+      for (let i = 0; i < 5; i++) {
+        var clone = JSON.parse(JSON.stringify(this.event))
+        this.activities.push(clone)
+      }
+      this.activities[0].eventName = '发现火情'
     }
-    this.activities[0].eventName = '发现火情'
   }
 }
 </script>

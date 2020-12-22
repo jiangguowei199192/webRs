@@ -163,7 +163,7 @@
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
-        <commentStep2 v-show="bNext" :combatId="combatId"></commentStep2>
+        <commentStep2 v-if="bNext" :combatId="combatId" :isEdit="bIsEdit" :eventDatas="eventDatas"></commentStep2>
       </div>
     </div>
   </div>
@@ -178,6 +178,7 @@ export default {
   name: 'addBattle',
   data () {
     return {
+      eventDatas: [], // 战评事件数据
       combatId: 0,
       bIsEdit: false,
       showPopover: false,
@@ -265,6 +266,7 @@ export default {
             tmpData.lonLat = [tmpData.fireLongitude, tmpData.fireLatitude]
             tmpData.dateRange = [new Date(tmpData.fireTimeStart), new Date(tmpData.fireTimeEnd)]
             this.fireData = tmpData
+            if (tmpData.combatEventList) { this.eventDatas = tmpData.combatEventList }
             this.mapClickCallback(tmpData.lonLat)
             this.$refs.gduMap.map2D.setZoom(16)
             this.$refs.gduMap.map2D.zoomToCenter(tmpData.fireLongitude, tmpData.fireLatitude)
