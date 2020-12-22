@@ -419,7 +419,7 @@ export default {
           item => !stringIsNullOrEmpty(item)
         )
         if (result) {
-          ac.combatId = this.combatId
+          if (this.isEdit) { ac.id = this.combatId } else { ac.combatId = this.combatId }
           data.push(ac)
         } else if (
           !Object.values(ac2).every(item => stringIsNullOrEmpty(item))
@@ -444,21 +444,22 @@ export default {
       const config = {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' }
       }
+      const url = this.isEdit ? battleApi.combatEventUpdate : battleApi.combatEventAdd
       this.$axios
-        .post(battleApi.combatEventAdd, data, config)
+        .post(url, data, config)
         .then(res => {
           if (res.data.code === 0) {
             this.$router.push({ path: '/battleReview' })
           }
         })
         .catch(err => {
-          console.log('combatEventAdd Err : ' + err)
+          const msg = this.isEdit ? 'combatEventUpdate Err : ' : 'combatEventAdd Err : '
+          console.log(msg + err)
         })
     }
   },
   mounted () {
     this.event.icon = this.icons[0].path
-    console.log(this.eventDatas)
     if (this.isEdit) {
       this.eventDatas.forEach(e => {
         var data = JSON.parse(JSON.stringify(this.event))
