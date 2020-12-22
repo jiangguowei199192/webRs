@@ -12,7 +12,23 @@
       <div class="reviewList browserScroll">
         <div class="reviewItem" v-for="(item, index) in reviewList" :key="index">
           <div class="item">
-            <img class="img" :src="item.eventFileUrl" />
+            <img class="img" :src="item.eventFileUrl" v-if="!item.bIsVideo"/>
+            <div class="video" v-if="item.bIsVideo">
+              <LivePlayer
+                :videoUrl="item.eventFileUrl"
+                :show-custom-button="false"
+                :muted="false"
+                :controls="false"
+                :autoplay="true"
+                :loop="true"
+                oncontextmenu="return false"
+                fluent
+                :stretch="true"
+                :live="false"
+                aspect="fullscreen"
+                :poster="poster"
+              ></LivePlayer>
+            </div>
             <div class="info1">
               <div class="name">{{ item.fireName }}</div>
               <div class="time">时间: {{ item.fireTimeStart }}</div>
@@ -84,6 +100,7 @@
 <script>
 import { battleApi } from '@/api/battle'
 import globalApi from '@/utils/globalApi'
+import LivePlayer from '@liveqing/liveplayer'
 export default {
   name: 'evaluation',
   data () {
@@ -94,10 +111,13 @@ export default {
         total: 10,
         currentPage: 1,
         pageSize: 8
-      }
+      },
+      poster: require('../../assets/images/loading.gif')
     }
   },
-  components: {},
+  components: {
+    LivePlayer
+  },
 
   mounted () {
     this.getBattleReviewList()
@@ -119,7 +139,15 @@ export default {
             if (res.data.code === 0 && res.data.data) {
               const tmpDatas = res.data.data.records
               tmpDatas.forEach(d => {
+                d.bIsVideo = false
                 d.eventFileUrl = globalApi.headImg + d.eventFileUrl
+                const tmpFile = d.eventFileUrl
+                const fileType = tmpFile
+                  .substring(tmpFile.lastIndexOf('.') + 1, tmpFile.length)
+                  .toLowerCase()
+                if (fileType === 'mp4') {
+                  d.bIsVideo = true
+                }
                 if (d.damageArea === null) {
                   d.damageArea = 0
                 }
@@ -278,6 +306,11 @@ export default {
           .img {
             width: 150px;
             height: 108px;
+          }
+          .video {
+            width: 150px;
+            height: 108px;
+            position: relative;
           }
           .info1 {
             margin-left: 20px;
