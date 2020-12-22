@@ -154,21 +154,11 @@ export default {
         showClose: false
       })
         .then(() => {
-          console.log('delBattleReview:', item)
-          const config = {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }
           this.$axios
-            .post(battleApi.deleteBattleReview, { id: item.id }, config)
+            .post(battleApi.deleteBattleReview, { combatId: item.id })
             .then(res => {
               if (res.data.code === 0) {
-                const size = this.reviewList.length
-                for (let i = size - 1; i >= 0; i--) {
-                  if (this.reviewList[i].id === item.id) {
-                    this.reviewList.splice(i, 1)
-                    break
-                  }
-                }
+                this.getBattleReviewList()
               } else {
                 console.log('delete failed : ', res)
               }

@@ -3,7 +3,7 @@ export const battleApi = {
   getBattleReviewDetail: 'fms-one-map/combatAssessment/selectDetail',
   addNewBattleReview: 'fms-one-map/combatAssessment/add',
   updateBattleReview: 'fms-one-map/combatAssessment/update',
-  deleteBattleReview: 'fms-one-map/combatAssessment/delete',
+  deleteBattleReview: 'fms-one-map/combatAssessment/del',
   getFireCaseList: 'fms-one-map/combatAssessment/fireCase',
   getEnterprise3dInfoList: 'fms-one-map/planEnterpriseInfo3d/selectList',
   combatEventUpload: 'fms-one-map/combatEvent/upload', // 战评事件文件上传
