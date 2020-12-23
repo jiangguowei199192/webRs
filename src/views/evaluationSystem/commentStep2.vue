@@ -399,6 +399,24 @@ export default {
       activity.icon = this.curIcon
     },
     /**
+     *  新增战评事件
+     */
+    addBattleEvent (data) {
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
+      this.$axios
+        .post(battleApi.combatEventAdd, data, config)
+        .then(res => {
+          if (res.data.code === 0) {
+            this.$router.push({ path: '/battleReview' })
+          }
+        })
+        .catch(err => {
+          console.log('combatEventAdd Err : ' + err)
+        })
+    },
+    /**
      *  提交事件
      */
     submitEvent () {
@@ -419,12 +437,13 @@ export default {
           item => !stringIsNullOrEmpty(item)
         )
         if (result) {
-          if (this.isEdit) { ac.id = this.combatId } else { ac.combatId = this.combatId }
+          ac.combatId = this.combatId
           data.push(ac)
         } else if (
           !Object.values(ac2).every(item => stringIsNullOrEmpty(item))
         ) {
           // 属性不都为空
+          // console.log(ac2)
           valid = false
           break
         }
@@ -441,21 +460,20 @@ export default {
         this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请先填写步骤后保存' })
       }
-      const config = {
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      if (this.isEdit && this.eventDatas && this.eventDatas.length > 0) {
+        this.$axios
+          .post(battleApi.delCombatEvent, { combatId: this.combatId })
+          .then(res => {
+            if (res.data.code === 0) {
+              this.addBattleEvent(data)
+            }
+          })
+          .catch(error => {
+            console.log('deleteBattleReview Err : ' + error)
+          })
+      } else {
+        this.addBattleEvent(data)
       }
-      const url = this.isEdit ? battleApi.combatEventUpdate : battleApi.combatEventAdd
-      this.$axios
-        .post(url, data, config)
-        .then(res => {
-          if (res.data.code === 0) {
-            this.$router.push({ path: '/battleReview' })
-          }
-        })
-        .catch(err => {
-          const msg = this.isEdit ? 'combatEventUpdate Err : ' : 'combatEventAdd Err : '
-          console.log(msg + err)
-        })
     }
   },
   mounted () {
@@ -470,6 +488,7 @@ export default {
         }
         var pos = e.eventFileUrl.lastIndexOf('/')
         data.fileName = e.eventFileUrl.substring(pos + 1)
+        data.showDelete = true
         this.activities.push(data)
       })
       const len = 5 - this.activities.length
