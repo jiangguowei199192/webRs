@@ -152,6 +152,7 @@ import { timeFormat } from '@/utils/date'
 import globalApi from '@/utils/globalApi'
 import LivePlayer from '@liveqing/liveplayer'
 var mars3d = window.mars3d
+var Cesium = window.Cesium
 export default {
   name: 'evaluation',
   data () {
@@ -407,33 +408,85 @@ export default {
       this.setEventData(this.combatEvents[index])
     },
     /**
+     * 添加三维模型
+     */
+    add3DModel (id, type, lat, lon, heading) {
+      if (!this.viewer) return
+      if (!this.mCollection) {
+        this.mCollection = new Cesium.PrimitiveCollection()
+        this.viewer.scene.primitives.add(this.mCollection)
+      }
+      const m = this.mCollection._primitives.find(i => i.id === id)
+      var position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
+      var hpRoll = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(heading || 0), Cesium.Math.toRadians(0), Cesium.Math.toRadians(0))
+      var converter = Cesium.Transforms.eastNorthUpToFixedFrame
+      var matrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, converter)
+      if (m === undefined) {
+        let url = ''
+        switch (type) {
+          case 1:
+            url = '/people/ren.glb'
+            break
+          case 2:
+            url = '/people/gongren.glb'
+            break
+          case 3:
+            url = '/people/xiaofangyuan.glb'
+            break
+          case 5:
+            url = '/xiaofangche/shuiguanche.gltf'
+            break
+          case 6:
+            url = '/xiaofangche/paomoche.gltf'
+            break
+          case 7:
+            url = '/xiaofangche/denggaoche/gltf2.gltf'
+            break
+          default:
+            break
+        }
+        if (url) {
+          url = globalApi.headImg + '/cloud-video/prePlanFor3D/gltf' + url
+          this.mCollection.add(
+            Cesium.Model.fromGltf({
+              url: url,
+              modelMatrix: matrix,
+              id: id
+            })
+          )
+        }
+      } else {
+        m.modelMatrix = matrix
+      }
+    },
+    /**
      * 设置战评事件数据
      */
     setEventData (event) {
-      // const data = [
-      //   event.waterSource,
-      //   event.foam,
-      //   event.dryPowder,
-      //   event.fireExtinguisher
-      // ]
-      // const option = {
-      //   series: [
-      //     {
-      //       name: 'pictorialBar1',
-      //       data: data
-      //     },
-      //     {
-      //       name: 'pictorialBar2',
-      //       data: data
-      //     },
-      //     {
-      //       name: 'bar',
-      //       data: data
-      //     }
-      //   ]
-      // }
-      // const mainChart = this.$echarts.init(document.getElementById('chart'))
-      // mainChart.setOption(option)
+      const data = [
+        event.waterSource,
+        event.foam,
+        event.dryPowder,
+        event.fireExtinguisher
+      ]
+      const option = {
+        series: [
+          {
+            name: 'pictorialBar1',
+            data: data
+          },
+          {
+            name: 'pictorialBar2',
+            data: data
+          },
+          {
+            name: 'bar',
+            data: data
+          }
+        ]
+      }
+      const mainChart = this.$echarts.init(document.getElementById('chart'))
+      mainChart.setOption(option)
       this.curEvent = event
       const file = event.eventFileUrl
       this.car = event.attendanceVehicle
@@ -550,6 +603,7 @@ export default {
           {
             type: 'pictorialBar',
             symbolSize: [23, 12],
+            symbolOffset: [0, -6],
             z: 12,
             itemStyle: {
               normal: {
@@ -570,7 +624,8 @@ export default {
             },
             symbolPosition: 'end',
             data: data,
-            name: 'pictorialBar1'
+            name: 'pictorialBar1',
+            barMinHeight: 12
           },
           {
             type: 'pictorialBar',
@@ -603,6 +658,7 @@ export default {
             // 图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件
             silent: false,
             barWidth: 23,
+            barMinHeight: 12,
             data: [0, 0, 0, 0],
             name: 'bar'
           }
