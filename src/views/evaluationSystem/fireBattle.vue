@@ -1,7 +1,7 @@
 <template>
   <div class="battleBox" :style="'height:'+fullHeight+'px;'">
     <div
-      class="marsBox"
+      class="marsBox mars3d"
       :class="{marsBoxSmallScreen:fullscreenMap}"
       @dblclick.capture="masDbClick"
       v-show="show3d"
@@ -245,13 +245,26 @@ export default {
       me.setMapHeight()
       me.getDragParam()
     }
+    this.setTimePointer(this.timeStart)
     this.me = this
     // 战评回放
     EventBus.$on('fireBattlePlayback', info => {
       info.objs.forEach(o => {
-        me.add3DModel(o.objSN, o.type, o.lan, o.lon, o.orientation)
         me.add2DObject(o.objSN, o.type, o.lan, o.lon, o.orientation)
+        if (me.show3d) { me.add3DModel(o.objSN, o.type, o.lan, o.lon, o.orientation, o.nickName) }
       })
+      // 设置时间轴指针
+      if (info.time >= me.timeStart && info.time <= me.timeEnd) {
+        me.setTimePointer(info.time)
+      }
+      // 切换事件
+      if (info.events.length > 0) {
+        const event = this.combatEvents.find(e => e.id === info.events[0].id)
+        if (event !== undefined) {
+          const index = this.combatEvents.indexOf(event)
+          if (index !== -1) { this.changeEvent(index) }
+        }
+      }
     })
     this.getAlertTopic()
 
@@ -332,6 +345,19 @@ export default {
       this.hideTimeout = setTimeout(() => {
         me.showCurTime = false
       }, 2 * 1000)
+    },
+    /**
+     *  根据时间设置时间轴指针
+     */
+    setTimePointer (time) {
+      const dom = document.querySelector('#timeBar')
+      if (dom) {
+        const left = dom.clientWidth * (time - this.timeStart) / (this.timeEnd - this.timeStart) + dom.offsetLeft
+        this.$nextTick(() => {
+          const d = document.querySelector('#pointer')
+          if (d) d.style.left = left - d.clientWidth / 2 + 'px'
+        })
+      }
     },
     /**
      *  设置当前时间
@@ -443,14 +469,43 @@ export default {
       this.setEventData(this.combatEvents[index])
     },
     /**
+     *  更新标签位置
+     */
+    updateLabelPosition (id, position) {
+      const t = this.labelList.find(t => t.opts.name === id)
+      if (t !== undefined) {
+        t.position = position
+      }
+    },
+    /**
+     *  添加模型上方标签
+     */
+    addModelLabel (position, name, id) {
+      const innerhtml =
+        '<div class="model-label">' +
+        '<span>' +
+        name +
+        '</span>' +
+        '</div>'
+      const label = new mars3d.DivPoint(this.viewer, {
+        html: innerhtml,
+        anchor: [0, 0],
+        position: position,
+        name: id,
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 500)
+      })
+      this.labelList.push(label)
+    },
+    /**
      * 添加三维模型
      */
-    add3DModel (id, type, lat, lon, heading) {
+    add3DModel (id, type, lat, lon, heading, name) {
       if (!this.viewer) return
       if (!this.mCollection) {
         this.mCollection = new Cesium.PrimitiveCollection()
         this.viewer.scene.primitives.add(this.mCollection)
       }
+      if (!this.labelList) { this.labelList = [] }
       const m = this.mCollection._primitives.find(i => i.id === id)
       var position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
       var hpRoll = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(heading || 0), Cesium.Math.toRadians(0), Cesium.Math.toRadians(0))
@@ -489,9 +544,11 @@ export default {
               id: id
             })
           )
+          this.addModelLabel(Cesium.Cartesian3.fromDegrees(lon, lat, 17), name, id)
         }
       } else {
         m.modelMatrix = matrix
+        this.updateLabelPosition(id, position)
       }
     },
     add2DObject (id, type, lat, lon, heading) {
@@ -1080,7 +1137,7 @@ export default {
         background: url("../../assets/images/fireBattle/pointer.png") no-repeat;
         position: absolute;
         top: 3px;
-        left: 177px;
+        //left: 177px;
         cursor: pointer;
       }
       span:nth-child(4) {

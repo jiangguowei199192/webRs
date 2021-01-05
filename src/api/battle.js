@@ -10,5 +10,5 @@ export const battleApi = {
   combatEventAdd: 'fms-one-map/combatEvent/batchAdd', // 批量新增战评事件
   combatEventUpdate: '/fms-one-map/combatEvent/batchUpdate', // 批量修改战评事件
   delCombatEvent: '/fms-one-map/combatAssessment/delCombatEvent', // 清除战评信息的所有事件
-  readPathByAlertId: '/path/readPathByAlertId' // 获取回放订阅事件的id
+  readPathByAlertId: 'fms-one-map/path/readPathByAlertId' // 获取回放订阅事件的id
 }
