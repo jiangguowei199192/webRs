@@ -287,7 +287,7 @@ export default {
      */
     getAlertTopic () {
       this.$axios
-        .post(battleApi.readPathByAlertId, { id: '' })
+        .post(battleApi.readPathByAlertId, { id: this.detail.fireNo })
         .then(res => {
           if (res.data.code === 0) {
             this.subscribeTopic(res.data.data)
