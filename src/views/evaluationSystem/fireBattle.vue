@@ -151,6 +151,9 @@ import Map from '../decisionSystem/components/marsMap.vue'
 import { timeFormat } from '@/utils/date'
 import globalApi from '@/utils/globalApi'
 import LivePlayer from '@liveqing/liveplayer'
+import { battleApi } from '@/api/battle'
+import MqttService from '@/utils/mqttService'
+import { EventBus } from '@/utils/eventBus.js'
 var mars3d = window.mars3d
 var Cesium = window.Cesium
 export default {
@@ -243,6 +246,13 @@ export default {
       me.getDragParam()
     }
     this.me = this
+    // 战评回放
+    EventBus.$on('fireBattlePlayback', info => {
+      info.objs.forEach(o => {
+        me.add3DModel(o.objSN, o.type, o.lan, o.lon, 0)
+      })
+    })
+    this.getAlertTopic()
 
     /* const tmpBattleData = {
       id: 123,
@@ -268,9 +278,31 @@ export default {
   },
   beforeDestroy () {
     window.onresize = null
+    EventBus.$off('fireBattlePlayback')
   },
   methods: {
     timeFormat,
+    /**
+     *  获取战评回放主题id
+     */
+    getAlertTopic () {
+      this.$axios
+        .post(battleApi.readPathByAlertId, { id: '' })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.subscribeTopic(res.data.data)
+          }
+        })
+        .catch(error => {
+          console.log('battleApi.readPathByAlertId Err : ' + error)
+        })
+    },
+    /**
+     *  订阅战评回放主题
+     */
+    subscribeTopic (id) {
+      new MqttService().client.subscribe('gdu/one_map/onemap_path_decoer/' + id)
+    },
     /**
      *  鼠标在时间轴上移动
      */
