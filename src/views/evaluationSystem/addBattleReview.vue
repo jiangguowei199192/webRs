@@ -54,7 +54,7 @@
                   <el-option
                     v-for="item in fireList"
                     :key="item.id"
-                    :label="item.name"
+                    :label="item.alertName"
                     :value="item"
                   ></el-option>
                 </el-select>
@@ -237,16 +237,7 @@ export default {
     const tmpMap = this.$refs.gduMap.map2D
     tmpMap.clickEvent.addEventListener(this.mapClickCallback.bind(this))
 
-    this.fireList = [
-      {
-        id: 1,
-        name: '孝感小森林火灾'
-      },
-      {
-        id: 2,
-        name: '孝感大森林火灾'
-      }
-    ]
+    this.getFireCaseList()
     this.getEnterpriseModelList()
     this.getBattleReviewDetail()
   },
@@ -293,12 +284,21 @@ export default {
     },
     // 获取火灾列表
     getFireCaseList () {
-      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
-      this.$axios.post(battleApi.getFireCaseList, { }, config).then(res => {
+      this.fireList = []
+      const tmpParams = {
+        status: 4,
+        currentPage: 1,
+        pageSize: 1000
+      }
+      this.$axios.post(battleApi.getFireCaseList, tmpParams).then(res => {
         if (res.data.code === 0) {
           if (res.data.code === 0 && res.data.data) {
             const tmpDatas = res.data.data
-            console.log('getFireCaseList:', tmpDatas)
+            tmpDatas.forEach(d => {
+              d.lon = d.lon / 10000000
+              d.lat = d.lan / 10000000
+            })
+            this.fireList = tmpDatas
           }
         }
       }).catch((error) => {
@@ -355,8 +355,14 @@ export default {
     },
     // 选择火灾
     selectFire (item) {
-      this.fireData.fireNo = item.id
-      this.fireData.fireName = item.name
+      this.fireData.fireNo = item.alertId
+      this.fireData.fireName = item.alertName
+      this.fireData.fireAddress = item.address
+      this.fireData.fireDescription = item.description
+      this.fireData.lonLat = [item.lon, item.lat]
+      this.mapClickCallback(this.fireData.lonLat)
+      this.$refs.gduMap.map2D.setZoom(16)
+      this.$refs.gduMap.map2D.zoomToCenter(item.lon, item.lat)
     },
     // 搜索三维预案
     searchModel () {
