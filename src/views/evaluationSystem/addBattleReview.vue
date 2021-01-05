@@ -296,7 +296,7 @@ export default {
             const tmpDatas = res.data.data
             tmpDatas.forEach(d => {
               d.lon = d.lon / 10000000
-              d.lat = d.lan / 10000000
+              d.lat = d.lat / 10000000
             })
             this.fireList = tmpDatas
           }
