@@ -249,10 +249,13 @@ export default {
     // 战评回放
     EventBus.$on('fireBattlePlayback', info => {
       info.objs.forEach(o => {
-        me.add3DModel(o.objSN, o.type, o.lan, o.lon, 0)
+        me.add3DModel(o.objSN, o.type, o.lan, o.lon, o.orientation)
+        me.add2DObject(o.objSN, o.type, o.lan, o.lon, o.orientation)
       })
     })
     this.getAlertTopic()
+
+    this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false)
 
     /* const tmpBattleData = {
       id: 123,
@@ -260,18 +263,18 @@ export default {
       _bWgs2Gcj: false,
       angle: 0 * Math.PI / 180,
       iconParams: {
-        anchor: [0.5, 0.5],
-        anchorXUnits: 'fraction',
-        anchorYUnits: 'fraction',
-        src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1608112539613&di=cda5ca25b72e0f1e536c82e9aa7c270d&imgtype=0&src=http%3A%2F%2Fa1.att.hudong.com%2F08%2F22%2F01300000242726125670225939875.jpg',
-        rotation: 0 * Math.PI / 180,
-        imgScale: 0.016 // 单位：米/Pixel    8米/500Pixel
+        anchor: [23, 43],
+        anchorXUnits: 'pixels',
+        anchorYUnits: 'pixels',
+        src: require('../../assets/images/fireBattle/1_Soldier.png'),
+        rotation: 0 * Math.PI / 180
+        // imgScale: 0.16 // 单位：米/Pixel    8米/500Pixel    (不存在此项时图标不随地图缩放)
       }
     }
     this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker(tmpBattleData, { color: '#BCBCBC', width: 2 })
     this.$refs.gduMap.map2D.zoomToCenter(114.261503, 30.633130)
     this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker({ id: 123, coordinate: [114.262503, 30.634130], angle: 90 * Math.PI / 180 })
-    this.$refs.gduMap.map2D.battleReviewLayerManager.removeMarker({id:123})
+    this.$refs.gduMap.map2D.battleReviewLayerManager.removeMarker({ id: 123 })
     this.$refs.gduMap.map2D.battleReviewLayerManager.removeAll()
     this.$refs.gduMap.map2D.battleReviewLayerManager.setVisible(true)
     this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false) */
@@ -490,6 +493,60 @@ export default {
       } else {
         m.modelMatrix = matrix
       }
+    },
+    add2DObject (id, type, lat, lon, heading) {
+      if (!this.$refs.gduMap) return
+      let tmpUrl = null
+      let tmpScale = null
+      const tmpAngle = heading * Math.PI / 180
+      switch (type) {
+        case 1:
+          tmpUrl = require('../../assets/images/fireBattle/1_Soldier.png')
+          tmpScale = 0.004
+          break
+        case 2:
+          tmpUrl = require('../../assets/images/fireBattle/2_Commander.png')
+          tmpScale = 0.004
+          break
+        case 3:
+          tmpUrl = require('../../assets/images/fireBattle/3_HighCommander.png')
+          tmpScale = 0.004
+          break
+        case 4:
+          tmpUrl = require('../../assets/images/fireBattle/4_UAV.png')
+          tmpScale = 0.004
+          break
+        case 5:
+          tmpUrl = require('../../assets/images/fireBattle/5_FireCarWater.png')
+          tmpScale = 0.004
+          break
+        case 6:
+          tmpUrl = require('../../assets/images/fireBattle/6_FireCarFroth.png')
+          tmpScale = 0.004
+          break
+        case 7:
+          tmpUrl = require('../../assets/images/fireBattle/7_FireCarLadder.png')
+          tmpScale = 0.004
+          break
+        default:
+          console.log('Unknown type : ', type, tmpAngle, tmpScale)
+          return
+      }
+      const tmpData = {
+        id: id,
+        coordinate: [lon, lat],
+        _bWgs2Gcj: false,
+        // angle: tmpAngle,
+        iconParams: {
+          anchor: [23, 43], // 0.5, 0.5
+          anchorXUnits: 'pixels', // fraction
+          anchorYUnits: 'pixels', // fraction
+          src: tmpUrl
+          // rotation: tmpAngle,
+          // imgScale: tmpScale // 单位：米/Pixel    8米/500Pixel    (不存在此项时图标不随地图缩放)
+        }
+      }
+      this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker(tmpData, { color: '#BCBCBC', width: 2 })
     },
     /**
      * 设置战评事件数据
