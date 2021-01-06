@@ -140,13 +140,19 @@ export default {
               const tmpDatas = res.data.data.records
               tmpDatas.forEach(d => {
                 d.bIsVideo = false
-                d.eventFileUrl = globalApi.headImg + d.eventFileUrl
-                const tmpFile = d.eventFileUrl
-                const fileType = tmpFile
-                  .substring(tmpFile.lastIndexOf('.') + 1, tmpFile.length)
-                  .toLowerCase()
-                if (fileType === 'mp4') {
-                  d.bIsVideo = true
+                if (d.eventFileUrl === undefined ||
+                    d.eventFileUrl === null ||
+                    d.eventFileUrl === '') {
+                  d.eventFileUrl = require('../../assets/images/fireBattle/fireBattleDefault.png')
+                } else {
+                  d.eventFileUrl = globalApi.headImg + d.eventFileUrl
+                  const tmpFile = d.eventFileUrl
+                  const fileType = tmpFile
+                    .substring(tmpFile.lastIndexOf('.') + 1, tmpFile.length)
+                    .toLowerCase()
+                  if (fileType === 'mp4') {
+                    d.bIsVideo = true
+                  }
                 }
                 if (d.damageArea === null) {
                   d.damageArea = 0

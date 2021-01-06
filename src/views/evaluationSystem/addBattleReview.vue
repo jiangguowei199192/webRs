@@ -45,7 +45,7 @@
               <span style="margin-right:15px">火灾名称</span>
               <el-form-item prop="fireName">
                 <el-select
-                  v-model="fireData.fireName"
+                  v-model="fireAlertName"
                   placeholder="请选择火灾"
                   class="fireSelectStyle baseInfoInput"
                   :disabled="bIsEdit"
@@ -55,7 +55,7 @@
                     v-for="item in fireList"
                     :key="item.id"
                     :label="item.alertName"
-                    :value="item"
+                    :value="item.id"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -182,6 +182,7 @@ export default {
       combatId: 0,
       bIsEdit: false,
       showPopover: false,
+      fireAlertName: '',
       inputModelName: '',
       selectModelName: '',
       modelList: [],
@@ -257,6 +258,7 @@ export default {
             tmpData.lonLat = [tmpData.fireLongitude, tmpData.fireLatitude]
             tmpData.dateRange = [new Date(tmpData.fireTimeStart), new Date(tmpData.fireTimeEnd)]
             this.fireData = tmpData
+            this.fireAlertName = tmpData.fireName
             if (tmpData.combatEventList) { this.eventDatas = tmpData.combatEventList }
             this.mapClickCallback(tmpData.lonLat)
             this.$refs.gduMap.map2D.setZoom(16)
@@ -354,7 +356,8 @@ export default {
       })
     },
     // 选择火灾
-    selectFire (item) {
+    selectFire (id) {
+      const item = this.fireList.find(i => i.id === id)
       this.fireData.fireNo = item.alertId
       this.fireData.fireName = item.alertName
       this.fireData.fireAddress = item.address
