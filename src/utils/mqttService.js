@@ -84,7 +84,7 @@ var mqttService;
         EventBus.$emit('streamHadNotData', object)
       } else if (message.topic.indexOf('gdu/one_map/onemap_path_decoer') !== -1) {
         // 战评回放
-        EventBus.$emit('fireBattlePlayback', object)
+        EventBus.$emit('fireBattlePlayback', message)
       } else if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
       } else {
