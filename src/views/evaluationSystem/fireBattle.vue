@@ -39,7 +39,7 @@
         <span>{{curEvent.eventName}}</span>
       </div>
       <span class="txt">{{curEvent.eventDescription}}</span>
-      <img class="img" :src="serverUrl + imgPath" v-show="imgPath"/>
+      <img class="img" :src="serverUrl + imgPath" v-show="imgPath" />
       <div class="playerBox" v-show="videoUrl">
         <LivePlayer
           :videoUrl="videoUrl"
@@ -189,7 +189,8 @@ export default {
       curEvent: '',
       imgPath: '',
       videoUrl: '',
-      poster: require('../../assets/images/loading.gif')
+      poster: require('../../assets/images/loading.gif'),
+      topic: '' // 战评回放主题
     }
   },
   components: {
@@ -248,10 +249,22 @@ export default {
     this.setTimePointer(this.timeStart)
     this.me = this
     // 战评回放
-    EventBus.$on('fireBattlePlayback', info => {
+    EventBus.$on('fireBattlePlayback', message => {
+      if (this.topic !== message.topic) return
+      var info = JSON.parse(message.payloadString)
+      console.log(info)
       info.objs.forEach(o => {
         me.add2DObject(o.objSN, o.type, o.lan, o.lon, o.orientation)
-        if (me.show3d) { me.add3DModel(o.objSN, o.type, o.lan, o.lon, o.orientation, o.nickName) }
+        if (me.show3d) {
+          me.add3DModel(
+            o.objSN,
+            o.type,
+            o.lan / 1e7,
+            o.lon / 1e7,
+            o.orientation,
+            o.nickName
+          )
+        }
       })
       // 设置时间轴指针
       if (info.time >= me.timeStart && info.time <= me.timeEnd) {
@@ -262,7 +275,9 @@ export default {
         const event = this.combatEvents.find(e => e.id === info.events[0].id)
         if (event !== undefined) {
           const index = this.combatEvents.indexOf(event)
-          if (index !== -1) { this.changeEvent(index) }
+          if (index !== -1) {
+            this.changeEvent(index)
+          }
         }
       }
     })
@@ -303,10 +318,12 @@ export default {
      */
     getAlertTopic () {
       this.$axios
-        .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
+        // .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
+        .post(battleApi.readPathByAlertId, { alertId: 20210105081733 })
         .then(res => {
           if (res.data.code === 0) {
-            this.subscribeTopic(res.data.data)
+            this.topic = 'gdu/one_map/onemap_path_decoer/' + res.data.data
+            // this.subscribeTopic(res.data.data)
           }
         })
         .catch(error => {
@@ -317,7 +334,9 @@ export default {
      *  订阅战评回放主题
      */
     subscribeTopic (id) {
-      new MqttService().client.subscribe('gdu/one_map/onemap_path_decoer/' + id)
+      new MqttService().client.subscribe(
+        'gdu/one_map/onemap_path_decoer/' + id
+      )
     },
     /**
      *  鼠标在时间轴上移动
@@ -352,7 +371,10 @@ export default {
     setTimePointer (time) {
       const dom = document.querySelector('#timeBar')
       if (dom) {
-        const left = dom.clientWidth * (time - this.timeStart) / (this.timeEnd - this.timeStart) + dom.offsetLeft
+        const left =
+          (dom.clientWidth * (time - this.timeStart)) /
+            (this.timeEnd - this.timeStart) +
+          dom.offsetLeft
         this.$nextTick(() => {
           const d = document.querySelector('#pointer')
           if (d) d.style.left = left - d.clientWidth / 2 + 'px'
@@ -482,11 +504,7 @@ export default {
      */
     addModelLabel (position, name, id) {
       const innerhtml =
-        '<div class="model-label">' +
-        '<span>' +
-        name +
-        '</span>' +
-        '</div>'
+        '<div class="model-label">' + '<span>' + name + '</span>' + '</div>'
       const label = new mars3d.DivPoint(this.viewer, {
         html: innerhtml,
         anchor: [0, 0],
@@ -505,12 +523,23 @@ export default {
         this.mCollection = new Cesium.PrimitiveCollection()
         this.viewer.scene.primitives.add(this.mCollection)
       }
-      if (!this.labelList) { this.labelList = [] }
+      if (!this.labelList) {
+        this.labelList = []
+      }
       const m = this.mCollection._primitives.find(i => i.id === id)
       var position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
-      var hpRoll = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(heading || 0), Cesium.Math.toRadians(0), Cesium.Math.toRadians(0))
+      var hpRoll = new Cesium.HeadingPitchRoll(
+        Cesium.Math.toRadians(heading || 0),
+        Cesium.Math.toRadians(0),
+        Cesium.Math.toRadians(0)
+      )
       var converter = Cesium.Transforms.eastNorthUpToFixedFrame
-      var matrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, converter)
+      var matrix = Cesium.Transforms.headingPitchRollToFixedFrame(
+        position,
+        hpRoll,
+        Cesium.Ellipsoid.WGS84,
+        converter
+      )
       if (m === undefined) {
         let url = ''
         switch (type) {
@@ -544,7 +573,11 @@ export default {
               id: id
             })
           )
-          this.addModelLabel(Cesium.Cartesian3.fromDegrees(lon, lat, 17), name, id)
+          this.addModelLabel(
+            Cesium.Cartesian3.fromDegrees(lon, lat, 15),
+            name,
+            id
+          )
         }
       } else {
         m.modelMatrix = matrix
@@ -555,7 +588,7 @@ export default {
       if (!this.$refs.gduMap) return
       let tmpUrl = null
       let tmpScale = null
-      const tmpAngle = heading * Math.PI / 180
+      const tmpAngle = (heading * Math.PI) / 180
       switch (type) {
         case 1:
           tmpUrl = require('../../assets/images/fireBattle/1_Soldier.png')
@@ -603,7 +636,10 @@ export default {
           // imgScale: tmpScale // 单位：米/Pixel    8米/500Pixel    (不存在此项时图标不随地图缩放)
         }
       }
-      this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker(tmpData, { color: '#BCBCBC', width: 2 })
+      this.$refs.gduMap.map2D.battleReviewLayerManager.addOrUpdateMarker(
+        tmpData,
+        { color: '#BCBCBC', width: 2 }
+      )
     },
     /**
      * 设置战评事件数据
@@ -647,7 +683,9 @@ export default {
           ? this.detail.attendancePeople - this.people
           : 0
       this.unUav =
-        this.detail.attendanceUav > this.uav ? this.detail.attendanceUav - this.uav : 0
+        this.detail.attendanceUav > this.uav
+          ? this.detail.attendanceUav - this.uav
+          : 0
       const fileType = file
         .substring(file.lastIndexOf('.') + 1, file.length)
         .toLowerCase()
@@ -668,7 +706,10 @@ export default {
       this.timeStart = new Date(this.detail.fireTimeStart).getTime()
       this.timeEnd = new Date(this.detail.fireTimeEnd).getTime()
       this.duration = this.$route.query.duration
-      if (this.detail.combatEventList && this.detail.combatEventList.length > 0) {
+      if (
+        this.detail.combatEventList &&
+        this.detail.combatEventList.length > 0
+      ) {
         this.combatEvents = this.detail.combatEventList
         this.changeEvent(0)
       }
