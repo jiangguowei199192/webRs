@@ -255,7 +255,7 @@ export default {
       var info = JSON.parse(message.payloadString)
       // console.log(info)
       info.objs.forEach(o => {
-        me.add2DObject(o.objSN, o.type, o.lan, o.lon, o.orientation)
+        me.add2DObject(o.objSN, o.type, o.lan / 1e7, o.lon / 1e7, o.orientation)
         if (me.show3d) {
           me.add3DModel(
             o.objSN,
