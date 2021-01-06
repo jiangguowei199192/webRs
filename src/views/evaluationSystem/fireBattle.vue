@@ -154,6 +154,7 @@ import LivePlayer from '@liveqing/liveplayer'
 import { battleApi } from '@/api/battle'
 import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
+import { CartesianToDegrees } from '@/utils/mars3d'
 var mars3d = window.mars3d
 var Cesium = window.Cesium
 export default {
@@ -190,7 +191,7 @@ export default {
       imgPath: '',
       videoUrl: '',
       poster: require('../../assets/images/loading.gif'),
-      topic: '' // 战评回放主题
+      topicId: '' // 战评回放主题id
     }
   },
   components: {
@@ -250,9 +251,10 @@ export default {
     this.me = this
     // 战评回放
     EventBus.$on('fireBattlePlayback', message => {
-      if (this.topic !== message.topic) return
+      const topic = 'gdu/one_map/onemap_path_decoer/' + this.topicId
+      if (topic !== message.topic) return
       var info = JSON.parse(message.payloadString)
-      console.log(info)
+      // console.log(info)
       info.objs.forEach(o => {
         me.add2DObject(o.objSN, o.type, o.lan, o.lon, o.orientation)
         if (me.show3d) {
@@ -308,6 +310,7 @@ export default {
     this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false) */
   },
   beforeDestroy () {
+    this.stopPlayback()
     window.onresize = null
     EventBus.$off('fireBattlePlayback')
   },
@@ -318,12 +321,11 @@ export default {
      */
     getAlertTopic () {
       this.$axios
-        // .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
-        .post(battleApi.readPathByAlertId, { alertId: 20210105081733 })
+        .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
+        // .post(battleApi.readPathByAlertId, { alertId: 20210105081733 })
         .then(res => {
           if (res.data.code === 0) {
-            this.topic = 'gdu/one_map/onemap_path_decoer/' + res.data.data
-            // this.subscribeTopic(res.data.data)
+            this.topicId = res.data.data
           }
         })
         .catch(error => {
@@ -331,12 +333,18 @@ export default {
         })
     },
     /**
-     *  订阅战评回放主题
+     *  停止战评回放
      */
-    subscribeTopic (id) {
-      new MqttService().client.subscribe(
-        'gdu/one_map/onemap_path_decoer/' + id
-      )
+    stopPlayback (id) {
+      this.$axios
+        .post(battleApi.stopReadPath, { workerNO: this.topicId })
+        .then(res => {
+          if (res.data.code === 0) {
+          }
+        })
+        .catch(error => {
+          console.log('battleApi.stopReadPath Err : ' + error)
+        })
     },
     /**
      *  鼠标在时间轴上移动
@@ -540,6 +548,7 @@ export default {
         Cesium.Ellipsoid.WGS84,
         converter
       )
+      const p = CartesianToDegrees(position)
       if (m === undefined) {
         let url = ''
         switch (type) {
@@ -574,14 +583,17 @@ export default {
             })
           )
           this.addModelLabel(
-            Cesium.Cartesian3.fromDegrees(lon, lat, 15),
+            Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 3),
             name,
             id
           )
         }
       } else {
         m.modelMatrix = matrix
-        this.updateLabelPosition(id, position)
+        this.updateLabelPosition(
+          id,
+          Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 3)
+        )
       }
     },
     add2DObject (id, type, lat, lon, heading) {

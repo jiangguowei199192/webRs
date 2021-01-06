@@ -250,6 +250,7 @@ import Map from './components/marsMap.vue'
 import FloorGuide from './components/FloorGuide.vue'
 import { stringIsNullOrEmpty } from '@/utils/validate'
 import { uuid } from '@/utils/public'
+import { CartesianToDegrees } from '@/utils/mars3d'
 import axios from 'axios'
 var Cesium = window.Cesium
 var mars3d = window.mars3d
@@ -684,20 +685,6 @@ export default {
         if (l !== undefined) { l.name = dst.name }
       } else this.copyData(this.curEntity.attribute, this.infoBox)
       this.infoBox.editing = false
-    },
-
-    /**
-     * 将笛卡尔坐标转为地理坐标
-     * @param {Object} position 笛卡尔坐标
-     */
-    CartesianToDegrees (position) {
-      var cartographic = Cesium.Cartographic.fromCartesian(position)
-      var lon = Number(
-        Cesium.Math.toDegrees(cartographic.longitude).toFixed(7)
-      )
-      var lat = Number(Cesium.Math.toDegrees(cartographic.latitude).toFixed(7))
-      var height = Math.ceil(cartographic.height)
-      return { lat: lat, lon: lon, height: height }
     },
 
     /**
@@ -1526,7 +1513,7 @@ export default {
       // const p = me.CartesianToDegrees(center)
       // return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 2)
       const attr = primitive.attribute
-      const p = this.CartesianToDegrees(primitive.position)
+      const p = CartesianToDegrees(primitive.position)
       if (attr.edit) {
         return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 5)
       } else return Cesium.Cartesian3.fromDegrees(p.lon, p.lat, p.height + 3)
