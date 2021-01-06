@@ -152,7 +152,6 @@ import { timeFormat } from '@/utils/date'
 import globalApi from '@/utils/globalApi'
 import LivePlayer from '@liveqing/liveplayer'
 import { battleApi } from '@/api/battle'
-import MqttService from '@/utils/mqttService'
 import { EventBus } from '@/utils/eventBus.js'
 import { CartesianToDegrees } from '@/utils/mars3d'
 var mars3d = window.mars3d
