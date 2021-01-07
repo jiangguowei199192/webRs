@@ -1127,7 +1127,7 @@ export default {
     position: relative;
     top: 10px;
     width: 312px;
-    height: 183px;
+    height: 163px;
     box-sizing: border-box;
   }
   .bar {
