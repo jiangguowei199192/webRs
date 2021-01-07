@@ -190,7 +190,8 @@ export default {
       imgPath: '',
       videoUrl: '',
       poster: require('../../assets/images/loading.gif'),
-      topicId: '' // 战评回放主题id
+      topicId: '', // 战评回放主题id
+      bIsFirstLonLat: true
     }
   },
   components: {
@@ -639,8 +640,8 @@ export default {
         _bWgs2Gcj: false,
         // angle: tmpAngle,
         iconParams: {
-          anchor: [23, 43], // 0.5, 0.5
-          anchorXUnits: 'pixels', // fraction
+          anchor: [23, 42], // 0.5, 0.5
+          anchorXUnits: 'pixels', // pixels
           anchorYUnits: 'pixels', // fraction
           src: tmpUrl
           // rotation: tmpAngle,
@@ -651,6 +652,11 @@ export default {
         tmpData,
         { color: '#BCBCBC', width: 2 }
       )
+      if (this.bIsFirstLonLat) {
+        this.bIsFirstLonLat = false
+        this.$refs.gduMap.map2D.setZoom(16)
+        this.$refs.gduMap.map2D.zoomToCenter(lon, lat)
+      }
     },
     /**
      * 设置战评事件数据
