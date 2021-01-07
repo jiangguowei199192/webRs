@@ -256,7 +256,13 @@ export default {
       var info = JSON.parse(message.payloadString)
       // console.log(info)
       info.objs.forEach(o => {
-        me.add2DObject(o.objSN, o.type, o.lan / 1e7, o.lon / 1e7, o.orientation)
+        me.add2DObject(
+          o.objSN,
+          o.type,
+          o.lan / 1e7,
+          o.lon / 1e7,
+          o.orientation
+        )
         if (me.show3d) {
           me.add3DModel(
             o.objSN,
@@ -326,6 +332,7 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.topicId = res.data.data
+            this.isPlay = true
           }
         })
         .catch(error => {
@@ -463,10 +470,44 @@ export default {
       this.$router.go(-1)
     },
     /**
-     *  返回
+     *  暂停/恢复回放工作台
+     */
+    pauseOrResumeWorker (isPlay) {
+      const url = isPlay === true ? battleApi.resumeWorker : battleApi.pauseWorker
+      this.$axios
+        .post(url, { workerNO: this.topicId })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.isPlay = isPlay
+          }
+        })
+        .catch(error => {
+          console.log(url + ' Err : ' + error)
+        })
+    },
+    /**
+     *  暂停/恢复回放战评
      */
     play (isPlay) {
-      this.isPlay = isPlay
+      const s = isPlay === true ? 1 : 2
+      // 查询回放工作台状态
+      // 0:工作台不存在，1.工作台正常工作。2.工作台被暂停了
+      this.$axios
+        .post(battleApi.getWorkerStatus, { workerNO: this.topicId })
+        .then(res => {
+          if (res.data.code === 0) {
+            const status = res.data.data
+            if (status === 0) {
+              // 重新开始回放战评
+              if (isPlay) this.getAlertTopic()
+            } else if (s !== status) {
+              this.pauseOrResumeWorker(isPlay)
+            } else this.isPlay = isPlay
+          }
+        })
+        .catch(error => {
+          console.log('battleApi.getWorkerStatus Err : ' + error)
+        })
     },
     /**
      * 二维地图、三维地图切换
