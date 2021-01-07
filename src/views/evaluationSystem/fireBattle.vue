@@ -749,7 +749,7 @@ export default {
       const option = {
         tooltip: {},
         grid: {
-          top: 10,
+          top: 15,
           left: 0,
           right: 0,
           bottom: 0,
@@ -1127,7 +1127,7 @@ export default {
     position: relative;
     top: 10px;
     width: 312px;
-    height: 168px;
+    height: 183px;
     box-sizing: border-box;
   }
   .bar {
