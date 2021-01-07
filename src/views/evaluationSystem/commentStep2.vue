@@ -351,7 +351,10 @@ export default {
         return
       }
       this.activities[this.activeStep].fileName = f.name
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      const config = {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 20000
+      }
       const formData = new FormData()
       formData.append('file', f)
       this.$axios
@@ -359,9 +362,13 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.activities[this.activeStep].eventFileUrl = res.data.data
+            this.$notify.closeAll()
+            this.$notify.success({ title: '提示', message: '上传成功' })
           }
         })
         .catch(err => {
+          this.$notify.closeAll()
+          this.$notify.error({ title: '错误', message: '上传失败' })
           console.log('combatUpload Err : ' + err)
         })
     },
@@ -443,7 +450,7 @@ export default {
           !Object.values(ac2).every(item => stringIsNullOrEmpty(item))
         ) {
           // 属性不都为空
-          // console.log(ac2)
+          console.log(ac2)
           valid = false
           break
         }
