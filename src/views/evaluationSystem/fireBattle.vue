@@ -173,6 +173,7 @@ export default {
       timeStart: 0,
       timeEnd: 0,
       curTime: '',
+      curTimeSpan: '',
       isPlay: false, // 播放战评
       detail: '', // 战评详情
       people: 0,
@@ -233,6 +234,7 @@ export default {
           document.onmouseup = null
           me.isDrag = false
           me.hideCurrentTime()
+          me.jumpPlayback(me.curTimeSpan)
         }
       }
     }
@@ -255,25 +257,32 @@ export default {
       if (topic !== message.topic) return
       var info = JSON.parse(message.payloadString)
       // console.log(info)
-      info.objs.forEach(o => {
-        me.add2DObject(
-          o.objSN,
-          o.type,
-          o.lan / 1e7,
-          o.lon / 1e7,
-          o.orientation
-        )
-        if (me.show3d) {
-          me.add3DModel(
+      if (info.objs) {
+        info.objs.forEach(o => {
+          me.add2DObject(
             o.objSN,
             o.type,
             o.lan / 1e7,
             o.lon / 1e7,
-            o.orientation,
-            o.nickName
+            o.orientation
           )
-        }
-      })
+          if (me.show3d) {
+            me.add3DModel(
+              o.objSN,
+              o.type,
+              o.lan / 1e7,
+              o.lon / 1e7,
+              o.orientation,
+              o.nickName
+            )
+          }
+        })
+      }
+      if (info.serialNum === -1) {
+        // 回放完毕
+        this.isPlay = false
+        // console.log('全部回放完毕')
+      }
       // 设置时间轴指针
       if (info.time >= me.timeStart && info.time <= me.timeEnd) {
         me.setTimePointer(info.time)
@@ -361,6 +370,23 @@ export default {
       this.setCurrentTime(left)
     },
     /**
+     *  跳转回放
+     */
+    jumpPlayback (time) {
+      this.$axios
+        .post(battleApi.setProgress, {
+          workerNO: this.topicId,
+          progressTime: time
+        })
+        .then(res => {
+          if (res.data.code === 0) {
+          }
+        })
+        .catch(error => {
+          console.log('battleApi.setProgress Err : ' + error)
+        })
+    },
+    /**
      *  单击时间轴
      */
     timeBarClick (event) {
@@ -369,7 +395,26 @@ export default {
       if (dom) {
         dom.style.left = left - dom.clientWidth / 2 + 'px'
       }
+      const timeSpan = this.computeTime(left)
+      if (timeSpan) {
+        this.jumpPlayback(timeSpan)
+      }
+
       this.hideCurrentTime()
+    },
+    /**
+     *  根据位置计算时间
+     */
+    computeTime (left) {
+      const d = document.querySelector('#timeBar')
+      if (d) {
+        const timeSpan = Math.round(
+          ((this.timeEnd - this.timeStart) * (left - d.offsetLeft)) /
+            d.clientWidth +
+            this.timeStart
+        )
+        return timeSpan
+      } else return ''
     },
     /**
      *  隐藏时间
@@ -407,12 +452,12 @@ export default {
         else if (left > dom.offsetLeft + dom.clientWidth) {
           left = dom.offsetLeft + dom.clientWidth
         }
-        const timeSpan = Math.round(
+        this.curTimeSpan = Math.round(
           ((this.timeEnd - this.timeStart) * (left - dom.offsetLeft)) /
             dom.clientWidth +
             this.timeStart
         )
-        this.curTime = timeFormat(timeSpan)
+        this.curTime = timeFormat(this.curTimeSpan)
       }
       this.showCurTime = true
       this.$nextTick(() => {
@@ -473,7 +518,8 @@ export default {
      *  暂停/恢复回放工作台
      */
     pauseOrResumeWorker (isPlay) {
-      const url = isPlay === true ? battleApi.resumeWorker : battleApi.pauseWorker
+      const url =
+        isPlay === true ? battleApi.resumeWorker : battleApi.pauseWorker
       this.$axios
         .post(url, { workerNO: this.topicId })
         .then(res => {
