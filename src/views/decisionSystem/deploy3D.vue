@@ -807,7 +807,7 @@ export default {
         this.copyData(this.editBox, this.curEntity.attribute.task)
         const t = this.findModelLabel(this.curEntity.attribute.id)
         if (t !== undefined) {
-          this.copyData(this.editBox, t.opts.data)
+          this.copyData(this.editBox, t.options.data)
           this.updateLabelHtml(t)
         }
         this.curEntity.show = !this.editBox.hide
@@ -824,7 +824,7 @@ export default {
      * @param {String} name 标签data.name
      */
     findModelLabel (name) {
-      return this.labelList.find(t => t.opts.name === name)
+      return this.labelList.find(t => t.options.name === name)
     },
 
     /**
@@ -832,7 +832,7 @@ export default {
      * @param {String} name 标签data.name
      */
     findModelMarker (name) {
-      return this.markList.find(t => t.opts.name === name)
+      return this.markList.find(t => t.options.name === name)
     },
 
     /**
@@ -887,10 +887,10 @@ export default {
      */
     autoFindEditBoxNum () {
       var number = 1
-      const list = this.labelList.sort(function (a, b) { return parseInt(a.opts.data.number) - parseInt(b.opts.data.number) })
+      const list = this.labelList.sort(function (a, b) { return parseInt(a.options.data.number) - parseInt(b.options.data.number) })
       for (var i = 0; i < list.length; i++) {
         const t = list[i]
-        if (parseInt(t.opts.data.number) !== number) {
+        if (parseInt(t.options.data.number) !== number) {
           break
         } else number += 1
       }
@@ -1320,9 +1320,9 @@ export default {
           this.labelList.forEach(e => { e.visible = true })
         }
       } else if (this.labelList) {
-        let list = this.labelList.filter(item => !item.opts.isGis)
+        let list = this.labelList.filter(item => !item.options.isGis)
         list.forEach(e => { e.visible = this.activeIndex === 4 })
-        list = this.labelList.filter(item => item.opts.isGis)
+        list = this.labelList.filter(item => item.options.isGis)
         list.forEach(e => { e.visible = false })
       }
       if (this.modelList) {
@@ -1347,7 +1347,7 @@ export default {
       if (this.markList) {
         this.markList.forEach(e => {
           if (index === 5) e.visible = true
-          else if (e.opts.editIndex === index) e.visible = true
+          else if (e.options.editIndex === index) e.visible = true
           else e.visible = false
         })
       }
@@ -1442,7 +1442,7 @@ export default {
      * @param {Object} entity 标签
      */
     updateLabelHtml (entity) {
-      const task = entity.opts.data
+      const task = entity.options.data
       const text1 = task.department + '-' + task.number
       const text2 = task.task
       const innerhtml =
@@ -1642,7 +1642,7 @@ export default {
           task: '供水'
         }
         const l = me.addModelLabel(modelPrimitive, task)
-        l.opts.isGis = true
+        l.options.isGis = true
       })
 
       return modelPrimitive
@@ -1659,7 +1659,7 @@ export default {
       const t = me.findModelLabel(entity.attribute.id)
       this.editBox.hide = !entity.show
       if (t !== undefined) {
-        this.copyData(t.opts.data, this.editBox)
+        this.copyData(t.options.data, this.editBox)
       }
       var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
         this.viewer.scene,

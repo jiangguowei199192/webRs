@@ -615,7 +615,7 @@ export default {
      *  更新标签位置
      */
     updateLabelPosition (id, position) {
-      const t = this.labelList.find(t => t.opts.name === id)
+      const t = this.labelList.find(t => t.options.name === id)
       if (t !== undefined) {
         t.position = position
       }

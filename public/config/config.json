@@ -50,7 +50,7 @@
                 "type": "www_google",
                 "crs": "wgs84",
                 "layer": "img_d",
-                "visible": true
+                "visible": false
             },
             {
                 "pid": 10,
@@ -74,12 +74,9 @@
                 "type": "www_tdt",
                 "layer": "img_d",
                 "key": [
-                  "313cd4b28ed520472e8b43de00b2de56",
-                  "83b36ded6b43b9bc81fbf617c40b83b5",
-                  "0ebd57f93a114d146a954da4ecae1e67",
-                  "6c99c7793f41fccc4bd595b03711913e",
-                  "56b81006f361f6406d0e940d2f89a39c"
-                ]
+                  "16bdd32bf10eca5a9d9088c15697491e"    
+                ],
+                "visible": true
             },
             {
                 "pid": 10,
@@ -149,14 +146,10 @@
                 "type": "www_tdt",
                 "layer": "img_z",
                 "key": [
-                  "313cd4b28ed520472e8b43de00b2de56",
-                  "83b36ded6b43b9bc81fbf617c40b83b5",
-                  "0ebd57f93a114d146a954da4ecae1e67",
-                  "6c99c7793f41fccc4bd595b03711913e",
-                  "56b81006f361f6406d0e940d2f89a39c"
+                    "16bdd32bf10eca5a9d9088c15697491e"
                 ],
                 "proxy": "http://data.marsgis.cn/proxy/",
-                "visible": false
+                "visible": true
             },
             {
                 "id": 60,
