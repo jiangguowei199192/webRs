@@ -206,6 +206,10 @@ export default {
       const dragBox = el // 获取当前元素
       dragBox.onmousedown = e => {
         me.isDrag = true
+        if (me.timeout) {
+          clearTimeout(me.timeout)
+          me.timeout = null
+        }
         // 阻止事件冒泡
         if (e.stopPropagation) e.stopPropagation()
         else e.cancelBubble = true
@@ -232,9 +236,8 @@ export default {
           document.onmousemove = null
           // 预防鼠标弹起来后还会循环（即预防鼠标放上去的时候还会移动）
           document.onmouseup = null
-          me.isDrag = false
           me.hideCurrentTime()
-          me.jumpPlayback(me.curTimeSpan)
+          if (me.isPlay) { this.jumpPlayback(me.curTimeSpan) }
         }
       }
     }
@@ -284,7 +287,11 @@ export default {
         // console.log('全部回放完毕')
       }
       // 设置时间轴指针
-      if (info.time >= me.timeStart && info.time <= me.timeEnd) {
+      if (
+        !this.isDrag &&
+        info.time >= me.timeStart &&
+        info.time <= me.timeEnd
+      ) {
         me.setTimePointer(info.time)
       }
       // 切换事件
@@ -337,7 +344,6 @@ export default {
     getAlertTopic () {
       this.$axios
         .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
-        // .post(battleApi.readPathByAlertId, { alertId: 20210105081733 })
         .then(res => {
           if (res.data.code === 0) {
             this.topicId = res.data.data
@@ -367,12 +373,13 @@ export default {
      */
     timeBarMousemove (event) {
       const left = event.offsetX + event.target.offsetLeft
-      this.setCurrentTime(left)
+      this.setCurrentTime(left, false)
     },
     /**
      *  跳转回放
      */
     jumpPlayback (time) {
+      this.disableTimePointerMove()
       this.$axios
         .post(battleApi.setProgress, {
           workerNO: this.topicId,
@@ -380,11 +387,26 @@ export default {
         })
         .then(res => {
           if (res.data.code === 0) {
+            this.isPlay = true
           }
         })
         .catch(error => {
           console.log('battleApi.setProgress Err : ' + error)
         })
+    },
+    /**
+     *  禁止时间轴指针移到
+     */
+    disableTimePointerMove () {
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+        this.timeout = null
+      }
+      const me = this
+      this.isDrag = true
+      this.timeout = setTimeout(() => {
+        me.isDrag = false
+      }, 2000)
     },
     /**
      *  单击时间轴
@@ -397,9 +419,9 @@ export default {
       }
       const timeSpan = this.computeTime(left)
       if (timeSpan) {
-        this.jumpPlayback(timeSpan)
+        this.curTimeSpan = timeSpan
+        if (this.isPlay) { this.jumpPlayback(timeSpan) }
       }
-
       this.hideCurrentTime()
     },
     /**
@@ -444,7 +466,7 @@ export default {
     /**
      *  设置当前时间
      */
-    setCurrentTime (left) {
+    setCurrentTime (left, updateTimeSpan = true) {
       if (this.hideTimeout) clearTimeout(this.hideTimeout)
       const dom = document.querySelector('#timeBar')
       if (dom) {
@@ -452,12 +474,14 @@ export default {
         else if (left > dom.offsetLeft + dom.clientWidth) {
           left = dom.offsetLeft + dom.clientWidth
         }
-        this.curTimeSpan = Math.round(
+        const timespan = Math.round(
           ((this.timeEnd - this.timeStart) * (left - dom.offsetLeft)) /
             dom.clientWidth +
             this.timeStart
         )
-        this.curTime = timeFormat(this.curTimeSpan)
+        if (updateTimeSpan) { this.curTimeSpan = timespan }
+
+        this.curTime = timeFormat(timespan)
       }
       this.showCurTime = true
       this.$nextTick(() => {
@@ -518,18 +542,20 @@ export default {
      *  暂停/恢复回放工作台
      */
     pauseOrResumeWorker (isPlay) {
-      const url =
-        isPlay === true ? battleApi.resumeWorker : battleApi.pauseWorker
-      this.$axios
-        .post(url, { workerNO: this.topicId })
-        .then(res => {
-          if (res.data.code === 0) {
-            this.isPlay = isPlay
-          }
-        })
-        .catch(error => {
-          console.log(url + ' Err : ' + error)
-        })
+      if (isPlay) {
+        this.jumpPlayback(this.curTimeSpan)
+      } else {
+        this.$axios
+          .post(battleApi.pauseWorker, { workerNO: this.topicId })
+          .then(res => {
+            if (res.data.code === 0) {
+              this.isPlay = isPlay
+            }
+          })
+          .catch(error => {
+            console.log('battleApi.pauseWorker Err : ' + error)
+          })
+      }
     },
     /**
      *  暂停/恢复回放战评
