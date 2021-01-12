@@ -26,7 +26,7 @@
         v-for="(item,index) in combatEvents"
         :key="index"
         :class="{active:activeIndex==index}"
-        @click="changeEvent(index)"
+        @click="changeEvent(index,true)"
       >
         <span :style="{background: 'url('+ serverUrl + item.icon +')'}"></span>
         <span></span>
@@ -192,7 +192,8 @@ export default {
       videoUrl: '',
       poster: require('../../assets/images/loading.gif'),
       topicId: '', // 战评回放主题id
-      bIsFirstLonLat: true
+      bIsFirstLonLat: true,
+      needCenter: true
     }
   },
   components: {
@@ -357,15 +358,29 @@ export default {
     /**
      *  停止战评回放
      */
-    stopPlayback (id) {
+    stopPlayback () {
+      // 查询回放工作台状态
+      // 0:工作台不存在，1.工作台正常工作。2.工作台被暂停了
       this.$axios
-        .post(battleApi.stopReadPath, { workerNO: this.topicId })
+        .post(battleApi.getWorkerStatus, { workerNO: this.topicId })
         .then(res => {
           if (res.data.code === 0) {
+            const status = res.data.data
+            if (status !== 0) {
+              this.$axios
+                .post(battleApi.stopReadPath, { workerNO: this.topicId })
+                .then(res => {
+                  if (res.data.code === 0) {
+                  }
+                })
+                .catch(error => {
+                  console.log('battleApi.stopReadPath Err : ' + error)
+                })
+            }
           }
         })
         .catch(error => {
-          console.log('battleApi.stopReadPath Err : ' + error)
+          console.log('battleApi.getWorkerStatus Err : ' + error)
         })
     },
     /**
@@ -607,9 +622,17 @@ export default {
     /**
      * 切换事件
      */
-    changeEvent (index) {
+    changeEvent (index, jump = false) {
       this.activeIndex = index
-      this.setEventData(this.combatEvents[index])
+      const event = this.combatEvents[index]
+      this.setEventData(event)
+      // 如果需要跳转
+      if (jump) {
+        const timespan = new Date(event.eventTime).getTime()
+        this.setTimePointer(timespan)
+        this.curTimeSpan = timespan
+        if (this.isPlay) { this.jumpPlayback(timespan) }
+      }
     },
     /**
      *  更新标签位置
@@ -700,6 +723,10 @@ export default {
             name,
             id
           )
+          if (this.needCenter && lat > 0 && lon > 0) {
+            this.needCenter = false
+            this.viewer.mars.centerAt({ y: lat, x: lon, z: 2000, heading: 0, pitch: -90, roll: 0 })
+          }
         }
       } else {
         m.modelMatrix = matrix

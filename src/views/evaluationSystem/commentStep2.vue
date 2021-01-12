@@ -339,6 +339,7 @@ export default {
     fileChange (e) {
       if (e.target.files.length <= 0) return
       const f = e.target.files[0]
+      this.$refs.uploadFile.value = null
       const fileType = f.name
         .substring(f.name.lastIndexOf('.') + 1, f.name.length)
         .toLowerCase()
@@ -450,7 +451,7 @@ export default {
           !Object.values(ac2).every(item => stringIsNullOrEmpty(item))
         ) {
           // 属性不都为空
-          console.log(ac2)
+          // console.log(ac2)
           valid = false
           break
         }
