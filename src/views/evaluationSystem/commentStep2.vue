@@ -13,8 +13,6 @@
                   v-model="activity.eventTime"
                   type="datetime"
                   placeholder="选择日期时间"
-                  @blur="datePickerBlur(true,index)"
-                  @focus="datePickerBlur(false,index)"
                   :clearable="false"
                   value-format="timestamp"
                 ></el-date-picker>
@@ -40,7 +38,6 @@
                   @mousedown="editMouseDown($event)"
                 ></span>
                 <span
-                  v-show="activity.showDelete"
                   @click.stop="deleteComment(index)"
                   :class="{disable:index !== activeStep}"
                 ></span>
@@ -204,7 +201,6 @@ export default {
         eventName: '',
         eventTime: '',
         readonly: true,
-        showDelete: false,
         fileName: '',
         eventFileUrl: '', // 文件URL
         attendancePeople: '', // 到达人数
@@ -277,7 +273,6 @@ export default {
           JSON.parse(JSON.stringify(this.event))
         )
         this.setEventData(index)
-        this.showDeleteButton(index)
       } else {
         this.activities.splice(index, 1)
         if (this.activeStep > this.activities.length - 1) {
@@ -286,30 +281,10 @@ export default {
       }
     },
     /**
-     * datePicker失去或获得焦点
-     */
-    datePickerBlur (isBlur, index) {
-      if (isBlur) {
-        this.showDeleteButton(index)
-      }
-    },
-    /**
      * input失去焦点
      */
     inputBlur (index) {
       this.activities[index].readonly = true
-      this.showDeleteButton(index)
-    },
-    /**
-     * 显示删除按钮
-     */
-    showDeleteButton (index) {
-      if (
-        this.activities[index].eventTime &&
-        this.activities[index].eventName
-      ) {
-        this.activities[index].showDelete = true
-      } else this.activities[index].showDelete = false
     },
     /**
      *  上传图片或视频
@@ -436,7 +411,6 @@ export default {
       for (; i < this.activities.length; i++) {
         const ac = JSON.parse(JSON.stringify(this.activities[i]))
         delete ac.readonly
-        delete ac.showDelete
         delete ac.fileName
         const ac2 = JSON.parse(JSON.stringify(ac))
         delete ac2.icon
@@ -467,6 +441,7 @@ export default {
       if (data.length === 0) {
         this.$notify.closeAll()
         this.$notify.warning({ title: '警告', message: '请先填写步骤后保存' })
+        return
       }
       if (this.isEdit && this.eventDatas && this.eventDatas.length > 0) {
         this.$axios
@@ -496,7 +471,6 @@ export default {
         }
         var pos = e.eventFileUrl.lastIndexOf('/')
         data.fileName = e.eventFileUrl.substring(pos + 1)
-        data.showDelete = true
         this.activities.push(data)
       })
       const len = 5 - this.activities.length
