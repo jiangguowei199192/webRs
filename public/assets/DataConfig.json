@@ -5,7 +5,7 @@
     "google": [
       {
         "description": "谷歌中国混合地图（默认）",
-        "url": "http://mt{0-3}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+        "url": "http://mt{0-3}.google.com/vt/lyrs=y&gl=cn&x={x}&y={y}&z={z}"
       },
       {
         "description": "谷歌中国卫星地图",
