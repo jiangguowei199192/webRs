@@ -502,7 +502,7 @@ export default {
     },
     maxZoom: {
       type: Number,
-      default: 21
+      default: 18
     },
     // 为false时，emit eventLocator事件。
     doLocator: {
@@ -599,6 +599,7 @@ export default {
       this.map2D = new D2.Map2D({
         containerId: this.mapContainerID,
         baseLayerType: this.mapTypeCur,
+        mapOriginType: 'gaode',
         serverBaseUrl: rootUrl,
         bIsOnline: bNetWorkConn,
         rpClickSelect: true
