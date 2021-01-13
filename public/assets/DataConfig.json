@@ -17,15 +17,15 @@
       },
       {
         "description": "谷歌混合地图(en)",
-        "url": "http://mt{0-3}.google.com/maps/vt/lyrs=y@333000000&hl=en&s=Gal&x={x}&y={y}&z={z}"
+        "url": "http://mt{0-3}.google.com/maps/vt/lyrs=y@333000000&hl=en&gl=cn&s=Gal&x={x}&y={y}&z={z}"
       },
       {
         "description": "谷歌卫星地图(en)",
-        "url": "http://mt{0-3}.google.com/maps/vt/lyrs=s@333000000&hl=en&s=G&x={x}&y={y}&z={z}"
+        "url": "http://mt{0-3}.google.com/maps/vt/lyrs=s@333000000&hl=en&gl=cn&s=G&x={x}&y={y}&z={z}"
       },
       {
         "description": "谷歌普通地图(en)",
-        "url": "http://mt{0-3}.google.com/maps/vt/lyrs=m@333000000&hl=en&s=Galil&x={x}&y={y}&z={z}"
+        "url": "http://mt{0-3}.google.com/maps/vt/lyrs=m@333000000&hl=en&gl=cn&s=Galil&x={x}&y={y}&z={z}"
       }
     ],
     "gaode": [
