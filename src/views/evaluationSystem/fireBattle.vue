@@ -266,16 +266,16 @@ export default {
           me.add2DObject(
             o.objSN,
             o.type,
-            o.lan / 1e7,
-            o.lon / 1e7,
+            o.latitude,
+            o.longitude,
             o.orientation
           )
           if (me.show3d) {
             me.add3DModel(
               o.objSN,
               o.type,
-              o.lan / 1e7,
-              o.lon / 1e7,
+              o.latitude,
+              o.longitude,
               o.orientation,
               o.nickName
             )
