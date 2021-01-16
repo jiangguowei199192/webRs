@@ -725,7 +725,8 @@ export default {
           )
           if (this.needCenter && lat > 0 && lon > 0) {
             this.needCenter = false
-            this.viewer.mars.centerAt({ y: lat, x: lon, z: 2000, heading: 0, pitch: -90, roll: 0 })
+            var pos = mars3d.point.getPositionValue(position)
+            this.viewer.mars.centerPoint(pos, { duration: 3, radius: 100 })
           }
         }
       } else {
@@ -777,7 +778,7 @@ export default {
       const tmpData = {
         id: id,
         coordinate: [lon, lat],
-        _bWgs2Gcj: false,
+        _bWgs2Gcj: true,
         // angle: tmpAngle,
         iconParams: {
           anchor: [23, 42], // 0.5, 0.5
