@@ -1229,7 +1229,9 @@ export default {
       this.modelIndex = index
       const m = this.modelList.find(m => m.attribute.id === item.id)
       if (m !== undefined) {
-        this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -30 })
+        // this.viewer.mars.flyTo(m, { duration: 3, radius: 100, pitch: -30 })
+        var position = mars3d.point.getPositionValue(m.position)
+        this.viewer.mars.centerPoint(position, { duration: 3, radius: 100 })
       }
     },
 
@@ -1692,7 +1694,7 @@ export default {
         position: position,
         depthTest: false,
         name: attr.id,
-        click: function (entity) {
+        click: function () {
           me.ClickDivPoint(entity)
         }
 
@@ -1762,7 +1764,9 @@ export default {
     ClickDivPoint (entity) {
       this.clearCurEntity()
       this.showInfoBox = false
-      this.viewer.mars.flyTo(entity, { duration: 3, radius: 100, pitch: -30 })
+      // this.viewer.mars.flyTo(entity, { duration: 3, radius: 100, pitch: -30 })
+      var position = mars3d.point.getPositionValue(entity.position)
+      this.viewer.mars.centerPoint(position, { duration: 3, radius: 100 })
     },
 
     /**
