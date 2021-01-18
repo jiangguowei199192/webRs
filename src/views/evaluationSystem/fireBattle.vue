@@ -307,7 +307,6 @@ export default {
       }
     })
     this.getAlertTopic()
-    this.getAlertInfo()
 
     this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false)
 
@@ -341,6 +340,36 @@ export default {
   methods: {
     timeFormat,
     /**
+     *  添加三维火焰
+     */
+    add3DFire (lat, lon) {
+      var position = Cesium.Cartesian3.fromDegrees(lon, lat)
+      var pos = mars3d.point.getPositionValue(position)
+      this.viewer.mars.centerPoint(pos, { duration: 3, radius: 400 })
+      const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(position)
+
+      function computeEmitterModelMatrix () {
+        const hpr = Cesium.HeadingPitchRoll.fromDegrees(0.0, 0.0, 0.0, new Cesium.HeadingPitchRoll())
+        var trs = new Cesium.TranslationRotationScale()
+        trs.translation = Cesium.Cartesian3.fromElements(2.5, 4.0, 1.0, new Cesium.Cartesian3())
+        trs.rotation = Cesium.Quaternion.fromHeadingPitchRoll(hpr, new Cesium.Quaternion())
+        return Cesium.Matrix4.fromTranslationRotationScale(trs, new Cesium.Matrix4())
+      }
+
+      this.viewer.scene.primitives.add(new Cesium.ParticleSystem({
+        image: require('../../assets/images/3d/fire2.png'),
+        startScale: 1.0,
+        endScale: 4.0,
+        particleLife: 1.0,
+        speed: 5.0,
+        imageSize: new Cesium.Cartesian2(20, 20),
+        emissionRate: 5.0,
+        lifetime: 16.0,
+        modelMatrix: modelMatrix,
+        emitterModelMatrix: computeEmitterModelMatrix()
+      }))
+    },
+    /**
      *  获取火灾数据
      */
     getAlertInfo () {
@@ -348,7 +377,9 @@ export default {
         .post(battleApi.findOneAlert, { alertId: this.detail.fireNo })
         .then(res => {
           if (res.data.code === 0) {
-
+            const lat = res.data.data.lat / 1e7
+            const lon = res.data.data.lon / 1e7
+            if (this.show3d) { this.add3DFire(lat, lon) }
           }
         })
         .catch(error => {
@@ -558,10 +589,11 @@ export default {
           luminanceAtZenith: 0.6
         }
         layercfg.visible = true
-        layercfg.flyTo = true
+        // layercfg.flyTo = true
         this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
-        this.layerModel.centerAt()
+        // this.layerModel.centerAt()
       }
+      this.getAlertInfo()
     },
     /**
      *  返回
