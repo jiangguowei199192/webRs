@@ -307,6 +307,7 @@ export default {
       }
     })
     this.getAlertTopic()
+    this.getAlertInfo()
 
     this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false)
 
@@ -339,6 +340,21 @@ export default {
   },
   methods: {
     timeFormat,
+    /**
+     *  获取火灾数据
+     */
+    getAlertInfo () {
+      this.$axios
+        .post(battleApi.findOneAlert, { alertId: this.detail.fireNo })
+        .then(res => {
+          if (res.data.code === 0) {
+
+          }
+        })
+        .catch(error => {
+          console.log('battleApi.findOneAlert Err : ' + error)
+        })
+    },
     /**
      *  获取战评回放主题id
      */
