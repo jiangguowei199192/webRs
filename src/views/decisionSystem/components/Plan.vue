@@ -65,7 +65,7 @@
                 :src="deployImgUrl"
                 @click.stop="goToFightDeploy"
               />
-              <div class="edit-add_div" v-else>
+              <div v-else class="edit-add_div">
                 <img :src="addImg" @click.stop="entryTabShow" /><br />
                 <span>暂无缩略图(点击添加)</span>
               </div>
@@ -176,7 +176,7 @@ export default {
         }
         this.$axios
           .get(settingApi.getFullInfoById, { params: param })
-          .then((res) => {
+          .then(res => {
             // console.log(res)
             if (res.data.code === 0) {
               var resData = res.data.data
@@ -209,7 +209,7 @@ export default {
               localStorage.setItem('PlanInfo', JSON.stringify(showInfoTemp))
 
               var baseInfosTemp = []
-              resData.planEnterpriseBaseInfoPic.forEach((item) => {
+              resData.planEnterpriseBaseInfoPic.forEach(item => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -219,7 +219,7 @@ export default {
               this.baseInfos = baseInfosTemp
 
               var buildingInfosTemp = []
-              resData.planEnterpriseJzpmtPic.forEach((item) => {
+              resData.planEnterpriseJzpmtPic.forEach(item => {
                 var temp = {
                   title: item.picName,
                   image: globalApi.headImg + item.picPath
@@ -335,14 +335,14 @@ export default {
       if (!imgPath || imgPath === 'undefined') return
       axios
         .get(globalApi.headImg + imgPath)
-        .then((res) => {
+        .then(res => {
           // console.log('返回picPath: ', res)
           const url = res.data
           res.data = this.replaceUrl(url)
           // console.log('imgPath: ', res.data)
           this.deployImgUrl = res.data
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('加载picPath失败: ' + err)
         })
     },

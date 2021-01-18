@@ -21,22 +21,20 @@
         :style="'height:' + (this.workHeight - 230) + 'px;'"
       >
         <div class="edit_menu">
-          <el-tooltip
-            v-for="(item, index) in curIcons"
-            :key="index + 'i'"
-            popper-class="gTooltip plotTooltip"
-            :content="item.title"
-            placement="top"
-            :open-delay="500"
-          >
+          <div v-for="(item, index) in curIcons" :key="index + 'i'">
             <span v-if="index == 0" @click.stop="entryTabShow"
               ><img :src="item.img" alt="" />{{ item.title }}</span
             >
-            <span v-else-if="index == 2" @click.stop="saveData"
+            <span v-else-if="index == 1" @click.stop="saveData"
               ><img :src="item.img" alt="" />{{ item.title }}</span
             >
-            <span v-else><img :src="item.img" alt="" />{{ item.title }}</span>
-          </el-tooltip>
+            <span v-else-if="index == 2" @click.stop="deleteAllNode"
+              ><img :src="item.img" alt="" />{{ item.title }}</span
+            >
+          </div>
+          <!-- <span v-else style="cursor: not-allowed"
+              ><img :src="item.img" alt=""
+            />{{ item.title }}</span> -->
         </div>
         <el-select
           style="margin: 5px 0 0 0"
@@ -44,7 +42,6 @@
           placeholder="请选择"
           v-model="modelType"
           :popper-append-to-body="false"
-          @change="optionValueChange"
         >
           <el-option
             v-for="item in options"
@@ -59,31 +56,29 @@
         >
           <ul class="fl">
             <el-tooltip
-              v-for="(item, index) in curModels"
-              :key="index + '_j'"
+              v-for="(model_item, model_index) in curModels"
+              :key="model_index + '_j'"
               popper-class="gTooltip plotTooltip"
-              :content="item.name"
+              :content="model_item.name"
               placement="top"
               :open-delay="500"
             >
               <li
                 id="list"
-                :class="{ active: curModelIndex === index }"
-                :style="'background:' + item.background"
+                :class="{ active: curModelIndex === model_index }"
+                :style="'background:' + model_item.background"
                 draggable="true"
-                @click.stop="listSelected(index)"
-                @dragstart="drag(item)"
+                @click.stop="listSelected(model_index)"
+                @dragstart="drag(model_item)"
               >
-                <div v-if="modelType == 0" class="model-list_one">
-                  <img :src="item.image" alt="模型加载失败" />
-                  <span>{{ item.name }}</span>
-                </div>
-                <div v-else-if="modelType == 1" class="model-list_two">
-                  <img :src="item.image" alt="模型加载失败" />
-                  <span>{{ item.name }}</span>
-                </div>
-                <div v-else-if="modelType == 2" class="model-list_three">
-                  <img :src="item.image" alt="模型加载失败" />
+                <div :class="[`model-list_${modelType}`]">
+                  <img
+                    :src="model_item.image"
+                    alt="模型加载失败"
+                    :id="'model_icon' + model_index"
+                    @load="getImgSize(model_index)"
+                  />
+                  <span v-if="modelType == 0">{{ model_item.name }}</span>
                 </div>
               </li>
             </el-tooltip>
@@ -100,13 +95,11 @@
         @dragover.prevent
       >
         <drawNode
-          v-show="modelType == 0"
           class="drawNode"
           ref="drawNode"
           v-for="node in data.nodeList"
-          :key="node.id + '_k'"
+          :key="node.id"
           :node="node"
-          :id="node.id + '_k'"
           @change-node-site="changeNodeSite"
           @delete-node="deleteNode"
           @edit-node="editNode"
@@ -114,36 +107,6 @@
           @resize-stop="resizeStop"
           @rotate-stop="rotateStop"
         ></drawNode>
-        <drawNode2
-          v-show="modelType == 1"
-          class="drawNode"
-          ref="drawNode"
-          v-for="node in data.nodeList"
-          :key="node.id + '_m'"
-          :node="node"
-          :id="node.id + '_m'"
-          @change-node-site="changeNodeSite"
-          @delete-node="deleteNode"
-          @edit-node="editNode"
-          @drag-stop="dragStop"
-          @resize-stop="resizeStop"
-          @rotate-stop="rotateStop"
-        ></drawNode2>
-        <drawNode3
-          v-show="modelType == 2"
-          class="drawNode"
-          ref="drawNode"
-          v-for="node in data.nodeList"
-          :key="node.id + '_n'"
-          :node="node"
-          :id="node.id + '_n'"
-          @change-node-site="changeNodeSite"
-          @delete-node="deleteNode"
-          @edit-node="editNode"
-          @drag-stop="dragStop"
-          @resize-stop="resizeStop"
-          @rotate-stop="rotateStop"
-        ></drawNode3>
       </div>
     </div>
     <!-- 底图选择入口 -->
@@ -153,23 +116,20 @@
 
 <script>
 import drawNode from './components/drawNode'
-import drawNode2 from './components/drawNode_2'
-import drawNode3 from './components/drawNode_3'
 import EntryTab from './components/entryTab'
-import { jsPlumb } from 'jsplumb'
+// import { jsPlumb } from 'jsplumb'
 import { EventBus } from '@/utils/eventBus.js'
 import axios from 'axios'
 import { api } from '@/api/2d.js'
 import globalApi from '@/utils/globalApi'
 import modelList from './utils/modelList'
+import shortid from 'shortid'
 
 export default {
   name: 'fightDeploy',
 
   components: {
     drawNode,
-    drawNode2,
-    drawNode3,
     EntryTab
   },
 
@@ -184,7 +144,7 @@ export default {
       // 节点激活状态
       activeType: true,
       // 节点id
-      index: 1,
+      eleId: '',
       // 节点info
       data: {
         nodeList: [],
@@ -211,10 +171,10 @@ export default {
           title: '背景',
           img: require('../../assets/images/2d/background.png')
         },
-        { title: '删除', img: require('../../assets/images/2d/delete.png') },
         { title: '保存', img: require('../../assets/images/2d/save.png') },
-        { title: '分享', img: require('../../assets/images/2d/share.png') },
-        { title: '打印', img: require('../../assets/images/2d/print.png') }
+        { title: '清屏', img: require('../../assets/images/2d/delete.png') }
+        // { title: '分享', img: require('../../assets/images/2d/share.png') },
+        // { title: '打印', img: require('../../assets/images/2d/print.png') }
       ],
       deployInfos: [
         {
@@ -245,6 +205,8 @@ export default {
       if (this.options.length > 0 && val >= 0 && val < this.options.length) {
         this.curModels = this.options[val].list
         // console.log(this.curModels);
+        this.modelType = val
+        EventBus.$emit('optionId', this.modelType)
       }
     }
   },
@@ -262,10 +224,10 @@ export default {
     // 获取保存的数据
     this.getSavedData()
     // 节点初始化
-    this.jsPlumb = jsPlumb.getInstance()
-    this.$nextTick(() => {
-      this.init()
-    })
+    // this.jsPlumb = jsPlumb.getInstance();
+    // this.$nextTick(() => {
+    //   this.init();
+    // });
     // 点击节点以外区域
     document.onclick = function (event) {
       var e = event || window.event
@@ -320,6 +282,17 @@ export default {
       this.$router.push({ path: '/decisionSystem' })
     },
 
+    // 动态获取模型尺寸
+    getImgSize (index) {
+      if (this.modelType === 0) return
+      const tagImg = document.getElementById('model_icon' + index)
+      // console.log(tagImg)
+      if (tagImg) {
+        this.curModels[index].iconW = tagImg.clientWidth
+        this.curModels[index].iconH = tagImg.clientHeight
+      }
+    },
+
     // 选中当前模型
     listSelected (id) {
       this.curModelIndex = id
@@ -333,20 +306,27 @@ export default {
 
     // 拖放
     drop (event) {
+      this.getImgSize()
       // console.log(event)
-      const index = this.index++
       const temp = {
         value: this.currentItem.name,
         icon: this.currentItem.image,
         background: this.currentItem.background,
-        left: event.offsetX - 130 / 2 + 'px',
-        top: event.offsetY - 64 / 2 + 'px',
-        id: index,
-        width: 130,
-        height: 64,
+        type: this.currentItem.type,
+        left:
+          this.modelType === 0
+            ? event.offsetX - 130 / 2 + 'px'
+            : event.offsetX - this.currentItem.iconW / 2 + 'px',
+        top:
+          this.modelType === 0
+            ? event.offsetY - 64 / 2 + 'px'
+            : event.offsetY - this.currentItem.iconH / 2 + 'px',
+        // id: this.eleId,
+        id: shortid.generate(),
+        width: this.modelType === 0 ? 130 : this.currentItem.iconW,
+        height: this.modelType === 0 ? 64 : this.currentItem.iconH,
         rotate: 0
       }
-
       this.addNode(temp)
       // this.editNode(temp.id)
     },
@@ -370,14 +350,30 @@ export default {
 
     // 删除节点
     deleteNode (nodeId) {
-      this.$confirm('确定要删除该模型吗?', '提示', {
+      this.$confirm('确定要删除此模型吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         showClose: false
       })
         .then(() => {
-          this.data.nodeList = this.data.nodeList.filter((item) => {
+          this.data.nodeList = this.data.nodeList.filter(item => {
             return item.id !== nodeId
+          })
+        })
+        .catch(() => {})
+      return true
+    },
+
+    // 清屏
+    deleteAllNode (nodeId) {
+      this.$confirm('确定要删除全部模型吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showClose: false
+      })
+        .then(() => {
+          this.data.nodeList = this.data.nodeList.filter(item => {
+            return item.id === nodeId
           })
         })
         .catch(() => {})
@@ -415,7 +411,7 @@ export default {
     updateNodeList (index, info) {
       info.left = info.left + 'px'
       info.top = info.top + 'px'
-      const node = this.data.nodeList.find((n) => n.id === index)
+      const node = this.data.nodeList.find(n => n.id === index)
       if (node !== undefined) {
         for (var b in info) {
           // 拷贝属性
@@ -428,48 +424,39 @@ export default {
 
     // 保存json数据
     saveData () {
-      // alert(JSON.stringify(this.data.nodeList))
-      if (!this.data.nodeList || this.data.nodeList.length === 0) {
-        this.$notify.warning({
-          title: '提示',
-          message: '请先创建数据!',
-          duration: 5 * 1000
+      const blob1 = new Blob([JSON.stringify(this.data.nodeList)], {
+        type: 'application/json'
+      })
+      const blob2 = new Blob([JSON.stringify(this.buildImgUrl)], {
+        type: 'application/json'
+      })
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      const formData = new FormData()
+      formData.append('enterpriseId', this.enterpriseId)
+      formData.append('configFile', blob1, '2dConfigData.json')
+      formData.append('picThumbFile', blob2, 'thumbPicUrl')
+      this.$axios
+        .post(api.upload2dRecord, formData, config)
+        .then(res => {
+          // console.log("保存/更新接口返回: ", res);
+          if (res.data.code === 0) {
+            this.configPath = globalApi.headImg + res.data.data.configPath
+            this.$notify.success({
+              title: '提示',
+              message: '保存成功',
+              duration: 3 * 1000
+            })
+          } else {
+            this.$notify.error({
+              title: '提示',
+              message: '保存失败',
+              duration: 3 * 1000
+            })
+          }
         })
-      } else {
-        const blob1 = new Blob([JSON.stringify(this.data.nodeList)], {
-          type: 'application/json'
+        .catch(err => {
+          console.log('接口错误: ' + err)
         })
-        const blob2 = new Blob([JSON.stringify(this.buildImgUrl)], {
-          type: 'application/json'
-        })
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-        const formData = new FormData()
-        formData.append('enterpriseId', this.enterpriseId)
-        formData.append('configFile', blob1, '2dConfigData.json')
-        formData.append('picThumbFile', blob2, 'thumbPicUrl')
-        this.$axios
-          .post(api.upload2dRecord, formData, config)
-          .then((res) => {
-            console.log('保存/更新接口返回: ', res)
-            if (res.data.code === 0) {
-              this.configPath = globalApi.headImg + res.data.data.configPath
-              this.$notify.success({
-                title: '提示',
-                message: '保存成功',
-                duration: 5 * 1000
-              })
-            } else {
-              this.$notify.error({
-                title: '提示',
-                message: '保存失败',
-                duration: 5 * 1000
-              })
-            }
-          })
-          .catch((err) => {
-            console.log('接口错误: ' + err)
-          })
-      }
     },
 
     // 加载json数据
@@ -477,24 +464,24 @@ export default {
       if (this.loadJsonPath || this.loadJsonPath !== '') {
         axios
           .get(globalApi.headImg + this.loadJsonPath)
-          .then((res) => {
+          .then(res => {
             // console.log('解析后json: ', res)
             const nodeData = res.data
-            if (nodeData || nodeData.length !== 0) {
-              nodeData.forEach((item) => {
+            if (nodeData === [] || nodeData.length === 0) {
+              this.$notify.warning({
+                title: '提示',
+                message: '当前未保存任何数据!',
+                duration: 3 * 1000
+              })
+            } else {
+              nodeData.forEach(item => {
                 this.addNode(item)
               })
             }
           })
-          .catch((err) => {
+          .catch(err => {
             console.log('加载json数据失败: ' + err)
           })
-      } else {
-        this.$notify.warning({
-          title: '提示',
-          message: '当前未保存任何数据!',
-          duration: 5 * 1000
-        })
       }
     },
 
@@ -529,12 +516,6 @@ export default {
         i += 1
       }
       // console.log("options: ", this.options);
-    },
-
-    // 模型类型改变
-    optionValueChange () {
-      EventBus.$emit('optionId', this.modelType)
-      // console.log(this.modelType)
     },
 
     // 获取底图
@@ -618,16 +599,16 @@ export default {
       padding: 10px 20px;
       .edit_menu {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         font-size: 12px;
         text-align: center;
         padding: 8px 0;
         span {
-          display: block;
-          outline: none;
           color: #fff;
-          margin: 8px;
+          margin: 5px;
           cursor: pointer;
+          display: flex;
+          flex-direction: column;
           img {
             width: 46px;
             height: 46px;
@@ -664,32 +645,26 @@ export default {
               line-height: 20px;
               position: absolute;
               top: 25px;
-              right: 25px;
+              right: 20px;
             }
-            .model-list_one {
+            .model-list_0 {
               img {
                 width: 32px;
                 height: 32px;
                 position: absolute;
                 top: 18px;
-                left: 9px;
+                left: 12px;
               }
             }
-            .model-list_two {
+            .model-list_1,
+            .model-list_2 {
               img {
-                width: 37%;
-                height: 43%;
+                width: auto;
+                height: auto;
                 position: absolute;
-                top: 18px;
-                left: 7px;
-              }
-            }
-            .model-list_three {
-              text-align: center;
-              line-height: 85px;
-              img {
-                width: 81px;
-                height: 33px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
               }
             }
           }

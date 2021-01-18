@@ -18,21 +18,34 @@
     @rotateStop="rotateStop"
   >
     <div
-      style="
-        width: 100%;
-        height: 100%;
-        font-size: 14px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      "
+      class="node-item"
       ref="node"
       :style="'background:' + node.background"
       @mouseenter="showDelete"
       @mouseleave="hideDelete"
+      @mouseup="changeNodeSite"
     >
-      <div class="node-item_one" id="node-span">
-        <span>{{ node.value }}</span>
+      <div class="model-list">
+        <img
+          v-if="modelType == 0"
+          class="model-list_0"
+          :src="node.icon"
+          alt=""
+        />
+        <img
+          v-else
+          :style="
+            'width:' +
+              posData.width +
+              'px;' +
+              'height:' +
+              posData.height +
+              'px;'
+          "
+          :src="node.icon"
+          alt=""
+        />
+        <span v-if="modelType == 0">{{ node.value }}</span>
       </div>
       <div class="node-del" v-show="mouseEnter" @click.stop="deleteNode">
         <i class="el-icon-circle-close"></i>
@@ -103,6 +116,10 @@ export default {
     }
   },
 
+  watch: {
+    // modelType: 'getModelType'
+  },
+
   created () {
     // 节点位置信息初始化
     const { width, height, left, top, rotate } = this.controlled
@@ -114,21 +131,26 @@ export default {
 
     // 节点激活状态
     const _this = this
-    EventBus.$on('type', (data) => {
+    EventBus.$on('type', data => {
       // console.log(data)
       _this.controlled.isActive = data
     })
   },
 
   mounted () {
-    // 所选模型类型
-    EventBus.$on('optionId', (data) => {
-      // console.log(data)
-      this.modelType = data
-    })
+    this.modelType = this.node.type
   },
 
   methods: {
+    // 所选模型类型
+    getModelType () {
+      const _this = this
+      EventBus.$on('optionId', data => {
+        // console.log(data)
+        _this.modelType = data
+      })
+    },
+
     // 点击选中元素
     activated (pos) {
       this.controlled.isActive = true
@@ -202,6 +224,27 @@ export default {
 </script>
 
 <style lang="scss" scope>
+.node-item {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .model-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .model-list_0 {
+      img {
+        width: 32px;
+        height: 32px;
+        vertical-align: middle;
+        margin-right: 22px;
+      }
+    }
+  }
+}
 .node-del {
   position: absolute;
   color: #fff;

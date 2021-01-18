@@ -3,74 +3,98 @@ export default {
     {
       name: '指挥区',
       image: require('../../../assets/images/2d/command_one.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: null,
+      iconH: null
     },
     {
       name: '1号停车区',
       image: require('../../../assets/images/2d/park.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '指挥区',
       image: require('../../../assets/images/2d/command_two.png'),
-      type: 'model-p',
-      background: '#E70000'
+      background: '#E70000',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '2号停车区',
       image: require('../../../assets/images/2d/park.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '集结区',
       image: require('../../../assets/images/2d/mass.png'),
-      type: 'model-p',
-      background: '#EF4E22'
+      background: '#EF4E22',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '3号停车区',
       image: require('../../../assets/images/2d/park.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '休整区',
       image: require('../../../assets/images/2d/rest.png'),
-      type: 'model-p',
-      background: '#C3960F'
+      background: '#C3960F',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '4号停车区',
       image: require('../../../assets/images/2d/park.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '无人机区',
       image: require('../../../assets/images/2d/drone.png'),
-      type: 'model-p',
-      background: '#EF4E22'
+      background: '#EF4E22',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '5号停车区',
       image: require('../../../assets/images/2d/park.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '入口',
       image: require('../../../assets/images/2d/entry.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '6号停车区',
       image: require('../../../assets/images/2d/park.png'),
-      type: 'model-p',
-      background: '#00BB09'
+      background: '#00BB09',
+      type: 0,
+      iconW: '',
+      iconH: ''
     }
   ],
 
@@ -78,65 +102,173 @@ export default {
     {
       name: '火情点',
       image: require('../../../assets/images/2d/fire.png'),
-      type: 'model-p',
-      background: 'transparent'
+      background: 'transparent',
+      type: 1,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '伤员',
       image: require('../../../assets/images/2d/hurt_person.png'),
-      type: 'model-p',
-      background: 'transparent'
+      background: 'transparent',
+      type: 1,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '警戒线',
       image: require('../../../assets/images/2d/warning_line.png'),
-      type: 'model-p',
-      background: 'transparent'
+      background: 'transparent',
+      type: 1,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '水带',
       image: require('../../../assets/images/2d/water_house.png'),
-      type: 'model-p',
-      background: 'transparent'
+      background: 'transparent',
+      type: 1,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '警戒线',
       image: require('../../../assets/images/2d/attack_route.png'),
-      type: 'model-p',
-      background: 'transparent'
+      background: 'transparent',
+      type: 1,
+      iconW: '',
+      iconH: ''
     },
     {
       name: '警戒线',
       image: require('../../../assets/images/2d/retreat_route.png'),
-      type: 'model-p',
-      background: 'transparent'
+      background: 'transparent',
+      type: 1,
+      iconW: '',
+      iconH: ''
     }
   ],
 
   2: [
     {
-      name: '高喷车',
-      image: require('../../../assets/images/2d/hight_spray.png'),
-      type: 'model-p',
-      background: '#1EB0FC'
+      name: '泵浦',
+      image: require('../../../assets/images/2d/bengpu.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
     },
     {
-      name: '云梯车',
-      image: require('../../../assets/images/2d/cloud_stairs.png'),
-      type: 'model-p',
-      background: '#1EB0FC'
+      name: '水罐',
+      image: require('../../../assets/images/2d/shuiguan.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
     },
     {
-      name: '抢险',
-      image: require('../../../assets/images/2d/emerge_one.png'),
-      type: 'model-p',
-      background: '#1EB0FC'
+      name: '干粉',
+      image: require('../../../assets/images/2d/ganfen.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
     },
     {
-      name: '抢险1',
-      image: require('../../../assets/images/2d/emerge_two.png'),
-      type: 'model-p',
-      background: '#1EB0FC'
+      name: '供水',
+      image: require('../../../assets/images/2d/gongshui.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '救护',
+      image: require('../../../assets/images/2d/jiuhu.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '排烟',
+      image: require('../../../assets/images/2d/paiyan.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '泡沫',
+      image: require('../../../assets/images/2d/paomo.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '水罐',
+      image: require('../../../assets/images/2d/shuiguan.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '云梯',
+      image: require('../../../assets/images/2d/yunti.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '照明',
+      image: require('../../../assets/images/2d/zhaoming.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '宣传',
+      image: require('../../../assets/images/2d/xuanchuan.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '侦查',
+      image: require('../../../assets/images/2d/zhencha.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '通讯指挥',
+      image: require('../../../assets/images/2d/zhihui.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '举高喷射',
+      image: require('../../../assets/images/2d/penshe.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
+    },
+    {
+      name: '登高平台',
+      image: require('../../../assets/images/2d/pingtai.png'),
+      background: 'transparent',
+      type: 2,
+      iconW: '',
+      iconH: ''
     }
   ]
 }

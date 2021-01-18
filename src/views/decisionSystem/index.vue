@@ -11,7 +11,11 @@
       :bShowBottomMenu="true"
     ></gMap>
     <!-- 火情列表 -->
-    <FireList class="fire-list" ref="fireList" @getTodayFireInfosDone="getTodayFireInfos"></FireList>
+    <FireList
+      class="fire-list"
+      ref="fireList"
+      @getTodayFireInfosDone="getTodayFireInfos"
+    ></FireList>
   </div>
 </template>
 
@@ -74,7 +78,9 @@ export default {
       } else if (dev.deviceTypeCode === 'WRJ') {
         dev.type = 'RP_Drone'
         dev.isOnline = dev.onlineStatus === 'online'
-        if (dev.children && dev.children.length > 0) { dev.url = dev.children[0].streamUrl }
+        if (dev.children && dev.children.length > 0) {
+          dev.url = dev.children[0].streamUrl
+        }
       }
       dev.name = dev.label
       dev.address = dev.deviceAddress
@@ -93,10 +99,10 @@ export default {
      *  显示高点设备和无人机设备
      */
     getAllDeviceDoneCallback (cameraDevs, droneDevs) {
-      cameraDevs.forEach((dev) => {
+      cameraDevs.forEach(dev => {
         this.handerVideoDevice(dev)
       })
-      droneDevs.forEach((dev) => {
+      droneDevs.forEach(dev => {
         this.handerVideoDevice(dev)
       })
       if (this.$refs.gduMap === undefined) return
@@ -128,51 +134,71 @@ export default {
      *  获取消防机构列表
      */
     getDeptList () {
-      this.$axios.get(decisionApi.getSimpleDeptList).then(res => {
-        if (res.data.code === 0) {
-          if (res.data.code === 0 && res.data.data) {
-            let list = res.data.data
-            list = JSON.parse(JSON.stringify(list).replace(/deptLatitude/g, 'latitude'))
-            list = JSON.parse(JSON.stringify(list).replace(/deptLongitude/g, 'longitude'))
-            list.forEach((m) => {
-              m.type = 'RP_Institution'
-            })
-            if (this.$refs.gduMap === undefined) return
-            this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(list)
+      this.$axios
+        .get(decisionApi.getSimpleDeptList)
+        .then(res => {
+          if (res.data.code === 0) {
+            if (res.data.code === 0 && res.data.data) {
+              let list = res.data.data
+              list = JSON.parse(
+                JSON.stringify(list).replace(/deptLatitude/g, 'latitude')
+              )
+              list = JSON.parse(
+                JSON.stringify(list).replace(/deptLongitude/g, 'longitude')
+              )
+              list.forEach(m => {
+                m.type = 'RP_Institution'
+              })
+              if (this.$refs.gduMap === undefined) return
+              this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(list)
+            }
           }
-        }
-      }).catch((error) => {
-        console.log('decisionApi.getSimpleDeptList Err : ' + error)
-      })
+        })
+        .catch(error => {
+          console.log('decisionApi.getSimpleDeptList Err : ' + error)
+        })
     },
     /**
      *  获取消防人员列表
      */
     getFireManList () {
-      this.$axios.get(decisionApi.getFireManList).then(res => {
-        if (res.data.code === 0 && res.data.data) {
-          let list = res.data.data
-          list = JSON.parse(JSON.stringify(list).replace(/policeLatitude/g, 'latitude'))
-          list = JSON.parse(JSON.stringify(list).replace(/policeLongitude/g, 'longitude'))
-          list.forEach((m) => {
-            m.type = 'RP_Police'
-          })
-          if (this.$refs.gduMap === undefined) return
-          this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(list)
-        }
-      }).catch((error) => {
-        console.log('decisionApi.getFireManList Err : ' + error)
-      })
+      this.$axios
+        .get(decisionApi.getFireManList)
+        .then(res => {
+          if (res.data.code === 0 && res.data.data) {
+            let list = res.data.data
+            list = JSON.parse(
+              JSON.stringify(list).replace(/policeLatitude/g, 'latitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/policeLongitude/g, 'longitude')
+            )
+            list.forEach(m => {
+              m.type = 'RP_Police'
+            })
+            if (this.$refs.gduMap === undefined) return
+            this.$refs.gduMap.map2D.riverProtectionManager.addRpDatas(list)
+          }
+        })
+        .catch(error => {
+          console.log('decisionApi.getFireManList Err : ' + error)
+        })
     },
     /**
      *  更新飞机在线状态
      */
     updateDroneOnlineStatus (obj, isOnline) {
       obj = JSON.parse(JSON.stringify(obj).replace(/deviceCode/g, 'snCode'))
-      if (this.hasDrone(obj.snCode) === false || this.$refs.gduMap === undefined) return
+      if (
+        this.hasDrone(obj.snCode) === false ||
+        this.$refs.gduMap === undefined
+      ) { return }
       const d = this.getDrone(obj.snCode)
       d.isOnline = isOnline
-      this.$refs.gduMap.map2D.riverProtectionManager.updateDroneOnlineStatus(obj.snCode, isOnline)
+      this.$refs.gduMap.map2D.riverProtectionManager.updateDroneOnlineStatus(
+        obj.snCode,
+        isOnline
+      )
     },
     /**
      *  获取火情列表完毕
@@ -184,7 +210,9 @@ export default {
     }
   },
   mounted () {
-    this.$refs.gduMap.map2D.riverProtectionManager.setCreateVueCompFunc(this.createDroneInfoCom)
+    this.$refs.gduMap.map2D.riverProtectionManager.setCreateVueCompFunc(
+      this.createDroneInfoCom
+    )
     EventBus.$on('droneOffline', obj => {
       this.updateDroneOnlineStatus(obj, false)
     })
@@ -192,11 +220,19 @@ export default {
       this.updateDroneOnlineStatus(obj, true)
     })
     EventBus.$on('droneRealtimeInfo', obj => {
-      if (this.hasDrone(obj.snCode) === false || this.$refs.gduMap === undefined) return
+      if (
+        this.hasDrone(obj.snCode) === false ||
+        this.$refs.gduMap === undefined
+      ) { return }
       const d = this.getDrone(obj.snCode)
       if (d.isOnline === false) return
       // 更新飞机经纬度和方向角
-      this.$refs.gduMap.map2D.riverProtectionManager.updateDroneMarker(obj.snCode, parseFloat(obj.latitude), parseFloat(obj.longitude), (parseFloat(obj.directionAngle) * Math.PI) / 180)
+      this.$refs.gduMap.map2D.riverProtectionManager.updateDroneMarker(
+        obj.snCode,
+        parseFloat(obj.latitude),
+        parseFloat(obj.longitude),
+        (parseFloat(obj.directionAngle) * Math.PI) / 180
+      )
     })
     this.getDeptList()
     this.getFireManList()
@@ -218,14 +254,14 @@ export default {
     EventBus.$off('droneOffline')
     EventBus.$off('droneOnline')
     EventBus.$off('droneRealtimeInfo')
-  },
-
-  beforeRouteLeave (to, from, next) {
-    if (to.name === 'fightDeploy') {
-      to.meta.keepAlive = true
-    }
-    next()
   }
+
+  // beforeRouteLeave (to, from, next) {
+  //   if (to.name === 'fightDeploy') {
+  //     to.meta.keepAlive = true
+  //   }
+  //   next()
+  // }
 }
 </script>
 

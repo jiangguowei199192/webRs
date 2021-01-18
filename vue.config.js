@@ -12,10 +12,10 @@ const createServerConfig = function (compilation) {
     baseUrlList: [
       {
         // 消防外网
-        // baseUrl: 'http://58.49.169.235:50020',
-        // mqttServer: '58.49.169.235',
+        // baseUrl: "http://58.49.169.235:50020",
+        // mqttServer: "58.49.169.235",
         // mqttPort: 50022,
-        // headImg: 'http://58.49.169.235:50026'
+        // headImg: "http://58.49.169.235:50026"
 
         // 消防v2.0开发环境
         baseUrl: 'http://111.47.13.103:40025',
@@ -103,16 +103,14 @@ module.exports = {
         jQuery: 'jquery',
         'windows.jQuery': 'jquery'
       }),
-      new CopyWebpackPlugin(
-        {
-          patterns: [
-            {
-              from: path.resolve(__dirname, './WEB-INF'),
-              to: 'WEB-INF'
-            }
-          ]
-        }
-      )
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, './WEB-INF'),
+            to: 'WEB-INF'
+          }
+        ]
+      })
     ]
   }
 }
