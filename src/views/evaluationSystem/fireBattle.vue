@@ -370,6 +370,15 @@ export default {
       }))
     },
     /**
+     *  添加二维火点标记
+     */
+    add2DFire (lon, lat) {
+      if (!this.$refs.gduMap) return
+      this.$refs.gduMap.map2D.imageLayerManager.addAnimation([lon, lat], 3, 48, 1500, 1, true)
+      this.$refs.gduMap.map2D.setZoom(16)
+      this.$refs.gduMap.map2D.zoomToCenter(lon, lat)
+    },
+    /**
      *  获取火灾数据
      */
     getAlertInfo () {
@@ -379,6 +388,7 @@ export default {
           if (res.data.code === 0) {
             const lat = res.data.data.lat / 1e7
             const lon = res.data.data.lon / 1e7
+            this.add2DFire(lon, lat)
             if (this.show3d) { this.add3DFire(lat, lon) }
           }
         })
