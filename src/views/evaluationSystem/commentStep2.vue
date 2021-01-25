@@ -68,7 +68,7 @@
       <div class="data">
         <div v-for="(item, index) in datas" :key="index">
           <span class="text">{{item.text}}</span>
-          <el-input v-model.number="item.value" type="number"></el-input>
+          <el-input v-model.number="item.value" type="number" @input="checkNum($event, item)"></el-input>
         </div>
       </div>
       <div class="title" style="margin-top:0px">
@@ -164,37 +164,44 @@ export default {
         {
           text: '出勤车辆',
           value: '',
-          type: 'attendanceVehicle'
+          type: 'attendanceVehicle',
+          maxlength: 3
         },
         {
           text: '出勤人数',
           value: '',
-          type: 'attendancePeople'
+          type: 'attendancePeople',
+          maxlength: 4
         },
         {
           text: '出勤无人机',
           value: '',
-          type: 'attendanceUav'
+          type: 'attendanceUav',
+          maxlength: 3
         },
         {
           text: '水源',
           value: '',
-          type: 'waterSource'
+          type: 'waterSource',
+          maxlength: 3
         },
         {
           text: '泡沫',
           value: '',
-          type: 'foam'
+          type: 'foam',
+          maxlength: 3
         },
         {
           text: '干粉',
           value: '',
-          type: 'dryPowder'
+          type: 'dryPowder',
+          maxlength: 3
         },
         {
           text: '灭火器',
           value: '',
-          type: 'fireExtinguisher'
+          type: 'fireExtinguisher',
+          maxlength: 3
         }
       ],
       event: {
@@ -239,6 +246,9 @@ export default {
   },
   methods: {
     timeFormat2,
+    checkNum (str, item) {
+      if (str.length > item.maxlength)item.value = str.slice(0, item.maxlength)
+    },
     /**
      * 显示日期时间选择器
      */
@@ -411,6 +421,7 @@ export default {
       for (; i < this.activities.length; i++) {
         const ac = JSON.parse(JSON.stringify(this.activities[i]))
         delete ac.readonly
+        delete ac.eventFileUrl
         delete ac.fileName
         const ac2 = JSON.parse(JSON.stringify(ac))
         delete ac2.icon
@@ -469,8 +480,10 @@ export default {
             data[b] = e[b]
           }
         }
-        var pos = e.eventFileUrl.lastIndexOf('/')
-        data.fileName = e.eventFileUrl.substring(pos + 1)
+        if (e.eventFileUrl) {
+          var pos = e.eventFileUrl.lastIndexOf('/')
+          data.fileName = e.eventFileUrl.substring(pos + 1)
+        }
         this.activities.push(data)
       })
       const len = 5 - this.activities.length
