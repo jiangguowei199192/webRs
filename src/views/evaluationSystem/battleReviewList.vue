@@ -9,7 +9,10 @@
         </div>
       </div>
       <!-- <span class="webFsScroll"></span> -->
-      <div class="reviewList browserScroll">
+      <div class="noReview" v-show="!bHasBattles">
+        <div class="noDataImg"></div>
+      </div>
+      <div class="reviewList browserScroll" v-show="bHasBattles">
         <div class="reviewItem" v-for="(item, index) in reviewList" :key="index">
           <div class="item">
             <img class="img" :src="item.eventFileUrl" v-if="!item.bIsVideo"/>
@@ -105,6 +108,7 @@ export default {
   name: 'evaluation',
   data () {
     return {
+      bHasBattles: true,
       reviewList: [],
       // 战评的分页信息
       reviewPageInfo: {
@@ -172,11 +176,21 @@ export default {
               })
               // console.log('getBattleReviewList:', tmpDatas)
               this.reviewList = tmpDatas
+              if (this.reviewList.length > 0) {
+                this.bHasBattles = true
+              } else {
+                this.bHasBattles = false
+              }
               this.reviewPageInfo.total = res.data.data.total
+            } else {
+              this.bHasBattles = false
             }
+          } else {
+            this.bHasBattles = false
           }
         })
         .catch(error => {
+          this.bHasBattles = false
           console.log('battleApi.getBattleReviewList Err : ' + error)
         })
     },
@@ -287,6 +301,22 @@ export default {
         line-height: 34px;
         border: 1px solid #1eb0fc9c;
         cursor: pointer;
+      }
+    }
+    .noReview {
+      width: 100%;
+      height: 725px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      border: 1px solid #00ccff;
+      display: flex;
+      align-items:center;     /*垂直居中*/
+      justify-content: center;/*水平居中*/
+      .noDataImg {
+        width: 346px;
+        height: 361px;
+        background-size: 100% 100%;
+        background-image: url('../../assets/images/fireBattle/noBattles.png');
       }
     }
     .reviewList {
