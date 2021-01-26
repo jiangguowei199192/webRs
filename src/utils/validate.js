@@ -73,6 +73,38 @@ export function limitLength (from, to) {
   return rules
 }
 
+// 验证整数是否在指定范围内
+export function limitIntegerRange (min, max) {
+  const rules = []
+  rules.push({
+    validator: (rule, value, callback) => {
+      const tmpMin = rule.intMin
+      const tmpMax = rule.intMax
+
+      const regPos = /^\d+$/ // 非负整数
+      const regNeg = /^\-[1-9][0-9]*$/ // 负整数
+      const resPos = regPos.test(value)
+      const resNeg = regNeg.test(value)
+      if (!resPos && !resNeg) {
+        callback(new Error('请输入整数'))
+      } else {
+        const tmpV = parseInt(value)
+        if (tmpV < tmpMin || tmpV > tmpMax) {
+          callback(new Error('请输入' + tmpMin + '到' + tmpMax + '的整数'))
+        } else {
+          callback()
+        }
+      }
+      return value
+    },
+    intMin: min,
+    intMax: max,
+    message: '',
+    trigger: 'blur'
+  })
+  return rules
+}
+
 // 字符串不能为空
 export function isNotNull (msg) {
   const rules = []

@@ -2,7 +2,7 @@
   <div class="addBattleMain">
     <div class="addBattleBox">
       <div class="addBattleHeader">
-        <div class="title disable-user-select">新增战评</div>
+        <div class="title disable-user-select">{{titleName}}</div>
       </div>
       <div class="addBattleWork">
         <div class="battleTotal" v-show="!bNext">
@@ -119,9 +119,8 @@
               <span style="color:red;">*</span>
               <span style="margin-right:15px">出勤车辆</span>
               <el-form-item prop="attendanceVehicle">
-                <el-input type="number"
-                          v-model="fireData.attendanceVehicle"
-                          @blur="fireData.attendanceVehicle = onlyPositiveInt(fireData.attendanceVehicle)"
+                <el-input v-model="fireData.attendanceVehicle"
+                          @input="lengthLimitedNumber($event, 3, fireData, 'attendanceVehicle')"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
@@ -129,9 +128,8 @@
               <span style="margin-left:31px;color:red;">*</span>
               <span style="margin-right:15px">出勤人数</span>
               <el-form-item prop="attendancePeople">
-                <el-input type="number"
-                          v-model="fireData.attendancePeople"
-                          @blur="fireData.attendancePeople = onlyPositiveInt(fireData.attendancePeople)"
+                <el-input v-model="fireData.attendancePeople"
+                          @input="lengthLimitedNumber($event, 3, fireData, 'attendancePeople')"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
@@ -139,9 +137,8 @@
               <span style="margin-left:31px;color:red;">*</span>
               <span style="margin-right:15px">出勤无人机</span>
               <el-form-item prop="attendanceUav">
-                <el-input type="number"
-                          v-model="fireData.attendanceUav"
-                          @blur="fireData.attendanceUav = onlyPositiveInt(fireData.attendanceUav)"
+                <el-input v-model="fireData.attendanceUav"
+                          @input="lengthLimitedNumber($event, 3, fireData, 'attendanceUav')"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
@@ -151,9 +148,9 @@
               <span style="color:red;">*</span>
               <span style="margin-right:15px">受灾面积</span>
               <el-form-item prop="damageArea">
-                <el-input type="number"
-                          v-model="fireData.damageArea"
-                          @blur="fireData.damageArea = onlyPositiveFloat(fireData.damageArea)"
+                <el-input v-model="fireData.damageArea"
+                          @input="formatLimitedFloat($event, 6, 2, fireData, 'damageArea')"
+                          @blur="fireData.damageArea = floatFormat(fireData.damageArea)"
                           style="width:112px;"
                           class="baseInfoInput"
                 ></el-input>
@@ -170,7 +167,7 @@
 </template>
 
 <script>
-import { isNotNull, limitLength } from '@/utils/validate'
+import { isNotNull, limitLength, limitIntegerRange } from '@/utils/validate'
 import commentStep2 from './commentStep2.vue'
 import { battleApi } from '@/api/battle'
 import { timeFormat } from '@/utils/date'
@@ -178,6 +175,7 @@ export default {
   name: 'addBattle',
   data () {
     return {
+      titleName: '新增战评',
       eventDatas: [], // 战评事件数据
       combatId: 0,
       bIsEdit: false,
@@ -210,12 +208,12 @@ export default {
       addBattleRules: {
         fireName: isNotNull('请选择火灾名称'),
         dateRange: isNotNull('请输入火灾时间'),
-        fireDescription: isNotNull('请输入火灾描述'),
-        fireAddress: isNotNull('请输入火灾地址').concat(limitLength(1, 60)),
+        fireDescription: isNotNull('请输入火灾描述').concat(limitLength(1, 200)),
+        fireAddress: isNotNull('请输入火灾地址').concat(limitLength(1, 50)),
         lonLat: isNotNull('请点选火灾经纬度位置'),
-        attendanceVehicle: isNotNull('请输入总车辆'),
-        attendancePeople: isNotNull('请输入总人数'),
-        attendanceUav: isNotNull('请输入总无人机数'),
+        attendanceVehicle: isNotNull('请输入总车辆').concat(limitIntegerRange(0, 999)),
+        attendancePeople: isNotNull('请输入总人数').concat(limitIntegerRange(0, 999)),
+        attendanceUav: isNotNull('请输入总无人机数').concat(limitIntegerRange(0, 999)),
         damageArea: isNotNull('请输入受灾面积')
       },
       jumpReviewId: '' // 此id有值时表示要编辑战评
@@ -264,6 +262,7 @@ export default {
             this.$refs.gduMap.map2D.setZoom(16)
             this.$refs.gduMap.map2D.zoomToCenter(tmpData.fireLongitude, tmpData.fireLatitude)
             this.bIsEdit = true
+            this.titleName = '编辑战评'
             this.matchEnterpriseModel()
           }
         }
@@ -321,6 +320,55 @@ export default {
         console.log('battleApi.getEnterprise3dInfoList Err : ' + error)
       })
     },
+    // 限制整数数字长度
+    lengthLimitedNumber (str, maxLength, obj, propertyName) {
+      if (obj && propertyName) {
+        obj[propertyName] = str.replace(/[^0-9]/g, '')
+        if (obj[propertyName].length > 1) {
+          obj[propertyName] = obj[propertyName].replace(/\b(0+)/gi, '') // 去掉字符串前面的0
+          if (obj[propertyName].length === 0) obj[propertyName] = 0
+        }
+        if (obj[propertyName].length > maxLength) {
+          obj[propertyName] = obj[propertyName].slice(0, maxLength)
+        }
+      }
+    },
+    // 限制小数格式
+    formatLimitedFloat (str, intLen, decimalsLen, obj, propertyName) {
+      if (obj && propertyName) {
+        obj[propertyName] = str.replace(/[^.0-9]/g, '')
+        let firstNonZeroIndex = 0
+        obj[propertyName] = obj[propertyName].replace(/\./ig, function (a, b, c) { // 删除字符串前面的小数点
+          if (b === firstNonZeroIndex) {
+            firstNonZeroIndex += 1
+            return ''
+          } else {
+            return '.'
+          }
+        })
+        obj[propertyName] = obj[propertyName].replace(/\./ig, function (a, b, c) { // 仅保留第一个小数点
+          return c.indexOf(a) === b ? '.' : ''
+        })
+        const tmpS = obj[propertyName].split('.')
+        if (tmpS.length > 1) {
+          if (tmpS[0].length > intLen) {
+            tmpS[0] = tmpS[0].slice(0, intLen)
+          }
+          if (tmpS[1].length > decimalsLen) {
+            tmpS[1] = tmpS[1].slice(0, decimalsLen)
+          }
+          obj[propertyName] = tmpS[0] + '.' + tmpS[1]
+        }
+      }
+    },
+    floatFormat (str) {
+      if (str.length > 0) {
+        if (str.indexOf('.') === str.length - 1) {
+          str = str.slice(0, str.length - 1)
+        }
+      }
+      return str
+    },
     // 取消，回退到战评列表页面
     addCancel () {
       this.$router.push({ path: '/battleReview' })
@@ -377,20 +425,6 @@ export default {
       this.fireData.enterpriseId = info.enterpriseId
       this.fireData.enterpriseName = info.enterpriseName
       this.showPopover = false
-    },
-    // 限制输入框输入大于等于0的整数
-    onlyPositiveInt (value) {
-      if (value !== '' && value !== undefined && value !== null) {
-        const val = value
-        const newValue = val.toString().replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
-        return Math.abs(parseInt(newValue === '' ? 0 : newValue))
-      } else return ''
-    },
-    // 限制输入框输入大于等于0的浮点数
-    onlyPositiveFloat (value) {
-      if (value !== '' && value !== undefined && value !== null) {
-        return Math.abs(parseFloat(value))
-      } else return ''
     },
     // 点击地图回调事件
     mapClickCallback (lonlat) {
