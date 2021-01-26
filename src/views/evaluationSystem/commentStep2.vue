@@ -3,13 +3,17 @@
     <div class="stepContainer">
       <div class="stepBox webFsScroll">
         <el-steps direction="vertical" :active="activeStep" :space="80">
-          <el-step :title="activity.content" v-for="(activity, index) in activities" :key="index">
+          <el-step
+            :title="activity.content"
+            v-for="(activity, index) in activities"
+            :key="index"
+          >
             <template slot="description">
               <div class="descBox">
                 <el-date-picker
                   ref="datepicker"
                   class="date"
-                  :class="{disable:index !== activeStep}"
+                  :class="{ disable: index !== activeStep }"
                   v-model="activity.eventTime"
                   type="datetime"
                   placeholder="选择日期时间"
@@ -23,30 +27,31 @@
                   v-model="activity.eventName"
                   placeholder="自定义事件"
                   maxlength="10"
-                  :class="{active:!activity.readonly}"
+                  :class="{ active: !activity.readonly }"
                   @blur="inputBlur(index)"
                 ></el-input>
                 <span
-                  @click.stop="setEditMode(true,index)"
-                  :class="{disable:index !== activeStep}"
+                  @click.stop="setEditMode(true, index)"
+                  :class="{ disable: index !== activeStep }"
                   @mousedown="editMouseDown($event)"
                 ></span>
                 <span
                   v-show="!activity.eventTime"
                   @click.stop="showDatePicker(index)"
-                  :class="{disable:index !== activeStep}"
+                  :class="{ disable: index !== activeStep }"
                   @mousedown="editMouseDown($event)"
                 ></span>
                 <span
                   @click.stop="deleteComment(index)"
-                  :class="{disable:index !== activeStep}"
+                  :class="{ disable: index !== activeStep }"
                 ></span>
                 <span
                   v-show="activity.eventTime"
                   @click.stop="showDatePicker(index)"
-                  :class="{disable:index !== activeStep}"
+                  :class="{ disable: index !== activeStep }"
                   @mousedown="editMouseDown($event)"
-                >{{timeFormat2(activity.eventTime)}}</span>
+                  >{{ timeFormat2(activity.eventTime) }}</span
+                >
                 <span class="num" @click.stop="stepNumClick(index)"></span>
               </div>
             </template>
@@ -66,16 +71,35 @@
         <span>数据</span>
       </div>
       <div class="data">
-        <div v-for="(item, index) in datas" :key="index">
-          <span class="text">{{item.text}}</span>
-          <el-input v-model.number="item.value" type="number" @input="checkNum($event, item)"></el-input>
-        </div>
+        <el-form
+          :model="form"
+          :inline="true"
+          label-width="92px"
+          :rules="formRules"
+        >
+          <template v-for="(item, index) in form.datas">
+            <el-form-item :label="item.text" :prop="item.type" :key="index">
+              <el-input
+                v-model.number="form[item.type]"
+                type="number"
+                @input="checkNum($event, item)"
+              ></el-input>
+            </el-form-item>
+          </template>
+          <el-form-item class="note" prop="describe">
+            <span class="dTitle" slot="label">
+              <span></span>
+              <span>描述</span>
+            </span>
+            <el-input
+              type="textarea"
+              resize="none"
+              v-model="form.describe"
+              maxlength="200"
+            ></el-input>
+          </el-form-item>
+        </el-form>
       </div>
-      <div class="title" style="margin-top:0px">
-        <span></span>
-        <span>描述</span>
-      </div>
-      <el-input type="textarea" resize="none" v-model="describe" class="describe" maxlength="100"></el-input>
       <div class="title">
         <span></span>
         <span>文件</span>
@@ -85,10 +109,14 @@
           <span></span>
           <span>上传文件</span>
         </div>
+        <span class="fileDesc">{{
+          (activities.length > 0 && activities[activeStep].fileName) ||
+          defaultName
+        }}</span>
         <span
-          class="fileDesc"
-        >{{ (activities.length > 0 && activities[activeStep].fileName) || defaultName}}</span>
-        <span class="car" :style="{background: 'url('+ serverUrl + curIcon +') no-repeat'}"></span>
+          class="car"
+          :style="{ background: 'url(' + serverUrl + curIcon + ') no-repeat' }"
+        ></span>
         <el-popover
           placement="top"
           trigger="click"
@@ -102,16 +130,24 @@
               class="icon"
               v-for="(item, index) in icons"
               :key="index"
-              :style="{background: 'url('+ serverUrl + item.path +') no-repeat'}"
+              :style="{
+                background: 'url(' + serverUrl + item.path + ') no-repeat',
+              }"
             ></span>
           </div>
           <div slot="reference" class="upload uploadIcon">
             <span></span>
+            <span>*</span>
             <span>选择图标</span>
           </div>
         </el-popover>
       </div>
-      <input type="file" ref="uploadFile" style="display:none" @change="fileChange" />
+      <input
+        type="file"
+        ref="uploadFile"
+        style="display: none"
+        @change="fileChange"
+      />
       <div class="btns">
         <span @click.stop="$router.go(-1)">取消</span>
         <span @click.stop="submitEvent">完成</span>
@@ -130,7 +166,6 @@ export default {
     return {
       showPopover: false,
       activeStep: 0,
-      describe: '',
       curIcon: '',
       defaultName: '可上传文件和视频',
       serverUrl: globalApi.headImg,
@@ -160,50 +195,64 @@ export default {
           path: '/cloud-oneMap/combatEvent/1608350478586_1608350478586.png'
         }
       ],
-      datas: [
-        {
-          text: '出勤车辆',
-          value: '',
-          type: 'attendanceVehicle',
-          maxlength: 3
-        },
-        {
-          text: '出勤人数',
-          value: '',
-          type: 'attendancePeople',
-          maxlength: 4
-        },
-        {
-          text: '出勤无人机',
-          value: '',
-          type: 'attendanceUav',
-          maxlength: 3
-        },
-        {
-          text: '水源',
-          value: '',
-          type: 'waterSource',
-          maxlength: 3
-        },
-        {
-          text: '泡沫',
-          value: '',
-          type: 'foam',
-          maxlength: 3
-        },
-        {
-          text: '干粉',
-          value: '',
-          type: 'dryPowder',
-          maxlength: 3
-        },
-        {
-          text: '灭火器',
-          value: '',
-          type: 'fireExtinguisher',
-          maxlength: 3
-        }
-      ],
+      formRules: {
+        attendanceVehicle: [{ required: true, message: '请输入出勤车辆' }],
+        attendancePeople: [{ required: true, message: '请输入出勤人数' }],
+        attendanceUav: [{ required: true, message: '请输入出勤无人机' }],
+        waterSource: [{ required: true, message: '请输入水源' }],
+        foam: [{ required: true, message: '请输入泡沫' }],
+        dryPowder: [{ required: true, message: '请输入干粉' }],
+        fireExtinguisher: [{ required: true, message: '请输入灭火器' }],
+        describe: [{ required: true, message: '请输入描述' }]
+      },
+
+      form: {
+        describe: '',
+        attendanceVehicle: '',
+        attendancePeople: '',
+        attendanceUav: '',
+        waterSource: '',
+        foam: '',
+        dryPowder: '',
+        fireExtinguisher: '',
+        datas: [
+          {
+            text: '出勤车辆',
+            type: 'attendanceVehicle',
+            maxlength: 3
+          },
+          {
+            text: '出勤人数',
+            type: 'attendancePeople',
+            maxlength: 4
+          },
+          {
+            text: '出勤无人机',
+            type: 'attendanceUav',
+            maxlength: 3
+          },
+          {
+            text: '水源',
+            type: 'waterSource',
+            maxlength: 3
+          },
+          {
+            text: '泡沫',
+            type: 'foam',
+            maxlength: 3
+          },
+          {
+            text: '干粉',
+            type: 'dryPowder',
+            maxlength: 3
+          },
+          {
+            text: '灭火器',
+            type: 'fireExtinguisher',
+            maxlength: 3
+          }
+        ]
+      },
       event: {
         eventName: '',
         eventTime: '',
@@ -247,7 +296,9 @@ export default {
   methods: {
     timeFormat2,
     checkNum (str, item) {
-      if (str.length > item.maxlength)item.value = str.slice(0, item.maxlength)
+      if (str.length > item.maxlength) {
+        item.value = str.slice(0, item.maxlength)
+      }
     },
     /**
      * 显示日期时间选择器
@@ -345,14 +396,14 @@ export default {
       formData.append('file', f)
       this.$axios
         .post(battleApi.combatEventUpload, formData, config)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             this.activities[this.activeStep].eventFileUrl = res.data.data
             this.$notify.closeAll()
             this.$notify.success({ title: '提示', message: '上传成功' })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$notify.closeAll()
           this.$notify.error({ title: '错误', message: '上传失败' })
           console.log('combatUpload Err : ' + err)
@@ -372,10 +423,11 @@ export default {
       if (index >= this.activities.length) return
       const data = this.activities[index]
       for (var b in data) {
-        const a = this.datas.find(a => a.type === b)
-        if (a !== undefined) a.value = data[b]
+        if (Object.prototype.hasOwnProperty.call(this.form, b)) {
+          this.form[b] = data[b]
+        }
       }
-      this.describe = data.eventDescription
+      this.form.describe = data.eventDescription
       this.curIcon = data.icon
     },
     /**
@@ -385,10 +437,11 @@ export default {
       if (index >= this.activities.length) return
       const activity = this.activities[index]
       for (var b in activity) {
-        const a = this.datas.find(a => a.type === b)
-        if (a !== undefined) activity[b] = a.value
+        if (Object.prototype.hasOwnProperty.call(this.form, b)) {
+          activity[b] = this.form[b]
+        }
       }
-      activity.eventDescription = this.describe
+      activity.eventDescription = this.form.describe
       activity.icon = this.curIcon
     },
     /**
@@ -400,12 +453,12 @@ export default {
       }
       this.$axios
         .post(battleApi.combatEventAdd, data, config)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             this.$router.push({ path: '/battleReview' })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('combatEventAdd Err : ' + err)
         })
     },
@@ -427,13 +480,13 @@ export default {
         delete ac2.icon
         // 判断属性是否都不为空
         const result = Object.values(ac).every(
-          item => !stringIsNullOrEmpty(item)
+          (item) => !stringIsNullOrEmpty(item)
         )
         if (result) {
           ac.combatId = this.combatId
           data.push(ac)
         } else if (
-          !Object.values(ac2).every(item => stringIsNullOrEmpty(item))
+          !Object.values(ac2).every((item) => stringIsNullOrEmpty(item))
         ) {
           // 属性不都为空
           // console.log(ac2)
@@ -457,12 +510,12 @@ export default {
       if (this.isEdit && this.eventDatas && this.eventDatas.length > 0) {
         this.$axios
           .post(battleApi.delCombatEvent, { combatId: this.combatId })
-          .then(res => {
+          .then((res) => {
             if (res.data.code === 0) {
               this.addBattleEvent(data)
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('deleteBattleReview Err : ' + error)
           })
       } else {
@@ -473,7 +526,7 @@ export default {
   mounted () {
     this.event.icon = this.icons[0].path
     if (this.isEdit) {
-      this.eventDatas.forEach(e => {
+      this.eventDatas.forEach((e) => {
         var data = JSON.parse(JSON.stringify(this.event))
         for (var b in data) {
           if (Object.prototype.hasOwnProperty.call(e, b)) {
@@ -720,50 +773,69 @@ export default {
       }
     }
     .data {
-      margin-top: 18px;
+      margin-top: 6px;
       display: flex;
       flex-wrap: wrap;
       margin-left: 52px;
-      > div {
-        display: flex;
+      /deep/.el-form-item__label {
+        text-align: left;
         font-size: 14px;
-        height: 26px;
-        margin-bottom: 24px;
-        box-sizing: border-box;
-        .text {
-          display: inline-block;
-          width: 80px;
-          line-height: 26px;
-        }
-        /deep/.el-input {
-          width: 112px;
-          height: 100%;
+        color: #ffffff;
+        line-height: 50px;
+      }
+      /deep/.el-form-item__content {
+        line-height: 50px;
+      }
+      /deep/.el-form-item__error {
+        margin-top: -10px;
+      }
+      /deep/.el-input {
+        width: 112px;
+        margin-right: 20px;
+        .el-input__inner {
           background: #09546d4c;
-          margin-right: 40px;
-          .el-input__inner {
-            background-color: transparent;
-            border-radius: 0px;
-            border: 1px solid #27bce5;
-            color: #00ccff;
-            height: 26px;
-            line-height: 26px;
-          }
+          border-radius: 0px;
+          border: 1px solid #27bce5;
+          color: #00ccff;
+          height: 26px;
         }
       }
     }
-    /deep/.describe.el-textarea {
-      width: 668px;
-      height: 70px;
-      background: #09546d4c;
-      margin-top: 18px;
-      margin-left: 50px;
-      .el-textarea__inner {
-        height: 100%;
-        background-color: transparent;
-        border-radius: 0px;
-        border: 1px solid #27bce5;
-        color: #00ccff;
-        line-height: 26px;
+    .note {
+      margin-top: 4px;
+      /deep/.el-textarea {
+        margin-top: 6px;
+        width: 668px;
+        height: 70px;
+        background: #09546d4c;
+        margin-bottom: 12px;
+        .el-textarea__inner {
+          height: 100%;
+          background-color: transparent;
+          border-radius: 0px;
+          border: 1px solid #27bce5;
+          color: #00ccff;
+          line-height: 26px;
+        }
+      }
+    }
+    .dTitle {
+      position: relative;
+      left: -38px;
+      box-sizing: border-box;
+      span:nth-child(1) {
+        display: inline-block;
+        width: 21px;
+        height: 16px;
+        background-image: url("../../assets/images/fire_title.png");
+        position: relative;
+        top: 2px;
+      }
+      span:nth-child(2) {
+        line-height: 40px;
+        font-size: 16px;
+        position: relative;
+        left: 16px;
       }
     }
     .fileBox {
@@ -809,6 +881,10 @@ export default {
           height: 15px;
           background: url("../../assets/images/fireBattle/selectIcon.png")
             no-repeat;
+        }
+        span:nth-child(2) {
+          color: #f56c6c;
+          margin-right: 2px;
         }
       }
     }
