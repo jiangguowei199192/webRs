@@ -79,6 +79,7 @@
                 <el-input type="textarea"
                           resize="none"
                           v-model="fireData.fireDescription"
+                          @input="limitMaxLength($event, 200, fireData, 'fireDescription')"
                           maxlength="200"
                           class="describeInputStyle"
                 ></el-input>
@@ -89,6 +90,7 @@
               <span style="margin-right:15px;vertical-align:top;">火灾地址</span>
               <el-form-item prop="fireAddress">
                 <el-input v-model="fireData.fireAddress"
+                          @input="limitMaxLength($event, 50, fireData, 'fireAddress')"
                           class="addressInputStyle baseInfoInput"
                 ></el-input>
               </el-form-item>
@@ -319,6 +321,14 @@ export default {
       }).catch((error) => {
         console.log('battleApi.getEnterprise3dInfoList Err : ' + error)
       })
+    },
+    // 输入框长度限制
+    limitMaxLength (str, maxLength, obj, propertyName) {
+      if (obj && propertyName) {
+        if (str.length > maxLength) {
+          obj[propertyName] = str.slice(0, maxLength)
+        }
+      }
     },
     // 限制整数数字长度
     lengthLimitedNumber (str, maxLength, obj, propertyName) {
