@@ -1,14 +1,19 @@
 <template>
-  <div class="battleBox" :style="'height:'+fullHeight+'px;'">
+  <div class="battleBox" :style="'height:' + fullHeight + 'px;'">
     <div
       class="marsBox mars3d"
-      :class="{marsBoxSmallScreen:fullscreenMap}"
+      :class="{ marsBoxSmallScreen: fullscreenMap }"
       @dblclick.capture="masDbClick"
       v-show="show3d"
     >
-      <Map :url="configUrl" :showOpenAnimation="false" :showCompass="false" @onload="onMapload" />
+      <Map
+        :url="configUrl"
+        :showOpenAnimation="false"
+        :showCompass="false"
+        @onload="onMapload"
+      />
     </div>
-    <div class="mapBox" :class="{mapBoxFullScreen:fullscreenMap}">
+    <div class="mapBox" :class="{ mapBoxFullScreen: fullscreenMap }">
       <div class="map" @dblclick.capture="mapDbClick">
         <gMap
           ref="gduMap"
@@ -23,23 +28,25 @@
     </div>
     <div class="list webFsScroll">
       <div
-        v-for="(item,index) in combatEvents"
+        v-for="(item, index) in combatEvents"
         :key="index"
-        :class="{active:activeIndex==index}"
-        @click="changeEvent(index,true)"
+        :class="{ active: activeIndex == index }"
+        @click="changeEvent(index, true)"
       >
-        <span :style="{background: 'url('+ serverUrl + item.icon +')'}"></span>
+        <span
+          :style="{ background: 'url(' + serverUrl + item.icon + ')' }"
+        ></span>
         <span></span>
-        <span>{{item.eventName}}</span>
+        <span>{{ item.eventName }}</span>
       </div>
     </div>
     <div class="describeBox">
       <div class="title">
         <span></span>
-        <span>{{curEvent.eventName}}</span>
+        <span>{{ curEvent.eventName }}</span>
       </div>
-      <span class="txt">{{curEvent.eventDescription}}</span>
-      <img class="img" :src="serverUrl + imgPath" v-show="imgPath" />
+      <span class="txt">{{ curEvent.eventDescription }}</span>
+      <img class="img" :src="imgPath" v-show="imgPath" />
       <div class="playerBox" v-show="videoUrl">
         <LivePlayer
           :videoUrl="videoUrl"
@@ -58,9 +65,9 @@
     </div>
     <span class="ball"></span>
     <div class="titleBox">
-      <span>{{timeFormat(timeStart)}}</span>
+      <span>{{ timeFormat(timeStart) }}</span>
       <span></span>
-      <span>{{fireName}}</span>
+      <span>{{ fireName }}</span>
     </div>
     <span class="more"></span>
     <div class="dataBox">
@@ -70,7 +77,7 @@
         <span>当前</span>
         <span></span>
       </div>
-      <div class="time" style="margin-right:40px;">{{duration}}min</div>
+      <div class="time" style="margin-right: 40px">{{ duration }}min</div>
       <div class="time">74min</div>
       <ul>
         <li>
@@ -78,11 +85,11 @@
             <span class="img"></span>
             <div>
               <span>出勤车辆</span>
-              <span>{{car}}辆</span>
+              <span>{{ car }}辆</span>
             </div>
             <div>
               <span>未到</span>
-              <span class="redTxt">{{unCar}}辆</span>
+              <span class="redTxt">{{ unCar }}辆</span>
             </div>
           </div>
         </li>
@@ -91,11 +98,11 @@
             <span class="img fireman"></span>
             <div>
               <span>出勤人数</span>
-              <span>{{people}}人</span>
+              <span>{{ people }}人</span>
             </div>
             <div>
               <span>未到</span>
-              <span class="redTxt">{{unPeople}}人</span>
+              <span class="redTxt">{{ unPeople }}人</span>
             </div>
           </div>
         </li>
@@ -104,11 +111,11 @@
             <span class="img drone"></span>
             <div>
               <span>出勤无人机</span>
-              <span>{{uav}}架</span>
+              <span>{{ uav }}架</span>
             </div>
             <div>
               <span>未到</span>
-              <span class="redTxt">{{unUav}}架</span>
+              <span class="redTxt">{{ unUav }}架</span>
             </div>
           </div>
         </li>
@@ -127,11 +134,13 @@
       <span class="play" v-show="!isPlay" @click.stop="play(true)"></span>
       <span class="play pause" v-show="isPlay" @click.stop="play(false)"></span>
       <div class="timeBox">
-        <span>{{timeFormat(timeStart)}}</span>
-        <span>{{timeFormat(timeEnd)}}</span>
+        <span>{{ timeFormat(timeStart) }}</span>
+        <span>{{ timeFormat(timeEnd) }}</span>
         <span v-drag="me" id="pointer"></span>
         <transition name="fade">
-          <span id="curTime" v-show="showCurTime">{{timeFormat(curTime)}}</span>
+          <span id="curTime" v-show="showCurTime">{{
+            timeFormat(curTime)
+          }}</span>
         </transition>
         <div
           class="time"
@@ -205,7 +214,7 @@ export default {
     drag: function (el, binding) {
       const me = binding.value
       const dragBox = el // 获取当前元素
-      dragBox.onmousedown = e => {
+      dragBox.onmousedown = (e) => {
         me.isDrag = true
         if (me.timeout) {
           clearTimeout(me.timeout)
@@ -218,7 +227,7 @@ export default {
         // 算出鼠标相对元素的位置
         const disX = e.clientX - dragBox.offsetLeft
         me.setCurrentTime(dragBox.offsetLeft + dragBox.clientWidth / 2)
-        document.onmousemove = e => {
+        document.onmousemove = (e) => {
           // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
           let left = e.clientX - disX
           // 左边界限制
@@ -232,13 +241,15 @@ export default {
           dragBox.style.left = left + 'px'
           me.setCurrentTime(left + dragBox.clientWidth / 2)
         }
-        document.onmouseup = e => {
+        document.onmouseup = (e) => {
           // 鼠标弹起来的时候不再移动
           document.onmousemove = null
           // 预防鼠标弹起来后还会循环（即预防鼠标放上去的时候还会移动）
           document.onmouseup = null
           me.hideCurrentTime()
-          if (me.isPlay) { this.jumpPlayback(me.curTimeSpan) }
+          if (me.isPlay) {
+            this.jumpPlayback(me.curTimeSpan)
+          }
         }
       }
     }
@@ -256,13 +267,13 @@ export default {
     this.setTimePointer(this.timeStart)
     this.me = this
     // 战评回放
-    EventBus.$on('fireBattlePlayback', message => {
+    EventBus.$on('fireBattlePlayback', (message) => {
       const topic = 'gdu/one_map/onemap_path_decoer/' + this.topicId
       if (topic !== message.topic) return
       var info = JSON.parse(message.payloadString)
       // console.log(info)
       if (info.objs) {
-        info.objs.forEach(o => {
+        info.objs.forEach((o) => {
           me.add2DObject(
             o.objSN,
             o.type,
@@ -297,7 +308,7 @@ export default {
       }
       // 切换事件
       if (info.events.length > 0) {
-        const event = this.combatEvents.find(e => e.id === info.events[0].id)
+        const event = this.combatEvents.find((e) => e.id === info.events[0].id)
         if (event !== undefined) {
           const index = this.combatEvents.indexOf(event)
           if (index !== -1) {
@@ -349,32 +360,57 @@ export default {
       const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(position)
 
       function computeEmitterModelMatrix () {
-        const hpr = Cesium.HeadingPitchRoll.fromDegrees(0.0, 0.0, 0.0, new Cesium.HeadingPitchRoll())
+        const hpr = Cesium.HeadingPitchRoll.fromDegrees(
+          0.0,
+          0.0,
+          0.0,
+          new Cesium.HeadingPitchRoll()
+        )
         var trs = new Cesium.TranslationRotationScale()
-        trs.translation = Cesium.Cartesian3.fromElements(2.5, 4.0, 1.0, new Cesium.Cartesian3())
-        trs.rotation = Cesium.Quaternion.fromHeadingPitchRoll(hpr, new Cesium.Quaternion())
-        return Cesium.Matrix4.fromTranslationRotationScale(trs, new Cesium.Matrix4())
+        trs.translation = Cesium.Cartesian3.fromElements(
+          2.5,
+          4.0,
+          1.0,
+          new Cesium.Cartesian3()
+        )
+        trs.rotation = Cesium.Quaternion.fromHeadingPitchRoll(
+          hpr,
+          new Cesium.Quaternion()
+        )
+        return Cesium.Matrix4.fromTranslationRotationScale(
+          trs,
+          new Cesium.Matrix4()
+        )
       }
 
-      this.viewer.scene.primitives.add(new Cesium.ParticleSystem({
-        image: require('../../assets/images/3d/fire2.png'),
-        startScale: 1.0,
-        endScale: 4.0,
-        particleLife: 1.0,
-        speed: 5.0,
-        imageSize: new Cesium.Cartesian2(20, 20),
-        emissionRate: 5.0,
-        lifetime: 16.0,
-        modelMatrix: modelMatrix,
-        emitterModelMatrix: computeEmitterModelMatrix()
-      }))
+      this.viewer.scene.primitives.add(
+        new Cesium.ParticleSystem({
+          image: require('../../assets/images/3d/fire2.png'),
+          startScale: 1.0,
+          endScale: 4.0,
+          particleLife: 1.0,
+          speed: 5.0,
+          imageSize: new Cesium.Cartesian2(20, 20),
+          emissionRate: 5.0,
+          lifetime: 16.0,
+          modelMatrix: modelMatrix,
+          emitterModelMatrix: computeEmitterModelMatrix()
+        })
+      )
     },
     /**
      *  添加二维火点标记
      */
     add2DFire (lon, lat) {
       if (!this.$refs.gduMap) return
-      this.$refs.gduMap.map2D.imageLayerManager.addAnimation([lon, lat], 3, 48, 1500, 1, true)
+      this.$refs.gduMap.map2D.imageLayerManager.addAnimation(
+        [lon, lat],
+        3,
+        48,
+        1500,
+        1,
+        true
+      )
       this.$refs.gduMap.map2D.setZoom(16)
       this.$refs.gduMap.map2D.zoomToCenter(lon, lat)
     },
@@ -384,15 +420,17 @@ export default {
     getAlertInfo () {
       this.$axios
         .post(battleApi.findOneAlert, { alertId: this.detail.fireNo })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             const lat = res.data.data.lat / 1e7
             const lon = res.data.data.lon / 1e7
             this.add2DFire(lon, lat)
-            if (this.show3d) { this.add3DFire(lat, lon) }
+            if (this.show3d) {
+              this.add3DFire(lat, lon)
+            }
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('battleApi.findOneAlert Err : ' + error)
         })
     },
@@ -402,13 +440,13 @@ export default {
     getAlertTopic () {
       this.$axios
         .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             this.topicId = res.data.data
             this.isPlay = true
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('battleApi.readPathByAlertId Err : ' + error)
         })
     },
@@ -420,23 +458,23 @@ export default {
       // 0:工作台不存在，1.工作台正常工作。2.工作台被暂停了
       this.$axios
         .post(battleApi.getWorkerStatus, { workerNO: this.topicId })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             const status = res.data.data
             if (status !== 0) {
               this.$axios
                 .post(battleApi.stopReadPath, { workerNO: this.topicId })
-                .then(res => {
+                .then((res) => {
                   if (res.data.code === 0) {
                   }
                 })
-                .catch(error => {
+                .catch((error) => {
                   console.log('battleApi.stopReadPath Err : ' + error)
                 })
             }
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('battleApi.getWorkerStatus Err : ' + error)
         })
     },
@@ -457,12 +495,12 @@ export default {
           workerNO: this.topicId,
           progressTime: time
         })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             this.isPlay = true
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('battleApi.setProgress Err : ' + error)
         })
     },
@@ -492,7 +530,9 @@ export default {
       const timeSpan = this.computeTime(left)
       if (timeSpan) {
         this.curTimeSpan = timeSpan
-        if (this.isPlay) { this.jumpPlayback(timeSpan) }
+        if (this.isPlay) {
+          this.jumpPlayback(timeSpan)
+        }
       }
       this.hideCurrentTime()
     },
@@ -551,7 +591,9 @@ export default {
             dom.clientWidth +
             this.timeStart
         )
-        if (updateTimeSpan) { this.curTimeSpan = timespan }
+        if (updateTimeSpan) {
+          this.curTimeSpan = timespan
+        }
 
         this.curTime = timeFormat(timespan)
       }
@@ -620,12 +662,12 @@ export default {
       } else {
         this.$axios
           .post(battleApi.pauseWorker, { workerNO: this.topicId })
-          .then(res => {
+          .then((res) => {
             if (res.data.code === 0) {
               this.isPlay = isPlay
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('battleApi.pauseWorker Err : ' + error)
           })
       }
@@ -639,7 +681,7 @@ export default {
       // 0:工作台不存在，1.工作台正常工作。2.工作台被暂停了
       this.$axios
         .post(battleApi.getWorkerStatus, { workerNO: this.topicId })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             const status = res.data.data
             if (status === 0) {
@@ -650,7 +692,7 @@ export default {
             } else this.isPlay = isPlay
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('battleApi.getWorkerStatus Err : ' + error)
         })
     },
@@ -689,14 +731,16 @@ export default {
         const timespan = new Date(event.eventTime).getTime()
         this.setTimePointer(timespan)
         this.curTimeSpan = timespan
-        if (this.isPlay) { this.jumpPlayback(timespan) }
+        if (this.isPlay) {
+          this.jumpPlayback(timespan)
+        }
       }
     },
     /**
      *  更新标签位置
      */
     updateLabelPosition (id, position) {
-      const t = this.labelList.find(t => t.options.name === id)
+      const t = this.labelList.find((t) => t.options.name === id)
       if (t !== undefined) {
         t.position = position
       }
@@ -728,7 +772,7 @@ export default {
       if (!this.labelList) {
         this.labelList = []
       }
-      const m = this.mCollection._primitives.find(i => i.id === id)
+      const m = this.mCollection._primitives.find((i) => i.id === id)
       var position = Cesium.Cartesian3.fromDegrees(lon, lat, 12)
       var hpRoll = new Cesium.HeadingPitchRoll(
         Cesium.Math.toRadians(heading || 0),
@@ -902,16 +946,18 @@ export default {
         this.detail.attendanceUav > this.uav
           ? this.detail.attendanceUav - this.uav
           : 0
-      const fileType = file
-        .substring(file.lastIndexOf('.') + 1, file.length)
-        .toLowerCase()
-      if (fileType === 'mp4') {
-        this.videoUrl = this.serverUrl + file
-        this.imgPath = ''
-      } else {
-        this.imgPath = file
-        this.videoUrl = ''
-      }
+      if (file) {
+        const fileType = file
+          .substring(file.lastIndexOf('.') + 1, file.length)
+          .toLowerCase()
+        if (fileType === 'mp4') {
+          this.videoUrl = this.serverUrl + file
+          this.imgPath = ''
+        } else {
+          this.imgPath = this.serverUrl + file
+          this.videoUrl = ''
+        }
+      } else this.imgPath = require('../../assets/images/fireBattle/default.png')
     },
     /**
      * 设置战评初始数据
@@ -929,7 +975,6 @@ export default {
         this.combatEvents = this.detail.combatEventList
         this.changeEvent(0)
       }
-      // 没有三维预案，只显示二维地图
       if (!this.detail.planEnterpriseInfo3d) {
         this.show3d = false
         this.changeMap()
