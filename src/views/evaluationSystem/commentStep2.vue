@@ -297,7 +297,7 @@ export default {
     timeFormat2,
     checkNum (str, item) {
       if (str.length > item.maxlength) {
-        item.value = str.slice(0, item.maxlength)
+        this.form[item.type] = str.slice(0, item.maxlength)
       }
     },
     /**
@@ -387,6 +387,44 @@ export default {
         })
         return
       }
+      // 找出当前上传了多少个图片和视频
+      const files = this.activities.filter((a) => a.eventFileUrl)
+      let totalImg = 0
+      let totalVideo = 0
+      files.forEach((f) => {
+        const fileType = f.eventFileUrl
+          .substring(f.eventFileUrl.lastIndexOf('.') + 1, f.eventFileUrl.length)
+          .toLowerCase()
+        if (fileType === 'mp4') { totalVideo += 1 } else { totalImg += 1 }
+      })
+      if (fileType === 'mp4' && totalVideo >= 5) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '视频个数已到达上限5，无法上传'
+        })
+        return
+      } else if (totalImg >= 10) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '图片个数已到达上限10，无法上传'
+        })
+      }
+      const maxSize = fileType === 'mp4' ? 20 : 3
+      if (f.size > maxSize * 1024 * 1024) {
+        const message =
+          fileType === 'mp4'
+            ? '单个视频大小不能超过20M'
+            : '单个图片大小不能超过3M'
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: message
+        })
+        return
+      }
+
       this.activities[this.activeStep].fileName = f.name
       const config = {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -484,6 +522,7 @@ export default {
         )
         if (result) {
           ac.combatId = this.combatId
+          ac.eventFileUrl = this.activities[i].eventFileUrl
           data.push(ac)
         } else if (
           !Object.values(ac2).every((item) => stringIsNullOrEmpty(item))
