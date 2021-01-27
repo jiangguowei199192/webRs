@@ -492,7 +492,7 @@ export default {
       }
       this.form.describe = data.eventDescription
       this.curIcon = data.icon
-      this.$refs.dataForm.validate()
+      this.$refs.dataForm.validate((v) => {})
     },
     /**
      *  缓存事件的数据
@@ -530,13 +530,78 @@ export default {
       this.lastObj.bNext = false
     },
     /**
+     *  新增战评
+     */
+    addBattle (eventDatas) {
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
+      this.$axios
+        .post(battleApi.addNewBattleReview, this.lastObj.fireData, config)
+        .then((res) => {
+          if (res.data.code === 0) {
+            const combatId = res.data.data
+            eventDatas.forEach((e) => {
+              e.combatId = combatId
+            })
+            this.addBattleEvent(eventDatas)
+          } else {
+            console.log(battleApi.addNewBattleReview + '.Err:', res)
+          }
+        })
+        .catch((error) => {
+          console.log(battleApi.addNewBattleReview + '.Excep : ' + error)
+        })
+    },
+    /**
+     *  编辑战评
+     */
+    editBattle (eventDatas) {
+      const config = {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      }
+      this.$axios
+        .post(battleApi.updateBattleReview, this.lastObj.fireData, config)
+        .then((res) => {
+          if (res.data.code === 0) {
+            eventDatas.forEach((e) => {
+              e.combatId = this.combatId
+            })
+            if (this.eventDatas && this.eventDatas.length > 0) {
+              this.$axios
+                .post(battleApi.delCombatEvent, { combatId: this.combatId })
+                .then((res) => {
+                  if (res.data.code === 0) {
+                    this.addBattleEvent(eventDatas)
+                  }
+                })
+                .catch((error) => {
+                  console.log('deleteBattleReview Err : ' + error)
+                })
+            } else {
+              this.addBattleEvent(eventDatas)
+            }
+          } else {
+            console.log(battleApi.addNewBattleReview + '.Err:', res)
+          }
+        })
+        .catch((error) => {
+          console.log(battleApi.addNewBattleReview + '.Excep : ' + error)
+        })
+    },
+    /**
      *  提交事件
      */
     submitEvent () {
       let valid = true
-      this.$refs.dataForm.validate((v) => {
-        valid = v
-      })
+      if (
+        this.activities[this.activeStep].eventName ||
+        this.activities[this.activeStep].eventTime
+      ) {
+        this.$refs.dataForm.validate((v) => {
+          valid = v
+        })
+      }
       if (!valid) return
       this.saveEventData(this.activeStep)
       // 检查是否有未填写的内容
@@ -554,7 +619,6 @@ export default {
           (item) => !stringIsNullOrEmpty(item)
         )
         if (result) {
-          ac.combatId = this.combatId
           ac.eventFileUrl = this.activities[i].eventFileUrl
           data.push(ac)
         } else if (
@@ -579,20 +643,9 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先填写步骤后保存' })
         return
       }
-      if (this.isEdit && this.eventDatas && this.eventDatas.length > 0) {
-        this.$axios
-          .post(battleApi.delCombatEvent, { combatId: this.combatId })
-          .then((res) => {
-            if (res.data.code === 0) {
-              this.addBattleEvent(data)
-            }
-          })
-          .catch((error) => {
-            console.log('deleteBattleReview Err : ' + error)
-          })
-      } else {
-        this.addBattleEvent(data)
-      }
+      if (this.isEdit) {
+        this.editBattle(data)
+      } else this.addBattle(data)
     }
   },
   mounted () {

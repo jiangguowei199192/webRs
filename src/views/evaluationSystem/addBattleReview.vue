@@ -162,7 +162,7 @@
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
-        <commentStep2 v-show="bNext"
+        <commentStep2 v-if="bNext"
                       :combatId="combatId"
                       v-bind:lastObj="this"
                       :isEdit="bIsEdit"

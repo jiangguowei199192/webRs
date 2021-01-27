@@ -999,7 +999,7 @@ export default {
       const option = {
         tooltip: {},
         grid: {
-          top: 15,
+          top: 30,
           left: 0,
           right: 0,
           bottom: 0,
@@ -1024,7 +1024,6 @@ export default {
         yAxis: {
           type: 'value',
           minInterval: 20,
-          interval: 20,
           // 分隔线
           splitLine: {
             show: true,
@@ -1377,7 +1376,7 @@ export default {
     position: relative;
     top: 10px;
     width: 312px;
-    height: 163px;
+    height: 180px;
     box-sizing: border-box;
   }
   .bar {
