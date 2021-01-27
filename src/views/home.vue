@@ -122,7 +122,7 @@
           </div>
         </div>
       </el-header>
-      <el-main :style="machineMainStyle($route.path)">
+      <el-main class="webFsScroll" :style="machineMainStyle($route.path)">
         <!-- <router-view /> -->
         <keep-alive v-if="$route.meta.keepAlive">
           <router-view />
