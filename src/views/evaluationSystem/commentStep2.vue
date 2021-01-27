@@ -76,6 +76,7 @@
           :inline="true"
           label-width="92px"
           :rules="formRules"
+          ref="dataForm"
         >
           <template v-for="(item, index) in form.datas">
             <el-form-item :label="item.text" :prop="item.type" :key="index">
@@ -149,6 +150,7 @@
         @change="fileChange"
       />
       <div class="btns">
+        <span>上一步</span>
         <span @click.stop="$router.go(-1)">取消</span>
         <span @click.stop="submitEvent">完成</span>
       </div>
@@ -159,7 +161,12 @@
 <script>
 import { timeFormat2 } from '@/utils/date'
 import { battleApi } from '@/api/battle.js'
-import { stringIsNullOrEmpty } from '@/utils/validate'
+import {
+  stringIsNullOrEmpty,
+  isNotNull,
+  limitLength,
+  limitIntegerRange
+} from '@/utils/validate'
 import globalApi from '@/utils/globalApi'
 export default {
   data () {
@@ -196,14 +203,24 @@ export default {
         }
       ],
       formRules: {
-        attendanceVehicle: [{ required: true, message: '请输入出勤车辆' }],
-        attendancePeople: [{ required: true, message: '请输入出勤人数' }],
-        attendanceUav: [{ required: true, message: '请输入出勤无人机' }],
-        waterSource: [{ required: true, message: '请输入水源' }],
-        foam: [{ required: true, message: '请输入泡沫' }],
-        dryPowder: [{ required: true, message: '请输入干粉' }],
-        fireExtinguisher: [{ required: true, message: '请输入灭火器' }],
-        describe: [{ required: true, message: '请输入描述' }]
+        attendanceVehicle: isNotNull('请输入出勤车辆').concat(
+          limitIntegerRange(0, 999)
+        ),
+        attendancePeople: isNotNull('请输入出勤无人机').concat(
+          limitIntegerRange(0, 9999)
+        ),
+        attendanceUav: isNotNull('请输入出勤人数').concat(
+          limitIntegerRange(0, 999)
+        ),
+        foam: isNotNull('请输入出请输入泡沫勤车辆').concat(
+          limitIntegerRange(0, 999)
+        ),
+        waterSource: isNotNull('请输入水源').concat(limitIntegerRange(0, 999)),
+        dryPowder: isNotNull('请输入干粉').concat(limitIntegerRange(0, 999)),
+        fireExtinguisher: isNotNull('请输入灭火器').concat(
+          limitIntegerRange(0, 999)
+        ),
+        describe: isNotNull('请输入描述').concat(limitLength(1, 200))
       },
 
       form: {
@@ -395,7 +412,11 @@ export default {
         const fileType = f.eventFileUrl
           .substring(f.eventFileUrl.lastIndexOf('.') + 1, f.eventFileUrl.length)
           .toLowerCase()
-        if (fileType === 'mp4') { totalVideo += 1 } else { totalImg += 1 }
+        if (fileType === 'mp4') {
+          totalVideo += 1
+        } else {
+          totalImg += 1
+        }
       })
       if (fileType === 'mp4' && totalVideo >= 5) {
         this.$notify.closeAll()
@@ -467,6 +488,7 @@ export default {
       }
       this.form.describe = data.eventDescription
       this.curIcon = data.icon
+      this.$refs.dataForm.validate()
     },
     /**
      *  缓存事件的数据
@@ -504,9 +526,13 @@ export default {
      *  提交事件
      */
     submitEvent () {
+      let valid = true
+      this.$refs.dataForm.validate((v) => {
+        valid = v
+      })
+      if (!valid) return
       this.saveEventData(this.activeStep)
       // 检查是否有未填写的内容
-      let valid = true
       let i = 0
       const data = []
       for (; i < this.activities.length; i++) {
@@ -941,16 +967,18 @@ export default {
         border-radius: 4px;
         font-size: 16px;
         line-height: 32px;
-        color: #1eb0fc;
         text-align: center;
+        background: #1eb0fc;
+        color: #fff;
       }
       span:active {
         opacity: 0.8;
       }
       span:nth-child(2) {
         margin-left: 20px;
-        background: #1eb0fc;
-        color: #fff;
+        margin-right: 20px;
+        background: transparent;
+        color: #1eb0fc;
       }
     }
   }
