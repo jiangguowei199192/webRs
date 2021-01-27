@@ -1271,7 +1271,9 @@ export default {
     }
     span:nth-child(3) {
       margin-top: 6px;
-      font-size: 18px;
+      font-size: 16px;
+      max-width: 200px;
+      margin-left: 30px;
     }
   }
   .more {
