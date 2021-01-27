@@ -150,7 +150,7 @@
         @change="fileChange"
       />
       <div class="btns">
-        <span>上一步</span>
+        <span @click.stop="lastStep">上一步</span>
         <span @click.stop="$router.go(-1)">取消</span>
         <span @click.stop="submitEvent">完成</span>
       </div>
@@ -301,6 +301,10 @@ export default {
     },
     eventDatas: {
       type: Array,
+      required: true
+    },
+    lastObj: {
+      type: Object,
       required: true
     }
   },
@@ -521,6 +525,9 @@ export default {
         .catch((err) => {
           console.log('combatEventAdd Err : ' + err)
         })
+    },
+    lastStep () {
+      this.lastObj.bNext = false
     },
     /**
      *  提交事件

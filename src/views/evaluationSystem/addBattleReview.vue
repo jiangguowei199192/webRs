@@ -162,7 +162,12 @@
           <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
           <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
         </div>
-        <commentStep2 v-if="bNext" :combatId="combatId" :isEdit="bIsEdit" :eventDatas="eventDatas"></commentStep2>
+        <commentStep2 v-show="bNext"
+                      :combatId="combatId"
+                      v-bind:lastObj="this"
+                      :isEdit="bIsEdit"
+                      :eventDatas="eventDatas">
+        </commentStep2>
       </div>
     </div>
   </div>
@@ -343,17 +348,21 @@ export default {
       this.$refs.addBattleRef.validate((valid) => {
         if (!valid) return
 
-        let tmpApi = battleApi.addNewBattleReview
+        /* let tmpApi = battleApi.addNewBattleReview
         if (this.bIsEdit) {
           tmpApi = battleApi.updateBattleReview
-        }
+        } */
 
         this.fireData.fireTimeStart = timeFormat(this.fireData.dateRange[0])
         this.fireData.fireTimeEnd = timeFormat(this.fireData.dateRange[1])
-        const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+
+        if (this.bIsEdit) {
+          this.combatId = this.jumpReviewId
+        }
+        this.bNext = true
+        /* const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         this.$axios.post(tmpApi, this.fireData, config).then(res => {
           if (res.data.code === 0) {
-            console.log(tmpApi + '.Ok:', res)
             if (this.bIsEdit) {
               this.combatId = this.jumpReviewId
             } else {
@@ -365,7 +374,7 @@ export default {
           }
         }).catch((error) => {
           console.log(tmpApi + '.Excep : ' + error)
-        })
+        }) */
       })
     },
     // 选择火灾
