@@ -2,11 +2,11 @@
   <div class="addBattleMain">
     <div class="addBattleBox">
       <div class="addBattleHeader">
-        <div class="title disable-user-select">{{titleName}}</div>
+        <div class="title disable-user-select">{{ titleName }}</div>
       </div>
       <div class="addBattleWork">
         <div class="battleTotal" v-show="!bNext">
-          <div style="margin-left:15px;margin-top:15px;">
+          <div style="margin-left: 15px; margin-top: 15px">
             <div class="imgFlag"></div>
             <span class="titleText">火灾描述</span>
             <el-popover
@@ -16,16 +16,26 @@
               v-model="showPopover"
             >
               <div class="selectBox">
-                <el-input placeholder="输入三维数据名称进行搜索"
-                          v-model="inputModelName"
-                          class="searchModel">
-                  <el-button @click="searchModel" slot="append" icon="el-icon-search"></el-button>
+                <el-input
+                  placeholder="输入三维数据名称进行搜索"
+                  v-model="inputModelName"
+                  class="searchModel"
+                >
+                  <el-button
+                    @click="searchModel"
+                    slot="append"
+                    icon="el-icon-search"
+                  ></el-button>
                 </el-input>
                 <div class="modelList webFsScroll">
-                  <div class="modelItem" v-for="item in modelList"
-                       :key="item.enterpriseId"
-                       @click="selectModel(item)"
-                  >{{ item.enterpriseName }}</div>
+                  <div
+                    class="modelItem"
+                    v-for="item in modelList"
+                    :key="item.enterpriseId"
+                    @click="selectModel(item)"
+                  >
+                    {{ item.enterpriseName }}
+                  </div>
                 </div>
               </div>
               <div slot="reference" class="selectModel" title="关联三维预案">
@@ -41,13 +51,23 @@
             :rules="addBattleRules"
           >
             <div class="itemComm">
-              <span style="color:red;">*</span>
-              <span style="margin-right:15px" :class="{fireNameUnSelectStyle:bIsEdit}">火灾名称</span>
+              <span style="color: red">*</span>
+              <span
+                style="margin-right: 15px"
+                :class="{ fireNameUnSelectStyle: bIsEdit }"
+                >火灾名称</span
+              >
               <el-form-item prop="fireName">
-                <el-select ref="ctrlFireName"
+                <el-select
+                  ref="ctrlFireName"
                   v-model="fireAlertName"
                   placeholder="请选择火灾"
-                  :class="{fireSelectStyle:!bIsEdit,baseInfoInput:!bIsEdit,fireUnSelectStyle:bIsEdit,baseInfoUnInput:bIsEdit}"
+                  :class="{
+                    fireSelectStyle: !bIsEdit,
+                    baseInfoInput: !bIsEdit,
+                    fireUnSelectStyle: bIsEdit,
+                    baseInfoUnInput: bIsEdit,
+                  }"
                   :disabled="bIsEdit"
                   @change="selectFire"
                 >
@@ -59,8 +79,8 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <span style="margin-left:15px;color:red;">*</span>
-              <span style="margin-right:15px;">火灾时间</span>
+              <span style="margin-left: 15px; color: red">*</span>
+              <span style="margin-right: 15px">火灾时间</span>
               <el-form-item prop="dateRange">
                 <el-date-picker
                   v-model="fireData.dateRange"
@@ -73,31 +93,41 @@
               </el-form-item>
             </div>
             <div class="itemComm">
-              <span style="color:red;vertical-align:top;">*</span>
-              <span style="margin-right:15px;vertical-align:top;">火灾描述</span>
+              <span style="color: red; vertical-align: top">*</span>
+              <span style="margin-right: 15px; vertical-align: top"
+                >火灾描述</span
+              >
               <el-form-item prop="fireDescription">
-                <el-input type="textarea"
-                          resize="none"
-                          v-model="fireData.fireDescription"
-                          @input="limitMaxLength($event, 200, fireData, 'fireDescription')"
-                          maxlength="200"
-                          class="describeInputStyle"
+                <el-input
+                  type="textarea"
+                  resize="none"
+                  v-model="fireData.fireDescription"
+                  @input="
+                    limitMaxLength($event, 200, fireData, 'fireDescription')
+                  "
+                  maxlength="200"
+                  class="describeInputStyle"
                 ></el-input>
               </el-form-item>
             </div>
             <div class="itemComm">
-              <span style="color:red;">*</span>
-              <span style="margin-right:15px;vertical-align:top;">火灾地址</span>
+              <span style="color: red">*</span>
+              <span style="margin-right: 15px; vertical-align: top"
+                >火灾地址</span
+              >
               <el-form-item prop="fireAddress">
-                <el-input v-model="fireData.fireAddress"
-                          @input="limitMaxLength($event, 50, fireData, 'fireAddress')"
-                          class="addressInputStyle baseInfoInput"
+                <el-input
+                  v-model="fireData.fireAddress"
+                  @input="limitMaxLength($event, 50, fireData, 'fireAddress')"
+                  class="addressInputStyle baseInfoInput"
                 ></el-input>
               </el-form-item>
             </div>
             <div class="itemComm">
-              <span style="color:red;vertical-align:top;">*</span>
-              <span style="margin-right:15px;vertical-align:top;">火灾经纬</span>
+              <span style="color: red; vertical-align: top">*</span>
+              <span style="margin-right: 15px; vertical-align: top"
+                >火灾经纬</span
+              >
               <el-form-item prop="lonLat">
                 <div class="fireMap">
                   <gMap
@@ -113,60 +143,84 @@
                 </div>
               </el-form-item>
             </div>
-            <div style="margin-left:15px;margin-top:25px;">
+            <div style="margin-left: 15px; margin-top: 25px">
               <div class="imgFlag"></div>
               <span class="titleText">出勤总数</span>
             </div>
             <div class="itemComm">
-              <span style="color:red;">*</span>
-              <span style="margin-right:15px">出勤车辆</span>
+              <span style="color: red">*</span>
+              <span style="margin-right: 15px">出勤车辆</span>
               <el-form-item prop="attendanceVehicle">
-                <el-input v-model="fireData.attendanceVehicle"
-                          @input="lengthLimitedNumber($event, 3, fireData, 'attendanceVehicle')"
-                          style="width:112px;"
-                          class="baseInfoInput"
+                <el-input
+                  v-model="fireData.attendanceVehicle"
+                  @input="
+                    lengthLimitedNumber(
+                      $event,
+                      3,
+                      fireData,
+                      'attendanceVehicle'
+                    )
+                  "
+                  style="width: 112px"
+                  class="baseInfoInput"
                 ></el-input>
               </el-form-item>
-              <span style="margin-left:31px;color:red;">*</span>
-              <span style="margin-right:15px">出勤人数</span>
+              <span style="margin-left: 31px; color: red">*</span>
+              <span style="margin-right: 15px">出勤人数</span>
               <el-form-item prop="attendancePeople">
-                <el-input v-model="fireData.attendancePeople"
-                          @input="lengthLimitedNumber($event, 3, fireData, 'attendancePeople')"
-                          style="width:112px;"
-                          class="baseInfoInput"
+                <el-input
+                  v-model="fireData.attendancePeople"
+                  @input="
+                    lengthLimitedNumber($event, 3, fireData, 'attendancePeople')
+                  "
+                  style="width: 112px"
+                  class="baseInfoInput"
                 ></el-input>
               </el-form-item>
-              <span style="margin-left:31px;color:red;">*</span>
-              <span style="margin-right:15px">出勤无人机</span>
+              <span style="margin-left: 31px; color: red">*</span>
+              <span style="margin-right: 15px">出勤无人机</span>
               <el-form-item prop="attendanceUav">
-                <el-input v-model="fireData.attendanceUav"
-                          @input="lengthLimitedNumber($event, 3, fireData, 'attendanceUav')"
-                          style="width:112px;"
-                          class="baseInfoInput"
+                <el-input
+                  v-model="fireData.attendanceUav"
+                  @input="
+                    lengthLimitedNumber($event, 3, fireData, 'attendanceUav')
+                  "
+                  style="width: 112px"
+                  class="baseInfoInput"
                 ></el-input>
               </el-form-item>
             </div>
             <div class="itemComm">
-              <span style="color:red;">*</span>
-              <span style="margin-right:15px">受灾面积</span>
+              <span style="color: red">*</span>
+              <span style="margin-right: 15px">受灾面积</span>
               <el-form-item prop="damageArea">
-                <el-input v-model="fireData.damageArea"
-                          @input="formatLimitedFloat($event, 7, 2, fireData, 'damageArea')"
-                          @blur="fireData.damageArea = floatFormat(fireData.damageArea)"
-                          style="width:112px;"
-                          class="baseInfoInput"
+                <el-input
+                  v-model="fireData.damageArea"
+                  @input="
+                    formatLimitedFloat($event, 7, 2, fireData, 'damageArea')
+                  "
+                  @blur="fireData.damageArea = floatFormat(fireData.damageArea)"
+                  style="width: 112px"
+                  class="baseInfoInput"
                 ></el-input>
               </el-form-item>
             </div>
           </el-form>
-          <div class="btnComm disable-user-select btnCancel" @click="addCancel">取消</div>
-          <div class="btnComm disable-user-select btnConfirm" @click="addNext">下一步</div>
+          <div class="btnComm disable-user-select btnCancel" @click="addCancel">
+            取消
+          </div>
+          <div class="btnComm disable-user-select btnConfirm" @click="addNext">
+            下一步
+          </div>
         </div>
-        <commentStep2 v-if="bNext"
-                      :combatId="combatId"
-                      v-bind:lastObj="this"
-                      :isEdit="bIsEdit"
-                      :eventDatas="eventDatas">
+        <commentStep2
+          ref="step2"
+          v-show="bNext"
+          :combatId="combatId"
+          v-bind:lastObj="this"
+          :isEdit="bIsEdit"
+          :eventDatas="eventDatas"
+        >
         </commentStep2>
       </div>
     </div>
@@ -223,12 +277,20 @@ export default {
       addBattleRules: {
         fireName: isNotNull('请选择火灾名称'),
         dateRange: isNotNull('请输入火灾时间'),
-        fireDescription: isNotNull('请输入火灾描述').concat(limitLength(1, 200)),
+        fireDescription: isNotNull('请输入火灾描述').concat(
+          limitLength(1, 200)
+        ),
         fireAddress: isNotNull('请输入火灾地址').concat(limitLength(1, 50)),
         lonLat: isNotNull('请点选火灾经纬度位置'),
-        attendanceVehicle: isNotNull('请输入总车辆').concat(limitIntegerRange(0, 999)),
-        attendancePeople: isNotNull('请输入总人数').concat(limitIntegerRange(0, 999)),
-        attendanceUav: isNotNull('请输入总无人机数').concat(limitIntegerRange(0, 999)),
+        attendanceVehicle: isNotNull('请输入总车辆').concat(
+          limitIntegerRange(0, 999)
+        ),
+        attendancePeople: isNotNull('请输入总人数').concat(
+          limitIntegerRange(0, 999)
+        ),
+        attendanceUav: isNotNull('请输入总无人机数').concat(
+          limitIntegerRange(0, 999)
+        ),
         damageArea: isNotNull('请输入受灾面积')
       },
       jumpReviewId: '' // 此id有值时表示要编辑战评
@@ -254,15 +316,18 @@ export default {
     this.getEnterpriseModelList()
     this.getBattleReviewDetail()
 
-    if (this.jumpReviewId !== '' && this.jumpReviewId !== null && this.jumpReviewId !== undefined) {
+    if (
+      this.jumpReviewId !== '' &&
+      this.jumpReviewId !== null &&
+      this.jumpReviewId !== undefined
+    ) {
       this.bIsEdit = true
       this.titleName = '编辑战评'
       const tmpEle = this.$refs.ctrlFireName.$el.childNodes[1].children.item(0)
       tmpEle.style.border = '1px solid #aaaaaa'
     }
   },
-  beforeDestroy () {
-  },
+  beforeDestroy () {},
   methods: {
     limitMaxLength,
     lengthLimitedNumber,
@@ -274,24 +339,35 @@ export default {
         return
       }
 
-      this.$axios.post(battleApi.getBattleReviewDetail, { id: this.jumpReviewId }).then(res => {
-        if (res.data.code === 0) {
-          if (res.data.code === 0 && res.data.data) {
-            const tmpData = res.data.data
-            tmpData.lonLat = [tmpData.fireLongitude, tmpData.fireLatitude]
-            tmpData.dateRange = [new Date(tmpData.fireTimeStart), new Date(tmpData.fireTimeEnd)]
-            this.fireData = tmpData
-            this.fireAlertName = tmpData.fireName
-            if (tmpData.combatEventList) { this.eventDatas = tmpData.combatEventList }
-            this.mapClickCallback(tmpData.lonLat)
-            this.$refs.gduMap.map2D.setZoom(16)
-            this.$refs.gduMap.map2D.zoomToCenter(tmpData.fireLongitude, tmpData.fireLatitude)
-            this.matchEnterpriseModel()
+      this.$axios
+        .post(battleApi.getBattleReviewDetail, { id: this.jumpReviewId })
+        .then((res) => {
+          if (res.data.code === 0) {
+            if (res.data.code === 0 && res.data.data) {
+              const tmpData = res.data.data
+              tmpData.lonLat = [tmpData.fireLongitude, tmpData.fireLatitude]
+              tmpData.dateRange = [
+                new Date(tmpData.fireTimeStart),
+                new Date(tmpData.fireTimeEnd)
+              ]
+              this.fireData = tmpData
+              this.fireAlertName = tmpData.fireName
+              if (tmpData.combatEventList) {
+                this.eventDatas = tmpData.combatEventList
+              }
+              this.mapClickCallback(tmpData.lonLat)
+              this.$refs.gduMap.map2D.setZoom(16)
+              this.$refs.gduMap.map2D.zoomToCenter(
+                tmpData.fireLongitude,
+                tmpData.fireLatitude
+              )
+              this.matchEnterpriseModel()
+            }
           }
-        }
-      }).catch((error) => {
-        console.log('battleApi.getBattleReviewDetail Err : ' + error)
-      })
+        })
+        .catch((error) => {
+          console.log('battleApi.getBattleReviewDetail Err : ' + error)
+        })
     },
     // 编辑时匹配三维预案
     matchEnterpriseModel () {
@@ -314,34 +390,40 @@ export default {
         currentPage: 1,
         pageSize: 1000
       }
-      this.$axios.post(battleApi.getFireCaseList, tmpParams).then(res => {
-        if (res.data.code === 0) {
-          if (res.data.code === 0 && res.data.data) {
-            const tmpDatas = res.data.data
-            tmpDatas.forEach(d => {
-              d.lon = d.lon / 10000000
-              d.lat = d.lat / 10000000
-            })
-            this.fireList = tmpDatas
+      this.$axios
+        .post(battleApi.getFireCaseList, tmpParams)
+        .then((res) => {
+          if (res.data.code === 0) {
+            if (res.data.code === 0 && res.data.data) {
+              const tmpDatas = res.data.data
+              tmpDatas.forEach((d) => {
+                d.lon = d.lon / 10000000
+                d.lat = d.lat / 10000000
+              })
+              this.fireList = tmpDatas
+            }
           }
-        }
-      }).catch((error) => {
-        console.log('battleApi.getFireCaseList Err : ' + error)
-      })
+        })
+        .catch((error) => {
+          console.log('battleApi.getFireCaseList Err : ' + error)
+        })
     },
     // 获取三维预案列表
     getEnterpriseModelList (name = '') {
       this.modelList = []
-      this.$axios.post(battleApi.getEnterprise3dInfoList, { enterpriseName: name }).then(res => {
-        if (res.data.code === 0) {
-          if (res.data.code === 0 && res.data.data) {
-            this.modelList = res.data.data
-            this.matchEnterpriseModel()
+      this.$axios
+        .post(battleApi.getEnterprise3dInfoList, { enterpriseName: name })
+        .then((res) => {
+          if (res.data.code === 0) {
+            if (res.data.code === 0 && res.data.data) {
+              this.modelList = res.data.data
+              this.matchEnterpriseModel()
+            }
           }
-        }
-      }).catch((error) => {
-        console.log('battleApi.getEnterprise3dInfoList Err : ' + error)
-      })
+        })
+        .catch((error) => {
+          console.log('battleApi.getEnterprise3dInfoList Err : ' + error)
+        })
     },
     // 取消，回退到战评列表页面
     addCancel () {
@@ -364,6 +446,7 @@ export default {
           this.combatId = this.jumpReviewId
         }
         this.bNext = true
+        this.$refs.step2.initData()
         /* const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         this.$axios.post(tmpApi, this.fireData, config).then(res => {
           if (res.data.code === 0) {
@@ -383,7 +466,7 @@ export default {
     },
     // 选择火灾
     selectFire (id) {
-      const item = this.fireList.find(i => i.id === id)
+      const item = this.fireList.find((i) => i.id === id)
       this.fireData.fireNo = item.alertId
       this.fireData.fireName = item.alertName
       this.fireData.fireAddress = item.address
@@ -420,7 +503,8 @@ export default {
       this.fireData.lonLat = lonlat
       this.fireData.fireLongitude = lonlat[0]
       this.fireData.fireLatitude = lonlat[1]
-      const tmpName = this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
+      const tmpName =
+        this.fireData.fireAddress === '' ? null : this.fireData.fireAddress
       tmpMap.customMarkerLayerManager.clear()
       tmpMap.customMarkerLayerManager.addMarker({
         name: tmpName,
@@ -475,7 +559,7 @@ export default {
         width: 134px;
         height: 34px;
         line-height: 34px;
-        border: 1px solid #1EB0FC9C;
+        border: 1px solid #1eb0fc9c;
         cursor: pointer;
       }
     }
@@ -489,8 +573,8 @@ export default {
         position: relative;
         width: 749px;
         height: 540px;
-        border: 1px solid #00CCFF;
-        background: linear-gradient(90deg, #08111F80, #13396380);
+        border: 1px solid #00ccff;
+        background: linear-gradient(90deg, #08111f80, #13396380);
         .imgFlag {
           height: 16px;
           width: 26px;
@@ -501,7 +585,7 @@ export default {
         }
         .titleText {
           font-size: 18px;
-          color: #FFFFFF;
+          color: #ffffff;
           height: 16px;
           line-height: 16px;
         }
@@ -527,19 +611,19 @@ export default {
             height: 16px;
             line-height: 16px;
             vertical-align: top;
-            background: #27BCE5;
+            background: #27bce5;
             border-radius: 2px;
           }
         }
         .itemComm {
-          margin-left:51px;
-          margin-top:15px;
-          width:670px;
+          margin-left: 51px;
+          margin-top: 15px;
+          width: 670px;
         }
 
         .btnComm {
           position: absolute;
-          border: 1px solid #1EB0FC;
+          border: 1px solid #1eb0fc;
           border-radius: 4px;
           width: 87px;
           height: 32px;
@@ -553,18 +637,18 @@ export default {
         }
         .btnCancel {
           right: 137px;
-          color: #1EB0FC;
+          color: #1eb0fc;
         }
         .btnConfirm {
           right: 28px;
-          background-color: #1EB0FC;
+          background-color: #1eb0fc;
           color: #ffffff;
         }
       }
       .battleEvents {
         width: 749px;
         height: 540px;
-        border: 1px solid #00CCFF;
+        border: 1px solid #00ccff;
         background: linear-gradient(90deg, #701e70, #133963);
         opacity: 0.5;
       }
@@ -605,7 +689,7 @@ export default {
     border: 1px solid #aaaaaa;
   }
   /deep/.el-input__icon {
-    color      : #aaaaaa;
+    color: #aaaaaa;
   }
 }
 
@@ -614,7 +698,7 @@ export default {
   height: 26px;
   background-color: transparent;
   border-color: #39a4dd;
-  vertical-align:top;
+  vertical-align: top;
   padding: 3px 5px;
 }
 /deep/.el-date-editor .el-range-input {

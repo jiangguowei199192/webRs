@@ -289,7 +289,8 @@ export default {
       },
       isRequest: false,
       activities: [],
-      fileTypes: ['mp4', 'png', 'jpg', 'jpeg']
+      fileTypes: ['mp4', 'png', 'jpg', 'jpeg'],
+      isInit: false
     }
   },
   props: {
@@ -550,6 +551,7 @@ export default {
         })
     },
     lastStep () {
+      // this.saveEventData(this.activeStep)
       this.lastObj.bNext = false
     },
     /**
@@ -617,6 +619,45 @@ export default {
           console.log(battleApi.addNewBattleReview + '.Excep : ' + error)
         })
     },
+    initData () {
+      if (this.isInit) {
+        this.activeStep = 0
+        return
+      }
+      this.isInit = true
+      this.event.icon = this.icons[0].path
+      if (this.isEdit) {
+        this.eventDatas.forEach((e) => {
+          var data = JSON.parse(JSON.stringify(this.event))
+          for (var b in data) {
+            if (Object.prototype.hasOwnProperty.call(e, b)) {
+              data[b] = e[b]
+            }
+          }
+          if (e.eventFileUrl) {
+            var pos = e.eventFileUrl.lastIndexOf('/')
+            data.fileName = e.eventFileUrl.substring(pos + 1)
+          }
+          data.eventTime = new Date(data.eventTime).getTime()
+          this.activities.push(data)
+        })
+        const len = 5 - this.activities.length
+        if (len > 0) {
+          for (let i = 0; i < len; i++) {
+            var c = JSON.parse(JSON.stringify(this.event))
+            this.activities.push(c)
+          }
+        }
+        this.setEventData(0)
+      } else {
+        this.curIcon = this.icons[0].path
+        for (let i = 0; i < 5; i++) {
+          var clone = JSON.parse(JSON.stringify(this.event))
+          this.activities.push(clone)
+        }
+        this.activities[0].eventName = '发现火情'
+      }
+    },
     /**
      *  提交事件
      */
@@ -678,40 +719,7 @@ export default {
       } else this.addBattle(data)
     }
   },
-  mounted () {
-    this.event.icon = this.icons[0].path
-    if (this.isEdit) {
-      this.eventDatas.forEach((e) => {
-        var data = JSON.parse(JSON.stringify(this.event))
-        for (var b in data) {
-          if (Object.prototype.hasOwnProperty.call(e, b)) {
-            data[b] = e[b]
-          }
-        }
-        if (e.eventFileUrl) {
-          var pos = e.eventFileUrl.lastIndexOf('/')
-          data.fileName = e.eventFileUrl.substring(pos + 1)
-        }
-        data.eventTime = new Date(data.eventTime).getTime()
-        this.activities.push(data)
-      })
-      const len = 5 - this.activities.length
-      if (len > 0) {
-        for (let i = 0; i < len; i++) {
-          var c = JSON.parse(JSON.stringify(this.event))
-          this.activities.push(c)
-        }
-      }
-      this.setEventData(0)
-    } else {
-      this.curIcon = this.icons[0].path
-      for (let i = 0; i < 5; i++) {
-        var clone = JSON.parse(JSON.stringify(this.event))
-        this.activities.push(clone)
-      }
-      this.activities[0].eventName = '发现火情'
-    }
-  }
+  mounted () {}
 }
 </script>
 
