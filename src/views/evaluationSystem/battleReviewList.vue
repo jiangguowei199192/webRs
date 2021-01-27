@@ -287,6 +287,7 @@ export default {
 .reviewMain {
   position: relative;
   height: 899px;
+  min-width: 1680px;
   margin-top: -5px;
   padding: 0 40px 0px 40px;
   .reviewBox {
