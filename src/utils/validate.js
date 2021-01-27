@@ -105,6 +105,84 @@ export function limitIntegerRange (min, max) {
   return rules
 }
 
+// 输入框长度限制
+export function limitMaxLength (str, maxLength, obj, propertyName) {
+  if (obj && propertyName) {
+    if (str.length > maxLength) {
+      obj[propertyName] = str.slice(0, maxLength)
+    }
+  }
+}
+// 限制整数数字长度
+export function lengthLimitedNumber (str, maxLength, obj, propertyName) {
+  if (obj && propertyName) {
+    obj[propertyName] = str.replace(/[^0-9]/g, '')
+    if (obj[propertyName].length > 1) {
+      obj[propertyName] = obj[propertyName].replace(/\b(0+)/gi, '') // 去掉字符串前面的0
+      if (obj[propertyName].length === 0) obj[propertyName] = 0
+    }
+    if (obj[propertyName].length > maxLength) {
+      obj[propertyName] = obj[propertyName].slice(0, maxLength)
+    }
+  }
+}
+// 限制小数格式
+export function formatLimitedFloat (str, intLen, decimalsLen, obj, propertyName) {
+  if (obj && propertyName) {
+    obj[propertyName] = str.replace(/[^.0-9]/g, '')
+    let firstNonZeroIndex = 0
+    obj[propertyName] = obj[propertyName].replace(/\./ig, function (a, b, c) { // 删除字符串前面的小数点
+      if (b === firstNonZeroIndex) {
+        firstNonZeroIndex += 1
+        return ''
+      } else {
+        return '.'
+      }
+    })
+    obj[propertyName] = obj[propertyName].replace(/\./ig, function (a, b, c) { // 仅保留第一个小数点
+      return c.indexOf(a) === b ? '.' : ''
+    })
+    const tmpS = obj[propertyName].split('.')
+    if (tmpS.length > 1) { // 限制整数位、小数位长度
+      if (tmpS[0].length > intLen) {
+        tmpS[0] = tmpS[0].slice(0, intLen)
+      }
+      if (tmpS[1].length > decimalsLen) {
+        tmpS[1] = tmpS[1].slice(0, decimalsLen)
+      }
+      obj[propertyName] = tmpS[0] + '.' + tmpS[1]
+    } else if (tmpS.length === 1) {
+      if (tmpS[0].length > intLen) {
+        tmpS[0] = tmpS[0].slice(0, intLen)
+        obj[propertyName] = tmpS[0]
+      }
+    }
+    // 删除字符串前多余的0
+    if (obj[propertyName].indexOf('0') === 0 && obj[propertyName].length > 1) {
+      let needDelNum = 0
+      for (let i = 1; i < obj[propertyName].length; i++) {
+        if (obj[propertyName][i] === '0') {
+          needDelNum += 1
+        } else if (i === 1 && obj[propertyName][i] !== '.') {
+          needDelNum += 1
+          break
+        } else {
+          break
+        }
+      }
+      obj[propertyName] = obj[propertyName].slice(needDelNum, obj[propertyName].length)
+    }
+  }
+}
+export function floatFormat (str) {
+  if (str.length > 0) {
+    if (str.indexOf('.') === str.length - 1) {
+      str = str.slice(0, str.length - 1)
+    }
+  }
+  return str
+}
+
 // 字符串不能为空
 export function isNotNull (msg) {
   const rules = []

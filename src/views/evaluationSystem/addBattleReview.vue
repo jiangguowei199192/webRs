@@ -151,7 +151,7 @@
               <span style="margin-right:15px">受灾面积</span>
               <el-form-item prop="damageArea">
                 <el-input v-model="fireData.damageArea"
-                          @input="formatLimitedFloat($event, 6, 2, fireData, 'damageArea')"
+                          @input="formatLimitedFloat($event, 7, 2, fireData, 'damageArea')"
                           @blur="fireData.damageArea = floatFormat(fireData.damageArea)"
                           style="width:112px;"
                           class="baseInfoInput"
@@ -169,7 +169,15 @@
 </template>
 
 <script>
-import { isNotNull, limitLength, limitIntegerRange } from '@/utils/validate'
+import {
+  isNotNull,
+  limitLength,
+  limitIntegerRange,
+  limitMaxLength,
+  lengthLimitedNumber,
+  formatLimitedFloat,
+  floatFormat
+} from '@/utils/validate'
 import commentStep2 from './commentStep2.vue'
 import { battleApi } from '@/api/battle'
 import { timeFormat } from '@/utils/date'
@@ -245,6 +253,10 @@ export default {
   beforeDestroy () {
   },
   methods: {
+    limitMaxLength,
+    lengthLimitedNumber,
+    formatLimitedFloat,
+    floatFormat,
     // 获取战评详情
     getBattleReviewDetail () {
       if (this.jumpReviewId === '' || this.jumpReviewId === undefined) {
@@ -321,63 +333,6 @@ export default {
       }).catch((error) => {
         console.log('battleApi.getEnterprise3dInfoList Err : ' + error)
       })
-    },
-    // 输入框长度限制
-    limitMaxLength (str, maxLength, obj, propertyName) {
-      if (obj && propertyName) {
-        if (str.length > maxLength) {
-          obj[propertyName] = str.slice(0, maxLength)
-        }
-      }
-    },
-    // 限制整数数字长度
-    lengthLimitedNumber (str, maxLength, obj, propertyName) {
-      if (obj && propertyName) {
-        obj[propertyName] = str.replace(/[^0-9]/g, '')
-        if (obj[propertyName].length > 1) {
-          obj[propertyName] = obj[propertyName].replace(/\b(0+)/gi, '') // 去掉字符串前面的0
-          if (obj[propertyName].length === 0) obj[propertyName] = 0
-        }
-        if (obj[propertyName].length > maxLength) {
-          obj[propertyName] = obj[propertyName].slice(0, maxLength)
-        }
-      }
-    },
-    // 限制小数格式
-    formatLimitedFloat (str, intLen, decimalsLen, obj, propertyName) {
-      if (obj && propertyName) {
-        obj[propertyName] = str.replace(/[^.0-9]/g, '')
-        let firstNonZeroIndex = 0
-        obj[propertyName] = obj[propertyName].replace(/\./ig, function (a, b, c) { // 删除字符串前面的小数点
-          if (b === firstNonZeroIndex) {
-            firstNonZeroIndex += 1
-            return ''
-          } else {
-            return '.'
-          }
-        })
-        obj[propertyName] = obj[propertyName].replace(/\./ig, function (a, b, c) { // 仅保留第一个小数点
-          return c.indexOf(a) === b ? '.' : ''
-        })
-        const tmpS = obj[propertyName].split('.')
-        if (tmpS.length > 1) {
-          if (tmpS[0].length > intLen) {
-            tmpS[0] = tmpS[0].slice(0, intLen)
-          }
-          if (tmpS[1].length > decimalsLen) {
-            tmpS[1] = tmpS[1].slice(0, decimalsLen)
-          }
-          obj[propertyName] = tmpS[0] + '.' + tmpS[1]
-        }
-      }
-    },
-    floatFormat (str) {
-      if (str.length > 0) {
-        if (str.indexOf('.') === str.length - 1) {
-          str = str.slice(0, str.length - 1)
-        }
-      }
-      return str
     },
     // 取消，回退到战评列表页面
     addCancel () {

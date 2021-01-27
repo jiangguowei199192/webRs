@@ -196,7 +196,11 @@ export default {
     },
     // 删除指定战评
     delBattleReview (item) {
-      this.$confirm('确定要删除此战评吗?', '提示', {
+      const newDatas = []
+      const fn = this.$createElement
+      newDatas.push(fn('p', null, '删除后无法撤销!'))
+      newDatas.push(fn('p', null, "您确定要删除'" + item.fireName + "'战评吗?"))
+      this.$confirm(fn('div', null, newDatas), '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         showClose: false
