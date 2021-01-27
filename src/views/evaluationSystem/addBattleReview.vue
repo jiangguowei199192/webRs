@@ -388,6 +388,16 @@ export default {
       this.fireData.fireName = item.alertName
       this.fireData.fireAddress = item.address
       this.fireData.fireDescription = item.description
+      if (item.happenTime === undefined) {
+        item.happenTime = new Date().getTime()
+      }
+      if (item.stopTime === undefined) {
+        item.stopTime = new Date().getTime()
+      }
+      if (item.stopTime < item.happenTime) {
+        item.stopTime = item.happenTime
+      }
+      this.fireData.dateRange = [new Date(item.happenTime * 1000), new Date(item.stopTime * 1000)]
       this.fireData.lonLat = [item.lon, item.lat]
       this.mapClickCallback(this.fireData.lonLat)
       this.$refs.gduMap.map2D.setZoom(16)
