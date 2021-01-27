@@ -46,8 +46,14 @@
         <span>{{ curEvent.eventName }}</span>
       </div>
       <span class="txt">{{ curEvent.eventDescription }}</span>
-      <img class="img" :src="imgPath" v-show="imgPath" />
-      <div class="playerBox" v-show="videoUrl">
+      <img
+        class="img"
+        :class="{ active: defaultImg === false }"
+        :src="imgPath"
+        v-show="imgPath"
+        @click.stop="defaultImg === true ? '' : (dlgVisible = true)"
+      />
+      <div class="playerBox" v-show="videoUrl" @click.stop="dlgVisible = true">
         <LivePlayer
           :videoUrl="videoUrl"
           :show-custom-button="false"
@@ -152,6 +158,32 @@
         ></div>
       </div>
     </div>
+    <el-dialog
+      custom-class="el-dialog-custom"
+      :visible.sync="dlgVisible"
+      :show-close="false"
+      type="primary"
+      :append-to-body="true"
+      @click.native="dlgVisible = false"
+      center
+    >
+      <img class="picture" :src="imgPath" v-show="imgPath" />
+      <div class="video" v-show="videoUrl">
+        <LivePlayer
+          :videoUrl="videoUrl"
+          :show-custom-button="false"
+          :muted="false"
+          :controls="false"
+          :autoplay="true"
+          oncontextmenu="return false"
+          fluent
+          :stretch="true"
+          :live="false"
+          aspect="fullscreen"
+          :poster="poster"
+        ></LivePlayer>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -169,6 +201,7 @@ export default {
   name: 'evaluation',
   data () {
     return {
+      dlgVisible: false,
       minHeight: 982,
       fullHeight: 0,
       configUrl: 'config/config.json',
@@ -202,7 +235,8 @@ export default {
       poster: require('../../assets/images/loading.gif'),
       topicId: '', // 战评回放主题id
       bIsFirstLonLat: true,
-      needCenter: true
+      needCenter: true,
+      defaultImg: true
     }
   },
   components: {
@@ -950,6 +984,7 @@ export default {
         const fileType = file
           .substring(file.lastIndexOf('.') + 1, file.length)
           .toLowerCase()
+        this.defaultImg = false
         if (fileType === 'mp4') {
           this.videoUrl = this.serverUrl + file
           this.imgPath = ''
@@ -957,7 +992,10 @@ export default {
           this.imgPath = this.serverUrl + file
           this.videoUrl = ''
         }
-      } else this.imgPath = require('../../assets/images/fireBattle/default.png')
+      } else {
+        this.defaultImg = true
+        this.imgPath = require('../../assets/images/fireBattle/default.png')
+      }
     },
     /**
      * 设置战评初始数据
@@ -1189,11 +1227,15 @@ export default {
       width: 293px;
       height: 170px;
     }
+    .img.active {
+      cursor: pointer;
+    }
     .playerBox {
       margin-top: 10px;
       width: 293px;
       height: 170px;
       position: relative;
+      cursor: pointer;
     }
   }
   .ball {

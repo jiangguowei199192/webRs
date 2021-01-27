@@ -19,6 +19,7 @@
                   placeholder="选择日期时间"
                   :clearable="false"
                   value-format="timestamp"
+                  @blur="datepickerBlur"
                 ></el-date-picker>
                 <el-input
                   ref="input"
@@ -317,6 +318,25 @@ export default {
   },
   methods: {
     timeFormat2,
+    /**
+     * 校验时间是否合法
+     */
+    datepickerBlur () {
+      const start = new Date(this.lastObj.fireData.fireTimeStart).getTime()
+      const end = new Date(this.lastObj.fireData.fireTimeEnd).getTime()
+      const time = this.activities[this.activeStep].eventTime
+      if (time > end || time < start) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '已超过受灾时间范围，请重新选择'
+        })
+        this.activities[this.activeStep].eventTime = ''
+      }
+    },
+    /**
+     * 校验战评事件输入数据
+     */
     checkNum (str, item) {
       if (str.length > item.maxlength) {
         this.form[item.type] = str.slice(0, item.maxlength)
@@ -672,6 +692,7 @@ export default {
           var pos = e.eventFileUrl.lastIndexOf('/')
           data.fileName = e.eventFileUrl.substring(pos + 1)
         }
+        data.eventTime = new Date(data.eventTime).getTime()
         this.activities.push(data)
       })
       const len = 5 - this.activities.length
