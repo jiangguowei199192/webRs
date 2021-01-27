@@ -33,9 +33,21 @@
               ></LivePlayer>
             </div>
             <div class="info1">
-              <div class="name">{{ item.fireName }}</div>
+              <el-tooltip
+                popper-class="gTooltip plotTooltip"
+                :content="item.fireName"
+                placement="top"
+                :open-delay="500">
+                <div class="name divEllipsis">{{ item.fireName }}</div>
+              </el-tooltip>
               <div class="time">时间: {{ item.fireTimeStart }}</div>
-              <div class="address">地点: {{ item.fireAddress }}</div>
+              <el-tooltip
+                popper-class="gTooltip plotTooltip"
+                :content="item.fireAddress"
+                placement="top"
+                :open-delay="500">
+                <div class="address divEllipsis">地点: {{ item.fireAddress }}</div>
+              </el-tooltip>
             </div>
             <div class="info2">
               <div class="infoCom">
@@ -362,6 +374,7 @@ export default {
             .time,
             .address {
               margin-bottom: 10px;
+              width: 180px;
             }
           }
           .info2 {
