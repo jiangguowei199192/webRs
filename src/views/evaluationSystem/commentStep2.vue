@@ -286,6 +286,7 @@ export default {
         icon: '', // 图标
         waterSource: '' // 水源
       },
+      isRequest: false,
       activities: [],
       fileTypes: ['mp4', 'png', 'jpg', 'jpeg']
     }
@@ -518,11 +519,13 @@ export default {
       this.$axios
         .post(battleApi.combatEventAdd, data, config)
         .then((res) => {
+          this.isRequest = false
           if (res.data.code === 0) {
             this.$router.push({ path: '/battleReview' })
           }
         })
         .catch((err) => {
+          this.isRequest = false
           console.log('combatEventAdd Err : ' + err)
         })
     },
@@ -546,10 +549,12 @@ export default {
             })
             this.addBattleEvent(eventDatas)
           } else {
+            this.isRequest = false
             console.log(battleApi.addNewBattleReview + '.Err:', res)
           }
         })
         .catch((error) => {
+          this.isRequest = false
           console.log(battleApi.addNewBattleReview + '.Excep : ' + error)
         })
     },
@@ -573,19 +578,22 @@ export default {
                 .then((res) => {
                   if (res.data.code === 0) {
                     this.addBattleEvent(eventDatas)
-                  }
+                  } else this.isRequest = false
                 })
                 .catch((error) => {
+                  this.isRequest = false
                   console.log('deleteBattleReview Err : ' + error)
                 })
             } else {
               this.addBattleEvent(eventDatas)
             }
           } else {
+            this.isRequest = false
             console.log(battleApi.addNewBattleReview + '.Err:', res)
           }
         })
         .catch((error) => {
+          this.isRequest = false
           console.log(battleApi.addNewBattleReview + '.Excep : ' + error)
         })
     },
@@ -593,6 +601,7 @@ export default {
      *  提交事件
      */
     submitEvent () {
+      if (this.isRequest) return
       let valid = true
       if (
         this.activities[this.activeStep].eventName ||
@@ -643,6 +652,7 @@ export default {
         this.$notify.warning({ title: '警告', message: '请先填写步骤后保存' })
         return
       }
+      this.isRequest = true
       if (this.isEdit) {
         this.editBattle(data)
       } else this.addBattle(data)
