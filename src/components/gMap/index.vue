@@ -942,7 +942,11 @@ export default {
       }
       this.simpleAutoTips.Ub.style.visibility = 'hidden'
 
-      const strs = addrStr.split(',')
+      let strs = addrStr.split(',')
+      const strs2 = addrStr.split('，')
+      if (strs.length !== 2 && strs2.length === 2) {
+        strs = strs2
+      }
       if (strs.length === 2) {
         try {
           if (!String.prototype.trim) {
