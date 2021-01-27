@@ -42,12 +42,12 @@
           >
             <div class="itemComm">
               <span style="color:red;">*</span>
-              <span style="margin-right:15px">火灾名称</span>
+              <span style="margin-right:15px" :class="{fireNameUnSelectStyle:bIsEdit}">火灾名称</span>
               <el-form-item prop="fireName">
-                <el-select
+                <el-select ref="ctrlFireName"
                   v-model="fireAlertName"
                   placeholder="请选择火灾"
-                  class="fireSelectStyle baseInfoInput"
+                  :class="{fireSelectStyle:!bIsEdit,baseInfoInput:!bIsEdit,fireUnSelectStyle:bIsEdit,baseInfoUnInput:bIsEdit}"
                   :disabled="bIsEdit"
                   @change="selectFire"
                 >
@@ -243,7 +243,6 @@ export default {
       immediate: true,
       handler () {
         this.jumpReviewId = this.$route.query.id
-        console.log('jumpReviewId:', this.jumpReviewId)
       }
     }
   },
@@ -254,6 +253,13 @@ export default {
     this.getFireCaseList()
     this.getEnterpriseModelList()
     this.getBattleReviewDetail()
+
+    if (this.jumpReviewId !== '' && this.jumpReviewId !== null && this.jumpReviewId !== undefined) {
+      this.bIsEdit = true
+      this.titleName = '编辑战评'
+      const tmpEle = this.$refs.ctrlFireName.$el.childNodes[1].children.item(0)
+      tmpEle.style.border = '1px solid #aaaaaa'
+    }
   },
   beforeDestroy () {
   },
@@ -280,8 +286,6 @@ export default {
             this.mapClickCallback(tmpData.lonLat)
             this.$refs.gduMap.map2D.setZoom(16)
             this.$refs.gduMap.map2D.zoomToCenter(tmpData.fireLongitude, tmpData.fireLatitude)
-            this.bIsEdit = true
-            this.titleName = '编辑战评'
             this.matchEnterpriseModel()
           }
         }
@@ -573,6 +577,25 @@ export default {
     border-color: #1daffb;
     border-radius: 4px;
     font-size: 16px;
+  }
+}
+.fireNameUnSelectStyle {
+  color: #aaaaaa;
+}
+.fireUnSelectStyle {
+  width: 179px;
+  height: 26px;
+  font-size: 16px;
+}
+.baseInfoUnInput {
+  /deep/.el-input__inner {
+    background-color: transparent;
+    height: 26px;
+    color: #aaaaaa;
+    border: 1px solid #aaaaaa;
+  }
+  /deep/.el-input__icon {
+    color      : #aaaaaa;
   }
 }
 
