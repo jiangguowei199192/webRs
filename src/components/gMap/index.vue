@@ -27,6 +27,7 @@
         v-on:keyup.enter="simpleSearchAddrs(simpleFilterText, false)"
         v-on:keyup.delete="simpleResetChooseAddr"
         :placeholder="simplePlaceHolder"
+        @blur="hideSimpleAutoTips"
       />
       <div
         class="simpleInputSearch"
@@ -51,6 +52,7 @@
         v-on:keyup.enter="searchAddrs(filterText, false)"
         v-on:keyup.delete="resetChooseAddr"
         :placeholder="placeHolder"
+        @blur="hideSearchAutoTips"
       />
       <div class="inputSearch" @click.stop="searchAddrs(filterText, true)">
         <img
@@ -79,6 +81,7 @@
         size="mini"
         :placeholder="startHolder"
         auto-complete="new-address"
+        @blur="hideStartAutoTips"
       >
         <div slot="prepend" style="corlor: black">起</div>
         <el-button
@@ -96,6 +99,7 @@
         size="mini"
         :placeholder="endHolder"
         auto-complete="new-address"
+        @blur="hideEndAutoTips"
       >
         <div slot="prepend" style="corlor: black">终</div>
         <el-button
@@ -1091,6 +1095,20 @@ export default {
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
       // this.bShowPaln = false
+    },
+
+    // 隐藏自动提示框
+    hideSearchAutoTips () {
+      this.autoTips.Ub.style.visibility = 'hidden'
+    },
+    hideSimpleAutoTips () {
+      this.simpleAutoTips.Ub.style.visibility = 'hidden'
+    },
+    hideStartAutoTips () {
+      this.autoStartTips.Ub.style.visibility = 'hidden'
+    },
+    hideEndAutoTips () {
+      this.autoEndTips.Ub.style.visibility = 'hidden'
     },
 
     // 隐藏导航框
