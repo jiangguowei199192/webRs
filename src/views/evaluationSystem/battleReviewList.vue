@@ -180,10 +180,14 @@ export default {
                   d.durationStr = tmpH + 'h'
                 }
                 if (tmpM > 0) {
-                  d.durationStr += tmpM + 'm'
+                  if (tmpH > 0) {
+                    d.durationStr += tmpM + 'm'
+                  } else {
+                    d.durationStr += tmpM + 'min'
+                  }
                 }
                 if (d.durationStr === '') {
-                  d.durationStr = '0m'
+                  d.durationStr = '0min'
                 }
               })
               // console.log('getBattleReviewList:', tmpDatas)
