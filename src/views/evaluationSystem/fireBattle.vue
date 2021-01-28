@@ -773,7 +773,9 @@ export default {
       this.setEventData(event)
       // 如果需要跳转
       if (jump) {
-        const timespan = new Date(event.eventTime).getTime()
+        let timespan = new Date(event.eventTime).getTime()
+        if (timespan > this.timeEnd)timespan = this.timeEnd
+        else if (timespan < this.timeStart)timespan = this.timeStart
         this.setTimePointer(timespan)
         this.curTimeSpan = timespan
         if (this.isPlay) {

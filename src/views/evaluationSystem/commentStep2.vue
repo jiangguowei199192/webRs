@@ -320,13 +320,20 @@ export default {
   methods: {
     timeFormat2,
     /**
+     * 校验事件时间是否合法
+     */
+    checkEventTime (time) {
+      const start = new Date(this.lastObj.fireData.fireTimeStart).getTime()
+      const end = new Date(this.lastObj.fireData.fireTimeEnd).getTime()
+      if (time > end || time < start) return false
+      else return true
+    },
+    /**
      * 校验时间是否合法
      */
     datepickerBlur () {
-      const start = new Date(this.lastObj.fireData.fireTimeStart).getTime()
-      const end = new Date(this.lastObj.fireData.fireTimeEnd).getTime()
       const time = this.activities[this.activeStep].eventTime
-      if (time > end || time < start) {
+      if (!this.checkEventTime(time)) {
         this.$notify.closeAll()
         this.$notify.warning({
           title: '警告',
@@ -689,6 +696,15 @@ export default {
           (item) => !stringIsNullOrEmpty(item)
         )
         if (result) {
+          const time = this.activities[i].eventTime
+          if (!this.checkEventTime(time)) {
+            this.$notify.closeAll()
+            this.$notify.warning({
+              title: '警告',
+              message: '事件时间中存在数据超过火灾时间范围，请重新选择'
+            })
+            return
+          }
           ac.eventFileUrl = this.activities[i].eventFileUrl
           data.push(ac)
         } else if (
