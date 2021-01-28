@@ -18,7 +18,8 @@
           <!-- 控制一级菜单的图标 -->
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">
-            {{ node.label }}
+            <!-- {{ node.label }} -->
+             {{!data.children&&node.label&&node.label.length>6?node.label.slice(0,6)+'.':node.label?node.label:'-' }}
             <a
               v-if="!isNaN(data.deviceCountTotal)"
             >[{{data.deviceCountOnline}}/{{data.deviceCountTotal}}]</a>
@@ -250,8 +251,8 @@ export default {
       }
     }
     span.liveIcon {
-      padding-right: 66px;
-      background: url(../../../assets/images/onlive.png) no-repeat right 7px;
+      padding-right: 40px;
+      background: url(../../../assets/images/onlive.png) no-repeat right center;
     }
   }
   /deep/.el-tree--highlight-current
