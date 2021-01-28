@@ -252,6 +252,15 @@ export default {
         .post(battleApi.getBattleReviewDetail, { id: item.id })
         .then(res => {
           if (res.data.code === 0) {
+            if (!res.data.data) {
+              this.$notify.closeAll()
+              this.$notify.warning({
+                title: '警告',
+                message: '该战评已删除'
+              })
+              this.getBattleReviewList()
+              return
+            }
             this.$router.push({
               path: '/fireBattle',
               query: {

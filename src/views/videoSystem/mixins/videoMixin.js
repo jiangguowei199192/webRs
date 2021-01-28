@@ -382,6 +382,7 @@ const videoMixin = {
                 c.streamUrl = replaceStreamUrl(c.streamUrl, globalApi.baseUrl)
               })
               this.onlineArray.push(clone)
+              this.expandedKeys.push(d.id)
             } else {
               d.onlineStatus = 'offline'
             }
