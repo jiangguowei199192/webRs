@@ -84,7 +84,7 @@
         <span></span>
       </div>
       <div class="time" style="margin-right: 40px">{{ duration }}min</div>
-      <div class="time">74min</div>
+      <div class="time">{{ curDuration }}min</div>
       <ul>
         <li>
           <div>
@@ -226,6 +226,7 @@ export default {
       unCar: 0, // 未到车辆
       fireName: '',
       duration: 0,
+      curDuration: 0,
       combatEvents: [],
       serverUrl: globalApi.headImg,
       show3d: true, // 是否显示三维
@@ -282,7 +283,7 @@ export default {
           document.onmouseup = null
           me.hideCurrentTime()
           if (me.isPlay) {
-            this.jumpPlayback(me.curTimeSpan)
+            me.jumpPlayback(me.curTimeSpan)
           }
         }
       }
@@ -564,6 +565,7 @@ export default {
       const timeSpan = this.computeTime(left)
       if (timeSpan) {
         this.curTimeSpan = timeSpan
+        this.setCurDuration(timeSpan)
         if (this.isPlay) {
           this.jumpPlayback(timeSpan)
         }
@@ -594,6 +596,13 @@ export default {
       }, 2 * 1000)
     },
     /**
+     *  设置当前用时
+     */
+    setCurDuration (time) {
+      this.curDuration = Math.ceil((time - this.timeStart) / (1000 * 60))
+      if (this.curDuration === 0) this.curDuration = 1
+    },
+    /**
      *  根据时间设置时间轴指针
      */
     setTimePointer (time) {
@@ -608,6 +617,7 @@ export default {
           if (d) d.style.left = left - d.clientWidth / 2 + 'px'
         })
       }
+      this.setCurDuration(time)
     },
     /**
      *  设置当前时间
@@ -627,6 +637,7 @@ export default {
         )
         if (updateTimeSpan) {
           this.curTimeSpan = timespan
+          this.setCurDuration(timespan)
         }
 
         this.curTime = timeFormat(timespan)
