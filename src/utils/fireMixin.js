@@ -39,7 +39,7 @@ const fireMixin = {
     if (this.bShowMarkersInMap) {
       EventBus.$off('getFireAlarmInfos_Done')
     }
-    // EventBus.$off('getFireAlarm')
+    EventBus.$off('getFireAlarm')
     EventBus.$off('refreshTodayFireAlarm')
   },
 
@@ -71,8 +71,9 @@ const fireMixin = {
       )
     }
     // 实时监控火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', obj => {
+    EventBus.$on('getFireAlarm', obj => {
       const info = JSON.parse(JSON.stringify(obj))
+      console.log('收到火情数据')
       if (info.alarmStatus !== 'mistaken') {
         info.bConfirmed = false
         info.alarmTime = timeFormat(info.alarmTime)

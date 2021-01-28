@@ -1681,7 +1681,7 @@ export default {
   },
   created () {
     // 监听火情报警
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', info => {
+    EventBus.$on('fullScrFireAlarm', info => {
       if (
         this.videoInfo.deviceCode === info.deviceCode && this.videoInfo.isShowOperate
       ) {
@@ -1710,10 +1710,10 @@ export default {
       //   }
       // }
     })
+  },
+  beforeDestroy () {
+    EventBus.$off('fullScrFireAlarm')
   }
-  // beforeDestroy () {
-  //   EventBus.$off('getFireAlarm')
-  // }
 }
 </script>
 <style lang="less" >

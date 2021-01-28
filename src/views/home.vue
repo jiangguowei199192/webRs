@@ -241,9 +241,9 @@ export default {
   mounted () {
     // 火情火点
     EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
-      console.log('火情数据', info)
-      // const curObj = JSON.parse(JSON.stringify(info))
-      // EventBus.$emit('getFireAlarm', curObj)
+      const curObj = JSON.parse(JSON.stringify(info))
+      EventBus.$emit('getFireAlarm', curObj)
+      EventBus.$emit('fullScrFireAlarm', curObj)
       if (this.$route.path !== '/fireAlarm') {
         !this.realNotice && (this.realNotice = true)
       }

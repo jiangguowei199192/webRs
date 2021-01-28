@@ -210,7 +210,7 @@ export default {
     padding: 27px 0 0 28px;
     font-size: 16px;
     font-family: Source Han Sans CN;
-    font-weight: bold;
+    // font-weight: bold;
 
     div.tab {
       display: flex;
