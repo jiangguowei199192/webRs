@@ -479,7 +479,6 @@ export default {
         return
       }
 
-      this.activities[this.activeStep].fileName = f.name
       const config = {
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 20000
@@ -490,9 +489,13 @@ export default {
         .post(battleApi.combatEventUpload, formData, config)
         .then((res) => {
           if (res.data.code === 0) {
-            this.activities[this.activeStep].eventFileUrl = res.data.data
+            let msg = '上传成功'
+            if (res.data.data) {
+              this.activities[this.activeStep].fileName = f.name
+              this.activities[this.activeStep].eventFileUrl = res.data.data
+            } else msg = '上传失败'
             this.$notify.closeAll()
-            this.$notify.success({ title: '提示', message: '上传成功' })
+            this.$notify.success({ title: '提示', message: msg })
           }
         })
         .catch((err) => {
