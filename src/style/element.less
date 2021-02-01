@@ -621,3 +621,38 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+//战评上传样式
+.battleUpload {
+  .el-icon-close {
+    color     : #ffffff;
+    background: url(../assets/images/x.png) no-repeat;
+    width     : 12px;
+    height    : 12px;
+    top       : -6px;
+    right     : -6px;
+  }
+
+  .el-upload:focus {
+    border-color: none;
+    color       : #fff;
+  }
+
+  .el-upload-list__item:focus {
+    outline: none;
+  }
+
+  .el-upload-list__item:hover {
+    background: #828388;
+
+    .el-upload-list__item-name,
+    .el-icon-document:before {
+      color: #ffffff;
+    }
+
+    .el-icon-close:before {
+      display: none;
+    }
+  }
+
+}

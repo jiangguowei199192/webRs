@@ -106,15 +106,24 @@
         <span></span>
         <span>文件</span>
       </div>
-      <div class="fileBox">
-        <div class="upload" @click.stop="upload">
-          <span></span>
-          <span>上传文件</span>
-        </div>
-        <span class="fileDesc">{{
-          (activities.length > 0 && activities[activeStep].fileName) ||
-          defaultName
-        }}</span>
+      <div class="fileBox battleUpload">
+        <el-upload
+          ref="upload"
+          :limit="1"
+          :file-list="uploadList"
+          :action="uploadUrl"
+          :on-remove="onRemoveFile"
+          :before-upload="beforeUpload"
+          name="file"
+          :headers="headers"
+          :on-success="handleUploadSuccess"
+        >
+          <div class="upload">
+            <span></span>
+            <span>上传文件</span>
+          </div>
+          <span slot="tip" class="tip">{{ defaultName }}</span>
+        </el-upload>
         <span
           class="car"
           :style="{ background: 'url(' + serverUrl + curIcon + ') no-repeat' }"
@@ -144,15 +153,9 @@
           </div>
         </el-popover>
       </div>
-      <input
-        type="file"
-        ref="uploadFile"
-        style="display: none"
-        @change="fileChange"
-      />
       <div class="btns">
         <span @click.stop="lastStep">上一步</span>
-        <span @click.stop="$router.go(-1)">取消</span>
+        <span @click.stop="cancel()">取消</span>
         <span @click.stop="submitEvent">完成</span>
       </div>
     </div>
@@ -172,6 +175,9 @@ import globalApi from '@/utils/globalApi'
 export default {
   data () {
     return {
+      uploading: false,
+      uploadUrl: '',
+      headers: { Authorization: '' },
       showPopover: false,
       activeStep: 0,
       curIcon: '',
@@ -271,6 +277,7 @@ export default {
           }
         ]
       },
+      uploadList: [],
       event: {
         eventName: '',
         eventTime: '',
@@ -319,6 +326,13 @@ export default {
   },
   methods: {
     timeFormat2,
+    /**
+     * 取消
+     */
+    cancel () {
+      this.$router.go(-1)
+      this.refs.upload.abort()
+    },
     /**
      * 校验事件时间是否合法
      */
@@ -419,15 +433,15 @@ export default {
       this.showPopover = false
       this.curIcon = item.path
     },
-    /**
-     *  文件选择完毕
-     */
-    fileChange (e) {
-      if (e.target.files.length <= 0) return
-      const f = e.target.files[0]
-      this.$refs.uploadFile.value = null
-      const fileType = f.name
-        .substring(f.name.lastIndexOf('.') + 1, f.name.length)
+    // 移除上传文件
+    onRemoveFile (file, fileList) {
+      this.activities[this.activeStep].fileName = ''
+      this.activities[this.activeStep].eventFileUrl = ''
+    },
+    // 上传图片前的处理
+    beforeUpload (file) {
+      const fileType = file.name
+        .substring(file.name.lastIndexOf('.') + 1, file.name.length)
         .toLowerCase()
       if (this.fileTypes.indexOf(fileType) === -1) {
         this.$notify.closeAll()
@@ -435,8 +449,9 @@ export default {
           title: '警告',
           message: '只能上传图片或者视频'
         })
-        return
+        return false
       }
+
       // 找出当前上传了多少个图片和视频
       const files = this.activities.filter((a) => a.eventFileUrl)
       let totalImg = 0
@@ -457,16 +472,17 @@ export default {
           title: '警告',
           message: '视频个数已到达上限5，无法上传'
         })
-        return
+        return false
       } else if (totalImg >= 10) {
         this.$notify.closeAll()
         this.$notify.warning({
           title: '警告',
           message: '图片个数已到达上限10，无法上传'
         })
+        return false
       }
       const maxSize = fileType === 'mp4' ? 20 : 3
-      if (f.size > maxSize * 1024 * 1024) {
+      if (file.size > maxSize * 1024 * 1024) {
         const message =
           fileType === 'mp4'
             ? '单个视频大小不能超过20M'
@@ -476,38 +492,41 @@ export default {
           title: '警告',
           message: message
         })
-        return
+        return false
       }
-
-      const config = {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 20000
+      this.uploading = true
+    },
+    /**
+     *  上传成功
+     */
+    handleUploadSuccess (response, file) {
+      this.uploading = false
+      if (response.code === 0 && response.data) {
+        this.activities[this.activeStep].fileName = file.name
+        this.activities[this.activeStep].eventFileUrl = response.data
+      } else { this.uploadList = [] }
+    },
+    /**
+     *  判断文件是否正在上传中
+     */
+    isUploadingFile () {
+      if (this.uploading) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '文件正在上传中，请稍后操作'
+        })
+        return true
       }
-      const formData = new FormData()
-      formData.append('file', f)
-      this.$axios
-        .post(battleApi.combatEventUpload, formData, config)
-        .then((res) => {
-          if (res.data.code === 0) {
-            let msg = '上传成功'
-            if (res.data.data) {
-              this.activities[this.activeStep].fileName = f.name
-              this.activities[this.activeStep].eventFileUrl = res.data.data
-            } else msg = '上传失败'
-            this.$notify.closeAll()
-            this.$notify.success({ title: '提示', message: msg })
-          }
-        })
-        .catch((err) => {
-          this.$notify.closeAll()
-          this.$notify.error({ title: '错误', message: '上传失败' })
-          console.log('combatUpload Err : ' + err)
-        })
+      return false
     },
     /**
      *  点击步骤
      */
     stepNumClick (index) {
+      if (this.isUploadingFile()) {
+        return
+      }
       this.activeStep = index
       this.showPopover = false
     },
@@ -524,6 +543,14 @@ export default {
       }
       this.form.describe = data.eventDescription
       this.curIcon = data.icon
+      this.uploadList = []
+      if (data.eventFileUrl) {
+        const file = {
+          name: data.fileName,
+          url: globalApi.headImg + data.eventFileUrl
+        }
+        this.uploadList.push(file)
+      }
       this.$refs.dataForm.validate((v) => {})
     },
     /**
@@ -561,7 +588,9 @@ export default {
         })
     },
     lastStep () {
-      // this.saveEventData(this.activeStep)
+      if (this.isUploadingFile()) {
+        return
+      }
       this.lastObj.bNext = false
     },
     /**
@@ -630,6 +659,7 @@ export default {
         })
     },
     initData () {
+      this.uploading = false
       if (this.isInit) {
         this.activeStep = 0
         return
@@ -673,6 +703,9 @@ export default {
      */
     submitEvent () {
       if (this.isRequest) return
+      if (this.isUploadingFile()) {
+        return
+      }
       let valid = true
       if (
         this.activities[this.activeStep].eventName ||
@@ -738,7 +771,12 @@ export default {
       } else this.addBattle(data)
     }
   },
-  mounted () {}
+  mounted () {
+    let token = ''
+    token = sessionStorage.getItem('token')
+    this.headers = { Authorization: token }
+    this.uploadUrl = globalApi.baseUrl + '/fms-one-map/combatEvent/upload'
+  }
 }
 </script>
 
@@ -1023,20 +1061,20 @@ export default {
     }
     .fileBox {
       display: flex;
-      align-items: center;
+      //align-items: center;
       margin-left: 51px;
       margin-top: 18px;
-      .fileDesc {
-        font-size: 12px;
-        color: #ffffff;
-        opacity: 0.4;
-        margin-left: 16px;
-      }
       .car {
         display: inline-block;
         height: 28px;
         width: 28px;
         margin-left: 70px;
+      }
+      .tip {
+        font-size: 12px;
+        color: #ffffff;
+        opacity: 0.4;
+        margin-left: 16px;
       }
       .upload {
         width: 100px;
