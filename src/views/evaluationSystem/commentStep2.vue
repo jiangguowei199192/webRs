@@ -117,6 +117,7 @@
           name="file"
           :headers="headers"
           :on-success="handleUploadSuccess"
+          :on-exceed="handleUploadExceed"
         >
           <div class="upload">
             <span></span>
@@ -473,7 +474,7 @@ export default {
           message: '视频个数已到达上限5，无法上传'
         })
         return false
-      } else if (totalImg >= 10) {
+      } else if (fileType !== 'mp4' && totalImg >= 10) {
         this.$notify.closeAll()
         this.$notify.warning({
           title: '警告',
@@ -495,6 +496,16 @@ export default {
         return false
       }
       this.uploading = true
+    },
+    /**
+     *  上传文件超出限制
+     */
+    handleUploadExceed () {
+      this.$notify.closeAll()
+      this.$notify.warning({
+        title: '警告',
+        message: '当前位置已上传文件，如果需要替换，请删除原有文件后重新上传'
+      })
     },
     /**
      *  上传成功
