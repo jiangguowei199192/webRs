@@ -70,6 +70,8 @@
                 draggable="true"
                 @click.stop="listSelected(model_index)"
                 @dragstart="drag(model_item)"
+                @dragend="dragend"
+
               >
                 <div :class="[`model-list_${modelType}`]">
                   <img
@@ -95,6 +97,7 @@
         @dragover.prevent
       >
         <drawNode
+          :class="{ disactive: isDragging }"
           class="drawNode"
           ref="drawNode"
           v-for="node in data.nodeList"
@@ -135,6 +138,7 @@ export default {
 
   data () {
     return {
+      isDragging: false,
       minHeight: 750,
       fullHeight: 0,
       workHeight: 0,
@@ -300,8 +304,13 @@ export default {
 
     // 拖拽
     drag (item) {
+      this.isDragging = true
       this.currentItem = item
       // console.log(this.currentItem)
+    },
+
+    dragend () {
+      this.isDragging = false
     },
 
     // 拖放
@@ -356,7 +365,7 @@ export default {
         showClose: false
       })
         .then(() => {
-          this.data.nodeList = this.data.nodeList.filter(item => {
+          this.data.nodeList = this.data.nodeList.filter((item) => {
             return item.id !== nodeId
           })
         })
@@ -372,7 +381,7 @@ export default {
         showClose: false
       })
         .then(() => {
-          this.data.nodeList = this.data.nodeList.filter(item => {
+          this.data.nodeList = this.data.nodeList.filter((item) => {
             return item.id === nodeId
           })
         })
@@ -411,7 +420,7 @@ export default {
     updateNodeList (index, info) {
       info.left = info.left + 'px'
       info.top = info.top + 'px'
-      const node = this.data.nodeList.find(n => n.id === index)
+      const node = this.data.nodeList.find((n) => n.id === index)
       if (node !== undefined) {
         for (var b in info) {
           // 拷贝属性
@@ -437,7 +446,7 @@ export default {
       formData.append('picThumbFile', blob2, 'thumbPicUrl')
       this.$axios
         .post(api.upload2dRecord, formData, config)
-        .then(res => {
+        .then((res) => {
           // console.log("保存/更新接口返回: ", res);
           if (res.data.code === 0) {
             this.configPath = globalApi.headImg + res.data.data.configPath
@@ -454,7 +463,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('接口错误: ' + err)
         })
     },
@@ -464,7 +473,7 @@ export default {
       if (this.loadJsonPath || this.loadJsonPath !== '') {
         axios
           .get(globalApi.headImg + this.loadJsonPath)
-          .then(res => {
+          .then((res) => {
             // console.log('解析后json: ', res)
             const nodeData = res.data
             if (nodeData === [] || nodeData.length === 0) {
@@ -474,12 +483,12 @@ export default {
                 duration: 3 * 1000
               })
             } else {
-              nodeData.forEach(item => {
+              nodeData.forEach((item) => {
                 this.addNode(item)
               })
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.log('加载json数据失败: ' + err)
           })
       }
@@ -700,5 +709,8 @@ export default {
   .el-input__inner {
     height: 28px;
   }
+}
+.drawNode.disactive {
+  pointer-events: none;
 }
 </style>
