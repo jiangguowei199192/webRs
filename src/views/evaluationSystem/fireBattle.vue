@@ -332,6 +332,8 @@ export default {
       if (info.serialNum === -1) {
         // 回放完毕
         this.isPlay = false
+        const index = this.combatEvents.length - 1
+        if (this.activeIndex !== index) { this.changeEvent(index) }
         // console.log('全部回放完毕')
       }
       // 设置时间轴指针
