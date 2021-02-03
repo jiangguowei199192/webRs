@@ -872,11 +872,11 @@ export default {
             name,
             id
           )
-          if (this.needCenter && lat > 0 && lon > 0) {
-            this.needCenter = false
-            var pos = mars3d.point.getPositionValue(position)
-            this.viewer.mars.centerPoint(pos, { duration: 3, radius: 100 })
-          }
+          // if (this.needCenter && lat > 0 && lon > 0) {
+          //   this.needCenter = false
+          //   var pos = mars3d.point.getPositionValue(position)
+          //   this.viewer.mars.centerPoint(pos, { duration: 3, radius: 100 })
+          // }
         }
       } else {
         m.modelMatrix = matrix
@@ -942,11 +942,11 @@ export default {
         tmpData,
         { color: '#BCBCBC', width: 2 }
       )
-      if (this.bIsFirstLonLat) {
-        this.bIsFirstLonLat = false
-        this.$refs.gduMap.map2D.setZoom(16)
-        this.$refs.gduMap.map2D.zoomToCenter(lon, lat)
-      }
+      // if (this.bIsFirstLonLat) {
+      //   this.bIsFirstLonLat = false
+      //   this.$refs.gduMap.map2D.setZoom(16)
+      //   this.$refs.gduMap.map2D.zoomToCenter(lon, lat)
+      // }
     },
     /**
      * 设置战评事件数据

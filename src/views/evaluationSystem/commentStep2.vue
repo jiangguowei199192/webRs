@@ -331,8 +331,8 @@ export default {
      * 取消
      */
     cancel () {
+      this.$refs.upload.abort()
       this.$router.go(-1)
-      this.refs.upload.abort()
     },
     /**
      * 校验事件时间是否合法
