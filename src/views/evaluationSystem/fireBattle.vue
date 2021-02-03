@@ -1006,6 +1006,7 @@ export default {
           this.videoUrl = ''
         }
       } else {
+        this.videoUrl = ''
         this.defaultImg = true
         this.imgPath = require('../../assets/images/fireBattle/default.png')
       }
