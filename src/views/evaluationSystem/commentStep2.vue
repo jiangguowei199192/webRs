@@ -214,18 +214,18 @@ export default {
         attendanceVehicle: isNotNull('请输入出勤车辆').concat(
           limitIntegerRange(0, 999)
         ),
-        attendancePeople: isNotNull('请输入出勤无人机').concat(
+        attendancePeople: isNotNull('请输入出勤人数').concat(
           limitIntegerRange(0, 9999)
         ),
-        attendanceUav: isNotNull('请输入出勤人数').concat(
+        attendanceUav: isNotNull('请输入出勤无人机数').concat(
           limitIntegerRange(0, 999)
         ),
-        foam: isNotNull('请输入出请输入泡沫勤车辆').concat(
+        foam: isNotNull('请输入泡沫数量').concat(
           limitIntegerRange(0, 999)
         ),
-        waterSource: isNotNull('请输入水源').concat(limitIntegerRange(0, 999)),
-        dryPowder: isNotNull('请输入干粉').concat(limitIntegerRange(0, 999)),
-        fireExtinguisher: isNotNull('请输入灭火器').concat(
+        waterSource: isNotNull('请输入水源数量').concat(limitIntegerRange(0, 999)),
+        dryPowder: isNotNull('请输入干粉数量').concat(limitIntegerRange(0, 999)),
+        fireExtinguisher: isNotNull('请输入灭火器数量').concat(
           limitIntegerRange(0, 999)
         ),
         describe: isNotNull('请输入描述').concat(limitLength(1, 200))
