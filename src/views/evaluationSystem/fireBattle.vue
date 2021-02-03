@@ -23,6 +23,7 @@
           :bShowSelLayer="false"
           :bShowMeasure="false"
           :bShowLonLat="false"
+          :bAutoLocate="false"
         ></gMap>
       </div>
     </div>
@@ -438,16 +439,17 @@ export default {
      */
     add2DFire (lon, lat) {
       if (!this.$refs.gduMap) return
+      var tmpLL = this.$refs.gduMap.map2D._algorithm.WGS2GCJ([lon, lat])
       this.$refs.gduMap.map2D.imageLayerManager.addAnimation(
-        [lon, lat],
+        tmpLL,
         3,
         48,
         1500,
         1,
-        true
+        false
       )
       this.$refs.gduMap.map2D.setZoom(16)
-      this.$refs.gduMap.map2D.zoomToCenter(lon, lat)
+      this.$refs.gduMap.map2D.zoomToCenter(tmpLL[0], tmpLL[1])
     },
     /**
      *  获取火灾数据
