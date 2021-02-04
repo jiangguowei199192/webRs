@@ -89,6 +89,7 @@
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   class="datePickerStyle baseInfoInput"
+                  @change="fireTimeChange"
                 ></el-date-picker>
               </el-form-item>
             </div>
@@ -255,6 +256,8 @@ export default {
       modelList: [],
       bNext: false,
       fireList: [],
+      originFireStart: '',
+      originFireEnd: '',
       fireData: {
         fireNo: '',
         fireName: '',
@@ -350,6 +353,8 @@ export default {
                 new Date(tmpData.fireTimeStart),
                 new Date(tmpData.fireTimeEnd)
               ]
+              this.originFireStart = tmpData.dateRange[0].getTime()
+              this.originFireEnd = tmpData.dateRange[1].getTime()
               this.fireData = tmpData
               this.fireAlertName = tmpData.fireName
               if (tmpData.combatEventList) {
@@ -480,11 +485,32 @@ export default {
       if (item.stopTime < item.happenTime) {
         item.stopTime = item.happenTime
       }
-      this.fireData.dateRange = [new Date(item.happenTime * 1000), new Date(item.stopTime * 1000)]
+      this.originFireStart = item.happenTime * 1000
+      this.originFireEnd = item.stopTime * 1000
+      this.fireData.dateRange = [new Date(this.originFireStart), new Date(this.originFireEnd)]
       this.fireData.lonLat = [item.lon, item.lat]
       this.mapClickCallback(this.fireData.lonLat)
       this.$refs.gduMap.map2D.setZoom(16)
       this.$refs.gduMap.map2D.zoomToCenter(item.lon, item.lat)
+    },
+    // 改变火灾时间
+    fireTimeChange (v) {
+      if (v !== null) {
+        if (v[0].getTime() < this.originFireStart ||
+          v[1].getTime() > this.originFireEnd) {
+          const tmpMsg = "请选择'" +
+          timeFormat(this.originFireStart) +
+          "'至'" +
+          timeFormat(this.originFireEnd) +
+          "'之间时间!"
+          this.$notify.closeAll()
+          this.$notify.warning({
+            title: '警告',
+            message: tmpMsg
+          })
+          this.fireData.dateRange = [new Date(this.originFireStart), new Date(this.originFireEnd)]
+        }
+      }
     },
     // 搜索三维预案
     searchModel () {
