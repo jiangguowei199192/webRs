@@ -46,7 +46,15 @@
         <span></span>
         <span>{{ curEvent.eventName }}</span>
       </div>
-      <span class="txt">{{ curEvent.eventDescription }}</span>
+      <el-tooltip
+        popper-class="gTooltip plotTooltip"
+        :content="curEvent.eventDescription"
+        placement="top"
+        :open-delay="500"
+      >
+        <span class="txt">{{ curEvent.eventDescription }}</span>
+      </el-tooltip>
+      <!-- <span class="txt">{{ curEvent.eventDescription }}</span> -->
       <img
         class="img"
         :class="{ active: defaultImg === false }"
@@ -332,13 +340,23 @@ export default {
       if (info.serialNum === -1) {
         // 回放完毕
         this.isPlay = false
+        this.curTimeSpan = this.timeEnd
+        this.setTimePointer(this.timeEnd)
         const index = this.getLastEvent()
         if (index !== -1 && this.activeIndex !== index) {
           this.changeEvent(index)
         }
-      } else if (info.events.length > 0) {
+      } else if (info.events) {
         // 切换事件
-        const event = this.combatEvents.find((e) => e.id === info.events[0].id)
+        let event
+        if (info.events.length === 0) {
+          const idx = this.getFirstEvent()
+          if (idx !== -1) {
+            event = this.combatEvents[idx]
+          }
+        } else {
+          event = this.combatEvents.find((e) => e.id === info.events[0].id)
+        }
         if (event !== undefined) {
           const index = this.combatEvents.indexOf(event)
           if (index !== -1) {
@@ -352,16 +370,21 @@ export default {
         info.time >= me.timeStart &&
         info.time <= me.timeEnd
       ) {
+        this.curTimeSpan = info.time
         me.setTimePointer(info.time)
       } else if (!this.isDrag && info.time > me.timeEnd) {
-        this.stopPlayback()
+        if (this.isPlay) {
+          this.stopPlayback()
+        }
+        this.curTimeSpan = this.timeEnd
+        this.setTimePointer(this.timeEnd)
         const index = this.getLastEvent()
         if (index !== -1 && this.activeIndex !== index) {
           this.changeEvent(index)
         }
       }
     })
-    this.getAlertTopic()
+    this.getAlertTopic(this.timeStart)
 
     this.$refs.gduMap.map2D.battleReviewLayerManager.setTrailVisible(false)
 
@@ -743,8 +766,12 @@ export default {
           if (res.data.code === 0) {
             const status = res.data.data
             if (status === 0) {
+              const time =
+                this.curTimeSpan >= this.timeEnd
+                  ? this.timeStart
+                  : this.curTimeSpan
               // 重新开始回放战评
-              if (isPlay) this.getAlertTopic(this.curTimeSpan)
+              if (isPlay) this.getAlertTopic(time)
             } else if (s !== status) {
               this.pauseOrResumeWorker(isPlay)
             } else this.isPlay = isPlay
@@ -788,6 +815,26 @@ export default {
       })
       const result = -1
       const e = list[list.length - 1]
+      const event = this.combatEvents.find((a) => a.id === e.id)
+      if (event !== undefined) {
+        const idx = this.combatEvents.indexOf(event)
+        if (idx !== -1) {
+          return idx
+        }
+      }
+      return result
+    },
+    /**
+     * 获取第一个事件
+     */
+    getFirstEvent () {
+      const list = this.combatEvents.sort(function (a, b) {
+        return (
+          new Date(a.eventTime).getTime() - new Date(b.eventTime).getTime()
+        )
+      })
+      const result = -1
+      const e = list[0]
       const event = this.combatEvents.find((a) => a.id === e.id)
       if (event !== undefined) {
         const idx = this.combatEvents.indexOf(event)
@@ -1303,6 +1350,12 @@ export default {
       font-size: 14px;
       line-height: 24px;
       height: 72px;
+      //多行文本溢出显示省略号
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
     .img {
       margin-top: 10px;
