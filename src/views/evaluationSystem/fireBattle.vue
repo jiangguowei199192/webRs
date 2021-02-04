@@ -285,7 +285,7 @@ export default {
           me.hideCurrentTime()
           if (me.isPlay) {
             me.jumpPlayback(me.curTimeSpan)
-          }
+          } else me.changeEventByTimespan(me.curTimeSpan)
         }
       }
     }
@@ -332,9 +332,19 @@ export default {
       if (info.serialNum === -1) {
         // 回放完毕
         this.isPlay = false
-        const index = this.combatEvents.length - 1
-        if (this.activeIndex !== index) { this.changeEvent(index) }
-        // console.log('全部回放完毕')
+        const index = this.getLastEvent()
+        if (index !== -1 && this.activeIndex !== index) {
+          this.changeEvent(index)
+        }
+      } else if (info.events.length > 0) {
+        // 切换事件
+        const event = this.combatEvents.find((e) => e.id === info.events[0].id)
+        if (event !== undefined) {
+          const index = this.combatEvents.indexOf(event)
+          if (index !== -1) {
+            this.changeEvent(index)
+          }
+        }
       }
       // 设置时间轴指针
       if (
@@ -343,15 +353,11 @@ export default {
         info.time <= me.timeEnd
       ) {
         me.setTimePointer(info.time)
-      }
-      // 切换事件
-      if (info.events.length > 0) {
-        const event = this.combatEvents.find((e) => e.id === info.events[0].id)
-        if (event !== undefined) {
-          const index = this.combatEvents.indexOf(event)
-          if (index !== -1) {
-            this.changeEvent(index)
-          }
+      } else if (!this.isDrag && info.time > me.timeEnd) {
+        this.stopPlayback()
+        const index = this.getLastEvent()
+        if (index !== -1 && this.activeIndex !== index) {
+          this.changeEvent(index)
         }
       }
     })
@@ -392,7 +398,7 @@ export default {
      *  添加三维火焰
      */
     add3DFire (lat, lon) {
-      var position = Cesium.Cartesian3.fromDegrees(lon, lat)
+      var position = Cesium.Cartesian3.fromDegrees(lon, lat, 5)
       var pos = mars3d.point.getPositionValue(position)
       this.viewer.mars.centerPoint(pos, { duration: 3, radius: 400 })
       const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(position)
@@ -476,9 +482,13 @@ export default {
     /**
      *  获取战评回放主题id
      */
-    getAlertTopic () {
+    getAlertTopic (progressTime) {
+      const param = { alertId: this.detail.fireNo }
+      if (progressTime) {
+        param.progressTime = progressTime
+      }
       this.$axios
-        .post(battleApi.readPathByAlertId, { alertId: this.detail.fireNo })
+        .post(battleApi.readPathByAlertId, param)
         .then((res) => {
           if (res.data.code === 0) {
             this.topicId = res.data.data
@@ -493,6 +503,7 @@ export default {
      *  停止战评回放
      */
     stopPlayback () {
+      this.isPlay = false
       // 查询回放工作台状态
       // 0:工作台不存在，1.工作台正常工作。2.工作台被暂停了
       this.$axios
@@ -572,7 +583,7 @@ export default {
         this.setCurDuration(timeSpan)
         if (this.isPlay) {
           this.jumpPlayback(timeSpan)
-        }
+        } else this.changeEventByTimespan(timeSpan)
       }
       this.hideCurrentTime()
     },
@@ -690,9 +701,7 @@ export default {
           luminanceAtZenith: 0.6
         }
         layercfg.visible = true
-        // layercfg.flyTo = true
         this.layerModel = mars3d.layer.createLayer(layercfg, this.viewer)
-        // this.layerModel.centerAt()
       }
       this.getAlertInfo()
     },
@@ -735,7 +744,7 @@ export default {
             const status = res.data.data
             if (status === 0) {
               // 重新开始回放战评
-              if (isPlay) this.getAlertTopic()
+              if (isPlay) this.getAlertTopic(this.curTimeSpan)
             } else if (s !== status) {
               this.pauseOrResumeWorker(isPlay)
             } else this.isPlay = isPlay
@@ -769,6 +778,62 @@ export default {
       this.changeMap()
     },
     /**
+     * 获取最后一个事件
+     */
+    getLastEvent () {
+      const list = this.combatEvents.sort(function (a, b) {
+        return (
+          new Date(a.eventTime).getTime() - new Date(b.eventTime).getTime()
+        )
+      })
+      const result = -1
+      const e = list[list.length - 1]
+      const event = this.combatEvents.find((a) => a.id === e.id)
+      if (event !== undefined) {
+        const idx = this.combatEvents.indexOf(event)
+        if (idx !== -1) {
+          return idx
+        }
+      }
+      return result
+    },
+    /**
+     * 根据时间切换事件
+     */
+    changeEventByTimespan (timespan) {
+      let index = 0
+      const list = this.combatEvents.sort(function (a, b) {
+        return (
+          new Date(a.eventTime).getTime() - new Date(b.eventTime).getTime()
+        )
+      })
+      const min = new Date(list[0].eventTime).getTime()
+      const max = new Date(list[list.length - 1].eventTime).getTime()
+      if (timespan <= min) {
+        index = 0
+      } else if (timespan >= max) {
+        index = list.length - 1
+      } else {
+        for (let i = 1; i < list.length; i++) {
+          const time1 = new Date(list[i - 1].eventTime).getTime()
+          const time2 = new Date(list[i].eventTime).getTime()
+          if (timespan >= time1 && timespan < time2) {
+            index = i - 1
+            break
+          }
+        }
+      }
+      const e = list[index]
+      const event = this.combatEvents.find((a) => a.id === e.id)
+      if (event !== undefined) {
+        const idx = this.combatEvents.indexOf(event)
+        if (idx !== -1) {
+          this.activeIndex = idx
+          this.setEventData(event)
+        }
+      }
+    },
+    /**
      * 切换事件
      */
     changeEvent (index, jump = false) {
@@ -778,8 +843,8 @@ export default {
       // 如果需要跳转
       if (jump) {
         let timespan = new Date(event.eventTime).getTime()
-        if (timespan > this.timeEnd)timespan = this.timeEnd
-        else if (timespan < this.timeStart)timespan = this.timeStart
+        if (timespan > this.timeEnd) timespan = this.timeEnd
+        else if (timespan < this.timeStart) timespan = this.timeStart
         this.setTimePointer(timespan)
         this.curTimeSpan = timespan
         if (this.isPlay) {
