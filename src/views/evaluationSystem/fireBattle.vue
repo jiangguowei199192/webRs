@@ -27,6 +27,7 @@
         ></gMap>
       </div>
     </div>
+    <div class="mapOverlay"></div>
     <div class="list webFsScroll">
       <div
         v-for="(item, index) in combatEvents"
@@ -1532,6 +1533,16 @@ export default {
     height: 100%;
     padding: 0px;
     background: none;
+  }
+  .mapOverlay {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    background: url("../../assets/images/fireBattle/overlay.png") no-repeat;
+    pointer-events: none;
   }
   .title {
     width: 100%;
