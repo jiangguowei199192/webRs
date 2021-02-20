@@ -283,7 +283,7 @@
                 <img src="../../../assets/images/AR/search_icon.png" alt />
                 <img src="../../../assets/images/AR/refresh.png" alt />
                 <img src="../../../assets/images/AR/down.png" alt />
-                <img src="../../../assets/images/AR/more.png" alt />
+                <!-- <img src="../../../assets/images/AR/more.png" alt /> -->
               </div>
             </div>
             <el-table :data="tableData" style="width: 100%;margin-top:17px;" :stripe="true">
