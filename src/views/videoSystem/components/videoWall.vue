@@ -2513,17 +2513,25 @@ export default {
         line-height: 44px;
       }
     }
-    > div.river,
-    div.build {
+    > div.fire,
+    div.build,
+    div.forest,
+    div.palace {
       width: 145px;
       height: 59px;
       padding-left: 48px;
     }
-    div.river {
-      background: url(../../../assets/images/AR/river.png) no-repeat;
+    div.fire {
+      background: url(../../../assets/images/AR/fire.png) no-repeat;
     }
     div.build {
       background: url(../../../assets/images/AR/build.png) no-repeat;
+    }
+    div.forest {
+      background: url(../../../assets/images/AR/build.png) no-repeat;
+    }
+    div.palace {
+      background: url(../../../assets/images/AR/palace.png) no-repeat;
     }
     div.high {
       background: url(../../../assets/images/AR/high.png) no-repeat;
@@ -2544,7 +2552,7 @@ export default {
         font-size: 14px;
         font-family: Source Han Sans CN;
         font-weight: 400;
-        color: #f8b652;
+        color: #fff;
       }
     }
     .horizontal {
@@ -2557,7 +2565,7 @@ export default {
       }
       span {
         position: absolute;
-        color: #00c4e0;
+        color: #fff;
       }
       span:nth-child(1) {
         left: -13px;
@@ -2581,7 +2589,7 @@ export default {
       }
       span {
         position: absolute;
-        color: #00c4e0;
+        color: #fff;
       }
       span:nth-child(1) {
         left: 25px;
@@ -2593,6 +2601,107 @@ export default {
       }
     }
   }
+  div.cruise {
+    position: absolute;
+    z-index: 20;
+    bottom: 51px;
+    right: 225px;
+    img.disabled {
+      cursor: text;
+    }
+  }
+  // .fullScreenAr {
+  //   > div {
+  //     position: absolute;
+  //     box-sizing: border-box;
+  //     height: 103px;
+  //     width: 102px;
+  //     div {
+  //       font-size: 12px;
+  //       text-align: center;
+  //       line-height: 44px;
+  //     }
+  //   }
+  //   > div.river,
+  //   div.build {
+  //     width: 145px;
+  //     height: 59px;
+  //     padding-left: 48px;
+  //   }
+  //   div.river {
+  //     background: url(../../../assets/images/AR/river.png) no-repeat;
+  //   }
+  //   div.build {
+  //     background: url(../../../assets/images/AR/build.png) no-repeat;
+  //   }
+  //   div.high {
+  //     background: url(../../../assets/images/AR/high.png) no-repeat;
+  //   }
+  // }
+  // div.rule {
+  //   position: fixed;
+  //   top: 90px;
+  //   left: 50%;
+  //   transform: translateX(-50%);
+  //   width: 802px;
+  //   height: 162px;
+  //   background: url(../../../assets/images/AR/rule.png) no-repeat;
+  //   .horizontal,
+  //   .vertical {
+  //     position: absolute;
+  //     div {
+  //       font-size: 14px;
+  //       font-family: Source Han Sans CN;
+  //       font-weight: 400;
+  //       color: #f8b652;
+  //     }
+  //   }
+  //   .horizontal {
+  //     top: 81px;
+  //     > div {
+  //       position: absolute;
+  //       div {
+  //         margin-left: -7px;
+  //       }
+  //     }
+  //     span {
+  //       position: absolute;
+  //       color: #00c4e0;
+  //     }
+  //     span:nth-child(1) {
+  //       left: -13px;
+  //       top: -5px;
+  //     }
+  //     span:nth-child(3) {
+  //       left: 804px;
+  //       top: -8px;
+  //     }
+  //   }
+  //   .vertical {
+  //     left: 360px;
+  //     > div {
+  //       position: absolute;
+  //       display: flex;
+  //       width: 42px;
+  //       justify-content: space-between;
+  //       // div {
+  //       //   margin-right: 2px;
+  //       // }
+  //     }
+  //     span {
+  //       position: absolute;
+  //       color: #00c4e0;
+  //     }
+  //     span:nth-child(1) {
+  //       left: 25px;
+  //       top: -16px;
+  //     }
+  //     span:nth-child(3) {
+  //       left: 25px;
+  //       top: 164px;
+  //     }
+  //   }
+  // }
   .fullScreenOperate {
     position: absolute;
     z-index: 20;
