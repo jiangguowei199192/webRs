@@ -137,7 +137,7 @@
             </div>
             <img src="../../../assets/images/AR/X.png" @click="showCurindex=1000" />
           </div>
-             <!-- 标签弹框 -->
+          <!-- 标签弹框 -->
           <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showCurindex==4">
             <!-- <p>常用标签</p> -->
             <div>
@@ -540,43 +540,118 @@
       <!-- 添加标签的弹框 -->
       <div class="fullScreenMark" v-show="showMarkForm">
         <img src="../../../assets/images/AR/close.png" @click="resetForm('ruleForm')" />
+        <h3>标签属性</h3>
         <el-form
           :model="ruleForm"
           :rules="rules"
           ref="ruleForm"
-          label-width="120px"
+          label-width="90px"
           class="demo-ruleForm"
+          label-position="left"
         >
-          <el-form-item label="标签名称" prop="tagName">
-            <el-input v-model.trim="ruleForm.tagName" placeholder="请输入标签名称" style="width:228px"></el-input>
-          </el-form-item>
-          <el-form-item label="标签类型" prop="tagType" style="margin-top:20px;">
-            <el-select
-              style="width:228px"
-              required
-              v-model="ruleForm.tagType"
-              placeholder="请选择标签类型"
-              :popper-append-to-body="false"
-              popper-class="selectStyle"
+          <el-form-item
+            label="标签类型:"
+            prop="tagType"
+            class="selectBg"
+            :style="{marginBottom:ruleForm.tagType==='11'||ruleForm.tagType==='22'?'6px':'16px'}"
+          >
+            <template
+              v-if="ruleForm.tagType==='0'||ruleForm.tagType==='1'||ruleForm.tagType==='2'||ruleForm.tagType==='3'||ruleForm.tagType==='4'"
             >
-              <el-option
-                v-for="item in tageTypeArray"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
-            </el-select>
+              <el-select
+                style="width:168px;"
+                v-model="ruleForm.tagType"
+                placeholder="请选择标签类型"
+                :popper-append-to-body="false"
+                popper-class="selectStyle"
+              >
+                <el-option
+                  v-for="item in tageTypeArray"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </template>
+            <span v-else>{{ruleForm.tagType==='11'?'自定义线段':ruleForm.tagType==='22'?'自定义区域':'-'}}</span>
           </el-form-item>
-          <el-form-item style="margin-top:30px;">
+          <el-form-item label="标签名称:" prop="tagName" class="tagName">
+            <el-input
+              v-model.trim="ruleForm.tagName"
+              placeholder="请输入标签名称"
+              style="width: 168px;color:#fff"
+            ></el-input>
+          </el-form-item>
+          <template v-if="ruleForm.tagType==='11'||ruleForm.tagType==='22'">
+            <el-form-item label="线段类型:" class="selectBg" style="margin-top:16px" prop="lineType">
+              <el-select
+                style="width:168px;"
+                placeholder="请选择"
+                :popper-append-to-body="false"
+                popper-class="selectStyle"
+                @change="changeSelection"
+                v-model="ruleForm.lineType"
+                ref="lineSelect"
+              >
+                <el-option
+                  v-for="item in lineOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                  <img :src="item.label" width="128px" />
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="线宽:" style="margin-top:12px" prop="lineWidth">
+              <el-input-number
+                v-model="ruleForm.lineWidth"
+                :min="1"
+                :max="10000"
+                style="width:96px;"
+              ></el-input-number>
+            </el-form-item>
+            <el-form-item label="线段颜色:" style="margin-top:8px;" prop="lineColor" class="labelColor">
+              <!-- <el-color-picker  size="small" show-alpha  :picker-append-to-body="false" popper-class="selectStyle"></el-color-picker> -->
+              <input
+                :default-value="ruleForm.lineColor"
+                v-model="ruleForm.lineColor"
+                type="color"
+                @input="updateData"
+                style="width:168px;"
+              />
+            </el-form-item>
+          </template>
+          <template v-if="ruleForm.tagType==='22'">
+            <el-form-item
+              label="区域颜色:"
+              style="margin-top:10px;"
+              prop="fillColor"
+              class="labelColor"
+            >
+              <input
+                :default-value="ruleForm.fillColor"
+                v-model="ruleForm.fillColor"
+                type="color"
+                style="width:168px;"
+              />
+              <!-- <el-color-picker v-model="ruleForm.fillColor" size="small" show-alpha  :append-to-body="false"  popper-class="selectStyle"></el-color-picker> -->
+            </el-form-item>
+            <el-form-item label="不透明度:" prop="opacity">
+              <el-slider v-model="ruleForm.opacity"></el-slider>
+              <span>{{ruleForm.opacity}}%</span>
+            </el-form-item>
+          </template>
+          <el-form-item class="btns">
             <el-button
               type="primary"
               @click="resetForm('ruleForm')"
-              style="background:#18223A;color:#209CDF;border: 1px solid #209CDF;width:108px!important"
+              style="background:#18223A;color:#209CDF;border: 1px solid #209CDF;width:64px!important"
             >取消</el-button>
             <el-button
               type="primary"
               @click="submitForm('ruleForm')"
-              style="width:108px!important"
+              style="width:64px!important"
             >确定</el-button>
           </el-form-item>
         </el-form>
