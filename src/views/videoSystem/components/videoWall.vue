@@ -22,13 +22,17 @@
         >
           <!-- canvas绘图 -->
           <canvas-area
-            :showAR="showAR"
+            :canDraw="showCurindex===4"
             @canvasEnd="getPosition"
-            @canvasStart="showCurindex=1000"
             :showMarkForm="showMarkForm"
+            :tagType="ruleForm.tagType"
+            :pointsArray="videoInfo.pointsArray"
+            :showAR="showAR"
+            @closeMarkForm="closeMarkForm"
+            ref="drawArea"
           ></canvas-area>
           <template v-if="showAR">
-            <div class="header">AR实景地图指挥</div>
+            <div class="header" @dblclick.stop="stopEvent">AR实景地图指挥</div>
           </template>
           <div class="footer" @dblclick.stop="stopEvent">
             <a @mouseenter="showActive(1)" @mouseleave="showActive(0)" title="AR" @click="changeAR">
@@ -74,8 +78,8 @@
               <a
                 @mouseenter="showActive(5)"
                 @mouseleave="showActive(0)"
-                title="标签"
-                @click="showCurindex=4"
+                title="标签管理"
+                @click="showTagType"
               >
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
@@ -93,6 +97,16 @@
                 <img :src="settingPic" title="设置" alt />
                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
               </a>-->
+              <!-- 新增 -->
+              <a
+                @mouseenter="showActive(8)"
+                @mouseleave="showActive(0)"
+                title="退出全屏"
+                @click="arExitFullScreen"
+              >
+                <img :src="fScreen" />
+                <img v-show="active === 8" class="hide_tab" :src="fScreenSelected" />
+              </a>
             </template>
           </div>
           <!-- 实时警情弹框 -->
@@ -123,21 +137,57 @@
             </div>
             <img src="../../../assets/images/AR/X.png" @click="showCurindex=1000" />
           </div>
-          <!-- 标签弹框 -->
+             <!-- 标签弹框 -->
           <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showCurindex==4">
+            <!-- <p>常用标签</p> -->
             <div>
-              <img src="../../../assets/images/AR/high2.png" alt />
+              <div :class="{'active':ruleForm.tagType==='0'}" class="mar11">
+                <img src="../../../assets/images/AR/high2.png" @click="changeType('0')" alt />
+              </div>
               <p>高点监控</p>
             </div>
             <div>
-              <img src="../../../assets/images/AR/building.png" alt />
-              <p>建筑大厦</p>
+              <div :class="{'active':ruleForm.tagType==='1'}" class="mar13">
+                <img src="../../../assets/images/AR/build_icon.png" @click="changeType('1')" alt />
+              </div>
+
+              <p>建筑</p>
             </div>
             <div>
-              <img src="../../../assets/images/AR/river2.png" alt />
-              <p>河流</p>
+              <div :class="{'active':ruleForm.tagType==='2'}" class="mar13">
+                <img src="../../../assets/images/AR/fire_icon.png" @click="changeType('2')" alt />
+              </div>
+              <p>消防力量</p>
             </div>
-            <img src="../../../assets/images/AR/X.png" alt @click="showCurindex=1000" />
+            <div>
+              <div :class="{'active':ruleForm.tagType==='3'}" class="mar13">
+                <img src="../../../assets/images/AR/forest_icon.png" @click="changeType('3')" alt />
+              </div>
+
+              <p>森林</p>
+            </div>
+            <div>
+              <div :class="{'active':ruleForm.tagType==='4'}" class="mar13">
+                <img src="../../../assets/images/AR/palace_icon.png" @click="changeType('4')" alt />
+              </div>
+
+              <p>重点场所</p>
+            </div>
+            <!-- <p>自定义标签</p> -->
+            <div>
+              <div :class="{'active':ruleForm.tagType==='11'}" class="mar12">
+                <img src="../../../assets/images/AR/line.png" @click="changeType('11')" alt />
+              </div>
+              <p>线段</p>
+            </div>
+            <div>
+              <div :class="{'active':ruleForm.tagType==='22'}" class="mar12">
+                <img src="../../../assets/images/AR/line_close.png" @click="changeType('22')" alt />
+              </div>
+
+              <p>区域</p>
+            </div>
+            <img src="../../../assets/images/AR/X.png" alt @click="closeTagType" />
           </div>
           <!-- 图库弹框 -->
           <div class="picStorage" @dblclick.stop="stopEvent" v-show="showCurindex==3">
@@ -860,10 +910,13 @@ export default {
     this.puzzlePageInfo.total = this.puzzleDataArray.length
     if (this.videoInfo.isLive !== false) {
       document.addEventListener('visibilitychange', this.reloadVideo)
-      EventBus.$on('streamHadNotData', (info) => {
+      EventBus.$on('streamHadNotData', info => {
         info.url = replaceStreamUrl(info.url, globalApi.baseUrl)
         if (info.url === this.videoInfo.streamUrl) {
-          console.log((new Date()).format('yyyy-MM-dd hh:mm:ss.S') + '  receive streamHadNotData and reloadVideo')
+          console.log(
+            new Date().format('yyyy-MM-dd hh:mm:ss.S') +
+              '  receive streamHadNotData and reloadVideo'
+          )
           this.videoInfo.streamUrl = ''
           this.$nextTick(() => {
             this.videoInfo.streamUrl = info.url
@@ -1447,9 +1500,9 @@ export default {
     // 鼠标按下
     startChange (index) {
       if (this.showAR) {
-      // 鼠标按下每隔一秒通知后台获取云台信息
+        // 鼠标按下每隔一秒通知后台获取云台信息
         this.timer = setInterval(() => {
-        // 按住期间执行的代码
+          // 按住期间执行的代码
           new MqttService().client.send(
             'video/webControlPzt',
             JSON.stringify({
@@ -1683,7 +1736,8 @@ export default {
     // 监听火情报警
     EventBus.$on('fullScrFireAlarm', info => {
       if (
-        this.videoInfo.deviceCode === info.deviceCode && this.videoInfo.isShowOperate
+        this.videoInfo.deviceCode === info.deviceCode &&
+        this.videoInfo.isShowOperate
       ) {
         // 如果此时火情弹框打开了
         if (this.showCurindex === 1) {
