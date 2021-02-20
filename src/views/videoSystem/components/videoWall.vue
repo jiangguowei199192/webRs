@@ -358,17 +358,38 @@
           <span>180</span>
         </div>
       </div>
+      <!-- 自动巡航 -->
+      <div
+        class="cruise"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+      >
+        <template v-if="!showAR">
+          <img
+            :src="cruiseOpen?cruiseClosePic:cruiseOpenPic"
+            @click.stop="changeCruise"
+            :title="cruiseOpen?'关闭巡航':'开启巡航'"
+          />
+        </template>
+        <template v-else>
+          <img
+            class="disabled"
+            src="../../../assets/images/AR/cruise_disabled.png"
+            title="
+AR功能开启中，巡航操作暂不可用。"
+          />
+        </template>
+      </div>
       <!-- 显示AR标签 -->
       <div
         class="fullScreenAr"
-        v-show="showAR&&videoInfo.arPositionList&&videoInfo.arPositionList.length>0"
+        v-show="showAR&&videoInfo.onePointArray&&videoInfo.onePointArray.length>0"
       >
         <div
-          v-for="(item,index) in videoInfo.arPositionList"
-          :class="{high:item.label==0,build:item.label==1,river:item.label==2}"
+          v-for="(item,index) in videoInfo.onePointArray"
+          :class="{high:item.label==0,build:item.label==1,fire:item.label==2,forest:item.label==3,palace:item.label==4}"
           :key="index"
           :style="{
-          left:item.label=='0'?((Number(item.left)+Number(item.width/2))/1280*1920-51.5)+'px':(Number(item.left)+Number(item.width/2))/1280*1920+'px',
+          left:item.label=='0'?(Number(item.left)/1280*1920-51.5)+'px':Number(item.left)/1280*1920+'px',
          top:item.label==0?((item.top/720)*1080-102)+'px':((item.top/720)*1080-58)+'px'}"
           :title="item.label==0?item.labelName:''"
         >
