@@ -730,9 +730,15 @@ export default {
       },
       puzzleDataArray: [], // 拼图列表数据
       puzzleDate: '',
+      // 标签属性
       ruleForm: {
         tagName: '',
-        tagType: ''
+        tagType: '0',
+        lineType: '0',
+        lineWidth: 3,
+        lineColor: '#ffde00',
+        fillColor: '#00ff48',
+        opacity: 60
       },
       rules: {
         tagName: [
@@ -741,8 +747,50 @@ export default {
         ],
         tagType: [
           { required: true, message: '请选择标签类型', trigger: 'change,blur' }
+        ],
+        lineType: [
+          { required: true, message: '请选择线段类型', trigger: 'change,blur' }
+        ],
+        lineWidth: [
+          { required: true, message: '请选择线宽', trigger: 'change,blur' }
+        ],
+        lineColor: [
+          { required: true, message: '请选择线段颜色', trigger: 'change,blur' }
+        ],
+        fillColor: [
+          { required: true, message: '请选择区域颜色', trigger: 'change,blur' }
+        ],
+        opacity: [
+          { required: true, message: '请选择不透明度', trigger: 'change,blur' }
         ]
       },
+      // 线段类型
+      lineOption: [
+        {
+          label: require('../../../assets/images/AR/line_1.png'),
+          value: '0'
+        },
+        {
+          label: require('../../../assets/images/AR/line_2.png'),
+          value: '1'
+        },
+        {
+          label: require('../../../assets/images/AR/line_3.png'),
+          value: '2'
+        },
+        {
+          label: require('../../../assets/images/AR/line_4.png'),
+          value: '3'
+        },
+        {
+          label: require('../../../assets/images/AR/line_5.png'),
+          value: '4'
+        },
+        {
+          label: require('../../../assets/images/AR/line_6.png'),
+          value: '5'
+        }
+      ],
       tageTypeArray: [
         {
           id: '0',
@@ -750,11 +798,19 @@ export default {
         },
         {
           id: '1',
-          name: '建筑大厦'
+          name: '建筑'
         },
         {
           id: '2',
-          name: '河流'
+          name: '消防力量'
+        },
+        {
+          id: '3',
+          name: '森林'
+        },
+        {
+          id: '4',
+          name: '重点场所'
         }
       ],
       showNotification: false,
