@@ -727,6 +727,10 @@ export default {
       active: '', // 动态显示悬停相关图标
       showAR: false, // 显示AR
       showCurindex: 1000, // 显示弹框
+      // 新增巡航图标
+      cruiseOpen: true,
+      cruiseOpenPic: require('@/assets/images/AR/cruise_on.png'),
+      cruiseClosePic: require('@/assets/images/AR/cruise_off.png'),
       upPic: require('@/assets/images/AR/up.png'),
       rightPic: require('@/assets/images/AR/right.png'),
       horizontalValue: 0, // 水平角度
