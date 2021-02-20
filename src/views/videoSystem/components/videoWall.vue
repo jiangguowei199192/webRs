@@ -1405,17 +1405,46 @@ export default {
     },
     // 获取位置信息
     getPosition (curPosition) {
-      if (curPosition.width > 0) {
-        const curArea = JSON.parse(JSON.stringify(curPosition))
-        this.curPositionObj = {
-          x: Math.round((curArea.x / 1920) * 1280 * 100) / 100,
-          y: Math.round((curArea.y / 1080) * 720 * 100) / 100,
-          width: Math.round((curArea.width / 1920) * 1280 * 100) / 100,
-          height: Math.round((curArea.height / 1080) * 720 * 100) / 100
-        }
-        console.log(this.curPositionObj)
-        this.showMarkForm = true
+      console.log('转换之前-前端绘制的坐标', curPosition)
+      // if (curPosition.width > 0) {
+      const positionArray = JSON.parse(JSON.stringify(curPosition))
+      const totalPosition = []
+      positionArray.forEach(item => {
+        totalPosition.push({
+          x: Math.round((item.x / 1920) * 1280 * 100) / 100,
+          y: Math.round((item.y / 1080) * 720 * 100) / 100
+          // width: Math.round((item.width / 1920) * 1280 * 100) / 100,
+          // height: Math.round((item.height / 1080) * 720 * 100) / 100
+        })
+      })
+      console.log('转换之后-前端绘制的坐标', totalPosition)
+      this.curPositionArray = totalPosition
+      this.showMarkForm = true
+      if (this.ruleForm.tagType === '11' || this.ruleForm.tagType === '22') {
+        // 设置默认线段类型
+        this.changeSelection()
       }
+    },
+    // 线段类型下拉框改变事件
+    changeSelection () {
+      const mark = this.ruleForm.lineType
+      for (const index in this.lineOption) {
+        const item = this.lineOption[index]
+        const value = item.value
+        if (mark === value) {
+          this.$nextTick(() => {
+            this.$refs.lineSelect.$el.children[0].children[0].setAttribute(
+              'style',
+              'background:url(' +
+                item.label +
+                ') no-repeat;color:#fff;text-indent: -9999px;background-position: center center'
+            )
+          })
+        }
+      }
+    },
+    updateData (val) {
+      console.log(this.ruleForm.lineColor)
     },
     // 表单提交
     submitForm (formName) {
@@ -1425,7 +1454,7 @@ export default {
           console.log('成功')
           // this.createImgDom(this.ruleForm.tagType)
           // 成功之后调用该方法获取坐标信息
-          // this.$refs.drawArea.customQuery(this.ruleForm)
+          // this.$refs.drawArea.clearReact()
           // 标签名称和标签类型校验成功之后 调接口  获取数据  无需手动创建dom结构
           // this.showNotification = true
           // this.infoObj.isSuccess = true
@@ -1436,32 +1465,37 @@ export default {
           // }, 3000)
 
           // this.createTag(this.ruleForm, this.curPositionObj)
-          new MqttService().client.send(
-            'video/add/arAlgorithm',
-            JSON.stringify({
-              deviceCode: this.videoInfo.deviceCode,
-              channelId: this.videoInfo.streamType,
-              streamUrl: this.videoInfo.streamUrl,
-              label: this.ruleForm.tagType,
-              labelName: this.ruleForm.tagName,
-              x: this.curPositionObj.x,
-              y: this.curPositionObj.y,
-              width: this.curPositionObj.width,
-              height: this.curPositionObj.height,
-              isOpen: 1
-            })
-          )
-          console.log({
+          const params = {
             deviceCode: this.videoInfo.deviceCode,
             channelId: this.videoInfo.streamType,
             streamUrl: this.videoInfo.streamUrl,
+            pointsArray: this.curPositionArray,
             label: this.ruleForm.tagType,
             labelName: this.ruleForm.tagName,
-            x: this.curPositionObj.x,
-            y: this.curPositionObj.y,
-            width: this.curPositionObj.width,
-            height: this.curPositionObj.height
-          })
+            // x: this.curPositionObj.x,
+            // y: this.curPositionObj.y,
+            // width: this.curPositionObj.width,
+            // height: this.curPositionObj.height,
+            isOpen: 1
+          }
+          if (
+            this.ruleForm.tagType === '11' ||
+            this.ruleForm.tagType === '22'
+          ) {
+            params.lineType = this.ruleForm.lineType
+            params.lineWidth = this.ruleForm.lineWidth
+            params.lineColor = this.ruleForm.lineColor
+          }
+          if (this.ruleForm.tagType === '22') {
+            params.fillColor = this.ruleForm.fillColor
+            params.opacity = this.ruleForm.opacity
+          }
+          new MqttService().client.send(
+            'video/add/arAlgorithm',
+            JSON.stringify(params)
+          )
+          console.log('添加时传给后台的数据', params)
+          console.log('添加时传给后台的坐标', this.curPositionArray)
           this.resetForm('ruleForm')
         } else {
           console.log('error submit!!')
@@ -1471,6 +1505,10 @@ export default {
     },
     // 重置表单
     resetForm (formName) {
+      // 防止第一次全屏时，找不到canvas对象
+      if (this.showCurindex === 4) {
+        this.$refs.drawArea.clearReact()
+      }
       this.showMarkForm = false
       this.$refs[formName].resetFields()
     },
