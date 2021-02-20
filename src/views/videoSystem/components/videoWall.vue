@@ -2031,6 +2031,32 @@ export default {
   .selectStyle {
     position: absolute !important;
     top: 30px !important;
+    left: 0 !important;
+  }
+  .tagName .el-form-item__content .el-input input {
+    border: 1px solid #209cdf;
+    background: #102035;
+    color: #fff;
+  }
+  .selectBg .el-form-item__content .el-input input {
+    border: 1px solid #209cdf;
+    background: #102035;
+    // background: rgba(0, 57, 87, 0.9);
+    color: #fff;
+  }
+  .selectBg .el-select-dropdown {
+    background: #313c4f;
+    border: 1px solid #2293d1;
+    .el-select-dropdown__item {
+      color: #fff;
+    }
+    .el-select-dropdown__item.hover,
+    .el-select-dropdown__item:hover {
+      background: #102035;
+    }
+    .popper__arrow {
+      display: none;
+    }
   }
   .cutDialog {
     background: rgba(0, 0, 0, 0.6);
