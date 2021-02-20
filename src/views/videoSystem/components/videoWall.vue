@@ -730,6 +730,10 @@ export default {
 
       settingPic: require('@/assets/images/AR/setting.png'),
       settingSelectedPic: require('@/assets/images/AR/setting_selected.png'),
+
+      fScreen: require('../../../assets/images/AR/exitFull.png'),
+      fScreenSelected: require('../../../assets/images/AR/exitFull_selected.png'),
+
       curSelectedIcon: 0, // 云台变倍或变焦 默认选中 0变倍 1变焦
       showMarkForm: false,
       curPositionObj: {}, // 保存当前位置相关坐标
@@ -789,6 +793,10 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ],
+      curPositionArray: [], // 保存当前位置相关坐标
+      // showTagInfo: false, // 标签弹框 默认不显示
+      // showPicStorage: false, // 图库弹框 默认不显示
+      // showSetting: false, // 设置弹框
       // 图库的分页信息
       pageInfo: {
         total: 1000,
