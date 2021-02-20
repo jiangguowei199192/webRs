@@ -1119,6 +1119,9 @@ export default {
           })
         )
       } else {
+        this.resetForm('ruleForm')
+        this.showCurindex = 1000
+
         // 关闭AR
         new MqttService().client.send(
           'video/stop/arAlgorithm',
@@ -1130,6 +1133,63 @@ export default {
           })
         )
       }
+    },
+    // 显示标签弹框
+    showTagType () {
+      this.showCurindex = 4
+      // 开启ar标记
+      new MqttService().client.send(
+        'video/webStartArMark',
+        JSON.stringify({
+          deviceCode: this.videoInfo.deviceCode,
+          channelId: this.videoInfo.streamType
+        })
+      )
+      // 关闭AR
+      new MqttService().client.send(
+        'video/stop/arAlgorithm',
+        JSON.stringify({
+          deviceCode: this.videoInfo.deviceCode,
+          channelId: this.videoInfo.streamType,
+          streamUrl: this.videoInfo.streamUrl,
+          isOpen: 0
+        })
+      )
+    },
+    // add 切换标签类型
+    changeType (type) {
+      // 先重置 再设置类型
+      this.resetForm('ruleForm')
+      this.ruleForm.tagType = type
+      EventBus.$emit('typeChange')
+    },
+    // add 关闭标签类型弹框
+    closeTagType () {
+      // 防止绘制不双击结束，直接点关闭按钮 先重置，再隐藏弹框
+      this.resetForm('ruleForm')
+      this.showCurindex = 1000
+      // 开启AR
+      new MqttService().client.send(
+        'video/start/arAlgorithm',
+        JSON.stringify({
+          deviceCode: this.videoInfo.deviceCode,
+          channelId: this.videoInfo.streamType,
+          streamUrl: this.videoInfo.streamUrl,
+          isOpen: 1
+        })
+      )
+    },
+    // 鼠标单击若标签弹框此时已打开
+    closeMarkForm () {
+      this.resetForm('ruleForm')
+    },
+    // 退出全屏
+    arExitFullScreen () {
+      if (this.showCurindex === 4) {
+        this.resetForm('ruleForm')
+      }
+      this.showCurindex = 1000
+      this.exitFullScreen()
     },
     // 获取今日警情
     getTodayFire () {
