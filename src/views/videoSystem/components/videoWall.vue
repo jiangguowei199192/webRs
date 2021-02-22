@@ -417,6 +417,7 @@ AR功能开启中，巡航操作暂不可用。"
             <span>X{{step}}</span>
           </div>
           <div @mousedown="startChange(9999)" @mouseup="stopChange(9999)"></div>
+          <span id="zoomValue">X{{zoomValue}}</span>
         </div>
       </div>
       <!-- 无人机指挥 -->
@@ -735,6 +736,7 @@ export default {
       rightPic: require('@/assets/images/AR/right.png'),
       horizontalValue: 0, // 水平角度
       verticalValue: 0, // 垂直角度
+      zoomValue: 0, // 变倍值
       arPic: require('@/assets/images/AR/ar.png'),
       arSelectedPic: require('@/assets/images/AR/ar_selected.png'),
 
@@ -1133,6 +1135,11 @@ export default {
           const data = res.data.data
           this.horizontalValue = data.nPTZPan
           this.verticalValue = data.nPTZTilt
+          this.zoomValue = data.nZoomValue
+          document.querySelector('.extra #zoomValue').style.opacity = 1
+          setTimeout(() => {
+            document.querySelector('.extra #zoomValue').style.opacity = 0
+          }, 2000)
         }
       })
     },
@@ -3324,7 +3331,7 @@ export default {
       }
     }
   }
-   .fullScreenMark {
+  .fullScreenMark {
     position: absolute;
     z-index: 20;
     // left: 50%;
