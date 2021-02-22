@@ -3563,6 +3563,20 @@ export default {
       position: absolute;
       top: 0;
       right: 0;
+      > span {
+        display: inline-block;
+        width: 58px;
+        height: 26px;
+        background: #1eb0fc;
+        border-radius: 4px;
+        line-height: 26px;
+        text-align: center;
+        position: relative;
+        left: -110px;
+        top: -260px;
+        opacity: 0;
+        transition: all 3s linear;
+      }
       div {
         width: 36px;
         height: 36px;
