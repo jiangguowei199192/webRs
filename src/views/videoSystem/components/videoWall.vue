@@ -1761,18 +1761,25 @@ export default {
     },
     // 鼠标按下
     startChange (index) {
+      if (this.showCurindex === 4) {
+        this.resetForm('ruleForm')
+      }
+      // 鼠标按下每隔一秒通知后台获取云台信息
       if (this.showAR) {
-        // 鼠标按下每隔一秒通知后台获取云台信息
         this.timer = setInterval(() => {
-          // 按住期间执行的代码
-          new MqttService().client.send(
-            'video/webControlPzt',
-            JSON.stringify({
-              deviceCode: this.videoInfo.deviceCode,
-              channelId: this.videoInfo.streamType
-            })
-          )
-        }, 2000)
+          if (this.showCurindex !== 4) {
+            // 按住期间执行的代码
+            new MqttService().client.send(
+              'video/webControlPzt',
+              JSON.stringify({
+                deviceCode: this.videoInfo.deviceCode,
+                channelId: this.videoInfo.streamType
+              })
+            )
+          }
+          // 更新坐标角度
+          this.getPtzInfo()
+        }, 1500)
       }
       const params = {
         device_id: this.videoInfo.deviceCode,
@@ -1894,19 +1901,25 @@ export default {
     // 鼠标松开
     stopChange (index) {
       if (this.showAR) {
+        // 停止定时器
         clearInterval(this.timer)
         this.timer = null
+        setTimeout(() => {
+          // 显示角度
+          this.getPtzInfo()
+          if (this.showCurindex !== 4) {
+            // 通知后台获取云台信息
+            new MqttService().client.send(
+              'video/webControlPzt',
+              JSON.stringify({
+                deviceCode: this.videoInfo.deviceCode,
+                channelId: this.videoInfo.streamType
+              })
+            )
+          }
+        }, 1000)
       }
-      // 通知后台获取云台信息
-      new MqttService().client.send(
-        'video/webControlPzt',
-        JSON.stringify({
-          deviceCode: this.videoInfo.deviceCode,
-          channelId: this.videoInfo.streamType
-        })
-      )
-      // 显示角度
-      this.getPtzInfo()
+
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType,
