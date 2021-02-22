@@ -4,7 +4,7 @@
       :data="treeData"
       highlight-current
       node-key="id"
-     :default-expanded-keys="expandedKeys"
+      :default-expanded-keys="expandedKeys"
       ref="tree"
       :props="defaultProps"
       :filter-node-method="filterNode"
@@ -19,7 +19,7 @@
           <span :class="data.class" v-if="data.class"></span>
           <i :id="'liveVideo'+data.id" :class="{extra:!data.children}">
             <!-- {{ node.label }} -->
-             {{!data.children&&node.label&&node.label.length>6?node.label.slice(0,6)+'.':node.label?node.label:'-' }}
+            {{!data.children&&node.label&&node.label.length>6?node.label.slice(0,6)+'.':node.label?node.label:'-' }}
             <a
               v-if="!isNaN(data.deviceCountTotal)"
             >[{{data.deviceCountOnline}}/{{data.deviceCountTotal}}]</a>
@@ -71,6 +71,9 @@ export default {
     },
     // 点击树节点
     handleNodeClick (data, $event) {
+      this.$nextTick(() => {
+        this.addParentDisabled()
+      })
       // console.log($event.parent.data)
       const parentData = $event.parent.data
       if (data._bIsDevice === true) {
@@ -153,12 +156,12 @@ export default {
         spans[i].parentElement.parentElement.style.color = '#007291'
       }
     }
-  },
-  created () {
-    this.$nextTick(() => {
-      this.addParentDisabled()
-    })
   }
+  // created () {
+  //   this.$nextTick(() => {
+  //     this.addParentDisabled()
+  //   })
+  // }
 }
 </script>
 <style lang="less" scoped>
@@ -207,7 +210,7 @@ export default {
         // overflow: hidden;
         // white-space: nowrap;
         // text-overflow: ellipsis;
-        a:hover{
+        a:hover {
           text-decoration: none;
         }
       }
@@ -276,5 +279,4 @@ export default {
     display: none;
   }
 }
-
 </style>
