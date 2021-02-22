@@ -2250,27 +2250,64 @@ export default {
       }
       .tagInfo {
         position: absolute;
-        bottom: 114px;
-        left: 924px;
-        width: 338px;
-        height: 126px;
+        bottom: 90px;
+        left: 818px;
+        width: 472px;
+        height: 128px;
         background: url(../../../assets/images/AR/tag_bg.png) no-repeat;
+        background-size: 100% 100%;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        padding: 0 20px;
         cursor: text;
         > div {
           text-align: center;
         }
-        div:nth-child(2) {
-          margin: 0 20px;
+        > div p {
+          font-size: 12px;
         }
-        div:nth-child(2),
-        div:nth-child(3) {
-          img {
-            margin: 5px 0;
-          }
+        > div img {
+          cursor: pointer;
         }
+        > div div.mar11 {
+          margin: 11px 0;
+        }
+        > div div.mar13 {
+          margin: 13px 0;
+        }
+        > div div.mar12 {
+          margin: 12px 0;
+        }
+        > div div {
+          box-sizing: border-box;
+          border: 1px solid transparent;
+        }
+        > div:first-child div {
+          width: 57px;
+          height: 54px;
+        }
+        > div div img {
+          cursor: pointer;
+        }
+        > div:not(:first-child) div {
+          width: 48px;
+          height: 48px;
+          padding-top: 7px;
+        }
+        > div div.active {
+          border: 1px solid rgb(30, 176, 252);
+          background: rgba(30, 176, 252, 0.6);
+        }
+        // div {
+        //   margin: 0 20px;
+        // }
+        // div:nth-child(2),
+        // div:nth-child(3) {
+        //   img {
+        //     margin: 5px 0;
+        //   }
+        // }
         > img {
           position: absolute;
           top: 15px;
