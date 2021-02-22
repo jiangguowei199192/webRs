@@ -2044,6 +2044,15 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  input[type="color"] {
+    border: none;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  input[type="color"]::-webkit-color-swatch {
+    border: 0;
+  }
   :focus {
     outline: none;
   }
