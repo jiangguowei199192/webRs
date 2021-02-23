@@ -212,6 +212,7 @@
                   <img :src="`${picUrl}${item.filePath}`" />
                   <div class="mask">
                     <i class="el-icon-edit" @click.stop="editCurPic(item)"></i>
+                     <i class="el-icon-download" @click.stop="downloadCurPic(item)"></i>
                     <i class="el-icon-delete" @click.stop="deleteCurPic(item)"></i>
                   </div>
                 </div>
@@ -1388,6 +1389,10 @@ export default {
       this.cutImgUrl = curData.filePath
       this.remark = curData.remark || ''
       this.imgId = curData.id
+    },
+    // 下载图片
+    downloadCurPic (item) {
+      window.open('http://www.baidu.com')
     },
     // 删除当前图片
     deleteCurPic (item) {

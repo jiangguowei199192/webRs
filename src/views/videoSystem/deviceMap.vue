@@ -58,8 +58,8 @@
       <div slot="center">
         <div class="video">
           <div class="deviceMapBox">
-            <div class="title">
-              <img src="@/assets/images/back.png" @click.stop="$router.go(-1)" />设备地图
+            <div class="title" @click.stop="$router.go(-1)" >
+              <img src="@/assets/images/back.png" />设备地图
             </div>
             <div class="container">
               <gMap
@@ -294,9 +294,9 @@ export default {
         line-height: 36px;
         // padding-left: 30px;
         margin-bottom: 20px;
+         cursor: pointer;
         img {
           margin-right: 10px;
-          cursor: pointer;
           vertical-align: middle;
         }
       }
