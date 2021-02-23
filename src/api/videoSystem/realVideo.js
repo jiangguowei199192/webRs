@@ -5,5 +5,6 @@ export const api = {
   getSnapList: '/cloud-video/deviceSnap/listVr', // 抓拍列表
   deleteSnapList: '/cloud-video/deviceSnap/delete', // 删除图片
   todayAlarm: '/cloud-video/deviceAlarm/list', // 查询今日警情
-  getPtzInfo: '/cloud-video/vr/getDevicePtzInfo'
+  getPtzInfo: '/cloud-video/vr/getDevicePtzInfo', // 获取云台信息
+  ptzLoopControl: '/cloud-video/device/ptzLoopControl' // 控制设备巡航
 }
