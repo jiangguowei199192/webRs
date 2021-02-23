@@ -2196,7 +2196,7 @@ export default {
         justify-content: center;
         align-items: center;
         cursor: text;
-        a {
+        a:not(:last-child){
           position: relative;
           display: inline-block;
           width: 40px;
