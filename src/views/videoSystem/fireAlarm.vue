@@ -1,33 +1,57 @@
 <template>
   <div class="fireAlarm">
-    <videoMain :showLeft="showLeft" :isShowRight="isShowRight" @hideLeftNav="closeLeftNav">
+    <videoMain
+      :showLeft="showLeft"
+      :isShowRight="isShowRight"
+      @hideLeftNav="closeLeftNav"
+    >
       <!-- 左侧部分 -->
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
-            <div :class="{active:isOnline}" @click.stop="changeOnlineOrAll(true)">在线</div>
-            <div :class="{active:!isOnline}" @click.stop="changeOnlineOrAll(false)">全部</div>
+            <div
+              :class="{ active: isOnline }"
+              @click.stop="changeOnlineOrAll(true)"
+            >
+              在线
+            </div>
+            <div
+              :class="{ active: !isOnline }"
+              @click.stop="changeOnlineOrAll(false)"
+            >
+              全部
+            </div>
           </div>
           <!-- 默认展示在线设备 -->
           <template v-if="isOnline">
             <div class="onlineList webFsScroll">
               <div
                 class="list"
-                v-for="(item,index) in onlineArray"
+                v-for="(item, index) in onlineArray"
                 :key="index"
-                :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
-                @click.stop="selectOnlineDeviceItem(item,index)"
+                :class="{
+                  selected: selectedIndex == index,
+                  unman: item.deviceTypeCode === 'WRJ',
+                }"
+                @click.stop="selectOnlineDeviceItem(item, index)"
               >
                 <p>
-                  <span class="area">{{item.label}}</span>
+                  <span class="area">{{ item.label }}</span>
                 </p>
                 <div class="btns">
                   <el-button
-                    v-for="(list,index2) in item.children"
+                    v-for="(list, index2) in item.children"
                     :key="index2"
                     class="visible"
                     :title="list.label"
-                  >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+                    >{{
+                      list.label && list.label.length > 3
+                        ? list.label.slice(0, 3) + ".."
+                        : list.label
+                        ? list.label
+                        : "-"
+                    }}</el-button
+                  >
                 </div>
               </div>
             </div>
@@ -50,9 +74,14 @@
             ></tree-data>
           </template>
           <div
-            v-if="(isOnline&&onlineArray.length===0)||!isOnline&&treeData.length===0"
+            v-if="
+              (isOnline && onlineArray.length === 0) ||
+              (!isOnline && treeData.length === 0)
+            "
             class="empty"
-          >暂无数据</div>
+          >
+            暂无数据
+          </div>
         </div>
       </div>
       <div slot="center">
@@ -71,28 +100,44 @@
                 :bAutoLocate="false"
               ></gMap>
               <div class="todayFire">
-                <div class="title">今日火情警报[{{fireConfirmedNum + '/' + fireTotalNum}}]</div>
+                <div class="title">
+                  今日火情警报[{{ fireConfirmedNum + "/" + fireTotalNum }}]
+                </div>
+                <span class="voice" @click.stop="openOrCloseVoice" :class="{active:voiceOpen}"></span>
                 <div class="info webFsScroll">
                   <div
                     class="list"
-                    v-for="(item,index) in fireWarningArray"
+                    v-for="(item, index) in fireWarningArray"
                     :key="index"
-                    :class="{unConfirmedItem:!item.bConfirmed,confirmedItem:item.bConfirmed}"
-                    @click.stop="selectFireWarningHandler(item,index)"
+                    :class="{
+                      unConfirmedItem: !item.bConfirmed,
+                      confirmedItem: item.bConfirmed,
+                    }"
+                    @click.stop="selectFireWarningHandler(item, index)"
                   >
                     <div class="address">
-                      <div>{{item.alarmTime}}</div>
-                      <div class="devNameBox" @click.stop="gotoDeviceDetail(item)">
-                        <img class="devIcon" src="../../assets/images/high_point.png" />
+                      <div>{{ item.alarmTime }}</div>
+                      <div
+                        class="devNameBox"
+                        @click.stop="gotoDeviceDetail(item)"
+                      >
+                        <img
+                          class="devIcon"
+                          src="../../assets/images/high_point.png"
+                        />
                         <div
                           class="devName divEllipsis"
                           :title="item.deviceName"
-                        >{{item.deviceName}}</div>
+                        >
+                          {{ item.deviceName }}
+                        </div>
                       </div>
                       <div
                         class="alarmAddr divEllipsis"
                         :title="item.alarmAddress"
-                      >{{item.alarmAddress}}</div>
+                      >
+                        {{ item.alarmAddress }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -107,7 +152,7 @@
       v-clipboard:copy="copyCoordinate"
       v-clipboard:success="onCopyOK"
       v-clipboard:error="onCopyErr"
-      style="display:none;"
+      style="display: none"
     />
     <el-dialog
       custom-class="el-dialog-custom"
@@ -137,10 +182,15 @@ export default {
       isShowRight: false,
       bShowMarkersInMap: true, // 在地图中加载显示设备、火情标记
       bRealTimeFireWarning: true, // 实时更新火情警报个数
-      jumpFireId: '' // 火情id
+      jumpFireId: '', // 火情id
+      voiceOpen: true
     }
   },
   mixins: [videoMixin, fireMixin],
+  created () {
+    const open = sessionStorage.getItem('voiceOpen')
+    if (open) { this.voiceOpen = open === 'true' }
+  },
   methods: {
     // 在线或所有设备切换
     changeOnlineOrAll (isOnline) {
@@ -154,8 +204,8 @@ export default {
         }
       } else {
         this.selectedIndex = 200 // 激活在线设备 初始值200，不激活
-        this.onlineArray.forEach(item => {
-          item.children.forEach(list => {
+        this.onlineArray.forEach((item) => {
+          item.children.forEach((list) => {
             list.isSelected = false
           })
         })
@@ -187,6 +237,11 @@ export default {
     // 点击全部设备列表中设备项
     clickAnDeviceItem (curDeviceInfo) {
       this.showDeviceDetailInfo(curDeviceInfo)
+    },
+    // 关闭/开启火情报警声音提示
+    openOrCloseVoice () {
+      this.voiceOpen = !this.voiceOpen
+      sessionStorage.setItem('voiceOpen', this.voiceOpen.toString())
     }
   },
   watch: {
@@ -365,7 +420,19 @@ export default {
           height: 557px;
           padding: 15px;
           background: url(../../assets/images/fire-box.png) no-repeat;
-
+          .voice {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            position: absolute;
+            top: 19px;
+            right: 18px;
+            cursor: pointer;
+            background: url(../../assets/images/voice-off.png) no-repeat;
+          }
+          .voice.active{
+            background: url(../../assets/images/voice-on.png) no-repeat;
+          }
           .title {
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(30, 176, 252, 1);
