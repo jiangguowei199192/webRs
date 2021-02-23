@@ -1144,6 +1144,22 @@ export default {
         }
       })
     },
+    // 开启/关闭巡航
+    changeCruise () {
+      const params = {
+        deviceCode: this.videoInfo.deviceCode,
+        channelId: this.videoInfo.streamType,
+        // 当前是开启 则关闭
+        action: this.cruiseOpen ? 2 : 1
+      }
+      this.cruiseOpen = !this.cruiseOpen
+      this.$axios.post(api.ptzLoopControl, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          console.log('巡航操作成功')
+        }
+      })
+      // this.cruiseOpen = !this.cruiseOpen
+    },
     // 显示与隐藏AR
     changeAR () {
       this.showAR = !this.showAR
