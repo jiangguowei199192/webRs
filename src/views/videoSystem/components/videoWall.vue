@@ -350,9 +350,9 @@
         <div class="vertical">
           <span>180</span>
           <div
-            :style="{top:verticalValue< 0 ? 73 + String(verticalValue).slice(1) / 180 * 80 +'px': (73 - verticalValue / 180 * 80)+'px'}"
+            :style="{top:verticalValue< 0 ? 74 + String(verticalValue).slice(1) / 180 * 81 +'px': (74 - verticalValue / 180 * 81)+'px'}"
           >
-            <div>{{verticalValue>0?verticalValue:String(verticalValue).slice(1)}}</div>
+            <div>{{verticalValue>=0?verticalValue:String(verticalValue).slice(1)}}</div>
             <img :src="rightPic" />
           </div>
           <span>180</span>
@@ -1158,6 +1158,7 @@ export default {
             isOpen: 1
           })
         )
+        console.log('开启AR')
       } else {
         this.resetForm('ruleForm')
         this.showCurindex = 1000
@@ -1172,6 +1173,7 @@ export default {
             isOpen: 0
           })
         )
+        console.log('关闭AR')
       }
     },
     // 显示标签弹框
