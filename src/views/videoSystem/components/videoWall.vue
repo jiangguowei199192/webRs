@@ -212,7 +212,7 @@
                   <img :src="`${picUrl}${item.filePath}`" />
                   <div class="mask">
                     <i class="el-icon-edit" @click.stop="editCurPic(item)"></i>
-                     <i class="el-icon-download" @click.stop="downloadCurPic(item)"></i>
+                    <i class="el-icon-download" @click.stop="downloadCurPic(item)"></i>
                     <i class="el-icon-delete" @click.stop="deleteCurPic(item)"></i>
                   </div>
                 </div>
@@ -1408,7 +1408,7 @@ export default {
     },
     // 下载图片
     downloadCurPic (item) {
-      window.open('http://www.baidu.com')
+      window.open(`${this.picUrl}${item.filePath}`)
     },
     // 删除当前图片
     deleteCurPic (item) {
@@ -2217,7 +2217,7 @@ export default {
         justify-content: center;
         align-items: center;
         cursor: text;
-        a{
+        a {
           position: relative;
           display: inline-block;
           width: 40px;
@@ -2237,8 +2237,8 @@ export default {
             height: 200px;
           }
         }
-        a:last-child{
-          margin-right:0
+        a:last-child {
+          margin-right: 0;
         }
       }
       .realPoliceInfo {
