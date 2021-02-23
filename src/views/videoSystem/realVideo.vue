@@ -1637,26 +1637,28 @@ export default {
           item.deviceCode === info.deviceCode &&
           item.streamType === info.channelId
         ) {
-          info.arPositionList.forEach(item => {
-            if (item.onePointArray) {
-              this.$set(
-                this.totalVideosArray[index],
-                'onePointArray',
-                item.onePointArray
-              )
-            } else {
-              this.$set(this.totalVideosArray[index], 'onePointArray', [])
-            }
-            if (item.pointsArray) {
-              this.$set(
-                this.totalVideosArray[index],
-                'pointsArray',
-                item.pointsArray
-              )
-            } else {
-              this.$set(this.totalVideosArray[index], 'pointsArray', [])
-            }
-          })
+          if (info.arPositionList && info.arPositionList.length > 0) {
+            info.arPositionList.forEach(item => {
+              if (item.onePointArray) {
+                this.$set(
+                  this.totalVideosArray[index],
+                  'onePointArray',
+                  item.onePointArray
+                )
+              } else {
+                this.$set(this.totalVideosArray[index], 'onePointArray', [])
+              }
+              if (item.pointsArray) {
+                this.$set(
+                  this.totalVideosArray[index],
+                  'pointsArray',
+                  item.pointsArray
+                )
+              } else {
+                this.$set(this.totalVideosArray[index], 'pointsArray', [])
+              }
+            })
+          }
         }
       })
       this.curVideosArray.forEach((item, index) => {
@@ -1664,26 +1666,28 @@ export default {
           item.deviceCode === info.deviceCode &&
           item.streamType === info.channelId
         ) {
-          info.arPositionList.forEach(item => {
-            if (item.onePointArray) {
-              this.$set(
-                this.curVideosArray[index],
-                'onePointArray',
-                item.onePointArray
-              )
-            } else {
-              this.$set(this.curVideosArray[index], 'onePointArray', [])
-            }
-            if (item.pointsArray) {
-              this.$set(
-                this.curVideosArray[index],
-                'pointsArray',
-                item.pointsArray
-              )
-            } else {
-              this.$set(this.curVideosArray[index], 'pointsArray', [])
-            }
-          })
+          if (info.arPositionList && info.arPositionList.length > 0) {
+            info.arPositionList.forEach(item => {
+              if (item.onePointArray) {
+                this.$set(
+                  this.curVideosArray[index],
+                  'onePointArray',
+                  item.onePointArray
+                )
+              } else {
+                this.$set(this.curVideosArray[index], 'onePointArray', [])
+              }
+              if (item.pointsArray) {
+                this.$set(
+                  this.curVideosArray[index],
+                  'pointsArray',
+                  item.pointsArray
+                )
+              } else {
+                this.$set(this.curVideosArray[index], 'pointsArray', [])
+              }
+            })
+          }
         }
       })
     })
