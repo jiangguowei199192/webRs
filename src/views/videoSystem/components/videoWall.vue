@@ -2196,7 +2196,7 @@ export default {
         justify-content: center;
         align-items: center;
         cursor: text;
-        a:not(:last-child){
+        a{
           position: relative;
           display: inline-block;
           width: 40px;
@@ -2215,6 +2215,9 @@ export default {
             width: 200px;
             height: 200px;
           }
+        }
+        a:last-child{
+          margin-right:0
         }
       }
       .realPoliceInfo {
