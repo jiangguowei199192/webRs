@@ -115,7 +115,7 @@
             <div class="content webFsScroll">
               <div class="item" v-for="(item,index) in todayFireArray" :key="index">
                 <div class="pic">
-                  <img :src="`${picUrl}${item.alarmPic}`" alt />
+                  <img :src="`${headImg}${item.alarmPic}`" alt />
                 </div>
                 <div class="detail">
                   <p>时间：{{item.alarmTime}}</p>
@@ -718,6 +718,7 @@ export default {
   data () {
     return {
       timer: null, // 保存计时器
+      headImg: globalApi.headImg,
       picUrl: globalApi.baseUrl + '/video-service2', // 图片前缀
       todayFireArray: [], // 保存火情火点数据
       showCutImg: false, // 是否显示抓拍的图片 默认不显示
