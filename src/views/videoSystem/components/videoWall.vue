@@ -2246,6 +2246,7 @@ export default {
         position: absolute;
         top: 125px;
         right: 40px;
+        z-index: 10;
         width: 306px;
         height: 568px;
         cursor: text;
