@@ -1426,7 +1426,7 @@ export default {
             setTimeout(() => {
               this.showNotification = false
             }, 3000)
-            this.pageInfo.currentPage = 1
+            this.pageInfo.currentPage = this.picStorageArray.length > 1 ? this.pageInfo.currentPage : 1
             this.getSnapList()
           }
         })
