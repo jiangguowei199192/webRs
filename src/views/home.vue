@@ -219,6 +219,10 @@ export default {
     EventBus.$on('video/aRAiResult', (info) => {
       EventBus.$emit('getArChange', info)
     })
+    // 云台角度信息
+    EventBus.$on('video/webControlPztNotice', (info) => {
+      EventBus.$emit('video/webControlPztChange', info)
+    })
   },
   destroyed () {
     EventBus.$off('video/device/online')
@@ -230,6 +234,7 @@ export default {
     EventBus.$off('video/people/real')
     EventBus.$off('video/aRAiResult')
     EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
+    EventBus.$off('video/webControlPztNotice')
     // 退出时，关闭mqtt连接
     if (this.mqtt) {
       this.mqtt.needReconnect = false

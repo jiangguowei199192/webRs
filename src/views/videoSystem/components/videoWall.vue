@@ -349,14 +349,15 @@
         </div>
         <!-- y轴箭头 -->
         <div class="vertical">
-          <span>180</span>
+          <span>90</span>
           <div
-            :style="{top:verticalValue< 0 ? 74 + String(verticalValue).slice(1) / 180 * 81 +'px': (74 - verticalValue / 180 * 81)+'px'}"
+            :style="{top:verticalValue< 0 ? 74 + String(verticalValue).slice(1) / 90 * 81 +'px': (74 - verticalValue / 90 * 81)+'px'}"
           >
-            <div>{{verticalValue>=0?verticalValue:String(verticalValue).slice(1)}}</div>
+            <!-- <div>{{verticalValue>=0?verticalValue:String(verticalValue).slice(1)}}</div> -->
+            <div>{{verticalValue}}</div>
             <img :src="rightPic" />
           </div>
-          <span>180</span>
+          <span>-90</span>
         </div>
       </div>
       <!-- 自动巡航 -->
@@ -574,7 +575,6 @@ AR功能开启中，巡航操作暂不可用。"
         >
           <el-form-item
             label="标签类型:"
-            prop="tagType"
             class="selectBg"
             :style="{marginBottom:ruleForm.tagType==='11'||ruleForm.tagType==='22'?'6px':'16px'}"
           >
@@ -1809,7 +1809,7 @@ export default {
             )
           }
           // 更新坐标角度
-          this.getPtzInfo()
+          // this.getPtzInfo()
         }, 1500)
       }
       const params = {
@@ -1937,7 +1937,7 @@ export default {
         this.timer = null
         setTimeout(() => {
           // 显示角度
-          this.getPtzInfo()
+          // this.getPtzInfo()
           if (this.showCurindex !== 4) {
             // 通知后台获取云台信息
             new MqttService().client.send(
@@ -2039,6 +2039,17 @@ export default {
     timeFormat
   },
   created () {
+    // 监听设备角度变化
+    EventBus.$on('video/webControlPztChange', info => {
+      this.horizontalValue = info.nPTZPan
+      this.verticalValue = info.nPTZTilt
+      this.zoomValue = info.nZoomValue
+      document.querySelector('.extra #zoomValue').style.opacity = 1
+      setTimeout(() => {
+        document.querySelector('.extra #zoomValue').style.opacity = 0
+      }, 2000)
+      // this.getPtzInfo()
+    })
     // 监听火情报警
     EventBus.$on('fullScrFireAlarm', info => {
       if (
@@ -2073,6 +2084,7 @@ export default {
   },
   beforeDestroy () {
     EventBus.$off('fullScrFireAlarm')
+    EventBus.$off('video/webControlPztChange')
   }
 }
 </script>
@@ -2121,6 +2133,11 @@ export default {
     background: #102035;
     // background: rgba(0, 57, 87, 0.9);
     color: #fff;
+  }
+  .selectBg > .el-form-item__label:before {
+    content: "*";
+    color: #f56c6c;
+    margin-right: 4px;
   }
   .selectBg .el-select-dropdown {
     background: #313c4f;
