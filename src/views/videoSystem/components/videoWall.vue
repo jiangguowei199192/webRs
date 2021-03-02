@@ -134,6 +134,9 @@
                   </p>
                 </div>
               </div>
+              <div v-if="todayFireArray.length===0" class="no_data">
+                <p>暂无火情</p>
+              </div>
             </div>
             <img src="../../../assets/images/AR/X.png" @click="showCurindex=1000" />
           </div>
@@ -349,15 +352,15 @@
         </div>
         <!-- y轴箭头 -->
         <div class="vertical">
-          <span>90</span>
+          <span>-90</span>
           <div
-            :style="{top:verticalValue< 0 ? 74 + String(verticalValue).slice(1) / 90 * 81 +'px': (74 - verticalValue / 90 * 81)+'px'}"
+            :style="{top:verticalValue< 0 ? 74 -String(verticalValue).slice(1) / 90 * 81 +'px': (74 + verticalValue / 90 * 81)+'px'}"
           >
             <!-- <div>{{verticalValue>=0?verticalValue:String(verticalValue).slice(1)}}</div> -->
             <div>{{verticalValue}}</div>
             <img :src="rightPic" />
           </div>
-          <span>-90</span>
+          <span>90</span>
         </div>
       </div>
       <!-- 自动巡航 -->
@@ -847,9 +850,9 @@ export default {
         tagName: '',
         tagType: '0',
         lineType: '0',
-        lineWidth: 3,
+        lineWidth: 5,
         lineColor: '#ffde00',
-        fillColor: '#00ff48',
+        fillColor: '#ffde00',
         opacity: 60
       },
       rules: {
@@ -1426,7 +1429,8 @@ export default {
             setTimeout(() => {
               this.showNotification = false
             }, 3000)
-            this.pageInfo.currentPage = this.picStorageArray.length > 1 ? this.pageInfo.currentPage : 1
+            this.pageInfo.currentPage =
+              this.picStorageArray.length > 1 ? this.pageInfo.currentPage : 1
             this.getSnapList()
           }
         })
@@ -2313,6 +2317,12 @@ export default {
                 color: #1eb0fc;
               }
             }
+          }
+          .no_data {
+            text-align: center;
+            color: #1e9cd2;
+            font-size: 18px;
+            margin-top: 225px;
           }
         }
         > img {

@@ -120,10 +120,10 @@ export default {
       }
       if (bool) {
         ctx.strokeStyle = item.lineColor || '#ffde00'
-        ctx.lineWidth = item.lineWidth || 3
+        ctx.lineWidth = item.lineWidth || 5
       } else {
         ctx.strokeStyle = '#ffde00'
-        ctx.lineWidth = 3
+        ctx.lineWidth = 5
       }
       ctx.lineJoin = 'round'
       ctx.lineCap = 'round'
@@ -165,7 +165,7 @@ export default {
       // 绘制实心（展示面）
       if (bool && item.label === '22') {
         ctx.fillStyle =
-          this.hexToRgba(item.fillColor, item.opacity / 100) || '#00ff48' // 填充颜色
+          this.hexToRgba(item.fillColor, item.opacity / 100) || '#ffde00' // 填充颜色
         ctx.fill()
       }
       // 若有文字则后绘制不会被覆盖
