@@ -1,4 +1,4 @@
-# webfs
+# webrs
 
 ## Project setup
 ```
