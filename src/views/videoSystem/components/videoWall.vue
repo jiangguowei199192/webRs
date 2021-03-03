@@ -2281,7 +2281,7 @@ export default {
         }
         div.content {
           padding: 0 14px 0 18px;
-          max-height: 500px;
+          height: 500px;
           overflow-y: auto;
           .item {
             display: flex;
