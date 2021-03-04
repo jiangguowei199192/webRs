@@ -2068,6 +2068,7 @@ export default {
         padding-left: 30px;
       }
       div.info {
+        font-size:16px;
         display: flex;
         font-weight: 400;
         line-height: 34px;

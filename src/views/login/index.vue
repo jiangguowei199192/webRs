@@ -243,6 +243,7 @@ export default {
   background: url(../../assets/images/Login/login-bg.png) no-repeat;
   background-size: 100% 100%;
   .content {
+    font-size:16px;
     width: 500px;
     // height: 502px;
     // height: 534px;
