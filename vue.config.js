@@ -8,7 +8,7 @@ const GenerateAssetPlugin = require('generate-asset-webpack-plugin')
 const createServerConfig = function (compilation) {
   // const cfgJson = { baseUrl: 'http://172.16.63.148:8850', mqttServer: '172.16.63.148', mqttPort: 2883, headImg: 'http://172.16.63.148', projectTitle: '武汉市公安局安保防控系统' }
   const cfgJson = {
-    projectTitle: '天地一体化预警侦查系统',
+    projectTitle: '智慧农业实战应用平台',
     baseUrlList: [
       {
         // 消防外网
@@ -42,7 +42,6 @@ const createServerConfig = function (compilation) {
 }
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const px2rem = require('postcss-px2rem')
-
 
 // 这里只列一部分，具体配置惨考文档啊
 module.exports = {
@@ -121,7 +120,7 @@ module.exports = {
       postcss: {
         plugins: [
           px2rem({
-            remUnit:100  //基准大小 baseSize，需要和rem.js中相同
+            remUnit: 100
           })
         ]
       }

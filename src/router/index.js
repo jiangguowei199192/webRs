@@ -28,12 +28,6 @@ const routes = [
         name: 'videoSystem',
         component: () => import('../views/videoSystem/realVideo')
       },
-      // 火情火警
-      {
-        path: '/fireAlarm',
-        name: 'fireAlarm',
-        component: () => import('../views/videoSystem/fireAlarm')
-      },
       // 设备地图
       {
         path: '/deviceMap',
@@ -45,12 +39,6 @@ const routes = [
         path: '/playback',
         name: 'playbackSystem',
         component: () => import('../views/videoSystem/playback')
-      },
-      // 实时拼图
-      {
-        path: '/pintu',
-        name: 'pinTu',
-        component: () => import('../views/videoSystem/pinTu')
       },
       // 三维部署
       {

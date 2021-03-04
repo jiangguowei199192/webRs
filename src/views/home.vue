@@ -34,93 +34,6 @@
             </template>
           </div>
         </div>
-        <audio src="./audio.mp3" ref="player"></audio>
-        <div class="fireNotice" :class="{ curFire: realNotice }">
-          <div class="title">
-            <div>
-              <img
-                src="../assets/images/fire_title.png"
-                class="fire_title"
-                alt
-              />
-              <span>火情通知</span>
-            </div>
-            <img
-              src="../assets/images/fire_close.png"
-              alt
-              @click.stop="realNotice = false"
-            />
-          </div>
-          <div class="content" v-if="Object.keys(curFireObj).length > 0">
-            <div class="detail">
-              <div class="info">
-                <ul>
-                  <li>
-                    <span>时间：</span>
-                    {{ timeFormat(curFireObj.alarmTime) }}
-                  </li>
-                  <li>
-                    <span>报警设备：</span>
-                    {{ curFireObj.deviceName || "-" }}
-                  </li>
-                </ul>
-                <ul>
-                  <li>
-                    <span>地点：</span>
-                    <span :title="curFireObj.alarmAddress">{{
-                      curFireObj.alarmAddress &&
-                      curFireObj.alarmAddress.length > 22
-                        ? curFireObj.alarmAddress.slice(0, 22) + "."
-                        : curFireObj.alarmAddress
-                        ? curFireObj.alarmAddress
-                        : "-"
-                    }}</span>
-                  </li>
-                  <li>
-                    <span>坐标：</span>
-                    <span style="margin-right: 17px"
-                      >{{ curFireObj.alarmLatitude || "-" }}
-                      {{ curFireObj.alarmLongitude || "-" }}</span
-                    >
-                    <el-button
-                      class="copy"
-                      @click.stop="
-                        copy(
-                          curFireObj.alarmLatitude,
-                          curFireObj.alarmLongitude
-                        )
-                      "
-                      >复制坐标</el-button
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="pics">
-                <img
-                  v-for="(item, index) in curFireObj.alarmPicList"
-                  :src="`${picUrl}${item.picPath}`"
-                  :key="index"
-                  alt
-                />
-              </div>
-              <div style="text-align: right; margin-top: 12px">
-                <el-button class="copy" @click.stop="jumpToTodayFire"
-                  >火情详情</el-button
-                >
-              </div>
-              <div class="pagination">
-                <el-pagination
-                  :page-size="1"
-                  layout="prev,next"
-                  :total="curFireArray.length"
-                  :current-page.sync="currentPage"
-                  @prev-click="pre"
-                  @next-click="next"
-                ></el-pagination>
-              </div>
-            </div>
-          </div>
-        </div>
       </el-header>
       <el-main class="webFsScroll" :style="machineMainStyle($route.path)">
         <!-- <router-view /> -->
@@ -244,30 +157,9 @@ export default {
     this.timer = null
   },
   mounted () {
-    // 火情火点
-    EventBus.$on('video/deviceIid/channleID/datalink/firewarning', (info) => {
-      const curObj = JSON.parse(JSON.stringify(info))
-      EventBus.$emit('getFireAlarm', curObj)
-      EventBus.$emit('fullScrFireAlarm', curObj)
-      if (this.$route.path !== '/fireAlarm') {
-        !this.realNotice && (this.realNotice = true)
-      }
-      this.curFireArray.unshift(info)
-      this.currentPage = 1
-      this.curFireObj = this.curFireArray[this.currentPage - 1]
-      this.addTitle()
-      const voiceOpen = sessionStorage.getItem('voiceOpen')
-      if (!voiceOpen || voiceOpen === 'true') {
-        this.$nextTick(() => {
-          const dom = document.querySelector('audio')
-          dom && dom.play()
-        })
-      }
-    })
     this.jumpTo(this.isActive)
     setInterval(() => {
       this.timeObj = getTime()
-      this.refreshTodayFireAlarm()
     }, 1000)
     this.init()
     // 通过构造函数，创建mqtt连接
@@ -282,82 +174,6 @@ export default {
   },
   methods: {
     timeFormat,
-
-    // 刷新今日报警(过了24点)
-    refreshTodayFireAlarm () {
-      const timestamp = new Date().getTime()
-      if (timestamp > this.todayEndTime.getTime()) {
-        console.log('刷新今日报警(过了24点)')
-        this.todayEndTime = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)
-        EventBus.$emit('refreshTodayFireAlarm')
-      }
-    },
-
-    // 复制经纬度
-    copy (la, lo) {
-      const text = `${la},${lo}`
-      const oInput = document.createElement('input')
-      oInput.value = text
-      document.body.appendChild(oInput)
-      oInput.select() // 选择对象;
-      // console.log(oInput.value)
-      document.execCommand('Copy') // 执行浏览器复制命令
-      this.$notify.closeAll()
-      this.$notify({
-        title: '成功',
-        message: '复制坐标成功',
-        type: 'success'
-      })
-      oInput.remove()
-    },
-    // 给分页添加提示
-    addTitle () {
-      this.$nextTick(() => {
-        const prevBtn = document.querySelector('.el-pagination > .btn-prev')
-        const nextBtn = document.querySelector('.el-pagination > .btn-next')
-        if (!prevBtn.getAttribute('disabled')) {
-          prevBtn.title = `当前页${this.currentPage} /${this.curFireArray.length} `
-        } else {
-          prevBtn.removeAttribute('title')
-        }
-        if (!nextBtn.getAttribute('disabled')) {
-          nextBtn.title = `当前页${this.currentPage} / ${this.curFireArray.length}`
-        } else {
-          nextBtn.removeAttribute('title')
-        }
-      })
-    },
-    // 展示当前火情信息
-    showCurFire (cpage) {
-      this.curFireObj = this.curFireArray[cpage - 1]
-      this.currentPage = cpage
-      this.addTitle()
-    },
-    // 上一页
-    pre (cpage) {
-      this.showCurFire(cpage)
-    },
-    // 下一页
-    next (cpage) {
-      this.showCurFire(cpage)
-    },
-    // 跳转到今日警情
-    jumpToTodayFire () {
-      this.$router.push({
-        path: '/fireAlarm',
-        query: {
-          id: this.curFireObj.id
-        }
-      })
-      this.curFireArray.splice(this.currentPage - 1, 1)
-      if (this.curFireArray.length > 0) {
-        this.curFireObj = this.curFireArray[0]
-      } else {
-        this.curFireObj = {}
-        this.realNotice = false
-      }
-      this.currentPage = 1
-    },
     // 路由发生变化
     machineMainStyle (path) {
       if (
@@ -452,17 +268,6 @@ export default {
             EventBus.$emit('droneRealtimeInfo', object)
             break
           }
-        }
-      }
-    }
-  },
-  watch: {
-    $route (to) {
-      if (to) {
-        if (to.path === '/fireAlarm') {
-          this.curFireArray = []
-          this.currentPage = 1
-          this.realNotice = false
         }
       }
     }
@@ -595,105 +400,6 @@ export default {
         margin-right: 25px;
       }
     }
-  }
-  .fireNotice {
-    font-size:16px;
-    transition: 1s linear;
-    position: fixed;
-    bottom: 0px;
-    right: -530px;
-    width: 530px;
-    height: 316px;
-    background: url(../assets/images/fire_notice.png) no-repeat;
-    z-index: 10000;
-    box-sizing: border-box;
-    padding: 14px;
-    font-family: Source Han Sans CN;
-    .title {
-      display: flex;
-      justify-content: space-between;
-      img.fire_title {
-        margin-right: 15px;
-      }
-      span {
-        font-weight: 400;
-        color: #ffffff;
-        font-size: 18px;
-      }
-      div + img {
-        height: 18px;
-        cursor: pointer;
-      }
-    }
-    .content {
-      padding-top: 26px;
-      padding-left: 18px;
-      .detail {
-        div.info {
-          display: flex;
-          justify-content: space-between;
-          ul {
-            li {
-              font-size: 12px;
-              font-weight: bold;
-              color: #ffffff;
-              line-height: 24px;
-              line-height: 26px;
-            }
-          }
-        }
-        .copy {
-          width: 80px;
-          height: 24px;
-          background: #1eb0fc;
-          border: 1px solid #1eb0fc;
-          border-radius: 4px;
-          padding: 0;
-          color: #fff;
-        }
-        div.pics {
-          display: flex;
-          justify-content: space-around;
-          margin-top: 20px;
-          img {
-            width: 170px;
-            height: 110px;
-          }
-        }
-        .pagination {
-          display: inline-block;
-          margin-right: 5px;
-          /deep/.el-pagination {
-            padding: 0;
-            button {
-              background-color: transparent !important;
-              i {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: #23cefd;
-                text-align: center;
-                line-height: 20px;
-                color: #1c638b;
-              }
-            }
-            button.btn-next,
-            button.btn-prev {
-              padding: 0;
-            }
-            button[disabled] {
-              i {
-                background: #999;
-                color: #2d506f;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  .curFire {
-    right: 0px;
   }
 }
 </style>
