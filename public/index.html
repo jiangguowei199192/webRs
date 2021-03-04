@@ -1,38 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="icon" href="./logo.ico" />
-  </head>
-  <style>
-    @import url(/webFs/assets/css/ms.css);
-    @import url(/webFs/assets/css/layerStyle.css);
-    @import url(/webFs/assets/css/rp.css);
-  </style>
 
-  <body class="browserScroll">
-    <noscript>
-      <strong
-        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
-        properly without JavaScript enabled. Please enable it to
-        continue.</strong
-      >
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-    <script src="/webFs/liveplayer-lib.min.js"></script>
-    <script src="/webFs/D2.js"></script>
-    <script src="/webFs/paho-mqtt.js"></script>
-    <!-- 第3方lib -->
-    <script
-      type="text/javascript"
-      src="lib/include-lib.js"
-      libpath="lib/"
-      include="jquery,font-awesome,web-icons,layer,haoutil,nprogress,toastr,turf,mars3d"
-    ></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="./logo.ico" />
+</head>
+<style>
+  @import url(/webFs/assets/css/ms.css);
+  @import url(/webFs/assets/css/layerStyle.css);
+  @import url(/webFs/assets/css/rp.css);
+</style>
+
+<body class="browserScroll">
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+      properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+  <script src="/webFs/liveplayer-lib.min.js"></script>
+  <script src="/webFs/D2.js"></script>
+  <script src="/webFs/paho-mqtt.js"></script>
+  <!-- 第3方lib -->
+  <script type="text/javascript" src="lib/include-lib.js" libpath="lib/"
+    include="jquery,font-awesome,web-icons,layer,haoutil,nprogress,toastr,turf,mars3d"></script>
+  <script>
+    function setRem() {
+      var winWidth = document.documentElement.offsetWidth ||
+        document.body.offsetWidth
+      winWidth = winWidth < 1366 ? 1366 : winWidth
+      var oHtml = document.getElementsByTagName('html')[0]
+      oHtml.style.fontSize = 100 * winWidth / 1920 + 'px'
+    }
+    setRem()
+    window.addEventListener('resize', function () {
+      setRem()
+    })
+  </script>
+
+</body>
+
 </html>
 <style>
   body {

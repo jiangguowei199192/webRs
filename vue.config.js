@@ -41,6 +41,9 @@ const createServerConfig = function (compilation) {
   return JSON.stringify(cfgJson)
 }
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const px2rem = require('postcss-px2rem')
+
+
 // 这里只列一部分，具体配置惨考文档啊
 module.exports = {
   publicPath: '/webFs/',
@@ -76,7 +79,7 @@ module.exports = {
   // 它支持webPack-dev-server的所有选项
 
   devServer: {
-    port: 8080, // 端口号
+    port: 8081, // 端口号
     host: 'localhost', // localhost
     https: false, // https:{type:Boolean}
     open: true, // 配置自动启动浏览器
@@ -112,5 +115,16 @@ module.exports = {
         ]
       })
     ]
+  },
+  css: {
+    loaderOptions: {
+      postcss: {
+        plugins: [
+          px2rem({
+            remUnit:100  //基准大小 baseSize，需要和rem.js中相同
+          })
+        ]
+      }
+    }
   }
 }

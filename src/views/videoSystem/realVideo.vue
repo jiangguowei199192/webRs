@@ -2060,6 +2060,7 @@ export default {
       margin-right: 10px;
       margin-bottom: 20px;
       .title {
+        font-size:16px;
         width: 196px;
         height: 34px;
         background: url(../../assets/images/device/info-title.png) no-repeat;
@@ -2123,6 +2124,7 @@ export default {
       margin-top: 20px;
       .leftTool,
       .rightTool {
+        font-size:16px;
         position: relative;
         top: 16px;
         left: 40px;

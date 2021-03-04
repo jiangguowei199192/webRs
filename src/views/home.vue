@@ -572,6 +572,7 @@ export default {
     z-index: 1000;
     pointer-events: none;
     .realTime {
+      font-size:16px;
       width: 936px;
       background: url(../assets/images/logo.png) no-repeat;
       position: absolute;
@@ -596,6 +597,7 @@ export default {
     }
   }
   .fireNotice {
+    font-size:16px;
     transition: 1s linear;
     position: fixed;
     bottom: 0px;
