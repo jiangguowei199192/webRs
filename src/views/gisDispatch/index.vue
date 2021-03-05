@@ -266,6 +266,8 @@ export default {
     display: flex;
     align-items: center;
     .btn {
+      width: 88px;
+      height: 88px;
       cursor: pointer;
       margin-right: 22px;
     }
@@ -284,6 +286,8 @@ export default {
           position: relative;
           img {
             position: absolute;
+            width: 28px;
+            height: 28px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
