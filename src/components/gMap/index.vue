@@ -205,27 +205,6 @@
               >无人机</span
             >
           </div>
-          <div class="mapInterval">
-            <div class="intervalLine"></div>
-          </div>
-          <div class="mapTypeContainer">
-            <div style="height: 45px; position: relative">
-              <div
-                class="mapImg layerFire"
-                :class="{ mapSelBorder: bShowFire }"
-                @click="showLayer('fire', !bShowFire)"
-              >
-                <img
-                  class="layer_selected"
-                  v-show="bShowFire"
-                  src="../../assets/images/layer_selected.png"
-                />
-              </div>
-            </div>
-            <span class="mapTypeName" :class="{ mapSelText: bShowFire }"
-              >火点</span
-            >
-          </div>
         </div>
         <div
           slot="reference"
@@ -311,52 +290,11 @@
       <span style="margin: 0px 15px">{{ mouseLon }}&#176;{{ lonFlag }}</span>
       <span style="margin: 0px 15px">{{ mouseLat }}&#176;{{ latFlag }}</span>
     </div>
-    <div class="rpBottomBox" v-if="bShowBottomMenu">
-      <div class="rpBottomMenu">
-        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerCamera}"
-          @click="setRpLayerVisible('RP_Camera')">
-          <div class="itemImgBox">
-            <div class="itemImg itemCamera"></div>
-          </div>
-          <div class="itemTextBox">
-            <div class="itemText">红外设备</div>
-          </div>
-        </div>
-        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerDrone}"
-          @click="setRpLayerVisible('RP_Drone')">
-          <div class="itemImgBox">
-            <div class="itemImg itemDrone"></div>
-          </div>
-          <div class="itemTextBox">
-            <div class="itemText">无人机</div>
-          </div>
-        </div>
-        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerPolice}"
-          @click="setRpLayerVisible('RP_Police')">
-          <div class="itemImgBox">
-            <div class="itemImg itemPolice"></div>
-          </div>
-          <div class="itemTextBox">
-            <div class="itemText">消防人员</div>
-          </div>
-        </div>
-        <div class="menuItem" :class="{unSelectItem:!bShowRpLayerInstitution}"
-          @click="setRpLayerVisible('RP_Institution')">
-          <div class="itemImgBox">
-            <div class="itemImg itemInstitution"></div>
-          </div>
-          <div class="itemTextBox">
-            <div class="itemText">消防机构</div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import AMapHelper from '../../axios/amapapis'
-import { settingApi } from '@/api/setting'
 
 export default {
   name: 'gMap',
@@ -387,7 +325,6 @@ export default {
       bRouteOrClose: false, // true:route,false:close
       bShowRouteCtrl: false,
       bShowResult: false,
-      bShowPaln: false,
       addrResults: null,
       lastResults: null,
       simpleChooseAddr: null,
@@ -407,7 +344,6 @@ export default {
       mapTypeCur: 1,
       bShowHighPoint: true,
       bShowDrone: true,
-      bShowFire: true,
       bBasicHighBottom: false, // 控制右下角基础工具条向上移动
       bAppendToBody: true, // 控制Popover弹窗附加文档结构位置
       popoverOffsetX: -38, // 地图右下角工具条Popover弹窗x轴偏移
@@ -507,11 +443,6 @@ export default {
     doLocator: {
       type: Boolean,
       default: true
-    },
-    // 是否显示底部图层显示隐藏菜单
-    bShowBottomMenu: {
-      type: Boolean,
-      default: false
     }
   },
 
@@ -551,20 +482,12 @@ export default {
   methods: {
     // 目标是否存在
     domIsExist () {
-      var dom = document.querySelector('#plan')
-      if (dom) this.clickDomChange()
+      this.clickDomChange()
     },
     // 目标切换
     clickDomChange () {
       this.$nextTick(() => {
-        const plan = document.querySelector('#plan')
         const input = document.querySelector('.searchCtrl')
-        document.onclick = (e) => {
-          this.bShowPaln = false
-        }
-        plan.onclick = (e) => {
-          e.stopPropagation()
-        }
         input.onclick = (e) => {
           e.stopPropagation()
         }
@@ -608,7 +531,6 @@ export default {
       this.map2D.setMaxZoom(this.maxZoom)
       this.map2D.zoomToCenter(this.lon, this.lat)
       this.map2D.markerLayerManager.baseUrl = localStorage.ftpBaseUrl
-      this.$emit('eventMapLoaded')
 
       if (this.bAutoLocate) {
         this.map2D.geoLocation(this.curLocationCB) // 根据浏览器自动定位当前位置
@@ -641,7 +563,6 @@ export default {
         this.map2D.searchLayerManager.clear()
         this.addRoutePoint(addr, false)
         this.bShowRouteCtrl = true
-        this.bShowPaln = false
       }
     },
 
@@ -706,130 +627,6 @@ export default {
       this.map2D.searchLayerManager.clear()
     },
 
-    // 重点单位搜索结果追加
-    appendKeyResults (_keyResult) {
-      if (_keyResult.length < 1) {
-        return
-      }
-      if (_keyResult.length > 0 && this.addrResults === null) {
-        this.addrResults = []
-      }
-      const tmpKeyRes = []
-      _keyResult.forEach((k) => {
-        k._bHover = false
-        k._updateHoverCB = this.updateMouseHover
-        k.keyId = k.id
-        if (k.enterpriseOtherInfo !== null) {
-          const tmpInfo = JSON.parse(k.enterpriseOtherInfo)
-          k.id = tmpInfo.mapId
-        }
-        k.name = k.enterpriseName
-        k.address = k.enterpriseAddress
-        k._addr = k.enterpriseAddress
-        k._lon = k.enterpriseLongitude
-        k._lat = k.enterpriseLatitude
-        k.tel = k.enterpriseTel
-        if (
-          k.enterpriseTelBackup !== undefined &&
-          k.enterpriseTelBackup !== ''
-        ) {
-          k.tel += ';' + k.enterpriseTelBackup
-        }
-        k._imgUrl = null
-        tmpKeyRes.push(k)
-      })
-      if (this.addrResults.length > 0 && tmpKeyRes.length > 0) {
-        for (let j = 0; j < tmpKeyRes.length; j++) {
-          for (let k = 0; k < this.addrResults.length; k++) {
-            if (tmpKeyRes[j].id === this.addrResults[k].id) {
-              this.addrResults.splice(k, 1)
-              break
-            }
-          }
-          if (this.addrResults.length < 1) {
-            break
-          }
-        }
-      }
-      this.addrResults.push.apply(this.addrResults, tmpKeyRes)
-      const tmpRes = []
-      const totalNum = this.addrResults.length
-      let count = 0
-      const tA = this.addrResults
-      let tmpMaxLon = -180
-      let tmpMaxLat = -90
-      let tmpMinLon = 180
-      let tmpMinLat = 90
-      for (let i = totalNum - 1; i >= 0; i--) {
-        count += 1
-        tA[i]._index = count
-        if (tA[i]._lon > tmpMaxLon) tmpMaxLon = tA[i]._lon
-        if (tA[i]._lat > tmpMaxLat) tmpMaxLat = tA[i]._lat
-        if (tA[i]._lon < tmpMinLon) tmpMinLon = tA[i]._lon
-        if (tA[i]._lat < tmpMinLat) tmpMinLat = tA[i]._lat
-        tmpRes.push(tA[i])
-      }
-      this.map2D.searchLayerManager.clear()
-      this.map2D.searchLayerManager.addSearchAddrs(tmpRes)
-      if (tmpRes.length > 1) {
-        this.map2D.zoomToExtent(tmpMinLon, tmpMinLat, tmpMaxLon, tmpMaxLat)
-        this.map2D.zoomOut()
-      } else {
-        this.map2D.zoomToCenter(tA[0]._lon, tA[0]._lat)
-        this.map2D.setZoom(16)
-      }
-      this.addrResults = []
-      this.addrResults = tmpRes
-      this.bShowResult = true
-      this.bRouteOrClose = false
-    },
-
-    // 根据网络结果查询预案
-    async handleAutoTipsPoi (poi) {
-      var that = this
-      if (poi.id === '' || poi.id === null || poi.id === undefined) {
-        that.searchAddrs(poi.name, true)
-        return
-      }
-
-      let bFoundKey = false
-      await this.$axios
-        .get(settingApi.enterpriseList, {
-          params: { enterpriseOtherInfo: poi.id }
-        })
-        .then((res) => {
-          if (res.data.code === 0) {
-            var keyDatas = res.data.data.data
-            if (keyDatas.length > 0) {
-              bFoundKey = true
-              that.addrResults = []
-              that.appendKeyResults(keyDatas)
-            }
-          }
-        })
-        .catch((err) => {
-          console.log('handleAutoTipsPoi.enterpriseList Err : ' + err)
-        })
-      if (bFoundKey) {
-        return
-      }
-
-      AMapHelper.getPoiDetail({ id: poi.id })
-        .then((res) => {
-          that.chooseAddr = null
-          if (res.data.status === '1') {
-            that.updateSearchResults(res.data.pois)
-          }
-        })
-        .catch((err) => {
-          console.log('handleAutoTipsPoi.AMapHelper.getPoiDetail Err : ' + err)
-        })
-
-      if (poi.location.lng !== undefined && poi.location.lat !== undefined) {
-        that.mapMoveTo(poi.location.lng, poi.location.lat, false)
-      }
-    },
-
     // 初始化搜索提示框
     initSearchBox () {
       var that = this
@@ -865,12 +662,6 @@ export default {
         // 输入提示
         // eslint-disable-next-line
         this.autoTips = new AMap.Autocomplete({ input: this.addrSearchID });
-        // eslint-disable-next-line
-        AMap.event.addListener(this.autoTips, "select", (e) => {
-          // 注册监听，当选中某条记录时会触发
-          that.bShowPaln = false
-          that.handleAutoTipsPoi(e.poi)
-        })
         // eslint-disable-next-line
         AMap.event.addListener(this.autoTips, "choose", (e) => {
           // 注册监听，当选中某条记录时会触发
@@ -917,7 +708,7 @@ export default {
         })
       }
 
-      console.log('initSearchBox ...... OK')
+      // console.log('initSearchBox ...... OK')
     },
 
     // 添加自定义位置标记
@@ -1049,22 +840,9 @@ export default {
       if (this.chooseAddr != null && bDetail !== true) {
         return
       }
-      this.bShowPaln = false
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
       await this.searchAMapAddrs(addrStr)
-
-      await this.$axios
-        .get(settingApi.enterpriseList, { params: { enterpriseName: addrStr } })
-        .then((res) => {
-          if (res.data.code === 0) {
-            var keyDatas = res.data.data.data
-            this.appendKeyResults(keyDatas)
-          }
-        })
-        .catch((err) => {
-          console.log('axios.get(settingApi.enterpriseList) Err : ' + err)
-        })
     },
 
     // 删除搜索框中文字事件处理
@@ -1072,7 +850,6 @@ export default {
       this.chooseAddr = null
       if (this.filterText === '') {
         this.updateSearchResults(null)
-        this.bShowPaln = false
       }
     },
 
@@ -1089,7 +866,6 @@ export default {
       this.chooseAddr = null
       this.autoTips.Ub.style.visibility = 'hidden'
       this.updateSearchResults(null)
-      // this.bShowPaln = false
     },
 
     // 隐藏自动提示框
@@ -1130,10 +906,6 @@ export default {
     gotoAddrDetails (event, addr, bCallHandler = true) {
       this.lastResults = this.addrResults
       this.bShowResult = false
-      this.bShowPaln = true
-      this.$nextTick(() => {
-        this.$refs.plan.show(addr)
-      })
       if (bCallHandler) {
         this.map2D.searchLayerManager._select.getFeatures().push(addr._feature) // 此句避免位置标记右侧的弹窗不消失
         this.map2D.searchLayerManager.selectFeatureHandler(addr._feature)
@@ -1351,9 +1123,6 @@ export default {
       } else if (layerFlag === 'drone') {
         this.bShowDrone = bShow
         this.map2D.devDroneLayerManager.setLayerVisible(bShow)
-      } else if (layerFlag === 'fire') {
-        this.bShowFire = bShow
-        this.map2D.devFireWarningLayerManager.setLayerVisible(bShow)
       }
     },
 
@@ -1473,14 +1242,6 @@ export default {
       }
     },
 
-    // 增加tif切片影像层
-    addTifImgLayerByUrl (tifUrl) {
-      const tmpLayer = this.map2D._imageLayerManager.add(tifUrl, (ly) => {
-        this.map2D.zoomToLayer(ly)
-      })
-      return tmpLayer
-    },
-
     // 鼠标滑动经纬度样式设置
     positionFormat (coordinate) {
       if (coordinate) {
@@ -1493,39 +1254,9 @@ export default {
         return ''
       }
     },
+
     setPositionFormatCB () {
       this.map2D.setMousePositionFormat(this.positionFormat)
-    },
-
-    // 添加团队标记
-    addTeamMarkers (teamData) {
-      const data = { data: teamData }
-      this.map2D.markerLayerManager.addTeamMarker(data)
-    },
-    // 删除所有团队标记
-    delAllTeamMarkers () {
-      this.map2D._markerLayerManager.clear()
-    },
-
-    // 显示隐藏Layers
-    setRpLayerVisible (type) {
-      if (type === 'RP_Institution') {
-        this.bShowRpLayerInstitution = !this.bShowRpLayerInstitution
-        this.map2D.riverProtectionManager.setLayerInstitutionVisible(this.bShowRpLayerInstitution)
-        if (!this.bShowRpLayerInstitution) this.map2D.riverProtectionManager.hideOverlaysByType(type)
-      } else if (type === 'RP_Police') {
-        this.bShowRpLayerPolice = !this.bShowRpLayerPolice
-        this.map2D.riverProtectionManager.setLayerPoliceVisible(this.bShowRpLayerPolice)
-        if (!this.bShowRpLayerPolice) this.map2D.riverProtectionManager.hideOverlaysByType(type)
-      } else if (type === 'RP_Drone') {
-        this.bShowRpLayerDrone = !this.bShowRpLayerDrone
-        this.map2D.riverProtectionManager.setLayerDroneVisible(this.bShowRpLayerDrone)
-        if (!this.bShowRpLayerDrone) this.map2D.riverProtectionManager.hideOverlaysByType(type)
-      } else if (type === 'RP_Camera') {
-        this.bShowRpLayerCamera = !this.bShowRpLayerCamera
-        this.map2D.riverProtectionManager.setLayerCameraVisible(this.bShowRpLayerCamera)
-        if (!this.bShowRpLayerCamera) this.map2D.riverProtectionManager.hideOverlaysByType(type)
-      }
     }
   }
 }
@@ -1949,69 +1680,6 @@ export default {
     cursor: default;
     border-radius: 4px;
     pointer-events: none;
-  }
-    .rpBottomBox {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    bottom: 0px;
-    width: 100%;
-    height: 84px;
-    .rpBottomMenu {
-      width: 1207px;
-      height: 84px;
-      background-image: url('../../assets/images/map/mapBottomMenuBg.png');
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      .menuItem {
-        margin-top: 10px;
-        margin-left: 22px;
-        margin-right: 22px;
-        display: inline-block;
-        cursor: pointer;
-        width: 68px;
-        height: 64px;
-        .itemImgBox {
-          height: 40px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          .itemImg {
-            display: inline-block;
-            height: 40px;
-            width: 40px;
-          }
-          .itemInstitution {
-            background-image: url('../../assets/images/map/institution.png');
-          }
-          .itemPolice {
-            background-image: url('../../assets/images/map/police.png');
-          }
-          .itemDrone {
-            background-image: url('../../assets/images/map/drone.png');
-          }
-          .itemCamera {
-            background-image: url('../../assets/images/map/camera.png');
-          }
-        }
-        .itemTextBox {
-          margin-top: 2px;
-          height: 20px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          .itemText {
-            color: #00CCFF;
-            display: inline-block;
-          }
-        }
-      }
-      .unSelectItem {
-        opacity: 0.35;
-      }
-    }
   }
 }
 </style>
