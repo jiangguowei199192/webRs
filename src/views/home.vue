@@ -91,49 +91,53 @@ export default {
           content: '系统设置'
         }
       ],
-      todayEndTime: new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1), // 今日23:59分时间戳
+      todayEndTime: new Date(
+        new Date(new Date().toLocaleDateString()).getTime() +
+          24 * 60 * 60 * 1000 -
+          1
+      ), // 今日23:59分时间戳
       realtimeInfoTopicArray: [] // 需要监听的飞机实时信息主题
     }
   },
   created () {
     this.systems[3].content = globalApi.projectTitle
     // 设备上线
-    EventBus.$on('video/device/online', (info) => {
+    EventBus.$on('video/device/online', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', (info) => {
+    EventBus.$on('video/device/offline', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', (info) => {
+    EventBus.$on('video/realVideo/streamStart', info => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', (info) => {
+    EventBus.$on('video/realVideo/streamEnd', info => {
       EventBus.$emit('streamEnd', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', (info) => {
+    EventBus.$on('droneInfos', info => {
       this.parseDroneRealtimeInfo(info)
     })
     // 人员识别提示
-    EventBus.$on('video/people/found', (info) => {
+    EventBus.$on('video/people/found', info => {
       this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
-    EventBus.$on('video/people/real', (info) => {
+    EventBus.$on('video/people/real', info => {
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示
-    EventBus.$on('video/aRAiResult', (info) => {
+    EventBus.$on('video/aRAiResult', info => {
       EventBus.$emit('getArChange', info)
     })
     // 云台角度信息
-    EventBus.$on('video/webControlPztNotice', (info) => {
+    EventBus.$on('video/webControlPztNotice', info => {
       EventBus.$emit('video/webControlPztChange', info)
     })
   },
@@ -177,8 +181,10 @@ export default {
     // 路由发生变化
     machineMainStyle (path) {
       if (
-        path === '/decisionSystem' || path === '/fightDeploy' ||
-        path === '/deploy3D' || path === '/fireBattle'
+        path === '/decisionSystem' ||
+        path === '/fightDeploy' ||
+        path === '/deploy3D' ||
+        path === '/fireBattle'
       ) {
         return {
           margin: '-65px 0px 0px 0px'
@@ -195,19 +201,21 @@ export default {
         if (index === 0) this.$router.push({ path: '/gisDispatch' })
         else if (index === 1) {
           this.$router.push({ path: '/videoSystem' })
-        } else {
-
+        } else if (index === 4) {
+          this.$router.push({ path: '/casecenter' })
+        } else if (index === 6) {
+          this.$router.push({ path: '/systemSettings' })
         }
         this.isActive = index
       }
     },
     init () {
-      amapApi.getLocation({}).then((res) => {
+      amapApi.getLocation({}).then(res => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then((res) => {
+            amapApi.getWeather({ city: cityCode }).then(res => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -223,26 +231,28 @@ export default {
       const tmpAxios = this.$axios
       this.$axios
         .get(loginApi.getUserDetail)
-        .then((res) => {
+        .then(res => {
           if (res.data.code === 0) {
             tmpAxios
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
               })
-              .then((res2) => {
+              .then(res2 => {
                 if (res2.data.code === 0) {
-                  res2.data.data.forEach((deptCode) => {
+                  res2.data.data.forEach(deptCode => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
-                  tmpThis.realtimeInfoTopicArray.unshift('gdu/' + res.data.data.deptCode)
+                  tmpThis.realtimeInfoTopicArray.unshift(
+                    'gdu/' + res.data.data.deptCode
+                  )
                 }
               })
-              .catch((err2) => {
+              .catch(err2 => {
                 console.log('loginApi.getDeptByDeptCode Err : ' + err2)
               })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('loginApi.getUserDetail Err : ' + err)
         })
     },
@@ -371,7 +381,7 @@ export default {
     z-index: 1000;
     pointer-events: none;
     .realTime {
-      font-size:16px;
+      font-size: 16px;
       width: 936px;
       background: url(../assets/images/logo.png) no-repeat;
       position: absolute;

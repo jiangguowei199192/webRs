@@ -45,6 +45,18 @@ const routes = [
         path: '/playback',
         name: 'playbackSystem',
         component: () => import('../views/videoSystem/playback')
+      },
+
+      {
+        path: '/caseCenter',
+        name: 'caseCenter',
+        component: () => import('../views/caseCenter')
+      },
+      {
+        path: '/systemSettings',
+        name: 'systemSettings',
+        component: () => import('../views/systemSettings'),
+        children: []
       }
     ]
   }
