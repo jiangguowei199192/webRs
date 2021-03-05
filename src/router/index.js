@@ -22,6 +22,12 @@ const routes = [
     name: 'home',
     component: () => import('../views/home'),
     children: [
+      // gis调度
+      {
+        path: '/gisDispatch',
+        name: 'gisDispatch',
+        component: () => import('../views/gisDispatch')
+      },
       // 实时视频
       {
         path: '/videoSystem',
@@ -39,96 +45,6 @@ const routes = [
         path: '/playback',
         name: 'playbackSystem',
         component: () => import('../views/videoSystem/playback')
-      },
-      // 三维部署
-      {
-        path: '/deploy3D',
-        name: 'deploy3D',
-        component: () => import('../views/decisionSystem/deploy3D')
-      },
-      {
-        path: '/decisionSystem',
-        name: 'decisionSystem',
-        component: () => import('../views/decisionSystem'),
-        meta: { keepAlive: true }
-      },
-      {
-        path: '/PlanSetting',
-        name: 'PlanSetting',
-        component: () => import('../views/decisionSystem/PlanSetting')
-      },
-      {
-        path: '/fightDeploy',
-        name: 'fightDeploy',
-        component: () => import('../views/decisionSystem/fightDeploy')
-      },
-      // 战评
-      {
-        path: '/battleReview',
-        name: 'battleReview',
-        component: () => import('../views/evaluationSystem/battleReviewList')
-      },
-      {
-        path: '/addBattleReview',
-        name: 'addBattleReview',
-        component: () => import('../views/evaluationSystem/addBattleReview')
-      },
-      {
-        path: '/fireBattle',
-        name: 'fireBattle',
-        component: () => import('../views/evaluationSystem/fireBattle')
-      },
-      {
-        path: '/evaluationSystem',
-        name: 'evaluationSystem',
-        component: () => import('../views/evaluationSystem')
-      },
-      {
-        path: '/digitalIndividual',
-        name: 'digitalIndividual',
-        component: () => import('../views/digitalIndividual')
-      },
-      {
-        path: '/digitalEquipment',
-        name: 'digitalEquipment',
-        component: () => import('../views/digitalEquipment')
-      },
-      {
-        path: '/systemSettings',
-        name: 'systemSettings',
-        component: () => import('../views/systemSettings'),
-        children: [
-          {
-            path: '/systemSettings/organizationManagement',
-            name: 'organizationManagement',
-            component: () => import('../views/systemSettings/organizationManagement')
-          },
-          {
-            path: '/systemSettings/userManagement',
-            name: 'userManagement',
-            component: () => import('../views/systemSettings/userManagement')
-          },
-          {
-            path: '/systemSettings/rolePermissionManagement',
-            name: 'rolePermissionManagement',
-            component: () => import('../views/systemSettings/rolePermissionManagement')
-          },
-          {
-            path: '/systemSettings/fireMap',
-            name: 'fireMap',
-            component: () => import('../views/systemSettings/fireMap')
-          },
-          {
-            path: '/systemSettings/firePolice',
-            name: 'firePolice',
-            component: () => import('../views/systemSettings/firePolice')
-          },
-          {
-            path: '/systemSettings/videoAccessManagement',
-            name: 'videoAccessManagement',
-            component: () => import('../views/systemSettings/videoAccessManagement')
-          }
-        ]
       }
     ]
   }

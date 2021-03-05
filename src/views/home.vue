@@ -192,18 +192,12 @@ export default {
     // 点击激活当前系统
     jumpTo (index) {
       if (index !== 3) {
-        if (index === 0) this.$router.push({ path: '/decisionSystem' })
+        if (index === 0) this.$router.push({ path: '/gisDispatch' })
         else if (index === 1) {
           this.$router.push({ path: '/videoSystem' })
-        } else if (index === 2) {
-          this.$router.push({ path: '/evaluationSystem' })
-        } else if (index === 4) {
-          this.$notify.closeAll()
-          // this.$notify.info({ title: '提示', message: '功能未开放' })
-          this.$router.push({ path: '/battleReview' })
-        } else if (index === 5) {
-          this.$router.push({ path: '/digitalEquipment' })
-        } else if (index === 6) this.$router.push({ path: '/systemSettings' })
+        } else {
+
+        }
         this.isActive = index
       }
     },

@@ -138,7 +138,6 @@
         </div>
       </div>
     </div>
-    <plan v-if="bShowPaln" ref="plan" id="plan"></plan>
     <div class="measureTools" v-if="bShowAllTools && bShowMeasure">
       <div
         class="lineBtn"
@@ -357,14 +356,10 @@
 
 <script>
 import AMapHelper from '../../axios/amapapis'
-import Plan from '../../views/decisionSystem/components/Plan.vue'
 import { settingApi } from '@/api/setting'
 
 export default {
   name: 'gMap',
-  components: {
-    Plan
-  },
   data () {
     return {
       mapContainerID: null,

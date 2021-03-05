@@ -1,0 +1,52 @@
+<svg 
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="1920px" height="1080px">
+<defs>
+<linearGradient id="PSgrad_0" x1="0%" x2="0%" y1="100%" y2="0%">
+  <stop offset="0%" stop-color="rgb(0,0,0)" stop-opacity="0.70196" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+<linearGradient id="PSgrad_1" x1="0%" x2="0%" y1="0%" y2="100%">
+  <stop offset="0%" stop-color="rgb(0,0,0)" stop-opacity="0.70196" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+<linearGradient id="PSgrad_2" x1="100%" x2="0%" y1="0%" y2="0%">
+  <stop offset="0%" stop-color="rgb(0,0,0)" stop-opacity="0.70196" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+<linearGradient id="PSgrad_3" x1="0%" x2="100%" y1="0%" y2="0%">
+  <stop offset="0%" stop-color="rgb(0,0,0)" stop-opacity="0.70196" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+<linearGradient id="PSgrad_4" x1="0%" x2="0%" y1="0%" y2="100%">
+  <stop offset="0%" stop-color="rgb(12,13,13)" stop-opacity="0.8" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+<linearGradient id="PSgrad_5" x1="0%" x2="0%" y1="100%" y2="0%">
+  <stop offset="0%" stop-color="rgb(0,0,0)" stop-opacity="0.8" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+<linearGradient id="PSgrad_6" x1="100%" x2="0%" y1="0%" y2="0%">
+  <stop offset="0%" stop-color="rgb(0,0,0)" stop-opacity="0.8" />
+  <stop offset="100%" stop-color="rgb(0,0,0)" stop-opacity="0" />
+</linearGradient>
+
+</defs>
+<path fill-rule="evenodd"  opacity="0.102" fill="rgb(0, 0, 0)"
+ d="M0.000,0.000 L1920.000,0.000 L1920.000,1080.000 L0.000,1080.000 L0.000,0.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.6" fill="url(#PSgrad_0)"
+ d="M0.000,576.000 L1920.000,576.000 L1920.000,1080.000 L0.000,1080.000 L0.000,576.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.502" fill="url(#PSgrad_1)"
+ d="M0.000,0.000 L1920.000,0.000 L1920.000,502.000 L0.000,502.000 L0.000,0.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.502" fill="url(#PSgrad_2)"
+ d="M1636.000,0.000 L1920.000,0.000 L1920.000,1080.000 L1636.000,1080.000 L1636.000,0.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.502" fill="url(#PSgrad_3)"
+ d="M-0.000,0.000 L285.000,0.000 L285.000,1080.000 L-0.000,1080.000 L-0.000,0.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.902" fill="url(#PSgrad_4)"
+ d="M0.000,0.000 L1920.000,0.000 L1920.000,249.000 L0.000,249.000 L0.000,0.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.6" fill="url(#PSgrad_5)"
+ d="M0.000,831.000 L1920.000,831.000 L1920.000,1080.000 L0.000,1080.000 L0.000,831.000 Z"/>
+<path fill-rule="evenodd"  opacity="0.8" fill="url(#PSgrad_6)"
+ d="M1637.000,0.000 L1920.000,0.000 L1920.000,1080.000 L1637.000,1080.000 L1637.000,0.000 Z"/>
+</svg>
