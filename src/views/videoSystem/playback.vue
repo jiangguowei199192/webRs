@@ -1436,9 +1436,9 @@ export default {
       margin-bottom: 11px;
       span:nth-child(1) {
       display: inline-block;
-      width: 20px;
-      height: 16px;
-      background: url(../../assets/images/Setting/setting-back.png) no-repeat;
+      width: 21px;
+      height: 17px;
+      background: url(../../assets/images/back.png) no-repeat;
       margin-left: 16px;
       margin-right: 13px;
       }
