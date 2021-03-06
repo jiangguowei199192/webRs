@@ -202,7 +202,7 @@ export default {
         else if (index === 1) {
           this.$router.push({ path: '/videoSystem' })
         } else if (index === 4) {
-          this.$router.push({ path: '/casecenter' })
+          this.$router.push({ path: '/caseCenter' })
         } else if (index === 6) {
           this.$router.push({ path: '/systemSettings' })
         }

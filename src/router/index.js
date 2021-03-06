@@ -47,11 +47,13 @@ const routes = [
         component: () => import('../views/videoSystem/playback')
       },
 
+      // 案件中心
       {
         path: '/caseCenter',
         name: 'caseCenter',
         component: () => import('../views/caseCenter')
       },
+      // 系统设置
       {
         path: '/systemSettings',
         name: 'systemSettings',
