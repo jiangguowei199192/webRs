@@ -193,7 +193,7 @@ export default {
               'token',
               'Bearer ' + res.data.data.access_token
             )
-            this.$router.push({ path: '/videoSystem' })
+            this.$router.push({ path: '/gisDispatch' })
           }
         })
         .catch(() => {})

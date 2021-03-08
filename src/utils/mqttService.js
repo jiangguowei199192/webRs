@@ -48,8 +48,6 @@ var mqttService;
       instance.client.subscribe('video/realVideo/streamEnd')
       instance.client.subscribe('video/device/online')
       instance.client.subscribe('video/device/offline')
-      // 订阅火情火点
-      instance.client.subscribe('video/deviceIid/channleID/datalink/firewarning')
       // 订阅云台操作获取角度
       instance.client.subscribe('video/webControlPztNotice')
       // 订阅实时拼图

@@ -1,23 +1,8 @@
 <template>
   <div class="home">
     <el-container>
-      <el-header>
-        <div class="box">
-          <div
-            v-for="(item, index) in systems"
-            :key="index"
-            class="list"
-            @click.stop="jumpTo(index)"
-          >
-            <div
-              class="item"
-              :class="{ title: index == 3, active: isActive == index }"
-            >
-              <span>{{ item.content }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="cur">
+      <el-header :class="{fixed:isFixed}">
+        <div class="headerTitle">
           <div class="realTime">
             <span class="extra">{{ timeObj.year }}</span> 年
             <span class="extra">{{ timeObj.month }}</span> 月
@@ -33,9 +18,34 @@
               </span>
             </template>
           </div>
+          <div class="content">
+            <div class="title">{{projectTitle}}</div>
+            <div class="container">
+              <div class="box">
+                <div
+                  v-for="(item, index) in systems"
+                  :key="index"
+                  class="list"
+                  :class="{ active: isActive == index }"
+                  @click.stop="jumpTo(index)"
+                >
+                  <span>{{ item.content }}</span>
+                </div>
+              </div>
+              <div class="settings">
+                <div class="info">
+                  <div class="person">
+                    <img :src="perSonPic" alt />
+                    <span class="uName">张三</span>
+                    <img :src="settingPic" alt />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </el-header>
-      <el-main class="webFsScroll" :style="machineMainStyle($route.path)">
+      <el-main class="webFsScroll">
         <!-- <router-view /> -->
         <keep-alive v-if="$route.meta.keepAlive">
           <router-view />
@@ -58,37 +68,26 @@ export default {
   name: 'Home',
   data () {
     return {
-      realNotice: false, // 显示火情弹框
-      curFireArray: [], // 火情数据
-      curFireObj: {}, // 当前火情信息
-      currentPage: 1, // 当前页
-      picUrl: globalApi.headImg, // 图片前缀
+      isFixed: false,
+      projectTitle: '',
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
       weatherReport: '', // 天气情况
-      isActive: 1, // 默认激活视频侦查系统
+      perSonPic: require('../assets/images/home/person.svg'),
+      settingPic: require('../assets/images/home/setting.svg'),
+      isActive: 0, // GIS调度平台
       systems: [
         {
-          content: '指挥决策'
+          content: 'GIS调度平台'
+        },
+        {
+          content: '案件中心'
         },
         {
           content: '视频侦查'
         },
         {
-          content: '数字化单兵'
-        },
-        {
-          content: '消防救援现场指挥系统'
-        },
-
-        {
-          content: '战评系统'
-        },
-        {
-          content: '数字化装备'
-        },
-        {
-          content: '系统设置'
+          content: '系统管理'
         }
       ],
       todayEndTime: new Date(
@@ -100,7 +99,7 @@ export default {
     }
   },
   created () {
-    this.systems[3].content = globalApi.projectTitle
+    this.projectTitle = globalApi.projectTitle || '智慧农业实战应用平台'
     // 设备上线
     EventBus.$on('video/device/online', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
@@ -161,7 +160,7 @@ export default {
     this.timer = null
   },
   mounted () {
-    this.jumpTo(this.isActive)
+    this.getPath()
     setInterval(() => {
       this.timeObj = getTime()
     }, 1000)
@@ -178,36 +177,17 @@ export default {
   },
   methods: {
     timeFormat,
-    // 路由发生变化
-    machineMainStyle (path) {
-      if (
-        path === '/decisionSystem' ||
-        path === '/fightDeploy' ||
-        path === '/deploy3D' ||
-        path === '/fireBattle'
-      ) {
-        return {
-          margin: '-65px 0px 0px 0px'
-        }
-      } else {
-        return {
-          margin: '0px'
-        }
-      }
-    },
     // 点击激活当前系统
     jumpTo (index) {
-      if (index !== 3) {
-        if (index === 0) this.$router.push({ path: '/gisDispatch' })
-        else if (index === 1) {
-          this.$router.push({ path: '/videoSystem' })
-        } else if (index === 4) {
-          this.$router.push({ path: '/casecenter' })
-        } else if (index === 6) {
-          this.$router.push({ path: '/systemSettings' })
-        }
-        this.isActive = index
+      if (index === 0) this.$router.push({ path: '/gisDispatch' })
+      else if (index === 1) {
+        this.$router.push({ path: '/caseCenter' })
+      } else if (index === 2) {
+        this.$router.push({ path: '/videoSystem' })
+      } else if (index === 3) {
+        this.$router.push({ path: '/systemSettings' })
       }
+      this.getPath()
     },
     init () {
       amapApi.getLocation({}).then(res => {
@@ -274,136 +254,155 @@ export default {
           }
         }
       }
+    },
+    getPath () {
+      const path = this.$route.path
+      this.isFixed = false
+      if (path === '/gisDispatch') {
+        this.isFixed = true
+        this.isActive = 0
+      } else if (path === '/caseCenter') {
+        this.isActive = 1
+      } else if (
+        path === '/videoSystem' ||
+        path === '/deviceMap' ||
+        path === '/playback'
+      ) {
+        this.isActive = 2
+      } else if (path === '/systemSettings') {
+        this.isActive = 3
+      }
     }
+  },
+  watch: {
+    $route: 'getPath'
   }
 }
 </script>
 <style lang="less" scoped>
 .home {
-  background: url(../assets/images/bg.png) no-repeat;
+  background: url(../assets/images/home/bg.svg) no-repeat;
   background-size: 100% 100%;
   .el-header {
-    margin-top: 36px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    ::selection {
+      background: transparent;
+    }
+    padding: 20px;
     height: auto !important;
-    padding: 0 20px 0 20px;
-    position: relative;
+    .headerTitle {
+      position: relative;
+      .realTime {
+        font-size: 17px;
+        font-family: Source Han Sans CN;
+        font-weight: 500;
+        color: #fff;
+        line-height: 14px;
+        span.extra {
+          color: #fff45c;
+          i {
+            font-style: normal;
+            position: relative;
+            top: -10px;
+          }
+        }
+        span.extra:last-child {
+          margin-left: 4px;
+        }
+        span.curCity {
+          margin-left: 30px;
+          margin-right: 25px;
+        }
+      }
+      .content {
+        display: flex;
+        font-size: 28px;
+        font-family: HuXiaoBo-NanShen;
+        font-weight: 400;
+        color: #ffffff;
+        // width: 1749px;
+        height: 74px;
+        margin-top: 16px;
+        background: url(../assets/images/home/title_bg.svg) no-repeat;
+        background-size: 100% 100%;
+        div.title {
+          // line-height: 74px;
+          padding-top: 10px;
+          padding-left: 67px;
+          width: 448px;
+          box-sizing: border-box;
+          text-align: center;
+        }
+        div.container {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          margin-top: -17px;
+          div.box {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            font-size: 24px;
+            font-weight: 500;
+            margin-left: 136px;
+            margin-right: 66px;
+            .list {
+              width: 176px;
+              height: 47px;
+              background: url(../assets/images/home/normal.png) no-repeat;
+              background-size: 100% 100%;
+              line-height: 40px;
+              text-align: center;
+              cursor: pointer;
+            }
+            .list.active {
+              background: url(../assets/images/home/active.png) no-repeat;
+              background-size: 100% 100%;
+            }
+          }
+          div.settings {
+            position: relative;
+            width: 348px;
+            background: url(../assets/images/home/setting_bg.svg) no-repeat;
+            background-size: 100% 100%;
+            div.info {
+              position: absolute;
+              top: -8px;
+              right: 18px;
+              div.person {
+                img {
+                  width: 26px;
+                  height: 26px;
+                }
+                img:last-child {
+                  cursor: pointer;
+                }
+                span.uName {
+                  font-size: 16px;
+                  font-family: Microsoft YaHei;
+                  font-weight: 400;
+                  color: #0fbfe0;
+                  margin: 0 32px 0 18px;
+                  position: relative;
+                  top: -6px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .el-header.fixed {
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
   }
   .el-main {
     padding: 0;
-  }
-  .box {
-    display: flex;
-    // 临时显示菜单
-    // justify-content: space-between;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: 500;
-    .list {
-      position: relative;
-      z-index: 1;
-      .item {
-        position: relative;
-      }
-      .status {
-        position: absolute;
-        z-index: 999;
-        width: 300px;
-        // 临时显示菜单
-        // left: -40px;
-        // padding-top: 30px;
-        left: -75px;
-        padding-top: 33px;
-        display: none;
-        .el-button {
-          width: 140px;
-          background: #082d56;
-        }
-        .activeStatus {
-          border: 2px solid rgba(233, 226, 101, 1);
-          color: #e9e265;
-        }
-      }
-    }
-    .list:not(:nth-child(4)):hover .status {
-      display: block !important;
-    }
-    div.list:not(:nth-child(4)) .item {
-      cursor: pointer;
-      width: 182px;
-      height: 52px;
-      background: url(../assets/images/unselected.png) no-repeat;
-      line-height: 52px;
-      text-align: center;
-    }
-    div.list:nth-child(n + 5) .item {
-      background: url(../assets/images/unselected-right.png) no-repeat;
-    }
-    .title {
-      width: 540px;
-      height: 66px;
-      line-height: 66px;
-      text-align: center;
-      // 临时显示菜单 添加
-      margin: 0 44px;
-      font-size: 36px;
-      font-weight: bold;
-      margin-top: -13px;
-      font-family: Source Han Sans CN;
-      background: url(../assets/images/title.png) no-repeat;
-      span {
-        text-shadow: #000 3px 4px 5px;
-      }
-    }
-    div.list:not(:nth-child(4)) .active {
-      background: url(../assets/images/selected.png) no-repeat !important;
-    }
-    div.list:nth-child(n + 5) .active {
-      background: url(../assets/images/selected-right.png) no-repeat !important;
-    }
-    div.list:nth-child(3),
-    div.list:nth-child(6) {
-      display: none;
-    }
-    div.list:nth-child(1),
-    div.list:nth-child(5) {
-      margin-right: 40px;
-    }
-  }
-  .cur {
-    position: relative;
-    margin-top: 8px;
-    margin-bottom: 25px;
-    font-family: Source Han Sans CN;
-    font-weight: 500;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    z-index: 1000;
-    pointer-events: none;
-    .realTime {
-      font-size: 16px;
-      width: 936px;
-      background: url(../assets/images/logo.png) no-repeat;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      span.extra {
-        color: #fff45c;
-        i {
-          font-style: normal;
-          position: relative;
-          top: -10px;
-        }
-      }
-      span.extra:last-child {
-        margin-left: 4px;
-      }
-      span.curCity {
-        margin-left: 30px;
-        margin-right: 25px;
-      }
-    }
   }
 }
 </style>
