@@ -30,11 +30,11 @@
       </div>
     </div>
     <div class="bottomTool">
-      <img
+      <div
         class="btn"
-        src="../../assets/images/gisDispatch/layer.png"
-        @click.stop="isfoldTool = !isfoldTool"
-      />
+        @click.stop="rotateClick"
+        :class="[rotate ? 'rotate' : 'rotate2']"
+      ></div>
       <div>
         <transition name="showContent">
           <div v-show="!isfoldTool" class="toolBox">
@@ -47,6 +47,56 @@
         </transition>
       </div>
     </div>
+    <div class="caseBox">
+      <div class="caseList">
+        <div class="title">案件列表</div>
+        <div class="add"></div>
+        <div class="caseNum">
+          <template v-for="(item, index) in caseNums">
+            <div :key="index">
+              <div>{{ item.num }}</div>
+              <span>{{ item.status }}</span>
+              <span :style="{ background: item.color }"></span>
+            </div>
+          </template>
+        </div>
+        <el-date-picker
+          v-model="dateRange"
+          type="datetimerange"
+          range-separator="一"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          class="caseDate"
+        ></el-date-picker>
+        <div class="list browserScroll">
+          <template v-for="(item, index) in cases">
+            <div :key="index">
+              <div class="caseName">{{ item.name }}</div>
+              <div class="caseInfo">
+                <div class="left">
+                  <img src="../../assets/images/gisDispatch/no-pic.svg" />
+                  <span>待处理</span>
+                </div>
+                <div class="right">
+                  <span class="des">{{ item.des }}</span>
+                  <div class="time">
+                    <img src="../../assets/images/gisDispatch/time.svg" />
+                    <span>{{ item.time }}</span>
+                  </div>
+                  <div class="time">
+                    <img src="../../assets/images/gisDispatch/addr.svg" />
+                    <span>{{ item.address }}</span>
+                  </div>
+                </div>
+              </div>
+              <img src="../../assets/images/gisDispatch/jump.svg" />
+              <div class="tag">待处理</div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="fold" @click.stop="caseFold = !caseFold"></div>
+    </div>
   </div>
 </template>
 
@@ -54,6 +104,9 @@
 export default {
   data () {
     return {
+      caseFold: false,
+      dateRange: '',
+      rotate: false,
       isfoldTool: true, // 是否折叠底部工具栏
       resInfos: [
         {
@@ -128,6 +181,58 @@ export default {
         {
           img: require('../../assets/images/gisDispatch/pointL.svg')
         }
+      ],
+      caseNums: [
+        {
+          num: 23,
+          status: '案件总数',
+          color: '#00D2FF'
+        },
+        {
+          num: 10,
+          status: '待处置',
+          color: '#FF0000'
+        },
+        {
+          num: 10,
+          status: '处置中',
+          color: '#EAFF00'
+        },
+        {
+          num: 3,
+          status: '已处置',
+          color: '#6DD23E'
+        }
+      ],
+      cases: [
+        {
+          name: '群众举报非法捕捞事件',
+          time: '2020-11-09 09:08:00',
+          address: '武汉长江二桥',
+          des:
+            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
+        },
+        {
+          name: '群众举报非法捕捞事件',
+          time: '2020-11-09 09:08:00',
+          address: '武汉长江二桥',
+          des:
+            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
+        },
+        {
+          name: '群众举报非法捕捞事件',
+          time: '2020-11-09 09:08:00',
+          address: '武汉长江二桥',
+          des:
+            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
+        },
+        {
+          name: '群众举报非法捕捞事件',
+          time: '2020-11-09 09:08:00',
+          address: '武汉长江二桥',
+          des:
+            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
+        }
       ]
     }
   },
@@ -168,6 +273,10 @@ export default {
       this.resInfos.forEach((r) => {
         r.width = (r.num / max) * 100
       })
+    },
+    rotateClick () {
+      this.isfoldTool = !this.isfoldTool
+      this.rotate = !this.rotate
     }
   }
 }
@@ -185,6 +294,7 @@ export default {
     width: 100%;
     background: url(../../assets/images/gisDispatch/bg.svg) no-repeat;
   }
+  //资源总览
   .resBox {
     font-size: 14px;
     width: 286px;
@@ -258,6 +368,7 @@ export default {
       }
     }
   }
+  //底部撒点工具栏
   .bottomTool {
     height: 88px;
     position: absolute;
@@ -270,6 +381,15 @@ export default {
       height: 88px;
       cursor: pointer;
       margin-right: 22px;
+      background: url(../../assets/images/gisDispatch/layer.png) no-repeat;
+      background-size: 100% 100%;
+    }
+    .btn.rotate2 {
+      transition: all 1s;
+    }
+    .btn.rotate {
+      transform: rotate(360deg);
+      transition: all 1s;
     }
     > div {
       overflow: hidden;
@@ -299,12 +419,235 @@ export default {
 
     .showContent-enter-active,
     .showContent-leave-active {
-      transition: all 0.4s;
+      transition: all 0.8s;
     }
     .showContent-enter,
     .showContent-leave-active {
       transform: translate3d(-474px, 0, 0);
       opacity: 0;
+    }
+  }
+
+  .listScroll::-webkit-scrollbar {
+    width: 2px;
+  }
+  .listScroll::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 3px;
+    background: #00b7ff;
+  }
+  .listScroll::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    background: transparent;
+  }
+
+  .caseBox {
+    display: flex;
+    font-size: 12px;
+    position: absolute;
+    top: 50%;
+    right: 0px;
+    transform: translateY(-50%);
+    box-sizing: border-box;
+    height: 910px;
+
+    //案件列表
+    .caseList {
+      width: 528px;
+      height: 100%;
+      background: url(../../assets/images/gisDispatch/case-box.svg) no-repeat;
+      background-size: 100% 100%;
+      transform: translate(37px, 0px);
+      .title {
+        width: 218px;
+        height: 30px;
+        background: linear-gradient(
+          90deg,
+          #00d2ff 0%,
+          rgba(0, 210, 255, 0) 100%
+        );
+        margin-top: 22px;
+        margin-left: 23px;
+        font-size: 18px;
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        color: #fefefe;
+        padding-left: 17px;
+        line-height: 30px;
+      }
+      //添加案件
+      .add {
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 22px;
+        right: 30px;
+        background: url(../../assets/images/gisDispatch/+.svg) no-repeat;
+        background-size: 100% 100%;
+        cursor: pointer;
+      }
+      //案件数目
+      .caseNum {
+        display: flex;
+        margin-left: 55px;
+        margin-top: 28px;
+        > div {
+          display: flex;
+          flex-direction: column;
+          margin-right: 38px;
+          align-items: center;
+          div:nth-child(1) {
+            width: 72px;
+            height: 72px;
+            background: url(../../assets/images/gisDispatch/num-box.svg)
+              no-repeat;
+            background-size: 100% 100%;
+            font-size: 24px;
+            font-family: Orbitron;
+            font-weight: bold;
+            color: #fefefe;
+            line-height: 72px;
+            text-align: center;
+          }
+          span:nth-child(2) {
+            margin-top: 17px;
+            font-size: 18px;
+            font-family: Source Han Sans CN;
+            font-weight: 400;
+            color: #fefefe;
+          }
+          span:nth-child(3) {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 3px;
+          }
+        }
+      }
+      .list {
+        box-sizing: border-box;
+        margin-top: 16px;
+        margin-left: 43px;
+        height: 600px;
+        overflow-y: scroll;
+        //每个案件
+        > div {
+          position: relative;
+          box-sizing: border-box;
+          width: 427px;
+          height: 190px;
+          background: url(../../assets/images/gisDispatch/red-case.svg)
+            no-repeat;
+          background-size: 100% 100%;
+          cursor: pointer;
+          margin-bottom: 10px;
+          padding: 8px 0px 0px 14px;
+          > img {
+            width: 34px;
+            height: 34px;
+            position: absolute;
+            right: 11px;
+            bottom: 14px;
+          }
+          .tag {
+            position: absolute;
+            width: 76px;
+            height: 55px;
+            top: 0px;
+            right: -18px;
+            background: url(../../assets/images/gisDispatch/red-tag.svg)
+              no-repeat;
+            background-size: 100% 100%;
+            font-size: 12px;
+            font-family: Source Han Sans CN;
+            font-weight: 400;
+            color: #ffffff;
+            text-align: center;
+            line-height: 55px;
+          }
+          .caseName {
+            font-size: 16px;
+            font-family: Source Han Sans CN;
+            font-weight: 400;
+            color: #22fcfe;
+          }
+          .caseInfo {
+            margin-top: 5px;
+            display: flex;
+            .left {
+              display: flex;
+              flex-direction: column;
+              margin-right: 12px;
+              align-items: center;
+              img {
+                width: 170px;
+                height: 124px;
+              }
+              span {
+                font-size: 14px;
+                font-family: Source Han Sans CN;
+                font-weight: 400;
+                color: #f30203;
+                margin-top: 2px;
+              }
+            }
+            .right {
+              margin-top: 10px;
+              display: inline-block;
+              width: 216px;
+              line-height: 18px;
+              font-family: Source Han Sans CN;
+              font-weight: 400;
+              color: #00d1fe;
+              .des {
+                max-height: 54px;
+              }
+              .time {
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                img {
+                  width: 14px;
+                  height: 14px;
+                  margin-right: 7px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .caseDate {
+      margin-left: 48px;
+      margin-top: 11px;
+      width: 436px;
+      height: 40px;
+      background-color: rgba($color: #004157, $alpha: 0.9);
+      border: 1px solid rgba($color: #00d1fe, $alpha: 0.9);
+      /deep/.el-range-input {
+        background: transparent;
+        font-size: 16px;
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        color: #00d1fe;
+      }
+      /deep/.el-range-separator {
+        color: #00d1fe;
+      }
+    }
+    /deep/.caseDate.el-input__inner {
+      border-radius: 0px;
+    }
+    //折叠
+    .fold {
+      width: 60px;
+      height: 596px;
+      background: url(../../assets/images/gisDispatch/fold.svg) no-repeat;
+      background-size: 100% 100%;
+      margin-top: 175px;
+      cursor: pointer;
+      z-index: 100;
     }
   }
 }
