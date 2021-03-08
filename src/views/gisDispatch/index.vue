@@ -50,7 +50,10 @@
     <div class="caseBox">
       <div class="caseList">
         <div class="title">案件列表</div>
-        <div class="add"></div>
+        <div class="btns">
+          <span @click.stop="addCase"></span>
+          <span></span>
+        </div>
         <div class="caseNum">
           <template v-for="(item, index) in caseNums">
             <div :key="index">
@@ -97,13 +100,16 @@
       </div>
       <div class="fold" @click.stop="caseFold = !caseFold"></div>
     </div>
+    <AddCase :isShow.sync="showCaseDlg"></AddCase>
   </div>
 </template>
 
 <script>
+import AddCase from './components/addCase.vue'
 export default {
   data () {
     return {
+      showCaseDlg: false,
       caseFold: false,
       dateRange: '',
       rotate: false,
@@ -236,7 +242,9 @@ export default {
       ]
     }
   },
-
+  components: {
+    AddCase
+  },
   created () {},
   mounted () {
     const me = this
@@ -274,9 +282,18 @@ export default {
         r.width = (r.num / max) * 100
       })
     },
+    /**
+     * 底部工具栏展开/收缩
+     */
     rotateClick () {
       this.isfoldTool = !this.isfoldTool
       this.rotate = !this.rotate
+    },
+    /**
+     * 新增案件
+     */
+    addCase () {
+      this.showCaseDlg = true
     }
   }
 }
@@ -373,7 +390,7 @@ export default {
     height: 88px;
     position: absolute;
     left: 48px;
-    bottom: 43px;
+    top:949px;
     display: flex;
     align-items: center;
     .btn {
@@ -428,26 +445,25 @@ export default {
     }
   }
 
-  .listScroll::-webkit-scrollbar {
-    width: 2px;
-  }
-  .listScroll::-webkit-scrollbar-thumb {
-    /*滚动条里面小方块*/
-    border-radius: 3px;
-    background: #00b7ff;
-  }
-  .listScroll::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    background: transparent;
-  }
+  // .listScroll::-webkit-scrollbar {
+  //   width: 2px;
+  // }
+  // .listScroll::-webkit-scrollbar-thumb {
+  //   /*滚动条里面小方块*/
+  //   border-radius: 3px;
+  //   background: #00b7ff;
+  // }
+  // .listScroll::-webkit-scrollbar-track {
+  //   /*滚动条里面轨道*/
+  //   background: transparent;
+  // }
 
   .caseBox {
     display: flex;
     font-size: 12px;
     position: absolute;
-    top: 50%;
+    top: 124px;
     right: 0px;
-    transform: translateY(-50%);
     box-sizing: border-box;
     height: 910px;
 
@@ -475,16 +491,23 @@ export default {
         padding-left: 17px;
         line-height: 30px;
       }
-      //添加案件
-      .add {
-        width: 30px;
-        height: 30px;
+      .btns {
         position: absolute;
         top: 22px;
         right: 30px;
-        background: url(../../assets/images/gisDispatch/+.svg) no-repeat;
-        background-size: 100% 100%;
-        cursor: pointer;
+        span {
+          display: inline-block;
+          width: 30px;
+          height: 30px;
+          background: url(../../assets/images/gisDispatch/+.svg) no-repeat;
+          background-size: 100% 100%;
+          cursor: pointer;
+          margin-left: 20px;
+        }
+        span:nth-child(2) {
+          background: url(../../assets/images/gisDispatch/refresh.svg) no-repeat;
+          background-size: 100% 100%;
+        }
       }
       //案件数目
       .caseNum {
@@ -650,5 +673,17 @@ export default {
       z-index: 100;
     }
   }
+
+  /deep/.people-selec-Popper {
+  .el-input__inner {
+    color: #00caf6;
+    width: 190px;
+    height: 26px;
+    line-height: 26px;
+    border: 1px solid #00d2ff;
+    border-radius: 0px;
+    //background-color: rgba($color: #09546d, $alpha: 0.85);
+  }
+}
 }
 </style>
