@@ -48,57 +48,63 @@
       </div>
     </div>
     <div class="caseBox">
-      <div class="caseList">
-        <div class="title">案件列表</div>
-        <div class="btns">
-          <span @click.stop="addCase"></span>
-          <span></span>
-        </div>
-        <div class="caseNum">
-          <template v-for="(item, index) in caseNums">
-            <div :key="index">
-              <div>{{ item.num }}</div>
-              <span>{{ item.status }}</span>
-              <span :style="{ background: item.color }"></span>
-            </div>
-          </template>
-        </div>
-        <el-date-picker
-          v-model="dateRange"
-          type="datetimerange"
-          range-separator="一"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          class="caseDate"
-        ></el-date-picker>
-        <div class="list browserScroll">
-          <template v-for="(item, index) in cases">
-            <div :key="index">
-              <div class="caseName">{{ item.name }}</div>
-              <div class="caseInfo">
-                <div class="left">
-                  <img src="../../assets/images/gisDispatch/no-pic.svg" />
-                  <span>待处理</span>
-                </div>
-                <div class="right">
-                  <span class="des">{{ item.des }}</span>
-                  <div class="time">
-                    <img src="../../assets/images/gisDispatch/time.svg" />
-                    <span>{{ item.time }}</span>
-                  </div>
-                  <div class="time">
-                    <img src="../../assets/images/gisDispatch/addr.svg" />
-                    <span>{{ item.address }}</span>
-                  </div>
-                </div>
+      <transition name="showCases">
+        <div class="caseList" v-show="!caseFold">
+          <div class="title">案件列表</div>
+          <div class="btns">
+            <span @click.stop="addCase"></span>
+            <span></span>
+          </div>
+          <div class="caseNum">
+            <template v-for="(item, index) in caseNums">
+              <div :key="index">
+                <div>{{ item.num }}</div>
+                <span>{{ item.status }}</span>
+                <span :style="{ background: item.color }"></span>
               </div>
-              <img src="../../assets/images/gisDispatch/jump.svg" />
-              <div class="tag">待处理</div>
-            </div>
-          </template>
+            </template>
+          </div>
+          <el-date-picker
+            v-model="dateRange"
+            type="datetimerange"
+            range-separator="一"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            class="caseDate"
+          ></el-date-picker>
+          <div class="list browserScroll">
+            <template v-for="(item, index) in cases">
+              <div :key="index">
+                <div class="caseName">{{ item.name }}</div>
+                <div class="caseInfo">
+                  <div class="left">
+                    <img src="../../assets/images/gisDispatch/no-pic.svg" />
+                    <span>待处理</span>
+                  </div>
+                  <div class="right">
+                    <span class="des">{{ item.des }}</span>
+                    <div class="time">
+                      <img src="../../assets/images/gisDispatch/time.svg" />
+                      <span>{{ item.time }}</span>
+                    </div>
+                    <div class="time">
+                      <img src="../../assets/images/gisDispatch/addr.svg" />
+                      <span>{{ item.address }}</span>
+                    </div>
+                  </div>
+                </div>
+                <img src="../../assets/images/gisDispatch/jump.svg" />
+                <div class="tag">待处理</div>
+              </div>
+            </template>
+          </div>
         </div>
-      </div>
-      <div class="fold" @click.stop="caseFold = !caseFold"></div>
+      </transition>
+      <div
+        class="foldBox"
+        @click.stop="caseFold = !caseFold"
+        :class="{ unfold: caseFold }"
+      ></div>
     </div>
     <AddCase :isShow.sync="showCaseDlg"></AddCase>
   </div>
@@ -390,7 +396,7 @@ export default {
     height: 88px;
     position: absolute;
     left: 48px;
-    top:949px;
+    top: 949px;
     display: flex;
     align-items: center;
     .btn {
@@ -466,14 +472,24 @@ export default {
     right: 0px;
     box-sizing: border-box;
     height: 910px;
-
+    overflow: hidden;
+    .showCases-enter-active,
+    .showCases-leave-active {
+      transition: all 0.8s;
+    }
+    .showCases-enter,
+    .showCases-leave-active {
+      transform: translate3d(528px, 0, 0);
+      opacity: 0;
+    }
     //案件列表
     .caseList {
       width: 528px;
       height: 100%;
       background: url(../../assets/images/gisDispatch/case-box.svg) no-repeat;
       background-size: 100% 100%;
-      transform: translate(37px, 0px);
+      position: relative;
+      left: 37px;
       .title {
         width: 218px;
         height: 30px;
@@ -564,6 +580,7 @@ export default {
             no-repeat;
           background-size: 100% 100%;
           cursor: pointer;
+          margin-top: 5px;
           margin-bottom: 10px;
           padding: 8px 0px 0px 14px;
           > img {
@@ -577,7 +594,7 @@ export default {
             position: absolute;
             width: 76px;
             height: 55px;
-            top: 0px;
+            top: -4px;
             right: -10px;
             background: url(../../assets/images/gisDispatch/red-tag.svg)
               no-repeat;
@@ -663,27 +680,30 @@ export default {
       border-radius: 0px;
     }
     //折叠
-    .fold {
+    .foldBox {
       width: 60px;
       height: 596px;
-      background: url(../../assets/images/gisDispatch/fold.svg) no-repeat;
-      background-size: 100% 100%;
       margin-top: 175px;
       cursor: pointer;
       z-index: 100;
+      background: url(../../assets/images/gisDispatch/fold.svg) no-repeat;
+      background-size: 100% 100%;
+    }
+    .foldBox.unfold {
+      background: url(../../assets/images/gisDispatch/unfold.svg) no-repeat;
+      background-size: 100% 100%;
     }
   }
 
   /deep/.people-selec-Popper {
-  .el-input__inner {
-    color: #00caf6;
-    width: 190px;
-    height: 26px;
-    line-height: 26px;
-    border: 1px solid #00d2ff;
-    border-radius: 0px;
-    //background-color: rgba($color: #09546d, $alpha: 0.85);
+    .el-input__inner {
+      color: #00caf6;
+      width: 190px;
+      height: 26px;
+      line-height: 26px;
+      border: 1px solid #00d2ff;
+      border-radius: 0px;
+    }
   }
-}
 }
 </style>
