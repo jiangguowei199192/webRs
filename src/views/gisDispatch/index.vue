@@ -316,6 +316,7 @@ export default {
     height: 100%;
     width: 100%;
     background: url(../../assets/images/gisDispatch/bg.svg) no-repeat;
+    pointer-events: none;
   }
   //资源总览
   .resBox {
