@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-06 14:40:37
+ * @LastEditTime: 2021-03-08 16:38:13
 -->
 <template>
   <div class="fireBox">
@@ -188,21 +188,35 @@ export default {
     .tool__title {
       margin: 0 8px 0 5px;
     }
-    .belongSel {
+    .belongSel,
+    .search {
       margin-right: 15px;
       /deep/.el-input__inner {
         color: #c5f3ff;
         border: solid 1px #1eb0fc;
         border-radius: 0;
         background-color: transparent;
-        font-size: 12px;
+        font-size: 15px;
       }
     }
     .btn {
-      margin-left: 255px;
+      margin-left: 225px;
+      img {
+        width: 20px;
+        height: 25px;
+        margin-right: 8px;
+      }
     }
     .resetBtn {
       margin-left: 25px;
+      img {
+        width: 12px;
+        height: 10px;
+        margin-right: 10px;
+      }
+    }
+    span {
+      font-size: 16px;
     }
   }
 }

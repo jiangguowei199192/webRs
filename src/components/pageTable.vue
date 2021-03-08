@@ -341,7 +341,7 @@ export default {
 <style lang="scss" scoped>
 .tableBox {
   background: rgba(0, 65, 87, 0.6);
-  // height: 760px;
+  height: 823px;
   .handerBox {
     .btn {
       display: inline-block;

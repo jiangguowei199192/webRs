@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-06 17:12:26
+ * @LastEditTime: 2021-03-08 15:55:10
 -->
 <template>
   <div class="caseCenter">
@@ -23,59 +23,82 @@
         <div class="case__content webFsScroll">
           <div class="base">
             <h4>基本信息</h4>
-            <p>
-              <span>案件名称: {{ "执法专班巡逻" }}</span>
-            </p>
-            <p>
-              <span>案发时间: {{ "2020-11-04 16:06:00" }}</span>
-            </p>
-            <p>
-              <span>举报人: {{ "王伟军" }}</span
-              ><span>性别: {{ "男" }}</span>
-            </p>
-            <p>
-              <span>身份证: {{ "2345432345678905433" }}</span
-              ><span>举报电话: {{ "15523489371" }}</span>
-            </p>
-            <p>
-              <span>举报地址: {{ "江夏区金口水域" }}</span>
-            </p>
-            <p>
-              <span
-                >简要描述: {{ "执法专班于长江金口水域发现疑似电捕鱼船" }}</span
-              >
-            </p>
-            <p>
-              <span>接案人: {{ "刘秀敏" }} </span>
-            </p>
+            <div>
+              <p>
+                <span>案件名称: </span> <span>{{ "执法专班巡逻" }}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                <span>案发时间: </span><span>{{ "2020-11-04 16:06:00" }}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                <span>举报人: </span><span>{{ "王伟军" }}</span>
+              </p>
+              <p>
+                <span>性别: </span><span>{{ "男" }}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                <span>身份证: </span><span>{{ "2345432345678905433" }}</span>
+              </p>
+              <p>
+                <span>举报电话: </span><span>{{ "15523489371" }}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                <span>举报地址: </span><span>{{ "江夏区金口水域" }}</span>
+              </p>
+            </div>
+            <div class="simple_describe">
+              <p>
+                <span>简要描述: </span
+                ><span>{{
+                  "执法专班于长江金口水域发现疑似电捕鱼船 执法专班于长江金口水域发现疑似电捕鱼船 执法专班于长江金口水域发现疑似电捕鱼船"
+                }}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                <span>接案人: </span><span>{{ "刘秀敏" }}</span>
+              </p>
+            </div>
           </div>
           <div class="handel">
             <h4>处置信息</h4>
-            <p>
-              <span>处置时间: {{ "2020-11-04 16:06:00" }}</span
-              ><span>处置人: {{ "王伟军" }}</span>
-            </p>
-            <p class="handel__result">
-              <span
-                >处置结果:
-                {{
-                  "渔政执法快艇到达案发水域后首先对龙口闸水域非法捕捞行为进行打击查处，随后才进入倒水河水域，但此时嫌疑人员已经上岸逃离。执法人员乘坐执法快艇进一步巡查后，发现嫌疑人驾驶的船舶，并将其带回渔政码头扣押并作进一步调查。"
-                }}</span
-              >
-            </p>
-            <p class="handel__attach">
-              相关附件:
-              <img
-                src="http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png"
-                alt=""
-              /><img
-                src="http://122.112.203.178:80/cloud-river/case/1609136358015_1609136358015.png"
-                alt=""
-              /><img
-                src="http://122.112.203.178:80/cloud-river/case/1609136358882_1609136358882.png"
-                alt=""
-              />
-            </p>
+            <div>
+              <p>
+                <span>处置时间: </span><span>{{ "2020-11-04 16:06:00" }}</span>
+              </p>
+              <p>
+                <span>处置人: </span><span>{{ "王伟军" }}</span>
+              </p>
+            </div>
+            <div class="handel__result">
+              <p>
+                <span>处置结果:</span
+                ><span>
+                  {{
+                    "渔政执法快艇到达案发水域后首先对龙口闸水域非法捕捞行为进行打击查处，随后才进入倒水河水域，但此时嫌疑人员已经上岸逃离。执法人员乘坐执法快艇进一步巡查后，发现嫌疑人驾驶的船舶，并将其带回渔政码头扣押并作进一步调查。"
+                  }}</span
+                >
+              </p>
+            </div>
+            <div class="handel__attach">
+              <span>相关附件: </span>
+              <div class="webFsScroll">
+                <img
+                  v-for="(img_item, img_index) in imgList"
+                  :key="img_index"
+                  :src="img_item.picPath"
+                  alt=""
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -110,7 +133,33 @@ export default {
         ]
       },
       isShow: false,
-      fireInfo: {}
+      fireInfo: {},
+      imgList: [
+        {
+          picPath:
+            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
+        },
+        {
+          picPath:
+            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
+        },
+        {
+          picPath:
+            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
+        },
+        {
+          picPath:
+            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
+        },
+        {
+          picPath:
+            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
+        },
+        {
+          picPath:
+            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
+        }
+      ]
     }
   },
 
@@ -152,14 +201,12 @@ export default {
 
 <style lang="scss" scoped>
 .caseCenter {
-  // height: 872px;
   display: flex;
   padding: 12px 60px 60px 60px;
   .case__table {
     width: 1140px;
   }
   .case__detail {
-    flex-grow: 1;
     width: 644px;
     margin: 80px 0 0 10px;
     .case__info {
@@ -178,65 +225,72 @@ export default {
         padding: 0 20px;
       }
       .case__content {
-        margin-top: 10px;
+        width: 644px;
         height: 236px;
+        margin-top: 10px;
         overflow-y: auto;
         h4 {
           font-size: 16px;
           font-weight: bold;
           color: #82f3fa;
-          margin-left: 20px;
           border-bottom: 1px solid #82f3fa;
           height: 35px;
           line-height: 35px;
         }
-        p {
+        .base,
+        .handel {
           font-size: 14px;
-          height: 40px;
-          line-height: 40px;
-          padding: 0 20px;
-          color: #82f3fa;
-          span {
-            display: inline-block;
-            // color: #fff;
-            // word-break: keep-all;
-            // white-space: nowrap;
-            // overflow: hidden;
-            // text-overflow: ellipsis;
-          }
-          span:nth-child(1) {
-            width: 306px;
-          }
-          span:nth-child(2) {
-            width: 220px;
-            margin-left: 70px;
+          color: #fff;
+          height: 36px;
+          line-height: 36px;
+          padding: 0 30px;
+          div {
+            display: flex;
+            justify-content: space-between;
+            p {
+              width: 100%;
+              span:nth-child(1) {
+                color: #82f3fa;
+                font-weight: bold;
+              }
+            }
+            p:nth-child(2) {
+              width: 80%;
+              margin-left: 140px;
+            }
           }
         }
+        .base {
+          height: auto;
+          margin-bottom: 10px;
+        }
+        .simple_describe,
         .handel__result {
-          width: auto;
-          height: 70px;
-          line-height: 25px;
-          span:nth-child(1) {
-            width: 100%;
-            // word-break: keep-all;
-            white-space: normal;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
+          line-height: 28px;
         }
         .handel__attach {
           height: 80px;
           margin-top: 15px;
-          img {
-            width: 120px;
-            height: 68px;
-            margin-right: 10px;
-            vertical-align: top;
+          span {
+            color: #82f3fa;
+            font-weight: bold;
+          }
+          div {
+            width: 500px;
+            overflow-x: auto;
+            cursor: pointer;
+            img {
+              width: 120px;
+              height: 68px;
+              margin-right: 10px;
+              vertical-align: top;
+            }
           }
         }
       }
     }
     .handel__info {
+      width: 644px;
       height: 536px;
       background: rgba(0, 65, 87, 0.6);
       margin-top: 10px;
