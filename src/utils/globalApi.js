@@ -11,7 +11,7 @@ $.ajax({
   async: false, // fasle表示同步请求，true表示异步请求
   type: 'get',
   dataType: 'json',
-  url: '/webFs/serverconfig.json', // 请求地址
+  url: '/webRs/serverconfig.json', // 请求地址
   success: function (res) {
     // 请求成功
     configJson = res

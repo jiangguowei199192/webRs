@@ -45,8 +45,8 @@ const px2rem = require('postcss-px2rem')
 
 // 这里只列一部分，具体配置惨考文档啊
 module.exports = {
-  publicPath: '/webFs/',
-  outputDir: 'webFs', // 在npm run build时 生成文件的目录 type:string, default:'dist'
+  publicPath: '/webRs/',
+  outputDir: 'webRs', // 在npm run build时 生成文件的目录 type:string, default:'dist'
   /*
     构建多页面模式的应用程序.每个“页面”都应该有一个相应的JavaScript条目文件。该值应该是一
     个对象，其中键是条目的名称，而该值要么是指定其条目、模板和文件名的对象，要么是指定其条目

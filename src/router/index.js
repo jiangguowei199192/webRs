@@ -66,7 +66,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: '/webFs/',
+  base: '/webRs/',
   routes,
   // 记录滚动条的坐标
   scrollBehavior (to, from, savedPosition) {
