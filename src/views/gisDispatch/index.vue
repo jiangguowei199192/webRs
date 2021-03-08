@@ -578,7 +578,7 @@ export default {
             width: 76px;
             height: 55px;
             top: 0px;
-            right: -18px;
+            right: -10px;
             background: url(../../assets/images/gisDispatch/red-tag.svg)
               no-repeat;
             background-size: 100% 100%;
