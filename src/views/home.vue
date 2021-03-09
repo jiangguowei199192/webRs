@@ -36,7 +36,7 @@
                 <div class="info">
                   <div class="person">
                     <img :src="perSonPic" alt />
-                    <span class="uName">张三</span>
+                    <span class="uName">{{userName||'-'}}</span>
 
                     <el-dropdown @command="handleCommand">
                       <span class="el-dropdown-link">
@@ -77,6 +77,7 @@ export default {
   name: 'Home',
   data () {
     return {
+      userName: '',
       isFixed: false,
       projectTitle: '',
       timeObj: '', // 当前时间
@@ -222,6 +223,8 @@ export default {
         .get(loginApi.getUserDetail)
         .then(res => {
           if (res.data.code === 0) {
+            const data = res.data.data
+            this.userName = data.username
             tmpAxios
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
@@ -425,8 +428,8 @@ export default {
                   padding: 8px 0;
                   border: 1px solid #01759d;
                   li.el-dropdown-menu__item {
-                    font-size: 12px;
                     font-family: Source Han Sans CN;
+                    font-size: 12px;
                     font-weight: bold;
                     color: #00b8ff;
                     padding: 0;
