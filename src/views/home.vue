@@ -37,7 +37,16 @@
                   <div class="person">
                     <img :src="perSonPic" alt />
                     <span class="uName">张三</span>
-                    <img :src="settingPic" alt />
+
+                    <el-dropdown @command="handleCommand">
+                      <span class="el-dropdown-link">
+                        <img :src="settingPic" alt />
+                      </span>
+                      <el-dropdown-menu slot="dropdown" :append-to-body="false" class="settingDrop">
+                        <el-dropdown-item command="0">修改密码</el-dropdown-item>
+                        <el-dropdown-item command="1">退出</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
                   </div>
                 </div>
               </div>
@@ -272,6 +281,18 @@ export default {
       } else if (path === '/systemSettings') {
         this.isActive = 3
       }
+    },
+    handleCommand (command) {
+      switch (command) {
+        case '0':
+          break
+        case '1':
+          this.$router.push({ path: '/login' })
+          break
+
+        default:
+          break
+      }
     }
   },
   watch: {
@@ -363,6 +384,12 @@ export default {
               background-size: 100% 100%;
             }
           }
+          .el-dropdown > .el-dropdown-link:focus {
+            outline: 0;
+          }
+          .el-dropdown > .el-dropdown-link {
+            outline: 0;
+          }
           div.settings {
             position: relative;
             width: 348px;
@@ -370,7 +397,7 @@ export default {
             background-size: 100% 100%;
             div.info {
               position: absolute;
-              top: -8px;
+              top: -12px;
               right: 18px;
               div.person {
                 img {
@@ -388,6 +415,37 @@ export default {
                   margin: 0 32px 0 18px;
                   position: relative;
                   top: -6px;
+                }
+                /deep/ ul.settingDrop {
+                  box-sizing: border-box;
+                  width: 82px;
+                  // height: 50px;
+                  background: #022d42;
+                  border: none;
+                  padding: 8px 0;
+                  border: 1px solid #01759d;
+                  li.el-dropdown-menu__item {
+                    font-size: 12px;
+                    font-family: Source Han Sans CN;
+                    font-weight: bold;
+                    color: #00b8ff;
+                    padding: 0;
+                    text-align: center;
+                    line-height: normal;
+                    // padding: 0 16px;
+                  }
+                  li:nth-child(2) {
+                    margin-top: 8px;
+                  }
+                  li:hover {
+                    background: transparent;
+                  }
+                  .popper__arrow {
+                    display: none;
+                  }
+                }
+                /deep/ ul.el-popper {
+                  margin: 0;
                 }
               }
             }
