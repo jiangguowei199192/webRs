@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-08 15:55:10
+ * @LastEditTime: 2021-03-09 17:21:54
 -->
 <template>
   <div class="caseCenter">
@@ -102,7 +102,58 @@
           </div>
         </div>
       </div>
-      <div class="handel__info"></div>
+      <div class="handel__info ">
+        <h3><span>处置记录 | </span><span>聊天记录</span></h3>
+        <!-- <vue-timeline-update
+          :date="new Date('2017-02-26')"
+          title="(已完成 | 正常)"
+          description="接案人员: 王伟军"
+          thumbnail=""
+          category="接案"
+          icon="code"
+          color="red"
+        />
+        <vue-timeline-update
+          :date="new Date('2016-11-22')"
+          title="(已完成 | 正常)"
+          description="已推送5人"
+          thumbnail=""
+          category="推送"
+          icon="code"
+          color="purple"
+        />
+        <vue-timeline-update
+          :date="new Date('2016-11-22')"
+          title="(已完成 | 异常: 2)"
+          description="已推送8人"
+          thumbnail=""
+          category="处警"
+          icon="code"
+          color="orange"
+        />
+        <vue-timeline-update
+          :date="new Date('2016-11-22')"
+          title="(进行中)"
+          description="已推送8人"
+          thumbnail=""
+          category="处置"
+          icon="code"
+          color="turquoise"
+        />
+        <vue-timeline-update
+          :date="new Date('2016-09-30')"
+          title=""
+          description="处置结果：这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录"
+          thumbnail=""
+          category="结案"
+          icon="code"
+          color="orange"
+          is-last
+        /> -->
+        <div class="handel__chat__record ">
+          <CaseStep></CaseStep>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -110,10 +161,12 @@
 <script>
 import CasePage from './components/casePage'
 import { fireApi } from '@/api/videoSystem/fireAlarm.js'
+import CaseStep from '@/components/caseStep.vue'
 
 export default {
   components: {
-    CasePage
+    CasePage,
+    CaseStep
   },
 
   data () {
@@ -294,6 +347,17 @@ export default {
       height: 536px;
       background: rgba(0, 65, 87, 0.6);
       margin-top: 10px;
+      h3 {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 35px;
+        padding: 5px 15px;
+        span:nth-child(1) {
+          color: #82f3fa;
+        }
+      }
+      .handel__chat__record {
+      }
     }
   }
 }
