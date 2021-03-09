@@ -1,0 +1,131 @@
+.routeBox,
+.pointBox {
+  position    : relative;
+  box-sizing  : border-box;
+  font-size   : 14px;
+  padding-top : 10px;
+  padding-left: 10px;
+}
+
+.pointBox {
+  width          : 306px;
+  height         : 140px;
+  background     : url('../images/point-box.svg') no-repeat;
+  background-size: 100% 100%;
+}
+
+.pointBox .close,
+.routeBox .close,
+.camerBox .close {
+  display        : inline-block;
+  position       : absolute;
+  width          : 12px;
+  height         : 12px;
+  top            : 19px;
+  right          : 19px;
+  background     : url('../images/x.svg') no-repeat;
+  background-size: 100% 100%;
+  cursor         : pointer;
+}
+
+.pointBox .gisTitle,
+.routeBox .gisTitle,
+.camerBox .gisTitle {
+  left           : 10px;
+  top            : -18px;
+  position       : absolute;
+  width          : 155px;
+  height         : 28px;
+  background     : url('../images/gis-title.svg') no-repeat;
+  background-size: 100% 100%;
+}
+
+.pointBox .gisTitle span,
+.routeBox .gisTitle span,
+.camerBox .gisTitle span {
+  font-family: Source Han Sans CN;
+  font-weight: bold;
+  color      : #00b8ff;
+  margin-left: 15px;
+  line-height: 28px;
+}
+
+.pointBox .ulBox,
+.routeBox .ulBox {
+  box-sizing      : border-box;
+  background-color: rgba(1, 121, 162, 0.95);
+  padding-top     : 15px;
+  padding-left    : 24px;
+  width           : 286px;
+}
+
+.pointBox .ulBox {
+  height: 120px;
+}
+
+.pointBox .ulBox ul li {
+  margin-bottom: 10px;
+}
+
+.camerBox .ulBox ul li {
+  margin-bottom: 10px;
+}
+
+.pointBox .ulPoint ul li,
+.routeBox .ulBox ul li {
+  margin-bottom: 5px;
+}
+
+.pointBox .ulBox ul li span,
+.routeBox .ulBox ul li span,
+.camerBox .ulBox ul li span {
+  color      : #00B8FF;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+}
+
+.pointBox .ulBox ul li span:nth-child(1),
+.routeBox .ulBox ul li span:nth-child(1),
+.camerBox .ulBox ul li span:nth-child(1) {
+  margin-right: 6px;
+  display     : inline-block;
+  width       : 70px;
+}
+
+.pointBox .ulBox ul li span:nth-child(2),
+.routeBox .ulBox ul li span:nth-child(2),
+.camerBox .ulBox ul li span:nth-child(2) {
+  color: #fff;
+}
+
+.pointBox .arrow,
+.routeBox .arrow,
+.camerBox .arrow {
+  position       : absolute;
+  width          : 41px;
+  height         : 27px;
+  top            : 149px;
+  left           : 132px;
+  background     : url('../images/arrow.svg') no-repeat;
+  background-size: 100% 100%;
+}
+
+.routeBox {
+  width          : 306px;
+  height         : 163px;
+  background     : url('../images/route-box.svg') no-repeat;
+  background-size: 100% 100%;
+}
+
+.routeBox .ulBox {
+  height: 143px;
+}
+
+.routeBox .arrow {
+  top: 172px;
+}
+
+.camerBox .arrow {
+  left: 222px;
+  top : 181px;
+}

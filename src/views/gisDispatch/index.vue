@@ -106,12 +106,16 @@
         :class="{ unfold: caseFold }"
       ></div>
     </div>
+    <!-- <camerBox class="test"></camerBox> -->
     <AddCase :isShow.sync="showCaseDlg"></AddCase>
   </div>
 </template>
 
 <script>
 import AddCase from './components/addCase.vue'
+import camerBox from './components/camerBox'
+import videoMixin from '../videoSystem/mixins/videoMixin'
+import createVueCompFunc from '@/utils/createVueComp'
 export default {
   data () {
     return {
@@ -248,6 +252,7 @@ export default {
       ]
     }
   },
+  mixins: [videoMixin],
   components: {
     AddCase
   },
@@ -261,11 +266,43 @@ export default {
       this.mapUpdateSize()
     })
     this.getResDataWidth()
+    this.$refs.gduMap.map2D.gisDispatcManager.setCreateVueCompFunc(
+      this.createVueCom
+    )
+    setTimeout(() => {
+      me.addCamera()
+    }, 3000)
   },
   beforeDestroy () {
+    if (this.$refs.gduMap) {
+      this.$refs.gduMap.map2D.gisDispatcManager.removeAll()
+    }
     window.onresize = null
   },
   methods: {
+    addCamera () {
+      if (!this.$refs.gduMap) return
+      this.onlineArray.forEach((o) => {
+        o.longitude = o.deviceLongitude
+        o.latitude = o.deviceLatitude
+        o.type = 'RP_Camera'
+        if (o.onlineStatus === 'online' && o.children && o.children.length > 0) {
+          o.urls = []
+          o.children.forEach((l) => {
+            o.urls.push(l.streamUrl)
+          })
+        }
+      })
+      this.$refs.gduMap.map2D.gisDispatcManager.addDatas(this.onlineArray)
+    },
+    /**
+     *  动态创建vue组件
+     */
+    createVueCom (props) {
+      if (props.dataInfo.type === 'RP_Camera') {
+        return createVueCompFunc(camerBox, props)
+      }
+    },
     /**
      * 刷新地图尺寸
      */
@@ -306,6 +343,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.test {
+  position: absolute;
+  left: 300px;
+  top: 200px;
+}
 .gisDispatch {
   height: 1080px;
   position: relative;
@@ -335,7 +377,6 @@ export default {
       width: 266px;
       height: 215px;
       background-color: rgba($color: #004157, $alpha: 0.9);
-      opacity: 0.8;
       margin-top: 9px;
       margin-left: 9px;
       display: flex;
