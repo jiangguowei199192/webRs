@@ -106,7 +106,6 @@
         :class="{ unfold: caseFold }"
       ></div>
     </div>
-    <!-- <camerBox class="test"></camerBox> -->
     <AddCase :isShow.sync="showCaseDlg"></AddCase>
   </div>
 </template>
@@ -114,6 +113,7 @@
 <script>
 import AddCase from './components/addCase.vue'
 import camerBox from './components/camerBox'
+import caseBox from './components/caseBox'
 import videoMixin from '../videoSystem/mixins/videoMixin'
 import createVueCompFunc from '@/utils/createVueComp'
 export default {
@@ -266,7 +266,7 @@ export default {
       this.mapUpdateSize()
     })
     this.getResDataWidth()
-    this.$refs.gduMap.map2D.gisDispatcManager.setCreateVueCompFunc(
+    this.$refs.gduMap.map2D.gisDispatchManager.setCreateVueCompFunc(
       this.createVueCom
     )
     setTimeout(() => {
@@ -275,7 +275,7 @@ export default {
   },
   beforeDestroy () {
     if (this.$refs.gduMap) {
-      this.$refs.gduMap.map2D.gisDispatcManager.removeAll()
+      this.$refs.gduMap.map2D.gisDispatchManager.removeAll()
     }
     window.onresize = null
   },
@@ -285,15 +285,15 @@ export default {
       this.onlineArray.forEach((o) => {
         o.longitude = o.deviceLongitude
         o.latitude = o.deviceLatitude
-        o.type = 'RP_Camera'
-        if (o.onlineStatus === 'online' && o.children && o.children.length > 0) {
-          o.urls = []
-          o.children.forEach((l) => {
-            o.urls.push(l.streamUrl)
-          })
-        }
+        o.type = 'RP_Case'
+        // if (o.onlineStatus === 'online' && o.children && o.children.length > 0) {
+        //   o.urls = []
+        //   o.children.forEach((l) => {
+        //     o.urls.push(l.streamUrl)
+        //   })
+        // }
       })
-      this.$refs.gduMap.map2D.gisDispatcManager.addDatas(this.onlineArray)
+      this.$refs.gduMap.map2D.gisDispatchManager.addDatas(this.onlineArray)
     },
     /**
      *  动态创建vue组件
@@ -301,6 +301,8 @@ export default {
     createVueCom (props) {
       if (props.dataInfo.type === 'RP_Camera') {
         return createVueCompFunc(camerBox, props)
+      } else if (props.dataInfo.type === 'RP_Case') {
+        return createVueCompFunc(caseBox, props)
       }
     },
     /**
