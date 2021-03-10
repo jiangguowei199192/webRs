@@ -2,7 +2,8 @@
 .pointBox,
 .caseBox,
 .camerBox,
-.droneBox {
+.droneBox,
+.singleCase {
   position    : relative;
   box-sizing  : border-box;
   font-size   : 14px;
@@ -37,7 +38,8 @@
 .routeBox .gisTitle,
 .camerBox .gisTitle,
 .caseBox .gisTitle,
-.droneBox .gisTitle {
+.droneBox .gisTitle,
+.singleCase .gisTitle {
   left           : 10px;
   top            : -18px;
   position       : absolute;
@@ -51,7 +53,8 @@
 .routeBox .gisTitle span,
 .camerBox .gisTitle span,
 .caseBox .gisTitle span,
-.droneBox .gisTitle span {
+.droneBox .gisTitle span,
+.singleCase .gisTitle span {
   font-family: Source Han Sans CN;
   font-weight: bold;
   color      : #00b8ff;
@@ -109,7 +112,7 @@
 .droneBox .ulBox ul li span:nth-child(1) {
   margin-right: 6px;
   display     : inline-block;
-  min-width       : 70px;
+  min-width   : 70px;
 }
 
 .pointBox .ulBox ul li span:nth-child(2),

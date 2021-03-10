@@ -22,6 +22,12 @@ const routes = [
     name: 'home',
     component: () => import('../views/home'),
     children: [
+      // gis调度(异常处理)
+      {
+        path: '/gisDispatchDispose',
+        name: 'gisDispatchDispose',
+        component: () => import('../views/gisDispatch/caseDetail')
+      },
       // gis调度
       {
         path: '/gisDispatch',

@@ -1,122 +1,115 @@
 <template>
-  <div class="gisDispatch">
-    <gMap
-      ref="gduMap"
-      handleType="devMap"
-      :bShowAllTools="false"
-      :baseMapIndex="2"
-      :bAutoLocate="false"
-      class="map"
-    ></gMap>
-    <div class="overlayer"></div>
-    <div class="resBox">
-      <div class="title">
-        <span>资源总览</span>
+  <caseMain ref="caseMain">
+    <div class="gisDispatch" slot="main">
+      <div class="resBox">
+        <div class="title">
+          <span>资源总览</span>
+        </div>
+        <div class="data">
+          <template v-for="(item, index) in resInfos">
+            <div :key="index" :style="{ color: item.color }">
+              <img :src="item.img" />
+              <span>{{ item.name }}</span>
+              <span>
+                <span
+                  :style="{ background: item.color, width: item.width + '%' }"
+                  class="rect"
+                ></span>
+              </span>
+              <span>{{ item.num }}</span>
+            </div>
+          </template>
+        </div>
       </div>
-      <div class="data">
-        <template v-for="(item, index) in resInfos">
-          <div :key="index" :style="{ color: item.color }">
-            <img :src="item.img" />
-            <span>{{ item.name }}</span>
-            <span>
-              <span
-                :style="{ background: item.color, width: item.width + '%' }"
-                class="rect"
-              ></span>
-            </span>
-            <span>{{ item.num }}</span>
-          </div>
-        </template>
+      <div class="bottomTool">
+        <div
+          class="btn"
+          @click.stop="rotateClick"
+          :class="[rotate ? 'rotate' : 'rotate2']"
+        ></div>
+        <div>
+          <transition name="showContent">
+            <div v-show="!isfoldTool" class="toolBox">
+              <template v-for="(item, index) in tools">
+                <div :key="index">
+                  <img :src="item.img" />
+                </div>
+              </template>
+            </div>
+          </transition>
+        </div>
       </div>
-    </div>
-    <div class="bottomTool">
-      <div
-        class="btn"
-        @click.stop="rotateClick"
-        :class="[rotate ? 'rotate' : 'rotate2']"
-      ></div>
-      <div>
-        <transition name="showContent">
-          <div v-show="!isfoldTool" class="toolBox">
-            <template v-for="(item, index) in tools">
-              <div :key="index">
-                <img :src="item.img" />
-              </div>
-            </template>
+      <div class="caseBox1">
+        <transition name="showCases">
+          <div class="caseList" v-show="!caseFold">
+            <div class="title">案件列表</div>
+            <div class="btns">
+              <span @click.stop="addCase"></span>
+              <span></span>
+            </div>
+            <div class="caseNum">
+              <template v-for="(item, index) in caseNums">
+                <div :key="index">
+                  <div>{{ item.num }}</div>
+                  <span>{{ item.status }}</span>
+                  <span :style="{ background: item.color }"></span>
+                </div>
+              </template>
+            </div>
+            <el-date-picker
+              v-model="dateRange"
+              type="datetimerange"
+              range-separator="一"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              class="caseDate"
+            ></el-date-picker>
+            <div class="list browserScroll">
+              <template v-for="(item, index) in cases">
+                <div :key="index" @click.stop="jumpCase">
+                  <div class="caseName">{{ item.name }}</div>
+                  <div class="caseInfo">
+                    <div class="left">
+                      <img src="../../assets/images/gisDispatch/no-pic.svg" />
+                      <span>待处理</span>
+                    </div>
+                    <div class="right">
+                      <span class="des">{{ item.des }}</span>
+                      <div class="time">
+                        <img src="../../assets/images/gisDispatch/time.svg" />
+                        <span>{{ item.time }}</span>
+                      </div>
+                      <div class="time">
+                        <img src="../../assets/images/gisDispatch/addr.svg" />
+                        <span>{{ item.address }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <img
+                    src="../../assets/images/gisDispatch/jump.svg"
+                    @click.stop="jumpCase"
+                  />
+                  <div class="tag">待处理</div>
+                </div>
+              </template>
+            </div>
           </div>
         </transition>
+        <div
+          class="foldBox"
+          @click.stop="caseFold = !caseFold"
+          :class="{ unfold: caseFold }"
+        ></div>
       </div>
+      <AddCase :isShow.sync="showCaseDlg"></AddCase>
     </div>
-    <div class="caseBox1">
-      <transition name="showCases">
-        <div class="caseList" v-show="!caseFold">
-          <div class="title">案件列表</div>
-          <div class="btns">
-            <span @click.stop="addCase"></span>
-            <span></span>
-          </div>
-          <div class="caseNum">
-            <template v-for="(item, index) in caseNums">
-              <div :key="index">
-                <div>{{ item.num }}</div>
-                <span>{{ item.status }}</span>
-                <span :style="{ background: item.color }"></span>
-              </div>
-            </template>
-          </div>
-          <el-date-picker
-            v-model="dateRange"
-            type="datetimerange"
-            range-separator="一"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            class="caseDate"
-          ></el-date-picker>
-          <div class="list browserScroll">
-            <template v-for="(item, index) in cases">
-              <div :key="index">
-                <div class="caseName">{{ item.name }}</div>
-                <div class="caseInfo">
-                  <div class="left">
-                    <img src="../../assets/images/gisDispatch/no-pic.svg" />
-                    <span>待处理</span>
-                  </div>
-                  <div class="right">
-                    <span class="des">{{ item.des }}</span>
-                    <div class="time">
-                      <img src="../../assets/images/gisDispatch/time.svg" />
-                      <span>{{ item.time }}</span>
-                    </div>
-                    <div class="time">
-                      <img src="../../assets/images/gisDispatch/addr.svg" />
-                      <span>{{ item.address }}</span>
-                    </div>
-                  </div>
-                </div>
-                <img src="../../assets/images/gisDispatch/jump.svg" />
-                <div class="tag">待处理</div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </transition>
-      <div
-        class="foldBox"
-        @click.stop="caseFold = !caseFold"
-        :class="{ unfold: caseFold }"
-      ></div>
-    </div>
-    <AddCase :isShow.sync="showCaseDlg"></AddCase>
-  </div>
+  </caseMain>
 </template>
 
 <script>
 import AddCase from './components/addCase.vue'
-import camerBox from './components/camerBox'
-import droneBox from './components/droneBox'
-import caseBox from './components/caseBox'
 import videoMixin from '../videoSystem/mixins/videoMixin'
-import createVueCompFunc from '@/utils/createVueComp'
+import caseMain from './components/caseMain'
 export default {
   data () {
     return {
@@ -255,38 +248,24 @@ export default {
   },
   mixins: [videoMixin],
   components: {
-    AddCase
+    AddCase,
+    caseMain
   },
   created () {},
   mounted () {
     const me = this
-    window.onresize = () => {
-      me.mapUpdateSize()
-    }
-    this.$nextTick(() => {
-      this.mapUpdateSize()
-    })
     this.getResDataWidth()
-    this.$refs.gduMap.map2D.gisDispatchManager.setCreateVueCompFunc(
-      this.createVueCom
-    )
-    setTimeout(() => {
-      me.addCamera()
-    }, 3000)
+    // setTimeout(() => {
+    //   me.addCamera()
+    // }, 3000)
   },
-  beforeDestroy () {
-    if (this.$refs.gduMap) {
-      this.$refs.gduMap.map2D.gisDispatchManager.removeAll()
-    }
-    window.onresize = null
-  },
+  beforeDestroy () {},
   methods: {
     addCamera () {
-      if (!this.$refs.gduMap) return
       this.onlineArray.forEach((o) => {
         o.longitude = o.deviceLongitude
         o.latitude = o.deviceLatitude
-        o.type = 'RP_Drone'
+        o.type = 'RP_Case'
         o.url = o.children[0].streamUrl
         // if (o.onlineStatus === 'online' && o.children && o.children.length > 0) {
         //   o.urls = []
@@ -295,19 +274,7 @@ export default {
         //   })
         // }
       })
-      this.$refs.gduMap.map2D.gisDispatchManager.addDatas(this.onlineArray)
-    },
-    /**
-     *  动态创建vue组件
-     */
-    createVueCom (props) {
-      if (props.dataInfo.type === 'RP_Camera') {
-        return createVueCompFunc(camerBox, props)
-      } else if (props.dataInfo.type === 'RP_Case') {
-        return createVueCompFunc(caseBox, props)
-      } else if (props.dataInfo.type === 'RP_Drone') {
-        return createVueCompFunc(droneBox, props)
-      }
+      this.$refs.caseMain.addDatas(this.onlineArray)
     },
     /**
      * 刷新地图尺寸
@@ -343,31 +310,24 @@ export default {
      */
     addCase () {
       this.showCaseDlg = true
+    },
+    /**
+     * 跳转到案件处理
+     */
+    jumpCase () {
+      this.$router.push({ path: '/gisDispatchDispose' })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.test {
-  position: absolute;
-  left: 300px;
-  top: 200px;
-}
 .gisDispatch {
-  height: 1080px;
+  height: 100%;
   position: relative;
-  .overlayer {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    background: url(../../assets/images/gisDispatch/bg.svg) no-repeat;
-    pointer-events: none;
-  }
   //资源总览
   .resBox {
+    pointer-events: auto;
     font-size: 14px;
     width: 286px;
     height: 235px;
@@ -441,6 +401,7 @@ export default {
   }
   //底部撒点工具栏
   .bottomTool {
+    pointer-events: auto;
     height: 88px;
     position: absolute;
     left: 48px;
@@ -513,6 +474,7 @@ export default {
   // }
 
   .caseBox1 {
+    pointer-events: auto;
     display: flex;
     font-size: 12px;
     position: absolute;

@@ -325,7 +325,7 @@ export default {
     getPath () {
       const path = this.$route.path
       this.isFixed = false
-      if (path === '/gisDispatch') {
+      if (path === '/gisDispatch' || path === '/gisDispatchDispose') {
         this.isFixed = true
         this.isActive = 0
       } else if (path === '/caseCenter') {
