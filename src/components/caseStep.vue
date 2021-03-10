@@ -4,10 +4,10 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-09 17:19:40
+ * @LastEditTime: 2021-03-10 09:31:13
 -->
 <template>
-  <div class="step__box webFsScroll">
+  <div class="step-box webFsScroll">
     <el-steps :active="eventStep" finish-status="success" direction="vertical">
       <el-step
         :title="event.content"
@@ -21,15 +21,15 @@
               border="0"
               cellspacing="0"
               cellpadding="0"
-              class="processing__content"
+              class="processing-content"
             >
               <tr>
                 <td>
-                  <div class="processing__content__detail fl">
+                  <div class="processing-content-detail fl">
                     <span>{{ event.describe + event.count }}</span>
                   </div>
                   <div
-                    class="processing__content__detail fr"
+                    class="processing-content-detail fr"
                     v-if="event_index == 0 || event_index == 1"
                   >
                     <span
@@ -39,7 +39,7 @@
                     >
                   </div>
                   <div
-                    class="processing__content__detail detail__img webFsScroll"
+                    class="processing-content-detail detail-img webFsScroll"
                     v-if="event_index == 3"
                   >
                     <img
@@ -50,7 +50,7 @@
                     />
                   </div>
                   <div
-                    class="processing__content__detail detail__result"
+                    class="processing-content-detail detail-result"
                     v-if="event_index == 4"
                   >
                     <span>{{ event.person + event.name }}</span>
@@ -101,6 +101,7 @@ export default {
           content: '处置(进行中)',
           describe: '上传照片: ',
           count: '',
+          time: '2020-06-21 12:45:00 ',
           picList: [
             {
               picPath:
@@ -126,8 +127,7 @@ export default {
               picPath:
                 'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
             }
-          ],
-          time: '2020-06-21 12:45:00 '
+          ]
         },
         {
           id: '4',
@@ -135,9 +135,9 @@ export default {
           describe: '处置结果: ',
           count:
             '这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录',
+          time: '2020-09-18 17:09:00 ',
           person: '处置人: ',
-          name: '张大大',
-          time: '2020-09-18 17:09:00 '
+          name: '张大大'
         }
       ]
     }
@@ -146,7 +146,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.step__box {
+.step-box {
   color: #fff;
   font-size: 14px;
   background: transparent;
@@ -169,7 +169,8 @@ export default {
     background-color: #00ccff;
   }
   /deep/.el-step.is-vertical .el-step__main {
-    padding-left: 20px;
+    background: rgba(5, 31, 46, 0.9);
+    margin: 0 0 30px 20px;
   }
   /deep/.el-step__title.is-process,
   /deep/.el-step__title.is-wait {
@@ -180,15 +181,15 @@ export default {
     width: 560px;
     margin: 12px 0;
   }
-  .processing__content {
+  .processing-content {
     background: rgba(5, 31, 46, 0.9);
   }
-  .processing__content__detail {
-    margin: 0 10px;
-    padding: 15px 5px;
+  .processing-content-detail {
+    margin-right: 10px;
+    padding: 15px 0;
     color: #fff;
   }
-  .detail__img {
+  .detail-img {
     display: flex;
     width: 450px;
     height: 80px;
@@ -200,7 +201,7 @@ export default {
       vertical-align: top;
     }
   }
-  .detail__result {
+  .detail-result {
     span {
       margin-right: 50px;
     }

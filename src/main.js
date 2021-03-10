@@ -6,7 +6,6 @@ import axios from './axios/axios'
 import $ from 'jquery'
 import ElementUI from 'element-ui'
 import gMap from '@/components/gMap'
-// import VueTimeline from '@growthbunker/vuetimeline'
 
 import 'element-ui/lib/theme-chalk/index.css'
 // import './style/theme/index.css'
@@ -20,7 +19,6 @@ import '../public/assets/css/ms.css'
 
 Vue.use(ElementUI)
 Vue.component('gMap', gMap)
-// Vue.use(VueTimeline, { theme: 'dark' })
 
 Vue.prototype.$axios = axios
 Vue.prototype.$ = $

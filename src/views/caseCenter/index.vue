@@ -4,23 +4,23 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-09 17:21:54
+ * @LastEditTime: 2021-03-10 14:16:59
 -->
 <template>
   <div class="caseCenter">
     <!-- 案件列表 -->
     <CasePage
-      class="case__table"
+      class="case-table"
       :tableInfo="tableInfo"
       :subTitle="subTitle"
       :api="getFireList"
-      @handelImgClick="handelImgClick"
+      @handelDisposeClick="handelDisposeClick"
     ></CasePage>
     <!-- 案件详情 -->
-    <div class="case__detail">
-      <div class="case__info">
-        <h3 class="case__header">案件记录</h3>
-        <div class="case__content webFsScroll">
+    <div class="case-detail">
+      <div class="case-info">
+        <h3 class="case-header">案件记录</h3>
+        <div class="case-content webFsScroll">
           <div class="base">
             <h4>基本信息</h4>
             <div>
@@ -54,7 +54,7 @@
                 <span>举报地址: </span><span>{{ "江夏区金口水域" }}</span>
               </p>
             </div>
-            <div class="simple_describe">
+            <div class="simple-describe">
               <p>
                 <span>简要描述: </span
                 ><span>{{
@@ -78,7 +78,7 @@
                 <span>处置人: </span><span>{{ "王伟军" }}</span>
               </p>
             </div>
-            <div class="handel__result">
+            <div class="handel-result">
               <p>
                 <span>处置结果:</span
                 ><span>
@@ -88,7 +88,7 @@
                 >
               </p>
             </div>
-            <div class="handel__attach">
+            <div class="handel-attach">
               <span>相关附件: </span>
               <div class="webFsScroll">
                 <img
@@ -102,71 +102,35 @@
           </div>
         </div>
       </div>
-      <div class="handel__info ">
+      <div class="handel-info ">
         <h3><span>处置记录 | </span><span>聊天记录</span></h3>
-        <!-- <vue-timeline-update
-          :date="new Date('2017-02-26')"
-          title="(已完成 | 正常)"
-          description="接案人员: 王伟军"
-          thumbnail=""
-          category="接案"
-          icon="code"
-          color="red"
-        />
-        <vue-timeline-update
-          :date="new Date('2016-11-22')"
-          title="(已完成 | 正常)"
-          description="已推送5人"
-          thumbnail=""
-          category="推送"
-          icon="code"
-          color="purple"
-        />
-        <vue-timeline-update
-          :date="new Date('2016-11-22')"
-          title="(已完成 | 异常: 2)"
-          description="已推送8人"
-          thumbnail=""
-          category="处警"
-          icon="code"
-          color="orange"
-        />
-        <vue-timeline-update
-          :date="new Date('2016-11-22')"
-          title="(进行中)"
-          description="已推送8人"
-          thumbnail=""
-          category="处置"
-          icon="code"
-          color="turquoise"
-        />
-        <vue-timeline-update
-          :date="new Date('2016-09-30')"
-          title=""
-          description="处置结果：这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录"
-          thumbnail=""
-          category="结案"
-          icon="code"
-          color="orange"
-          is-last
-        /> -->
-        <div class="handel__chat__record ">
+        <div class="handel-chat-record ">
           <CaseStep></CaseStep>
         </div>
       </div>
     </div>
+    <!-- 处置记录弹窗 -->
+    <DisposeRecDialog
+      ref="addDictRef"
+      :isShow.sync="isShow"
+      title="火情详情"
+      :fireInfo.sync="fireInfo"
+      @confirmFireClick="confirmFireClick"
+    ></DisposeRecDialog>
   </div>
 </template>
 
 <script>
+// import { fireApi } from '@/api/videoSystem/fireAlarm.js'
 import CasePage from './components/casePage'
-import { fireApi } from '@/api/videoSystem/fireAlarm.js'
-import CaseStep from '@/components/caseStep.vue'
+import CaseStep from '@/components/caseStep'
+import DisposeRecDialog from './components/disposeRecDialog'
 
 export default {
   components: {
     CasePage,
-    CaseStep
+    CaseStep,
+    DisposeRecDialog
   },
 
   data () {
@@ -175,14 +139,75 @@ export default {
       // 表格项
       tableInfo: {
         refresh: 0,
-        data: [],
+        data: [
+          {
+            caseBelong: '渔政执法二大队',
+            caseDesc: '童家湖水域查获涉嫌使用电鱼捕捞',
+            caseImg: null,
+            caseNo: '20201228797173',
+            caseStatus: '已处置',
+            dispositionImgUrl: null,
+            dispositionMan: '渔政执法大队 ',
+            dispositionRecord: null,
+            dispositionTime: '2020-04-04 18:00:00',
+            id: '72e0cb580297ad7bfbda59a9da88d26a',
+            importantRecord: null,
+            infoSource: '通江支流府河童家湖水域电鱼非法捕捞',
+            latitude: 30.7602145,
+            longitude: 114.180492,
+            reportAddr: '通江支流府河童家湖水域',
+            reportMan: ' ',
+            reportTel: null,
+            reportTime: '2020-04-04 14:00:00'
+          },
+          {
+            caseBelong: '江夏区渔政船检港监管理站',
+            caseDesc: '执法专班于长江金口水域发现疑似电捕鱼船',
+            caseImg: null,
+            caseNo: '20201229347324',
+            caseStatus: '未处置',
+            dispositionImgUrl: null,
+            dispositionMan: null,
+            dispositionRecord: null,
+            dispositionTime: null,
+            id: '1bb161a6ef9d0c5b05eb74da7e3b4b3d',
+            importantRecord: null,
+            infoSource: '执法专班巡逻',
+            latitude: 30.2845938,
+            longitude: 114.091783,
+            reportAddr: '江夏区金口水域',
+            reportMan: '无',
+            reportTel: '无',
+            reportTime: '2020-11-04 16:06:00'
+          },
+          {
+            caseBelong: '江夏区渔政船检港监管理站',
+            caseDesc: '执法专班于长江金口水域发现疑似电捕鱼船',
+            caseImg: null,
+            caseNo: '20201229347324',
+            caseStatus: '未处置',
+            dispositionImgUrl: null,
+            dispositionMan: null,
+            dispositionRecord: null,
+            dispositionTime: null,
+            id: '1bb161a6ef9d0c5b05eb74da7e3b4b3d',
+            importantRecord: null,
+            infoSource: '执法专班巡逻',
+            latitude: 30.2845938,
+            longitude: 114.091783,
+            reportAddr: '江夏区金口水域',
+            reportMan: '无',
+            reportTel: '无',
+            reportTime: '2020-11-04 16:06:00'
+          }
+        ],
         fieldList: [
-          { label: '案件名称', value: 'alarmTime' },
-          { label: '举报地点', value: 'alarmAddress' },
-          { label: '简要描述', value: 'alarmLongitude' },
-          { label: '案发时间', value: 'deviceName' },
-          { label: '接案时间', value: 'alarmStatus' },
-          { label: '处置状态', value: 'updateTime' }
+          { label: '案件名称', value: 'infoSource' },
+          { label: '举报地点', value: 'reportAddr' },
+          { label: '简要描述', value: 'caseDesc' },
+          { label: '案发时间', value: 'reportTime' },
+          { label: '接案时间', value: 'dispositionTime' },
+          { label: '处置状态', value: 'caseStatus', type: 'handelStatus' }
         ]
       },
       isShow: false,
@@ -217,7 +242,7 @@ export default {
   },
 
   mounted () {
-    this.refreshTable()
+    // this.refreshTable()
   },
 
   beforeDestroy () {
@@ -232,15 +257,16 @@ export default {
 
     // 获取火情列表
     getFireList (params) {
-      //   console.log('params:', params)
-      return this.$axios.get(fireApi.getDurationFireAlarmInfos, {
-        params: params
-      })
+      // console.log("params:", params);
+      // return this.$axios.get(fireApi.getDurationFireAlarmInfos, {
+      //   params: params
+      // });
     },
 
-    // 单击图片
-    handelImgClick (data) {
-      this.fireInfo = data
+    // 单击处置按钮
+    handelDisposeClick (id, info) {
+      // console.log("index:", id, "data:", info);
+      // this.fireInfo = info
       this.isShow = true
     },
 
@@ -256,16 +282,16 @@ export default {
 .caseCenter {
   display: flex;
   padding: 12px 60px 60px 60px;
-  .case__table {
+  .case-table {
     width: 1140px;
   }
-  .case__detail {
+  .case-detail {
     width: 644px;
     margin: 80px 0 0 10px;
-    .case__info {
+    .case-info {
       height: 278px;
       background: rgba(0, 65, 87, 0.6);
-      .case__header {
+      .case-header {
         width: 178px;
         height: 30px;
         line-height: 30px;
@@ -277,7 +303,7 @@ export default {
         font-size: 18px;
         padding: 0 20px;
       }
-      .case__content {
+      .case-content {
         width: 644px;
         height: 236px;
         margin-top: 10px;
@@ -317,11 +343,11 @@ export default {
           height: auto;
           margin-bottom: 10px;
         }
-        .simple_describe,
-        .handel__result {
+        .simple-describe,
+        .handel-result {
           line-height: 28px;
         }
-        .handel__attach {
+        .handel-attach {
           height: 80px;
           margin-top: 15px;
           span {
@@ -342,7 +368,7 @@ export default {
         }
       }
     }
-    .handel__info {
+    .handel-info {
       width: 644px;
       height: 536px;
       background: rgba(0, 65, 87, 0.6);
@@ -356,7 +382,7 @@ export default {
           color: #82f3fa;
         }
       }
-      .handel__chat__record {
+      .handel-chat-record {
       }
     }
   }

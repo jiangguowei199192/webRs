@@ -253,7 +253,7 @@ export default {
   },
   created () {},
   mounted () {
-    const me = this
+    // const me = this
     this.getResDataWidth()
     // setTimeout(() => {
     //   me.addCamera()

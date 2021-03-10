@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-08 16:38:13
+ * @LastEditTime: 2021-03-10 14:03:47
 -->
 <template>
   <div class="fireBox">
@@ -63,7 +63,7 @@
         :query="query"
         :api="api"
         :checkedList.sync="checkedList"
-        @imgClick="imgClick"
+        @disposeClick="disposeClick"
       ></PageTable>
     </div>
   </div>
@@ -136,11 +136,6 @@ export default {
       this.$refs.pageTable.clearSelection()
     },
 
-    // 单击图片
-    imgClick (info) {
-      this.$emit('handelImgClick', info)
-    },
-
     // 按日期搜索列表
     dateSearchChange () {
       if (this.queryParams.dateRange) {
@@ -173,8 +168,10 @@ export default {
       this.getList()
     },
 
-    // 导出excel
-    onExportExcel () {}
+    // 单击处置按钮
+    disposeClick (index, data) {
+      this.$emit('handelDisposeClick', index, data)
+    }
   }
 }
 </script>
@@ -185,7 +182,7 @@ export default {
   .toolBox {
     margin: 18px 0 16px 0;
     font-size: 16px;
-    .tool__title {
+    .tool-title {
       margin: 0 8px 0 5px;
     }
     .belongSel,

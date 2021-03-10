@@ -57,6 +57,18 @@
                 @click.stop="imgClick(scope.row)"
               />
             </div>
+            <!-- 处置 -->
+            <span
+              v-else-if="item.type === 'handelStatus' && scope.row[item.value]"
+              class="handelBtn"
+              :class="
+                scope.row[item.value] == '已处置'
+                  ? 'activeColor'
+                  : 'inActiveColor'
+              "
+              @click.stop="disposeClick(scope.$index, scope.row)"
+              >{{ scope.row[item.value] }}</span
+            >
             <span v-else>
               {{ scope.row[item.value] }}
             </span>
@@ -248,6 +260,12 @@ export default {
       this.$emit('imgClick', data)
     },
     /**
+     *  处置按钮点击
+     */
+    disposeClick (index, data) {
+      this.$emit('disposeClick', index, data)
+    },
+    /**
      *  处理参数
      */
     handleParams () {
@@ -342,20 +360,18 @@ export default {
 .tableBox {
   background: rgba(0, 65, 87, 0.6);
   height: 823px;
-  .handerBox {
-    .btn {
-      display: inline-block;
-      width: 46px;
-      height: 26px;
-      background: #0b779e;
-      cursor: pointer;
-      font-size: 14px;
-      color: #fefefe;
-      line-height: 26px;
-    }
-    .btn:not(:last-child) {
-      margin-right: 18px;
-    }
+  .btn {
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    background: #0b779e;
+    cursor: pointer;
+    font-size: 14px;
+    color: #fefefe;
+    line-height: 26px;
+  }
+  .btn:not(:last-child) {
+    margin-right: 18px;
   }
   .picBox {
     display: flex;
@@ -365,6 +381,24 @@ export default {
       height: 40px;
       cursor: pointer;
     }
+  }
+  .handelBtn {
+    display: inline-block;
+    width: 74px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 14px;
+    color: #fefefe;
+    cursor: pointer;
+  }
+  .activeColor {
+    background: #02b337;
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .inActiveColor {
+    background: #af0e03;
   }
 }
 </style>
