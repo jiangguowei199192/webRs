@@ -47,7 +47,7 @@
         </transition>
       </div>
     </div>
-    <div class="caseBox">
+    <div class="caseBox1">
       <transition name="showCases">
         <div class="caseList" v-show="!caseFold">
           <div class="title">案件列表</div>
@@ -113,6 +113,7 @@
 <script>
 import AddCase from './components/addCase.vue'
 import camerBox from './components/camerBox'
+import droneBox from './components/droneBox'
 import caseBox from './components/caseBox'
 import videoMixin from '../videoSystem/mixins/videoMixin'
 import createVueCompFunc from '@/utils/createVueComp'
@@ -285,7 +286,8 @@ export default {
       this.onlineArray.forEach((o) => {
         o.longitude = o.deviceLongitude
         o.latitude = o.deviceLatitude
-        o.type = 'RP_Case'
+        o.type = 'RP_Drone'
+        o.url = o.children[0].streamUrl
         // if (o.onlineStatus === 'online' && o.children && o.children.length > 0) {
         //   o.urls = []
         //   o.children.forEach((l) => {
@@ -303,6 +305,8 @@ export default {
         return createVueCompFunc(camerBox, props)
       } else if (props.dataInfo.type === 'RP_Case') {
         return createVueCompFunc(caseBox, props)
+      } else if (props.dataInfo.type === 'RP_Drone') {
+        return createVueCompFunc(droneBox, props)
       }
     },
     /**
@@ -508,7 +512,7 @@ export default {
   //   background: transparent;
   // }
 
-  .caseBox {
+  .caseBox1 {
     display: flex;
     font-size: 12px;
     position: absolute;

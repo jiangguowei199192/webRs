@@ -13,8 +13,10 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './style/common.less'
 import './assets/font/iconfont.css'
 import './style/element.less'
-
 import md5 from 'js-md5'
+import '../public/assets/css/gisBox.css'
+import '../public/assets/css/layerStyle.css'
+import '../public/assets/css/ms.css'
 
 Vue.use(ElementUI)
 Vue.component('gMap', gMap)

@@ -124,15 +124,10 @@ export default {
 
 <style lang="scss" scoped>
 .camerBox {
-  position: relative;
-  box-sizing: border-box;
-  font-size: 14px;
   width: 486px;
   height: 173px;
   background: url(../../../assets/images/gisDispatch/camera-box.svg) no-repeat;
   background-size: 100% 100%;
-  padding-left: 10px;
-  padding-top: 10px;
   .content {
     width: 466px;
     height: 153px;
