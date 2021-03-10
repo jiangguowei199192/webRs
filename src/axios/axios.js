@@ -49,7 +49,7 @@ service.interceptors.response.use(
         errorCode.forEach(item => {
           if (item.code === response.data.code) {
             errorMsg = item.str
-            return false
+            // return false
           }
         })
       }
@@ -62,7 +62,7 @@ service.interceptors.response.use(
       })
 
       if (response.data.code === 401 && window.location.href.indexOf('/login') === -1) {
-        window.location.href = '/webFs/login'
+        window.location.href = '/webRs/login'
       }
     } else {
       return response
@@ -77,7 +77,7 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
-      window.location.href = '/webFs/login'
+      window.location.href = '/webRs/login'
       return
     }
     Notification.closeAll()

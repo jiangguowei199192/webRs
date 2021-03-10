@@ -16,6 +16,8 @@
                 {{ weatherReport.temperature }}
                 <i>。</i>
               </span>
+              <span>风力：</span>
+              <span class="extra">{{ weatherReport.windpower }}</span>
             </template>
           </div>
           <div class="content">
@@ -62,6 +64,32 @@
         <router-view v-else />
       </el-main>
     </el-container>
+    <el-dialog
+      title="修改密码"
+      :visible.sync="dialogVisible"
+      class="passDialog"
+      :show-close="false"
+      :close-on-click-modal="false"
+    >
+      <el-form :model="form" label-width="88px" :rules="rules" ref="ruleForm">
+        <el-form-item label="用户名:">
+          <span style="color: #fff;">{{userName}}</span>
+        </el-form-item>
+        <el-form-item label="原密码:" prop="oldPass">
+          <el-input v-model="form.oldPass" autocomplete="off" placeholder="密码长度在3到20位之间"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码:" prop="newPass">
+          <el-input v-model="form.newPass" autocomplete="off" placeholder="密码长度在3到20位之间"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码:" prop="confirmPass">
+          <el-input v-model="form.confirmPass" autocomplete="off" placeholder="密码长度在3到20位之间"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -77,6 +105,28 @@ export default {
   name: 'Home',
   data () {
     return {
+      form: {
+        oldPass: '',
+        newPass: '',
+        confirmPass: ''
+      },
+      rules: {
+        oldPass: [
+          { required: true, message: '请输入原密码', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        ],
+        newPass: [
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 20个字符', trigger: 'blur' }
+        ],
+        confirmPass: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 20个字符', trigger: 'blur' }
+        ]
+      },
+      dialogVisible: false,
+      timer: null,
+      timerWeather: null,
       userName: '',
       isFixed: false,
       projectTitle: '',
@@ -168,13 +218,18 @@ export default {
     }
     clearInterval(this.timer)
     this.timer = null
+    clearInterval(this.timerWeather)
+    this.timerWeather = null
   },
   mounted () {
     this.getPath()
-    setInterval(() => {
+    this.timer = setInterval(() => {
       this.timeObj = getTime()
     }, 1000)
     this.init()
+    this.timerWeather = setInterval(() => {
+      this.init()
+    }, 7200000)
     // 通过构造函数，创建mqtt连接
     // eslint-disable-next-line no-unused-vars
     this.mqtt = new MqttService()
@@ -288,6 +343,7 @@ export default {
     handleCommand (command) {
       switch (command) {
         case '0':
+          this.dialogVisible = true
           break
         case '1':
           this.$router.push({ path: '/login' })
@@ -296,6 +352,16 @@ export default {
         default:
           break
       }
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   },
   watch: {
@@ -337,8 +403,7 @@ export default {
           margin-left: 4px;
         }
         span.curCity {
-          margin-left: 30px;
-          margin-right: 25px;
+          margin: 0 20px;
         }
       }
       .content {
@@ -464,6 +529,66 @@ export default {
   }
   .el-main {
     padding: 0;
+  }
+  .passDialog {
+    border: 1px solid #00a7e8;
+    font-size: 14px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
+    background: rgba(0, 0, 0, 0.7);
+    /deep/.el-dialog__title {
+      display: inline-block;
+      width: 218px;
+      height: 30px;
+      padding-left: 17px;
+      line-height: 30px;
+      background: linear-gradient(90deg, #00d2ff 0%, rgba(0, 210, 255, 0) 100%);
+      font-size: 18px;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      color: #fefefe;
+    }
+    /deep/.el-dialog {
+      background: rgba(0, 65, 87, 0.85);
+      opacity: 0.85;
+      width: 550px;
+      /deep/.el-dialog__body {
+        padding: 0 0.2rem;
+        .el-input {
+          .el-input__inner {
+            background: #034257;
+            border: 1px solid #00d2ff;
+            font-weight: 500;
+            color: #ffffff;
+          }
+        }
+      }
+      /deep/.el-dialog__footer {
+        .el-button--default,
+        .el-button--primary {
+          width: 87px;
+          height: 32px;
+          border: 1px solid #1eb0fc;
+          border-radius: 2px;
+          background: #043c4f;
+          font-size: 18px;
+          font-family: Source Han Sans CN;
+          font-weight: bold;
+          color: #1eb0fc;
+          padding: 0;
+        }
+        .el-button--primary {
+          background: #00a7e8;
+          color: #fff;
+        }
+      }
+    }
+    /deep/.el-form-item__label {
+      color: #fff;
+    }
+    /deep/.el-form-item:first-child {
+      margin-bottom: 0;
+    }
   }
 }
 </style>

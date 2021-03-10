@@ -185,10 +185,10 @@ export default {
               localStorage.removeItem('password')
               localStorage.removeItem('time')
             }
-            localStorage.setItem(
-              'token',
-              'Bearer ' + res.data.data.access_token
-            )
+            // localStorage.setItem(
+            //   'token',
+            //   'Bearer ' + res.data.data.access_token
+            // )
             sessionStorage.setItem(
               'token',
               'Bearer ' + res.data.data.access_token
