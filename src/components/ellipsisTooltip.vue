@@ -86,6 +86,9 @@ export default {
     font-weight: 400;
     color: #00d1fe;
   }
+  .caseTxt {
+    color: #fff;
+  }
 }
 
 .gEllipsis.singleLine {

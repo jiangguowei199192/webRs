@@ -3,7 +3,8 @@
 .caseBox,
 .camerBox,
 .droneBox,
-.singleCase {
+.singleCase,
+.caseMap {
   position    : relative;
   box-sizing  : border-box;
   font-size   : 14px;
@@ -22,7 +23,8 @@
 .routeBox .close,
 .camerBox .close,
 .caseBox .close,
-.droneBox .close {
+.droneBox .close,
+.caseMap .close {
   display        : inline-block;
   position       : absolute;
   width          : 12px;
@@ -39,7 +41,8 @@
 .camerBox .gisTitle,
 .caseBox .gisTitle,
 .droneBox .gisTitle,
-.singleCase .gisTitle {
+.singleCase .gisTitle,
+.caseMap .gisTitle {
   left           : 10px;
   top            : -18px;
   position       : absolute;
@@ -54,7 +57,8 @@
 .camerBox .gisTitle span,
 .caseBox .gisTitle span,
 .droneBox .gisTitle span,
-.singleCase .gisTitle span {
+.singleCase .gisTitle span,
+.caseMap .gisTitle span {
   font-family: Source Han Sans CN;
   font-weight: bold;
   color      : #00b8ff;
@@ -64,7 +68,8 @@
 
 .pointBox .ulBox,
 .routeBox .ulBox,
-.caseBox .ulBox {
+.caseBox .ulBox,
+.caseMap .ulBox {
   box-sizing      : border-box;
   background-color: rgba(1, 121, 162, 0.95);
   padding-top     : 15px;
@@ -84,7 +89,8 @@
   margin-bottom: 10px;
 }
 
-.caseBox .ulBox ul li {
+.caseBox .ulBox ul li,
+.caseMap .ulBox ul li {
   margin-bottom: 4px;
 }
 
@@ -98,7 +104,6 @@
 .pointBox .ulBox ul li span,
 .routeBox .ulBox ul li span,
 .camerBox .ulBox ul li span,
-.caseBox .ulBox ul li span,
 .droneBox .ulBox ul li span {
   color      : #00B8FF;
   font-family: Source Han Sans CN;
@@ -108,7 +113,6 @@
 .pointBox .ulBox ul li span:nth-child(1),
 .routeBox .ulBox ul li span:nth-child(1),
 .camerBox .ulBox ul li span:nth-child(1),
-.caseBox .ulBox ul li span:nth-child(1),
 .droneBox .ulBox ul li span:nth-child(1) {
   margin-right: 6px;
   display     : inline-block;
@@ -118,7 +122,6 @@
 .pointBox .ulBox ul li span:nth-child(2),
 .routeBox .ulBox ul li span:nth-child(2),
 .camerBox .ulBox ul li span:nth-child(2),
-.caseBox .ulBox ul li span:nth-child(2),
 .droneBox .ulBox ul li span:nth-child(2) {
   color: #fff;
 }
@@ -127,7 +130,8 @@
 .routeBox .arrow,
 .camerBox .arrow,
 .caseBox .arrow,
-.droneBox .arrow {
+.droneBox .arrow,
+.caseMap .arrow {
   position       : absolute;
   width          : 41px;
   height         : 27px;
@@ -137,18 +141,21 @@
   background-size: 100% 100%;
 }
 
-.routeBox {
+.routeBox,
+.caseMap {
   width          : 306px;
   height         : 163px;
   background     : url('../images/route-box.svg') no-repeat;
   background-size: 100% 100%;
 }
 
-.routeBox .ulBox {
+.routeBox .ulBox,
+.caseMap .ulBox {
   height: 143px;
 }
 
-.routeBox .arrow {
+.routeBox .arrow,
+.caseMap .arrow {
   top: 172px;
 }
 

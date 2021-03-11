@@ -63,6 +63,8 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               class="caseDate"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              @change="getCaseList"
             ></el-date-picker>
             <div class="list browserScroll">
               <template v-for="(item, index) in cases">
@@ -137,7 +139,7 @@ export default {
     return {
       showCaseDlg: false,
       caseFold: false,
-      dateRange: '',
+      dateRange: [],
       rotate: false,
       isfoldTool: true, // 是否折叠底部工具栏
       resInfos: [
@@ -369,7 +371,9 @@ export default {
           caseApi.selectPage,
           {
             currentPage: 1,
-            pageSize: 1000
+            pageSize: 1000,
+            startTime: this.dateRange && this.dateRange.length > 0 ? this.dateRange[0] : '',
+            endTime: this.dateRange && this.dateRange.length > 1 ? this.dateRange[2] : ''
           },
           {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }

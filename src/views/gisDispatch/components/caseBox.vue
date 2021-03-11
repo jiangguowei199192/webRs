@@ -1,32 +1,44 @@
 <template>
-  <div :class="[isGisDispatch ? 'routeBox' : 'caseBox']">
+  <div :class="[isGisDispatch ? 'caseMap' : 'caseBox']">
     <div class="gisTitle">
       <span>案件信息</span>
     </div>
     <div class="ulBox">
       <ul>
         <li>
-          <span>案件名称：</span>
-          <span>{{ dataInfo.caseName }}</span>
+          <span class="left">案件名称：</span>
+          <EllipsisTooltip
+            :contentText="dataInfo.caseName"
+            class="txt"
+            :contentClass="'caseTxt'"
+          ></EllipsisTooltip>
         </li>
         <li>
-          <span>报案地址：</span>
-          <span>{{ dataInfo.reportAddr }}</span>
+          <span class="left">报案地址：</span>
+          <EllipsisTooltip
+            :contentText="dataInfo.reportAddr"
+            class="txt"
+            :contentClass="'caseTxt'"
+          ></EllipsisTooltip>
         </li>
         <li>
-          <span>报警时间：</span>
-          <span>{{ dataInfo.reportTime }}</span>
+          <span class="left">报警时间：</span>
+          <span class="right">{{ dataInfo.reportTime }}</span>
         </li>
         <li>
-          <span>案件描述：</span>
-          <span>{{ dataInfo.caseDesc }}</span>
+          <span class="left">案件描述：</span>
+          <EllipsisTooltip
+            :contentText="dataInfo.caseDesc"
+            class="txt"
+            :contentClass="'caseTxt'"
+          ></EllipsisTooltip>
         </li>
         <li>
-          <span>案件状态：</span>
-          <span>{{ formatCaseStatus(dataInfo.caseStatus) }}</span>
+          <span class="left">案件状态：</span>
+          <span class="right caseStatus">{{ formatCaseStatus(dataInfo.caseStatus) }}</span>
         </li>
         <li v-if="!isGisDispatch">
-          <span>周边范围：</span>
+          <span class="left">周边范围：</span>
           <el-input v-model="radius"></el-input>
           <span>km</span>
         </li>
@@ -38,6 +50,7 @@
 </template>
 
 <script>
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 export default {
   name: 'caseBox',
   data () {
@@ -50,6 +63,9 @@ export default {
     dataInfo: {
       default: () => {}
     }
+  },
+  components: {
+    EllipsisTooltip
   },
   mounted () {
     if (this.$route.path !== '/gisDispatch') {
@@ -90,6 +106,36 @@ export default {
       color: #00b8ff;
       height: 20px;
     }
+  }
+}
+.caseMap,
+.caseBox {
+  .txt {
+    width: 160px;
+    display: inline-block;
+    line-height: 18px;
+    height: 18px;
+    position: relative;
+    top: 3px;
+  }
+  .caseStatus {
+    padding: 0px 10px;
+    background: #c2ac16;
+    border-radius: 10px;
+  }
+}
+
+.caseMap,
+.caseBox {
+  .left,
+  .right {
+    font-family: Source Han Sans CN;
+  }
+  .left {
+    color: #00b8ff;
+    margin-right: 6px;
+    display: inline-block;
+    min-width: 70px;
   }
 }
 </style>
