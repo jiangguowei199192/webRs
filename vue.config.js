@@ -11,23 +11,11 @@ const createServerConfig = function (compilation) {
     projectTitle: '智慧农业实战应用平台',
     baseUrlList: [
       {
-        // 消防外网
-        // baseUrl: "http://58.49.169.235:50020",
-        // mqttServer: "58.49.169.235",
-        // mqttPort: 50022,
-        // headImg: "http://58.49.169.235:50026"
-
-        // 消防v2.0开发环境
-        baseUrl: 'http://111.47.13.103:40025',
-        mqttServer: '111.47.13.103',
-        mqttPort: 40027,
-        headImg: 'http://111.47.13.103:40031'
-
-        // v3.0开发环境
-        // baseUrl: 'http://112.74.104.62:8850',
-        // mqttServer: '112.74.104.62',
-        // mqttPort: 2883,
-        // headImg: 'http://112.74.104.62:81'
+        // 普宙应用管理平台v1.0
+        baseUrl: 'http://172.16.63.43:8850',
+        mqttServer: '172.16.63.43',
+        mqttPort: 1883,
+        headImg: 'http://172.16.63.43:80'
       }
       // 消防内网
       // {

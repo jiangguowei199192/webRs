@@ -73,20 +73,44 @@
     >
       <el-form :model="form" label-width="88px" :rules="rules" ref="ruleForm">
         <el-form-item label="用户名:">
-          <span style="color: #fff;">{{userName}}</span>
+          <span style="color: #fff;">{{userName||'-'}}</span>
         </el-form-item>
         <el-form-item label="原密码:" prop="oldPass">
-          <el-input v-model="form.oldPass" autocomplete="off" placeholder="密码长度在3到20位之间"></el-input>
+          <el-input
+            v-model.trim="form.oldPass"
+            type="text"
+            autocomplete="off"
+            name="password"
+            onfocus="this.type='password'"
+            placeholder="密码长度在3到20位之间，且不能包含中文"
+            style="color: blue"
+          ></el-input>
         </el-form-item>
         <el-form-item label="新密码:" prop="newPass">
-          <el-input v-model="form.newPass" autocomplete="off" placeholder="密码长度在3到20位之间"></el-input>
+          <el-input
+            v-model.trim="form.newPass"
+            type="text"
+            autocomplete="off"
+            name="newPass"
+            onfocus="this.type='password'"
+            placeholder="密码长度在3到20位之间，且不能包含中文"
+            style="color: blue"
+          ></el-input>
         </el-form-item>
         <el-form-item label="确认密码:" prop="confirmPass">
-          <el-input v-model="form.confirmPass" autocomplete="off" placeholder="密码长度在3到20位之间"></el-input>
+          <el-input
+            v-model.trim="form.confirmPass"
+            type="text"
+            autocomplete="off"
+            placeholder="密码长度在3到20位之间，且不能包含中文"
+            name="confirmPass"
+            onfocus="this.type='password'"
+            style="color: blue"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="resetForm('ruleForm')">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </span>
     </el-dialog>
@@ -104,6 +128,22 @@ const droneCmdReq = 'gdu/commandCtrlReq'
 export default {
   name: 'Home',
   data () {
+    const validatePass = (rule, value, callback) => {
+      if (/[\u4E00-\u9FA5]/g.test(value)) {
+        callback(new Error('密码不能包含中文!'))
+      } else {
+        callback()
+      }
+    }
+    const validateConfirPass = (rule, value, callback) => {
+      if (/[\u4E00-\u9FA5]/g.test(value)) {
+        callback(new Error('密码不能包含中文'))
+      } else if (value !== this.form.newPass) {
+        callback(new Error('两次输入密码不一致'))
+      } else {
+        callback()
+      }
+    }
     return {
       form: {
         oldPass: '',
@@ -113,15 +153,28 @@ export default {
       rules: {
         oldPass: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+          {
+            min: 3,
+            max: 20,
+            message: '长度在 3 到 20 个字符',
+            trigger: 'blur'
+          },
+          { validator: validatePass, trigger: 'blur' }
         ],
         newPass: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 20个字符', trigger: 'blur' }
+          { min: 3, max: 20, message: '长度在 3 到 20个字符', trigger: 'blur' },
+          { validator: validatePass, trigger: 'blur' }
         ],
         confirmPass: [
-          { required: true, message: '请再次输入密码', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 20个字符', trigger: 'blur' }
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            min: 3,
+            max: 20,
+            message: '长度在 3 到 20 个字符',
+            trigger: 'blur'
+          },
+          { validator: validateConfirPass, trigger: 'blur' }
         ]
       },
       dialogVisible: false,
@@ -353,6 +406,10 @@ export default {
           break
       }
     },
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+      this.dialogVisible = false
+    },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -559,7 +616,15 @@ export default {
             background: #034257;
             border: 1px solid #00d2ff;
             font-weight: 500;
-            color: #ffffff;
+            color: #fff;
+          }
+          input:-webkit-autofill {
+            box-shadow: 0 0 0px 1000px #034257 inset !important;
+            -webkit-text-fill-color: white !important;
+          }
+          input:-webkit-autofill:focus {
+            box-shadow: 0 0 0px 1000px #034257 inset !important;
+             -webkit-text-fill-color: white !important;
           }
         }
       }
