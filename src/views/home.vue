@@ -84,6 +84,7 @@
             onfocus="this.type='password'"
             placeholder="密码长度在3到20位之间，且不能包含中文"
             style="color: blue"
+            maxlength="20"
           ></el-input>
         </el-form-item>
         <el-form-item label="新密码:" prop="newPass">
@@ -95,6 +96,7 @@
             onfocus="this.type='password'"
             placeholder="密码长度在3到20位之间，且不能包含中文"
             style="color: blue"
+            maxlength="20"
           ></el-input>
         </el-form-item>
         <el-form-item label="确认密码:" prop="confirmPass">
@@ -106,6 +108,7 @@
             name="confirmPass"
             onfocus="this.type='password'"
             style="color: blue"
+            maxlength="20"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -413,10 +416,28 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
+          this.updatePassAxios()
         } else {
           console.log('error submit!!')
           return false
+        }
+      })
+    },
+    updatePassAxios () {
+      const params = {
+        oldPassword: this.$md5(this.form.oldPass),
+        newPassword: this.$md5(this.form.newPass),
+        confirmPassword: this.$md5(this.form.confirmPass)
+      }
+      this.$axios.post(loginApi.updatePass, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          this.$notify({
+            title: '成功',
+            message: '修改密码成功！',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.resetForm('ruleForm')
         }
       })
     }
@@ -624,7 +645,7 @@ export default {
           }
           input:-webkit-autofill:focus {
             box-shadow: 0 0 0px 1000px #034257 inset !important;
-             -webkit-text-fill-color: white !important;
+            -webkit-text-fill-color: white !important;
           }
         }
       }
