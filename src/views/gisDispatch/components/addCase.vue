@@ -2,63 +2,72 @@
   <el-dialog :visible="isShow" class="caseDlg">
     <div>
       <div class="title">新增案件</div>
-      <el-form :model="caseForm" :inline="true" class="caseForm">
+      <el-form
+        ref="caseForm"
+        :model="caseForm"
+        :inline="true"
+        class="caseForm"
+        :rules="formRules"
+      >
         <div class="step1">
           <span>1</span>
           <span>报案信息</span>
         </div>
-        <el-form-item label="案件名称 :" prop="name">
+        <el-form-item label="案件名称 :" prop="caseName">
           <el-input
-            v-model="caseForm.name"
+            v-model="caseForm.caseName"
             :placeholder="placeholder"
             class="caseName"
           ></el-input>
         </el-form-item>
-        <el-form-item label="案发时间 :" prop="time">
+        <el-form-item label="案发时间 :" prop="caseStartTime">
           <el-date-picker
-            v-model="caseForm.time1"
+            v-model="caseForm.caseStartTime"
             type="datetime"
             :placeholder="placeholder"
             class="timeStyle"
             value-format="yyyy-MM-dd HH:mm:ss"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="报警时间 :" prop="time" class="time">
+        <el-form-item label="报警时间 :" prop="reportTime" class="time">
           <el-date-picker
-            v-model="caseForm.time2"
+            v-model="caseForm.reportTime"
             type="datetime"
             :placeholder="placeholder"
             class="timeStyle"
             value-format="yyyy-MM-dd HH:mm:ss"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="举报人 :" prop="people">
+        <el-form-item label="举报人 :" prop="reportMan">
           <el-input
-            v-model="caseForm.people"
+            v-model="caseForm.reportMan"
             :placeholder="placeholder"
           ></el-input>
         </el-form-item>
-        <el-form-item label="性别 :" prop="sex" class="sex">
-          <el-radio v-model="caseForm.sex" label="1">男</el-radio>
-          <el-radio v-model="caseForm.sex" label="2">女</el-radio>
+        <el-form-item label="性别 :" class="sex" prop="reporterGender">
+          <el-radio v-model="caseForm.reporterGender" label="男">男</el-radio>
+          <el-radio v-model="caseForm.reporterGender" label="女">女</el-radio>
         </el-form-item>
-        <el-form-item label="身份证号 :" prop="id">
-          <el-input v-model="caseForm.id" :placeholder="placeholder"></el-input>
-        </el-form-item>
-        <el-form-item label="举报电话 :" prop="phone" class="time">
+        <el-form-item label="身份证号 :" prop="reporterIdentity">
           <el-input
-            v-model="caseForm.phone"
+            v-model="caseForm.reporterIdentity"
             :placeholder="placeholder"
           ></el-input>
         </el-form-item>
-        <el-form-item label="举报地址 :" prop="addr">
+        <el-form-item label="举报电话 :" class="time" prop="reportTel">
           <el-input
-            v-model="caseForm.addr"
+            v-model="caseForm.reportTel"
+            :placeholder="placeholder"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="举报地址 :" prop="reportAddr">
+          <el-input
+            v-model="caseForm.reportAddr"
             :placeholder="placeholder"
             class="caseName"
           ></el-input>
         </el-form-item>
-        <el-form-item label="    " prop="lon" class="map">
+        <el-form-item label="    " prop="longitude" class="map">
           <div class="mapBox">
             <gMap
               ref="gduMap"
@@ -71,9 +80,9 @@
             ></gMap>
           </div>
         </el-form-item>
-        <el-form-item label="案件描述 :" prop="des" class="des">
+        <el-form-item label="案件描述 :" prop="caseDesc" class="des">
           <el-input
-            v-model="caseForm.des"
+            v-model="caseForm.caseDesc"
             :placeholder="placeholder"
             type="textarea"
             resize="none"
@@ -83,9 +92,13 @@
           <span>2</span>
           <span>接案信息</span>
         </div>
-        <el-form-item label="接警人 :" prop="addr" class="acceptPeople">
+        <el-form-item
+          label="接警人 :"
+          prop="receivingAlarmMan"
+          class="acceptPeople"
+        >
           <el-input
-            v-model="caseForm.addr"
+            v-model="caseForm.receivingAlarmMan"
             :placeholder="placeholder"
           ></el-input>
         </el-form-item>
@@ -93,9 +106,9 @@
           <span>3</span>
           <span>指派信息</span>
         </div>
-        <el-form-item label="指派人 :">
+        <el-form-item label="指派人 :" prop="designateMan">
           <el-select
-            v-model="caseForm.peoples"
+            v-model="caseForm.designateMan"
             multiple
             class="select"
             popper-class="people-selec-Popper"
@@ -121,13 +134,15 @@
       </el-form>
       <div class="btns">
         <span @click.stop="cancel()">取消</span>
-        <span>确定</span>
+        <span @click.stop="submit()">确定</span>
       </div>
     </div>
   </el-dialog>
 </template>
 
 <script>
+import { isNotNull } from '@/utils/formRules'
+import { caseApi } from '@/api/case'
 export default {
   props: {
     isShow: {
@@ -137,8 +152,33 @@ export default {
   },
   data () {
     return {
+      isInit: false,
       search: '',
-      caseForm: { sex: '', peoples: [] },
+      formRules: {
+        caseName: [{ required: true, message: '请输入案件名称' }],
+        caseStartTime: [{ required: true, message: '请选择案发时间' }],
+        reportTime: [{ required: true, message: '请选择报警时间' }],
+        reportMan: [{ required: true, message: '请输入举报人' }],
+        reportAddr: [{ required: true, message: '请输入举报地址' }],
+        caseDesc: [{ required: true, message: '请输入案件描述' }],
+        receivingAlarmMan: [{ required: true, message: '请输入接警人' }],
+        longitude: isNotNull('请点选案件经纬度位置')
+      },
+      caseForm: {
+        reporterGender: '',
+        reporterIdentity: '',
+        designateMan: '',
+        caseDesc: '',
+        caseName: '',
+        caseStartTime: '',
+        reportMan: '',
+        reportAddr: '',
+        reportTime: '',
+        receivingAlarmMan: '',
+        latitude: '',
+        longitude: '',
+        reportTel: ''
+      },
       placeholder: '请输入',
       peoples: [
         {
@@ -152,13 +192,70 @@ export default {
       ]
     }
   },
+  watch: {
+    isShow (val) {
+      if (val) {
+        setTimeout(() => {
+          if (!this.isInit) {
+            this.isInit = true
+            this.$refs.gduMap.map2D.clickEvent.addEventListener(
+              this.mapClickCallback.bind(this)
+            )
+          }
+          this.$refs.gduMap.resetSearchText()
+          this.$refs.gduMap.map2D.customMarkerLayerManager.clear()
+          this.$refs.gduMap.map2D._map.updateSize()
+        }, 200)
+      } else {
+        this.$refs.caseForm.resetFields()
+      }
+    }
+  },
   mounted () {},
   methods: {
+    /**
+     * 点击地图回调事件
+     */
+    mapClickCallback (lonlat) {
+      const tmpMap = this.$refs.gduMap.map2D
+      this.caseForm.longitude = lonlat[0]
+      this.caseForm.latitude = lonlat[1]
+      tmpMap.customMarkerLayerManager.clear()
+      tmpMap.customMarkerLayerManager.addMarker({
+        name: null,
+        lon: lonlat[0],
+        lat: lonlat[1],
+        _bWgs2Gcj: false
+      })
+    },
     /**
      * 取消
      */
     cancel () {
       this.$emit('update:isShow', false)
+    },
+    /**
+     * 新增案件
+     */
+    submit () {
+      let v = false
+      this.$refs.caseForm.validate((valid) => {
+        v = valid
+      })
+      if (!v) return
+      this.caseForm.designateMan = ''
+      this.$axios
+        .post(caseApi.caseAdd, this.caseForm, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            this.$emit('addCaseOK')
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.caseAdd Err : ' + err)
+        })
     }
   }
 }
@@ -166,6 +263,7 @@ export default {
 
 <style lang="scss" scoped>
 .caseDlg {
+  pointer-events: auto;
   font-size: 14px;
   /deep/.el-dialog {
     width: 710px;
@@ -198,7 +296,7 @@ export default {
       .el-form-item {
         margin-bottom: 0.22rem;
         height: 26px;
-        margin-bottom: 14px;
+        margin-bottom: 18px;
       }
       .el-form-item__content {
         line-height: 26px;
@@ -208,7 +306,7 @@ export default {
         font-family: Source Han Sans CN;
         font-weight: 400;
         color: #fefefe;
-        width: 80px;
+        width: 100px;
         padding: 0px 15px 0px 0px;
         line-height: 26px;
       }
@@ -272,10 +370,10 @@ export default {
         }
       }
       .time {
-        margin-left: 50px;
+        margin-left: 30px;
       }
       .sex {
-        margin-left: 50px;
+        margin-left: 30px;
         .el-radio {
           color: #00caf6;
           margin-right: 28px;

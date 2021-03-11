@@ -493,7 +493,10 @@ export default {
         }
       })
     },
-
+    // 重置搜索文字
+    resetSearchText () {
+      this.simpleFilterText = ''
+    },
     getRootUrl () {
       var curWwwPath = window.document.location.href
       var pathName = window.document.location.pathname

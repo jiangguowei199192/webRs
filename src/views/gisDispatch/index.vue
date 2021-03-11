@@ -45,7 +45,7 @@
             <div class="title">案件列表</div>
             <div class="btns">
               <span @click.stop="addCase"></span>
-              <span></span>
+              <span @click.stop="getCaseList"></span>
             </div>
             <div class="caseNum">
               <template v-for="(item, index) in caseNums">
@@ -67,21 +67,21 @@
             <div class="list browserScroll">
               <template v-for="(item, index) in cases">
                 <div :key="index" @click.stop="jumpCase">
-                  <div class="caseName">{{ item.name }}</div>
+                  <div class="caseName">{{ item.caseName }}</div>
                   <div class="caseInfo">
                     <div class="left">
                       <img src="../../assets/images/gisDispatch/no-pic.svg" />
                       <span>待处理</span>
                     </div>
                     <div class="right">
-                      <span class="des">{{ item.des }}</span>
+                      <span class="des">{{ item.caseDesc }}</span>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/time.svg" />
-                        <span>{{ item.time }}</span>
+                        <span>{{ item.createTime }}</span>
                       </div>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/addr.svg" />
-                        <span>{{ item.address }}</span>
+                        <span>{{ item.reportAddr }}</span>
                       </div>
                     </div>
                   </div>
@@ -101,7 +101,7 @@
           :class="{ unfold: caseFold }"
         ></div>
       </div>
-      <AddCase :isShow.sync="showCaseDlg"></AddCase>
+      <AddCase :isShow.sync="showCaseDlg" @addCaseOK="addCaseOK"></AddCase>
     </div>
   </caseMain>
 </template>
@@ -110,6 +110,7 @@
 import AddCase from './components/addCase.vue'
 import videoMixin from '../videoSystem/mixins/videoMixin'
 import caseMain from './components/caseMain'
+import { caseApi } from '@/api/case'
 export default {
   data () {
     return {
@@ -194,56 +195,27 @@ export default {
       ],
       caseNums: [
         {
-          num: 23,
+          num: 0,
           status: '案件总数',
           color: '#00D2FF'
         },
         {
-          num: 10,
+          num: 0,
           status: '待处置',
           color: '#FF0000'
         },
         {
-          num: 10,
+          num: 0,
           status: '处置中',
           color: '#EAFF00'
         },
         {
-          num: 3,
+          num: 0,
           status: '已处置',
           color: '#6DD23E'
         }
       ],
-      cases: [
-        {
-          name: '群众举报非法捕捞事件',
-          time: '2020-11-09 09:08:00',
-          address: '武汉长江二桥',
-          des:
-            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
-        },
-        {
-          name: '群众举报非法捕捞事件',
-          time: '2020-11-09 09:08:00',
-          address: '武汉长江二桥',
-          des:
-            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
-        },
-        {
-          name: '群众举报非法捕捞事件',
-          time: '2020-11-09 09:08:00',
-          address: '武汉长江二桥',
-          des:
-            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
-        },
-        {
-          name: '群众举报非法捕捞事件',
-          time: '2020-11-09 09:08:00',
-          address: '武汉长江二桥',
-          des:
-            '情况说明：汉口江滩长江二桥附近发现非 法捕捞人员，可能携带电鱼装备，请相关 人员前往核查处置'
-        }
-      ]
+      cases: []
     }
   },
   mixins: [videoMixin],
@@ -255,6 +227,7 @@ export default {
   mounted () {
     // const me = this
     this.getResDataWidth()
+    this.getCaseList()
     // setTimeout(() => {
     //   me.addCamera()
     // }, 3000)
@@ -275,6 +248,13 @@ export default {
         // }
       })
       this.$refs.caseMain.addDatas(this.onlineArray)
+    },
+    /**
+     * 新增案件成功
+     */
+    addCaseOK () {
+      this.showCaseDlg = false
+      this.getCaseList()
     },
     /**
      * 刷新地图尺寸
@@ -316,6 +296,28 @@ export default {
      */
     jumpCase () {
       this.$router.push({ path: '/gisDispatchDispose' })
+    },
+    getCaseList () {
+      this.$axios
+        .post(
+          caseApi.selectPage,
+          {
+            currentPage: 1,
+            pageSize: 1000
+          },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            this.cases = res.data.data.records
+            this.caseNums[0].num = res.data.data.total
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectPage Err : ' + err)
+        })
     }
   }
 }
@@ -621,6 +623,7 @@ export default {
             font-family: Source Han Sans CN;
             font-weight: 400;
             color: #22fcfe;
+            height: 21px;
           }
           .caseInfo {
             margin-top: 5px;
