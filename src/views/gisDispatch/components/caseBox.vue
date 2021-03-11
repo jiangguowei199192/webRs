@@ -7,23 +7,23 @@
       <ul>
         <li>
           <span>案件名称：</span>
-          <span>{{ dataInfo.deptName }}</span>
+          <span>{{ dataInfo.caseName }}</span>
         </li>
         <li>
           <span>报案地址：</span>
-          <span>{{ dataInfo.deptAddress }}</span>
+          <span>{{ dataInfo.reportAddr }}</span>
         </li>
         <li>
           <span>报警时间：</span>
-          <span>{{ dataInfo.deptAddress }}</span>
+          <span>{{ dataInfo.reportTime }}</span>
         </li>
         <li>
           <span>案件描述：</span>
-          <span>{{ dataInfo.deptAddress }}</span>
+          <span>{{ dataInfo.caseDesc }}</span>
         </li>
         <li>
           <span>案件状态：</span>
-          <span>{{ dataInfo.deptAddress }}</span>
+          <span>{{ formatCaseStatus(dataInfo.caseStatus) }}</span>
         </li>
         <li v-if="!isGisDispatch">
           <span>周边范围：</span>
@@ -42,7 +42,7 @@ export default {
   name: 'caseBox',
   data () {
     return {
-      isGisDispatch: false,
+      isGisDispatch: true,
       radius: 5
     }
   },
@@ -64,6 +64,13 @@ export default {
       if (this.closeOverlay) {
         this.closeOverlay()
       }
+    },
+    /**
+     * 格式化案件状态
+     */
+    formatCaseStatus (caseStatus) {
+      if (caseStatus === '0') return '未处置'
+      else if (caseStatus === '1') return '已处置'
     }
   }
 }

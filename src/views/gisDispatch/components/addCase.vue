@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="isShow" class="caseDlg">
+  <el-dialog :visible="isShow" class="caseDlg browserScroll">
     <div>
       <div class="title">新增案件</div>
       <el-form
@@ -18,6 +18,7 @@
             v-model="caseForm.caseName"
             :placeholder="placeholder"
             class="caseName"
+            maxlength="20"
           ></el-input>
         </el-form-item>
         <el-form-item label="案发时间 :" prop="caseStartTime">
@@ -42,6 +43,7 @@
           <el-input
             v-model="caseForm.reportMan"
             :placeholder="placeholder"
+            maxlength="10"
           ></el-input>
         </el-form-item>
         <el-form-item label="性别 :" class="sex" prop="reporterGender">
@@ -58,6 +60,7 @@
           <el-input
             v-model="caseForm.reportTel"
             :placeholder="placeholder"
+            maxlength="11"
           ></el-input>
         </el-form-item>
         <el-form-item label="举报地址 :" prop="reportAddr">
@@ -65,6 +68,7 @@
             v-model="caseForm.reportAddr"
             :placeholder="placeholder"
             class="caseName"
+            maxlength="50"
           ></el-input>
         </el-form-item>
         <el-form-item label="    " prop="longitude" class="map">
@@ -86,6 +90,7 @@
             :placeholder="placeholder"
             type="textarea"
             resize="none"
+            maxlength="200"
           ></el-input>
         </el-form-item>
         <div class="step1">
@@ -100,6 +105,7 @@
           <el-input
             v-model="caseForm.receivingAlarmMan"
             :placeholder="placeholder"
+            maxlength="10"
           ></el-input>
         </el-form-item>
         <div class="step1">
@@ -141,7 +147,7 @@
 </template>
 
 <script>
-import { isNotNull } from '@/utils/formRules'
+import { isNotNull, checkPhone } from '@/utils/formRules'
 import { caseApi } from '@/api/case'
 export default {
   props: {
@@ -162,7 +168,8 @@ export default {
         reportAddr: [{ required: true, message: '请输入举报地址' }],
         caseDesc: [{ required: true, message: '请输入案件描述' }],
         receivingAlarmMan: [{ required: true, message: '请输入接警人' }],
-        longitude: isNotNull('请点选案件经纬度位置')
+        longitude: isNotNull('请点选案件经纬度位置'),
+        reportTel: [checkPhone()]
       },
       caseForm: {
         reporterGender: '',
@@ -211,7 +218,9 @@ export default {
       }
     }
   },
-  mounted () {},
+  mounted () {
+    this.getUserList()
+  },
   methods: {
     /**
      * 点击地图回调事件
@@ -233,6 +242,22 @@ export default {
      */
     cancel () {
       this.$emit('update:isShow', false)
+    },
+    /**
+     * 获取分配人员列表
+     */
+    getUserList () {
+      this.$axios
+        .post(caseApi.selectDesignateUserList, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectDesignateUserList Err : ' + err)
+        })
     },
     /**
      * 新增案件

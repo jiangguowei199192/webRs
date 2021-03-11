@@ -49,6 +49,14 @@ export default {
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
     },
     /**
+     * 在地图上添加案件标记
+     */
+    addCaseMarker (data) {
+      if (!this.$refs.gduMap) return
+      this.$refs.gduMap.map2D.gisDispatchManager.removeAllCase()
+      this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
+    },
+    /**
      *  动态创建vue组件
      */
     createVueCom (props) {

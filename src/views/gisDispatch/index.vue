@@ -1,5 +1,5 @@
 <template>
-  <caseMain ref="caseMain">
+  <CaseMain ref="caseMain">
     <div class="gisDispatch" slot="main">
       <div class="resBox">
         <div class="title">
@@ -66,30 +66,50 @@
             ></el-date-picker>
             <div class="list browserScroll">
               <template v-for="(item, index) in cases">
-                <div :key="index" @click.stop="jumpCase">
-                  <div class="caseName">{{ item.caseName }}</div>
+                <div
+                  :key="index"
+                  @click.stop="jumpCase(item.id)"
+                  :class="{ green: item.caseStatus === '1' }"
+                >
+                  <EllipsisTooltip
+                    :contentText="item.caseName"
+                    class="caseName"
+                  ></EllipsisTooltip>
                   <div class="caseInfo">
                     <div class="left">
                       <img src="../../assets/images/gisDispatch/no-pic.svg" />
-                      <span>待处理</span>
+                      <span :class="{ green: item.caseStatus === '1' }">{{
+                        formatCaseStatus(item.caseStatus)
+                      }}</span>
                     </div>
                     <div class="right">
-                      <span class="des">{{ item.caseDesc }}</span>
+                      <EllipsisTooltip
+                        :contentText="item.caseDesc"
+                        class="caseDesc"
+                        :isMultiLine="true"
+                        :contentClass="'addr'"
+                      ></EllipsisTooltip>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/time.svg" />
                         <span>{{ item.createTime }}</span>
                       </div>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/addr.svg" />
-                        <span>{{ item.reportAddr }}</span>
+                        <EllipsisTooltip
+                          :contentText="item.reportAddr"
+                          class="reportAddr"
+                          :contentClass="'addr'"
+                        ></EllipsisTooltip>
                       </div>
                     </div>
                   </div>
                   <img
                     src="../../assets/images/gisDispatch/jump.svg"
-                    @click.stop="jumpCase"
+                    @click.stop="jumpCase(item.id)"
                   />
-                  <div class="tag">待处理</div>
+                  <div class="tag" :class="{ green: item.caseStatus === '1' }">
+                    {{ formatCaseStatus(item.caseStatus) }}
+                  </div>
                 </div>
               </template>
             </div>
@@ -103,14 +123,15 @@
       </div>
       <AddCase :isShow.sync="showCaseDlg" @addCaseOK="addCaseOK"></AddCase>
     </div>
-  </caseMain>
+  </CaseMain>
 </template>
 
 <script>
 import AddCase from './components/addCase.vue'
 import videoMixin from '../videoSystem/mixins/videoMixin'
-import caseMain from './components/caseMain'
+import CaseMain from './components/caseMain'
 import { caseApi } from '@/api/case'
+import EllipsisTooltip from '../../components/ellipsisTooltip'
 export default {
   data () {
     return {
@@ -221,7 +242,8 @@ export default {
   mixins: [videoMixin],
   components: {
     AddCase,
-    caseMain
+    CaseMain,
+    EllipsisTooltip
   },
   created () {},
   mounted () {
@@ -234,6 +256,9 @@ export default {
   },
   beforeDestroy () {},
   methods: {
+    setclass () {
+      return 'addr'
+    },
     addCamera () {
       this.onlineArray.forEach((o) => {
         o.longitude = o.deviceLongitude
@@ -248,6 +273,22 @@ export default {
         // }
       })
       this.$refs.caseMain.addDatas(this.onlineArray)
+    },
+    /**
+     * 在地图上添加案件标记
+     */
+    addCaseMarker () {
+      this.cases.forEach((c) => {
+        c.type = 'RP_Case'
+      })
+      this.$refs.caseMain.addDatas(this.cases)
+    },
+    /**
+     * 格式化案件状态
+     */
+    formatCaseStatus (caseStatus) {
+      if (caseStatus === '0') return '未处置'
+      else if (caseStatus === '1') return '已处置'
     },
     /**
      * 新增案件成功
@@ -294,9 +335,34 @@ export default {
     /**
      * 跳转到案件处理
      */
-    jumpCase () {
-      this.$router.push({ path: '/gisDispatchDispose' })
+    jumpCase (id) {
+      this.$axios
+        .post(
+          caseApi.selectDetail,
+          {
+            id: id
+          },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            this.$router.push({
+              path: '/gisDispatchDispose',
+              query: {
+                data: res.data.data
+              }
+            })
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectDetail Err : ' + err)
+        })
     },
+    /**
+     * 获取案件列表
+     */
     getCaseList () {
       this.$axios
         .post(
@@ -313,6 +379,13 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.cases = res.data.data.records
             this.caseNums[0].num = res.data.data.total
+            this.addCaseMarker()
+            this.caseNums[1].num = this.cases.filter(
+              (c) => c.caseStatus === '0'
+            ).length
+            this.caseNums[3].num = this.cases.filter(
+              (c) => c.caseStatus === '1'
+            ).length
           }
         })
         .catch((err) => {
@@ -618,12 +691,15 @@ export default {
             text-align: center;
             line-height: 55px;
           }
+          .tag.green {
+            background: url(../../assets/images/gisDispatch/green-tag.svg)
+              no-repeat;
+            background-size: 100% 100%;
+          }
           .caseName {
-            font-size: 16px;
-            font-family: Source Han Sans CN;
-            font-weight: 400;
-            color: #22fcfe;
             height: 21px;
+            line-height: 21px;
+            width: 160px;
           }
           .caseInfo {
             margin-top: 5px;
@@ -644,17 +720,22 @@ export default {
                 color: #f30203;
                 margin-top: 2px;
               }
+              span.green {
+                color: #6dd23e;
+              }
             }
             .right {
+              display: flex;
+              flex-direction: column;
               margin-top: 10px;
-              display: inline-block;
               width: 216px;
               line-height: 18px;
               font-family: Source Han Sans CN;
               font-weight: 400;
               color: #00d1fe;
-              .des {
+              .caseDesc {
                 max-height: 54px;
+                line-height: 18px;
               }
               .time {
                 margin-top: 10px;
@@ -665,9 +746,19 @@ export default {
                   height: 14px;
                   margin-right: 7px;
                 }
+                .reportAddr {
+                  line-height: 18px;
+                  height: 18px;
+                  width: 160px;
+                }
               }
             }
           }
+        }
+        > div.green {
+          background: url(../../assets/images/gisDispatch/green-case.svg)
+            no-repeat;
+          background-size: 100% 100%;
         }
       }
     }
