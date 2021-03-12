@@ -339,6 +339,9 @@ export default {
       .el-date-editor.el-input__inner {
         width: 190px;
       }
+      .el-input--suffix .el-input__inner {
+        padding-right: 20px;
+      }
       .el-input__inner {
         color: #00caf6;
         width: 190px;

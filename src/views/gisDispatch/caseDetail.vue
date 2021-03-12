@@ -21,17 +21,43 @@
               class="left"
             />
             <div class="right">
-              <span class="name">{{ caseInfo.caseName }}</span>
-              <span>报案人：{{ caseInfo.reportMan }}</span>
-              <span>联系电话：{{ caseInfo.reportTel }}</span>
-              <span>案件描述：{{ caseInfo.caseDesc }}</span>
+              <EllipsisTooltip
+                class="txt"
+                :contentText="caseInfo.caseName"
+                :contentClass="'caseName'"
+              ></EllipsisTooltip>
+              <EllipsisTooltip
+                :contentText="'报案人：' + caseInfo.reportMan"
+                class="txt"
+                :contentClass="'reportAddr'"
+              ></EllipsisTooltip>
+              <EllipsisTooltip
+                :contentText="'联系电话：' + caseInfo.reportTel"
+                class="txt"
+                :contentClass="'reportAddr'"
+              ></EllipsisTooltip>
+              <EllipsisTooltip
+                :contentText="'案件描述：' + caseInfo.caseDesc"
+                class="caseDesc"
+                :contentClass="'reportAddr'"
+                :isMultiLine="true"
+                :webkitLineClamp="2"
+              ></EllipsisTooltip>
               <div class="time">
                 <img src="../../assets/images/gisDispatch/time.svg" />
-                <span>{{ caseInfo.reportTime }}</span>
+                <EllipsisTooltip
+                  :contentText="caseInfo.reportTime"
+                  class="reportAddr"
+                  :contentClass="'reportAddr'"
+                ></EllipsisTooltip>
               </div>
               <div class="time">
                 <img src="../../assets/images/gisDispatch/addr.svg" />
-                <span>{{ caseInfo.reportAddr }}</span>
+                <EllipsisTooltip
+                  :contentText="caseInfo.reportAddr"
+                  :contentClass="'reportAddr'"
+                  class="reportAddr"
+                ></EllipsisTooltip>
               </div>
             </div>
           </div>
@@ -48,6 +74,12 @@
           </div>
         </div>
       </div>
+      <div class="disposeBox">
+        <div class="gisTitle">
+          <span>案件信息</span>
+        </div>
+        <div class="disposeInfo"></div>
+      </div>
     </div>
   </caseMain>
 </template>
@@ -55,6 +87,7 @@
 <script>
 import { copyData } from '@/utils/public'
 import caseMain from './components/caseMain'
+import EllipsisTooltip from '../../components/ellipsisTooltip'
 export default {
   name: 'caseDetail',
   data () {
@@ -72,10 +105,11 @@ export default {
     }
   },
   components: {
-    caseMain
+    caseMain,
+    EllipsisTooltip
   },
   mounted () {
-    const data = this.$route.query.data
+    const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
   },
   methods: {}
@@ -130,28 +164,58 @@ export default {
         .right {
           display: flex;
           flex-direction: column;
-          width: 216px;
+          width: 180px;
+          font-size: 12px;
           font-family: Source Han Sans CN;
           font-weight: 400;
           color: #fff;
-          > span {
-            margin-bottom: 7px;
+          .txt {
+            height: 16px;
+            line-height: 16px;
+            margin-bottom: 5px;
           }
-          .name {
-            color: #82f3fa;
+          .caseDesc {
+            height: 36px;
+            line-height: 18px;
+            margin-bottom: 5px;
           }
           .time {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
             img {
               width: 14px;
               height: 14px;
-              margin-right: 7px;
+              margin-right: 6px;
+            }
+            .reportAddr {
+              width: 160px;
+              height: 16px;
+              line-height: 16px;
             }
           }
         }
       }
+    }
+  }
+  .disposeBox {
+    width: 349px;
+    height: 608px;
+    pointer-events: auto;
+    position: absolute;
+    top: 397px;
+    left: 17px;
+    background: url(../../assets/images/gisDispatch/dispose-box.svg) no-repeat;
+    background-size: 100% 100%;
+    .disposeInfo {
+      box-sizing: border-box;
+      width: 329px;
+      height: 588px;
+      background-color: rgba($color: #0179a2, $alpha: 0.95);
+      font-size: 12px;
+      font-family: Source Han Sans CN;
+      font-weight: bold;
+      color: #ffffff;
     }
   }
 }

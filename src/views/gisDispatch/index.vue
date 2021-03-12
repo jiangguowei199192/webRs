@@ -296,7 +296,7 @@ export default {
       this.cases.forEach((c) => {
         c.type = 'RP_Case'
       })
-      this.$refs.caseMain.addDatas(this.cases)
+      this.$refs.caseMain.addCaseMarker(this.cases)
     },
     /**
      * 格式化案件状态
@@ -363,10 +363,11 @@ export default {
         )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
+            const data = JSON.stringify(res.data.data)
             this.$router.push({
               path: '/gisDispatchDispose',
               query: {
-                data: res.data.data
+                data: data
               }
             })
           }

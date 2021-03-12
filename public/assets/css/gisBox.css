@@ -4,7 +4,8 @@
 .camerBox,
 .droneBox,
 .singleCase,
-.caseMap {
+.caseMap,
+.disposeBox {
   position    : relative;
   box-sizing  : border-box;
   font-size   : 14px;
@@ -42,7 +43,8 @@
 .caseBox .gisTitle,
 .droneBox .gisTitle,
 .singleCase .gisTitle,
-.caseMap .gisTitle {
+.caseMap .gisTitle,
+.disposeBox .gisTitle {
   left           : 10px;
   top            : -18px;
   position       : absolute;
@@ -58,7 +60,8 @@
 .caseBox .gisTitle span,
 .droneBox .gisTitle span,
 .singleCase .gisTitle span,
-.caseMap .gisTitle span {
+.caseMap .gisTitle span,
+.disposeBox .gisTitle span {
   font-family: Source Han Sans CN;
   font-weight: bold;
   color      : #00b8ff;

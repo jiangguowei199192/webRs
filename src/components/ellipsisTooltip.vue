@@ -1,6 +1,6 @@
 <template>
   <div class="gEllipsis" :class="isMultiLine ? 'mltiLine' : 'singleLine'">
-    <div :class="contentClass">
+    <div :class="contentClass" :style="lineClamp">
       <el-tooltip
         effect="dark"
         :disabled="isElTooltipShow"
@@ -38,14 +38,23 @@ export default {
       // 多行省略
       type: Boolean,
       default: false
+    },
+    webkitLineClamp: {
+      type: Number,
+      default: 3
     }
   },
   data () {
     return {
-      isElTooltipShow: true // Tooltip 是否可用
+      isElTooltipShow: true, // Tooltip 是否可用
+      lineClamp: ''
     }
   },
-  mounted () {},
+  mounted () {
+    this.lineClamp = this.isMultiLine
+      ? '-webkit-line-clamp:' + this.webkitLineClamp
+      : ''
+  },
   methods: {
     hanldeElTooltip (val) {
       const dom = document.querySelector('.gEllipsis')
@@ -70,7 +79,7 @@ export default {
 <style scoped lang="scss">
 .gEllipsis {
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 12px;
   > div {
     width: 100%;
   }
@@ -88,6 +97,14 @@ export default {
   }
   .caseTxt {
     color: #fff;
+  }
+  .caseName {
+    box-sizing: border-box;
+    font-size: 12px;
+    color: #82f3fa;
+  }
+  .reportAddr {
+    font-size: 12px;
   }
 }
 
@@ -107,7 +124,6 @@ export default {
     display: -webkit-box;
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
 }
