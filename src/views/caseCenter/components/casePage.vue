@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-10 14:03:47
+ * @LastEditTime: 2021-03-11 15:08:11
 -->
 <template>
   <div class="fireBox">
@@ -64,6 +64,7 @@
         :api="api"
         :checkedList.sync="checkedList"
         @disposeClick="disposeClick"
+        @getClickRowInfo="getClickRowInfo"
       ></PageTable>
     </div>
   </div>
@@ -89,7 +90,7 @@ export default {
         return {
           timeBegin: '',
           timeEnd: '',
-          alarmAddress: ''
+          reportAddr: ''
         }
       }
     },
@@ -125,6 +126,8 @@ export default {
     }
   },
 
+  mounted () {},
+
   methods: {
     //  获取列表
     getList () {
@@ -156,7 +159,7 @@ export default {
         })
         return
       }
-      this.query.alarmAddress = this.queryParams.searchStr
+      this.query.reportAddr = this.queryParams.searchStr
       this.getList()
     },
 
@@ -164,13 +167,18 @@ export default {
     resetSearchParams () {
       this.dateRange = []
       this.queryParams.searchStr = ''
-      this.query.timeBegin = this.query.timeEnd = this.query.alarmAddress = ''
+      this.query.timeBegin = this.query.timeEnd = this.query.reportAddr = ''
       this.getList()
     },
 
     // 单击处置按钮
     disposeClick (index, data) {
       this.$emit('handelDisposeClick', index, data)
+    },
+
+    // 单击表格行
+    getClickRowInfo (data) {
+      this.$emit('handelClickRowInfo', data)
     }
   }
 }

@@ -4,15 +4,17 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-10 09:31:13
+ * @LastEditTime: 2021-03-12 14:09:41
 -->
 <template>
   <div class="step-box webFsScroll">
     <el-steps :active="eventStep" finish-status="success" direction="vertical">
       <el-step
-        :title="event.content"
         v-for="(event, event_index) in events"
         :key="event_index"
+        :title="
+          event.dispositionNode + '(' + event.dispositionStatus + ' | ' + ')'
+        "
       >
         <template slot="description">
           <div class="step-row">
@@ -26,7 +28,7 @@
               <tr>
                 <td>
                   <div class="processing-content-detail fl">
-                    <span>{{ event.describe + event.count }}</span>
+                    <!-- <span>{{ event.describe + event.count }}</span> -->
                   </div>
                   <div
                     class="processing-content-detail fr"
@@ -34,7 +36,7 @@
                   >
                     <span
                       ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
-                        event.time
+                        event.createTime
                       }}</span
                     >
                   </div>
@@ -42,19 +44,19 @@
                     class="processing-content-detail detail-img webFsScroll"
                     v-if="event_index == 3"
                   >
-                    <img
+                    <!-- <img
                       v-for="(event_pic, pic_index) in event.picList"
                       :key="pic_index"
                       :src="event_pic.picPath"
                       alt=""
-                    />
+                    /> -->
                   </div>
                   <div
                     class="processing-content-detail detail-result"
                     v-if="event_index == 4"
                   >
-                    <span>{{ event.person + event.name }}</span>
-                    <span>处置时间: {{ event.time }}</span>
+                    <span>处置人: {{ event.content.receivingAlarmMan }}</span>
+                    <span>处置时间: {{ event.createTime }}</span>
                     <div><span>附件: </span></div>
                   </div>
                 </td>
@@ -68,78 +70,88 @@
 </template>
 
 <script>
+// import { caseApi } from '@/api/case'
+// import { EventBus } from '@/utils/eventBus.js'
+
 export default {
   name: 'caseStep',
+
+  props: {
+    clickRowId: { type: String, required: false },
+    caseRecordInfo: { type: Array, required: false }
+  },
 
   data () {
     return {
       eventStep: 0,
-      events: [
-        {
-          id: '0',
-          content: '接案(已完成 | 正常)',
-          describe: '接案人员: ',
-          count: '王伟军',
-          time: '2020-12-27 09:52:00 '
-        },
-        {
-          id: '1',
-          content: '推送(已完成 | 正常)',
-          describe: '已推送: ',
-          count: '5人',
-          time: '2020-11-16 22:09:00 '
-        },
-        {
-          id: '2',
-          content: '处警(已完成 | 异常: 2)',
-          describe: '已推送: ',
-          count: '9人',
-          time: '2020-07-18 17:17:00 '
-        },
-        {
-          id: '3',
-          content: '处置(进行中)',
-          describe: '上传照片: ',
-          count: '',
-          time: '2020-06-21 12:45:00 ',
-          picList: [
-            {
-              picPath:
-                'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-            },
-            {
-              picPath:
-                'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-            },
-            {
-              picPath:
-                'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-            },
-            {
-              picPath:
-                'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-            },
-            {
-              picPath:
-                'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-            },
-            {
-              picPath:
-                'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-            }
-          ]
-        },
-        {
-          id: '4',
-          content: '结案',
-          describe: '处置结果: ',
-          count:
-            '这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录这里是处置记录',
-          time: '2020-09-18 17:09:00 ',
-          person: '处置人: ',
-          name: '张大大'
-        }
-      ]
+      events: {
+        id: '',
+        caseId: '', // 案件id
+        dispositionNode: '', // 节点（0接警、1推送、2处警、3处置、4结案）
+        dispositionStatus: '', // 节点状态(0进行中、1已完成、2未完成)
+        content: '', // 节点内容
+        createTime: '', // 创建时间
+        dispositionException: '' // 异常数量
+      }
+    }
+  },
+
+  watch: {},
+
+  mounted () {
+    this.disposeCaseInfo()
+  },
+
+  methods: {
+    // 处理处置记录info
+    disposeCaseInfo () {
+      console.log('caseRecordInfo:', this.caseRecordInfo)
+      if (this.caseRecordInfo) {
+        this.caseRecordInfo.forEach(item => {
+          this.events.id = item.id
+          this.events.caseId = item.caseId
+          this.events.dispositionNode = item.dispositionNode
+          this.events.dispositionStatus = item.dispositionStatus
+          this.events.content = item.content
+          this.events.createTime = item.createTime
+          this.events.dispositionException = item.dispositionException
+
+          switch (this.events.dispositionNode) {
+            case 0:
+              this.events.dispositionNode = '接警'
+              break
+            case 1:
+              this.events.dispositionNode = '推送'
+              break
+            case 2:
+              this.events.dispositionNode = '处警'
+              break
+            case 3:
+              this.events.dispositionNode = '处置'
+              break
+            case 4:
+              this.events.dispositionNode = '结案'
+              break
+          }
+          switch (this.events.dispositionStatus) {
+            case 0:
+              this.events.dispositionStatus = '进行中'
+              break
+            case 1:
+              this.events.dispositionStatus = '已完成'
+              break
+            case 2:
+              this.events.dispositionStatus = '未完成'
+              break
+          }
+        })
+        // console.log(
+        //   'dispositionNode:',
+        //   this.events.dispositionNode,
+        //   'dispositionStatus:',
+        //   this.events.dispositionStatus
+        // )
+      }
     }
   }
 }

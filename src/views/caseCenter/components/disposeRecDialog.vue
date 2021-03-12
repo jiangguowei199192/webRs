@@ -2,16 +2,15 @@
  * @Descripttion: 天下风云出我辈, 一入江湖岁月催; 皇图霸业谈笑中, 不胜人生一场醉.
  * @version: v_1.0
  * @Author: liangkaiLee
- * @Date: 2021-03-10 14:07:40
+ * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-10 17:33:00
+ * @LastEditTime: 2021-03-11 15:19:01
 -->
 <template>
   <div>
     <el-dialog
       :visible.sync="isShow"
       :close-on-click-modal="false"
-      width="660px"
       class="add-case-dlg dialog-wrap"
     >
       <div class="add-case-header">{{ title }}</div>
@@ -19,7 +18,7 @@
         ref="fireListForm"
         :model="addCaseForm"
         :inline="true"
-        label-width="80px"
+        label-width="auto"
         class="add-case-form"
       >
         <el-form-item label="处置结果 :" prop="result">
@@ -41,7 +40,11 @@
               value-format="yyyy-MM-dd HH:mm:ss"
             ></el-date-picker>
           </el-form-item>
-          <el-form-item label="处置人 :" prop="people">
+          <el-form-item
+            label="处置人 :"
+            prop="people"
+            style="margin-right: 20px"
+          >
             <el-input
               v-model="addCaseForm.people"
               :placeholder="placeholder"
@@ -68,13 +71,6 @@
               <p>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
             </div>
           </el-upload>
-          <el-progress
-            v-if="uploadFlag == true"
-            type="line"
-            :percentage="uploadPercent"
-            :color="customColor"
-            style="margin-top:-25px;"
-          ></el-progress>
         </el-form-item>
       </el-form>
       <div class="handelBtns">
@@ -106,18 +102,12 @@ export default {
         showConfirm: true
       },
       isReadonly: false,
-      uploadList: [],
-      uploadFlag: true,
-      uploadPercent: 45,
-      customColor: '#409eff'
+      uploadList: []
     }
   },
 
   watch: {
-    isShow (val) {
-      if (val && this.caseInfo) {
-      }
-    }
+    isShow (val) {}
   },
 
   methods: {
@@ -140,6 +130,8 @@ export default {
 .add-case-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    max-width: 780px;
+    // background-color: rgba(0, 65, 87, 0.85);
     .add-case-header {
       width: 218px;
       height: 30px;
@@ -151,12 +143,12 @@ export default {
       padding: 0 20px;
     }
     .add-case-form {
-      margin-top: 30px;
+      margin: 30px 0 0 5px;
       .el-input__inner {
         background-color: rgba(9, 84, 109, 0.85);
         border-color: #00d2ff;
         border-radius: 0;
-        width: 270px;
+        width: 240px;
         height: 28px;
         color: #00caf6;
         font-size: 12px;
@@ -176,7 +168,7 @@ export default {
         background-color: rgba(9, 84, 109, 0.85);
         border-color: #00d2ff;
         border-radius: 0;
-        width: 619px;
+        width: 635px;
         height: 85px;
         color: #fff;
         font-size: 12px;
@@ -198,19 +190,16 @@ export default {
           border: 1px dashed #00d2ff;
           box-sizing: border-box;
           width: 404px;
-          height: auto;
+          height: 208px;
         }
         .el-icon-upload {
           font-size: 80px;
           color: #c0c4cc;
-          margin: 10px 0 0 5px;
+          margin: 30px 0 0 5px;
         }
         .el-upload__text {
           color: #fff;
         }
-      }
-      .el-progress__text {
-        color: rgb(13, 219, 99);
       }
     }
     .handelBtns {

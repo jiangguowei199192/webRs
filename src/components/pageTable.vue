@@ -10,6 +10,7 @@
       :row-style="changeRowStyle"
       :cell-style="changeCellStyle"
       @selection-change="selectionChange"
+      @row-click="getClickRowInfo"
     >
       <el-table-column
         v-if="checkBox"
@@ -62,9 +63,7 @@
               v-else-if="item.type === 'handelStatus' && scope.row[item.value]"
               class="handelBtn"
               :class="
-                scope.row[item.value] == '已处置'
-                  ? 'activeColor'
-                  : 'inActiveColor'
+                scope.row[item.value] == '已处置' ? 'activeColor' : 'inActiveColor'
               "
               @click.stop="disposeClick(scope.$index, scope.row)"
               >{{ scope.row[item.value] }}</span
@@ -266,6 +265,12 @@ export default {
       this.$emit('disposeClick', index, data)
     },
     /**
+     *  表格行点击
+     */
+    getClickRowInfo (val) {
+      this.$emit('getClickRowInfo', val)
+    },
+    /**
      *  处理参数
      */
     handleParams () {
@@ -329,6 +334,13 @@ export default {
                 this.listInfo.query.currentPage = paginator.current
                 this.listInfo.query.pageSize = paginator.size
               }
+              arr.forEach(r => {
+                if (r.caseStatus === '0') {
+                  r.caseStatus = '未处置'
+                } else if (r.caseStatus === '1') {
+                  r.caseStatus = '已处置'
+                }
+              })
             }
           }
         })

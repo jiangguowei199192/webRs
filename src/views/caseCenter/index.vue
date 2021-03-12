@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-10 14:16:59
+ * @LastEditTime: 2021-03-12 14:09:02
 -->
 <template>
   <div class="caseCenter">
@@ -13,8 +13,9 @@
       class="case-table"
       :tableInfo="tableInfo"
       :subTitle="subTitle"
-      :api="getFireList"
+      :api="getCaseList"
       @handelDisposeClick="handelDisposeClick"
+      @handelClickRowInfo="handelClickRowInfo"
     ></CasePage>
     <!-- 案件详情 -->
     <div class="case-detail">
@@ -25,46 +26,51 @@
             <h4>基本信息</h4>
             <div>
               <p>
-                <span>案件名称: </span> <span>{{ "执法专班巡逻" }}</span>
+                <span>案件名称: </span>
+                <span>{{ caseDetailInfo.caseName }}</span>
               </p>
             </div>
             <div>
               <p>
-                <span>案发时间: </span><span>{{ "2020-11-04 16:06:00" }}</span>
+                <span>案发时间: </span
+                ><span>{{ caseDetailInfo.caseStartTime }}</span>
               </p>
             </div>
             <div>
               <p>
-                <span>举报人: </span><span>{{ "王伟军" }}</span>
+                <span>举报人: </span><span>{{ caseDetailInfo.reportMan }}</span>
               </p>
               <p>
-                <span>性别: </span><span>{{ "男" }}</span>
-              </p>
-            </div>
-            <div>
-              <p>
-                <span>身份证: </span><span>{{ "2345432345678905433" }}</span>
-              </p>
-              <p>
-                <span>举报电话: </span><span>{{ "15523489371" }}</span>
+                <span>性别: </span
+                ><span>{{ caseDetailInfo.reporterGender }}</span>
               </p>
             </div>
             <div>
               <p>
-                <span>举报地址: </span><span>{{ "江夏区金口水域" }}</span>
+                <span>身份证: </span
+                ><span>{{ caseDetailInfo.reporterIdentity }}</span>
+              </p>
+              <p>
+                <span>举报电话: </span
+                ><span>{{ caseDetailInfo.reportTel }}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                <span>举报地址: </span
+                ><span>{{ caseDetailInfo.reportAddr }}</span>
               </p>
             </div>
             <div class="simple-describe">
               <p>
                 <span>简要描述: </span
-                ><span>{{
-                  "执法专班于长江金口水域发现疑似电捕鱼船 执法专班于长江金口水域发现疑似电捕鱼船 执法专班于长江金口水域发现疑似电捕鱼船"
-                }}</span>
+                ><span>{{ caseDetailInfo.caseDesc }}</span>
               </p>
             </div>
             <div>
               <p>
-                <span>接案人: </span><span>{{ "刘秀敏" }}</span>
+                <span>接案人: </span
+                ><span>{{ caseDetailInfo.receivingAlarmMan }}</span>
               </p>
             </div>
           </div>
@@ -72,20 +78,18 @@
             <h4>处置信息</h4>
             <div>
               <p>
-                <span>处置时间: </span><span>{{ "2020-11-04 16:06:00" }}</span>
+                <span>处置时间: </span
+                ><span>{{ caseDetailInfo.dispositionTime }}</span>
               </p>
               <p>
-                <span>处置人: </span><span>{{ "王伟军" }}</span>
+                <span>处置人: </span
+                ><span>{{ caseDetailInfo.disManName }}</span>
               </p>
             </div>
             <div class="handel-result">
               <p>
                 <span>处置结果:</span
-                ><span>
-                  {{
-                    "渔政执法快艇到达案发水域后首先对龙口闸水域非法捕捞行为进行打击查处，随后才进入倒水河水域，但此时嫌疑人员已经上岸逃离。执法人员乘坐执法快艇进一步巡查后，发现嫌疑人驾驶的船舶，并将其带回渔政码头扣押并作进一步调查。"
-                  }}</span
-                >
+                ><span> {{ caseDetailInfo.dispositionRecord }}</span>
               </p>
             </div>
             <div class="handel-attach">
@@ -105,7 +109,8 @@
       <div class="handel-info ">
         <h3><span>处置记录 | </span><span>聊天记录</span></h3>
         <div class="handel-chat-record ">
-          <CaseStep></CaseStep>
+          <!-- 处置记录|聊天记录步骤条 -->
+          <CaseStep :caseRecordInfo.sync="caseRecordInfo"></CaseStep>
         </div>
       </div>
     </div>
@@ -113,7 +118,7 @@
     <DisposeRecDialog
       ref="addDictRef"
       :isShow.sync="isShow"
-      title="火情详情"
+      title="处置记录"
       :fireInfo.sync="fireInfo"
       @confirmFireClick="confirmFireClick"
     ></DisposeRecDialog>
@@ -121,10 +126,11 @@
 </template>
 
 <script>
-// import { fireApi } from '@/api/videoSystem/fireAlarm.js'
 import CasePage from './components/casePage'
 import CaseStep from '@/components/caseStep'
 import DisposeRecDialog from './components/disposeRecDialog'
+import { caseApi } from '@/api/case'
+// import { EventBus } from "@/utils/eventBus.js";
 
 export default {
   components: {
@@ -135,78 +141,17 @@ export default {
 
   data () {
     return {
-      subTitle: '火情列表',
+      subTitle: '案件列表',
       // 表格项
       tableInfo: {
         refresh: 0,
-        data: [
-          {
-            caseBelong: '渔政执法二大队',
-            caseDesc: '童家湖水域查获涉嫌使用电鱼捕捞',
-            caseImg: null,
-            caseNo: '20201228797173',
-            caseStatus: '已处置',
-            dispositionImgUrl: null,
-            dispositionMan: '渔政执法大队 ',
-            dispositionRecord: null,
-            dispositionTime: '2020-04-04 18:00:00',
-            id: '72e0cb580297ad7bfbda59a9da88d26a',
-            importantRecord: null,
-            infoSource: '通江支流府河童家湖水域电鱼非法捕捞',
-            latitude: 30.7602145,
-            longitude: 114.180492,
-            reportAddr: '通江支流府河童家湖水域',
-            reportMan: ' ',
-            reportTel: null,
-            reportTime: '2020-04-04 14:00:00'
-          },
-          {
-            caseBelong: '江夏区渔政船检港监管理站',
-            caseDesc: '执法专班于长江金口水域发现疑似电捕鱼船',
-            caseImg: null,
-            caseNo: '20201229347324',
-            caseStatus: '未处置',
-            dispositionImgUrl: null,
-            dispositionMan: null,
-            dispositionRecord: null,
-            dispositionTime: null,
-            id: '1bb161a6ef9d0c5b05eb74da7e3b4b3d',
-            importantRecord: null,
-            infoSource: '执法专班巡逻',
-            latitude: 30.2845938,
-            longitude: 114.091783,
-            reportAddr: '江夏区金口水域',
-            reportMan: '无',
-            reportTel: '无',
-            reportTime: '2020-11-04 16:06:00'
-          },
-          {
-            caseBelong: '江夏区渔政船检港监管理站',
-            caseDesc: '执法专班于长江金口水域发现疑似电捕鱼船',
-            caseImg: null,
-            caseNo: '20201229347324',
-            caseStatus: '未处置',
-            dispositionImgUrl: null,
-            dispositionMan: null,
-            dispositionRecord: null,
-            dispositionTime: null,
-            id: '1bb161a6ef9d0c5b05eb74da7e3b4b3d',
-            importantRecord: null,
-            infoSource: '执法专班巡逻',
-            latitude: 30.2845938,
-            longitude: 114.091783,
-            reportAddr: '江夏区金口水域',
-            reportMan: '无',
-            reportTel: '无',
-            reportTime: '2020-11-04 16:06:00'
-          }
-        ],
+        data: [],
         fieldList: [
-          { label: '案件名称', value: 'infoSource' },
+          { label: '案件名称', value: 'caseName' },
           { label: '举报地点', value: 'reportAddr' },
           { label: '简要描述', value: 'caseDesc' },
-          { label: '案发时间', value: 'reportTime' },
-          { label: '接案时间', value: 'dispositionTime' },
+          { label: '案发时间', value: 'caseStartTime' },
+          { label: '接案时间', value: 'createTime' },
           { label: '处置状态', value: 'caseStatus', type: 'handelStatus' }
         ]
       },
@@ -216,33 +161,29 @@ export default {
         {
           picPath:
             'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-        },
-        {
-          picPath:
-            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-        },
-        {
-          picPath:
-            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-        },
-        {
-          picPath:
-            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-        },
-        {
-          picPath:
-            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-        },
-        {
-          picPath:
-            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
         }
-      ]
+      ],
+      caseDetailInfo: {},
+      clickRowId: '',
+      // caseRecordInfo:
+      //   {
+      //     caseId: '',
+      //     content: '',
+      //     createTime: '',
+      //     dispositionException: '',
+      //     dispositionNode: '',
+      //     dispositionStatus: '',
+      //     id: ''
+      //   }
+
+      caseRecordInfo: null
     }
   },
 
   mounted () {
-    // this.refreshTable()
+    this.refreshTable()
+    this.getCaseDetail()
+    this.getCaseRecord()
   },
 
   beforeDestroy () {
@@ -255,24 +196,76 @@ export default {
       this.tableInfo.refresh = Math.random()
     },
 
-    // 获取火情列表
-    getFireList (params) {
-      // console.log("params:", params);
-      // return this.$axios.get(fireApi.getDurationFireAlarmInfos, {
-      //   params: params
-      // });
-    },
-
     // 单击处置按钮
     handelDisposeClick (id, info) {
       // console.log("index:", id, "data:", info);
-      // this.fireInfo = info
       this.isShow = true
+    },
+
+    // 单击表格行
+    handelClickRowInfo (info) {
+      // console.log('rowdata:', info)
+      this.clickRowId = info.id
+
+      this.getCaseDetail()
+      this.getCaseRecord()
     },
 
     // 按钮操作提交
     confirmFireClick () {
       this.refreshTable()
+    },
+
+    // 获取案件列表
+    getCaseList (params) {
+      return this.$axios.post(caseApi.selectPage, params, {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      })
+    },
+
+    // 获取案件记录-基本信息
+    getCaseDetail () {
+      this.$axios
+        .post(
+          caseApi.selectDetail,
+          { id: this.clickRowId },
+          { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+        )
+        .then(res => {
+          console.log('基本信息res：', res)
+          if (res && res.data && res.data.code === 0) {
+            if (this.caseDetailInfo === {}) {
+              this.caseDetailInfo = res.data.data[0]
+            }
+            this.caseDetailInfo = res.data.data
+          }
+        })
+        .catch(err => {
+          console.log('caseApi.selectDetail Err : ' + err)
+        })
+    },
+
+    // 获取案件记录-处置记录
+    getCaseRecord () {
+      this.$axios
+        .post(
+          caseApi.selectCaseRecord,
+          { id: this.clickRowId },
+          { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+        )
+        .then(res => {
+          console.log('处置记录res：', res)
+          if (res && res.data && res.data.code === 0) {
+            if (!this.caseRecordInfo) {
+              this.caseRecordInfo = res.data.data.records[0]
+            }
+            this.caseRecordInfo = res.data.data.records
+            // console.log('caseRecordInfo:', this.caseRecordInfo)
+          }
+        })
+        .catch(err => {
+          console.log('caseApi.selectDetail Err : ' + err)
+        })
     }
   }
 }
