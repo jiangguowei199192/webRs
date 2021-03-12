@@ -675,12 +675,11 @@ export default {
       .list {
         width: 442px;
         box-sizing: border-box;
-        margin-top: 9px;
+        margin-top: 6px;
         margin-left: 40px;
-        height: 607px;
+        height: 600px;
         overflow-y: scroll;
         //每个案件
-        padding-top: 7px;
         > div {
           position: relative;
           box-sizing: border-box;
@@ -690,7 +689,7 @@ export default {
             no-repeat;
           background-size: 100% 100%;
           cursor: pointer;
-          margin-bottom: 10px;
+          margin-top: 10px;
           padding: 8px 0px 0px 14px;
           > img {
             width: 34px;
@@ -799,6 +798,7 @@ export default {
         font-family: Source Han Sans CN;
         font-weight: 400;
         color: #00d1fe;
+        width: 41%;
       }
       /deep/.el-range-separator {
         color: #00d1fe;
