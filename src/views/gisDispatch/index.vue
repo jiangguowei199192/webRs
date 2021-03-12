@@ -66,7 +66,7 @@
               value-format="yyyy-MM-dd HH:mm:ss"
               @change="getCaseList"
             ></el-date-picker>
-            <div class="list browserScroll">
+            <div class="list listScroll">
               <template v-for="(item, index) in cases">
                 <div
                   :key="index"
@@ -134,6 +134,7 @@ import videoMixin from '../videoSystem/mixins/videoMixin'
 import CaseMain from './components/caseMain'
 import { caseApi } from '@/api/case'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
+import { timeFormat } from '@/utils/date'
 export default {
   data () {
     return {
@@ -250,6 +251,7 @@ export default {
   created () {},
   mounted () {
     // const me = this
+    this.initDateRange()
     this.getResDataWidth()
     this.getCaseList()
     // setTimeout(() => {
@@ -275,6 +277,17 @@ export default {
         // }
       })
       this.$refs.caseMain.addDatas(this.onlineArray)
+    },
+    /**
+     * 初始化时间
+     */
+    initDateRange () {
+      // 今日0点
+      const time = new Date(new Date().toLocaleDateString()).getTime()
+      // 今日 23:59:59
+      const end = new Date(time + 24 * 60 * 60 * 1000 - 1)
+      const start = new Date(time - 6 * 24 * 60 * 60 * 1000)
+      this.dateRange = [timeFormat(start), timeFormat(end)]
     },
     /**
      * 在地图上添加案件标记
@@ -372,8 +385,14 @@ export default {
           {
             currentPage: 1,
             pageSize: 1000,
-            startTime: this.dateRange && this.dateRange.length > 0 ? this.dateRange[0] : '',
-            endTime: this.dateRange && this.dateRange.length > 1 ? this.dateRange[2] : ''
+            startTime:
+              this.dateRange && this.dateRange.length > 0
+                ? this.dateRange[0]
+                : '',
+            endTime:
+              this.dateRange && this.dateRange.length > 1
+                ? this.dateRange[2]
+                : ''
           },
           {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
@@ -539,18 +558,18 @@ export default {
     }
   }
 
-  // .listScroll::-webkit-scrollbar {
-  //   width: 2px;
-  // }
-  // .listScroll::-webkit-scrollbar-thumb {
-  //   /*滚动条里面小方块*/
-  //   border-radius: 3px;
-  //   background: #00b7ff;
-  // }
-  // .listScroll::-webkit-scrollbar-track {
-  //   /*滚动条里面轨道*/
-  //   background: transparent;
-  // }
+  .listScroll::-webkit-scrollbar {
+    width: 3px;
+  }
+  .listScroll::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 3px;
+    background: #00b7ff;
+  }
+  .listScroll::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    background: transparent;
+  }
 
   .caseBox1 {
     pointer-events: auto;
@@ -654,12 +673,14 @@ export default {
         }
       }
       .list {
+        width: 442px;
         box-sizing: border-box;
-        margin-top: 16px;
-        margin-left: 43px;
-        height: 600px;
+        margin-top: 9px;
+        margin-left: 40px;
+        height: 607px;
         overflow-y: scroll;
         //每个案件
+        padding-top: 7px;
         > div {
           position: relative;
           box-sizing: border-box;
@@ -669,7 +690,6 @@ export default {
             no-repeat;
           background-size: 100% 100%;
           cursor: pointer;
-          margin-top: 5px;
           margin-bottom: 10px;
           padding: 8px 0px 0px 14px;
           > img {
@@ -683,8 +703,8 @@ export default {
             position: absolute;
             width: 76px;
             height: 55px;
-            top: -4px;
-            right: -10px;
+            top: -7px;
+            right: -12px;
             background: url(../../assets/images/gisDispatch/red-tag.svg)
               no-repeat;
             background-size: 100% 100%;
@@ -731,7 +751,7 @@ export default {
             .right {
               display: flex;
               flex-direction: column;
-              margin-top: 10px;
+              margin-top: 8px;
               width: 216px;
               line-height: 18px;
               font-family: Source Han Sans CN;
@@ -767,7 +787,7 @@ export default {
       }
     }
     .caseDate {
-      margin-left: 48px;
+      margin-left: 40px;
       margin-top: 11px;
       width: 436px;
       height: 40px;
