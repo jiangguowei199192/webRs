@@ -89,7 +89,6 @@
                         :contentText="item.caseDesc"
                         class="caseDesc"
                         :isMultiLine="true"
-                        :contentClass="'addr'"
                       ></EllipsisTooltip>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/time.svg" />
@@ -100,7 +99,6 @@
                         <EllipsisTooltip
                           :contentText="item.reportAddr"
                           class="reportAddr"
-                          :contentClass="'addr'"
                         ></EllipsisTooltip>
                       </div>
                     </div>
@@ -187,7 +185,7 @@ export default {
           width: 0
         },
         {
-          name: '关注单位',
+          name: '关注点位',
           img: require('../../assets/images/gisDispatch/point.svg'),
           num: 7,
           color: '#82F3FA',
@@ -559,19 +557,6 @@ export default {
     }
   }
 
-  .listScroll::-webkit-scrollbar {
-    width: 3px;
-  }
-  .listScroll::-webkit-scrollbar-thumb {
-    /*滚动条里面小方块*/
-    border-radius: 3px;
-    background: #00b7ff;
-  }
-  .listScroll::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    background: transparent;
-  }
-
   .caseBox1 {
     pointer-events: auto;
     display: flex;
@@ -724,6 +709,10 @@ export default {
             height: 21px;
             line-height: 21px;
             width: 160px;
+            font-size: 16px;
+            font-family: Source Han Sans CN;
+            font-weight: 400;
+            color: #22fcfe;
           }
           .caseInfo {
             margin-top: 5px;

@@ -22,24 +22,20 @@
             />
             <div class="right">
               <EllipsisTooltip
-                class="txt"
+                class="caseName"
                 :contentText="caseInfo.caseName"
-                :contentClass="'caseName'"
               ></EllipsisTooltip>
               <EllipsisTooltip
                 :contentText="'报案人：' + caseInfo.reportMan"
                 class="txt"
-                :contentClass="'reportAddr'"
               ></EllipsisTooltip>
               <EllipsisTooltip
                 :contentText="'联系电话：' + caseInfo.reportTel"
                 class="txt"
-                :contentClass="'reportAddr'"
               ></EllipsisTooltip>
               <EllipsisTooltip
                 :contentText="'案件描述：' + caseInfo.caseDesc"
                 class="caseDesc"
-                :contentClass="'reportAddr'"
                 :isMultiLine="true"
                 :webkitLineClamp="2"
               ></EllipsisTooltip>
@@ -48,27 +44,26 @@
                 <EllipsisTooltip
                   :contentText="caseInfo.reportTime"
                   class="reportAddr"
-                  :contentClass="'reportAddr'"
                 ></EllipsisTooltip>
               </div>
               <div class="time">
                 <img src="../../assets/images/gisDispatch/addr.svg" />
                 <EllipsisTooltip
                   :contentText="caseInfo.reportAddr"
-                  :contentClass="'reportAddr'"
                   class="reportAddr"
                 ></EllipsisTooltip>
               </div>
             </div>
           </div>
-          <div v-show="active === 1">
+          <div v-show="active === 1" class="pushBox listScroll">
             <template v-for="(item, index) in pushList">
-              <div :key="index" @click.stop="jumpCase">
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
+              <div :key="index" class="push">
+                <span>{{ index + 1 }}</span>
+                <span>{{ item.time }}</span>
+                <EllipsisTooltip
+                  :contentText="item.txt"
+                  class="names"
+                ></EllipsisTooltip>
               </div>
             </template>
           </div>
@@ -79,6 +74,78 @@
           <span>案件信息</span>
         </div>
         <div class="disposeInfo"></div>
+      </div>
+      <div class="resAround">
+        <div class="gisTitle">
+          <span>周边资源</span>
+        </div>
+        <div class="resBox">
+          <div class="head">
+            <span>总计:</span>
+            <span>详情</span>
+          </div>
+          <div class="data">
+            <div class="left">
+              <template v-for="(item, index) in resInfos">
+                <div
+                  :key="index"
+                  :style="{ color: item.color }"
+                  @click.stop="selResIdx = index"
+                  :class="{ select: selResIdx === index }"
+                >
+                  <img :src="selResIdx === index ? item.imgS : item.img" />
+                  <span>{{ item.name }}</span>
+                  <span>{{ item.num }}</span>
+                  <span
+                    :class="{ unview: !item.view }"
+                    @click.stop="visibleResInMap(item)"
+                  ></span>
+                </div>
+              </template>
+            </div>
+            <div class="right listScroll">
+              <template v-for="(item, index) in resDetails">
+                <div :key="index">
+                  <div class="rTxt" v-show="selResIdx != 2">
+                    <EllipsisTooltip
+                      class="name"
+                      :contentText="item.name"
+                    ></EllipsisTooltip>
+                    <EllipsisTooltip
+                      class="des"
+                      :contentText="item.des"
+                    ></EllipsisTooltip>
+                  </div>
+                  <div class="drone" v-show="selResIdx === 2">
+                    <EllipsisTooltip
+                      class="name"
+                      :contentText="item.name"
+                      :isMultiLine="true"
+                      :webkitLineClamp="2"
+                    ></EllipsisTooltip>
+                    <div class="latLng">
+                      <EllipsisTooltip
+                        class="lat"
+                        :contentText="'经度：' + item.lon"
+                      ></EllipsisTooltip>
+                      <EllipsisTooltip
+                        class="lat"
+                        :contentText="'纬度：' + item.lon"
+                      ></EllipsisTooltip>
+                    </div>
+                  </div>
+                  <div
+                    class="distance"
+                    v-show="selResIdx != 4 && selResIdx != 5 && selResIdx != 6"
+                  >
+                    <img src="../../assets/images/gisDispatch/distance.svg" />
+                    <span>{{ item.dist + "m" }}</span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </caseMain>
@@ -101,7 +168,128 @@ export default {
         reportTel: '',
         reportTime: ''
       },
-      pushList: []
+      selResIdx: -1,
+      resDetails: [
+        {
+          dist: 222,
+          name: '武汉市渔业渔政处22222222222',
+          des: '武汉市江汉区沿江大道33333333333333',
+          lat: '30.1234567',
+          lon: '114.654317'
+        },
+        {
+          dist: 222,
+          name: '武汉市渔业渔政处',
+          des: '武汉市江汉区沿江大道33333333333333',
+          lat: '',
+          lon: ''
+        },
+        {
+          dist: 222,
+          name: '武汉市渔业渔政处22222222222',
+          des: '武汉市江汉区沿江大道',
+          lat: '',
+          lon: ''
+        },
+        {
+          dist: 222,
+          name: '武汉市渔业渔政处22222222222',
+          des: '武汉市江汉区沿江大道33333333333333',
+          lat: '',
+          lon: ''
+        },
+        {
+          dist: 333,
+          name: '武汉市渔业渔政处22222222222',
+          des: '武汉市江汉区沿江大道33333333333333',
+          lat: '',
+          lon: ''
+        }
+      ],
+      resInfos: [
+        {
+          name: '组织机构',
+          img: require('../../assets/images/gisDispatch/institution.svg'),
+          imgS: require('../../assets/images/gisDispatch/institution-select.svg'),
+          num: 8,
+          color: '#20F2F5',
+          view: true
+        },
+        {
+          name: '组织人员',
+          img: require('../../assets/images/gisDispatch/people.svg'),
+          imgS: require('../../assets/images/gisDispatch/people-select.svg'),
+          num: 12,
+          color: '#CCFF00',
+          view: true
+        },
+        {
+          name: '无人机',
+          img: require('../../assets/images/gisDispatch/drone.svg'),
+          imgS: require('../../assets/images/gisDispatch/drone-select.svg'),
+          num: 4,
+          color: '#EF4E22',
+          view: true
+        },
+        {
+          name: '高点监控',
+          img: require('../../assets/images/gisDispatch/camera.svg'),
+          imgS: require('../../assets/images/gisDispatch/camera-select.svg'),
+          num: 15,
+          color: '#49EF22',
+          view: true
+        },
+        {
+          name: '重点区域',
+          img: require('../../assets/images/gisDispatch/area.svg'),
+          imgS: require('../../assets/images/gisDispatch/area-select.svg'),
+          num: 3,
+          color: '#E92D2D',
+          view: true
+        },
+        {
+          name: '重要路线',
+          img: require('../../assets/images/gisDispatch/route.svg'),
+          imgS: require('../../assets/images/gisDispatch/route-select.svg'),
+          num: 7,
+          color: '#CCFF00',
+          view: true
+        },
+        {
+          name: '关注点位',
+          img: require('../../assets/images/gisDispatch/point.svg'),
+          imgS: require('../../assets/images/gisDispatch/point-select.svg'),
+          num: 7,
+          color: '#82F3FA',
+          view: true
+        }
+      ],
+      pushList: [
+        {
+          time: '2020-03-04 16:21:33',
+          txt: '张三 李四 王五'
+        },
+        {
+          time: '2020-03-04 16:21:33',
+          txt: '张三 李四 王五2233333355555555'
+        },
+        {
+          time: '2020-03-04 16:21:33',
+          txt: '张三 李四 王五'
+        },
+        {
+          time: '2020-03-04 16:21:33',
+          txt: '张三 李四 王五'
+        },
+        {
+          time: '2020-03-04 16:21:33',
+          txt: '张三 李四 王五'
+        },
+        {
+          time: '2020-03-04 16:21:33',
+          txt: '张三 李四 王五'
+        }
+      ]
     }
   },
   components: {
@@ -112,7 +300,14 @@ export default {
     const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
   },
-  methods: {}
+  methods: {
+    /**
+     * 地图上显隐资源
+     */
+    visibleResInMap (item) {
+      item.view = !item.view
+    }
+  }
 }
 </script>
 
@@ -169,6 +364,9 @@ export default {
           font-family: Source Han Sans CN;
           font-weight: 400;
           color: #fff;
+          .caseName {
+            color: #82f3fa;
+          }
           .txt {
             height: 16px;
             line-height: 16px;
@@ -196,6 +394,40 @@ export default {
           }
         }
       }
+      .pushBox {
+        box-sizing: border-box;
+        padding: 0px 13px 0px 0px;
+        height: 150px;
+        overflow-y: scroll;
+        font-size: 12px;
+        .push {
+          position: relative;
+          height: 16px;
+          line-height: 16px;
+          margin-top: 14px;
+          span:nth-child(1) {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #00b7ff;
+            border-radius: 50%;
+            line-height: 18px;
+            text-align: center;
+            margin-right: 9px;
+          }
+          span:nth-child(2) {
+            color: #82f3fa;
+          }
+          .names {
+            display: inline-block;
+            width: 100px;
+            position: absolute;
+            right: 0px;
+            text-align: right;
+            color: #82f3fa;
+          }
+        }
+      }
     }
   }
   .disposeBox {
@@ -216,6 +448,144 @@ export default {
       font-family: Source Han Sans CN;
       font-weight: bold;
       color: #ffffff;
+    }
+  }
+  .resAround {
+    font-size: 12px;
+    font-family: Source Han Sans CN;
+    font-weight: bold;
+    width: 420px;
+    height: 235px;
+    pointer-events: auto;
+    position: absolute;
+    top: 151px;
+    right: 23px;
+    background: url(../../assets/images/gisDispatch/around-box.svg) no-repeat;
+    background-size: 100% 100%;
+    .resBox {
+      box-sizing: border-box;
+      width: 400px;
+      height: 215px;
+      background-color: rgba($color: #0179a2, $alpha: 0.95);
+      padding: 5px 0px 5px 0px;
+      .head {
+        padding: 0px 10px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #00a7e8;
+        margin-bottom: 5px;
+      }
+      .data {
+        display: flex;
+        .left {
+          width: 170px;
+          box-sizing: border-box;
+          border-right: 1px solid #00b7ff;
+          cursor: pointer;
+          > div {
+            height: 26px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            img {
+              width: 16px;
+              height: 16px;
+              margin-right: 10px;
+              vertical-align: middle;
+            }
+            span:nth-child(2) {
+              display: inline-block;
+              width: 70px;
+              margin-right: 8px;
+            }
+            span:nth-child(3) {
+              margin-right: 10px;
+              display: inline-block;
+              width: 20px;
+            }
+            span:nth-child(4) {
+              cursor: pointer;
+              display: inline-block;
+              width: 18px;
+              height: 14px;
+              background: url(../../assets/images/gisDispatch/view.svg)
+                no-repeat;
+              background-size: 100% 100%;
+            }
+            span:nth-child(4).unview {
+              background: url(../../assets/images/gisDispatch/unview.svg)
+                no-repeat;
+              background-size: 100% 100%;
+            }
+          }
+          > div.select {
+            background: #00b7ff;
+            color: #fff !important;
+            span:nth-child(4) {
+              background: url(../../assets/images/gisDispatch/view-select.svg)
+                no-repeat;
+              background-size: 100% 100%;
+            }
+            span:nth-child(4).unview {
+              background: url(../../assets/images/gisDispatch/unview-select.svg)
+                no-repeat;
+              background-size: 100% 100%;
+            }
+          }
+        }
+        .right {
+          box-sizing: border-box;
+          margin-left: 10px;
+          width: 220px;
+          height: 180px;
+          padding-right: 10px;
+          overflow-y: scroll;
+          > div {
+            box-sizing: border-box;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #00b7ff;
+            .rTxt {
+              width: 130px;
+              display: flex;
+              flex-direction: column;
+              .name {
+                color: #82f3fa;
+              }
+              .des {
+                color: #cdcdcd;
+                font-weight: 500;
+              }
+            }
+            .distance {
+              display: flex;
+              align-items: center;
+              img {
+                margin-right: 5px;
+              }
+            }
+            .drone {
+              display: flex;
+              .name {
+                color: #82f3fa;
+                width: 24px;
+                box-sizing: border-box;
+                margin-right: 8px;
+              }
+              .latLng {
+                display: flex;
+                width: 98px;
+                flex-direction: column;
+                font-weight: 500;
+                color: #cdcdcd;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

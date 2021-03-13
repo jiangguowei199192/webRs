@@ -10,7 +10,6 @@
           <EllipsisTooltip
             :contentText="dataInfo.caseName"
             class="txt"
-            :contentClass="'caseTxt'"
           ></EllipsisTooltip>
         </li>
         <li>
@@ -18,7 +17,6 @@
           <EllipsisTooltip
             :contentText="dataInfo.reportAddr"
             class="txt"
-            :contentClass="'caseTxt'"
           ></EllipsisTooltip>
         </li>
         <li>
@@ -30,7 +28,6 @@
           <EllipsisTooltip
             :contentText="dataInfo.caseDesc"
             class="txt"
-            :contentClass="'caseTxt'"
           ></EllipsisTooltip>
         </li>
         <li>

@@ -30,8 +30,8 @@ export default {
       default: 'top'
     },
     contentClass: {
-      type: String,
-      default: 'contentCls'
+      type: String
+      // default: 'contentCls'
     },
     contentText: {
       // 文本内容
@@ -84,29 +84,6 @@ export default {
   font-size: 12px;
   > div {
     width: 100%;
-  }
-  .contentCls {
-    font-size: 16px;
-    font-family: Source Han Sans CN;
-    font-weight: 400;
-    color: #22fcfe;
-  }
-  .addr {
-    font-size: 12px;
-    font-family: Source Han Sans CN;
-    font-weight: 400;
-    color: #00d1fe;
-  }
-  .caseTxt {
-    color: #fff;
-  }
-  .caseName {
-    box-sizing: border-box;
-    font-size: 12px;
-    color: #82f3fa;
-  }
-  .reportAddr {
-    font-size: 12px;
   }
 }
 
