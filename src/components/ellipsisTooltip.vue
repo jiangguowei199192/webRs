@@ -1,9 +1,13 @@
 <template>
-  <div class="gEllipsis" :class="isMultiLine ? 'mltiLine' : 'singleLine'">
+  <div
+    class="gEllipsis"
+    :class="isMultiLine ? 'mltiLine' : 'singleLine'"
+    ref="editor"
+  >
     <div :class="contentClass" :style="lineClamp">
       <el-tooltip
         effect="dark"
-        :disabled="isElTooltipShow"
+        :disabled="!isElTooltipShow"
         :content="contentText"
         :placement="placement"
         :open-delay="500"
@@ -57,20 +61,18 @@ export default {
   },
   methods: {
     hanldeElTooltip (val) {
-      const dom = document.querySelector('.gEllipsis')
-      if (dom) {
-        if (this.isMultiLine) {
-          if (val.target.offsetHeight > dom.offsetHeight) {
-            // 作比较：文本实际的高度与外层壳的高度
-            this.isElTooltipShow = false
-          } else this.isElTooltipShow = true
-        } else {
-          if (val.target.offsetWidth > dom.offsetWidth) {
-            // 作比较：文本实际的宽度与外层壳的宽度
-            this.isElTooltipShow = false
-          } else this.isElTooltipShow = true
-        }
-      }
+      const width = this.$refs.editor.offsetWidth
+      const height = this.$refs.editor.offsetHeight
+      // 作比较：文本实际的高度与外层壳的高度
+      if (this.isMultiLine && val.target.offsetHeight > height) {
+        this.isElTooltipShow = true
+      } else if (
+        // 作比较：文本实际的宽度与外层壳的宽度
+        !this.isMultiLine &&
+        val.target.offsetWidth > width
+      ) {
+        this.isElTooltipShow = true
+      } else this.isElTooltipShow = false
     }
   }
 }
