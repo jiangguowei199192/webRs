@@ -3,7 +3,10 @@
     <gMap
       ref="gduMap"
       handleType="devMap"
-      :bShowAllTools="false"
+      :bShowAllTools="showTool"
+      :bShowLonLat="false"
+      :bShowBasic="showTool"
+      :bShowSelMap="showTool"
       :baseMapIndex="2"
       :bAutoLocate="false"
     ></gMap>
@@ -24,7 +27,12 @@ export default {
   data () {
     return {}
   },
-
+  props: {
+    showTool: {
+      type: Boolean,
+      required: false
+    }
+  },
   mounted () {
     const me = this
     window.onresize = () => {
@@ -32,6 +40,17 @@ export default {
     }
     this.$nextTick(() => {
       this.mapUpdateSize()
+      this.$refs.gduMap.map2D.measureTool.setLineStringCircleStyle({
+        radius: 5,
+        fillStyle: {
+          color: 'rgba(0, 204, 255, 1)'
+        },
+        strokeStyle: {
+          width: 2,
+          color: 'rgba(0, 204, 255, 1)'
+        }
+      })
+      this.$refs.gduMap.map2D.measureTool.setLenColor('rgb(0, 0, 0)')
     })
     this.$refs.gduMap.map2D.gisDispatchManager.setCreateVueCompFunc(
       this.createVueCom
@@ -47,6 +66,13 @@ export default {
     addDatas (data) {
       if (!this.$refs.gduMap) return
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
+    },
+    /**
+     * 清屏
+     */
+    clearScreen (data) {
+      this.$refs.gduMap.map2D.gisDispatchManager.removeAllOtherFeatures()
+      this.$refs.gduMap.map2D.measureTool.clear()
     },
     /**
      * 在地图上添加案件标记
@@ -75,6 +101,18 @@ export default {
       if (this.$refs.gduMap) {
         this.$refs.gduMap.map2D._map.updateSize()
       }
+    },
+    /**
+     * 地图定位
+     */
+    zoomToCenter (lon, lat) {
+      this.$refs.gduMap.mapMoveTo(lon, lat)
+    },
+    /**
+     * 测距
+     */
+    measureLenStart () {
+      this.$refs.gduMap.map2D.measureTool.start()
     }
   }
 }

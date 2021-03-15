@@ -70,7 +70,7 @@
               <template v-for="(item, index) in cases">
                 <div
                   :key="index"
-                  @click.stop="jumpCase(item.id)"
+                  @click.stop="jumpCase(item)"
                   :class="{ green: item.caseStatus === '1' }"
                 >
                   <EllipsisTooltip
@@ -105,7 +105,7 @@
                   </div>
                   <img
                     src="../../assets/images/gisDispatch/jump.svg"
-                    @click.stop="jumpCase(item.id)"
+                    @click.stop="jumpCase(item)"
                   />
                   <div class="tag" :class="{ green: item.caseStatus === '1' }">
                     {{ formatCaseStatus(item.caseStatus) }}
@@ -348,12 +348,12 @@ export default {
     /**
      * 跳转到案件处理
      */
-    jumpCase (id) {
+    jumpCase (item) {
       this.$axios
         .post(
           caseApi.selectDetail,
           {
-            id: id
+            id: item.id
           },
           {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
@@ -361,6 +361,8 @@ export default {
         )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
+            res.data.data.latitude = item.latitude
+            res.data.data.longitude = item.longitude
             const data = JSON.stringify(res.data.data)
             this.$router.push({
               path: '/gisDispatchDispose',

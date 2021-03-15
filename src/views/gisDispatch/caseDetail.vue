@@ -1,5 +1,5 @@
 <template>
-  <caseMain ref="caseMain">
+  <caseMain ref="caseMain" :showTool="true">
     <div class="caseDetail" slot="main">
       <div class="singleCase">
         <div class="gisTitle">
@@ -66,6 +66,11 @@
                 ></EllipsisTooltip>
               </div>
             </template>
+          </div>
+          <div class="btns">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
         </div>
       </div>
@@ -189,6 +194,14 @@
           </div>
         </div>
       </div>
+      <div class="tools">
+        <template v-for="(item, index) in tools">
+          <div :key="index" @click.stop="toolClick(index)">
+            <img :src="item.img" />
+            <span>{{ item.name }}</span>
+          </div>
+        </template>
+      </div>
     </div>
   </caseMain>
 </template>
@@ -213,6 +226,16 @@ export default {
       },
       selResIdx: -1,
       selStepIdx: -1,
+      tools: [
+        {
+          name: '清屏',
+          img: require('../../assets/images/gisDispatch/clear.svg')
+        },
+        {
+          name: '测距',
+          img: require('../../assets/images/gisDispatch/measure-len.svg')
+        }
+      ],
       planSteps: [
         {
           name: '接警',
@@ -381,6 +404,12 @@ export default {
   mounted () {
     const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
+    console.log(data)
+    setTimeout(() => {
+      data.type = 'RP_Case'
+      this.$refs.caseMain.addCaseMarker([data])
+      this.$refs.caseMain.zoomToCenter(data.longitude, data.latitude)
+    }, 200)
   },
   methods: {
     /**
@@ -399,6 +428,16 @@ export default {
           p.visible = false
         }
       })
+    },
+    /**
+     * 点击工具栏
+     */
+    toolClick (index) {
+      if (index === 0) {
+        this.$refs.caseMain.clearScreen()
+      } else if (index === 1) {
+        this.$refs.caseMain.measureLenStart()
+      }
     }
   }
 }
@@ -418,6 +457,7 @@ export default {
     background: url(../../assets/images/gisDispatch/single-case.svg) no-repeat;
     background-size: 100% 100%;
     .caseInfo {
+      position: relative;
       box-sizing: border-box;
       width: 329px;
       height: 188px;
@@ -426,6 +466,31 @@ export default {
       padding-top: 6px;
       padding-left: 14px;
       padding-right: 8px;
+      .btns {
+        position: absolute;
+        top: 4px;
+        right: 2px;
+        span {
+          display: inline-block;
+          cursor: pointer;
+          width: 16px;
+          height: 16px;
+          margin-right: 8px;
+        }
+        span:nth-child(1) {
+          background: url(../../assets/images/gisDispatch/assign.svg) no-repeat;
+          background-size: 100% 100%;
+        }
+        span:nth-child(2) {
+          background: url(../../assets/images/gisDispatch/chat.svg) no-repeat;
+          background-size: 100% 100%;
+        }
+        span:nth-child(3) {
+          background: url(../../assets/images/gisDispatch/dispose.svg) no-repeat;
+          background-size: 100% 100%;
+          margin-right: 0px;
+        }
+      }
       .switch {
         span {
           font-family: Source Han Sans CN;
@@ -744,6 +809,31 @@ export default {
             }
           }
         }
+      }
+    }
+  }
+  .tools {
+    display: flex;
+    position: absolute;
+    bottom: 20px;
+    left: 860px;
+    font-size: 14px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
+    color: #ffffff;
+    > div {
+      pointer-events: auto;
+      width: 90px;
+      height: 43px;
+      background: url(../../assets/images/gisDispatch/clear-box.svg) no-repeat;
+      background-size: 100% 100%;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 19px;
+      img {
+        margin-left: 12px;
+        margin-right: 6px;
       }
     }
   }

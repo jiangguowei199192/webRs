@@ -29,6 +29,7 @@
 }
 
 .ol-tooltip-measure:before, .ol-tooltip-static:before {
+  display: none;
   border-top: 6px solid rgba(0, 0, 0, 0.5);
   border-right: 6px solid transparent;
   border-left: 6px solid transparent;
@@ -40,6 +41,7 @@
 }
 
 .ol-tooltip-static:before {
+  display: none;
   border-top-color: #ffcc33;
 }
 

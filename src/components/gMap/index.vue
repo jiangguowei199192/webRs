@@ -160,62 +160,6 @@
     >
       <el-popover
         :append-to-body="bAppendToBody"
-        ref="ctrlFuncLayer"
-        placement="left"
-        trigger="click"
-        popper-class="el-popover-custom"
-      >
-        <div class="mapPopover">
-          <div class="mapTypeContainer">
-            <div style="height: 45px; position: relative">
-              <div
-                class="mapImg layerHigh"
-                :class="{ mapSelBorder: bShowHighPoint }"
-                @click="showLayer('high', !bShowHighPoint)"
-              >
-                <img
-                  class="layer_selected"
-                  v-show="bShowHighPoint"
-                  src="../../assets/images/layer_selected.png"
-                />
-              </div>
-            </div>
-            <span class="mapTypeName" :class="{ mapSelText: bShowHighPoint }"
-              >高点监控</span
-            >
-          </div>
-          <div class="mapInterval">
-            <div class="intervalLine"></div>
-          </div>
-          <div class="mapTypeContainer">
-            <div style="height: 45px; position: relative">
-              <div
-                class="mapImg layerDrone"
-                :class="{ mapSelBorder: bShowDrone }"
-                @click="showLayer('drone', !bShowDrone)"
-              >
-                <img
-                  class="layer_selected"
-                  v-show="bShowDrone"
-                  src="../../assets/images/layer_selected.png"
-                />
-              </div>
-            </div>
-            <span class="mapTypeName" :class="{ mapSelText: bShowDrone }"
-              >无人机</span
-            >
-          </div>
-        </div>
-        <div
-          slot="reference"
-          ref="selLayerCtrl"
-          class="yDivBtn btnSelLayer btnActive"
-          v-if="bShowSelLayer"
-          @click="clickChangeFuncLayers"
-        ></div>
-      </el-popover>
-      <el-popover
-        :append-to-body="bAppendToBody"
         ref="ctrlBasicLayer"
         placement="left"
         trigger="click"
@@ -280,8 +224,8 @@
         ></div>
       </el-popover>
       <div class="yDivBtn btnLocator btnActive" @click="clickLocator"></div>
-      <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
-      <div class="yDivBtn btnZoomOut btnActive" @click="clickZoomOut"></div>
+      <!-- <div class="yDivBtn btnZoomIn btnActive" @click="clickZoomIn"></div>
+      <div class="yDivBtn btnZoomOut btnActive" @click="clickZoomOut"></div> -->
     </div>
     <div
       class="lonLatTools disable-user-select"
@@ -527,7 +471,8 @@ export default {
         mapOriginType: 'gaode',
         serverBaseUrl: rootUrl,
         bIsOnline: bNetWorkConn,
-        rpClickSelect: true
+        rpClickSelect: true,
+        deleteIcon: false
       })
       this.setPositionFormatCB()
       this.map2D.setMinZoom(this.minZoom)
@@ -1177,7 +1122,7 @@ export default {
         }
       } catch (error) {}
       this.$nextTick(() => {
-        closePop.doClose()
+        if (closePop) closePop.doClose()
         if (this.bAppendToBody === false) {
           const tmpThis = this
           setTimeout(() => {
@@ -1212,8 +1157,10 @@ export default {
 
     // 定位到地图指定坐标
     clickLocator () {
-      if (this.doLocator) this.map2D.zoomToCenter(this.lon, this.lat)
-      else this.$emit('eventLocator')
+      if (this.doLocator) {
+        this.map2D.setZoom(16)
+        this.map2D.zoomToCenter(this.lon, this.lat)
+      } else this.$emit('eventLocator')
     },
 
     // 地图移动到指定坐标
@@ -1222,6 +1169,7 @@ export default {
         this.lon = longitude
         this.lat = latitude
       }
+      this.map2D.setZoom(16)
       this.map2D.zoomToCenter(longitude, latitude)
     },
 
@@ -1275,11 +1223,11 @@ export default {
   cursor: pointer;
 }
 .yDivBtn {
-  display: block;
-  height: 30px;
-  width: 30px;
+  width: 51px;
+  height: 44px;
+  background: url(../../assets/images/gisDispatch/box.svg) no-repeat;
   background-size: 100% 100%;
-  margin-top: 10px;
+  margin-top: 6px;
   cursor: pointer;
 }
 
@@ -1643,9 +1591,9 @@ export default {
   }
   .basicTools {
     position: absolute;
-    width: 30px;
-    right: 15px;
-    bottom: 45px;
+    width: 51px;
+    right: 21px;
+    bottom: 20px;
     z-index: 10;
     .btnActive:active {
       opacity: 0.8;
@@ -1654,10 +1602,10 @@ export default {
       background-image: url("../../assets/images/layer_select.png");
     }
     .btnSelMap {
-      background-image: url("../../assets/images/map_change.png");
+      background-image: url("../../assets/images/map_change.svg");
     }
     .btnLocator {
-      background-image: url("../../assets/images/map_locator.png");
+      background-image: url("../../assets/images/map_locator.svg");
     }
     .btnZoomIn {
       background-image: url("../../assets/images/zoomin.png");
