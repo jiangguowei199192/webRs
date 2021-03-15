@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-12 14:09:02
+ * @LastEditTime: 2021-03-13 15:25:23
 -->
 <template>
   <div class="caseCenter">
@@ -21,7 +21,7 @@
     <div class="case-detail">
       <div class="case-info">
         <h3 class="case-header">案件记录</h3>
-        <div class="case-content webFsScroll">
+        <div class="case-content browserScroll">
           <div class="base">
             <h4>基本信息</h4>
             <div>
@@ -94,7 +94,7 @@
             </div>
             <div class="handel-attach">
               <span>相关附件: </span>
-              <div class="webFsScroll">
+              <div class="browserScroll">
                 <img
                   v-for="(img_item, img_index) in imgList"
                   :key="img_index"
@@ -116,11 +116,11 @@
     </div>
     <!-- 处置记录弹窗 -->
     <DisposeRecDialog
-      ref="addDictRef"
+      ref="disposeRecRef"
       :isShow.sync="isShow"
       title="处置记录"
-      :fireInfo.sync="fireInfo"
-      @confirmFireClick="confirmFireClick"
+      :clickRowId.sync="clickRowId"
+      @confirmRecordClick="confirmRecordClick"
     ></DisposeRecDialog>
   </div>
 </template>
@@ -130,7 +130,7 @@ import CasePage from './components/casePage'
 import CaseStep from '@/components/caseStep'
 import DisposeRecDialog from './components/disposeRecDialog'
 import { caseApi } from '@/api/case'
-// import { EventBus } from "@/utils/eventBus.js";
+import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   components: {
@@ -156,7 +156,6 @@ export default {
         ]
       },
       isShow: false,
-      fireInfo: {},
       imgList: [
         {
           picPath:
@@ -165,7 +164,8 @@ export default {
       ],
       caseDetailInfo: {},
       clickRowId: '',
-      // caseRecordInfo:
+      caseRecordInfo: []
+      // caseRecordInfo: [
       //   {
       //     caseId: '',
       //     content: '',
@@ -175,15 +175,12 @@ export default {
       //     dispositionStatus: '',
       //     id: ''
       //   }
-
-      caseRecordInfo: null
+      // ]
     }
   },
 
   mounted () {
     this.refreshTable()
-    this.getCaseDetail()
-    this.getCaseRecord()
   },
 
   beforeDestroy () {
@@ -198,21 +195,21 @@ export default {
 
     // 单击处置按钮
     handelDisposeClick (id, info) {
-      // console.log("index:", id, "data:", info);
+      // console.log('index:', id, 'data:', info)
       this.isShow = true
+      this.clickRowId = info.id
     },
 
     // 单击表格行
     handelClickRowInfo (info) {
       // console.log('rowdata:', info)
       this.clickRowId = info.id
-
       this.getCaseDetail()
       this.getCaseRecord()
     },
 
     // 按钮操作提交
-    confirmFireClick () {
+    confirmRecordClick () {
       this.refreshTable()
     },
 
@@ -232,11 +229,8 @@ export default {
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
         .then(res => {
-          console.log('基本信息res：', res)
+          // console.log('基本信息res：', res)
           if (res && res.data && res.data.code === 0) {
-            if (this.caseDetailInfo === {}) {
-              this.caseDetailInfo = res.data.data[0]
-            }
             this.caseDetailInfo = res.data.data
           }
         })
@@ -254,17 +248,16 @@ export default {
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
         .then(res => {
-          console.log('处置记录res：', res)
+          // console.log('处置记录res：', res)
           if (res && res.data && res.data.code === 0) {
-            if (!this.caseRecordInfo) {
-              this.caseRecordInfo = res.data.data.records[0]
-            }
             this.caseRecordInfo = res.data.data.records
             // console.log('caseRecordInfo:', this.caseRecordInfo)
+            // console.log('records:', res.data.data.records)
+            EventBus.$emit('selectedCaseRecord')
           }
         })
         .catch(err => {
-          console.log('caseApi.selectDetail Err : ' + err)
+          console.log('caseApi.selectCaseRecord Err : ' + err)
         })
     }
   }

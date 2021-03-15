@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-11 15:19:01
+ * @LastEditTime: 2021-03-13 15:41:40
 -->
 <template>
   <div>
@@ -15,8 +15,9 @@
     >
       <div class="add-case-header">{{ title }}</div>
       <el-form
-        ref="fireListForm"
+        ref="addCaseForm"
         :model="addCaseForm"
+        :rules="addCaseFormRules"
         :inline="true"
         label-width="auto"
         class="add-case-form"
@@ -48,7 +49,8 @@
             <el-input
               v-model="addCaseForm.people"
               :placeholder="placeholder"
-              :readonly="isReadonly"
+              maxlength="10"
+              show-word-limit
             ></el-input>
           </el-form-item>
         </div>
@@ -74,21 +76,22 @@
         </el-form-item>
       </el-form>
       <div class="handelBtns">
-        <span @click.stop="updateIsShow">取消</span>
-        <span @click.stop="confirmFireDetail('confirmed')">确定</span>
+        <span @click.stop="updateIsShow('addCaseForm')">取消</span>
+        <span @click.stop="confirmCaseRecord('addCaseForm')">确定</span>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-// import { fireApi } from "@/api/videoSystem/fireAlarm";
+import { isNotNull } from '@/utils/formRules'
+import { caseApi } from '@/api/case'
 
 export default {
   props: {
     isShow: { type: Boolean, required: true },
     title: { type: String, required: true },
-    caseInfo: { type: Object, required: false }
+    clickRowId: { type: String, required: true }
   },
 
   data () {
@@ -99,24 +102,56 @@ export default {
         time: '',
         result: '',
         people: '',
-        showConfirm: true
+        uploadFile: null
       },
-      isReadonly: false,
+      addCaseFormRules: {
+        result: isNotNull('请输入处置结果'),
+        people: isNotNull('请输入处置人'),
+        time: isNotNull('请选择报警时间')
+      },
       uploadList: []
     }
   },
 
   watch: {
-    isShow (val) {}
+    isShow (val) {
+      if (val) {
+        // console.log("clickRowId:", this.clickRowId);
+        this.addCaseForm.id = this.clickRowId
+      }
+    }
   },
 
+  mounted () {},
+
   methods: {
-    // 火情确认/误报提交
-    confirmFireDetail (type) {},
+    // 处置info录入提交
+    confirmCaseRecord (formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return false
+        // console.log('addCaseForm:', this.addCaseForm)
+        this.$axios
+          .post(caseApi.finishCase, this.addCaseForm, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then(res => {
+            console.log('处置记录提交res:', res)
+            if (res && res.data && res.data.code === 0) {
+              this.updateIsShow()
+              this.$emit('confirmRecordClick', this.addCaseForm)
+            }
+          })
+          .catch(err => {
+            console.log('caseApi.caseAdd Err : ' + err)
+          })
+      })
+    },
 
     // 更新isShow状态
-    updateIsShow () {
+    updateIsShow (formName) {
+      this.$refs[formName].resetFields()
       this.$emit('update:isShow', false)
+      this.$emit('update:clickRowId', '')
     },
 
     onUploadChange () {},
@@ -155,22 +190,22 @@ export default {
       }
       .el-form-item {
         display: block;
-        margin: -5px 0 25px 0;
+        margin: 5px 0 25px 0;
       }
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
       }
-      .el-form-item__error {
-        margin-top: -5px;
-      }
+      // .el-form-item__error {
+      //   margin-top: -5px;
+      // }
       .el-textarea__inner {
         background-color: rgba(9, 84, 109, 0.85);
         border-color: #00d2ff;
         border-radius: 0;
         width: 635px;
         height: 85px;
-        color: #fff;
+        color: #00caf6;
         font-size: 12px;
         margin-top: 8px;
       }

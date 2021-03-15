@@ -4,10 +4,10 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-12 14:09:41
+ * @LastEditTime: 2021-03-13 15:29:50
 -->
 <template>
-  <div class="step-box webFsScroll">
+  <div class="step-box browserScroll">
     <el-steps :active="eventStep" finish-status="success" direction="vertical">
       <el-step
         v-for="(event, event_index) in events"
@@ -41,7 +41,7 @@
                     >
                   </div>
                   <div
-                    class="processing-content-detail detail-img webFsScroll"
+                    class="processing-content-detail detail-img browserScroll"
                     v-if="event_index == 3"
                   >
                     <!-- <img
@@ -71,7 +71,7 @@
 
 <script>
 // import { caseApi } from '@/api/case'
-// import { EventBus } from '@/utils/eventBus.js'
+import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   name: 'caseStep',
@@ -84,15 +84,16 @@ export default {
   data () {
     return {
       eventStep: 0,
-      events: {
-        id: '',
-        caseId: '', // 案件id
-        dispositionNode: '', // 节点（0接警、1推送、2处警、3处置、4结案）
-        dispositionStatus: '', // 节点状态(0进行中、1已完成、2未完成)
-        content: '', // 节点内容
-        createTime: '', // 创建时间
-        dispositionException: '' // 异常数量
-      }
+      // events: {
+      //   id: "",
+      //   caseId: "", // 案件id
+      //   dispositionNode: "", // 节点（0接警、1推送、2处警、3处置、4结案）
+      //   dispositionStatus: "", // 节点状态(0进行中、1已完成、2未完成)
+      //   content: "", // 节点内容
+      //   createTime: "", // 创建时间
+      //   dispositionException: "" // 异常数量
+      // },
+      events: []
     }
   },
 
@@ -100,57 +101,55 @@ export default {
 
   mounted () {
     this.disposeCaseInfo()
+    EventBus.$on('selectedCaseRecord', () => {
+      this.disposeCaseInfo()
+    })
+  },
+
+  beforeDestroy () {
+    EventBus.$off('selectedCaseRecord')
   },
 
   methods: {
     // 处理处置记录info
     disposeCaseInfo () {
-      console.log('caseRecordInfo:', this.caseRecordInfo)
-      if (this.caseRecordInfo) {
-        this.caseRecordInfo.forEach(item => {
-          this.events.id = item.id
-          this.events.caseId = item.caseId
-          this.events.dispositionNode = item.dispositionNode
-          this.events.dispositionStatus = item.dispositionStatus
-          this.events.content = item.content
-          this.events.createTime = item.createTime
-          this.events.dispositionException = item.dispositionException
-
-          switch (this.events.dispositionNode) {
-            case 0:
-              this.events.dispositionNode = '接警'
-              break
-            case 1:
-              this.events.dispositionNode = '推送'
-              break
-            case 2:
-              this.events.dispositionNode = '处警'
-              break
-            case 3:
-              this.events.dispositionNode = '处置'
-              break
-            case 4:
-              this.events.dispositionNode = '结案'
-              break
+      // console.log("caseRecordInfo:", this.caseRecordInfo);
+      this.events = this.caseRecordInfo
+      if (this.events.length !== 0) {
+        this.events.forEach(item => {
+          if (item.dispositionNode) {
+            switch (item.dispositionNode) {
+              case 0:
+                item.dispositionNode = '接警'
+                break
+              case 1:
+                item.dispositionNode = '推送'
+                break
+              case 2:
+                item.dispositionNode = '处警'
+                break
+              case 3:
+                item.dispositionNode = '处置'
+                break
+              case 4:
+                item.dispositionNode = '结案'
+                break
+            }
           }
-          switch (this.events.dispositionStatus) {
-            case 0:
-              this.events.dispositionStatus = '进行中'
-              break
-            case 1:
-              this.events.dispositionStatus = '已完成'
-              break
-            case 2:
-              this.events.dispositionStatus = '未完成'
-              break
+          if (item.dispositionStatus) {
+            switch (item.dispositionStatus) {
+              case 0:
+                item.dispositionStatus = '进行中'
+                break
+              case 1:
+                item.dispositionStatus = '已完成'
+                break
+              case 2:
+                item.dispositionStatus = '未完成'
+                break
+            }
           }
         })
-        // console.log(
-        //   'dispositionNode:',
-        //   this.events.dispositionNode,
-        //   'dispositionStatus:',
-        //   this.events.dispositionStatus
-        // )
       }
     }
   }
