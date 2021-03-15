@@ -144,6 +144,48 @@
                 </div>
               </template>
             </div>
+            <div class="plan">
+              <div class="header">
+                <img
+                  src="../../assets/images/gisDispatch/plan-unfold.svg"
+                  @click.stop="showPlans = !showPlans"
+                  :class="{ fold: showPlans }"
+                />
+                <span>预案</span>
+              </div>
+              <transition name="showPlans">
+                <div class="stepBox" v-show="showPlans">
+                  <template v-for="(item, index) in planSteps">
+                    <el-popover
+                      :key="index"
+                      placement="right"
+                      trigger="click"
+                      v-model="item.visible"
+                      popper-class="planPopover"
+                    >
+                      <div>
+                        <span
+                          class="close"
+                          @click.stop="item.visible = false"
+                        ></span>
+                        <span>{{ item.content }}</span>
+                      </div>
+                      <div
+                        slot="reference"
+                        @click.stop="clickStep(item, index)"
+                        class="step"
+                        :class="{ select: selStepIdx === index }"
+                      >
+                        {{ item.name }}
+                        <img
+                          :src="selStepIdx === index ? item.imgS : item.img"
+                        />
+                      </div>
+                    </el-popover>
+                  </template>
+                </div>
+              </transition>
+            </div>
           </div>
         </div>
       </div>
@@ -159,6 +201,7 @@ export default {
   name: 'caseDetail',
   data () {
     return {
+      showPlans: true,
       active: 0, // 0-基础信息 1-推送信息
       caseInfo: {
         caseName: '',
@@ -169,6 +212,45 @@ export default {
         reportTime: ''
       },
       selResIdx: -1,
+      selStepIdx: -1,
+      planSteps: [
+        {
+          name: '接警',
+          content:
+            '认真接听案情。在接线员接案后第一时间 问清相关信息，重点询问发生时间、地址、 人数、携带工具',
+          visible: false,
+          img: require('../../assets/images/gisDispatch/accept-police.svg'),
+          imgS: require('../../assets/images/gisDispatch/accept-police-select.svg')
+        },
+        {
+          name: '推送',
+          content: '推送相关信息到附近执法人员或附近单位',
+          visible: false,
+          img: require('../../assets/images/gisDispatch/push.svg'),
+          imgS: require('../../assets/images/gisDispatch/push-select.svg')
+        },
+        {
+          name: '侦查',
+          content: '查看周围视频，查看案件周围情况',
+          visible: false,
+          img: require('../../assets/images/gisDispatch/detect.svg'),
+          imgS: require('../../assets/images/gisDispatch/detect-select.svg')
+        },
+        {
+          name: '跟踪',
+          content: '实时跟踪处置信，与一线执法人员进行沟通',
+          visible: false,
+          img: require('../../assets/images/gisDispatch/trace.svg'),
+          imgS: require('../../assets/images/gisDispatch/trace-select.svg')
+        },
+        {
+          name: '结案',
+          content: '上报案件处置结果',
+          visible: false,
+          img: require('../../assets/images/gisDispatch/finish-case.svg'),
+          imgS: require('../../assets/images/gisDispatch/finish-case-select.svg')
+        }
+      ],
       resDetails: [
         {
           dist: 222,
@@ -306,6 +388,17 @@ export default {
      */
     visibleResInMap (item) {
       item.view = !item.view
+    },
+    /**
+     * 点击预案
+     */
+    clickStep (item, index) {
+      this.selStepIdx = index
+      this.planSteps.forEach((p) => {
+        if (p.name !== item.name) {
+          p.visible = false
+        }
+      })
     }
   }
 }
@@ -582,6 +675,72 @@ export default {
                 font-weight: 500;
                 color: #cdcdcd;
               }
+            }
+          }
+        }
+        .plan {
+          width: 134px;
+          position: absolute;
+          top: 514px;
+          right: 23px;
+          font-family: Source Han Sans CN;
+          font-weight: 500;
+          font-size: 12px;
+
+          .showPlans-enter-active,
+          .showPlans-leave-active {
+            transition: all 0.8s;
+          }
+          .showPlans-enter,
+          .showPlans-leave-active {
+            transform: translate3d(104px, 0, 0);
+            opacity: 0;
+          }
+
+          .header {
+            height: 30px;
+            background: #00b7ff;
+            display: flex;
+            align-items: center;
+            img {
+              margin-left: 20px;
+              margin-right: 28px;
+              cursor: pointer;
+            }
+            img.fold {
+              transform: rotate(180deg);
+            }
+            span {
+              font-size: 16px;
+              color: #ffffff;
+            }
+          }
+          .stepBox {
+            .step {
+              box-sizing: border-box;
+              width: 104px;
+              height: 30px;
+              border: 1px solid #00b7ff;
+              background-color: rgba($color: #00b7ff, $alpha: 0.2);
+              margin-top: 10px;
+              font-size: 16px;
+              color: #00b7ff;
+              padding: 0px 12px 0px 21px;
+              line-height: 30px;
+              cursor: pointer;
+              img {
+                position: relative;
+                top: -2px;
+                left: 15px;
+                vertical-align: middle;
+              }
+            }
+            .step.select {
+              background: #00b7ff;
+              color: #fff;
+            }
+            .step:focus {
+              outline: none;
             }
           }
         }
