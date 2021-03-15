@@ -628,7 +628,6 @@ export default {
     }
     /deep/.el-dialog {
       background: rgba(0, 65, 87, 0.85);
-      opacity: 0.85;
       width: 550px;
       /deep/.el-dialog__body {
         padding: 0 0.2rem;
@@ -652,16 +651,16 @@ export default {
       /deep/.el-dialog__footer {
         .el-button--default,
         .el-button--primary {
+          font-family: Source Han Sans CN;
+          font-size: 18px;
+          font-weight: bold;
+          color: #1eb0fc;
+          padding: 0;
           width: 87px;
           height: 32px;
           border: 1px solid #1eb0fc;
           border-radius: 2px;
           background: #043c4f;
-          font-size: 18px;
-          font-family: Source Han Sans CN;
-          font-weight: bold;
-          color: #1eb0fc;
-          padding: 0;
         }
         .el-button--primary {
           background: #00a7e8;

@@ -1,111 +1,98 @@
 <template>
-  <div>
-    <div class="login">
-      <div class="content">
-        <div class="title">{{ configJson.projectTitle }}</div>
-        <el-input
-          placeholder="用户名"
-          auto-complete="new-password"
-          clearable
-          maxlength="35"
-          prefix-icon="el-icon-user"
-          v-model="loginInfo.username"
-          class="username"
-          size="small"
-        ></el-input>
-        <el-input
-          placeholder="密码"
-          :type="passwordInputType"
-          @focus="changePasswordInputType"
-          @input.native="changePasswordInputType"
-          auto-complete="new-password"
-          clearable
-          maxlength="35"
-          prefix-icon="el-icon-lock"
-          v-model="loginInfo.password"
-          class="username password"
-          size="small"
-          @keyup.enter.native="jumpToMain"
-        ></el-input>
-        <div class="checkDiv">
-          <el-checkbox v-model="checked" class="check">记住密码</el-checkbox>
-          <el-button
-            type="text"
-            size="mini"
-            class="forgot"
-            @click="dialogVisible = true"
-            >忘记密码？</el-button
-          >
-        </div>
+  <div class="login">
+    <div class="content">
+      <div class="title">{{ configJson.projectTitle }}</div>
+      <img class="logo" :src="logoPic" alt />
+      <br />
+      <b class="label">用户名：</b>
+      <el-input
+        placeholder="请输入用户名"
+        auto-complete="new-password"
+        clearable
+        maxlength="20"
+        v-model="loginInfo.username"
+        name="userName"
+        class="username"
+      ></el-input>
+      <br />
+      <b class="label">密码：</b>
+      <el-input
+        placeholder="请输入密码"
+        :type="passwordInputType"
+        @focus="changePasswordInputType"
+        @input.native="changePasswordInputType"
+        auto-complete="new-password"
+        clearable
+        maxlength="20"
+        v-model="loginInfo.password"
+        class="username password"
+        name="passWord"
+        @keyup.enter.native="jumpToMain"
+      ></el-input>
+      <div class="checkDiv pd76">
+        <el-checkbox v-model="checked" class="check">记住密码</el-checkbox>
+        <el-button type="text" size="mini" class="forgot" @click="dialogVisible = true">忘记密码？</el-button>
+      </div>
+      <div class="pd76">
         <el-button class="loginBtn" @click="jumpToMain">登 录</el-button>
+      </div>
 
-        <div class="settingBoxStyle">
-          <div class="settingStyle" @click="settingClick">
-            <div class="settingIconSty">
-              <i class="el-icon-setting"></i>
-            </div>
-            <div class="settingTitleStyle">高级设置</div>
+      <div class="settingBoxStyle pd76">
+        <div class="settingStyle" @click="settingClick">
+          <div class="settingIconSty">
+            <i class="el-icon-setting"></i>
           </div>
-        </div>
-
-        <div class="serverAddressBoxSty" v-show="showServer">
-          <div class="serverTitleSty">服务器：</div>
-          <el-select v-model="selectedServerIndex" class="serverSelectSty">
-            <el-option
-              v-for="(item, index) in configJson.baseUrlList"
-              :key="index"
-              :label="item.baseUrl"
-              :value="index"
-            ></el-option>
-          </el-select>
+          <div class="settingTitleStyle">高级设置</div>
         </div>
       </div>
 
-      <el-dialog
-        title="忘记密码"
-        :visible.sync="dialogVisible"
-        width="30%"
-        class="dialogStyle"
-      >
-        <p>
-          <span>普通用户请联系管理员重置密码。</span>
-        </p>
-        <!-- <p>
+      <div class="serverAddressBoxSty" v-show="showServer">
+        <b class="label">服务器：</b>
+        <el-select v-model="selectedServerIndex" class="serverSelectSty">
+          <el-option
+            v-for="(item, index) in configJson.baseUrlList"
+            :key="index"
+            :label="item.baseUrl"
+            :value="index"
+          ></el-option>
+        </el-select>
+      </div>
+    </div>
+
+    <el-dialog title="忘记密码" :visible.sync="dialogVisible" width="30%" class="passDialog">
+      <p>
+        <span>普通用户请联系管理员重置密码。</span>
+      </p>
+      <!-- <p>
         <span>管理员请登录系统所在的服务器，创建 'c:\zhc\tmp\reset_5f0d6451c203f.txt' 文件。</span>
       </p>
       <p>
         <span>注意：</span>
       </p>
-        <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p>-->
-        <span slot="footer" class="dialog-footer">
-          <el-button
-            type="primary"
-            @click="dialogVisible = false"
-            class="trueBtn"
-            >确 定</el-button
-          >
-        </span>
-      </el-dialog>
-      <!-- 粒子漂浮物 -->
-      <vue-particles
-        style="height: 1084px"
-        color="#01A9DB"
-        :particleOpacity="0.7"
-        :particlesNumber="60"
-        shapeType="star"
-        :particleSize="7"
-        linesColor="#58D3F7"
-        :linesWidth="2"
-        :lineLinked="true"
-        :lineOpacity="0.4"
-        :linesDistance="150"
-        :moveSpeed="3"
-        :hoverEffect="true"
-        hoverMode="grab"
-        :clickEffect="true"
-        clickMode="push"
-      ></vue-particles>
-    </div>
+      <p><span>文件内容为新密码。密码6-16个字符，区分大小写。</span></p>-->
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false" class="trueBtn">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 粒子漂浮物 -->
+    <!-- <vue-particles
+      style="height: 1084px"
+      color="#01A9DB"
+      :particleOpacity="0.7"
+      :particlesNumber="60"
+      shapeType="star"
+      :particleSize="7"
+      linesColor="#58D3F7"
+      :linesWidth="2"
+      :lineLinked="true"
+      :lineOpacity="0.4"
+      :linesDistance="150"
+      :moveSpeed="3"
+      :hoverEffect="true"
+      hoverMode="grab"
+      :clickEffect="true"
+      clickMode="push"
+    ></vue-particles>-->
   </div>
 </template>
 
@@ -114,14 +101,15 @@ import { loginApi } from '@/api/login'
 import { Notification } from 'element-ui'
 import globalApi from '../../utils/globalApi'
 import AMapHelper from '../../axios/amapapis'
-import VueParticles from 'vue-particles'
-import Vue from 'vue'
-Vue.use(VueParticles)
+// import VueParticles from 'vue-particles'
+// import Vue from 'vue'
+// Vue.use(VueParticles)
 
 export default {
   name: 'login',
   data () {
     return {
+      logoPic: require('../../assets/images/Login/logo.svg'),
       passwordInputType: 'text',
       loginInfo: {
         username: '',
@@ -172,7 +160,7 @@ export default {
       }
       this.$axios
         .post(loginApi.login, info)
-        .then((res) => {
+        .then(res => {
           if (res.data.code === 0) {
             this.checkMapNetwork()
             if (this.checked) {
@@ -200,13 +188,13 @@ export default {
     },
     async checkMapNetwork () {
       await AMapHelper.getLocation({})
-        .then((res) => {
+        .then(res => {
           if (res.data.status === '1') {
             localStorage.location_city_adcode = res.data.adcode
             localStorage.bNetWorkConn = 'true'
           }
         })
-        .catch((err) => {
+        .catch(err => {
           localStorage.bNetWorkConn = 'false'
           console.log('AMapHelper.getLocation Err : ' + err)
         })
@@ -237,44 +225,90 @@ export default {
 
 <style lang="scss" scoped>
 .login {
+  b.label {
+    font-size: 18px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
+    color: #00bcff;
+    display: inline-block;
+    width: 76px;
+    font-weight: normal;
+    text-align: left;
+  }
+  .pd76 {
+    padding-left: 76px;
+  }
   position: relative;
   width: 100%;
-  height: 1084px;
-  background: url(../../assets/images/Login/login-bg.png) no-repeat;
+  height: 1080px;
+  background: url(../../assets/images/Login/bg.png) no-repeat;
   background-size: 100% 100%;
   .content {
-    font-size:16px;
-    width: 500px;
-    // height: 502px;
-    // height: 534px;
+    font-size: 16px;
+    width: 781px;
+    height: 486px;
     padding-bottom: 30px;
-    background: url(../../assets/images/Login/login-contentBg.png) no-repeat;
+    background: url(../../assets/images/Login/contentBox.png) no-repeat;
     background-size: 100% 100%;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    padding-top: 32px;
+    box-sizing: border-box;
     .title {
-      height: 150px;
-      text-align: center;
-      line-height: 150px;
-      color: white;
-      font-size: 34px;
-    }
-    .username {
-      width: 403px;
-      background: url(../../assets/images/Login/login-usernameBox.png) no-repeat;
-      margin: 0 auto 0 auto;
       font-size: 20px;
+      font-family: HuXiaoBo-NanShen;
+      font-weight: 400;
+      color: #ffffff;
+      width: 320px;
+      height: 32px;
+      line-height: 32px;
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, -26px);
+      background: url(../../assets/images/Login/title-bg.png) no-repeat;
+      background-size: 100% 100%;
+      text-align: center;
+    }
+    img.logo {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    /deep/ .username {
+      width: 272px;
+      font-size: 20px;
+      .el-input__inner {
+        width: 272px;
+        height: 37px;
+        line-height: 37px;
+        border: 1px solid #00bbff;
+        background: transparent;
+        color: #00bbff;
+      }
+      input::-webkit-input-placeholder {
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        color: #01bcff;
+      }
+      input:-webkit-autofill,
+      select:-webkit-autofill {
+        box-shadow: 0 0 0px 1000px rgb(3, 12, 23) inset !important;
+        -webkit-text-fill-color: #00bbff !important;
+      }
+      input:-webkit-autofill:focus {
+        box-shadow: 0 0 0px 1000px rgb(3, 12, 23) inset !important;
+        -webkit-text-fill-color: #00bbff !important;
+      }
     }
     .password {
-      margin-top: 33px;
+      margin-top: 23px;
     }
     .checkDiv {
-      width: 403px;
+      width: 272px;
       height: 30px;
-      margin: 20px auto 0 auto;
+      margin: 18px auto 0 auto;
       text-align: left;
       .check {
         margin-top: 7px;
@@ -288,16 +322,22 @@ export default {
       }
     }
     .loginBtn {
-      width: 403px;
-      height: 56px;
-      font-size: 26px;
-      color: white;
+      width: 272px;
+      height: 40px;
+      font-size: 18px;
+      color: #fff;
       background-color: #00b8ff;
       border: 0;
-      margin-top: 30px;
+      margin-top: 25px;
+      padding: 0;
+      line-height: 40px;
     }
     .settingBoxStyle {
-      width: 403px;
+      font-size: 16px;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      color: #ffffff;
+      width: 272px;
       height: 20px;
       margin: 20px auto;
       .settingStyle {
@@ -320,55 +360,27 @@ export default {
       }
     }
     .serverAddressBoxSty {
-      width: 403px;
       height: 36px;
       margin: 20px auto;
       .serverTitleSty {
         font-size: 16px;
         line-height: 36px;
-        float: left;
       }
       .serverSelectSty {
         /deep/ .el-input__inner {
-          background: url(../../assets/images/Login/login-usernameBox.png)
-            no-repeat;
-          background-size: 100% 100%;
-          color: white;
+          width: 272px;
+          background-color: transparent;
+          border: 1px solid #00bbff;
+          color: #01bcff;
         }
       }
     }
+    /deep/.el-checkbox__input.is-checked .el-checkbox__inner,
+    .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+      background-color: #00bbff;
+      border-color: #00bbff;
+    }
   }
-}
-/deep/ .el-input--small .el-input__inner {
-  height: 56px;
-  line-height: 56px;
-}
-/deep/ .el-input__icon {
-  margin-left: 20px;
-}
-/deep/ .el-input__inner {
-  background-color: transparent;
-  border: 0;
-  color: white;
-  width: 330px;
-}
-// /deep/ input:-webkit-autofill, select:-webkit-autofill {
-//   box-shadow: 0 0 0px 1000px transparent inset !important;
-//   background-color: transparent;
-// }
-// /deep/ input:-internal-autofill-selected {
-//   box-shadow: 0 0 0px 1000px transparent inset !important;
-//   background-color: transparent;
-// }
-/deep/ input:-webkit-autofill,
-textarea:-webkit-autofill,
-select:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px transparent inset !important;
-  -webkit-text-fill-color: white !important;
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-  background-color: transparent;
-  background-image: none;
-  transition: background-color 50000s ease-in-out 0s;
 }
 
 /deep/ .el-checkbox__label {
@@ -381,35 +393,77 @@ select:-webkit-autofill {
   color: white;
 }
 
-.dialogStyle {
-  min-width: 1500px;
-  /deep/.el-dialog__header {
-    background-color: #39a4dd;
-  }
+// .dialogStyle {
+//   font-size: 16px;
+//   min-width: 1500px;
+//   /deep/.el-dialog__header {
+//     background-color: #39a4dd;
+//   }
+//   /deep/.el-dialog__title {
+//     color: white;
+//     font-size: 18px;
+//     font-weight: bold;
+//   }
+//   /deep/.el-dialog__body {
+//     background-color: #336984;
+//   }
+//   /deep/.el-dialog__footer {
+//     background-color: #336984;
+//   }
+//   /deep/.el-icon-close:before {
+//     color: white;
+//   }
+//   .trueBtn {
+//     background-color: #1eb0fc;
+//     font-size: 14px;
+//     color: white;
+//     width: 66px;
+//     height: 30px;
+//     padding: 0;
+//   }
+//   span {
+//     color: white;
+//   }
+// }
+.passDialog {
+  border: 1px solid #00a7e8;
+  font-size: 14px;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+  background: rgba(0, 0, 0, 0.7);
+
   /deep/.el-dialog__title {
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  /deep/.el-dialog__body {
-    background-color: #336984;
-  }
-  /deep/.el-dialog__footer {
-    background-color: #336984;
-  }
-  /deep/.el-icon-close:before {
-    color: white;
-  }
-  .trueBtn {
-    background-color: #1eb0fc;
-    font-size: 14px;
-    color: white;
-    width: 66px;
+    display: inline-block;
+    width: 218px;
     height: 30px;
-    padding: 0;
+    padding-left: 17px;
+    line-height: 30px;
+    background: linear-gradient(90deg, #00d2ff 0%, rgba(0, 210, 255, 0) 100%);
+    font-size: 18px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
+    color: #fefefe;
   }
-  span {
-    color: white;
+  /deep/.el-dialog {
+    background: rgba(0, 65, 87, 0.85);
+    .el-dialog__headerbtn:hover .el-dialog__close {
+      color: #fff;
+    }
+    /deep/.el-dialog__body {
+      color: #fff;
+    }
+    .trueBtn {
+      width: 87px;
+      height: 32px;
+      border: 1px solid #1eb0fc;
+      border-radius: 2px;
+      background: #043c4f;
+      font-size: 18px;
+      font-family: Source Han Sans CN;
+      padding: 0;
+      background: #00a7e8;
+      color: #fff;
+    }
   }
 }
 </style>
