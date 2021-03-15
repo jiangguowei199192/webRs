@@ -512,10 +512,12 @@ export default {
             display: flex;
             flex: 1;
             justify-content: space-between;
-            font-size: 24px;
-            font-weight: 500;
             margin-left: 136px;
             margin-right: 66px;
+            font-size: 20px;
+            font-family: Microsoft YaHei;
+            font-weight: 400;
+            color: #0fbfe0;
             .list {
               width: 176px;
               height: 47px;
@@ -526,6 +528,7 @@ export default {
               cursor: pointer;
             }
             .list.active {
+              color:#fff;
               background: url(../assets/images/home/active.png) no-repeat;
               background-size: 100% 100%;
             }

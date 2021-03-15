@@ -1,0 +1,13 @@
+<svg 
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="1232px" height="891px">
+<path fill-rule="evenodd"  opacity="0.6" fill="rgb(0, 65, 87)"
+ d="M12.000,12.000 L1218.000,12.000 L1218.000,877.000 L12.000,877.000 L12.000,12.000 Z"/>
+<path fill-rule="evenodd"  stroke="rgb(1, 121, 162)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.949" fill="none"
+ d="M12.000,12.000 L1218.000,12.000 L1218.000,877.000 L12.000,877.000 L12.000,12.000 Z"/>
+<path fill-rule="evenodd"  stroke="rgb(0, 167, 232)" stroke-width="2px" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.8" fill="none"
+ d="M2.000,2.000 L1228.000,2.000 L1228.000,887.000 L2.000,887.000 L2.000,2.000 Z"/>
+<path fill-rule="evenodd"  stroke="rgb(0, 183, 255)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+ d="M24.000,887.000 C8.457,887.000 2.000,887.000 2.000,887.000 C2.000,887.000 2.000,880.750 2.000,865.000 M2.000,24.264 C2.000,9.765 2.000,2.000 2.000,2.000 C2.000,2.000 8.871,2.000 24.138,2.000 M1206.000,2.000 C1220.848,2.000 1228.000,2.000 1228.000,2.000 C1228.000,2.000 1228.000,6.483 1228.000,24.000 M1228.000,865.000 C1228.000,879.628 1228.000,887.000 1228.000,887.000 C1228.000,887.000 1225.213,887.000 1206.000,887.000 "/>
+</svg>

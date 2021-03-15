@@ -78,7 +78,7 @@ export default {
   }
   .leftNav .iconLeft {
     background: url(../../../assets/images/arrow-left.png) no-repeat;
-    left:-21px;
+    left: -21px;
   }
   .rightInfo .iconRight {
     right: -20px;
@@ -89,21 +89,23 @@ export default {
     left: -22px;
   }
   .leftNav .left {
-    width: 280px;
-    height: 890px;
-    background: url(../../../assets/images/nav-left.png) no-repeat;
+    width: 286px;
+    height: 885px;
+    background: url(../../../assets/images/nav-left.svg) no-repeat;
+    background-size: 100% 100%;
   }
   .rightInfo .right {
-    width: 280px;
-    height: 890px;
-    background: url(../../../assets/images/nav-right.png) no-repeat;
+    width: 286px;
+    height: 885px;
+    background: url(../../../assets/images/nav-right.svg) no-repeat;
+    background-size: 100% 100%;
   }
   .center {
     flex: 1;
     margin: 0 27px;
-     width: 1240px;
-    height: 890px;
-    background: url(../../../assets/images/video-bg.png) no-repeat;
+    // width: 1240px;
+    height: 885px;
+    background: url(../../../assets/images/video-bg.svg) no-repeat;
     background-size: 100% 100%;
     position: relative;
   }
