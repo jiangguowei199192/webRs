@@ -1,5 +1,5 @@
 <template>
-  <caseMain ref="caseMain" :showTool="true">
+  <CaseMain ref="caseMain" :showTool="true">
     <div class="caseDetail" slot="main">
       <div class="singleCase">
         <div class="gisTitle">
@@ -70,7 +70,7 @@
           <div class="btns">
             <span></span>
             <span></span>
-            <span></span>
+            <span @click.stop="showDispose = true"></span>
           </div>
         </div>
       </div>
@@ -202,18 +202,28 @@
           </div>
         </template>
       </div>
+      <!-- 处置记录弹窗 -->
+      <DisposeRecDialog
+        :isShow.sync="showDispose"
+        title="处置记录"
+        class="dispose"
+        :clickRowId="caseId"
+      ></DisposeRecDialog>
     </div>
-  </caseMain>
+  </CaseMain>
 </template>
 
 <script>
 import { copyData } from '@/utils/public'
-import caseMain from './components/caseMain'
+import CaseMain from './components/caseMain'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
+import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 export default {
   name: 'caseDetail',
   data () {
     return {
+      caseId: '',
+      showDispose: false,
       showPlans: true,
       active: 0, // 0-基础信息 1-推送信息
       caseInfo: {
@@ -398,13 +408,14 @@ export default {
     }
   },
   components: {
-    caseMain,
-    EllipsisTooltip
+    CaseMain,
+    EllipsisTooltip,
+    DisposeRecDialog
   },
   mounted () {
     const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
-    console.log(data)
+    this.caseId = data.id
     setTimeout(() => {
       data.type = 'RP_Case'
       this.$refs.caseMain.addCaseMarker([data])
@@ -447,6 +458,9 @@ export default {
 .caseDetail {
   height: 100%;
   position: relative;
+  .dispose {
+    pointer-events: auto;
+  }
   .singleCase {
     width: 349px;
     height: 208px;

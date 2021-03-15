@@ -86,11 +86,13 @@
 <script>
 import { isNotNull } from '@/utils/formRules'
 import { caseApi } from '@/api/case'
+// import { debounce } from '../../../utils/public'
 
 export default {
   props: {
     isShow: { type: Boolean, required: true },
     title: { type: String, required: true },
+    // 案件id
     clickRowId: { type: String, required: true }
   },
 
@@ -137,12 +139,12 @@ export default {
           .then(res => {
             console.log('处置记录提交res:', res)
             if (res && res.data && res.data.code === 0) {
-              this.updateIsShow()
+              this.updateIsShow('addCaseForm')
               this.$emit('confirmRecordClick', this.addCaseForm)
             }
           })
           .catch(err => {
-            console.log('caseApi.caseAdd Err : ' + err)
+            console.log('caseApi.finishCase Err : ' + err)
           })
       })
     },
