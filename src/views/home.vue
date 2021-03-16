@@ -461,7 +461,7 @@ export default {
     ::selection {
       background: transparent;
     }
-    padding: 20px;
+    padding: 20px 20px 30px;
     height: auto !important;
     .headerTitle {
       position: relative;
@@ -494,7 +494,7 @@ export default {
         color: #ffffff;
         // width: 1749px;
         height: 74px;
-        margin-top: 16px;
+        margin-top: 20px;
         background: url(../assets/images/home/title_bg.svg) no-repeat;
         background-size: 100% 100%;
         div.title {

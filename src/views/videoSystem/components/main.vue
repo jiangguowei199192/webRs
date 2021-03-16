@@ -60,33 +60,36 @@ export default {
   }
   .leftNav,
   .rightInfo {
-    height: 899px;
+    height: 885px;
     .iconRight,
     .iconLeft {
-      width: 25px;
-      height: 70px;
+      width: 22px;
+      height: 68px;
       position: absolute;
-      top: 410px;
+      top: 50%;
       cursor: pointer;
-      // transform: translateY(-50%);
+      transform: translateY(-50%);
     }
   }
   .leftNav .iconRight {
     left: 100%;
-    background: url(../../../assets/images/arrow-right.png) no-repeat;
-    margin-left: -9px;
+    background: url(../../../assets/images/arrow-right.svg) no-repeat;
+    margin-left: -5px;
+    background-size: 100% 100%;
   }
   .leftNav .iconLeft {
-    background: url(../../../assets/images/arrow-left.png) no-repeat;
-    left: -21px;
+    background: url(../../../assets/images/arrow-left.svg) no-repeat;
+    left: -30px;
   }
   .rightInfo .iconRight {
-    right: -20px;
-    background: url(../../../assets/images/arrow-right-info.png) no-repeat;
+    right: -25px;
+    background: url(../../../assets/images/arrow-right.svg) no-repeat;
+    transform: rotate(-180deg);
   }
   .rightInfo .iconLeft {
-    background: url(../../../assets/images/arrow-left-info.png) no-repeat;
-    left: -22px;
+    background: url(../../../assets/images/arrow-left.svg) no-repeat;
+    left: -19px;
+    transform: rotate(-180deg);
   }
   .leftNav .left {
     width: 286px;
