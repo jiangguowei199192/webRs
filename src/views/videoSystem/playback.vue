@@ -1461,8 +1461,8 @@ export default {
           margin-bottom: 10px;
           width:calc(100% - 10px);
           height:calc(100% - 10px);
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
+          background: url(../../assets/images/video.svg) no-repeat center center;
+          background-color: #16789E;
           cursor: pointer;
         }
         > div.active {
@@ -1591,7 +1591,7 @@ export default {
         margin-bottom: 10px;
         width:calc(100% - 10px);
         height:calc(100% - 10px);
-        background: url(../../assets/images/video.png) no-repeat center center;
+        background: url(../../assets/images/video.svg) no-repeat center center;
         background-color: #00497c;
       }
       div.active {
@@ -1619,7 +1619,7 @@ export default {
           height: 100%;
           margin-right: 19px;
           // margin-bottom: 20px;
-          background: url(../../assets/images/video.png) no-repeat center center;
+          background: url(../../assets/images/video.svg) no-repeat center center;
           background-color: #00497c;
         }
       }

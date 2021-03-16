@@ -495,7 +495,7 @@ export default {
         // width: 1749px;
         height: 74px;
         margin-top: 20px;
-        background: url(../assets/images/home/title_bg.svg) no-repeat;
+        background: url(../assets/images/home/title_bg1.svg) no-repeat;
         background-size: 100% 100%;
         div.title {
           // line-height: 74px;

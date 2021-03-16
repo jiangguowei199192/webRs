@@ -76,17 +76,17 @@
       <div slot="center">
         <div class="video">
           <div class="box">
-            <div class="title">直播</div>
+            <div class="content-title">直播</div>
             <div class="info">
               <div
                 class="curSelected"
                 v-show="curSelectedVideo.labelTotal"
               >当前选中:{{curSelectedVideo.labelTotal}}</div>
-              <div class="warning" @click.stop="$router.push({name:'fireAlarm'})">
+              <!-- <div class="warning" @click.stop="$router.push({name:'fireAlarm'})">
                 <img :src="firePic" alt />
                 监控报警
                 <b>{{ fireWarningArray.length }}</b>个
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="videoList" ref="videoList" :class="{videolistFullscreen:dialogVisible}">
@@ -115,23 +115,35 @@
           <!-- 下面按钮部分 -->
           <div class="tools">
             <div class="leftTool">
-             <el-tooltip popper-class="gTooltip" content="9宫格" placement="top" :open-delay="500">
-                <img :src="palace==9?nineSelectedPalace:ninePalace" @click.stop="changeVideosType(9)"/>
+              <el-tooltip popper-class="gTooltip" content="9宫格" placement="top" :open-delay="500">
+                <img
+                  :src="palace==9?nineSelectedPalace:ninePalace"
+                  @click.stop="changeVideosType(9)"
+                />
               </el-tooltip>
               <el-tooltip popper-class="gTooltip" content="4宫格" placement="top" :open-delay="500">
-                <img :src="palace==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)"/>
+                <img
+                  :src="palace==4?fourSelectedPalace:fourPalace"
+                  @click.stop="changeVideosType(4)"
+                />
               </el-tooltip>
               <el-tooltip popper-class="gTooltip" content="1宫格" placement="top" :open-delay="500">
-                <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)"/>
+                <img :src="palace==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)" />
               </el-tooltip>
               <el-tooltip popper-class="gTooltip" content="抓取" placement="top" :open-delay="500">
-                <img :src="photoClicked?photoSelected:photo" @click.stop="showImg"/>
+                <img :src="photoClicked?photoSelected:photo" @click.stop="showImg" />
               </el-tooltip>
               <el-tooltip popper-class="gTooltip" content="设备地图" placement="top" :open-delay="500">
-                <img :src="mapClicked?mapSelected:map" @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"/>
+                <img
+                  :src="mapClicked?mapSelected:map"
+                  @click.stop="mapClicked=true;$router.push({name:'deviceMap'})"
+                />
               </el-tooltip>
               <el-tooltip popper-class="gTooltip" content="回放" placement="top" :open-delay="500">
-                <img :src="playbackClick?playbackSelected:playback" @click.stop="playbackClick=true;$router.push({name:'playbackSystem'})"/>
+                <img
+                  :src="playbackClick?playbackSelected:playback"
+                  @click.stop="playbackClick=true;$router.push({name:'playbackSystem'})"
+                />
               </el-tooltip>
               <!-- 用于显示截取的图片 -->
               <img
@@ -143,8 +155,13 @@
               />
             </div>
             <div class="rightTool">
-              <el-tooltip popper-class="gTooltip" :content="!isPlayAll?'预览全部':'取消预览全部'" placement="top" :open-delay="500">
-                <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos"/>
+              <el-tooltip
+                popper-class="gTooltip"
+                :content="!isPlayAll?'预览全部':'取消预览全部'"
+                placement="top"
+                :open-delay="500"
+              >
+                <img :src="!isPlayAll?playAll:closeAll" @click.stop="playAllVideos" />
               </el-tooltip>
               <div class="pagination">
                 <el-pagination
@@ -156,8 +173,13 @@
                   @next-click="next"
                 ></el-pagination>
               </div>
-              <el-tooltip popper-class="gTooltip" :content="!dialogVisible?'全屏':'取消全屏'" placement="top" :open-delay="500">
-                <img :src="!dialogVisible?fullScreen:fullScreenSelected" @click.stop="openDialog()"/>
+              <el-tooltip
+                popper-class="gTooltip"
+                :content="!dialogVisible?'全屏':'取消全屏'"
+                placement="top"
+                :open-delay="500"
+              >
+                <img :src="!dialogVisible?fullScreen:fullScreenSelected" @click.stop="openDialog()" />
               </el-tooltip>
             </div>
           </div>
@@ -167,7 +189,7 @@
       <div slot="right">
         <div class="rightContent">
           <div class="baseInfo">
-            <div class="info">基本信息</div>
+            <div class="content-title">基本信息</div>
             <div class="detail">
               <ul v-show="Object.keys(curSelectedVideo).length>0">
                 <li>
@@ -1423,7 +1445,10 @@ export default {
     // 设备下线
     deviceOffline (device) {
       if (this.isOnline) {
-        if (device.id === this.curSelectedVideo.deviceCode && device.children[0].streamType === this.curSelectedVideo.streamType) {
+        if (
+          device.id === this.curSelectedVideo.deviceCode &&
+          device.children[0].streamType === this.curSelectedVideo.streamType
+        ) {
           this.selectedIndex = 200
           this.curSelectedVideo = {}
           this.onlineArray.forEach(item => {
@@ -1698,7 +1723,7 @@ export default {
 <style lang="less" scoped>
 .videoContainer {
   box-sizing: border-box;
-  padding:0 24px 37px 30px;
+  padding: 0 24px 37px 24px;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;
@@ -1708,46 +1733,51 @@ export default {
 
     div.tab {
       display: flex;
+      justify-content: space-between;
       cursor: pointer;
       height: 34px;
       line-height: 34px;
       width: 230px;
       color: #23cefd;
-      background: #062c5d;
+      background: #194a6f;
       // text-align: center;
       div {
-        width: 104px;
+        width: 115px;
         box-sizing: border-box;
+        text-align: center;
       }
-      div:nth-child(1) {
-        padding-left: 30px;
-      }
-      div:nth-child(2) {
-        padding-left: 20px;
-      }
+      // div:nth-child(1) {
+      //   padding-left: 30px;
+      // }
+      // div:nth-child(2) {
+      //   padding-left: 20px;
+      // }
       div.active {
-        width: 126px !important;
+        // width: 126px !important;
         color: #fff;
         font-weight: bold;
+        background: #39a4dd;
       }
-      div:nth-child(1).active {
-        background: url(../../assets/images/left.png) no-repeat;
-      }
-      div:nth-child(2).active {
-        padding-left: 42px;
-        background: url(../../assets/images/right.png) no-repeat;
-      }
+      // div:nth-child(1).active {
+      //   background: url(../../assets/images/left.png) no-repeat;
+      // }
+      // div:nth-child(2).active {
+      //   padding-left: 42px;
+      //   background: url(../../assets/images/right.png) no-repeat;
+      // }
     }
     div.search {
       width: 230px;
       margin-top: 20px;
-      background: #10203b;
+      // background: #10203b;
       /deep/ .el-input__inner {
-        background: #10203b;
+        background: transparent;
         border: 1px solid #1eb0fc;
         color: #1eb0fc;
       }
-
+      /deep/.el-input__suffix-inner {
+        color: #39a4dd;
+      }
       ::-webkit-input-placeholder {
         /* WebKit, Blink, Edge */
         color: #1eb0fc;
@@ -2059,7 +2089,7 @@ export default {
       margin-right: 10px;
       margin-bottom: 20px;
       .title {
-        font-size:16px;
+        font-size: 16px;
         width: 196px;
         height: 34px;
         background: url(../../assets/images/device/info-title.png) no-repeat;
@@ -2067,7 +2097,7 @@ export default {
         padding-left: 30px;
       }
       div.info {
-        font-size:16px;
+        font-size: 16px;
         display: flex;
         font-weight: 400;
         line-height: 34px;
@@ -2104,8 +2134,8 @@ export default {
           margin-bottom: 10px;
           width: calc(100% - 10px);
           height: calc(100% - 10px);
-          background: url(../../assets/images/video.png) no-repeat center center;
-          background-color: #00497c;
+          background: url(../../assets/images/video.svg) no-repeat center center;
+          background-color: #16789E;
           cursor: pointer;
         }
         > div.active {
@@ -2124,7 +2154,7 @@ export default {
       margin-top: 20px;
       .leftTool,
       .rightTool {
-        font-size:16px;
+        font-size: 16px;
         position: relative;
         top: 16px;
         left: 40px;
@@ -2236,7 +2266,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   overflow: visible;
-  background-image: url('../../assets/images/bg.png');
+  background-image: url("../../assets/images/bg.png");
 }
 .cutDialog {
   background: rgba(0, 0, 0, 0.6);

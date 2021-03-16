@@ -1,9 +1,11 @@
 <template>
   <div class="box">
     <div class="leftNav">
-      <div class="left" v-show="showLeft">
-        <slot name="left"></slot>
-      </div>
+      <transition name="normal-expand">
+        <div class="left" v-show="showLeft">
+          <slot name="left"></slot>
+        </div>
+      </transition>
       <span @click.stop="operateNav(1)" class="iconRight" v-if="showLeft"></span>
       <span @click.stop="operateNav(2)" class="iconLeft" v-else></span>
     </div>
@@ -14,9 +16,11 @@
     <div class="rightInfo" v-show="isShowRight">
       <span @click.stop="operateInfo(1)" class="iconLeft" v-if="showRight"></span>
       <span @click.stop="operateInfo(2)" class="iconRight" v-else></span>
-      <div class="right" v-show="showRight">
-        <slot name="right"></slot>
-      </div>
+      <transition name="normal-expand">
+        <div class="right" v-show="showRight">
+          <slot name="right"></slot>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -50,10 +54,18 @@ export default {
 }
 </script>
 <style lang="less">
+.normal-expand-enter-active,
+.normal-expand-leave-active {
+  transition: all 0.08s linear;
+  width: 286px !important;
+}
+.normal-expand-enter,
+.normal-expand-leave-to {
+  width: 0 !important;
+}
 .box {
   display: flex;
   justify-content: space-between;
-
   .leftNav,
   .rightInfo {
     position: relative;
@@ -79,17 +91,20 @@ export default {
   }
   .leftNav .iconLeft {
     background: url(../../../assets/images/arrow-left.svg) no-repeat;
-    left: -30px;
+    left: -24px;
+    background-size: 100% 100%;
   }
   .rightInfo .iconRight {
-    right: -25px;
-    background: url(../../../assets/images/arrow-right.svg) no-repeat;
+    right: -24px;
+    background: url(../../../assets/images/arrow-left.svg) no-repeat;
     transform: rotate(-180deg);
+    background-size: 100% 100%;
   }
   .rightInfo .iconLeft {
-    background: url(../../../assets/images/arrow-left.svg) no-repeat;
+    background: url(../../../assets/images/arrow-right.svg) no-repeat;
     left: -19px;
     transform: rotate(-180deg);
+    background-size: 100% 100%;
   }
   .leftNav .left {
     width: 286px;
