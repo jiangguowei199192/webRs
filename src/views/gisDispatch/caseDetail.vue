@@ -68,7 +68,7 @@
             </template>
           </div>
           <div class="btns">
-            <span></span>
+            <span @click.stop="showAssign = true"></span>
             <span @click.stop="showChatBox = true"></span>
             <span @click.stop="showDispose = true"></span>
           </div>
@@ -210,6 +210,7 @@
         :clickRowId="caseId"
       ></DisposeRecDialog>
       <ChatBox :isShow.sync="showChatBox" :caseId="caseId"></ChatBox>
+      <CaseAssign :isShow.sync="showAssign" :caseInfo="caseInfo"></CaseAssign>
     </div>
   </CaseMain>
 </template>
@@ -218,12 +219,14 @@
 import { copyData } from '@/utils/public'
 import CaseMain from './components/caseMain'
 import ChatBox from './components/chatBox'
+import CaseAssign from './components/caseAssign'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 export default {
   name: 'caseDetail',
   data () {
     return {
+      showAssign: false,
       showChatBox: false,
       caseId: '',
       showDispose: false,
@@ -235,7 +238,10 @@ export default {
         caseDesc: '',
         reportAddr: '',
         reportTel: '',
-        reportTime: ''
+        reportTime: '',
+        longitude: '',
+        latitude: '',
+        type: ''
       },
       selResIdx: -1,
       selStepIdx: -1,
@@ -414,15 +420,16 @@ export default {
     CaseMain,
     EllipsisTooltip,
     DisposeRecDialog,
-    ChatBox
+    ChatBox,
+    CaseAssign
   },
   mounted () {
     const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
+    this.caseInfo.type = 'RP_Case'
     this.caseId = data.id
     setTimeout(() => {
-      data.type = 'RP_Case'
-      this.$refs.caseMain.addCaseMarker([data])
+      this.$refs.caseMain.addCaseMarker([this.caseInfo])
       this.$refs.caseMain.zoomToCenter(data.longitude, data.latitude)
     }, 200)
   },
