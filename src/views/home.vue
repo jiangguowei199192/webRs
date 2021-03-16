@@ -335,6 +335,8 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             const data = res.data.data
+            // 获取案件聊天记录时，需要知道哪些消息是自己发的
+            localStorage.setItem('userDetail', JSON.stringify(data))
             this.userName = data.username
             tmpAxios
               .get(loginApi.getDeptByDeptCode, {

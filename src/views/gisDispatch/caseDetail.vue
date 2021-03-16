@@ -69,7 +69,7 @@
           </div>
           <div class="btns">
             <span></span>
-            <span></span>
+            <span @click.stop="showChatBox = true"></span>
             <span @click.stop="showDispose = true"></span>
           </div>
         </div>
@@ -209,6 +209,7 @@
         class="dispose"
         :clickRowId="caseId"
       ></DisposeRecDialog>
+      <ChatBox :isShow.sync="showChatBox" :caseId="caseId"></ChatBox>
     </div>
   </CaseMain>
 </template>
@@ -216,12 +217,14 @@
 <script>
 import { copyData } from '@/utils/public'
 import CaseMain from './components/caseMain'
+import ChatBox from './components/chatBox'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 export default {
   name: 'caseDetail',
   data () {
     return {
+      showChatBox: false,
       caseId: '',
       showDispose: false,
       showPlans: true,
@@ -410,7 +413,8 @@ export default {
   components: {
     CaseMain,
     EllipsisTooltip,
-    DisposeRecDialog
+    DisposeRecDialog,
+    ChatBox
   },
   mounted () {
     const data = JSON.parse(this.$route.query.data)
