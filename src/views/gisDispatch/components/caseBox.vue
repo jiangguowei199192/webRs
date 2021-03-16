@@ -36,7 +36,7 @@
         </li>
         <li v-if="!isGisDispatch">
           <span class="left">周边范围：</span>
-          <el-input v-model="radius"></el-input>
+          <el-input v-model="radius" @change="radiusChange"></el-input>
           <span>km</span>
         </li>
       </ul>
@@ -48,6 +48,7 @@
 
 <script>
 import EllipsisTooltip from '../../../components/ellipsisTooltip'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'caseBox',
   data () {
@@ -64,10 +65,17 @@ export default {
   components: {
     EllipsisTooltip
   },
+  destroyed () {
+    EventBus.$off('setCaseRadius')
+  },
   mounted () {
     if (this.$route.path !== '/gisDispatch') {
       this.isGisDispatch = false
     }
+    const me = this
+    EventBus.$on('setCaseRadius', (radius) => {
+      me.radius = radius
+    })
   },
   methods: {
     /**
@@ -82,8 +90,17 @@ export default {
      * 格式化案件状态
      */
     formatCaseStatus (caseStatus) {
-      if (caseStatus === '0') return '未处置'
-      else if (caseStatus === '1') return '已处置'
+      if (caseStatus === '0' || caseStatus === 0) return '未处置'
+      else if (caseStatus === '1' || caseStatus === 1) return '已处置'
+    },
+    /**
+     * 范围改变
+     */
+    radiusChange () {
+      try {
+        const r = parseFloat(this.radius)
+        EventBus.$emit('caseRadiusChange', r)
+      } catch (error) {}
     }
   }
 }
@@ -102,6 +119,8 @@ export default {
       box-sizing: border-box;
       color: #00b8ff;
       height: 20px;
+      padding: 0 5px;
+      text-align: center;
     }
   }
 }

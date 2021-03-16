@@ -207,9 +207,9 @@
         :isShow.sync="showDispose"
         title="处置记录"
         class="dispose"
-        :clickRowId="caseId"
+        :clickRowId="caseInfo.id"
       ></DisposeRecDialog>
-      <ChatBox :isShow.sync="showChatBox" :caseId="caseId"></ChatBox>
+      <ChatBox :isShow.sync="showChatBox" :caseId="caseInfo.id"></ChatBox>
       <CaseAssign :isShow.sync="showAssign" :caseInfo="caseInfo"></CaseAssign>
     </div>
   </CaseMain>
@@ -222,13 +222,13 @@ import ChatBox from './components/chatBox'
 import CaseAssign from './components/caseAssign'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
+import { EventBus } from '@/utils/eventBus.js'
 export default {
   name: 'caseDetail',
   data () {
     return {
       showAssign: false,
       showChatBox: false,
-      caseId: '',
       showDispose: false,
       showPlans: true,
       active: 0, // 0-基础信息 1-推送信息
@@ -241,7 +241,9 @@ export default {
         reportTime: '',
         longitude: '',
         latitude: '',
-        type: ''
+        type: '',
+        caseStatus: '',
+        id: ''
       },
       selResIdx: -1,
       selStepIdx: -1,
@@ -423,15 +425,23 @@ export default {
     ChatBox,
     CaseAssign
   },
+  destroyed () {
+    EventBus.$off('caseRadiusChange')
+  },
   mounted () {
     const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
     this.caseInfo.type = 'RP_Case'
-    this.caseId = data.id
+    this.caseInfo.hasFence = true
     setTimeout(() => {
       this.$refs.caseMain.addCaseMarker([this.caseInfo])
       this.$refs.caseMain.zoomToCenter(data.longitude, data.latitude)
+      this.$refs.caseMain.addOrUpdateFence(this.caseInfo, 5000)
     }, 200)
+    const me = this
+    EventBus.$on('caseRadiusChange', (radius) => {
+      me.$refs.caseMain.addOrUpdateFence(me.caseInfo, radius * 1000)
+    })
   },
   methods: {
     /**
@@ -456,6 +466,7 @@ export default {
      */
     toolClick (index) {
       if (index === 0) {
+        EventBus.$emit('setCaseRadius', 0)
         this.$refs.caseMain.clearScreen()
       } else if (index === 1) {
         this.$refs.caseMain.measureLenStart()

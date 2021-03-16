@@ -10,7 +10,7 @@
         <div class="left">
           <div class="radius">
             <span class="lTxt">范围：</span>
-            <el-input v-model="radius"></el-input>
+            <el-input v-model="radius" @change="radiusChange"></el-input>
             <span>km</span>
             <div class="rTxt">
               <span>共</span>
@@ -94,7 +94,7 @@ export default {
       msg: '',
       userId: '',
       username: '',
-      radius: '',
+      radius: 5,
       search: '',
       selectList: [],
       peoples: [
@@ -126,6 +126,10 @@ export default {
           this.$refs.gduMap.mapMoveTo(
             this.caseInfo.longitude,
             this.caseInfo.latitude
+          )
+          this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
+            this.caseInfo,
+            this.radius * 1000
           )
         }, 200)
       }
@@ -183,6 +187,18 @@ export default {
       if (this.$refs.gduMap) {
         this.$refs.gduMap.map2D._map.updateSize()
       }
+    },
+    /**
+     * 范围改变
+     */
+    radiusChange () {
+      try {
+        const r = parseFloat(this.radius)
+        this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
+          this.caseInfo,
+          r * 1000
+        )
+      } catch (error) {}
     }
   }
 }
@@ -288,6 +304,9 @@ export default {
               border-bottom: 1px solid #fff;
               box-sizing: border-box;
               height: 20px;
+              color: #fff;
+              padding: 0px 5px;
+              text-align: center;
             }
           }
         }

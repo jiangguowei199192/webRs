@@ -83,6 +83,12 @@ export default {
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
     },
     /**
+     * 在地图上添加圆形围栏
+     */
+    addOrUpdateFence (data, radius) {
+      this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(data, radius)
+    },
+    /**
      *  动态创建vue组件
      */
     createVueCom (props) {

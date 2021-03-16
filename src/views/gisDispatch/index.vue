@@ -361,8 +361,6 @@ export default {
         )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.latitude = item.latitude
-            res.data.data.longitude = item.longitude
             const data = JSON.stringify(res.data.data)
             this.$router.push({
               path: '/gisDispatchDispose',
