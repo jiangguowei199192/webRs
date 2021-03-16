@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-13 15:41:40
+ * @LastEditTime: 2021-03-16 20:11:17
 -->
 <template>
   <div>
@@ -22,9 +22,9 @@
         label-width="auto"
         class="add-case-form"
       >
-        <el-form-item label="处置结果 :" prop="result">
+        <el-form-item label="处置结果 :" prop="record">
           <el-input
-            v-model="addCaseForm.result"
+            v-model="addCaseForm.record"
             :placeholder="placeholder"
             type="textarea"
             resize="none"
@@ -57,10 +57,11 @@
         <el-form-item label="上传文件 :" prop="uploadFile">
           <el-upload
             class="upload-box"
+            ref="uploadForm"
             multiple
-            name="flies"
             drag
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="action"
+            accept=".xls, .xlsx, .docx, .jpg, .jpeg, .png, .zip"
             :limit="10"
             :file-list="uploadList"
             :auto-upload="false"
@@ -69,8 +70,10 @@
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
-              将文件拖到此处，或<em>点击上传</em>
-              <p>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
+              将文件拖到此处，或<em style="color:#1ed8a0">点击上传</em>
+              <p>
+                支持文件类型: xls、xlsx、docx、jpg、jpeg、png、zip(10M以内)
+              </p>
             </div>
           </el-upload>
         </el-form-item>
@@ -91,9 +94,7 @@ import { caseApi } from '@/api/case'
 export default {
   props: {
     isShow: { type: Boolean, required: true },
-    title: { type: String, required: true },
-    // 案件id
-    clickRowId: { type: String, required: true }
+    title: { type: String, required: true }
   },
 
   data () {
@@ -102,23 +103,23 @@ export default {
       addCaseForm: {
         id: 0,
         time: '',
-        result: '',
+        record: '',
         people: '',
-        uploadFile: null
+        uploadFileUrl: ''
       },
       addCaseFormRules: {
-        result: isNotNull('请输入处置结果'),
+        record: isNotNull('请输入处置结果'),
         people: isNotNull('请输入处置人'),
         time: isNotNull('请选择报警时间')
       },
-      uploadList: []
+      uploadList: [],
+      uploadFiles: []
     }
   },
 
   watch: {
     isShow (val) {
       if (val) {
-        // console.log("clickRowId:", this.clickRowId);
         this.addCaseForm.id = this.clickRowId
       }
     }
@@ -127,38 +128,117 @@ export default {
   mounted () {},
 
   methods: {
-    // 处置info录入提交
-    confirmCaseRecord (formName) {
-      this.$refs[formName].validate(valid => {
-        if (!valid) return false
-        // console.log('addCaseForm:', this.addCaseForm)
-        this.$axios
-          .post(caseApi.finishCase, this.addCaseForm, {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          })
-          .then(res => {
-            console.log('处置记录提交res:', res)
-            if (res && res.data && res.data.code === 0) {
-              this.updateIsShow('addCaseForm')
-              this.$emit('confirmRecordClick', this.addCaseForm)
-            }
-          })
-          .catch(err => {
-            console.log('caseApi.finishCase Err : ' + err)
-          })
-      })
-    },
-
     // 更新isShow状态
     updateIsShow (formName) {
       this.$refs[formName].resetFields()
+      this.uploadFiles = this.uploadList = []
       this.$emit('update:isShow', false)
       this.$emit('update:clickRowId', '')
     },
 
-    onUploadChange () {},
+    // 处置info录入提交
+    confirmCaseRecord (formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return false
+        this.uploadFileList()
+        // console.log('addCaseForm:', this.addCaseForm)
+        setTimeout(() => {
+          const params = {
+            id: this.addCaseForm.id,
+            dispositionMan: this.addCaseForm.people,
+            dispositionRecord: this.addCaseForm.record,
+            dispositionTime: this.addCaseForm.time,
+            dispositionImgUrl: this.addCaseForm.uploadFileUrl
+          }
+          this.$axios
+            .post(caseApi.finishCase, params, {
+              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+            })
+            .then(res => {
+              console.log('处置记录提交res:', res)
+              if (res && res.data && res.data.code === 0) {
+                this.$emit('confirmRecordClick', this.addCaseForm)
+                this.updateIsShow('addCaseForm')
+              }
+            })
+            .catch(err => {
+              console.log('caseApi.finishCase Err : ' + err)
+            })
+        }, 100)
+      })
+    },
 
-    onRemoveFile () {}
+    // 上传文件
+    uploadFileList () {
+      if (this.uploadFiles.length !== 0) {
+        const formData = new FormData()
+        this.uploadFiles.forEach(f => {
+          formData.append('file', f)
+        })
+        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+        this.$axios
+          .post(caseApi.uploadFile, formData, config)
+          .then(res => {
+            console.log('上传文件res:', res)
+            if (res && res.data && res.data.code === 0) {
+              this.addCaseForm.uploadFileUrl = res.data.data
+            }
+          })
+          .catch(err => {
+            console.log('caseApi.uploadFile Err : ' + err)
+          })
+      }
+    },
+
+    // 上传文件前的处理
+    onUploadChange (file) {
+      var files = this.$refs.uploadForm.uploadFiles
+      files.forEach(t => {
+        const fileName = t.name
+          .substring(t.name.lastIndexOf('.') + 1)
+          .toLowerCase()
+        const fileType = [
+          'jpg',
+          'jpeg',
+          'png',
+          'doc',
+          'docx',
+          'xls',
+          'xlsx',
+          'rar',
+          'zip'
+        ]
+        if (fileType.indexOf(fileName) === -1) {
+          this.$notify.closeAll()
+          this.$notify.warning({
+            title: '提示',
+            message:
+              '上传文件只能是 jpg/jpeg/png/doc/docx/xls/xlsx/rar/zip 等格式',
+            duration: 3 * 1000
+          })
+          return false
+        }
+        const limitSize = t.size / 1024 / 1024 < 10
+        if (!limitSize) {
+          this.$notify.closeAll()
+          this.$notify.warning({
+            title: '提示',
+            message: '单个文件大小不能超过 10MB',
+            duration: 3 * 1000
+          })
+          return false
+        }
+      })
+      this.uploadFiles.push(file.raw)
+    },
+
+    // 移除上传文件
+    onRemoveFile (file, fileList) {
+      const index = this.uploadFiles.indexOf(file.raw)
+      if (index !== -1) {
+        this.uploadFiles.splice(index, 1)
+      }
+    }
   }
 }
 </script>
@@ -198,9 +278,6 @@ export default {
         color: #fff;
         font-size: 12px;
       }
-      // .el-form-item__error {
-      //   margin-top: -5px;
-      // }
       .el-textarea__inner {
         background-color: rgba(9, 84, 109, 0.85);
         border-color: #00d2ff;
@@ -231,11 +308,24 @@ export default {
         }
         .el-icon-upload {
           font-size: 80px;
-          color: #c0c4cc;
+          color: #00caf6;
           margin: 30px 0 0 5px;
         }
         .el-upload__text {
-          color: #fff;
+          color: #00caf6;
+          font-size: 13px;
+        }
+        .el-upload-list {
+          height: 50px;
+          overflow-y: auto;
+        }
+        .el-upload-list__item {
+          font-size: 12px;
+          margin-top: 0;
+        }
+        .el-upload-list__item-name,
+        .el-icon-document {
+          color: #00caf6;
         }
       }
     }
@@ -263,6 +353,16 @@ export default {
         color: #fff;
       }
     }
+  }
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: #00b7ff;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 </style>

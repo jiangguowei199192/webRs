@@ -4,10 +4,10 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-13 15:29:50
+ * @LastEditTime: 2021-03-16 19:59:49
 -->
 <template>
-  <div class="step-box browserScroll">
+  <div class="step-box listScroll">
     <el-steps :active="eventStep" finish-status="success" direction="vertical">
       <el-step
         v-for="(event, event_index) in events"
@@ -41,7 +41,7 @@
                     >
                   </div>
                   <div
-                    class="processing-content-detail detail-img browserScroll"
+                    class="processing-content-detail detail-img listScroll"
                     v-if="event_index == 3"
                   >
                     <!-- <img
@@ -77,8 +77,7 @@ export default {
   name: 'caseStep',
 
   props: {
-    clickRowId: { type: String, required: false },
-    caseRecordInfo: { type: Array, required: false }
+    clickRowId: { type: String, required: false }
   },
 
   data () {
@@ -100,9 +99,8 @@ export default {
   watch: {},
 
   mounted () {
-    this.disposeCaseInfo()
-    EventBus.$on('selectedCaseRecord', () => {
-      this.disposeCaseInfo()
+    EventBus.$on('selectedCaseRecord', info => {
+      this.disposeCaseInfo(info)
     })
   },
 
@@ -112,42 +110,38 @@ export default {
 
   methods: {
     // 处理处置记录info
-    disposeCaseInfo () {
+    disposeCaseInfo (info) {
       // console.log("caseRecordInfo:", this.caseRecordInfo);
-      this.events = this.caseRecordInfo
+      this.events = info
       if (this.events.length !== 0) {
         this.events.forEach(item => {
-          if (item.dispositionNode) {
-            switch (item.dispositionNode) {
-              case 0:
-                item.dispositionNode = '接警'
-                break
-              case 1:
-                item.dispositionNode = '推送'
-                break
-              case 2:
-                item.dispositionNode = '处警'
-                break
-              case 3:
-                item.dispositionNode = '处置'
-                break
-              case 4:
-                item.dispositionNode = '结案'
-                break
-            }
+          switch (item.dispositionNode) {
+            case 0:
+              item.dispositionNode = '接警'
+              break
+            case 1:
+              item.dispositionNode = '推送'
+              break
+            case 2:
+              item.dispositionNode = '处警'
+              break
+            case 3:
+              item.dispositionNode = '处置'
+              break
+            case 4:
+              item.dispositionNode = '结案'
+              break
           }
-          if (item.dispositionStatus) {
-            switch (item.dispositionStatus) {
-              case 0:
-                item.dispositionStatus = '进行中'
-                break
-              case 1:
-                item.dispositionStatus = '已完成'
-                break
-              case 2:
-                item.dispositionStatus = '未完成'
-                break
-            }
+          switch (item.dispositionStatus) {
+            case 0:
+              item.dispositionStatus = '进行中'
+              break
+            case 1:
+              item.dispositionStatus = '已完成'
+              break
+            case 2:
+              item.dispositionStatus = '未完成'
+              break
           }
         })
       }
@@ -179,9 +173,12 @@ export default {
     left: 17px;
     background-color: #00ccff;
   }
+  /deep/.el-step.is-vertical .el-step__head {
+    width: auto;
+  }
   /deep/.el-step.is-vertical .el-step__main {
     background: rgba(5, 31, 46, 0.9);
-    margin: 0 0 30px 20px;
+    margin: 0 15px 30px 10px;
   }
   /deep/.el-step__title.is-process,
   /deep/.el-step__title.is-wait {

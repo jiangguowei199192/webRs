@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-13 15:25:23
+ * @LastEditTime: 2021-03-16 20:00:06
 -->
 <template>
   <div class="caseCenter">
@@ -21,7 +21,7 @@
     <div class="case-detail">
       <div class="case-info">
         <h3 class="case-header">案件记录</h3>
-        <div class="case-content browserScroll">
+        <div class="case-content listScroll">
           <div class="base">
             <h4>基本信息</h4>
             <div>
@@ -94,7 +94,7 @@
             </div>
             <div class="handel-attach">
               <span>相关附件: </span>
-              <div class="browserScroll">
+              <div class="listScroll">
                 <img
                   v-for="(img_item, img_index) in imgList"
                   :key="img_index"
@@ -110,7 +110,7 @@
         <h3><span>处置记录 | </span><span>聊天记录</span></h3>
         <div class="handel-chat-record ">
           <!-- 处置记录|聊天记录步骤条 -->
-          <CaseStep :caseRecordInfo.sync="caseRecordInfo"></CaseStep>
+          <CaseStep></CaseStep>
         </div>
       </div>
     </div>
@@ -251,9 +251,7 @@ export default {
           // console.log('处置记录res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseRecordInfo = res.data.data.records
-            // console.log('caseRecordInfo:', this.caseRecordInfo)
-            // console.log('records:', res.data.data.records)
-            EventBus.$emit('selectedCaseRecord')
+            EventBus.$emit('selectedCaseRecord', this.caseRecordInfo)
           }
         })
         .catch(err => {

@@ -63,7 +63,9 @@
               v-else-if="item.type === 'handelStatus' && scope.row[item.value]"
               class="handelBtn"
               :class="
-                scope.row[item.value] == '已处置' ? 'activeColor' : 'inActiveColor'
+                scope.row[item.value] == '已处置'
+                  ? 'activeColor'
+                  : 'inActiveColor'
               "
               @click.stop="disposeClick(scope.$index, scope.row)"
               >{{ scope.row[item.value] }}</span
@@ -267,8 +269,8 @@ export default {
     /**
      *  表格行点击
      */
-    getClickRowInfo (val) {
-      this.$emit('getClickRowInfo', val)
+    getClickRowInfo (row) {
+      this.$emit('getClickRowInfo', row)
     },
     /**
      *  处理参数
@@ -341,6 +343,8 @@ export default {
                   r.caseStatus = '已处置'
                 }
               })
+              // 默认选中首行
+              this.getClickRowInfo(arr[0])
             }
           }
         })
