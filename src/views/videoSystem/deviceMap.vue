@@ -149,8 +149,7 @@ export default {
 <style lang="less" scoped>
 .deviceMap {
   box-sizing: border-box;
-  padding:20px ;
-  padding-top: 0px;
+  padding: 0 24px 37px 24px;
   .leftContainer {
     box-sizing: border-box;
     padding: 27px 0 0 28px;
@@ -288,6 +287,7 @@ export default {
         height: 36px;
         border: 1px solid rgba(57, 164, 221, 1);
         text-align: center;
+        font-size:16px;
         // width: 202px;
         // height: 45px;
         // background: url(../../assets/images/device/info-title.png) no-repeat;

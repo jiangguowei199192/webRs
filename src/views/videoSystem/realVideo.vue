@@ -1726,7 +1726,7 @@ export default {
   padding: 0 24px 37px 24px;
   .leftContainer {
     box-sizing: border-box;
-    padding: 27px 0 0 28px;
+    padding: 21px 0 0 28px;
     font-size: 16px;
     font-family: Source Han Sans CN;
     // font-weight: bold;
@@ -1735,8 +1735,8 @@ export default {
       display: flex;
       justify-content: space-between;
       cursor: pointer;
-      height: 34px;
-      line-height: 34px;
+      height: 36px;
+      line-height: 36px;
       width: 230px;
       color: #23cefd;
       background: #194a6f;
@@ -1863,7 +1863,7 @@ export default {
     font-family: Source Han Sans CN;
     color: rgba(255, 255, 255, 1);
     line-height: 14px;
-    padding: 21px 13px 0px 23px;
+    padding: 23px 13px 0px 23px;
     .baseInfo,
     .deviceInfo {
       .info {
@@ -2081,7 +2081,7 @@ export default {
   }
   .video {
     box-sizing: border-box;
-    padding: 21px 13px 0px 23px;
+    padding: 23px 13px 0px 23px;
     // position: relative;
     .box {
       display: flex;
