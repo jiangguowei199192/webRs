@@ -203,6 +203,12 @@ export default {
           content: '视频侦查'
         },
         {
+          content: '结构化数据'
+        },
+        {
+          content: '信息要闻'
+        },
+        {
           content: '系统管理'
         }
       ],
@@ -306,6 +312,10 @@ export default {
       } else if (index === 2) {
         this.$router.push({ path: '/videoSystem' })
       } else if (index === 3) {
+        this.$router.push({ path: '/structureData' })
+      } else if (index === 4) {
+        this.$router.push({ path: '/infoCenter' })
+      } else {
         this.$router.push({ path: '/systemSettings' })
       }
       this.getPath()
@@ -394,8 +404,12 @@ export default {
         path === '/playback'
       ) {
         this.isActive = 2
-      } else if (path === '/systemSettings') {
+      } else if (path === '/structureData') {
         this.isActive = 3
+      } else if (path === '/infoCenter') {
+        this.isActive = 4
+      } else if (path === '/systemSettings') {
+        this.isActive = 5
       }
     },
     handleCommand (command) {
@@ -514,15 +528,15 @@ export default {
             display: flex;
             flex: 1;
             justify-content: space-between;
-            margin-left: 136px;
-            margin-right: 66px;
+            margin-left: 90px;
+            margin-right: 20px;
             font-size: 20px;
             font-family: Microsoft YaHei;
             font-weight: 400;
             color: #0fbfe0;
             .list {
-              width: 176px;
-              height: 47px;
+              width: 147px;
+              height: 43px;
               background: url(../assets/images/home/normal.png) no-repeat;
               background-size: 100% 100%;
               line-height: 40px;
@@ -530,7 +544,7 @@ export default {
               cursor: pointer;
             }
             .list.active {
-              color:#fff;
+              color: #fff;
               background: url(../assets/images/home/active.png) no-repeat;
               background-size: 100% 100%;
             }

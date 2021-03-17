@@ -59,6 +59,18 @@ const routes = [
         name: 'caseCenter',
         component: () => import('../views/caseCenter')
       },
+      // 结构化数据
+      {
+        path: '/structureData',
+        name: 'structureData',
+        component: () => import('../views/structureData/index')
+      },
+      // 信息要闻
+      {
+        path: '/infoCenter',
+        name: 'infoCenter',
+        component: () => import('../views/infoCenter/index')
+      },
       // 系统设置
       {
         path: '/systemSettings',
