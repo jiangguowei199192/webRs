@@ -119,6 +119,36 @@ export default {
      */
     measureLenStart () {
       this.$refs.gduMap.map2D.measureTool.start()
+    },
+    /**
+     * 隐藏/显示图层
+     */
+    showOrHideLayer (isShow, id) {
+      switch (id) {
+        case 0:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerInstitutionVisible(isShow)
+          break
+        case 1:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerMemberVisible(isShow)
+          break
+        case 2:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerDroneVisible(isShow)
+          break
+        case 3:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerCameraVisible(isShow)
+          break
+        case 4:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerAreaVisible(isShow)
+          break
+        case 5:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerRouteVisible(isShow)
+          break
+        case 6:
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerPointVisible(isShow)
+          break
+        default:
+          break
+      }
     }
   }
 }

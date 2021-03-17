@@ -113,31 +113,43 @@
           <span>指派信息</span>
         </div>
         <el-form-item label="指派人 :" prop="designateMan">
-          <el-select
-            v-model="caseForm.designateMan"
-            multiple
-            class="select"
-            popper-class="people-selec-Popper"
-          >
+          <div class="select listScroll">
+            <template v-for="(item, index) in selectList">
+              <div :key="index">
+                <EllipsisTooltip
+                  :contentText="item.employeeName"
+                  class="name"
+                ></EllipsisTooltip>
+                <span class="close" @click.stop="deleteSelect(item)"></span>
+              </div>
+            </template>
+          </div>
+          <div class="userBox">
             <el-input
+              @change="getUserList()"
               v-model="search"
               class="search"
-              :popper-append-to-body="false"
               placeholder="请输入姓名/身份证号进行搜索"
-              @change="getUserList()"
             >
               <i slot="suffix"></i
             ></el-input>
-            <el-option
-              v-for="(item, index) in peoples"
-              :key="index"
-              :value="item.employeeId"
-              :label="item.employeeName"
-            >
-              <span class="check"></span>
-              <span>{{ item.employeeName + " " + item.deptName }}</span>
-            </el-option>
-          </el-select>
+            <div class="list listScroll">
+              <template v-for="(item, index) in peoples">
+                <div :key="index">
+                  <span
+                    :class="{ check: item.isCheck }"
+                    class="checkBox"
+                    @click.stop="selectPeople(item)"
+                  ></span>
+                  <img src="../../../assets/images/gisDispatch/user.png" />
+                  <EllipsisTooltip
+                    :contentText="item.employeeName + ' ' + item.deptName"
+                    class="name"
+                  ></EllipsisTooltip>
+                </div>
+              </template>
+            </div>
+          </div>
         </el-form-item>
       </el-form>
       <div class="btns">
@@ -151,6 +163,8 @@
 <script>
 import { isNotNull, checkPhone } from '@/utils/formRules'
 import { caseApi } from '@/api/case'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
+import assignMixin from '../mixins/assignMixin'
 export default {
   props: {
     isShow: {
@@ -158,10 +172,13 @@ export default {
       required: false
     }
   },
+  components: {
+    EllipsisTooltip
+  },
+  mixins: [assignMixin],
   data () {
     return {
       isInit: false,
-      search: '',
       formRules: {
         caseName: [{ required: true, message: '请输入案件名称' }],
         caseStartTime: [{ required: true, message: '请选择案发时间' }],
@@ -188,13 +205,13 @@ export default {
         longitude: '',
         reportTel: ''
       },
-      placeholder: '请输入',
-      peoples: []
+      placeholder: '请输入'
     }
   },
   watch: {
     isShow (val) {
       if (val) {
+        this.selectList = []
         setTimeout(() => {
           if (!this.isInit) {
             this.isInit = true
@@ -206,6 +223,7 @@ export default {
           this.$refs.gduMap.map2D.customMarkerLayerManager.clear()
           this.$refs.gduMap.map2D._map.updateSize()
         }, 200)
+        this.getUserList()
       } else {
         this.$refs.caseForm.resetFields()
       }
@@ -237,30 +255,6 @@ export default {
       this.$emit('update:isShow', false)
     },
     /**
-     * 获取分配人员列表
-     */
-    getUserList () {
-      this.$axios
-        .post(
-          caseApi.selectUsers,
-          {
-            content: this.search
-          },
-          {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }
-        )
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            const list = res.data.data
-            this.peoples = list
-          }
-        })
-        .catch((err) => {
-          console.log('caseApi.selectUsers Err : ' + err)
-        })
-    },
-    /**
      * 新增案件
      */
     submit () {
@@ -269,11 +263,12 @@ export default {
         v = valid
       })
       if (!v) return
-      if (this.caseForm.designateMan) {
-        const list = this.caseForm.designateMan
-        this.caseForm.designateMan = ''
-        for (let i = 0; i < list.length; i++) {
-          const s = i === list.length - 1 ? list[i] : list[i] + ','
+      if (this.selectList.length > 0) {
+        for (let i = 0; i < this.selectList.length; i++) {
+          const s =
+            i === this.selectList.length - 1
+              ? this.selectList[i].id
+              : this.selectList[i].id + ','
           this.caseForm.designateMan += s
         }
       }
@@ -441,31 +436,114 @@ export default {
         margin-bottom: 27px;
       }
       .select {
-        .el-input__inner {
-          width: 330px;
-        }
-        .el-tag {
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        overflow-y: auto;
+        height: 28px;
+        width: 326px;
+        border: 1px solid #00d2ff;
+        > div {
+          box-sizing: border-box;
+          width: 70px;
           height: 20px;
-          line-height: 20px;
-          font-size: 14px;
-          font-family: Source Han Sans CN;
-          font-weight: 400;
-          color: #ffffff;
+          margin-top: 3px;
+          margin-bottom: 3px;
           background: #00d2ff;
           border-radius: 2px;
-          border: none;
+          position: relative;
+          margin-left: 5px;
+          margin-right: 5px;
+          display: flex;
+          align-items: center;
+          padding-left: 5px;
         }
-        .el-tag .el-icon-close::before {
-          display: none;
+        .name {
+          display: inline-block;
+          font-size: 14px;
+          color: #fff;
+          width: 50px;
+          height: 20px;
+          line-height: 20px;
         }
-        .el-tag__close.el-icon-close {
-          height: 12px;
-          width: 12px;
+        .close {
+          display: inline-block;
+          height: 8px;
+          width: 8px;
           background: url(../../../assets/images/gisDispatch/x.svg) no-repeat;
           background-size: 100% 100%;
-          right: -0.07rem;
-          top: 0;
-          color: #fff;
+          cursor: pointer;
+          position: absolute;
+          right: 3px;
+        }
+      }
+      .userBox {
+        box-sizing: border-box;
+        border: 1px solid #00d2ff;
+        border-top: none;
+        padding-left: 10px;
+        width: 326px;
+        .search {
+          margin-top: 10px;
+          box-sizing: border-box;
+          .el-input__suffix {
+            width: 16px;
+            height: 21px;
+            background: url("../../../assets/images/gisDispatch/search.svg");
+            background-size: 100% 100%;
+            top: 4px;
+            right: 14px;
+          }
+          .el-input__inner {
+            width: 306px;
+            color: #fff;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #00d2ff;
+            border-radius: 0px;
+            background: transparent;
+          }
+        }
+        .list {
+          box-sizing: border-box;
+          margin-top: 6px;
+          height: 168px;
+          overflow-y: auto;
+          > div {
+            display: flex;
+            box-sizing: border-box;
+            margin-top: 8px;
+            height: 20px;
+            align-items: center;
+            .name {
+              font-size: 14px;
+              color: #fff;
+              width: 250px;
+              height: 20px;
+              line-height: 20px;
+            }
+            img {
+              width: 12px;
+              height: 18px;
+              margin-right: 12px;
+            }
+            .checkBox {
+              display: inline-block;
+              width: 14px;
+              height: 14px;
+              cursor: pointer;
+              background: url(../../../assets/images/gisDispatch/uncheck.svg)
+                no-repeat;
+              background-size: 100% 100%;
+              margin-right: 14px;
+            }
+            .checkBox.check {
+              background: url(../../../assets/images/gisDispatch/check.svg)
+                no-repeat;
+              background-size: 100% 100%;
+            }
+          }
         }
       }
     }

@@ -36,7 +36,7 @@
                 ></span>
                 <img src="../../../assets/images/gisDispatch/user.png" />
                 <EllipsisTooltip
-                  :contentText="item.name + ' ' + item.deptName"
+                  :contentText="item.employeeName + ' ' + item.deptName"
                   class="name"
                 ></EllipsisTooltip>
               </div>
@@ -58,7 +58,7 @@
               <div :key="index">
                 <img src="../../../assets/images/gisDispatch/user.png" />
                 <EllipsisTooltip
-                  :contentText="item.name"
+                  :contentText="item.employeeName"
                   class="name"
                 ></EllipsisTooltip>
                 <span class="close" @click.stop="deleteSelect(item)"></span>
@@ -74,6 +74,7 @@
 <script>
 import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import { caseApi } from '@/api/case'
+import assignMixin from '../mixins/assignMixin'
 export default {
   props: {
     isShow: {
@@ -88,6 +89,7 @@ export default {
       }
     }
   },
+  mixins: [assignMixin],
   components: {
     EllipsisTooltip
   },
@@ -96,10 +98,7 @@ export default {
       msg: '',
       userId: '',
       username: '',
-      radius: 5,
-      search: '',
-      selectList: [],
-      peoples: []
+      radius: 5
     }
   },
   watch: {
@@ -137,33 +136,6 @@ export default {
      */
     cancel () {
       this.$emit('update:isShow', false)
-    },
-    /**
-     * 删除选中
-     */
-    deleteSelect (item) {
-      item.isCheck = false
-      const p = this.selectList.find((s) => s.id === item.id)
-      if (p) {
-        const idx = this.selectList.indexOf(p)
-        if (idx !== -1) {
-          this.selectList.splice(idx, 1)
-        }
-      }
-    },
-    /**
-     * 选择人员
-     */
-    selectPeople (item) {
-      item.isCheck = !item.isCheck
-      const p = this.selectList.find((s) => s.id === item.id)
-      if (item.isCheck && !p) this.selectList.push(item)
-      else if (!item.isCheck && p) {
-        const idx = this.selectList.indexOf(p)
-        if (idx !== -1) {
-          this.selectList.splice(idx, 1)
-        }
-      }
     },
     /**
      * 分派
@@ -217,39 +189,6 @@ export default {
           r * 1000
         )
       } catch (error) {}
-    },
-    /**
-     * 获取分派人员列表
-     */
-    getUserList () {
-      this.$axios
-        .post(
-          caseApi.selectUsers,
-          {
-            content: this.search
-          },
-          {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }
-        )
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            const list = res.data.data
-            this.peoples = []
-            list.forEach((l) => {
-              const user = {
-                name: l.employeeName,
-                deptName: l.deptName,
-                id: l.employeeId,
-                isCheck: false
-              }
-              this.peoples.push(user)
-            })
-          }
-        })
-        .catch((err) => {
-          console.log('caseApi.selectUsers Err : ' + err)
-        })
     }
   }
 }

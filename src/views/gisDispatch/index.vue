@@ -31,7 +31,11 @@
           <transition name="showContent">
             <div v-show="!isfoldTool" class="toolBox">
               <template v-for="(item, index) in tools">
-                <div :key="index">
+                <div
+                  :key="index"
+                  @click.stop="showOrHideLayer(item, index)"
+                  :class="{ unselect: !item.showLayer }"
+                >
                   <img :src="item.img" />
                 </div>
               </template>
@@ -194,24 +198,31 @@ export default {
       ],
       tools: [
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/institutionL.svg')
         },
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/peopleL.svg')
         },
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/droneL.svg')
         },
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/cameraL.svg')
         },
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/areaL.svg')
         },
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/routeL.svg')
         },
         {
+          showLayer: true,
           img: require('../../assets/images/gisDispatch/pointL.svg')
         }
       ],
@@ -272,6 +283,13 @@ export default {
         // }
       })
       this.$refs.caseMain.addDatas(this.onlineArray)
+    },
+    /**
+     * 隐藏/显示图层
+     */
+    showOrHideLayer (item, id) {
+      item.showLayer = !item.showLayer
+      this.$refs.caseMain.showOrHideLayer(item.showLayer, id)
     },
     /**
      * 初始化时间
@@ -416,9 +434,13 @@ export default {
      */
     getUserList () {
       this.$axios
-        .post(caseApi.selectUsers, { content: '' }, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        })
+        .post(
+          caseApi.selectUsers,
+          { content: '' },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
             let list = res.data.data
@@ -599,6 +621,11 @@ export default {
             left: 50%;
             transform: translate(-50%, -50%);
           }
+        }
+        > div.unselect {
+          background: url(../../assets/images/gisDispatch/box-unselect.svg)
+            no-repeat;
+          background-size: 100% 100%;
         }
       }
     }
