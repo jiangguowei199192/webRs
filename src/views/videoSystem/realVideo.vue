@@ -198,7 +198,7 @@
                 </li>
                 <li>
                   <span>设备编号：</span>
-                  <span>{{curSelectedVideo.deviceCode||'-'}}</span>
+                  <span class="deviceCode" :title="curSelectedVideo.deviceCode">{{curSelectedVideo.deviceCode||'-'}}</span>
                 </li>
                 <li>
                   <span>设备品牌：</span>
@@ -216,7 +216,7 @@
             </div>
           </div>
           <div class="deviceInfo" v-show="curSelectedVideo.deviceTypeCode==='GDJK'">
-            <div class="info">云台</div>
+            <div class="content-title">云台操作</div>
             <div class="operate">
               <div class="icons">
                 <!-- <div></div>
@@ -1881,12 +1881,26 @@ export default {
         height: 230px;
         ul {
           padding-left: 15px;
-          padding-right: 22px;
+          padding-right: 10px;
           li {
             // text-align: justify;
-            word-break: break-all;
-            span {
-              line-height: 20px;
+            // word-break: break-all;
+            font-size: 16px;
+            // span {
+            //   line-height: 20px;
+            // }
+            span:nth-child(1) {
+              font-family: Source Han Sans CN;
+              font-weight: 500;
+              color: #00d1ff;
+            }
+            span.deviceCode {
+              display: inline-block;
+              width: 144px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              vertical-align: middle;
             }
           }
           li:not(:nth-child(1)) {
@@ -1989,7 +2003,7 @@ export default {
             line-height: 35px;
             text-align: center;
             margin-left: 10px;
-            background: rgba(46, 108, 147, 1);
+            // background: rgba(46, 108, 147, 1);
             border: 1px solid rgba(28, 161, 220, 1);
             color: #84ddff;
             display: flex;
@@ -2087,7 +2101,7 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-right: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       .title {
         font-size: 16px;
         width: 196px;
@@ -2103,7 +2117,7 @@ export default {
         line-height: 34px;
         color: rgba(132, 221, 255, 1);
         .curSelected {
-          margin-right: 70px;
+          margin-right: 20px;
         }
         .warning {
           font-size: 16px;
