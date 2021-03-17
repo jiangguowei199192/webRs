@@ -68,7 +68,10 @@
             </template>
           </div>
           <div class="btns">
-            <span @click.stop="showAssign = true"></span>
+            <span
+              @click.stop="showAssign = true"
+              v-show="caseInfo.caseStatus !== 1"
+            ></span>
             <span @click.stop="showChatBox = true"></span>
             <span @click.stop="showDispose = true"></span>
           </div>

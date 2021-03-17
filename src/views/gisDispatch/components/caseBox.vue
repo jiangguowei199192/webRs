@@ -32,7 +32,9 @@
         </li>
         <li>
           <span class="left">案件状态：</span>
-          <span class="right caseStatus">{{ formatCaseStatus(dataInfo.caseStatus) }}</span>
+          <span class="right caseStatus">{{
+            formatCaseStatus(dataInfo.caseStatus)
+          }}</span>
         </li>
         <li v-if="!isGisDispatch">
           <span class="left">周边范围：</span>
@@ -129,10 +131,7 @@ export default {
   .txt {
     width: 160px;
     display: inline-block;
-    line-height: 18px;
-    height: 18px;
-    position: relative;
-    top: 3px;
+    font-size: 14px;
   }
   .caseStatus {
     padding: 0px 10px;

@@ -87,8 +87,14 @@
   height: 120px;
 }
 
-.pointBox .ulBox ul li {
+.pointBox .ulBox ul li,
+.routeBox .ulBox ul li,
+.caseMap .ulBox ul li,
+.caseBox .ulBox ul li {
   margin-bottom: 10px;
+  height       : 20px;
+  line-height  : 20px;
+  display      : flex
 }
 
 .camerBox .ulBox ul li {
@@ -129,7 +135,17 @@
 .routeBox .ulBox ul li span:nth-child(2),
 .camerBox .ulBox ul li span:nth-child(2),
 .droneBox .ulBox ul li span:nth-child(2) {
-  color: #fff;
+  color        : #fff;
+  white-space  : nowrap;
+  text-overflow: ellipsis;
+  overflow     : hidden;
+  word-break   : break-all;
+}
+
+.pointBox .ulBox ul li span:nth-child(2),
+.routeBox .ulBox ul li span:nth-child(2) {
+  display: inline-block;
+  width  : 160px;
 }
 
 .pointBox .arrow,

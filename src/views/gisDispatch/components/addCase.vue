@@ -123,17 +123,19 @@
               v-model="search"
               class="search"
               :popper-append-to-body="false"
+              placeholder="请输入姓名/身份证号进行搜索"
+              @change="getUserList()"
             >
               <i slot="suffix"></i
             ></el-input>
             <el-option
               v-for="(item, index) in peoples"
               :key="index"
-              :value="item.id"
-              :label="item.name"
+              :value="item.employeeId"
+              :label="item.employeeName"
             >
               <span class="check"></span>
-              <span>{{ item.name }}</span>
+              <span>{{ item.employeeName + " " + item.deptName }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -187,16 +189,7 @@ export default {
         reportTel: ''
       },
       placeholder: '请输入',
-      peoples: [
-        {
-          name: '张三',
-          id: 1
-        },
-        {
-          name: '李四',
-          id: 2
-        }
-      ]
+      peoples: []
     }
   },
   watch: {
@@ -248,15 +241,23 @@ export default {
      */
     getUserList () {
       this.$axios
-        .post(caseApi.selectDesignateUserList, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        })
+        .post(
+          caseApi.selectUsers,
+          {
+            content: this.search
+          },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
+            const list = res.data.data
+            this.peoples = list
           }
         })
         .catch((err) => {
-          console.log('caseApi.selectDesignateUserList Err : ' + err)
+          console.log('caseApi.selectUsers Err : ' + err)
         })
     },
     /**
@@ -268,7 +269,14 @@ export default {
         v = valid
       })
       if (!v) return
-      this.caseForm.designateMan = ''
+      if (this.caseForm.designateMan) {
+        const list = this.caseForm.designateMan
+        this.caseForm.designateMan = ''
+        for (let i = 0; i < list.length; i++) {
+          const s = i === list.length - 1 ? list[i] : list[i] + ','
+          this.caseForm.designateMan += s
+        }
+      }
       this.$axios
         .post(caseApi.caseAdd, this.caseForm, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }

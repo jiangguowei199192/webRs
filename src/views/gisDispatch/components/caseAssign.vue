@@ -19,9 +19,10 @@
             </div>
           </div>
           <el-input
+           @change="getUserList()"
             v-model="search"
             class="search"
-            placeholder="请输入单位、姓名搜索"
+            placeholder="请输入姓名/身份证号进行搜索"
           >
             <i slot="suffix"></i
           ></el-input>
@@ -35,7 +36,7 @@
                 ></span>
                 <img src="../../../assets/images/gisDispatch/user.png" />
                 <EllipsisTooltip
-                  :contentText="item.name"
+                  :contentText="item.name + ' ' + item.deptName"
                   class="name"
                 ></EllipsisTooltip>
               </div>
@@ -72,6 +73,7 @@
 
 <script>
 import EllipsisTooltip from '../../../components/ellipsisTooltip'
+import { caseApi } from '@/api/case'
 export default {
   props: {
     isShow: {
@@ -97,21 +99,7 @@ export default {
       radius: 5,
       search: '',
       selectList: [],
-      peoples: [
-        { name: '张三 江夏渔政1', isCheck: false },
-        { name: '张三 江夏渔政2', isCheck: false },
-        { name: '张三 江夏渔政1111111111122222222222222', isCheck: false },
-        { name: '张三 江夏渔政3', isCheck: false },
-        { name: '张三 江夏渔政4', isCheck: false },
-        { name: '张三 江夏渔政5', isCheck: false },
-        { name: '张三 江夏渔政6', isCheck: false },
-        { name: '张三 江夏渔政7', isCheck: false },
-        { name: '张三 江夏渔政8', isCheck: false },
-        { name: '张三 江夏渔政9', isCheck: false },
-        { name: '张三 江夏渔政10', isCheck: false },
-        { name: '张三 江夏渔政11', isCheck: false },
-        { name: '张三江夏', isCheck: false }
-      ]
+      peoples: []
     }
   },
   watch: {
@@ -132,6 +120,7 @@ export default {
             this.radius * 1000
           )
         }, 200)
+        this.getUserList()
       }
     }
   },
@@ -154,7 +143,7 @@ export default {
      */
     deleteSelect (item) {
       item.isCheck = false
-      const p = this.selectList.find((s) => s.name === item.name)
+      const p = this.selectList.find((s) => s.id === item.id)
       if (p) {
         const idx = this.selectList.indexOf(p)
         if (idx !== -1) {
@@ -167,7 +156,7 @@ export default {
      */
     selectPeople (item) {
       item.isCheck = !item.isCheck
-      const p = this.selectList.find((s) => s.name === item.name)
+      const p = this.selectList.find((s) => s.id === item.id)
       if (item.isCheck && !p) this.selectList.push(item)
       else if (!item.isCheck && p) {
         const idx = this.selectList.indexOf(p)
@@ -179,7 +168,36 @@ export default {
     /**
      * 分派
      */
-    submit () {},
+    submit () {
+      if (this.selectList.length === 0) {
+        this.$notify.closeAll()
+        this.$notify.info({ title: '提示', message: '请选择分派人员' })
+        return
+      }
+      const ids = []
+      this.selectList.forEach((item) => {
+        ids.push(item.id)
+      })
+      this.$axios
+        .post(
+          caseApi.caseAssign,
+          {
+            caseId: this.caseInfo.id,
+            userIds: ids
+          },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            this.$emit('update:isShow', false)
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.caseAssign Err : ' + err)
+        })
+    },
     /**
      * 刷新地图尺寸
      */
@@ -199,6 +217,39 @@ export default {
           r * 1000
         )
       } catch (error) {}
+    },
+    /**
+     * 获取分派人员列表
+     */
+    getUserList () {
+      this.$axios
+        .post(
+          caseApi.selectUsers,
+          {
+            content: this.search
+          },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            const list = res.data.data
+            this.peoples = []
+            list.forEach((l) => {
+              const user = {
+                name: l.employeeName,
+                deptName: l.deptName,
+                id: l.employeeId,
+                isCheck: false
+              }
+              this.peoples.push(user)
+            })
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectUsers Err : ' + err)
+        })
     }
   }
 }

@@ -145,14 +145,14 @@ export default {
         {
           name: '组织机构',
           img: require('../../assets/images/gisDispatch/institution.svg'),
-          num: 8,
+          num: 0,
           color: '#20F2F5',
           width: 0
         },
         {
           name: '组织人员',
           img: require('../../assets/images/gisDispatch/people.svg'),
-          num: 12,
+          num: 0,
           color: '#CCFF00',
           width: 0
         },
@@ -248,13 +248,10 @@ export default {
   },
   created () {},
   mounted () {
-    // const me = this
     this.initDateRange()
-    this.getResDataWidth()
     this.getCaseList()
-    // setTimeout(() => {
-    //   me.addCamera()
-    // }, 3000)
+    this.getUserList()
+    this.getDeptList()
   },
   beforeDestroy () {},
   methods: {
@@ -412,6 +409,67 @@ export default {
         })
         .catch((err) => {
           console.log('caseApi.selectPage Err : ' + err)
+        })
+    },
+    /**
+     * 获取组织人员
+     */
+    getUserList () {
+      this.$axios
+        .post(caseApi.selectUsers, { content: '' }, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            let list = res.data.data
+            this.resInfos[1].num = list ? list.length : 0
+            this.getResDataWidth()
+            list = JSON.parse(
+              JSON.stringify(list).replace(/userLongitude/g, 'longitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/userLatitude/g, 'latitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/employeeId/g, 'id')
+            )
+            list.forEach((c) => {
+              c.type = 'RP_Member'
+            })
+            this.$refs.caseMain.addDatas(list)
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectUsers Err : ' + err)
+        })
+    },
+    /**
+     * 获取组织机构
+     */
+    getDeptList () {
+      this.$axios
+        .post(caseApi.selectDepts, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            let list = res.data.data
+            this.resInfos[0].num = list ? list.length : 0
+            this.getResDataWidth()
+            list = JSON.parse(
+              JSON.stringify(list).replace(/deptLongitude/g, 'longitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/deptLatitude/g, 'latitude')
+            )
+            list.forEach((c) => {
+              c.type = 'RP_Institution'
+            })
+            this.$refs.caseMain.addDatas(list)
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectDepts Err : ' + err)
         })
     }
   }
