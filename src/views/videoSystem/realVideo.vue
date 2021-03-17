@@ -86,7 +86,7 @@
                 <img :src="firePic" alt />
                 监控报警
                 <b>{{ fireWarningArray.length }}</b>个
-              </div> -->
+              </div>-->
             </div>
           </div>
           <div class="videoList" ref="videoList" :class="{videolistFullscreen:dialogVisible}">
@@ -2135,7 +2135,7 @@ export default {
           width: calc(100% - 10px);
           height: calc(100% - 10px);
           background: url(../../assets/images/video.svg) no-repeat center center;
-          background-color: #16789E;
+          background-color: #16789e;
           cursor: pointer;
         }
         > div.active {
@@ -2266,7 +2266,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   overflow: visible;
-  background-image: url("../../assets/images/bg.png");
+  background-image: url("../../assets/images/home/bg.svg");
 }
 .cutDialog {
   background: rgba(0, 0, 0, 0.6);

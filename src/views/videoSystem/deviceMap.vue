@@ -11,25 +11,25 @@
           <!-- 默认展示在线设备 -->
           <template v-if="isOnline">
             <div class="onlineList webFsScroll">
-            <div
-              class="list"
-              v-for="(item,index) in onlineArray"
-              :key="index"
-              :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
-              @click.stop="selectOnlineDeviceItem(item,index)"
-            >
-              <p>
-                <span class="area">{{item.label}}</span>
-              </p>
-              <div class="btns">
-                <el-button
-                  v-for="(list,index2) in item.children"
-                  :key="index2"
-                  class="visible"
-                  :title="list.label"
-                >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+              <div
+                class="list"
+                v-for="(item,index) in onlineArray"
+                :key="index"
+                :class="{selected:selectedIndex==index,unman:item.deviceTypeCode==='WRJ'}"
+                @click.stop="selectOnlineDeviceItem(item,index)"
+              >
+                <p>
+                  <span class="area">{{item.label}}</span>
+                </p>
+                <div class="btns">
+                  <el-button
+                    v-for="(list,index2) in item.children"
+                    :key="index2"
+                    class="visible"
+                    :title="list.label"
+                  >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+                </div>
               </div>
-            </div>
             </div>
           </template>
           <!-- 全部部分 -->
@@ -58,7 +58,7 @@
       <div slot="center">
         <div class="video">
           <div class="deviceMapBox">
-            <div class="title" @click.stop="$router.go(-1)" >
+            <div class="title" @click.stop="$router.go(-1)">
               <img src="@/assets/images/back.png" />设备地图
             </div>
             <div class="container">
@@ -152,64 +152,69 @@ export default {
   padding: 0 24px 37px 24px;
   .leftContainer {
     box-sizing: border-box;
-    padding: 27px 0 0 28px;
+    padding: 21px 0 0 28px;
     font-size: 16px;
     font-family: Source Han Sans CN;
     // font-weight: bold;
 
     div.tab {
       display: flex;
+      justify-content: space-between;
       cursor: pointer;
-      height: 34px;
-      line-height: 34px;
+      height: 36px;
+      line-height: 36px;
       width: 230px;
       color: #23cefd;
-      background: #1a3e68;
+      background: #194a6f;
       // text-align: center;
-      div{
-        width: 104px;
+      div {
+        width: 115px;
         box-sizing: border-box;
+        text-align: center;
       }
-      div:nth-child(1){
-        padding-left:30px
-      }
-      div:nth-child(2){
-         padding-left:20px
-      }
+      // div:nth-child(1) {
+      //   padding-left: 30px;
+      // }
+      // div:nth-child(2) {
+      //   padding-left: 20px;
+      // }
       div.active {
-        width: 126px !important;
+        // width: 126px !important;
         color: #fff;
+        font-weight: bold;
+        background: #39a4dd;
       }
-      div:nth-child(1).active {
-        background: url(../../assets/images/left.png) no-repeat;
-      }
-      div:nth-child(2).active {
-        padding-left:42px;
-        background: url(../../assets/images/right.png) no-repeat;
-      }
+      // div:nth-child(1).active {
+      //   background: url(../../assets/images/left.png) no-repeat;
+      // }
+      // div:nth-child(2).active {
+      //   padding-left: 42px;
+      //   background: url(../../assets/images/right.png) no-repeat;
+      // }
     }
     div.search {
       width: 230px;
       margin-top: 20px;
-      background: #10203b;
+      // background: #10203b;
       /deep/ .el-input__inner {
-        background: #10203b;
+        background: transparent;
         border: 1px solid #1eb0fc;
         color: #1eb0fc;
       }
-
+      /deep/.el-input__suffix-inner {
+        color: #39a4dd;
+      }
       ::-webkit-input-placeholder {
         /* WebKit, Blink, Edge */
         color: #1eb0fc;
       }
     }
-     div.onlineList{
-      max-height:800px;
+    div.onlineList {
+      max-height: 800px;
       overflow-y: auto;
-      margin-right:8px;
+      margin-right: 8px;
     }
     div.list {
-      cursor: pointer;
       margin-top: 20px;
       padding-left: 10px;
       padding-top: 10px;
@@ -247,9 +252,15 @@ export default {
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
         }
-        button.visibleSelected {
+        button.visibleSelected,
+        button.curSelected {
           background: url(../../assets/images/visible_selected.png) no-repeat
             4px center;
+        }
+        button.visibleOffline {
+          cursor: not-allowed;
+          opacity: 0.5;
+          background: url(../../assets/images/visible.png) no-repeat 4px center;
         }
       }
     }
@@ -265,8 +276,7 @@ export default {
     div.empty {
       position: relative;
       min-height: 60px;
-      // text-align: center;
-      padding-left: 90px;
+      text-align: center;
       width: 100%;
       height: 100%;
       color: #909399;
@@ -287,14 +297,14 @@ export default {
         height: 36px;
         border: 1px solid rgba(57, 164, 221, 1);
         text-align: center;
-        font-size:16px;
+        font-size: 16px;
         // width: 202px;
         // height: 45px;
         // background: url(../../assets/images/device/info-title.png) no-repeat;
         line-height: 36px;
         // padding-left: 30px;
         margin-bottom: 20px;
-         cursor: pointer;
+        cursor: pointer;
         img {
           margin-right: 10px;
           vertical-align: middle;

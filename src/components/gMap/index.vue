@@ -1593,7 +1593,7 @@ export default {
     position: absolute;
     width: 51px;
     right: 21px;
-    bottom: 20px;
+    bottom: 45px;
     z-index: 10;
     .btnActive:active {
       opacity: 0.8;
@@ -1621,6 +1621,7 @@ export default {
     bottom: 145px;
   }
   .lonLatTools {
+    font-size:16px;
     position: absolute;
     background-color: #00000066;
     color: white;
