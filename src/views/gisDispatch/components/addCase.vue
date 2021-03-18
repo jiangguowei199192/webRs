@@ -17,9 +17,22 @@
           <el-input
             v-model="caseForm.caseName"
             :placeholder="placeholder"
-            class="caseName"
             maxlength="20"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="案件来源 :" class="time" prop="resourcesType">
+          <el-select
+            v-model="caseForm.resourcesType"
+            :popper-append-to-body="false"
+            placeholder="请选择案件来源"
+          >
+            <el-option
+              v-for="item in caseSources"
+              :key="item.typeCode"
+              :label="item.typeName"
+              :value="item.typeCode"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="案发时间 :" prop="caseStartTime">
           <el-date-picker
@@ -178,6 +191,7 @@ export default {
   mixins: [assignMixin],
   data () {
     return {
+      caseSources: [],
       isInit: false,
       formRules: {
         caseName: [{ required: true, message: '请输入案件名称' }],
@@ -387,11 +401,6 @@ export default {
           font-family: Source Han Sans CN;
           font-weight: 400;
           color: #00d2ff;
-        }
-      }
-      .caseName {
-        .el-input__inner {
-          width: 520px;
         }
       }
       .acceptPeople {

@@ -132,11 +132,11 @@
 
 <script>
 import AddCase from './components/addCase.vue'
-import videoMixin from '../videoSystem/mixins/videoMixin'
 import CaseMain from './components/caseMain'
 import { caseApi } from '@/api/case'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import { timeFormat } from '@/utils/date'
+import caseMixin from './mixins/caseMixin'
 export default {
   data () {
     return {
@@ -145,57 +145,6 @@ export default {
       dateRange: [],
       rotate: false,
       isfoldTool: true, // 是否折叠底部工具栏
-      resInfos: [
-        {
-          name: '组织机构',
-          img: require('../../assets/images/gisDispatch/institution.svg'),
-          num: 0,
-          color: '#20F2F5',
-          width: 0
-        },
-        {
-          name: '组织人员',
-          img: require('../../assets/images/gisDispatch/people.svg'),
-          num: 0,
-          color: '#CCFF00',
-          width: 0
-        },
-        {
-          name: '无人机',
-          img: require('../../assets/images/gisDispatch/drone.svg'),
-          num: 4,
-          color: '#EF4E22',
-          width: 0
-        },
-        {
-          name: '高点监控',
-          img: require('../../assets/images/gisDispatch/camera.svg'),
-          num: 15,
-          color: '#49EF22',
-          width: 0
-        },
-        {
-          name: '重点区域',
-          img: require('../../assets/images/gisDispatch/area.svg'),
-          num: 3,
-          color: '#E92D2D',
-          width: 0
-        },
-        {
-          name: '重要路线',
-          img: require('../../assets/images/gisDispatch/route.svg'),
-          num: 7,
-          color: '#CCFF00',
-          width: 0
-        },
-        {
-          name: '关注点位',
-          img: require('../../assets/images/gisDispatch/point.svg'),
-          num: 7,
-          color: '#82F3FA',
-          width: 0
-        }
-      ],
       tools: [
         {
           showLayer: true,
@@ -248,10 +197,11 @@ export default {
           color: '#6DD23E'
         }
       ],
-      cases: []
+      cases: [],
+      refreshTimeout: ''
     }
   },
-  mixins: [videoMixin],
+  mixins: [caseMixin],
   components: {
     AddCase,
     CaseMain,
@@ -261,10 +211,17 @@ export default {
   mounted () {
     this.initDateRange()
     this.getCaseList()
-    this.getUserList()
-    this.getDeptList()
+    const me = this
+    // 每隔10分钟刷新一次案件列表
+    this.refreshTimeout = setTimeout(() => {
+      me.getCaseList()
+    }, 10 * 60 * 1000)
   },
-  beforeDestroy () {},
+  beforeDestroy () {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout)
+    }
+  },
   methods: {
     setclass () {
       return 'addr'
@@ -283,6 +240,22 @@ export default {
         // }
       })
       this.$refs.caseMain.addDatas(this.onlineArray)
+    },
+    /**
+     * 获取组织机构完毕回调
+     */
+    getDeptsDone () {
+      this.resInfos[0].num = this.organs ? this.organs.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addDatas(this.organs)
+    },
+    /**
+     * 获取组织人员完毕回调
+     */
+    getMembersDone () {
+      this.resInfos[1].num = this.members ? this.members.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addDatas(this.members)
     },
     /**
      * 隐藏/显示图层
@@ -427,71 +400,6 @@ export default {
         })
         .catch((err) => {
           console.log('caseApi.selectPage Err : ' + err)
-        })
-    },
-    /**
-     * 获取组织人员
-     */
-    getUserList () {
-      this.$axios
-        .post(
-          caseApi.selectUsers,
-          { content: '' },
-          {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }
-        )
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            let list = res.data.data
-            this.resInfos[1].num = list ? list.length : 0
-            this.getResDataWidth()
-            list = JSON.parse(
-              JSON.stringify(list).replace(/userLongitude/g, 'longitude')
-            )
-            list = JSON.parse(
-              JSON.stringify(list).replace(/userLatitude/g, 'latitude')
-            )
-            list = JSON.parse(
-              JSON.stringify(list).replace(/employeeId/g, 'id')
-            )
-            list.forEach((c) => {
-              c.type = 'RP_Member'
-            })
-            this.$refs.caseMain.addDatas(list)
-          }
-        })
-        .catch((err) => {
-          console.log('caseApi.selectUsers Err : ' + err)
-        })
-    },
-    /**
-     * 获取组织机构
-     */
-    getDeptList () {
-      this.$axios
-        .post(caseApi.selectDepts, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        })
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            let list = res.data.data
-            this.resInfos[0].num = list ? list.length : 0
-            this.getResDataWidth()
-            list = JSON.parse(
-              JSON.stringify(list).replace(/deptLongitude/g, 'longitude')
-            )
-            list = JSON.parse(
-              JSON.stringify(list).replace(/deptLatitude/g, 'latitude')
-            )
-            list.forEach((c) => {
-              c.type = 'RP_Institution'
-            })
-            this.$refs.caseMain.addDatas(list)
-          }
-        })
-        .catch((err) => {
-          console.log('caseApi.selectDepts Err : ' + err)
         })
     }
   }

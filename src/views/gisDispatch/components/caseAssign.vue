@@ -114,6 +114,7 @@ export default {
             this.caseInfo.longitude,
             this.caseInfo.latitude
           )
+          this.$refs.gduMap.map2D.setZoom(12)
           this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
             this.caseInfo,
             this.radius * 1000

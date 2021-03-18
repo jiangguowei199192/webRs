@@ -68,9 +68,26 @@ export default {
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
     },
     /**
+     * 加载圆形围栏范围内的资源
+     */
+    addDatasInRadius (data, rCenrer, radius) {
+      if (!this.$refs.gduMap) return
+      return this.$refs.gduMap.map2D.gisDispatchManager.addDatasInRadius(
+        data,
+        rCenrer,
+        radius
+      )
+    },
+    /**
+     * 除去除了案件外的所有资源
+     */
+    clearAllOtherFeatures () {
+      this.$refs.gduMap.map2D.gisDispatchManager.removeAllOtherFeatures()
+    },
+    /**
      * 清屏
      */
-    clearScreen (data) {
+    clearScreen () {
       this.$refs.gduMap.map2D.gisDispatchManager.removeAllOtherFeatures()
       this.$refs.gduMap.map2D.measureTool.clear()
     },
@@ -111,8 +128,9 @@ export default {
     /**
      * 地图定位
      */
-    zoomToCenter (lon, lat) {
-      this.$refs.gduMap.mapMoveTo(lon, lat)
+    zoomToCenter (lon, lat, zoom) {
+      this.$refs.gduMap.mapMoveTo(lon, lat, zoom)
+      this.$refs.gduMap.map2D.setZoom(zoom)
     },
     /**
      * 测距
@@ -121,30 +139,55 @@ export default {
       this.$refs.gduMap.map2D.measureTool.start()
     },
     /**
+     * 更新飞机标记
+     */
+    updateDroneMarker (id, latitude, longitude, directionAngle) {
+      this.$refs.gduMap.map2D.gisDispatchManager.updateDroneMarker(
+        id,
+        parseFloat(latitude),
+        parseFloat(longitude),
+        (parseFloat(directionAngle) * Math.PI) / 180
+      )
+    },
+    /**
      * 隐藏/显示图层
      */
     showOrHideLayer (isShow, id) {
       switch (id) {
         case 0:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerInstitutionVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerInstitutionVisible(
+            isShow
+          )
           break
         case 1:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerMemberVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerMemberVisible(
+            isShow
+          )
           break
         case 2:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerDroneVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerDroneVisible(
+            isShow
+          )
           break
         case 3:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerCameraVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerCameraVisible(
+            isShow
+          )
           break
         case 4:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerAreaVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerAreaVisible(
+            isShow
+          )
           break
         case 5:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerRouteVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerRouteVisible(
+            isShow
+          )
           break
         case 6:
-          this.$refs.gduMap.map2D.gisDispatchManager.setLayerPointVisible(isShow)
+          this.$refs.gduMap.map2D.gisDispatchManager.setLayerPointVisible(
+            isShow
+          )
           break
         default:
           break

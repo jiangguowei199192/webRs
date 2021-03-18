@@ -1169,7 +1169,6 @@ export default {
         this.lon = longitude
         this.lat = latitude
       }
-      this.map2D.setZoom(16)
       this.map2D.zoomToCenter(longitude, latitude)
     },
 

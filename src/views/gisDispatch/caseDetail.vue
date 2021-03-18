@@ -30,7 +30,7 @@
                 class="txt"
               ></EllipsisTooltip>
               <EllipsisTooltip
-                :contentText="'联系电话：' + caseInfo.reportTel"
+                :contentText="'联系电话：' + (caseInfo.reportTel || '')"
                 class="txt"
               ></EllipsisTooltip>
               <EllipsisTooltip
@@ -98,7 +98,7 @@
                 <div
                   :key="index"
                   :style="{ color: item.color }"
-                  @click.stop="selResIdx = index"
+                  @click.stop="changeDetailList(index)"
                   :class="{ select: selResIdx === index }"
                 >
                   <img :src="selResIdx === index ? item.imgS : item.img" />
@@ -106,13 +106,13 @@
                   <span>{{ item.num }}</span>
                   <span
                     :class="{ unview: !item.view }"
-                    @click.stop="visibleResInMap(item)"
+                    @click.stop="visibleResInMap(item, index)"
                   ></span>
                 </div>
               </template>
             </div>
             <div class="right listScroll">
-              <template v-for="(item, index) in resDetails">
+              <template v-for="(item, index) in resList[selResIdx]">
                 <div :key="index">
                   <div class="rTxt" v-show="selResIdx != 2">
                     <EllipsisTooltip
@@ -226,10 +226,12 @@ import CaseAssign from './components/caseAssign'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 import { EventBus } from '@/utils/eventBus.js'
+import caseMixin from './mixins/caseMixin'
 export default {
   name: 'caseDetail',
   data () {
     return {
+      radius: 5000,
       showAssign: false,
       showChatBox: false,
       showDispose: false,
@@ -248,8 +250,9 @@ export default {
         caseStatus: '',
         id: ''
       },
-      selResIdx: -1,
+      selResIdx: 0,
       selStepIdx: -1,
+      resList: [[], [], [], [], [], [], []],
       tools: [
         {
           name: '清屏',
@@ -335,64 +338,6 @@ export default {
           lon: ''
         }
       ],
-      resInfos: [
-        {
-          name: '组织机构',
-          img: require('../../assets/images/gisDispatch/institution.svg'),
-          imgS: require('../../assets/images/gisDispatch/institution-select.svg'),
-          num: 8,
-          color: '#20F2F5',
-          view: true
-        },
-        {
-          name: '组织人员',
-          img: require('../../assets/images/gisDispatch/people.svg'),
-          imgS: require('../../assets/images/gisDispatch/people-select.svg'),
-          num: 12,
-          color: '#CCFF00',
-          view: true
-        },
-        {
-          name: '无人机',
-          img: require('../../assets/images/gisDispatch/drone.svg'),
-          imgS: require('../../assets/images/gisDispatch/drone-select.svg'),
-          num: 4,
-          color: '#EF4E22',
-          view: true
-        },
-        {
-          name: '高点监控',
-          img: require('../../assets/images/gisDispatch/camera.svg'),
-          imgS: require('../../assets/images/gisDispatch/camera-select.svg'),
-          num: 15,
-          color: '#49EF22',
-          view: true
-        },
-        {
-          name: '重点区域',
-          img: require('../../assets/images/gisDispatch/area.svg'),
-          imgS: require('../../assets/images/gisDispatch/area-select.svg'),
-          num: 3,
-          color: '#E92D2D',
-          view: true
-        },
-        {
-          name: '重要路线',
-          img: require('../../assets/images/gisDispatch/route.svg'),
-          imgS: require('../../assets/images/gisDispatch/route-select.svg'),
-          num: 7,
-          color: '#CCFF00',
-          view: true
-        },
-        {
-          name: '关注点位',
-          img: require('../../assets/images/gisDispatch/point.svg'),
-          imgS: require('../../assets/images/gisDispatch/point-select.svg'),
-          num: 7,
-          color: '#82F3FA',
-          view: true
-        }
-      ],
       pushList: [
         {
           time: '2020-03-04 16:21:33',
@@ -421,6 +366,7 @@ export default {
       ]
     }
   },
+  mixins: [caseMixin],
   components: {
     CaseMain,
     EllipsisTooltip,
@@ -431,27 +377,85 @@ export default {
   destroyed () {
     EventBus.$off('caseRadiusChange')
   },
-  mounted () {
+  created () {
     const data = JSON.parse(this.$route.query.data)
     copyData(data, this.caseInfo)
     this.caseInfo.type = 'RP_Case'
     this.caseInfo.hasFence = true
     setTimeout(() => {
       this.$refs.caseMain.addCaseMarker([this.caseInfo])
-      this.$refs.caseMain.zoomToCenter(data.longitude, data.latitude)
+      this.$refs.caseMain.zoomToCenter(data.longitude, data.latitude, 13)
       this.$refs.caseMain.addOrUpdateFence(this.caseInfo, 5000)
     }, 200)
+  },
+  mounted () {
     const me = this
+    // 案件范围改变
     EventBus.$on('caseRadiusChange', (radius) => {
+      this.radius = radius * 1000
+      me.$refs.caseMain.clearAllOtherFeatures()
       me.$refs.caseMain.addOrUpdateFence(me.caseInfo, radius * 1000)
+      me.getDeptsDone()
+      me.getMembersDone()
     })
   },
   methods: {
     /**
      * 地图上显隐资源
      */
-    visibleResInMap (item) {
+    visibleResInMap (item, id) {
       item.view = !item.view
+      this.$refs.caseMain.showOrHideLayer(item.view, id)
+    },
+    /**
+     * 切换周边资源列表
+     */
+    changeDetailList (index) {
+      this.selResIdx = index
+    },
+    /**
+     * 获取组织机构完毕回调
+     */
+    getDeptsDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.organs,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[0].num = count
+      this.resList[0] = []
+      this.organs.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.deptName,
+            des: l.deptAddress,
+            dist: parseInt(l.distance)
+          }
+          this.resList[0].push(o)
+        }
+      })
+    },
+    /**
+     * 获取组织人员完毕回调
+     */
+    getMembersDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.members,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[1].num = count
+      this.resList[1] = []
+      this.members.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.employeeName,
+            des: l.deptName,
+            dist: parseInt(l.distance)
+          }
+          this.resList[1].push(o)
+        }
+      })
     },
     /**
      * 点击预案
