@@ -9,35 +9,63 @@
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
-            <div :class="{active:isOnline}" @click.stop="changeOnlineOrAll(true)">在线</div>
-            <div :class="{active:!isOnline}" @click.stop="changeOnlineOrAll(false)">全部</div>
+            <div
+              :class="{ active: isOnline }"
+              @click.stop="changeOnlineOrAll(true)"
+            >
+              在线
+            </div>
+            <div
+              :class="{ active: !isOnline }"
+              @click.stop="changeOnlineOrAll(false)"
+            >
+              全部
+            </div>
           </div>
           <!-- 默认展示已选部分 -->
           <template v-if="isOnline">
-          <div class="onlineList webFsScroll">
-            <div
-              class="list"
-              v-for="(item,index1) in onlineArray"
-              :key="index1"
-              :class="{selected:selectedIndex==index1,unman:item.deviceTypeCode==='WRJ'}"
-            >
-              <p>
-                <span class="area">{{item.label}}</span>
-                <i v-show="item.isPlay"></i>
-              </p>
-              <div class="btns">
-                <!-- <div > -->
-                <el-button
-                  v-for="(list,index2) in item.children"
-                  :key="index2"
-                  :class="{visible:!list.isSelected,visibleSelected:list.isSelected}"
-                  :style="{backgroundColor:list.isSelected?'rgba(0,212,15,1)':'',color:list.isSelected?'#fff':'#1EB0FC'}"
-                  @click.stop="playDeviceVideo(item,list,index1,index2)"
-                  :title="list.label"
-                >{{list.label&&list.label.length>3?list.label.slice(0,3)+'..':list.label?list.label:'-'}}</el-button>
+            <div class="onlineList webFsScroll">
+              <div
+                class="list"
+                v-for="(item, index1) in onlineArray"
+                :key="index1"
+                :class="{
+                  selected: selectedIndex == index1,
+                  unman: item.deviceTypeCode === 'WRJ',
+                }"
+              >
+                <p>
+                  <span class="area">{{ item.label }}</span>
+                  <i v-show="item.isPlay"></i>
+                </p>
+                <div class="btns">
+                  <!-- <div > -->
+                  <el-button
+                    v-for="(list, index2) in item.children"
+                    :key="index2"
+                    :class="{
+                      visible: !list.isSelected,
+                      visibleSelected: list.isSelected,
+                    }"
+                    :style="{
+                      backgroundColor: list.isSelected
+                        ? 'rgba(0,212,15,1)'
+                        : '',
+                      color: list.isSelected ? '#fff' : '#1EB0FC',
+                    }"
+                    @click.stop="playDeviceVideo(item, list, index1, index2)"
+                    :title="list.label"
+                    >{{
+                      list.label && list.label.length > 3
+                        ? list.label.slice(0, 3) + ".."
+                        : list.label
+                        ? list.label
+                        : "-"
+                    }}</el-button
+                  >
+                </div>
               </div>
             </div>
-          </div>
           </template>
           <!-- 全部部分 -->
           <template v-else>
@@ -49,7 +77,13 @@
                 suffix-icon="el-icon-search"
               ></el-input>
             </div>
-            <Tree :treeData="treeData" :isLive="false" :expandedKeys="expandedKeys"  @selectedChange="getSelectedData" ref="tree"></Tree>
+            <Tree
+              :treeData="treeData"
+              :isLive="false"
+              :expandedKeys="expandedKeys"
+              @selectedChange="getSelectedData"
+              ref="tree"
+            ></Tree>
           </template>
         </div>
       </div>
@@ -60,17 +94,20 @@
               <span></span>
               <span>回放</span>
             </div>
-            <div v-if="curNode">当前选中:{{curNode.parentLabel}}</div>
+            <div v-if="curNode">当前选中:{{ curNode.parentLabel }}</div>
           </div>
-          <div class="videoList" :class="{videolistFullscreenStyle:dialogVisible}">
+          <div
+            class="videoList"
+            :class="{ videolistFullscreenStyle: dialogVisible }"
+          >
             <div
-              v-for="(item,index) in curVideosArray"
+              v-for="(item, index) in curVideosArray"
               :key="index"
               :style="machineStatusStyle(showVideoPageSize)"
             >
               <div
-                @click.stop="operateCurVideo(item,index)"
-                :class="{active:curVideoIndex===index}"
+                @click.stop="operateCurVideo(item, index)"
+                :class="{ active: curVideoIndex === index }"
               >
                 <VideoWall
                   :videoInfo.sync="item"
@@ -89,22 +126,63 @@
                 :src="showVideoPageSize==9?nineSelectedPalace:ninePalace"
                 @click.stop="changeVideosType(9)"
               /> -->
-              <el-tooltip popper-class="gTooltip" content="4宫格" placement="top" :open-delay="500">
-                <img :src="showVideoPageSize==4?fourSelectedPalace:fourPalace" @click.stop="changeVideosType(4)"/>
+              <el-tooltip
+                popper-class="gTooltip"
+                content="4宫格"
+                placement="top"
+                :open-delay="500"
+              >
+                <img
+                  :src="
+                    showVideoPageSize == 4 ? fourSelectedPalace : fourPalace
+                  "
+                  @click.stop="changeVideosType(4)"
+                />
               </el-tooltip>
-              <el-tooltip popper-class="gTooltip" content="1宫格" placement="top" :open-delay="500">
-                <img :src="showVideoPageSize==1?oneSelectedPalace:onePalace" @click.stop="changeVideosType(1)"/>
+              <el-tooltip
+                popper-class="gTooltip"
+                content="1宫格"
+                placement="top"
+                :open-delay="500"
+              >
+                <img
+                  :src="showVideoPageSize == 1 ? oneSelectedPalace : onePalace"
+                  @click.stop="changeVideosType(1)"
+                />
               </el-tooltip>
             </div>
             <div class="centerTool">
-              <el-tooltip popper-class="gTooltip" content="停止" placement="top" :open-delay="500">
+              <el-tooltip
+                popper-class="gTooltip"
+                content="停止"
+                placement="top"
+                :open-delay="500"
+              >
                 <img :src="stop" @click="stopPlayRecord" />
               </el-tooltip>
-              <el-tooltip popper-class="gTooltip" content="播放" placement="top" :open-delay="500">
-                <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay" />
+              <el-tooltip
+                popper-class="gTooltip"
+                content="播放"
+                placement="top"
+                :open-delay="500"
+              >
+                <img
+                  :src="play"
+                  @click="playRecord"
+                  v-show="!curPlayer.isPlay"
+                />
               </el-tooltip>
-              <el-tooltip popper-class="gTooltip" content="暂停" placement="top" :open-delay="500">
-                <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
+              <el-tooltip
+                popper-class="gTooltip"
+                content="暂停"
+                placement="top"
+                :open-delay="500"
+              >
+                <img
+                  :src="pause"
+                  @click="pauseRecord"
+                  v-show="curPlayer.isPlay"
+                />
               </el-tooltip>
             </div>
             <div class="rightTool">
@@ -118,10 +196,20 @@
                   @next-click="next"
                 ></el-pagination>
               </div>-->
-              <el-tooltip popper-class="gTooltip" content="下载" placement="top" :open-delay="500">
+              <el-tooltip
+                popper-class="gTooltip"
+                content="下载"
+                placement="top"
+                :open-delay="500"
+              >
                 <div class="download" @click="download" />
               </el-tooltip>
-              <el-tooltip popper-class="gTooltip" content="全屏" placement="top" :open-delay="500">
+              <el-tooltip
+                popper-class="gTooltip"
+                content="全屏"
+                placement="top"
+                :open-delay="500"
+              >
                 <img :src="fullScreen" @click.stop="showFullScreen" />
               </el-tooltip>
             </div>
@@ -157,7 +245,11 @@
         </div>
       </div>
     </div> -->
-    <el-dialog :visible.sync="downloadDlgVisible" class="downloadDlg" width="803px">
+    <el-dialog
+      :visible.sync="downloadDlgVisible"
+      class="downloadDlg"
+      width="803px"
+    >
       <div class="downloadContainer webFsScroll">
         <div class="title">
           <span>视频列表</span>
@@ -166,7 +258,13 @@
           <img src="../../assets/images/download-pic.png" />
           <span>下载</span>
         </div>
-        <div class="close" @click="downloadDlgVisible = false;radio = -1"></div>
+        <div
+          class="close"
+          @click="
+            downloadDlgVisible = false;
+            radio = -1;
+          "
+        ></div>
         <div>
           <el-table
             @row-click="ClickTableRow"
@@ -178,10 +276,17 @@
           >
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
-                <el-radio v-model="radio" :label="scope.$index">{{''}}</el-radio>
+                <el-radio v-model="radio" :label="scope.$index">{{
+                  ""
+                }}</el-radio>
               </template>
             </el-table-column>
-            <el-table-column label="序号" type="index" align="center" min-width="7%"></el-table-column>
+            <el-table-column
+              label="序号"
+              type="index"
+              align="center"
+              min-width="7%"
+            ></el-table-column>
             <el-table-column
               label="文件名"
               prop="fileName"
@@ -303,12 +408,9 @@ export default {
     })
   },
 
-  mounted () {
-
-  },
+  mounted () {},
 
   methods: {
-
     /**
      * 返回实时视频页面
      */
@@ -484,12 +586,14 @@ export default {
       // 如果展示全部设备，则不处理
       if (!this.isOnline) return
       if (device.children && device.children.length > 0) {
-        device.children.forEach(item => {
+        device.children.forEach((item) => {
           // 如果当前播放对象，下线了
-          if (this.curPlayer && this.curPlayer.id === item.id) { this.stopPlayRecord() } else {
+          if (this.curPlayer && this.curPlayer.id === item.id) {
+            this.stopPlayRecord()
+          } else {
             // 视频墙中视频对象，下线
             var video = this.totalVideosArray.find(
-              v => v !== '' && v.id === item.id
+              (v) => v !== '' && v.id === item.id
             )
             if (video !== undefined) {
               var index = this.totalVideosArray.indexOf(video)
@@ -522,7 +626,9 @@ export default {
         if (this.curPlayer) {
           // 需要记录时间轴上的时间，和播放的时间
           this.curPlayer.curTime = this.curTime
-          if (this.curPlayer.isPlay) { this.curPlayer.playTime = this.curTime }
+          if (this.curPlayer.isPlay) {
+            this.curPlayer.playTime = this.curTime
+          }
           // 取消订阅进度更新事件
           var ctrl = this.findVideoControl()
           if (ctrl !== undefined) {
@@ -548,7 +654,10 @@ export default {
       }
       // 查询回放记录
       // 设置日历
-      if (this.curPlayer.calendar && this.curPlayer.calendar !== this.curCalendar) {
+      if (
+        this.curPlayer.calendar &&
+        this.curPlayer.calendar !== this.curCalendar
+      ) {
         // setDate函数，若日历日期改变，会触发查询回放记录
         this.$refs.calendarCtrl.setDate(this.curPlayer.calendar)
       } else {
@@ -561,12 +670,12 @@ export default {
      * 初始化OnlineArray
      */
     initOnlineArray () {
-      this.onlineArray.forEach(item => {
+      this.onlineArray.forEach((item) => {
         if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
           delete item.isPlay
         }
         if (item.children && item.children.length > 0) {
-          item.children.forEach(list => {
+          item.children.forEach((list) => {
             list.isSelected = false
           })
         }
@@ -581,7 +690,9 @@ export default {
       if (
         this.curNode &&
         this.curNode.id === this.onlineArray[index1].children[index2].id
-      ) { return }
+      ) {
+        return
+      }
 
       this.curNode = this.onlineArray[index1].children[index2]
       this.curNode.pID = this.onlineArray[index1].id
@@ -589,7 +700,7 @@ export default {
         this.onlineArray[index1].label +
         '-' +
         this.onlineArray[index1].children[index2].label
-      var player = this.totalVideosArray.find(v => v.id === this.curNode.id)
+      var player = this.totalVideosArray.find((v) => v.id === this.curNode.id)
       if (player === undefined) {
         player = ''
       }
@@ -597,9 +708,9 @@ export default {
 
       if (!this.onlineArray[index1].children[index2].isSelected) {
         // 默认去掉所有isSelected的样式
-        this.onlineArray.forEach(item => {
+        this.onlineArray.forEach((item) => {
           if (item.children && item.children.length > 0) {
-            item.children.forEach(list => {
+            item.children.forEach((list) => {
               list.isSelected = false
             })
           }
@@ -619,7 +730,7 @@ export default {
     activeOnlineArrayItem (id) {
       this.onlineArray.forEach((item, index) => {
         if (item.children && item.children.length > 0) {
-          item.children.forEach(list => {
+          item.children.forEach((list) => {
             list.isSelected = false
             if (list.id === id) {
               this.selectedIndex = index
@@ -634,7 +745,13 @@ export default {
      * 点击当前视频
      */
     operateCurVideo (curVideo, index) {
-      if (this.curVideoIndex === index && !curVideo && curVideo.id === this.curPlayer.id) return
+      if (
+        this.curVideoIndex === index &&
+        !curVideo &&
+        curVideo.id === this.curPlayer.id
+      ) {
+        return
+      }
 
       this.curVideoIndex = index
       // 如果不是空白区域，给对应的数结构添加样式
@@ -670,7 +787,7 @@ export default {
       this.curNode = data
       this.curNode.parentLabel = pData.label + '-' + this.curNode.label
       this.curNode.pID = pData.id
-      var player = this.totalVideosArray.find(v => v.id === data.id)
+      var player = this.totalVideosArray.find((v) => v.id === data.id)
       if (player === undefined) {
         player = ''
       }
@@ -691,13 +808,13 @@ export default {
           period: date,
           secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
         })
-        .then(res => {
+        .then((res) => {
           var rs = res.data
           if (rs && rs.code === 0) {
             this.recordData = rs.data.paths
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('getMp4RecordFile Err : ' + err)
         })
     },
@@ -720,12 +837,13 @@ export default {
             date: timestamp
           }
         })
-        .then(res => {
+        .then((res) => {
           var rs = res.data
           if (rs && rs.code === 0) {
             this.snapList = rs.data
           }
-        }).catch(err => {
+        })
+        .catch((err) => {
           console.log('getSnapList Err : ' + err)
         })
     },
@@ -748,10 +866,10 @@ export default {
           period: date,
           secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
         })
-        .then(res => {
+        .then((res) => {
           var rs = res.data
           if (rs && rs.code === 0) {
-            rs.data.paths.forEach(p => {
+            rs.data.paths.forEach((p) => {
               var d = new Date(p.start_time * 1000)
               var start =
                 d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60
@@ -759,7 +877,8 @@ export default {
               var url = ''
               if (index !== -1) {
                 url =
-                  globalApi.baseUrl + '/video-service1' +
+                  globalApi.baseUrl +
+                  '/video-service1' +
                   rs.data.rootPath.substring(index) +
                   p.file_name
               }
@@ -780,7 +899,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('getMp4RecordFile Err : ' + err)
         })
     },
@@ -837,7 +956,7 @@ export default {
 
       if (this.isOnline) {
         // 清除所有的在线设备播放样式
-        this.onlineArray.forEach(item => {
+        this.onlineArray.forEach((item) => {
           if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
             delete item.isPlay
           }
@@ -846,7 +965,7 @@ export default {
         const bs = document.querySelectorAll(
           '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
         )
-        bs.forEach(item => {
+        bs.forEach((item) => {
           item.parentElement.setAttribute('class', '')
         })
       }
@@ -966,7 +1085,7 @@ export default {
             var item = this.onlineArray[j]
             if (item.children && item.children.length > 0) {
               var c = item.children.find(
-                i => i.id === this.curVideosArray[index].id
+                (i) => i.id === this.curVideosArray[index].id
               )
               if (c !== undefined) {
                 if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
@@ -1185,7 +1304,7 @@ export default {
     findVideoControl () {
       if (!this.curPlayer) return undefined
       return this.$refs.videoCtrl.find(
-        c => c.videoInfo.id === this.curPlayer.id
+        (c) => c.videoInfo.id === this.curPlayer.id
       )
     },
 
@@ -1207,7 +1326,7 @@ export default {
       var time =
         parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
       var r = records.find(
-        x => x.start <= time && x.start + x.duration >= time
+        (x) => x.start <= time && x.start + x.duration >= time
       )
       // 是否需要跳转
       var jump = false
@@ -1217,7 +1336,7 @@ export default {
         jump = true
         jumpSeconds = (time - r.start) * 60
       } else {
-        r = records.find(x => x.start > time)
+        r = records.find((x) => x.start > time)
       }
 
       if (r === undefined) {
@@ -1275,90 +1394,95 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.playBack{
-  padding:20px;
+.playBack {
+  padding: 20px;
   padding-top: 0px;
 }
 .leftContainer {
   box-sizing: border-box;
-  padding: 27px 0px 0 28px;
+  padding: 21px 0 0 28px;
   font-size: 16px;
   font-family: Source Han Sans CN;
-  //font-weight: bold;
+  // font-weight: bold;
 
   div.tab {
     display: flex;
+    justify-content: space-between;
     cursor: pointer;
-    height: 34px;
-    line-height: 34px;
+    height: 36px;
+    line-height: 36px;
     width: 230px;
     color: #23cefd;
-    background: #062C5D;
+    background: #194a6f;
     // text-align: center;
     div {
-      width: 104px;
+      width: 115px;
       box-sizing: border-box;
+      text-align: center;
     }
-    div:nth-child(1) {
-      padding-left: 30px;
-    }
-    div:nth-child(2) {
-      padding-left: 20px;
-    }
+    // div:nth-child(1) {
+    //   padding-left: 30px;
+    // }
+    // div:nth-child(2) {
+    //   padding-left: 20px;
+    // }
     div.active {
-      width: 126px !important;
+      // width: 126px !important;
       color: #fff;
       font-weight: bold;
+      background: #39a4dd;
     }
-    div:nth-child(1).active {
-      background: url(../../assets/images/left.png) no-repeat;
-    }
-    div:nth-child(2).active {
-      padding-left: 42px;
-      background: url(../../assets/images/right.png) no-repeat;
-    }
+    // div:nth-child(1).active {
+    //   background: url(../../assets/images/left.png) no-repeat;
+    // }
+    // div:nth-child(2).active {
+    //   padding-left: 42px;
+    //   background: url(../../assets/images/right.png) no-repeat;
+    // }
   }
   div.search {
-      width: 230px;
-      margin-top: 20px;
+    width: 230px;
+    margin-top: 20px;
+    background: #10203b;
+    /deep/ .el-input__inner {
       background: #10203b;
-      /deep/ .el-input__inner {
-        background: #10203b;
-        border: 1px solid #1eb0fc;
-        color: #1eb0fc;
-      }
-
-      ::-webkit-input-placeholder {
-        /* WebKit, Blink, Edge */
-        color: #1eb0fc;
-      }
+      border: 1px solid #1eb0fc;
+      color: #1eb0fc;
+    }
+    /deep/.el-input__suffix-inner {
+      color: #39a4dd;
+    }
+    ::-webkit-input-placeholder {
+      /* WebKit, Blink, Edge */
+      color: #1eb0fc;
+    }
   }
 
-    div.onlineList{
-      max-height:800px;
-      overflow-y: auto;
-      margin-right:8px;
-    }
-    // /* --- 改变滚动条样式 --- */
-    // .onlineList::-webkit-scrollbar {
-    //   width: 10px;
-    // }
-    // /* --- 滚动条里面的滚动块 --- */
-    // .onlineList::-webkit-scrollbar-thumb {
-    //   border-radius: 10px;
-    //   box-shadow: inset 0 0 5px rgb(0, 180, 255);
-    //   background: rgba(0, 180, 255, 0.2);
-    // }
+  div.onlineList {
+    max-height: 800px;
+    overflow-y: auto;
+    margin-right: 8px;
+  }
+  // /* --- 改变滚动条样式 --- */
+  // .onlineList::-webkit-scrollbar {
+  //   width: 10px;
+  // }
+  // /* --- 滚动条里面的滚动块 --- */
+  // .onlineList::-webkit-scrollbar-thumb {
+  //   border-radius: 10px;
+  //   box-shadow: inset 0 0 5px rgb(0, 180, 255);
+  //   background: rgba(0, 180, 255, 0.2);
+  // }
 
-    // /* --- 滚动条里面轨道 --- */
-    // .onlineList::-webkit-scrollbar-track {
-    //   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    //   border-radius: 10px;
-    //   background: #096090;
-    // }
-    // .onlineList::-webkit-scrollbar-corner {
-    //   background: transparent;
-    // }
+  // /* --- 滚动条里面轨道 --- */
+  // .onlineList::-webkit-scrollbar-track {
+  //   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  //   border-radius: 10px;
+  //   background: #096090;
+  // }
+  // .onlineList::-webkit-scrollbar-corner {
+  //   background: transparent;
+  // }
 
   div.list {
     margin-top: 20px;
@@ -1424,27 +1548,27 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-right: 64px;
-    .back{
+    .back {
       display: flex;
       box-sizing: border-box;
       width: 98px;
       height: 36px;
-      border: 1px solid #39A4DD;
+      border: 1px solid #39a4dd;
       background: rgba(18, 30, 58, 0.85);
       align-items: center;
       cursor: pointer;
       margin-bottom: 11px;
       span:nth-child(1) {
-      display: inline-block;
-      width: 21px;
-      height: 17px;
-      background: url(../../assets/images/back.png) no-repeat;
-      margin-left: 16px;
-      margin-right: 13px;
+        display: inline-block;
+        width: 21px;
+        height: 17px;
+        background: url(../../assets/images/back.png) no-repeat;
+        margin-left: 16px;
+        margin-right: 13px;
       }
       span:nth-child(2) {
-      font-size: 16px;
-      color: #FFFFFF;
+        font-size: 16px;
+        color: #ffffff;
       }
     }
   }
@@ -1452,23 +1576,23 @@ export default {
     height: 700px;
     display: flex;
     flex-wrap: wrap;
-     > div {
-       > div {
-          box-sizing: border-box;
-          // height: 223px;
+    > div {
+      > div {
+        box-sizing: border-box;
+        // height: 223px;
 
-          margin-right: 10px;
-          margin-bottom: 10px;
-          width:calc(100% - 10px);
-          height:calc(100% - 10px);
-          background: url(../../assets/images/video.svg) no-repeat center center;
-          background-color: #16789E;
-          cursor: pointer;
-        }
-        > div.active {
-          border: 2px solid rgba(255, 244, 100, 1);
-        }
+        margin-right: 10px;
+        margin-bottom: 10px;
+        width: calc(100% - 10px);
+        height: calc(100% - 10px);
+        background: url(../../assets/images/video.svg) no-repeat center center;
+        background-color: #16789e;
+        cursor: pointer;
       }
+      > div.active {
+        border: 2px solid rgba(255, 244, 100, 1);
+      }
+    }
   }
   .tools {
     position: absolute;
@@ -1554,17 +1678,17 @@ export default {
 }
 
 .videolistFullscreenStyle {
-  position:fixed;
+  position: fixed;
   top: 0;
   right: 0;
   width: 100%;
-  height:100%!important;
+  height: 100% !important;
   z-index: 1000;
   background: #fff;
   display: flex;
   flex-wrap: wrap;
   overflow: visible;
-  background-image: url('../../assets/images/bg.png');
+  background-image: url("../../assets/images/bg.png");
 }
 
 // 全屏弹框
@@ -1583,21 +1707,21 @@ export default {
   overflow: visible;
   // padding: 20px 30px;
   background: url(../../assets/images/bg.png) no-repeat;
+  > div {
     > div {
-     > div {
-        box-sizing: border-box;
-        cursor: pointer;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        width:calc(100% - 10px);
-        height:calc(100% - 10px);
-        background: url(../../assets/images/video.svg) no-repeat center center;
-        background-color: #00497c;
-      }
-      div.active {
-        border: 2px solid #fff464;
-      }
+      box-sizing: border-box;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      width: calc(100% - 10px);
+      height: calc(100% - 10px);
+      background: url(../../assets/images/video.svg) no-repeat center center;
+      background-color: #00497c;
     }
+    div.active {
+      border: 2px solid #fff464;
+    }
+  }
 }
 
 // 修改弹框样式
@@ -1692,7 +1816,7 @@ export default {
 .el-table {
   /* --- 改变滚动条样式 --- */
   ::-webkit-scrollbar {
-   width: 17px;
+    width: 17px;
   }
   /* --- 滚动条里面的滚动块 --- */
   /deep/ ::-webkit-scrollbar-thumb {
@@ -1716,11 +1840,11 @@ export default {
     background-color: rgba(54, 143, 187, 1);
   }
 
-   /deep/.el-table__body-wrapper {
+  /deep/.el-table__body-wrapper {
     height: calc(100% - 26px) !important;
   }
 
-  /deep/.el-table__body{
+  /deep/.el-table__body {
     width: 100% !important;
   }
 
