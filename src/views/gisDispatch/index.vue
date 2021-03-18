@@ -242,6 +242,30 @@ export default {
       this.$refs.caseMain.addDatas(this.onlineArray)
     },
     /**
+     * 获取面资源完毕回调
+     */
+    getAreasDone () {
+      this.resInfos[4].num = this.areas ? this.lines.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addRouteOrLineDatas(this.areas)
+    },
+    /**
+     * 获取线资源完毕回调
+     */
+    getLinesDone () {
+      this.resInfos[5].num = this.lines ? this.lines.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addRouteOrLineDatas(this.lines)
+    },
+    /**
+     * 获取点资源完毕回调
+     */
+    getPointsDone () {
+      this.resInfos[6].num = this.points ? this.points.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addDatas(this.points)
+    },
+    /**
      * 获取组织机构完毕回调
      */
     getDeptsDone () {
@@ -337,30 +361,14 @@ export default {
      * 跳转到案件处理
      */
     jumpCase (item) {
-      this.$axios
-        .post(
-          caseApi.selectDetail,
-          {
-            id: item.id
-          },
-          {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          }
-        )
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            const data = JSON.stringify(res.data.data)
-            this.$router.push({
-              path: '/gisDispatchDispose',
-              query: {
-                data: data
-              }
-            })
-          }
-        })
-        .catch((err) => {
-          console.log('caseApi.selectDetail Err : ' + err)
-        })
+      const data = { id: item.id }
+      const newpage = this.$router.resolve({
+        path: '/gisDispatchDispose',
+        query: {
+          data: JSON.stringify(data)
+        }
+      })
+      window.open(newpage.href, '_blank')
     },
     /**
      * 获取案件列表

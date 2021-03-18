@@ -244,7 +244,6 @@ export default {
     }
   },
   mounted () {
-    this.getUserList()
   },
   methods: {
     /**
