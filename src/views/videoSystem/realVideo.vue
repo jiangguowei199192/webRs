@@ -198,7 +198,10 @@
                 </li>
                 <li>
                   <span>设备编号：</span>
-                  <span class="deviceCode" :title="curSelectedVideo.deviceCode">{{curSelectedVideo.deviceCode||'-'}}</span>
+                  <span
+                    class="deviceCode"
+                    :title="curSelectedVideo.deviceCode"
+                  >{{curSelectedVideo.deviceCode||'-'}}</span>
                 </li>
                 <li>
                   <span>设备品牌：</span>
@@ -1928,29 +1931,43 @@ export default {
             cursor: pointer;
           }
           div:nth-child(1) {
-            background: url(../../assets/images/device/7.png) no-repeat;
+            background: url(../../assets/images/operate/base/left_up.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(1):hover {
-            background: url(../../assets/images/device/7_selected.png) no-repeat;
+           background: url(../../assets/images/operate/base/left_up_selected.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(2) {
-            background: url(../../assets/images/device/8.png) no-repeat;
+            background: url(../../assets/images/operate/base/up.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(2):hover {
-            background: url(../../assets/images/device/8_selected.png) no-repeat;
+            background: url(../../assets/images/operate/base/up_selected.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(3) {
-            background: url(../../assets/images/device/9.png) no-repeat;
+            background: url(../../assets/images/operate/base/right_up.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(3):hover {
-            background: url(../../assets/images/device/9_selected.png) no-repeat;
+             background: url(../../assets/images/operate/base/right_up_selected.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(4) {
             margin-right: 10px;
-            background: url(../../assets/images/device/4.png) no-repeat;
+            background: url(../../assets/images/operate/base/left.svg) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(4):hover {
-            background: url(../../assets/images/device/4_selected.png) no-repeat;
+           background: url(../../assets/images/operate/base/left_selected.svg) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(5) {
             width: 64px;
@@ -1960,36 +1977,51 @@ export default {
             top: -7px;
             // left: -5px;
             margin-right: 10px;
-            background: url(../../assets/images/device/5.png) no-repeat;
+            background: url(../../assets/images/operate/base/circle.svg);
             cursor: text;
             margin-bottom: 5px;
+            background-size: 100% 100%;
           }
           // div:nth-child(5):hover {
           //   background: url(../../assets/images/device/5_selected.png) no-repeat;
           // }
           div:nth-child(6) {
-            background: url(../../assets/images/device/6.png) no-repeat;
+            background: url(../../assets/images/operate/base/right.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(6):hover {
-            background: url(../../assets/images/device/6_selected.png) no-repeat;
+            background: url(../../assets/images/operate/base/right_selected.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(7) {
-            background: url(../../assets/images/device/1.png) no-repeat;
+            background: url(../../assets/images/operate/base/left_down.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(7):hover {
-            background: url(../../assets/images/device/1_selected.png) no-repeat;
+            background: url(../../assets/images/operate/base/left_down_selected.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(8) {
-            background: url(../../assets/images/device/2.png) no-repeat;
+            background: url(../../assets/images/operate/base/down.svg) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(8):hover {
-            background: url(../../assets/images/device/2_selected.png) no-repeat;
+            background: url(../../assets/images/operate/base/down_selected.svg) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(9) {
-            background: url(../../assets/images/device/3.png) no-repeat;
+            background: url(../../assets/images/operate/base/right_down.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(9):hover {
-            background: url(../../assets/images/device/3_selected.png) no-repeat;
+             background: url(../../assets/images/operate/base/right_down_selected.svg)
+              no-repeat;
+            background-size: 100% 100%;
           }
         }
         .btns {
@@ -2031,11 +2063,7 @@ export default {
               top: -2px;
             }
             span:hover {
-              background: linear-gradient(
-                90deg,
-                rgb(32, 72, 105) 0%,
-                rgb(32, 72, 105) 100%
-              );
+              background: #027190;
             }
             span:nth-child(1):hover:after {
               display: none;
@@ -2054,18 +2082,20 @@ export default {
           }
           span.demonstration {
             font-weight: bold;
+            font-size:14px;
             color: rgba(132, 221, 255, 1);
           }
           span:nth-child(3) {
             display: inline-block;
             width: 38px;
             height: 24px;
-            background: rgba(46, 108, 147, 1);
+            background: #012c40;
             border: 1px solid rgba(28, 161, 220, 1);
             border-radius: 10px;
             text-align: center;
             position: relative;
             top: 5px;
+             font-size:14px;
             line-height: 24px;
           }
           /deep/.el-slider__bar {
