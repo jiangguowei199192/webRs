@@ -546,17 +546,22 @@ export default {
               background-size: 100% 100%;
             }
           }
-          .el-dropdown > .el-dropdown-link:focus {
-            outline: 0;
-          }
-          .el-dropdown > .el-dropdown-link {
-            outline: 0;
-          }
+
           div.settings {
             position: relative;
             width: 348px;
             background: url(../assets/images/home/setting_bg.svg) no-repeat;
             background-size: 100% 100%;
+            .el-dropdown > .el-dropdown-link:focus {
+              outline: 0;
+            }
+            .el-dropdown-menu__item:focus,
+            .el-dropdown-menu__item:not(.is-disabled):hover {
+              background-color: #022d42;
+            }
+            .el-dropdown > .el-dropdown-link {
+              outline: 0;
+            }
             div.info {
               position: absolute;
               top: -12px;
