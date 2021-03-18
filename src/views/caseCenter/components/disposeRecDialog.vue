@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-16 20:11:17
+ * @LastEditTime: 2021-03-18 10:10:34
 -->
 <template>
   <div>
@@ -61,7 +61,7 @@
             multiple
             drag
             action="action"
-            accept=".xls, .xlsx, .docx, .jpg, .jpeg, .png, .zip"
+            accept=".jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .rar, .zip"
             :limit="10"
             :file-list="uploadList"
             :auto-upload="false"
@@ -72,7 +72,7 @@
             <div class="el-upload__text">
               将文件拖到此处，或<em style="color:#1ed8a0">点击上传</em>
               <p>
-                支持文件类型: xls、xlsx、docx、jpg、jpeg、png、zip(10M以内)
+                支持文件类型:xls、xlsx、docx、jpg、jpeg、png、zip...(10M以内)
               </p>
             </div>
           </el-upload>
@@ -94,7 +94,8 @@ import { caseApi } from '@/api/case'
 export default {
   props: {
     isShow: { type: Boolean, required: true },
-    title: { type: String, required: true }
+    title: { type: String, required: true },
+    clickRowId: { type: String, required: false }
   },
 
   data () {
@@ -136,60 +137,6 @@ export default {
       this.$emit('update:clickRowId', '')
     },
 
-    // 处置info录入提交
-    confirmCaseRecord (formName) {
-      this.$refs[formName].validate(valid => {
-        if (!valid) return false
-        this.uploadFileList()
-        // console.log('addCaseForm:', this.addCaseForm)
-        setTimeout(() => {
-          const params = {
-            id: this.addCaseForm.id,
-            dispositionMan: this.addCaseForm.people,
-            dispositionRecord: this.addCaseForm.record,
-            dispositionTime: this.addCaseForm.time,
-            dispositionImgUrl: this.addCaseForm.uploadFileUrl
-          }
-          this.$axios
-            .post(caseApi.finishCase, params, {
-              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-            })
-            .then(res => {
-              console.log('处置记录提交res:', res)
-              if (res && res.data && res.data.code === 0) {
-                this.$emit('confirmRecordClick', this.addCaseForm)
-                this.updateIsShow('addCaseForm')
-              }
-            })
-            .catch(err => {
-              console.log('caseApi.finishCase Err : ' + err)
-            })
-        }, 100)
-      })
-    },
-
-    // 上传文件
-    uploadFileList () {
-      if (this.uploadFiles.length !== 0) {
-        const formData = new FormData()
-        this.uploadFiles.forEach(f => {
-          formData.append('file', f)
-        })
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-        this.$axios
-          .post(caseApi.uploadFile, formData, config)
-          .then(res => {
-            console.log('上传文件res:', res)
-            if (res && res.data && res.data.code === 0) {
-              this.addCaseForm.uploadFileUrl = res.data.data
-            }
-          })
-          .catch(err => {
-            console.log('caseApi.uploadFile Err : ' + err)
-          })
-      }
-    },
-
     // 上传文件前的处理
     onUploadChange (file) {
       var files = this.$refs.uploadForm.uploadFiles
@@ -209,6 +156,7 @@ export default {
           'zip'
         ]
         if (fileType.indexOf(fileName) === -1) {
+          this.uploadList.splice(this.uploadList.length - 1, 1)
           this.$notify.closeAll()
           this.$notify.warning({
             title: '提示',
@@ -238,6 +186,62 @@ export default {
       if (index !== -1) {
         this.uploadFiles.splice(index, 1)
       }
+    },
+
+    // 上传文件
+    uploadFileList () {
+      if (this.uploadFiles.length !== 0) {
+        const formData = new FormData()
+        this.uploadFiles.forEach(f => {
+          formData.append('file', f)
+        })
+        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+        this.$axios
+          .post(caseApi.uploadFile, formData, config)
+          .then(res => {
+            console.log('上传文件res:', res)
+            if (res && res.data && res.data.code === 0) {
+              this.addCaseForm.uploadFileUrl = res.data.data
+            }
+          })
+          .catch(err => {
+            console.log('caseApi.uploadFile Err : ' + err)
+          })
+      }
+    },
+
+    // 处置info录入提交
+    confirmCaseRecord (formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return false
+        this.uploadFileList()
+        // console.log('addCaseForm:', this.addCaseForm)
+        // setTimeout(() => {
+        // const params = {
+        //   id: this.addCaseForm.id,
+        //   dispositionMan: this.addCaseForm.people,
+        //   dispositionRecord: this.addCaseForm.record,
+        //   dispositionTime: this.addCaseForm.time,
+        //   dispositionImgUrl: this.addCaseForm.uploadFileUrl
+        // }
+        //   this.$axios
+        //     .post(caseApi.finishCase, params, {
+        //       headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        //     })
+        //     .then(res => {
+        //       console.log('处置记录提交res:', res)
+        //       if (res && res.data && res.data.code === 0) {
+        setTimeout(() => {
+          this.$emit('confirmRecordClick', this.addCaseForm)
+        }, 100)
+        //         this.updateIsShow('addCaseForm')
+        //       }
+        //     })
+        //     .catch(err => {
+        //       console.log('caseApi.finishCase Err : ' + err)
+        //     })
+        // }, 100)
+      })
     }
   }
 }

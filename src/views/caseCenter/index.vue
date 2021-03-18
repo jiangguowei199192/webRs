@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-16 20:00:06
+ * @LastEditTime: 2021-03-17 17:31:53
 -->
 <template>
   <div class="caseCenter">
@@ -83,7 +83,7 @@
               </p>
               <p>
                 <span>处置人: </span
-                ><span>{{ caseDetailInfo.disManName }}</span>
+                ><span>{{ caseDetailInfo.dispositionMan }}</span>
               </p>
             </div>
             <div class="handel-result">
@@ -94,14 +94,14 @@
             </div>
             <div class="handel-attach">
               <span>相关附件: </span>
-              <div class="listScroll">
+              <!-- <div class="listScroll">
                 <img
-                  v-for="(img_item, img_index) in imgList"
+                  v-for="(img_item, img_index) in imgListPath"
                   :key="img_index"
-                  :src="img_item.picPath"
+                  :src="serverUrl + img_item"
                   alt=""
                 />
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -131,6 +131,7 @@ import CaseStep from '@/components/caseStep'
 import DisposeRecDialog from './components/disposeRecDialog'
 import { caseApi } from '@/api/case'
 import { EventBus } from '@/utils/eventBus.js'
+import globalApi from '@/utils/globalApi'
 
 export default {
   components: {
@@ -156,15 +157,11 @@ export default {
         ]
       },
       isShow: false,
-      imgList: [
-        {
-          picPath:
-            'http://122.112.203.178:80/cloud-river/case/1609136356400_1609136356400.png'
-        }
-      ],
       caseDetailInfo: {},
       clickRowId: '',
-      caseRecordInfo: []
+      caseRecordInfo: [],
+      uploadFilesConfig: [],
+      serverUrl: globalApi.headImg
       // caseRecordInfo: [
       //   {
       //     caseId: '',
@@ -194,8 +191,8 @@ export default {
     },
 
     // 单击处置按钮
-    handelDisposeClick (id, info) {
-      // console.log('index:', id, 'data:', info)
+    handelDisposeClick (index, info) {
+      // console.log('index:', index, 'data:', info)
       this.isShow = true
       this.clickRowId = info.id
     },
@@ -209,7 +206,12 @@ export default {
     },
 
     // 按钮操作提交
-    confirmRecordClick () {
+    confirmRecordClick (data) {
+      // data.forEach(item => {
+      //   this.uploadFilesConfig.push(item.uploadFileUrl);
+      // });
+      this.uploadFilesConfig = data.uploadFileUrl
+      console.log('uploadFilesConfig:', data)
       this.refreshTable()
     },
 
@@ -367,6 +369,7 @@ export default {
         }
       }
       .handel-chat-record {
+        // color:#0cca91
       }
     }
   }
