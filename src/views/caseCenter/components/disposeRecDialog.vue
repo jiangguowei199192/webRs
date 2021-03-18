@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-18 10:10:34
+ * @LastEditTime: 2021-03-18 14:59:52
 -->
 <template>
   <div>
@@ -216,31 +216,29 @@ export default {
         if (!valid) return false
         this.uploadFileList()
         // console.log('addCaseForm:', this.addCaseForm)
-        // setTimeout(() => {
-        // const params = {
-        //   id: this.addCaseForm.id,
-        //   dispositionMan: this.addCaseForm.people,
-        //   dispositionRecord: this.addCaseForm.record,
-        //   dispositionTime: this.addCaseForm.time,
-        //   dispositionImgUrl: this.addCaseForm.uploadFileUrl
-        // }
-        //   this.$axios
-        //     .post(caseApi.finishCase, params, {
-        //       headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        //     })
-        //     .then(res => {
-        //       console.log('处置记录提交res:', res)
-        //       if (res && res.data && res.data.code === 0) {
         setTimeout(() => {
-          this.$emit('confirmRecordClick', this.addCaseForm)
+          const params = {
+            id: this.addCaseForm.id,
+            dispositionMan: this.addCaseForm.people,
+            dispositionRecord: this.addCaseForm.record,
+            dispositionTime: this.addCaseForm.time,
+            dispositionImgUrl: this.addCaseForm.uploadFileUrl
+          }
+          this.$axios
+            .post(caseApi.finishCase, params, {
+              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+            })
+            .then(res => {
+              console.log('处置记录提交res:', res)
+              if (res && res.data && res.data.code === 0) {
+                this.$emit('confirmRecordClick', this.addCaseForm)
+                this.updateIsShow('addCaseForm')
+              }
+            })
+            .catch(err => {
+              console.log('caseApi.finishCase Err : ' + err)
+            })
         }, 100)
-        //         this.updateIsShow('addCaseForm')
-        //       }
-        //     })
-        //     .catch(err => {
-        //       console.log('caseApi.finishCase Err : ' + err)
-        //     })
-        // }, 100)
       })
     }
   }

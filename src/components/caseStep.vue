@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-16 19:59:49
+ * @LastEditTime: 2021-03-18 19:48:40
 -->
 <template>
   <div class="step-box listScroll">
@@ -13,7 +13,14 @@
         v-for="(event, event_index) in events"
         :key="event_index"
         :title="
-          event.dispositionNode + '(' + event.dispositionStatus + ' | ' + ')'
+          event_index == 2
+            ? event.dispositionNode +
+              ' (' +
+              event.dispositionStatus +
+              ' | ' +
+              event.content[0].designateStatus +
+              ')'
+            : event.dispositionNode + ' (' + event.dispositionStatus + ')'
         "
       >
         <template slot="description">
@@ -27,22 +34,57 @@
             >
               <tr>
                 <td>
-                  <div class="processing-content-detail fl">
-                    <!-- <span>{{ event.describe + event.count }}</span> -->
+                  <div v-if="event.dispositionNode == '受理'">
+                    <div class="processing-content-detail fl">
+                      <span>{{
+                        "接案人员: " + event.content.receivingAlarmMan
+                      }}</span>
+                    </div>
+                    <div class="processing-content-detail fr">
+                      <span
+                        ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
+                          event.createTime
+                        }}</span
+                      >
+                    </div>
                   </div>
                   <div
-                    class="processing-content-detail fr"
-                    v-if="event_index == 0 || event_index == 1"
+                    v-else-if="event.dispositionNode == '批示'"
+                    v-for="(content_item, content_index) in event.content"
+                    :key="content_index"
                   >
-                    <span
-                      ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
-                        event.createTime
-                      }}</span
-                    >
+                    <div class="processing-content-detail fl">
+                      <span>{{ "推送人: " + content_item.pushMan }}</span>
+                    </div>
+                    <div class="processing-content-detail fr">
+                      <span
+                        ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
+                          content_item.pushTime
+                        }}</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    v-else-if="event.dispositionNode == '召集'"
+                    v-for="(content_item, content_index) in event.content"
+                    :key="content_index"
+                  >
+                    <div class="processing-content-detail fl">
+                      <span>{{
+                        content_item.employeeName + " " + content_item.deptName
+                      }}</span>
+                    </div>
+                    <div class="processing-content-detail fr">
+                      <span
+                        ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
+                          event.createTime
+                        }}</span
+                      >
+                    </div>
                   </div>
                   <div
                     class="processing-content-detail detail-img listScroll"
-                    v-if="event_index == 3"
+                    v-else-if="event.dispositionNode == '处置'"
                   >
                     <!-- <img
                       v-for="(event_pic, pic_index) in event.picList"
@@ -53,11 +95,12 @@
                   </div>
                   <div
                     class="processing-content-detail detail-result"
-                    v-if="event_index == 4"
+                    v-else-if="event.dispositionNode == '回告'"
                   >
-                    <span>处置人: {{ event.content.receivingAlarmMan }}</span>
-                    <span>处置时间: {{ event.createTime }}</span>
-                    <div><span>附件: </span></div>
+                    <p>处置记录：{{ event.content.dispositionRecord }}</p>
+                    <span>处置人：{{ event.content.employeeName }}</span>
+                    <span>处置时间：{{ event.content.dispositionTime }}</span>
+                    <div><span>附件：</span></div>
                   </div>
                 </td>
               </tr>
@@ -101,6 +144,7 @@ export default {
   mounted () {
     EventBus.$on('selectedCaseRecord', info => {
       this.disposeCaseInfo(info)
+      console.log('info:', info)
     })
   },
 
@@ -117,19 +161,19 @@ export default {
         this.events.forEach(item => {
           switch (item.dispositionNode) {
             case 0:
-              item.dispositionNode = '接警'
+              item.dispositionNode = '受理'
               break
             case 1:
-              item.dispositionNode = '推送'
+              item.dispositionNode = '批示'
               break
             case 2:
-              item.dispositionNode = '处警'
+              item.dispositionNode = '召集'
               break
             case 3:
               item.dispositionNode = '处置'
               break
             case 4:
-              item.dispositionNode = '结案'
+              item.dispositionNode = '回告'
               break
           }
           switch (item.dispositionStatus) {
