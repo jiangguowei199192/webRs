@@ -83,7 +83,6 @@
             name="password"
             onfocus="this.type='password'"
             placeholder="密码长度在3到20位之间，且不能包含中文"
-            style="color: blue"
             maxlength="20"
           ></el-input>
         </el-form-item>
@@ -95,7 +94,6 @@
             name="newPass"
             onfocus="this.type='password'"
             placeholder="密码长度在3到20位之间，且不能包含中文"
-            style="color: blue"
             maxlength="20"
           ></el-input>
         </el-form-item>
@@ -107,7 +105,6 @@
             placeholder="密码长度在3到20位之间，且不能包含中文"
             name="confirmPass"
             onfocus="this.type='password'"
-            style="color: blue"
             maxlength="20"
           ></el-input>
         </el-form-item>

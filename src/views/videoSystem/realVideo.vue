@@ -1936,13 +1936,12 @@ export default {
             background-size: 100% 100%;
           }
           div:nth-child(1):hover {
-           background: url(../../assets/images/operate/base/left_up_selected.svg)
+            background: url(../../assets/images/operate/base/left_up_selected.svg)
               no-repeat;
             background-size: 100% 100%;
           }
           div:nth-child(2) {
-            background: url(../../assets/images/operate/base/up.svg)
-              no-repeat;
+            background: url(../../assets/images/operate/base/up.svg) no-repeat;
             background-size: 100% 100%;
           }
           div:nth-child(2):hover {
@@ -1956,7 +1955,7 @@ export default {
             background-size: 100% 100%;
           }
           div:nth-child(3):hover {
-             background: url(../../assets/images/operate/base/right_up_selected.svg)
+            background: url(../../assets/images/operate/base/right_up_selected.svg)
               no-repeat;
             background-size: 100% 100%;
           }
@@ -1966,7 +1965,8 @@ export default {
             background-size: 100% 100%;
           }
           div:nth-child(4):hover {
-           background: url(../../assets/images/operate/base/left_selected.svg) no-repeat;
+            background: url(../../assets/images/operate/base/left_selected.svg)
+              no-repeat;
             background-size: 100% 100%;
           }
           div:nth-child(5) {
@@ -2010,7 +2010,8 @@ export default {
             background-size: 100% 100%;
           }
           div:nth-child(8):hover {
-            background: url(../../assets/images/operate/base/down_selected.svg) no-repeat;
+            background: url(../../assets/images/operate/base/down_selected.svg)
+              no-repeat;
             background-size: 100% 100%;
           }
           div:nth-child(9) {
@@ -2019,7 +2020,7 @@ export default {
             background-size: 100% 100%;
           }
           div:nth-child(9):hover {
-             background: url(../../assets/images/operate/base/right_down_selected.svg)
+            background: url(../../assets/images/operate/base/right_down_selected.svg)
               no-repeat;
             background-size: 100% 100%;
           }
@@ -2082,7 +2083,7 @@ export default {
           }
           span.demonstration {
             font-weight: bold;
-            font-size:14px;
+            font-size: 14px;
             color: rgba(132, 221, 255, 1);
           }
           span:nth-child(3) {
@@ -2095,7 +2096,7 @@ export default {
             text-align: center;
             position: relative;
             top: 5px;
-             font-size:14px;
+            font-size: 14px;
             line-height: 24px;
           }
           /deep/.el-slider__bar {
