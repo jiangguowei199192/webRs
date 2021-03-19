@@ -819,7 +819,7 @@ export default {
       box-sizing: border-box;
       width: 400px;
       height: 215px;
-      background-color: rgba($color: #0179a2, $alpha: 0.95);
+      background-color: rgba($color: #004157, $alpha: 0.8);
       padding: 5px 0px 5px 0px;
       .head {
         padding: 0px 10px;

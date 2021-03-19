@@ -6,6 +6,7 @@ export const caseApi = {
   caseDispose: '/fms-river-protection/riverCase/dispose', // 案件处置
   finishCase: '/fms-river-protection/riverCase/finishCase', // 案件处置结果-结案
   uploadFile: '/fms-river-protection/file/upload', // 文件上传
+  uploadFiles: '/fms-river-protection/file/uploads', // 多文件上传
   selectUsers: '/fms-river-protection/riverCase/selectListEmployee', // 查询在线人员
   selectDepts: '/fms-river-protection/riverCase/selectListDeptInfo', // 查询组织机构
   caseAssign: '/fms-river-protection/riverDesignate/designateUsers' // 案件分派

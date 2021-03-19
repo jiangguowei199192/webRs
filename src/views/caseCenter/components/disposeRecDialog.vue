@@ -70,7 +70,7 @@
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
-              将文件拖到此处，或<em style="color:#1ed8a0">点击上传</em>
+              将文件拖到此处，或<em style="color: #1ed8a0">点击上传</em>
               <p>
                 支持文件类型:xls、xlsx、docx、jpg、jpeg、png、zip...(10M以内)
               </p>
@@ -139,44 +139,43 @@ export default {
 
     // 上传文件前的处理
     onUploadChange (file) {
-      var files = this.$refs.uploadForm.uploadFiles
-      files.forEach(t => {
-        const fileName = t.name
-          .substring(t.name.lastIndexOf('.') + 1)
-          .toLowerCase()
-        const fileType = [
-          'jpg',
-          'jpeg',
-          'png',
-          'doc',
-          'docx',
-          'xls',
-          'xlsx',
-          'rar',
-          'zip'
-        ]
-        if (fileType.indexOf(fileName) === -1) {
-          this.uploadList.splice(this.uploadList.length - 1, 1)
-          this.$notify.closeAll()
-          this.$notify.warning({
-            title: '提示',
-            message:
-              '上传文件只能是 jpg/jpeg/png/doc/docx/xls/xlsx/rar/zip 等格式',
-            duration: 3 * 1000
-          })
-          return false
-        }
-        const limitSize = t.size / 1024 / 1024 < 10
-        if (!limitSize) {
-          this.$notify.closeAll()
-          this.$notify.warning({
-            title: '提示',
-            message: '单个文件大小不能超过 10MB',
-            duration: 3 * 1000
-          })
-          return false
-        }
-      })
+      const fileName = file.name
+        .substring(file.name.lastIndexOf('.') + 1)
+        .toLowerCase()
+      const fileType = [
+        'jpg',
+        'jpeg',
+        'png',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'rar',
+        'zip'
+      ]
+      if (fileType.indexOf(fileName) === -1) {
+        this.uploadList.splice(this.uploadList.length - 1, 1)
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '提示',
+          message:
+            '上传文件只能是 jpg/jpeg/png/doc/docx/xls/xlsx/rar/zip 等格式',
+          duration: 3 * 1000
+        })
+        return false
+      }
+      const limitSize = file.size / 1024 / 1024 < 10
+      if (!limitSize) {
+        this.uploadList.splice(this.uploadList.length - 1, 1)
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '提示',
+          message: '单个文件大小不能超过 10MB',
+          duration: 3 * 1000
+        })
+        return false
+      }
+
       this.uploadFiles.push(file.raw)
     },
 
@@ -192,53 +191,55 @@ export default {
     uploadFileList () {
       if (this.uploadFiles.length !== 0) {
         const formData = new FormData()
-        this.uploadFiles.forEach(f => {
-          formData.append('file', f)
+        this.uploadFiles.forEach((f) => {
+          formData.append('files', f)
         })
         const config = { headers: { 'Content-Type': 'multipart/form-data' } }
         this.$axios
-          .post(caseApi.uploadFile, formData, config)
-          .then(res => {
-            console.log('上传文件res:', res)
+          .post(caseApi.uploadFiles, formData, config)
+          .then((res) => {
+            // console.log('上传文件res:', res)
             if (res && res.data && res.data.code === 0) {
               this.addCaseForm.uploadFileUrl = res.data.data
+              this.finishCase()
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.log('caseApi.uploadFile Err : ' + err)
           })
       }
     },
 
+    // 结案
+    finishCase () {
+      const params = {
+        id: this.addCaseForm.id,
+        dispositionMan: this.addCaseForm.people,
+        dispositionRecord: this.addCaseForm.record,
+        dispositionTime: this.addCaseForm.time,
+        dispositionImgUrl: this.addCaseForm.uploadFileUrl
+      }
+      this.$axios
+        .post(caseApi.finishCase, params, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          // console.log('处置记录提交res:', res)
+          if (res && res.data && res.data.code === 0) {
+            this.$emit('confirmRecordClick', this.addCaseForm)
+            this.updateIsShow('addCaseForm')
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.finishCase Err : ' + err)
+        })
+    },
+
     // 处置info录入提交
     confirmCaseRecord (formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (!valid) return false
         this.uploadFileList()
-        // console.log('addCaseForm:', this.addCaseForm)
-        setTimeout(() => {
-          const params = {
-            id: this.addCaseForm.id,
-            dispositionMan: this.addCaseForm.people,
-            dispositionRecord: this.addCaseForm.record,
-            dispositionTime: this.addCaseForm.time,
-            dispositionImgUrl: this.addCaseForm.uploadFileUrl
-          }
-          this.$axios
-            .post(caseApi.finishCase, params, {
-              headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-            })
-            .then(res => {
-              console.log('处置记录提交res:', res)
-              if (res && res.data && res.data.code === 0) {
-                this.$emit('confirmRecordClick', this.addCaseForm)
-                this.updateIsShow('addCaseForm')
-              }
-            })
-            .catch(err => {
-              console.log('caseApi.finishCase Err : ' + err)
-            })
-        }, 100)
       })
     }
   }
