@@ -68,6 +68,13 @@ export default {
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
     },
     /**
+     * 添加线和面资源
+     */
+    addRouteOrLineDatas (data) {
+      if (!this.$refs.gduMap) return
+      this.$refs.gduMap.map2D.gisDispatchManager.addRouteOrLineDatas(data)
+    },
+    /**
      * 加载圆形围栏范围内的资源
      */
     addDatasInRadius (data, rCenrer, radius) {

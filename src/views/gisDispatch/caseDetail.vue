@@ -89,7 +89,7 @@
         </div>
         <div class="resBox">
           <div class="head">
-            <span>总计:</span>
+            <span>总计: {{ totalRes }}</span>
             <span>详情</span>
           </div>
           <div class="data">
@@ -144,7 +144,7 @@
                   </div>
                   <div
                     class="distance"
-                    v-show="selResIdx != 4 && selResIdx != 5 && selResIdx != 6"
+                    v-show="selResIdx != 4 && selResIdx != 5"
                   >
                     <img src="../../assets/images/gisDispatch/distance.svg" />
                     <span>{{ item.dist + "m" }}</span>
@@ -227,11 +227,13 @@ import EllipsisTooltip from '../../components/ellipsisTooltip'
 import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 import { EventBus } from '@/utils/eventBus.js'
 import caseMixin from './mixins/caseMixin'
+import { caseApi } from '@/api/case'
 export default {
   name: 'caseDetail',
   data () {
     return {
       radius: 5000,
+      detailTimeout: '',
       showAssign: false,
       showChatBox: false,
       showDispose: false,
@@ -252,6 +254,7 @@ export default {
       },
       selResIdx: 0,
       selStepIdx: -1,
+      totalRes: 0,
       resList: [[], [], [], [], [], [], []],
       tools: [
         {
@@ -376,17 +379,21 @@ export default {
   },
   destroyed () {
     EventBus.$off('caseRadiusChange')
+    if (this.detailTimeout) {
+      clearTimeout(this.detailTimeout)
+    }
   },
   created () {
     const data = JSON.parse(this.$route.query.data)
-    copyData(data, this.caseInfo)
+    this.caseInfo.id = data.id
     this.caseInfo.type = 'RP_Case'
     this.caseInfo.hasFence = true
-    setTimeout(() => {
-      this.$refs.caseMain.addCaseMarker([this.caseInfo])
-      this.$refs.caseMain.zoomToCenter(data.longitude, data.latitude, 13)
-      this.$refs.caseMain.addOrUpdateFence(this.caseInfo, 5000)
-    }, 200)
+    this.getCaseDetail()
+    const me = this
+    // 每隔10分钟刷新一次案件详情
+    this.detailTimeout = setTimeout(() => {
+      me.getCaseDetail()
+    }, 10 * 60 * 1000)
   },
   mounted () {
     const me = this
@@ -397,9 +404,45 @@ export default {
       me.$refs.caseMain.addOrUpdateFence(me.caseInfo, radius * 1000)
       me.getDeptsDone()
       me.getMembersDone()
+      me.getPointsDone()
+      me.getLinesDone()
+      me.getAreasDone()
     })
   },
   methods: {
+    /**
+     * 获取案件详情
+     */
+    getCaseDetail () {
+      this.$axios
+        .post(
+          caseApi.selectDetail,
+          {
+            id: this.caseInfo.id
+          },
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            const data = res.data.data
+            copyData(data, this.caseInfo)
+            setTimeout(() => {
+              this.$refs.caseMain.addCaseMarker([this.caseInfo])
+              this.$refs.caseMain.zoomToCenter(
+                data.longitude,
+                data.latitude,
+                13
+              )
+              this.$refs.caseMain.addOrUpdateFence(this.caseInfo, 5000)
+            }, 200)
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectDetail Err : ' + err)
+        })
+    },
     /**
      * 地图上显隐资源
      */
@@ -412,6 +455,84 @@ export default {
      */
     changeDetailList (index) {
       this.selResIdx = index
+    },
+    /**
+     * 获取资源总数
+     */
+    getTotalRes () {
+      this.totalRes = 0
+      this.resList.forEach((l) => {
+        this.totalRes += l.length
+      })
+    },
+    /**
+     * 获取面资源完毕回调
+     */
+    getAreasDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.areas,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[4].num = count
+      this.resList[4] = []
+      this.areas.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.resourcesName,
+            des: l.resourcesAddr,
+            dist: parseInt(l.distance)
+          }
+          this.resList[4].push(o)
+        }
+      })
+      this.getTotalRes()
+    },
+    /**
+     * 获取线资源完毕回调
+     */
+    getLinesDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.lines,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[5].num = count
+      this.resList[5] = []
+      this.lines.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.resourcesName,
+            des: l.resourcesAddr,
+            dist: parseInt(l.distance)
+          }
+          this.resList[5].push(o)
+        }
+      })
+      this.getTotalRes()
+    },
+    /**
+     * 获取点资源完毕回调
+     */
+    getPointsDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.points,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[6].num = count
+      this.resList[6] = []
+      this.points.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.resourcesName,
+            des: l.resourcesAddr,
+            dist: parseInt(l.distance)
+          }
+          this.resList[6].push(o)
+        }
+      })
+      this.getTotalRes()
     },
     /**
      * 获取组织机构完毕回调
@@ -434,6 +555,7 @@ export default {
           this.resList[0].push(o)
         }
       })
+      this.getTotalRes()
     },
     /**
      * 获取组织人员完毕回调
@@ -456,6 +578,7 @@ export default {
           this.resList[1].push(o)
         }
       })
+      this.getTotalRes()
     },
     /**
      * 点击预案

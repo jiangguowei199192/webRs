@@ -14,7 +14,7 @@ const createServerConfig = function (compilation) {
         // 普宙应用管理平台v1.0
         baseUrl: 'http://172.16.63.43:8850',
         mqttServer: '172.16.63.43',
-        mqttPort: 1883,
+        mqttPort: 2883,
         headImg: 'http://172.16.63.43:80'
       }
       // 消防内网

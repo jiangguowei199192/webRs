@@ -58,6 +58,8 @@ var mqttService;
       instance.client.subscribe('video/aRAiResult')
       // 飞机实时信息
       instance.client.subscribe('gdu/#')
+      // 案件聊天信息
+      instance.client.subscribe('web/river/caseHandling/#')
     }
 
     // mqtt client失去连接后的callback
@@ -80,6 +82,8 @@ var mqttService;
         EventBus.$emit('streamHadNotData', object)
       } else if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
+      } else if (message.topic.indexOf('web/river/caseHandling') !== -1) {
+        EventBus.$emit('web/river/caseHandling', message)
       } else {
         console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }

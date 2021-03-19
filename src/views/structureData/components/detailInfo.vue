@@ -45,77 +45,77 @@
 
 <script>
 export default {
-  props: ["isShow", "type"],
-  data() {
+  props: ['isShow', 'type'],
+  data () {
     return {
-      title: "",
+      title: '',
       deviceInfo: {
-        deviceName: "样例",
-        address: "样例",
-        time: "样例",
+        deviceName: '样例',
+        address: '样例',
+        time: '样例'
       },
       detailInfo: {
-        six: "男",
-        age: "20-30",
-        coat: "蓝色",
-        dowm: "黑色",
-        hairColor: "黑色",
+        six: '男',
+        age: '20-30',
+        coat: '蓝色',
+        dowm: '黑色',
+        hairColor: '黑色'
       },
       detailInfoItems: [
-        { label: "性别:", prop: "six" },
-        { label: "年龄组:", prop: "age" },
-        { label: "上衣:", prop: "coat" },
-        { label: "下衣:", prop: "dowm" },
-        { label: "发色:", prop: "hairColor" },
-      ],
-    };
+        { label: '性别:', prop: 'six' },
+        { label: '年龄组:', prop: 'age' },
+        { label: '上衣:', prop: 'coat' },
+        { label: '下衣:', prop: 'dowm' },
+        { label: '发色:', prop: 'hairColor' }
+      ]
+    }
   },
   watch: {
-    isShow(newS) {
+    isShow (newS) {
       if (newS) {
         switch (this.type) {
-          case "人": {
-            this.title = "人员信息";
+          case '人': {
+            this.title = '人员信息'
             this.detailInfoItems = [
-              { label: "性别:", prop: "six" },
-              { label: "年龄组:", prop: "age" },
-              { label: "上衣:", prop: "coat" },
-              { label: "下衣:", prop: "dowm" },
-              { label: "发色:", prop: "hairColor" },
-            ];
-            break;
+              { label: '性别:', prop: 'six' },
+              { label: '年龄组:', prop: 'age' },
+              { label: '上衣:', prop: 'coat' },
+              { label: '下衣:', prop: 'dowm' },
+              { label: '发色:', prop: 'hairColor' }
+            ]
+            break
           }
-          case "车": {
-            this.title = "车信息";
+          case '车': {
+            this.title = '车信息'
             this.detailInfoItems = [
-              { label: "类型:", prop: "six" },
-              { label: "品牌:", prop: "age" },
-              { label: "款式:", prop: "coat" },
-              { label: "颜色:", prop: "dowm" },
-              { label: "车牌号:", prop: "hairColor" },
-            ];
-            break;
+              { label: '类型:', prop: 'six' },
+              { label: '品牌:', prop: 'age' },
+              { label: '款式:', prop: 'coat' },
+              { label: '颜色:', prop: 'dowm' },
+              { label: '车牌号:', prop: 'hairColor' }
+            ]
+            break
           }
-          case "船": {
-            this.title = "船信息";
+          case '船': {
+            this.title = '船信息'
             this.detailInfoItems = [
-              { label: "类型:", prop: "six" },
-              { label: "方向:", prop: "age" },
-            ];
-            break;
+              { label: '类型:', prop: 'six' },
+              { label: '方向:', prop: 'age' }
+            ]
+            break
           }
           default:
-            break;
+            break
         }
       }
-    },
+    }
   },
   methods: {
-    confirmClick() {
-      this.$emit("confirmClick");
-    },
-  },
-};
+    confirmClick () {
+      this.$emit('confirmClick')
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

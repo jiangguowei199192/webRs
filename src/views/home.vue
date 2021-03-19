@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <el-container>
-      <el-header :class="{fixed:isFixed}">
+      <el-header :class="{ fixed: isFixed }">
         <div class="headerTitle">
           <div class="realTime">
             <span class="extra">{{ timeObj.year }}</span> 年
@@ -21,9 +21,9 @@
             </template>
           </div>
           <div class="content">
-            <div class="title">{{projectTitle}}</div>
+            <div class="title">{{ projectTitle }}</div>
             <div class="container">
-              <div class="box">
+              <div class="box" :class="{ disable: menuDisable }">
                 <div
                   v-for="(item, index) in systems"
                   :key="index"
@@ -38,14 +38,20 @@
                 <div class="info">
                   <div class="person">
                     <img :src="perSonPic" alt />
-                    <span class="uName">{{userName||'-'}}</span>
+                    <span class="uName">{{ userName || "-" }}</span>
 
                     <el-dropdown @command="handleCommand">
                       <span class="el-dropdown-link">
                         <img :src="settingPic" alt />
                       </span>
-                      <el-dropdown-menu slot="dropdown" :append-to-body="false" class="settingDrop">
-                        <el-dropdown-item command="0">修改密码</el-dropdown-item>
+                      <el-dropdown-menu
+                        slot="dropdown"
+                        :append-to-body="false"
+                        class="settingDrop"
+                      >
+                        <el-dropdown-item command="0"
+                          >修改密码</el-dropdown-item
+                        >
                         <el-dropdown-item command="1">退出</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -73,7 +79,7 @@
     >
       <el-form :model="form" label-width="88px" :rules="rules" ref="ruleForm">
         <el-form-item label="用户名:">
-          <span style="color: #fff;">{{userName||'-'}}</span>
+          <span style="color: #fff">{{ userName || "-" }}</span>
         </el-form-item>
         <el-form-item label="原密码:" prop="oldPass">
           <el-input
@@ -111,7 +117,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -182,6 +190,7 @@ export default {
       timerWeather: null,
       userName: '',
       isFixed: false,
+      menuDisable: false, // 菜单禁用
       projectTitle: '',
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
@@ -220,42 +229,42 @@ export default {
   created () {
     this.projectTitle = globalApi.projectTitle || '智慧农业实战应用平台'
     // 设备上线
-    EventBus.$on('video/device/online', info => {
+    EventBus.$on('video/device/online', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', info => {
+    EventBus.$on('video/device/offline', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', info => {
+    EventBus.$on('video/realVideo/streamStart', (info) => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', info => {
+    EventBus.$on('video/realVideo/streamEnd', (info) => {
       EventBus.$emit('streamEnd', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', info => {
+    EventBus.$on('droneInfos', (info) => {
       this.parseDroneRealtimeInfo(info)
     })
     // 人员识别提示
-    EventBus.$on('video/people/found', info => {
+    EventBus.$on('video/people/found', (info) => {
       this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
-    EventBus.$on('video/people/real', info => {
+    EventBus.$on('video/people/real', (info) => {
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示
-    EventBus.$on('video/aRAiResult', info => {
+    EventBus.$on('video/aRAiResult', (info) => {
       EventBus.$emit('getArChange', info)
     })
     // 云台角度信息
-    EventBus.$on('video/webControlPztNotice', info => {
+    EventBus.$on('video/webControlPztNotice', (info) => {
       EventBus.$emit('video/webControlPztChange', info)
     })
   },
@@ -315,15 +324,15 @@ export default {
       } else {
         this.$router.push({ path: '/systemSettings' })
       }
-      this.getPath()
+      // this.getPath()
     },
     init () {
-      amapApi.getLocation({}).then(res => {
+      amapApi.getLocation({}).then((res) => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then(res => {
+            amapApi.getWeather({ city: cityCode }).then((res) => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -339,7 +348,7 @@ export default {
       const tmpAxios = this.$axios
       this.$axios
         .get(loginApi.getUserDetail)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             const data = res.data.data
             // 获取案件聊天记录时，需要知道哪些消息是自己发的
@@ -349,9 +358,9 @@ export default {
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
               })
-              .then(res2 => {
+              .then((res2) => {
                 if (res2.data.code === 0) {
-                  res2.data.data.forEach(deptCode => {
+                  res2.data.data.forEach((deptCode) => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
                   tmpThis.realtimeInfoTopicArray.unshift(
@@ -359,12 +368,12 @@ export default {
                   )
                 }
               })
-              .catch(err2 => {
+              .catch((err2) => {
                 console.log('loginApi.getDeptByDeptCode Err : ' + err2)
               })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('loginApi.getUserDetail Err : ' + err)
         })
     },
@@ -390,6 +399,11 @@ export default {
     getPath () {
       const path = this.$route.path
       this.isFixed = false
+      this.menuDisable = false
+      if (path === '/gisDispatchDispose') {
+        this.menuDisable = true
+      }
+
       if (path === '/gisDispatch' || path === '/gisDispatchDispose') {
         this.isFixed = true
         this.isActive = 0
@@ -427,7 +441,7 @@ export default {
       this.dialogVisible = false
     },
     submitForm (formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           this.updatePassAxios()
         } else {
@@ -442,7 +456,7 @@ export default {
         newPassword: this.$md5(this.form.newPass),
         confirmPassword: this.$md5(this.form.confirmPass)
       }
-      this.$axios.post(loginApi.updatePass, params).then(res => {
+      this.$axios.post(loginApi.updatePass, params).then((res) => {
         if (res && res.data && res.data.code === 0) {
           this.$notify({
             title: '成功',
@@ -546,17 +560,24 @@ export default {
               background-size: 100% 100%;
             }
           }
-          .el-dropdown > .el-dropdown-link:focus {
-            outline: 0;
-          }
-          .el-dropdown > .el-dropdown-link {
-            outline: 0;
+          div.box.disable {
+            pointer-events: none;
           }
           div.settings {
             position: relative;
             width: 348px;
             background: url(../assets/images/home/setting_bg.svg) no-repeat;
             background-size: 100% 100%;
+            .el-dropdown > .el-dropdown-link:focus {
+              outline: 0;
+            }
+            .el-dropdown-menu__item:focus,
+            .el-dropdown-menu__item:not(.is-disabled):hover {
+              background-color: #022d42;
+            }
+            .el-dropdown > .el-dropdown-link {
+              outline: 0;
+            }
             div.info {
               position: absolute;
               top: -12px;

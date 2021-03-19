@@ -117,7 +117,12 @@ export default {
     this.userId = JSON.parse(localStorage.getItem('userDetail')).id
     if (this.$route.path !== '/caseCenter') {
       // 接收案件实时聊天信息
-      EventBus.$on('caseHandling', (info) => {
+      EventBus.$on('web/river/caseHandling', (message) => {
+        const str = 'web/river/caseHandling/'
+        const caseId = message.topic.substr(str.length)
+        // 只接收本案件的聊天信息
+        if (caseId !== this.caseId) return
+        const info = JSON.parse(message.payloadString)
         if (info.userid === this.userId) return
         const msg = {
           person: info.username,
@@ -131,7 +136,7 @@ export default {
   },
   destroyed () {
     if (this.$route.path !== '/caseCenter') {
-      EventBus.$off('caseHandling')
+      EventBus.$off('web/river/caseHandling')
     }
   },
   methods: {

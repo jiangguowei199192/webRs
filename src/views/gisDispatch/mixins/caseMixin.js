@@ -1,11 +1,16 @@
 import { caseApi } from '@/api/case'
+import { resApi } from '@/api/res'
 import { EventBus } from '@/utils/eventBus.js'
+import globalApi from '@/utils/globalApi'
 const caseMixin = {
   data () {
     return {
       members: [],
       organs: [],
       drones: [],
+      points: [],
+      lines: [],
+      areas: [],
       resInfos: [
         {
           name: '组织机构',
@@ -77,6 +82,9 @@ const caseMixin = {
   mounted () {
     this.getUserList()
     this.getDeptList()
+    this.getPointList()
+    this.getLineList()
+    this.getAreaList()
     EventBus.$on('droneRealtimeInfo', obj => {
       const d = this.drones.find(c => c.id === obj.snCode)
       if (d === undefined) return
@@ -93,6 +101,103 @@ const caseMixin = {
     EventBus.$off('droneRealtimeInfo')
   },
   methods: {
+    /**
+     * 获取点资源列表
+     */
+    getPointList () {
+      this.$axios
+        .post(
+          resApi.selectListPoint,
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            let list = res.data.data
+            list = JSON.parse(
+              JSON.stringify(list).replace(/resourcesLongitude/g, 'longitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/resourcesLatitude/g, 'latitude')
+            )
+            list.forEach((c) => {
+              c.type = 'RP_Point'
+              if (c.resourcesIcon) { c.resourcesIcon = globalApi.headImg + c.resourcesIcon }
+            })
+            this.points = list
+            this.getPointsDone()
+          }
+        })
+        .catch((err) => {
+          console.log('resApi.selectListPoint Err : ' + err)
+        })
+    },
+    /**
+     * 获取线资源列表
+     */
+    getLineList () {
+      this.$axios
+        .post(
+          resApi.selectListLine,
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            const list = res.data.data
+            list.forEach((c) => {
+              c.type = 'RP_Route'
+              // eslint-disable-next-line no-eval
+              c.longitudeLatitudeArray = eval(c.longitudeLatitudeArray)
+              c.strokeStyle = {
+                color: c.lineColor ? c.lineColor : 'rgba(0, 204, 255, 1)',
+                width: c.lineWidth ? c.lineWidth : 2
+              }
+            })
+            this.lines = list
+            this.getLinesDone()
+          }
+        })
+        .catch((err) => {
+          console.log('resApi.selectListLine Err : ' + err)
+        })
+    },
+    /**
+     * 获取面资源列表
+     */
+    getAreaList () {
+      this.$axios
+        .post(
+          resApi.selectListArea,
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            const list = res.data.data
+            list.forEach((c) => {
+              c.type = 'RP_Area'
+              // eslint-disable-next-line no-eval
+              c.longitudeLatitudeArray = eval(c.longitudeLatitudeArray)
+              c.strokeStyle = {
+                color: c.lineColor ? c.lineColor : 'rgba(0, 204, 255, 1)',
+                width: c.lineWidth ? c.lineWidth : 2
+              }
+              c.fillStyle = {
+                color: c.fillColor ? c.fillColor : 'rgba(0, 204, 255, 0.4)'
+              }
+            })
+            this.areas = list
+            this.getAreasDone()
+          }
+        })
+        .catch((err) => {
+          console.log('resApi.selectListArea Err : ' + err)
+        })
+    },
     /**
      * 获取组织人员
      */

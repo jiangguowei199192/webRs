@@ -59,42 +59,42 @@
   </div>
 </template>
 <script>
-import DetailInfo from "./components/detailInfo";
+import DetailInfo from './components/detailInfo'
 
 export default {
-  name: "structureData",
+  name: 'structureData',
   components: { DetailInfo },
-  data() {
+  data () {
     return {
-      radio: "人",
+      radio: '人',
       list: [
         {
-          deviceName: "样例样例样例样例样例样例样例样例样例",
-          address: "样例样例样例样例样例样例样例样例样例",
-          time: "2021-03-18 15:09:06",
+          deviceName: '样例样例样例样例样例样例样例样例样例',
+          address: '样例样例样例样例样例样例样例样例样例',
+          time: '2021-03-18 15:09:06'
         },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
-        { deviceName: "样例", address: "样例", time: "2021-03-18 15:09:06" },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
+        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' }
       ],
       pageTotal: 100,
       pageSize: 18,
       currentPage: 1,
-      showDetailInfo: false,
-    };
+      showDetailInfo: false
+    }
   },
   methods: {
-    currentPageChange() {},
-    sizeChange() {},
+    currentPageChange () {},
+    sizeChange () {}
   },
-  created() {},
-};
+  created () {}
+}
 </script>
 
 <style lang="scss" scoped>

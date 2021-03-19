@@ -39,18 +39,18 @@
   </div>
 </template>
 <script>
-import InfoBox from "./components/infoBox";
-import QrcodeBox from "./components/qrcodeBox";
+import InfoBox from './components/infoBox'
+import QrcodeBox from './components/qrcodeBox'
 
 export default {
-  name: "infoCenter",
+  name: 'infoCenter',
   components: { InfoBox, QrcodeBox },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   methods: {},
-  created() {},
-};
+  created () {}
+}
 </script>
 
 <style lang="scss" scoped>
