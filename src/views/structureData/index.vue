@@ -16,27 +16,27 @@
           <img src="../../../public/assets/images/camera_type.png" />
           <img src="../../../public/assets/images/camera_type.png" />
         </div>
-        <div style="margin-left: 10px; margin-right: 10px">
+        <div class="text-base">
           <div>
             <span class="item-text1">监控设备：</span>
             <span class="item-text2" :title="item.deviceName">{{
               item.deviceName
             }}</span>
           </div>
-          <div style="margin-top: 5px">
+          <div class="address">
             <span class="item-text1">地址：</span>
             <span class="item-text2" :title="item.address">{{
               item.address
             }}</span>
           </div>
-          <div style="margin-top: 5px">
+          <div class="address">
             <span class="item-text1">时间：</span>
             <span class="item-text2" :title="item.time">{{ item.time }}</span>
           </div>
         </div>
       </div>
     </div>
-    <div style="float: right; margin-top: 20px; margin-right: 55px">
+    <div class="page-base">
       <el-pagination
         class="tablePagination"
         popper-class="pageSelect"
@@ -144,6 +144,13 @@ export default {
       height: 124px;
       margin: 10px 0 0 10px;
     }
+    .text-base {
+      margin-left: 10px;
+      margin-right: 10px
+    }
+    .address {
+      margin-top: 5px;
+    }
     .item-text1 {
       font-size: 16px;
       color: #00d1ff;
@@ -161,5 +168,10 @@ export default {
       max-width: 160px;
     }
   }
+}
+.page-base {
+  float: right;
+  margin-top: 20px;
+  margin-right: 55px;
 }
 </style>

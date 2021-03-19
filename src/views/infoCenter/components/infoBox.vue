@@ -1,11 +1,11 @@
 <template>
   <div class="base">
     <div class="title">
-      <span style="margin-left: 17px">{{ title }}</span>
+      <span>{{ title }}</span>
     </div>
     <div class="list webFsScroll">
       <div class="list-item" v-for="(item, index) in list" :key="index">
-        <span class="item-title">{{item.title}}</span>
+        <span class="item-title" :title="item.title">{{item.title}}</span>
         <span class="item-time">{{item.time}}</span>
       </div>
     </div>
@@ -54,6 +54,9 @@ export default {
   margin-top: 20px;
   font-size: 18px;
   font-weight: bold;
+  span {
+    margin-left: 17px;
+  }
 }
 .list {
   height: 300px;

@@ -27,7 +27,7 @@ export default {
   }
   .text {
     float: right;
-    width: 160px;
+    width: 170px;
     margin: 14px 18px 0 0;
     font-size: 16px;
     color: #FEFEFE;

@@ -2,37 +2,37 @@
   <div class="infoCenter">
     <div>
       <InfoBox
-        style="float: left; margin-left: 25px"
         title="禁捕政策"
+        class="jbzc"
       ></InfoBox>
       <InfoBox
-        style="float: right; margin-right: 25px"
         title="工作进展"
+        class="gzjz"
       ></InfoBox>
     </div>
     <div>
       <InfoBox
-        style="float: left; margin-left: 25px; margin-top: 20px"
         title="禁捕区域"
+        class="jbqy"
       ></InfoBox>
       <InfoBox
-        style="float: right; margin-right: 25px; margin-top: 20px"
         title="成果展示"
+        class="cgzs"
       ></InfoBox>
     </div>
     <div>
-      <div class="qrcodeBase">
+      <div class="qrcodeBase1">
         <QrcodeBox
-          style="float: right; margin-top: 18px; margin-bottom: 18px"
           :src="require('../../assets/images/infoCenter/qrcode-nyj.png')"
           name="武汉市农业农村局"
+          class="nyncj"
         ></QrcodeBox>
       </div>
       <div class="qrcodeBase2">
         <QrcodeBox
-          style="float: left; margin-top: 18px; margin-bottom: 18px"
           :src="require('../../assets/images/infoCenter/qrcode-nyzf.png')"
           name="武汉市农业执法"
+          class="nyzf"
         ></QrcodeBox>
       </div>
     </div>
@@ -57,14 +57,42 @@ export default {
 .infoCenter {
   font-size: 12px;
 }
-.qrcodeBase {
+.jbzc {
+  float: left;
+  margin-left: 25px;
+}
+.gzjz {
+  float: right;
+  margin-right: 25px;
+}
+.jbqy {
+  float: left;
+  margin-left: 25px;
+  margin-top: 20px;
+}
+.cgzs {
+  float: right;
+  margin-right: 25px;
+  margin-top: 20px;
+}
+.qrcodeBase1 {
   width: 916px;
   float: left;
   margin-left: 25px;
+  .nyncj {
+    float: right;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
 }
 .qrcodeBase2 {
   width: 916px;
   float: right;
   margin-right: 25px;
+  .nyzf {
+    float: left;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
 }
 </style>
