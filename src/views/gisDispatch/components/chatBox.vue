@@ -31,10 +31,11 @@
 </template>
 
 <script>
-import { chatApi } from '@/api/chat'
+import { caseApi } from '@/api/case'
 import MqttService from '@/utils/mqttService'
 import { stringIsNullOrEmpty } from '@/utils/validate'
 import ChatContent from './chatContent'
+import globalApi from '@/utils/globalApi'
 export default {
   props: {
     isShow: {
@@ -50,7 +51,9 @@ export default {
     return {
       msg: '',
       userId: '',
-      username: ''
+      username: '',
+      fileTypes: ['mp4', 'png', 'jpg', 'jpeg'],
+      topic: ''
     }
   },
   components: {
@@ -59,6 +62,7 @@ export default {
   watch: {
     isShow (val) {
       if (val) {
+        this.topic = 'web/river/caseHandling/' + this.caseId
         this.$nextTick(() => {
           this.$refs.chatContent.getChatList()
         })
@@ -84,7 +88,7 @@ export default {
       if (stringIsNullOrEmpty(msg) || msg.trim().length === 0) return
       const time = new Date().getTime()
       new MqttService().client.send(
-        'web/river/caseHandling',
+        this.topic,
         JSON.stringify({
           sendTime: time,
           userid: this.userId,
@@ -136,20 +140,17 @@ export default {
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
-      formData.append('chatFile', f)
+      formData.append('file', f)
       this.$axios
-        .post(chatApi.uploadFile, formData, config)
+        .post(caseApi.uploadFile, formData, config)
         .then((res) => {
           if (res.data.code === 0) {
-            // const type = fileType === 'mp4' ? 'video' : 'img'
-            // this.sendCaseMessage(
-            //   type,
-            //   globalApi.headImg + res.data.data.filePath
-            // )
+            const type = fileType === 'mp4' ? 'video' : 'img'
+            this.sendCaseMessage(type, globalApi.headImg + res.data.data)
           }
         })
         .catch((err) => {
-          console.log('chatApi.uploadFile Err : ' + err)
+          console.log('caseApi.uploadFile Err : ' + err)
         })
     }
   }
