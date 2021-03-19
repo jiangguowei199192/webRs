@@ -81,7 +81,9 @@
         <div class="gisTitle">
           <span>案件信息</span>
         </div>
-        <div class="disposeInfo"></div>
+        <div class="disposeInfo">
+          <CaseStep class="record"></CaseStep>
+        </div>
       </div>
       <div class="resAround">
         <div class="gisTitle">
@@ -223,6 +225,7 @@ import { copyData } from '@/utils/public'
 import CaseMain from './components/caseMain'
 import ChatBox from './components/chatBox'
 import CaseAssign from './components/caseAssign'
+import CaseStep from '@/components/caseStep'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 import { EventBus } from '@/utils/eventBus.js'
@@ -375,7 +378,8 @@ export default {
     EllipsisTooltip,
     DisposeRecDialog,
     ChatBox,
-    CaseAssign
+    CaseAssign,
+    CaseStep
   },
   destroyed () {
     EventBus.$off('caseRadiusChange')
@@ -408,8 +412,28 @@ export default {
       me.getLinesDone()
       me.getAreasDone()
     })
+    this.getCaseRecord()
   },
   methods: {
+    /**
+     * 获取案件处置记录
+     */
+    getCaseRecord () {
+      this.$axios
+        .post(
+          caseApi.selectCaseRecord,
+          { id: this.caseInfo.id },
+          { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            EventBus.$emit('selectedCaseRecord', res.data.data.records)
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectCaseRecord Err : ' + err)
+        })
+    },
     /**
      * 获取案件详情
      */
@@ -767,11 +791,16 @@ export default {
       box-sizing: border-box;
       width: 329px;
       height: 588px;
-      background-color: rgba($color: #0179a2, $alpha: 0.95);
+      background-color: rgba($color: #004157, $alpha: 0.8);
       font-size: 12px;
       font-family: Source Han Sans CN;
       font-weight: bold;
       color: #ffffff;
+      padding: 20px 0 20px 10px;
+      .record {
+        margin: 0px;
+        height: 548px;
+      }
     }
   }
   .resAround {

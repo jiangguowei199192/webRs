@@ -35,17 +35,20 @@
               <tr>
                 <td>
                   <div v-if="event.dispositionNode == '受理'">
-                    <div class="processing-content-detail fl">
+                    <EllipsisTooltip
+                      v-if="!caseCenter"
+                      :contentText="
+                        '接案人员: ' + event.content.receivingAlarmMan
+                      "
+                      class="name alarmMan"
+                    ></EllipsisTooltip>
+                    <div v-else class="processing-content-detail fl">
                       <span>{{
                         "接案人员: " + event.content.receivingAlarmMan
                       }}</span>
                     </div>
                     <div class="processing-content-detail fr">
-                      <span
-                        ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
-                          event.createTime
-                        }}</span
-                      >
+                      <span>{{ event.createTime }}</span>
                     </div>
                   </div>
                   <div
@@ -57,11 +60,7 @@
                       <span>{{ "推送人: " + content_item.pushMan }}</span>
                     </div>
                     <div class="processing-content-detail fr">
-                      <span
-                        ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
-                          content_item.pushTime
-                        }}</span
-                      >
+                      <span>{{ content_item.pushTime }}</span>
                     </div>
                   </div>
                   <div
@@ -69,17 +68,31 @@
                     v-for="(content_item, content_index) in event.content"
                     :key="content_index"
                   >
-                    <div class="processing-content-detail fl">
+                    <div v-if="!caseCenter" class="fl eTooltip">
+                      <img
+                        class="police"
+                        src="../assets/images/caseCenter/police.svg"
+                      />
+                      <EllipsisTooltip
+                        :contentText="
+                          content_item.employeeName +
+                          ' ' +
+                          content_item.deptName
+                        "
+                        class="name"
+                      ></EllipsisTooltip>
+                    </div>
+                    <div v-else class="processing-content-detail fl eTooltip">
+                      <img
+                        class="police"
+                        src="../assets/images/caseCenter/police.svg"
+                      />
                       <span>{{
                         content_item.employeeName + " " + content_item.deptName
                       }}</span>
                     </div>
                     <div class="processing-content-detail fr">
-                      <span
-                        ><i class="el-icon-time"></i>&nbsp;&nbsp;{{
-                          event.createTime
-                        }}</span
-                      >
+                      <span>{{ event.createTime }}</span>
                     </div>
                   </div>
                   <div
@@ -98,8 +111,10 @@
                     v-else-if="event.dispositionNode == '回告'"
                   >
                     <p>处置记录：{{ event.content.dispositionRecord }}</p>
-                    <span>处置人：{{ event.content.employeeName }}</span>
-                    <span>处置时间：{{ event.content.dispositionTime }}</span>
+                    <div :class="[caseCenter ? 'row' : 'column']">
+                      <span>处置人：{{ event.content.employeeName }}</span>
+                      <span>处置时间：{{ event.content.dispositionTime }}</span>
+                    </div>
                     <div><span>附件：</span></div>
                   </div>
                 </td>
@@ -115,17 +130,20 @@
 <script>
 // import { caseApi } from '@/api/case'
 import { EventBus } from '@/utils/eventBus.js'
-
+import EllipsisTooltip from './ellipsisTooltip'
 export default {
   name: 'caseStep',
 
   props: {
     clickRowId: { type: String, required: false }
   },
-
+  components: {
+    EllipsisTooltip
+  },
   data () {
     return {
       eventStep: 0,
+      caseCenter: true,
       // events: {
       //   id: "",
       //   caseId: "", // 案件id
@@ -142,10 +160,13 @@ export default {
   watch: {},
 
   mounted () {
-    EventBus.$on('selectedCaseRecord', info => {
+    EventBus.$on('selectedCaseRecord', (info) => {
       this.disposeCaseInfo(info)
       console.log('info:', info)
     })
+    if (this.$route.path !== '/caseCenter') {
+      this.caseCenter = false
+    }
   },
 
   beforeDestroy () {
@@ -158,7 +179,7 @@ export default {
       // console.log("caseRecordInfo:", this.caseRecordInfo);
       this.events = info
       if (this.events.length !== 0) {
-        this.events.forEach(item => {
+        this.events.forEach((item) => {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
@@ -220,25 +241,55 @@ export default {
   /deep/.el-step.is-vertical .el-step__head {
     width: auto;
   }
+  /deep/.el-step .el-step__description {
+    padding-right: 0px;
+  }
+
   /deep/.el-step.is-vertical .el-step__main {
-    background: rgba(5, 31, 46, 0.9);
-    margin: 0 15px 30px 10px;
+    //background: rgba(5, 31, 46, 0.9);
+    //margin: 0 15px 30px 10px;
+    padding: 0px 10px 28px 12px;
   }
   /deep/.el-step__title.is-process,
   /deep/.el-step__title.is-wait {
     font-weight: 700;
     color: #82f3fa;
   }
-  .step-row {
-    width: 560px;
-    margin: 12px 0;
+  // .step-row {
+  //   width: 560px;
+  //   margin: 12px 0;
+  // }
+  // .processing-content {
+  //   background: rgba(5, 31, 46, 0.9);
+  // }
+  .eTooltip {
+    display: flex;
+    align-items: center;
   }
-  .processing-content {
-    background: rgba(5, 31, 46, 0.9);
+  .police {
+    width: 16px;
+    height: 15px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .fl {
+    float: left;
+  }
+  .fr {
+    float: right;
+  }
+  .name {
+    width: 110px;
+    color: #fff;
+    display: inline-block;
+    height: 20px;
+  }
+  .alarmMan {
+    width: 135px;
   }
   .processing-content-detail {
-    margin-right: 10px;
-    padding: 15px 0;
+    //margin-right: 10px;
+    //padding: 15px 0;
     color: #fff;
   }
   .detail-img {
@@ -254,11 +305,13 @@ export default {
     }
   }
   .detail-result {
-    span {
-      margin-right: 50px;
+    .row {
+      display: flex;
+      justify-content: space-between;
     }
-    div {
-      margin-top: 15px;
+    .column {
+      display: flex;
+      flex-direction: column;
     }
   }
 }
