@@ -411,6 +411,8 @@ export default {
       me.getPointsDone()
       me.getLinesDone()
       me.getAreasDone()
+      me.getCamerasDone()
+      me.getDronesDone()
     })
     this.getCaseRecord()
   },
@@ -488,6 +490,53 @@ export default {
       this.resList.forEach((l) => {
         this.totalRes += l.length
       })
+    },
+    /**
+     * 获取无人机资源完毕回调
+     */
+    getDronesDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.drones,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[2].num = count
+      this.resList[2] = []
+      this.drones.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.deviceName,
+            lat: l.latitude,
+            lon: l.longitude,
+            dist: parseInt(l.distance)
+          }
+          this.resList[2].push(o)
+        }
+      })
+      this.getTotalRes()
+    },
+    /**
+     * 获取高点监控资源完毕回调
+     */
+    getCamerasDone () {
+      const count = this.$refs.caseMain.addDatasInRadius(
+        this.cameras,
+        this.caseInfo,
+        this.radius
+      )
+      this.resInfos[3].num = count
+      this.resList[3] = []
+      this.cameras.forEach((l) => {
+        if (l.inRadius) {
+          const o = {
+            name: l.deviceName,
+            des: l.deviceAddress,
+            dist: parseInt(l.distance)
+          }
+          this.resList[3].push(o)
+        }
+      })
+      this.getTotalRes()
     },
     /**
      * 获取面资源完毕回调

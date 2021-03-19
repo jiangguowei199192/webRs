@@ -242,6 +242,22 @@ export default {
       this.$refs.caseMain.addDatas(this.onlineArray)
     },
     /**
+     * 获取无人机资源完毕回调
+     */
+    getDronesDone () {
+      this.resInfos[2].num = this.drones ? this.drones.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addDatas(this.drones)
+    },
+    /**
+     * 获取高点监控资源完毕回调
+     */
+    getCamerasDone () {
+      this.resInfos[3].num = this.cameras ? this.cameras.length : 0
+      this.getResDataWidth()
+      this.$refs.caseMain.addDatas(this.cameras)
+    },
+    /**
      * 获取面资源完毕回调
      */
     getAreasDone () {

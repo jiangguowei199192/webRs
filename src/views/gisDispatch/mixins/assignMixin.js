@@ -56,17 +56,22 @@ const assignMixin = {
         )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            const list = res.data.data
-            this.peoples = []
-            list.forEach((l) => {
-              const user = {
-                employeeName: l.employeeName,
-                deptName: l.deptName,
-                id: l.employeeId,
-                isCheck: false
-              }
-              this.peoples.push(user)
+            let list = res.data.data
+            list = JSON.parse(
+              JSON.stringify(list).replace(/userLongitude/g, 'longitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/userLatitude/g, 'latitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/employeeId/g, 'id')
+            )
+            list.forEach((c) => {
+              c.type = 'RP_Member'
+              c.isCheck = false
             })
+            this.peoples = list
+            this.getMembersDone()
           }
         })
         .catch((err) => {

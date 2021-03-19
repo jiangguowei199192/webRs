@@ -128,7 +128,7 @@ export default {
   },
   mounted () {
     EventBus.$on('droneRealtimeInfo', (obj) => {
-      if (obj.snCode !== this.dataInfo.id || !this.isOnline) return
+      if (obj.snCode !== this.dataInfo.id) return
       // 更新飞机数据
       obj.longitude = parseFloat(obj.longitude).toFixed(7)
       obj.latitude = parseFloat(obj.latitude).toFixed(7)

@@ -1,5 +1,6 @@
 import { caseApi } from '@/api/case'
 import { resApi } from '@/api/res'
+import { deviceApi } from '@/api/device'
 import { EventBus } from '@/utils/eventBus.js'
 import globalApi from '@/utils/globalApi'
 const caseMixin = {
@@ -11,6 +12,7 @@ const caseMixin = {
       points: [],
       lines: [],
       areas: [],
+      cameras: [],
       resInfos: [
         {
           name: '组织机构',
@@ -85,6 +87,8 @@ const caseMixin = {
     this.getPointList()
     this.getLineList()
     this.getAreaList()
+    this.getCameraList()
+    this.getDroneList()
     EventBus.$on('droneRealtimeInfo', obj => {
       const d = this.drones.find(c => c.id === obj.snCode)
       if (d === undefined) return
@@ -101,6 +105,72 @@ const caseMixin = {
     EventBus.$off('droneRealtimeInfo')
   },
   methods: {
+    /**
+     * 获取无人机列表
+     */
+    getDroneList () {
+      this.$axios
+        .post(
+          deviceApi.selectListWRJ,
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            let list = res.data.data
+            list = JSON.parse(
+              JSON.stringify(list).replace(/deviceLongitude/g, 'longitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/deviceLatitude/g, 'latitude')
+            )
+            list.forEach((c) => {
+              c.type = 'RP_Drone'
+              delete c.id
+              c.id = c.deviceCode
+            })
+            this.drones = list
+            this.getDronesDone()
+          }
+        })
+        .catch((err) => {
+          console.log('deviceApi.selectListWRJ Err : ' + err)
+        })
+    },
+    /**
+     * 获取高点监控列表
+     */
+    getCameraList () {
+      this.$axios
+        .post(
+          deviceApi.selectListGDJK,
+          {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            let list = res.data.data
+            list = JSON.parse(
+              JSON.stringify(list).replace(/deviceLongitude/g, 'longitude')
+            )
+            list = JSON.parse(
+              JSON.stringify(list).replace(/deviceLatitude/g, 'latitude')
+            )
+            list.forEach((c) => {
+              c.type = 'RP_Camera'
+              delete c.id
+              c.id = c.deviceCode
+            })
+            this.cameras = list
+            this.getCamerasDone()
+          }
+        })
+        .catch((err) => {
+          console.log('deviceApi.selectListGDJK Err : ' + err)
+        })
+    },
     /**
      * 获取点资源列表
      */

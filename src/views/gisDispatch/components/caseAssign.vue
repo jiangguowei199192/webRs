@@ -19,7 +19,7 @@
             </div>
           </div>
           <el-input
-           @change="getUserList()"
+            @change="getUserList()"
             v-model="search"
             class="search"
             placeholder="请输入姓名/身份证号进行搜索"
@@ -27,7 +27,7 @@
             <i slot="suffix"></i
           ></el-input>
           <div class="list listScroll">
-            <template v-for="(item, index) in peoples">
+            <template v-for="(item, index) in members">
               <div :key="index">
                 <span
                   :class="{ check: item.isCheck }"
@@ -98,12 +98,14 @@ export default {
       msg: '',
       userId: '',
       username: '',
-      radius: 5
+      radius: 5,
+      members: []
     }
   },
   watch: {
     isShow (val) {
       if (val) {
+        this.radius = 5
         this.selectList = []
         setTimeout(() => {
           if (!this.$refs.gduMap) return
@@ -180,16 +182,38 @@ export default {
       }
     },
     /**
+     * 获取组织人员完毕回调
+     */
+    getMembersDone () {
+      if (!this.$refs.gduMap) return
+
+      if (!isNaN(this.radius)) {
+        this.$refs.gduMap.map2D.gisDispatchManager.addDatasInRadius(
+          this.peoples,
+          this.caseInfo,
+          this.radius * 1000
+        )
+        this.members = []
+        this.peoples.forEach((l) => {
+          if (l.inRadius) {
+            this.members.push(l)
+          }
+        })
+      } else this.members = this.peoples
+    },
+    /**
      * 范围改变
      */
     radiusChange () {
-      try {
-        const r = parseFloat(this.radius)
+      if (!this.$refs.gduMap) return
+
+      if (!isNaN(this.radius)) {
         this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
           this.caseInfo,
-          r * 1000
+          this.radius * 1000
         )
-      } catch (error) {}
+        this.getMembersDone()
+      }
     }
   }
 }
