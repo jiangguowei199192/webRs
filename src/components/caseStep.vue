@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 13:52:14
+ * @LastEditTime: 2021-03-20 14:50:05
 -->
 <template>
   <div class="step-box listScroll">
@@ -111,14 +111,16 @@
                     v-else-if="event.dispositionNode == '回告'"
                   >
                     <p class="result-item">
-                      处置记录：{{ event.content.dispositionRecord }}
+                      处置记录：{{ caseDetailInfo.dispositionRecord }}
                     </p>
                     <div
                       :class="[caseCenter ? 'row' : 'column']"
                       class="result-item"
                     >
-                      <span>处置人：{{ event.content.employeeName }}</span>
-                      <span>处置时间：{{ event.content.dispositionTime }}</span>
+                      <span>处置人：{{ caseDetailInfo.dispositionMan }}</span>
+                      <span
+                        >处置时间：{{ caseDetailInfo.dispositionTime }}</span
+                      >
                     </div>
                     <div class="result-item">
                       <span>附件：</span>
@@ -175,7 +177,6 @@ export default {
 
   props: {
     clickRowId: { type: String, required: false }
-    // uploadFilesConfig: { type: Array, required: false }
   },
 
   data () {
@@ -192,6 +193,7 @@ export default {
       //   dispositionException: "" // 异常数量
       // },
       events: [],
+      caseDetailInfo: {},
       uploadFilesConfig: [],
       imgListPath: [],
       fileListPath: [],
@@ -210,6 +212,10 @@ export default {
       this.disposeUploadConfig(info)
     })
 
+    EventBus.$on('caseDetailInfo', info => {
+      this.caseDetailInfo = info
+    })
+
     if (this.$route.path !== '/caseCenter') {
       this.caseCenter = false
     }
@@ -218,6 +224,7 @@ export default {
   beforeDestroy () {
     EventBus.$off('selectedCaseRecord')
     EventBus.$off('uploadFilesConfig')
+    EventBus.$off('caseDetailInfo')
   },
 
   methods: {
@@ -278,7 +285,7 @@ export default {
             this.fileListPath.push(t)
           }
         })
-        console.log('uploadFilesConfig:', this.uploadFilesConfig)
+        // console.log('uploadFilesConfig:', this.uploadFilesConfig)
       }
     }
   }
@@ -388,6 +395,8 @@ export default {
       margin-top: 10px;
     }
     .img-box {
+      display: flex;
+      width: 550px;
       height: 80px;
       margin-top: 10px;
       overflow-x: auto;
