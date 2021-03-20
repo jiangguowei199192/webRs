@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 16:57:58
+ * @LastEditTime: 2021-03-20 18:23:57
 -->
 <template>
   <div class="caseCenter">
@@ -100,6 +100,7 @@
                   :key="img_index"
                   :src="serverUrl + img_item"
                   alt=""
+                  @click.stop="previewImg(img_index)"
                 />
               </div>
               <div class="file-box listScroll" v-if="fileListPath.length !== 0">
@@ -111,7 +112,7 @@
                 >
                   {{ file_item.split("_")[1] }}&nbsp;<em
                     style="color: #1ed8a0;font-weight: bold;"
-                    >点击上传</em
+                    >点击下载</em
                   >
                 </p>
               </div>
@@ -127,6 +128,17 @@
         </div>
       </div>
     </div>
+    <!-- 预览图片弹窗 -->
+    <el-dialog
+      :visible.sync="imgDialogVisible"
+      custom-class="el-dialog-custom"
+      :show-close="false"
+      type="primary"
+      @click.native="imgDialogVisible = false"
+      center
+    >
+      <img style="width: 100%;height: 100%;" :src="clickImgSrc" />
+    </el-dialog>
     <!-- 处置记录弹窗 -->
     <DisposeRecDialog
       ref="disposeRecRef"
@@ -176,7 +188,9 @@ export default {
       uploadFilesConfig: [],
       imgListPath: [],
       fileListPath: [],
-      serverUrl: globalApi.headImg
+      serverUrl: globalApi.headImg,
+      imgDialogVisible: false,
+      clickImgSrc: ''
     }
   },
 
@@ -207,30 +221,12 @@ export default {
       this.clickRowId = info.id
       this.getCaseDetail()
       this.getCaseRecord()
+      this.disposeUploadConfig()
     },
 
     // 按钮操作提交
     confirmRecordClick (data) {
       this.refreshTable()
-      setTimeout(() => {
-        this.uploadFilesConfig = data.uploadFileUrl.split(',')
-        this.uploadFilesConfig.forEach(t => {
-          const type = t.split('.')[1]
-          if (type === 'jpg' || type === 'jpeg' || type === 'png') {
-            this.imgListPath.push(t)
-          } else if (
-            type === 'doc' ||
-            type === 'docx' ||
-            type === 'xls' ||
-            type === 'xlsx' ||
-            type === 'rar' ||
-            type === 'zip'
-          ) {
-            this.fileListPath.push(t)
-          }
-        })
-        // console.log('uploadFilesConfig:', this.uploadFilesConfig)
-      }, 100)
     },
 
     // 获取案件列表
@@ -278,6 +274,37 @@ export default {
         .catch(err => {
           console.log('caseApi.selectCaseRecord Err : ' + err)
         })
+    },
+
+    // 处理已上传文件返回info
+    disposeUploadConfig () {
+      if (this.caseDetailInfo.disFinishAttachment) {
+        this.uploadFilesConfig = this.caseDetailInfo.disFinishAttachment.split(
+          ','
+        )
+        this.uploadFilesConfig.forEach(t => {
+          const type = t.split('.')[1]
+          if (type === 'jpg' || type === 'jpeg' || type === 'png') {
+            this.imgListPath.push(t)
+          } else if (
+            type === 'doc' ||
+            type === 'docx' ||
+            type === 'xls' ||
+            type === 'xlsx' ||
+            type === 'rar' ||
+            type === 'zip'
+          ) {
+            this.fileListPath.push(t)
+          }
+        })
+      }
+      // console.log('uploadFilesConfig:', this.uploadFilesConfig)
+    },
+
+    // 图片预览
+    previewImg (index) {
+      this.imgDialogVisible = true
+      this.clickImgSrc = this.serverUrl + this.imgListPath[index]
     }
   }
 }
@@ -410,7 +437,7 @@ export default {
         }
       }
       .handel-chat-record {
-      padding-right: 8px;
+        padding-right: 8px;
         margin-top: 50px;
       }
     }

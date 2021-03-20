@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 16:53:25
+ * @LastEditTime: 2021-03-20 18:24:22
 -->
 <template>
   <div class="step-box listScroll">
@@ -150,6 +150,7 @@
                           :key="img_index"
                           :src="serverUrl + img_item"
                           alt=""
+                          @click.stop="previewImg(img_index)"
                         />
                       </div>
                       <div class="file-box" v-if="fileListPath.length !== 0">
@@ -161,7 +162,7 @@
                         >
                           {{ file_item.split("_")[1] }}&nbsp;<em
                             style="color: #1ed8a0;font-weight: bold;"
-                            >点击上传</em
+                            >点击下载</em
                           >
                         </p>
                       </div>
@@ -174,6 +175,17 @@
         </template>
       </el-step></el-steps
     >
+    <!-- 预览图片弹窗 -->
+    <el-dialog
+      :visible.sync="imgDialogVisible"
+      custom-class="el-dialog-custom"
+      :show-close="false"
+      type="primary"
+      @click.native="imgDialogVisible = false"
+      center
+    >
+      <img style="width: 100%;height: 100%;" :src="clickImgSrc" />
+    </el-dialog>
   </div>
 </template>
 
@@ -210,7 +222,9 @@ export default {
       uploadFilesConfig: [],
       imgListPath: [],
       fileListPath: [],
-      serverUrl: globalApi.headImg
+      serverUrl: globalApi.headImg,
+      imgDialogVisible: false,
+      clickImgSrc: ''
     }
   },
 
@@ -300,6 +314,12 @@ export default {
         })
         // console.log('uploadFilesConfig:', this.uploadFilesConfig)
       }
+    },
+
+    // 图片预览
+    previewImg (index) {
+      this.imgDialogVisible = true
+      this.clickImgSrc = this.serverUrl + this.imgListPath[index]
     }
   }
 }
