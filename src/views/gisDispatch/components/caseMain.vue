@@ -55,6 +55,9 @@ export default {
     this.$refs.gduMap.map2D.gisDispatchManager.setCreateVueCompFunc(
       this.createVueCom
     )
+    this.$refs.gduMap.map2D.measureTool.drawEndEvent.addEventListener(
+      this.measureToolDrawEnd.bind(this)
+    )
   },
   beforeDestroy () {
     if (this.$refs.gduMap) {
@@ -66,6 +69,12 @@ export default {
     addDatas (data) {
       if (!this.$refs.gduMap) return
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)
+    },
+    /**
+     * 测量工具绘制一次完毕回调
+     */
+    measureToolDrawEnd () {
+      this.$refs.gduMap.map2D.measureTool.stop()
     },
     /**
      * 添加线和面资源

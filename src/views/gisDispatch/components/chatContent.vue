@@ -93,24 +93,7 @@ export default {
       dlgData: { type: '', msg: '' },
       userId: '',
       poster: require('../../../assets/images/loading.gif'),
-      talks: [
-        {
-          person: '武汉渔政 张三',
-          messages: ['将非法捕捞预警指派给王军'],
-          time: new Date().getTime()
-        },
-        {
-          person: '青山渔政 张三',
-          messages: ['已收到指令', '正在前往案发中心处置,随时上报案件处理情况'],
-          time: new Date().getTime()
-        },
-        {
-          person: '青山渔政 李四',
-          messages: ['ws://58.49.169.235:50010/live/5H00983PAKCC2CC0.flv'],
-          type: 'video',
-          time: new Date().getTime()
-        }
-      ]
+      talks: []
     }
   },
   mounted () {

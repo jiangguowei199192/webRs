@@ -212,28 +212,27 @@ export default {
 
     // 结案
     finishCase () {
-      this.$emit('confirmRecordClick', this.addCaseForm)
-      // const params = {
-      //   id: this.addCaseForm.id,
-      //   dispositionMan: this.addCaseForm.people,
-      //   dispositionRecord: this.addCaseForm.record,
-      //   dispositionTime: this.addCaseForm.time,
-      //   dispositionImgUrl: this.addCaseForm.uploadFileUrl
-      // }
-      // this.$axios
-      //   .post(caseApi.finishCase, params, {
-      //     headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-      //   })
-      //   .then(res => {
-      //     // console.log('处置记录提交res:', res)
-      //     if (res && res.data && res.data.code === 0) {
-      //       this.$emit('confirmRecordClick', this.addCaseForm)
-      //       this.updateIsShow('addCaseForm')
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log('caseApi.finishCase Err : ' + err)
-      //   })
+      const params = {
+        id: this.addCaseForm.id,
+        dispositionMan: this.addCaseForm.people,
+        dispositionRecord: this.addCaseForm.record,
+        dispositionTime: this.addCaseForm.time,
+        disFinishAttachment: this.addCaseForm.uploadFileUrl
+      }
+      this.$axios
+        .post(caseApi.finishCase, params, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          // console.log('处置记录提交res:', res)
+          if (res && res.data && res.data.code === 0) {
+            this.$emit('confirmRecordClick', this.addCaseForm)
+            this.updateIsShow('addCaseForm')
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.finishCase Err : ' + err)
+        })
     },
 
     // 处置info录入提交

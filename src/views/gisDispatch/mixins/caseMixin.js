@@ -6,6 +6,7 @@ import globalApi from '@/utils/globalApi'
 const caseMixin = {
   data () {
     return {
+      noPic: require('../../../assets/images/gisDispatch/no-pic.svg'),
       members: [],
       organs: [],
       drones: [],
@@ -105,6 +106,29 @@ const caseMixin = {
     EventBus.$off('droneRealtimeInfo')
   },
   methods: {
+    /**
+     * 获取案件图片
+     */
+    getCaseImg (disFinishAttachment) {
+      let file = null
+      if (!disFinishAttachment) return file
+      const fileType = [
+        'jpg',
+        'jpeg',
+        'png'
+      ]
+      const list = disFinishAttachment.split(',')
+      for (let i = 0; i < list.length; i++) {
+        const fileName = list[i]
+          .substring(list[i].lastIndexOf('.') + 1)
+          .toLowerCase()
+        if (fileType.indexOf(fileName) !== -1) {
+          file = list[i]
+          break
+        }
+      }
+      return file
+    },
     /**
      * 获取无人机列表
      */

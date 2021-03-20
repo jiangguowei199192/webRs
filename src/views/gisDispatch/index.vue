@@ -83,7 +83,7 @@
                   ></EllipsisTooltip>
                   <div class="caseInfo">
                     <div class="left">
-                      <img src="../../assets/images/gisDispatch/no-pic.svg" />
+                      <img :src="item.img || noPic" />
                       <span :class="{ green: item.caseStatus === '1' }">{{
                         formatCaseStatus(item.caseStatus)
                       }}</span>
@@ -137,6 +137,7 @@ import { caseApi } from '@/api/case'
 import EllipsisTooltip from '../../components/ellipsisTooltip'
 import { timeFormat } from '@/utils/date'
 import caseMixin from './mixins/caseMixin'
+import globalApi from '../../utils/globalApi'
 export default {
   data () {
     return {
@@ -316,15 +317,6 @@ export default {
       this.dateRange = [timeFormat(start), timeFormat(end)]
     },
     /**
-     * 在地图上添加案件标记
-     */
-    addCaseMarker () {
-      this.cases.forEach((c) => {
-        c.type = 'RP_Case'
-      })
-      this.$refs.caseMain.addCaseMarker(this.cases)
-    },
-    /**
      * 格式化案件状态
      */
     formatCaseStatus (caseStatus) {
@@ -413,7 +405,14 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.cases = res.data.data.records
             this.caseNums[0].num = res.data.data.total
-            this.addCaseMarker()
+            this.cases.forEach((c) => {
+              c.type = 'RP_Case'
+              const img = this.getCaseImg(c.disFinishAttachment)
+              if (img) {
+                c.img = globalApi.headImg + img
+              }
+            })
+            this.$refs.caseMain.addCaseMarker(this.cases)
             this.caseNums[1].num = this.cases.filter(
               (c) => c.caseStatus === '0'
             ).length

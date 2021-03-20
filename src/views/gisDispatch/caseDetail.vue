@@ -16,10 +16,7 @@
             >
           </div>
           <div class="info" v-show="active === 0">
-            <img
-              src="../../assets/images/gisDispatch/no-pic.svg"
-              class="left"
-            />
+            <img :src="caseInfo.img || noPic" class="left" />
             <div class="right">
               <EllipsisTooltip
                 class="caseName"
@@ -231,6 +228,7 @@ import DisposeRecDialog from '../caseCenter/components/disposeRecDialog'
 import { EventBus } from '@/utils/eventBus.js'
 import caseMixin from './mixins/caseMixin'
 import { caseApi } from '@/api/case'
+import globalApi from '../../utils/globalApi'
 export default {
   name: 'caseDetail',
   data () {
@@ -253,6 +251,7 @@ export default {
         latitude: '',
         type: '',
         caseStatus: '',
+        img: '',
         id: ''
       },
       selResIdx: 0,
@@ -465,6 +464,10 @@ export default {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
             copyData(data, this.caseInfo)
+            const img = this.getCaseImg(data.disFinishAttachment)
+            if (img) {
+              this.caseInfo.img = globalApi.headImg + img
+            }
             setTimeout(() => {
               this.$refs.caseMain.addCaseMarker([this.caseInfo])
               this.$refs.caseMain.zoomToCenter(

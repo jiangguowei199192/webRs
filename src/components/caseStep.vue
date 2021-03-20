@@ -23,6 +23,7 @@
             : event.dispositionNode + ' (' + event.dispositionStatus + ')'
         "
       >
+        <img :src="event.icon" slot="icon" />
         <template slot="description">
           <div class="step-row">
             <table
@@ -68,12 +69,13 @@
                     v-for="(content_item, content_index) in event.content"
                     :key="content_index"
                   >
-                    <div v-if="!caseCenter" class="fl eTooltip">
+                    <div class="fl eTooltip">
                       <img
                         class="police"
                         src="../assets/images/caseCenter/police.svg"
                       />
                       <EllipsisTooltip
+                        v-if="!caseCenter"
                         :contentText="
                           content_item.employeeName +
                             ' ' +
@@ -81,13 +83,7 @@
                         "
                         class="name"
                       ></EllipsisTooltip>
-                    </div>
-                    <div v-else class="processing-content-detail fl eTooltip">
-                      <img
-                        class="police"
-                        src="../assets/images/caseCenter/police.svg"
-                      />
-                      <span>{{
+                      <span v-else>{{
                         content_item.employeeName + " " + content_item.deptName
                       }}</span>
                     </div>
@@ -99,12 +95,35 @@
                     class="processing-content-detail detail-img listScroll"
                     v-else-if="event.dispositionNode == '处置'"
                   >
-                    <!-- <img
-                      v-for="(event_pic, pic_index) in event.picList"
-                      :key="pic_index"
-                      :src="event_pic.picPath"
-                      alt=""
-                    /> -->
+                    <div class="fl eTooltip">
+                      <img
+                        class="police"
+                        src="../assets/images/caseCenter/police.svg"
+                      />
+                      <EllipsisTooltip
+                        v-if="!caseCenter"
+                        :contentText="
+                          content_item.employeeName +
+                          ' ' +
+                          content_item.deptName
+                        "
+                        class="name"
+                      ></EllipsisTooltip>
+                      <span v-else>{{
+                        content_item.employeeName + " " + content_item.deptName
+                      }}</span>
+                    </div>
+                    <div class="processing-content-detail fr">
+                      <span>{{ event.createTime }}</span>
+                    </div>
+                    <div class="picBox">
+                      <span>上传照片</span>
+                      <div>
+                        <template v-for="(item, index) in event.picList">
+                          <img :key="index" :src="event_pic.picPath" alt="" />
+                        </template>
+                      </div>
+                    </div>
                   </div>
                   <div
                     class="processing-content-detail detail-result"
@@ -230,18 +249,23 @@ export default {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
+              item.icon = require('../assets/images/caseCenter/step1.svg')
               break
             case 1:
               item.dispositionNode = '批示'
+              item.icon = require('../assets/images/caseCenter/step2.svg')
               break
             case 2:
               item.dispositionNode = '召集'
+              item.icon = require('../assets/images/caseCenter/step3.svg')
               break
             case 3:
               item.dispositionNode = '处置'
+              item.icon = require('../assets/images/caseCenter/step4.svg')
               break
             case 4:
               item.dispositionNode = '回告'
+              item.icon = require('../assets/images/caseCenter/step5.svg')
               break
           }
           switch (item.dispositionStatus) {
@@ -316,8 +340,6 @@ export default {
   }
 
   /deep/.el-step.is-vertical .el-step__main {
-    //background: rgba(5, 31, 46, 0.9);
-    //margin: 0 15px 30px 10px;
     padding: 0px 10px 28px 12px;
   }
   /deep/.el-step__title.is-process,
@@ -325,16 +347,10 @@ export default {
     font-weight: 700;
     color: #82f3fa;
   }
-  // .step-row {
-  //   width: 560px;
-  //   margin: 12px 0;
-  // }
-  // .processing-content {
-  //   background: rgba(5, 31, 46, 0.9);
-  // }
   .eTooltip {
     display: flex;
     align-items: center;
+    color: #fff;
   }
   .police {
     width: 16px;
@@ -357,9 +373,10 @@ export default {
   .alarmMan {
     width: 135px;
   }
+  .picBox {
+    display: flex;
+  }
   .processing-content-detail {
-    //margin-right: 10px;
-    //padding: 15px 0;
     color: #fff;
   }
   .detail-img {
