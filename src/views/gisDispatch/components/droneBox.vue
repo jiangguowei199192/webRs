@@ -179,14 +179,23 @@ export default {
       background: url(../../../assets/images/gisDispatch/no-videoL.svg)
         no-repeat;
       background-size: 100% 100%;
-      margin-right: 33px;
+      margin-right: 23px;
     }
     .ulBox {
       box-sizing: border-box;
       margin-top: 15px;
-      ul li span:nth-child(2) {
-        display: inline-block;
+      padding-right: 8px;
+      ul li {
+        height: 20px;
+        line-height: 20px;
+        display: flex;
+         span {
+          min-width: 60px;
+          margin-right: 0px;
+        }
+        span:nth-child(2) {
         min-width: 30px;
+      }
       }
       .row1 {
         border-bottom: 1px solid #00a7e8;
@@ -196,7 +205,7 @@ export default {
         color: #fff;
       }
       .speedV {
-        min-width: 100px;
+        min-width: 90px;
       }
     }
   }

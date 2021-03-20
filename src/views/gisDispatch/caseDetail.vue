@@ -344,32 +344,7 @@ export default {
           lon: ''
         }
       ],
-      pushList: [
-        {
-          time: '2020-03-04 16:21:33',
-          txt: '张三 李四 王五'
-        },
-        {
-          time: '2020-03-04 16:21:33',
-          txt: '张三 李四 王五2233333355555555'
-        },
-        {
-          time: '2020-03-04 16:21:33',
-          txt: '张三 李四 王五'
-        },
-        {
-          time: '2020-03-04 16:21:33',
-          txt: '张三 李四 王五'
-        },
-        {
-          time: '2020-03-04 16:21:33',
-          txt: '张三 李四 王五'
-        },
-        {
-          time: '2020-03-04 16:21:33',
-          txt: '张三 李四 王五'
-        }
-      ]
+      pushList: []
     }
   },
   mixins: [caseMixin],
@@ -393,6 +368,7 @@ export default {
     this.caseInfo.type = 'RP_Case'
     this.caseInfo.hasFence = true
     this.getCaseDetail()
+    this.getPushList()
     const me = this
     // 每隔10分钟刷新一次案件详情
     this.detailTimeout = setTimeout(() => {
@@ -434,6 +410,41 @@ export default {
         })
         .catch((err) => {
           console.log('caseApi.selectCaseRecord Err : ' + err)
+        })
+    },
+    /**
+     * 获取案件推送列表
+     */
+    getPushList () {
+      this.$axios
+        .post(
+          caseApi.selectPushList,
+          { id: this.caseInfo.id },
+          { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
+        )
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            const list = res.data.data
+            this.pushList = []
+            list.forEach((l) => {
+              let txt = ''
+              for (let i = 0; i < l.pushMans.length; i++) {
+                const s =
+                  i === l.pushMans.length.length - 1
+                    ? l.pushMans[i].employeeName
+                    : l.pushMans[i].employeeName + ' '
+                txt += s
+              }
+              const p = {
+                time: l.pushTime,
+                txt: txt
+              }
+              this.pushList.push(p)
+            })
+          }
+        })
+        .catch((err) => {
+          console.log('caseApi.selectPushList Err : ' + err)
         })
     },
     /**

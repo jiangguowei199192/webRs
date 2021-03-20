@@ -9,6 +9,7 @@ export const caseApi = {
   uploadFiles: '/fms-river-protection/file/uploads', // 多文件上传
   selectUsers: '/fms-river-protection/riverCase/selectListEmployee', // 查询在线人员
   selectDepts: '/fms-river-protection/riverCase/selectListDeptInfo', // 查询组织机构
+  selectPushList: '/fms-river-protection/pushInfo/selectPushList', // 根据案件ID查询推送列表
   caseAssign: '/fms-river-protection/riverDesignate/designateUsers' // 案件分派
 
 }

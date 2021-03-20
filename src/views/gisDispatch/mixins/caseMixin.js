@@ -18,7 +18,7 @@ const caseMixin = {
           name: '组织机构',
           img: require('../../../assets/images/gisDispatch/institution.svg'),
           imgS: require('../../../assets/images/gisDispatch/institution-select.svg'),
-          num: 8,
+          num: 0,
           color: '#20F2F5',
           view: true,
           width: 0
@@ -27,7 +27,7 @@ const caseMixin = {
           name: '组织人员',
           img: require('../../../assets/images/gisDispatch/people.svg'),
           imgS: require('../../../assets/images/gisDispatch/people-select.svg'),
-          num: 12,
+          num: 0,
           color: '#CCFF00',
           view: true,
           width: 0
@@ -36,7 +36,7 @@ const caseMixin = {
           name: '无人机',
           img: require('../../../assets/images/gisDispatch/drone.svg'),
           imgS: require('../../../assets/images/gisDispatch/drone-select.svg'),
-          num: 4,
+          num: 0,
           color: '#EF4E22',
           view: true,
           width: 0
@@ -45,7 +45,7 @@ const caseMixin = {
           name: '高点监控',
           img: require('../../../assets/images/gisDispatch/camera.svg'),
           imgS: require('../../../assets/images/gisDispatch/camera-select.svg'),
-          num: 15,
+          num: 0,
           color: '#49EF22',
           view: true,
           width: 0
@@ -54,7 +54,7 @@ const caseMixin = {
           name: '重点区域',
           img: require('../../../assets/images/gisDispatch/area.svg'),
           imgS: require('../../../assets/images/gisDispatch/area-select.svg'),
-          num: 3,
+          num: 0,
           color: '#E92D2D',
           view: true,
           width: 0
@@ -63,7 +63,7 @@ const caseMixin = {
           name: '重要路线',
           img: require('../../../assets/images/gisDispatch/route.svg'),
           imgS: require('../../../assets/images/gisDispatch/route-select.svg'),
-          num: 7,
+          num: 0,
           color: '#CCFF00',
           view: true,
           width: 0
@@ -72,7 +72,7 @@ const caseMixin = {
           name: '关注点位',
           img: require('../../../assets/images/gisDispatch/point.svg'),
           imgS: require('../../../assets/images/gisDispatch/point-select.svg'),
-          num: 7,
+          num: 0,
           color: '#82F3FA',
           view: true,
           width: 0
