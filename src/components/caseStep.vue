@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 14:50:05
+ * @LastEditTime: 2021-03-20 16:53:25
 -->
 <template>
   <div class="step-box listScroll">
@@ -104,8 +104,8 @@
                         v-if="!caseCenter"
                         :contentText="
                           content_item.employeeName +
-                          ' ' +
-                          content_item.deptName
+                            ' ' +
+                            content_item.deptName
                         "
                         class="name"
                       ></EllipsisTooltip>
@@ -130,16 +130,14 @@
                     v-else-if="event.dispositionNode == '回告'"
                   >
                     <p class="result-item">
-                      处置记录：{{ caseDetailInfo.dispositionRecord }}
+                      处置记录：{{ event.content.dispositionRecord }}
                     </p>
                     <div
                       :class="[caseCenter ? 'row' : 'column']"
                       class="result-item"
                     >
-                      <span>处置人：{{ caseDetailInfo.dispositionMan }}</span>
-                      <span
-                        >处置时间：{{ caseDetailInfo.dispositionTime }}</span
-                      >
+                      <span>处置人：{{ event.content.employeeName }}</span>
+                      <span>处置时间：{{ event.content.dispositionTime }}</span>
                     </div>
                     <div class="result-item">
                       <span>附件：</span>
@@ -154,10 +152,7 @@
                           alt=""
                         />
                       </div>
-                      <div
-                        class="file-box listScroll"
-                        v-if="fileListPath.length !== 0"
-                      >
+                      <div class="file-box" v-if="fileListPath.length !== 0">
                         <p
                           class=""
                           v-for="(file_item, file_index) in fileListPath"
@@ -212,7 +207,6 @@ export default {
       //   dispositionException: "" // 异常数量
       // },
       events: [],
-      caseDetailInfo: {},
       uploadFilesConfig: [],
       imgListPath: [],
       fileListPath: [],
@@ -231,10 +225,6 @@ export default {
       this.disposeUploadConfig(info)
     })
 
-    EventBus.$on('caseDetailInfo', info => {
-      this.caseDetailInfo = info
-    })
-
     if (this.$route.path !== '/caseCenter') {
       this.caseCenter = false
     }
@@ -243,7 +233,6 @@ export default {
   beforeDestroy () {
     EventBus.$off('selectedCaseRecord')
     EventBus.$off('uploadFilesConfig')
-    EventBus.$off('caseDetailInfo')
   },
 
   methods: {
@@ -324,6 +313,7 @@ export default {
   margin: 20px 0 0 15px;
   height: 470px;
   overflow-y: auto;
+  overflow-x: hidden;
   /deep/.el-step__icon.is-text {
     border: 1px solid #00ccff;
   }
@@ -399,7 +389,6 @@ export default {
     }
   }
   .detail-result {
-    // width: 600px;
     .row {
       display: flex;
       justify-content: space-between;
@@ -413,7 +402,7 @@ export default {
     }
     .img-box {
       display: flex;
-      width: 550px;
+      width: 510px;
       height: 80px;
       margin-top: 10px;
       overflow-x: auto;

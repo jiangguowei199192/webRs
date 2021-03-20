@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 14:45:00
+ * @LastEditTime: 2021-03-20 16:57:58
 -->
 <template>
   <div class="caseCenter">
@@ -213,7 +213,6 @@ export default {
     confirmRecordClick (data) {
       this.refreshTable()
       setTimeout(() => {
-        this.uploadFiles = data
         this.uploadFilesConfig = data.uploadFileUrl.split(',')
         this.uploadFilesConfig.forEach(t => {
           const type = t.split('.')[1]
@@ -274,7 +273,6 @@ export default {
             this.caseRecordInfo = res.data.data.records
             EventBus.$emit('selectedCaseRecord', this.caseRecordInfo)
             EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
-            EventBus.$emit('caseDetailInfo', this.caseDetailInfo)
           }
         })
         .catch(err => {
@@ -288,18 +286,21 @@ export default {
 <style lang="scss" scoped>
 .caseCenter {
   display: flex;
-  padding: 12px 60px 60px 60px;
+  padding: 0 60px 60px 60px;
   .case-table {
-    width: 1140px;
+    width: 1120px;
   }
   .case-detail {
     width: 644px;
-    margin: 80px 0 0 10px;
+    margin: 75px 0 0 10px;
     .case-info {
-      height: 278px;
-      background: rgba(0, 65, 87, 0.6);
+      height: 258px;
+      // background-color: rgba(0, 65, 87, 0.6);
+      background: url(../../assets/images/caseCenter/case_wrap.svg) no-repeat
+        center/100% 100%;
+      padding: 10px 0 20px 12px;
       .case-header {
-        width: 178px;
+        width: 168px;
         height: 30px;
         line-height: 30px;
         background: linear-gradient(
@@ -311,8 +312,8 @@ export default {
         padding: 0 20px;
       }
       .case-content {
-        width: 644px;
-        height: 236px;
+        width: 614px;
+        height: 216px;
         margin-top: 10px;
         overflow-y: auto;
         h4 {
@@ -329,7 +330,7 @@ export default {
           color: #fff;
           height: 36px;
           line-height: 36px;
-          padding: 0 30px;
+          padding: 0 20px;
           .content-item {
             display: flex;
             justify-content: space-between;
@@ -351,9 +352,10 @@ export default {
           margin-bottom: 10px;
         }
         .simple-describe,
+        .handel-result,
         .handel-attach {
           line-height: 28px;
-          span {
+          span:nth-child(1) {
             color: #82f3fa;
             font-weight: bold;
           }
@@ -389,11 +391,16 @@ export default {
       }
     }
     .handel-info {
-      width: 644px;
-      height: 536px;
-      background: rgba(0, 65, 87, 0.6);
+      width: 624px;
+      height: 530px;
+      // background-color: rgba(0, 65, 87, 0.6);
+      background: url(../../assets/images/caseCenter/chat_wrap.svg) no-repeat
+        center/100% 100%;
+      padding: 10px;
       margin-top: 10px;
+      overflow-x: hidden;
       h3 {
+        position: absolute;
         font-size: 16px;
         font-weight: bold;
         line-height: 35px;
@@ -402,9 +409,10 @@ export default {
           color: #82f3fa;
         }
       }
-      // .handel-chat-record {
-      //   color:#0cca91
-      // }
+      .handel-chat-record {
+      padding-right: 8px;
+        margin-top: 50px;
+      }
     }
   }
   ::-webkit-scrollbar {

@@ -374,8 +374,11 @@ export default {
 
 <style lang="scss" scoped>
 .tableBox {
-  background: rgba(0, 65, 87, 0.6);
-  height: 823px;
+  // background-color: rgba(0, 65, 87, 0.6);
+  background: url(../assets/images/caseCenter/table_wrap.svg) no-repeat
+    center/100% 100%;
+  height: 839px;
+  padding: 10px 10px 0 10px;
   .btn {
     display: inline-block;
     width: 46px;
