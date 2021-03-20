@@ -6,6 +6,7 @@ import axios from './axios/axios'
 import $ from 'jquery'
 import ElementUI from 'element-ui'
 import gMap from '@/components/gMap'
+import globalApi from '@/utils/globalApi'
 
 import 'element-ui/lib/theme-chalk/index.css'
 // import './style/theme/index.css'
@@ -25,6 +26,23 @@ Vue.prototype.$ = $
 Vue.config.productionTip = false
 Vue.prototype.$md5 = md5
 Vue.prototype.$confirm = ElementUI.MessageBox.confirm
+
+const baseDownloadUrl = globalApi.headImg
+Vue.directive('download', {
+  inserted: (el, binding) => {
+    el.style.cssText = 'cursor: pointer;color:#fff;'
+    el.addEventListener('click', () => {
+      const link = document.createElement('a')
+      const url = baseDownloadUrl + binding.value
+      fetch(url).then(res => res.blob()).then(blob => {
+        link.href = URL.createObjectURL(blob)
+        link.download = ''
+        document.body.appendChild(link)
+        setTimeout(() => { link.click() }, 300)
+      })
+    })
+  }
+})
 
 new Vue({
   router,

@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-18 19:48:40
+ * @LastEditTime: 2021-03-20 13:52:14
 -->
 <template>
   <div class="step-box listScroll">
@@ -13,7 +13,7 @@
         v-for="(event, event_index) in events"
         :key="event_index"
         :title="
-          event_index == 2
+          event.dispositionNode == '召集'
             ? event.dispositionNode +
               ' (' +
               event.dispositionStatus +
@@ -44,7 +44,7 @@
                     ></EllipsisTooltip>
                     <div v-else class="processing-content-detail fl">
                       <span>{{
-                        "接案人员: " + event.content.receivingAlarmMan
+                        "接案人员：" + event.content.receivingAlarmMan
                       }}</span>
                     </div>
                     <div class="processing-content-detail fr">
@@ -57,7 +57,7 @@
                     :key="content_index"
                   >
                     <div class="processing-content-detail fl">
-                      <span>{{ "推送人: " + content_item.pushMan }}</span>
+                      <span>{{ "推送人：" + content_item.pushMan }}</span>
                     </div>
                     <div class="processing-content-detail fr">
                       <span>{{ content_item.pushTime }}</span>
@@ -76,8 +76,8 @@
                       <EllipsisTooltip
                         :contentText="
                           content_item.employeeName +
-                          ' ' +
-                          content_item.deptName
+                            ' ' +
+                            content_item.deptName
                         "
                         class="name"
                       ></EllipsisTooltip>
@@ -110,12 +110,46 @@
                     class="processing-content-detail detail-result"
                     v-else-if="event.dispositionNode == '回告'"
                   >
-                    <p>处置记录：{{ event.content.dispositionRecord }}</p>
-                    <div :class="[caseCenter ? 'row' : 'column']">
+                    <p class="result-item">
+                      处置记录：{{ event.content.dispositionRecord }}
+                    </p>
+                    <div
+                      :class="[caseCenter ? 'row' : 'column']"
+                      class="result-item"
+                    >
                       <span>处置人：{{ event.content.employeeName }}</span>
                       <span>处置时间：{{ event.content.dispositionTime }}</span>
                     </div>
-                    <div><span>附件：</span></div>
+                    <div class="result-item">
+                      <span>附件：</span>
+                      <div
+                        class="img-box listScroll"
+                        v-if="imgListPath.length !== 0"
+                      >
+                        <img
+                          v-for="(img_item, img_index) in imgListPath"
+                          :key="img_index"
+                          :src="serverUrl + img_item"
+                          alt=""
+                        />
+                      </div>
+                      <div
+                        class="file-box listScroll"
+                        v-if="fileListPath.length !== 0"
+                      >
+                        <p
+                          class=""
+                          v-for="(file_item, file_index) in fileListPath"
+                          :key="file_index"
+                          v-download="file_item"
+                        >
+                          {{ file_item.split("_")[1] }}&nbsp;<em
+                            style="color: #1ed8a0;font-weight: bold;"
+                            >点击上传</em
+                          >
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -128,18 +162,22 @@
 </template>
 
 <script>
-// import { caseApi } from '@/api/case'
 import { EventBus } from '@/utils/eventBus.js'
 import EllipsisTooltip from './ellipsisTooltip'
+import globalApi from '@/utils/globalApi'
+
 export default {
   name: 'caseStep',
 
-  props: {
-    clickRowId: { type: String, required: false }
-  },
   components: {
     EllipsisTooltip
   },
+
+  props: {
+    clickRowId: { type: String, required: false }
+    // uploadFilesConfig: { type: Array, required: false }
+  },
+
   data () {
     return {
       eventStep: 0,
@@ -153,17 +191,25 @@ export default {
       //   createTime: "", // 创建时间
       //   dispositionException: "" // 异常数量
       // },
-      events: []
+      events: [],
+      uploadFilesConfig: [],
+      imgListPath: [],
+      fileListPath: [],
+      serverUrl: globalApi.headImg
     }
   },
 
   watch: {},
 
   mounted () {
-    EventBus.$on('selectedCaseRecord', (info) => {
+    EventBus.$on('selectedCaseRecord', info => {
       this.disposeCaseInfo(info)
-      console.log('info:', info)
     })
+
+    EventBus.$on('uploadFilesConfig', info => {
+      this.disposeUploadConfig(info)
+    })
+
     if (this.$route.path !== '/caseCenter') {
       this.caseCenter = false
     }
@@ -171,6 +217,7 @@ export default {
 
   beforeDestroy () {
     EventBus.$off('selectedCaseRecord')
+    EventBus.$off('uploadFilesConfig')
   },
 
   methods: {
@@ -179,7 +226,7 @@ export default {
       // console.log("caseRecordInfo:", this.caseRecordInfo);
       this.events = info
       if (this.events.length !== 0) {
-        this.events.forEach((item) => {
+        this.events.forEach(item => {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
@@ -209,6 +256,29 @@ export default {
               break
           }
         })
+      }
+    },
+
+    // 处理已上传文件返回info
+    disposeUploadConfig (info) {
+      this.uploadFilesConfig = info
+      if (this.uploadFilesConfig.length !== 0) {
+        this.uploadFilesConfig.forEach(t => {
+          const type = t.split('.')[1]
+          if (type === 'jpg' || type === 'jpeg' || type === 'png') {
+            this.imgListPath.push(t)
+          } else if (
+            type === 'doc' ||
+            type === 'docx' ||
+            type === 'xls' ||
+            type === 'xlsx' ||
+            type === 'rar' ||
+            type === 'zip'
+          ) {
+            this.fileListPath.push(t)
+          }
+        })
+        console.log('uploadFilesConfig:', this.uploadFilesConfig)
       }
     }
   }
@@ -305,6 +375,7 @@ export default {
     }
   }
   .detail-result {
+    // width: 600px;
     .row {
       display: flex;
       justify-content: space-between;
@@ -312,6 +383,32 @@ export default {
     .column {
       display: flex;
       flex-direction: column;
+    }
+    .result-item {
+      margin-top: 10px;
+    }
+    .img-box {
+      height: 80px;
+      margin-top: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      cursor: pointer;
+      img {
+        width: 120px;
+        height: 68px;
+        margin-right: 10px;
+        vertical-align: top;
+      }
+    }
+    .file-box {
+      padding-bottom: 20px;
+      p {
+        font-size: 12px;
+        line-height: 26px;
+      }
+      p:nth-child(1) {
+        margin-top: 20px;
+      }
     }
   }
 }

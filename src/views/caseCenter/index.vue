@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-17 17:31:53
+ * @LastEditTime: 2021-03-20 13:38:07
 -->
 <template>
   <div class="caseCenter">
@@ -24,19 +24,19 @@
         <div class="case-content listScroll">
           <div class="base">
             <h4>基本信息</h4>
-            <div>
+            <div class="content-item">
               <p>
                 <span>案件名称: </span>
                 <span>{{ caseDetailInfo.caseName }}</span>
               </p>
             </div>
-            <div>
+            <div class="content-item">
               <p>
                 <span>案发时间: </span
                 ><span>{{ caseDetailInfo.caseStartTime }}</span>
               </p>
             </div>
-            <div>
+            <div class="content-item">
               <p>
                 <span>举报人: </span><span>{{ caseDetailInfo.reportMan }}</span>
               </p>
@@ -45,7 +45,7 @@
                 ><span>{{ caseDetailInfo.reporterGender }}</span>
               </p>
             </div>
-            <div>
+            <div class="content-item">
               <p>
                 <span>身份证: </span
                 ><span>{{ caseDetailInfo.reporterIdentity }}</span>
@@ -55,7 +55,7 @@
                 ><span>{{ caseDetailInfo.reportTel }}</span>
               </p>
             </div>
-            <div>
+            <div class="content-item">
               <p>
                 <span>举报地址: </span
                 ><span>{{ caseDetailInfo.reportAddr }}</span>
@@ -67,7 +67,7 @@
                 ><span>{{ caseDetailInfo.caseDesc }}</span>
               </p>
             </div>
-            <div>
+            <div class="content-item">
               <p>
                 <span>接案人: </span
                 ><span>{{ caseDetailInfo.receivingAlarmMan }}</span>
@@ -76,7 +76,7 @@
           </div>
           <div class="handel">
             <h4>处置信息</h4>
-            <div>
+            <div class="content-item">
               <p>
                 <span>处置时间: </span
                 ><span>{{ caseDetailInfo.dispositionTime }}</span>
@@ -94,14 +94,27 @@
             </div>
             <div class="handel-attach">
               <span>相关附件: </span>
-              <!-- <div class="listScroll">
+              <div class="img-box listScroll" v-if="imgListPath.length !== 0">
                 <img
                   v-for="(img_item, img_index) in imgListPath"
                   :key="img_index"
                   :src="serverUrl + img_item"
                   alt=""
                 />
-              </div> -->
+              </div>
+              <div class="file-box listScroll" v-if="fileListPath.length !== 0">
+                <p
+                  class=""
+                  v-for="(file_item, file_index) in fileListPath"
+                  :key="file_index"
+                  v-download="file_item"
+                >
+                  {{ file_item.split("_")[1] }}&nbsp;<em
+                    style="color: #1ed8a0;font-weight: bold;"
+                    >点击上传</em
+                  >
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -161,18 +174,9 @@ export default {
       clickRowId: '',
       caseRecordInfo: [],
       uploadFilesConfig: [],
+      imgListPath: [],
+      fileListPath: [],
       serverUrl: globalApi.headImg
-      // caseRecordInfo: [
-      //   {
-      //     caseId: '',
-      //     content: '',
-      //     createTime: '',
-      //     dispositionException: '',
-      //     dispositionNode: '',
-      //     dispositionStatus: '',
-      //     id: ''
-      //   }
-      // ]
     }
   },
 
@@ -207,12 +211,26 @@ export default {
 
     // 按钮操作提交
     confirmRecordClick (data) {
-      // data.forEach(item => {
-      //   this.uploadFilesConfig.push(item.uploadFileUrl);
-      // });
-      this.uploadFilesConfig = data.uploadFileUrl
-      console.log('uploadFilesConfig:', data)
       this.refreshTable()
+      setTimeout(() => {
+        this.uploadFilesConfig = data.uploadFileUrl.split(',')
+        this.uploadFilesConfig.forEach(t => {
+          const type = t.split('.')[1]
+          if (type === 'jpg' || type === 'jpeg' || type === 'png') {
+            this.imgListPath.push(t)
+          } else if (
+            type === 'doc' ||
+            type === 'docx' ||
+            type === 'xls' ||
+            type === 'xlsx' ||
+            type === 'rar' ||
+            type === 'zip'
+          ) {
+            this.fileListPath.push(t)
+          }
+        })
+        // console.log('uploadFilesConfig:', this.uploadFilesConfig)
+      }, 100)
     },
 
     // 获取案件列表
@@ -254,6 +272,7 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.caseRecordInfo = res.data.data.records
             EventBus.$emit('selectedCaseRecord', this.caseRecordInfo)
+            EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
           }
         })
         .catch(err => {
@@ -309,7 +328,7 @@ export default {
           height: 36px;
           line-height: 36px;
           padding: 0 30px;
-          div {
+          .content-item {
             display: flex;
             justify-content: space-between;
             p {
@@ -330,25 +349,38 @@ export default {
           margin-bottom: 10px;
         }
         .simple-describe,
-        .handel-result {
-          line-height: 28px;
-        }
         .handel-attach {
-          height: 80px;
-          margin-top: 15px;
+          line-height: 28px;
           span {
             color: #82f3fa;
             font-weight: bold;
           }
-          div {
-            width: 500px;
+        }
+        .handel-attach {
+          margin-top: 15px;
+          flex-direction: column;
+          .img-box {
+            display: flex;
+            height: 80px;
+            margin-top: 10px;
             overflow-x: auto;
+            overflow-y: hidden;
             cursor: pointer;
             img {
               width: 120px;
               height: 68px;
               margin-right: 10px;
               vertical-align: top;
+            }
+          }
+          .file-box {
+            padding-bottom: 20px;
+            p {
+              font-size: 12px;
+              line-height: 26px;
+            }
+            p:nth-child(1) {
+              margin-top: 20px;
             }
           }
         }
@@ -368,10 +400,14 @@ export default {
           color: #82f3fa;
         }
       }
-      .handel-chat-record {
-        // color:#0cca91
-      }
+      // .handel-chat-record {
+      //   color:#0cca91
+      // }
     }
+  }
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 5px;
   }
 }
 </style>
