@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 13:38:07
+ * @LastEditTime: 2021-03-20 14:45:00
 -->
 <template>
   <div class="caseCenter">
@@ -213,6 +213,7 @@ export default {
     confirmRecordClick (data) {
       this.refreshTable()
       setTimeout(() => {
+        this.uploadFiles = data
         this.uploadFilesConfig = data.uploadFileUrl.split(',')
         this.uploadFilesConfig.forEach(t => {
           const type = t.split('.')[1]
@@ -273,6 +274,7 @@ export default {
             this.caseRecordInfo = res.data.data.records
             EventBus.$emit('selectedCaseRecord', this.caseRecordInfo)
             EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
+            EventBus.$emit('caseDetailInfo', this.caseDetailInfo)
           }
         })
         .catch(err => {
