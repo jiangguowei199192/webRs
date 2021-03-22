@@ -111,7 +111,7 @@
                   v-download="file_item"
                 >
                   {{ file_item.split("_")[1] }}&nbsp;<em
-                    style="color: #1ed8a0;font-weight: bold;"
+                    style="color: #1ed8a0; font-weight: bold"
                     >点击下载</em
                   >
                 </p>
@@ -120,7 +120,7 @@
           </div>
         </div>
       </div>
-      <div class="handel-info ">
+      <div class="handel-info">
         <h3>
           <span :class="{ select: active === 0 }" @click.stop="active = 0"
             >处置记录</span
@@ -130,13 +130,13 @@
           >
         </h3>
         <!-- 处置记录 -->
-        <CaseStep class="handel-chat-record " v-show="active === 0"></CaseStep>
+        <CaseStep class="handel-chat-record" v-show="active === 0"></CaseStep>
         <!-- 聊天记录 -->
         <ChatContent
-          class="handel-chat-record "
+          class="handel-chat-record"
           v-show="active === 1"
           ref="chatContent"
-          :caseId="caseId"
+          :caseId="clickRowId"
         ></ChatContent>
       </div>
     </div>
@@ -149,7 +149,7 @@
       @click.native="imgDialogVisible = false"
       center
     >
-      <img style="width: 100%;height: 100%;" :src="clickImgSrc" />
+      <img style="width: 100%; height: 100%" :src="clickImgSrc" />
     </el-dialog>
     <!-- 处置记录弹窗 -->
     <DisposeRecDialog
@@ -250,6 +250,9 @@ export default {
       this.getCaseDetail()
       this.getCaseRecord()
       this.disposeUploadConfig()
+      this.$nextTick(() => {
+        this.$refs.chatContent.getChatList()
+      })
     },
 
     // 按钮操作提交
@@ -272,13 +275,13 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then(res => {
+        .then((res) => {
           // console.log('基本信息res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseDetailInfo = res.data.data
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('caseApi.selectDetail Err : ' + err)
         })
     },
@@ -291,7 +294,7 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then(res => {
+        .then((res) => {
           // console.log('处置记录res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseRecordInfo = res.data.data.records
@@ -299,7 +302,7 @@ export default {
             EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('caseApi.selectCaseRecord Err : ' + err)
         })
     },
@@ -310,7 +313,7 @@ export default {
         this.uploadFilesConfig = this.caseDetailInfo.disFinishAttachment.split(
           ','
         )
-        this.uploadFilesConfig.forEach(t => {
+        this.uploadFilesConfig.forEach((t) => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             this.imgListPath.push(t)
@@ -469,8 +472,10 @@ export default {
         }
       }
       .handel-chat-record {
+        font-size: 14px;
         padding-right: 8px;
         margin-top: 50px;
+        padding: 0px 15px;
       }
     }
   }
