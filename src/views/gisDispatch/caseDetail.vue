@@ -1,5 +1,5 @@
 <template>
-  <CaseMain ref="caseMain" :showTool="true">
+  <CaseMain ref="caseMain" :showTool="true" @clearScreen="clearScreen">
     <div class="caseDetail" slot="main">
       <div class="singleCase">
         <div class="gisTitle">
@@ -397,6 +397,12 @@ export default {
     this.getCaseRecord()
   },
   methods: {
+    /**
+     * 更新案件范围
+     */
+    clearScreen () {
+      this.$refs.caseMain.updateCaseRadius(this.caseInfo, 0)
+    },
     /**
      * 获取案件处置记录
      */

@@ -97,7 +97,7 @@
                           }}</span>
                         </div>
                         <div class="processing-content-detail fr">
-                          <span>{{ content_item.receivingAlarmTime }}</span>
+                          <span>{{ content_item.createTime }}</span>
                         </div>
                         <div
                           class="processing-content-detail"
@@ -109,13 +109,13 @@
                           <span>{{
                             formatAcceptTime(
                               content_item.receivingAlarmTime,
-                              event.createTime
+                              content_item.createTime
                             )
                           }}</span>
                           <span style="color: red">{{
                             formatExceedTime(
                               content_item.receivingAlarmTime,
-                              event.createTime
+                              content_item.createTime
                             )
                           }}</span>
                         </div>

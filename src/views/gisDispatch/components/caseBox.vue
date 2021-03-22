@@ -74,6 +74,7 @@ export default {
     if (this.$route.path !== '/gisDispatch') {
       this.isGisDispatch = false
     }
+    if (this.dataInfo.radius !== undefined) this.radius = this.dataInfo.radius
     const me = this
     EventBus.$on('setCaseRadius', (radius) => {
       me.radius = radius
@@ -99,10 +100,9 @@ export default {
      * 范围改变
      */
     radiusChange () {
-      try {
-        const r = parseFloat(this.radius)
-        EventBus.$emit('caseRadiusChange', r)
-      } catch (error) {}
+      if (!isNaN(this.radius)) {
+        EventBus.$emit('caseRadiusChange', this.radius)
+      }
     }
   }
 }

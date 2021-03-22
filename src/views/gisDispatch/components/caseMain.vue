@@ -101,11 +101,18 @@ export default {
       this.$refs.gduMap.map2D.gisDispatchManager.removeAllOtherFeatures()
     },
     /**
+     * 更新案件范围
+     */
+    updateCaseRadius (data, radius) {
+      this.$refs.gduMap.map2D.gisDispatchManager.updateCaseRadius(data, radius)
+    },
+    /**
      * 清屏
      */
     clearScreen () {
       this.$refs.gduMap.map2D.gisDispatchManager.removeAllOtherFeatures()
       this.$refs.gduMap.map2D.measureTool.clear()
+      this.$emit('clearScreen')
     },
     /**
      * 在地图上添加案件标记
