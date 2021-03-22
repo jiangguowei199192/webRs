@@ -76,7 +76,68 @@ const routes = [
         path: '/systemSettings',
         name: 'systemSettings',
         component: () => import('../views/systemSettings'),
-        children: []
+        children: [
+          {
+            path: '/systemSettings/institutionManagement',
+            name: 'institutionManagement',
+            component: () => import('../views/systemSettings/institutionManagement')
+          },
+          {
+            path: '/systemSettings/userManagement',
+            name: 'userManagement',
+            component: () => import('../views/systemSettings/userManagement')
+          },
+          {
+            path: '/systemSettings/roleManagement',
+            name: 'roleManagement',
+            component: () => import('../views/systemSettings/roleManagement')
+          },
+          {
+            path: '/systemSettings/functionPermission',
+            name: 'functionPermission',
+            component: () => import('../views/systemSettings/functionPermission')
+          },
+          {
+            path: '/systemSettings/dataPermission',
+            name: 'dataPermission',
+            component: () => import('../views/systemSettings/dataPermission')
+          },
+          {
+            path: '/systemSettings/dataDictionary',
+            name: 'dataDictionary',
+            component: () => import('../views/systemSettings/dataDictionary')
+          },
+          {
+            path: '/systemSettings/pointResource',
+            name: 'pointResource',
+            component: () => import('../views/systemSettings/pointResource')
+          },
+          {
+            path: '/systemSettings/lineResource',
+            name: 'lineResource',
+            component: () => import('../views/systemSettings/lineResource')
+          },
+          {
+            path: '/systemSettings/surfaceResource',
+            name: 'surfaceResource',
+            component: () => import('../views/systemSettings/surfaceResource')
+          },
+          {
+            path: '/systemSettings/videoData',
+            name: 'videoData',
+            component: () => import('../views/systemSettings/videoData')
+          },
+          {
+            path: '/systemSettings/iconLibrary',
+            name: 'iconLibrary',
+            component: () => import('../views/systemSettings/iconLibrary')
+          },
+          {
+            path: '/systemSettings/fireList',
+            name: 'fireList',
+            component: () => import('../views/systemSettings/fireList')
+          }
+        ]
       }
     ]
   }

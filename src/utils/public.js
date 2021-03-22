@@ -42,13 +42,16 @@ export function throttle (fn, interval = 200) {
 // 8 character ID (base=16)
 // uuid(8, 16) // "098F4D35"
 export function uuid (len, radix) {
-  var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
-  var uuid = []; var i
+  var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(
+    ''
+  )
+  var uuid = []
+  var i
   radix = radix || chars.length
 
   if (len) {
     // Compact form
-    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix]
+    for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)]
   } else {
     // rfc4122, version 4 form
     var r
@@ -61,8 +64,8 @@ export function uuid (len, radix) {
     // per rfc4122, sec. 4.1.5
     for (i = 0; i < 36; i++) {
       if (!uuid[i]) {
-        r = 0 | Math.random() * 16
-        uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r]
+        r = 0 | (Math.random() * 16)
+        uuid[i] = chars[i === 19 ? (r & 0x3) | 0x8 : r]
       }
     }
   }
@@ -71,10 +74,10 @@ export function uuid (len, radix) {
 }
 
 /**
-     *  拷贝数据
-     * @param {Object} src
-     * @param {Object} dst
-     */
+ *  拷贝数据
+ * @param {Object} src
+ * @param {Object} dst
+ */
 export function copyData (src, dst) {
   for (var b in dst) {
     // 拷贝属性
@@ -85,8 +88,8 @@ export function copyData (src, dst) {
 }
 
 /**
-     * 根据内外网替换StreamUrl
-     */
+ * 根据内外网替换StreamUrl
+ */
 export function replaceStreamUrl (streamUrl, baseUrl) {
   if (streamUrl) {
     const startI = baseUrl.indexOf('//')
@@ -99,4 +102,27 @@ export function replaceStreamUrl (streamUrl, baseUrl) {
     return 'ws://' + url + ':40021/' + stream // 消防测试环境视频端口
     // return 'ws://' + url + ':40007/' + stream // 长江大保护视频端口
   }
+}
+
+/**
+ *  二维数组转字符串
+ */
+export function arrToStr (objarr) {
+  var arrLen = objarr.length
+  var row = '['
+  for (var i = 0; i < arrLen; i++) {
+    row += '['
+    for (var j = 0; j < objarr[i].length; j++) {
+      row += objarr[i][j]
+      if (j < objarr[i].length - 1) {
+        row += ','
+      }
+    }
+    row += ']'
+    if (i < arrLen - 1) {
+      row += ','
+    }
+  }
+  row += ']'
+  return row
 }

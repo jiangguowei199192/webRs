@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-22 15:11:16
+ * @LastEditTime: 2021-03-22 15:52:29
 -->
 <template>
   <div class="caseCenter">
@@ -206,7 +206,6 @@ export default {
       serverUrl: globalApi.headImg,
       imgDialogVisible: false,
       clickImgSrc: '',
-      topic: '',
       caseId: ''
     }
   },
@@ -214,7 +213,6 @@ export default {
   watch: {
     active (now, old) {
       if (now === 1) {
-        this.topic = 'web/river/caseHandling/' + this.caseId
         this.$nextTick(() => {
           this.$refs.chatContent.getChatList()
         })
@@ -275,13 +273,13 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then((res) => {
+        .then(res => {
           // console.log('基本信息res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseDetailInfo = res.data.data
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('caseApi.selectDetail Err : ' + err)
         })
     },
@@ -294,7 +292,7 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then((res) => {
+        .then(res => {
           // console.log('处置记录res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseRecordInfo = res.data.data.records
@@ -302,7 +300,7 @@ export default {
             EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('caseApi.selectCaseRecord Err : ' + err)
         })
     },
@@ -313,7 +311,7 @@ export default {
         this.uploadFilesConfig = this.caseDetailInfo.disFinishAttachment.split(
           ','
         )
-        this.uploadFilesConfig.forEach((t) => {
+        this.uploadFilesConfig.forEach(t => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             this.imgListPath.push(t)
@@ -464,9 +462,6 @@ export default {
         line-height: 35px;
         padding: 5px 15px;
         cursor: pointer;
-        span:nth-child(1) {
-          color: #82f3fa;
-        }
         span.select {
           color: #1ae256;
         }
