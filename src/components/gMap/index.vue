@@ -468,7 +468,7 @@ export default {
       this.map2D = new D2.Map2D({
         containerId: this.mapContainerID,
         baseLayerType: this.mapTypeCur,
-        mapOriginType: 'gaode',
+        mapOriginType: 'tianditu',
         serverBaseUrl: rootUrl,
         bIsOnline: bNetWorkConn,
         rpClickSelect: true,

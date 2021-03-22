@@ -6,7 +6,7 @@
     <div class="content">
       <div class="playerBox" @dblclick="showDialog">
         <LivePlayer
-          v-if="dataInfo.urls && dataInfo.urls.length > 0"
+          v-if="urls && urls.length > 0"
           :videoUrl="streamUrl"
           :show-custom-button="false"
           :muted="false"
@@ -22,7 +22,7 @@
         <span
           class="change"
           @click="changeStream"
-          v-if="dataInfo.urls && dataInfo.urls.length > 1"
+          v-if="urls && urls.length > 1"
         ></span>
       </div>
       <div class="ulBox">
@@ -74,34 +74,29 @@
 
 <script>
 import LivePlayer from '@liveqing/liveplayer'
+import streamMixin from '../mixins/streamMixin'
 export default {
   name: 'camerBox',
   data () {
     return {
-      streamUrl: '',
       poster: require('../../../assets/images/loading.gif'),
       dialogVisible: false
-    }
-  },
-  props: {
-    dataInfo: {
-      default: () => {}
     }
   },
   components: {
     LivePlayer
   },
+  mixins: [streamMixin],
   mounted () {
-    if (this.dataInfo.urls && this.dataInfo.urls.length > 0) {
-      this.streamUrl = this.dataInfo.urls[0]
-    }
   },
   methods: {
     /**
      *  显示视频放大对话框窗口
      */
     showDialog () {
-      if (this.dataInfo.urls && this.dataInfo.urls.length > 0) { this.dialogVisible = true }
+      if (this.urls && this.urls.length > 0) {
+        this.dialogVisible = true
+      }
     },
     /**
      *  关闭vue overlay
@@ -115,7 +110,7 @@ export default {
      *  切换视频（高点监控可见光/红外切换）
      */
     changeStream () {
-      const url = this.dataInfo.urls.find((u) => u !== this.streamUrl)
+      const url = this.urls.find((u) => u !== this.streamUrl)
       this.streamUrl = url
     }
   }

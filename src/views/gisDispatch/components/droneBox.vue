@@ -6,8 +6,8 @@
     <div class="content">
       <div class="playerBox" @dblclick="showDialog">
         <LivePlayer
-          v-if="dataInfo.url"
-          :videoUrl="dataInfo.url"
+          v-if="streamUrl"
+          :videoUrl="streamUrl"
           :show-custom-button="false"
           :muted="false"
           :controls="false"
@@ -32,11 +32,11 @@
           </li>
           <li>
             <span>状态：</span>
-            <span>{{ dataInfo.brand }}</span>
+            <span>{{ formatOnlineStatus(dataInfo.onlineStatus) }}</span>
           </li>
           <li>
             <span>品牌： </span>
-            <span>{{ dataInfo.address }}</span>
+            <span>{{ dataInfo.brand }}</span>
           </li>
         </ul>
         <ul>
@@ -79,7 +79,7 @@
       :append-to-body="true"
     >
       <LivePlayer
-        :videoUrl="dataInfo.url"
+        :videoUrl="streamUrl"
         :show-custom-button="false"
         :muted="false"
         :controls="false"
@@ -101,6 +101,7 @@
 import LivePlayer from '@liveqing/liveplayer'
 import { EventBus } from '@/utils/eventBus.js'
 import { copyData } from '@/utils/public'
+import streamMixin from '../mixins/streamMixin'
 export default {
   name: 'camerBox',
   data () {
@@ -118,14 +119,10 @@ export default {
       dialogVisible: false
     }
   },
-  props: {
-    dataInfo: {
-      default: () => {}
-    }
-  },
   components: {
     LivePlayer
   },
+  mixins: [streamMixin],
   mounted () {
     EventBus.$on('droneRealtimeInfo', (obj) => {
       if (obj.snCode !== this.dataInfo.id) return
@@ -143,10 +140,17 @@ export default {
   },
   methods: {
     /**
+     * 格式化在线状态
+     */
+    formatOnlineStatus (onlineStatus) {
+      if (onlineStatus === 'offline') return '离线'
+      else return '在线'
+    },
+    /**
      *  显示视频放大对话框窗口
      */
     showDialog () {
-      if (this.dataInfo.url) {
+      if (this.streamUrl) {
         this.dialogVisible = true
       }
     },
@@ -189,13 +193,13 @@ export default {
         height: 20px;
         line-height: 20px;
         display: flex;
-         span {
+        span {
           min-width: 60px;
           margin-right: 0px;
         }
         span:nth-child(2) {
-        min-width: 30px;
-      }
+          min-width: 30px;
+        }
       }
       .row1 {
         border-bottom: 1px solid #00a7e8;
