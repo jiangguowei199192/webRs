@@ -64,63 +64,93 @@
                       <span>{{ content_item.pushTime }}</span>
                     </div>
                   </div>
-                  <div
-                    v-else-if="event.dispositionNode == '召集'"
-                    v-for="(content_item, content_index) in event.content"
-                    :key="content_index"
-                  >
-                    <div class="fl eTooltip">
-                      <img
-                        class="police"
-                        src="../assets/images/caseCenter/police.svg"
-                      />
-                      <EllipsisTooltip
-                        v-if="!caseCenter"
-                        :contentText="
-                          content_item.employeeName +
-                            ' ' +
+                  <div v-else-if="event.dispositionNode == '召集'">
+                    <div class="processing-content-detail">
+                      已推送{{ event.content.length }}人
+                    </div>
+                    <template v-for="(content_item, index) in event.content">
+                      <div
+                        :key="index"
+                        class="together"
+                        :class="{
+                          hasBorder: index !== event.content.length - 1,
+                        }"
+                      >
+                        <div class="fl eTooltip">
+                          <img
+                            class="police"
+                            src="../assets/images/caseCenter/police.svg"
+                          />
+                          <EllipsisTooltip
+                            v-if="!caseCenter"
+                            :contentText="
+                              content_item.employeeName +
+                              ' ' +
+                              content_item.deptName
+                            "
+                            class="name"
+                          ></EllipsisTooltip>
+                          <span v-else>{{
+                            content_item.employeeName +
+                            " " +
                             content_item.deptName
-                        "
-                        class="name"
-                      ></EllipsisTooltip>
-                      <span v-else>{{
-                        content_item.employeeName + " " + content_item.deptName
-                      }}</span>
-                    </div>
-                    <div class="processing-content-detail fr">
-                      <span>{{ event.createTime }}</span>
-                    </div>
+                          }}</span>
+                        </div>
+                        <div class="processing-content-detail fr">
+                          <span>{{ content_item.receivingAlarmTime }}</span>
+                        </div>
+                        <div
+                          class="processing-content-detail"
+                          style="clear: both"
+                        >
+                          <span>{{ content_item.designateStatus }}</span>
+                        </div>
+                        <div>
+                          <span>{{ content_item.receivingAlarmTime }}</span>
+                        </div>
+                      </div>
+                    </template>
                   </div>
                   <div
-                    class="processing-content-detail detail-img listScroll"
+                    class="processing-content-detail"
                     v-else-if="event.dispositionNode == '处置'"
                   >
-                    <div class="fl eTooltip">
-                      <img
-                        class="police"
-                        src="../assets/images/caseCenter/police.svg"
-                      />
-                      <EllipsisTooltip
-                        v-if="!caseCenter"
-                        :contentText="
-                          content_item.employeeName +
+                    <div class="dispose">
+                      <div class="eTooltip">
+                        <img
+                          class="police"
+                          src="../assets/images/caseCenter/police.svg"
+                        />
+                        <EllipsisTooltip
+                          v-if="!caseCenter"
+                          :contentText="
+                            event.content.employeeName +
                             ' ' +
-                            content_item.deptName
-                        "
-                        class="name"
-                      ></EllipsisTooltip>
-                      <span v-else>{{
-                        content_item.employeeName + " " + content_item.deptName
-                      }}</span>
-                    </div>
-                    <div class="processing-content-detail fr">
+                            event.content.deptName
+                          "
+                          class="name"
+                        ></EllipsisTooltip>
+                        <span v-else>{{
+                          event.content.employeeName +
+                          " " +
+                          event.content.deptName
+                        }}</span>
+                      </div>
                       <span>{{ event.createTime }}</span>
                     </div>
                     <div class="picBox">
                       <span>上传照片</span>
-                      <div>
-                        <template v-for="(item, index) in event.picList">
-                          <img :key="index" :src="event_pic.picPath" alt="" />
+                      <div
+                        class="imgScroll"
+                        :class="[caseCenter ? 'box1' : 'box2']"
+                      >
+                        <template v-for="(item, index) in event.imgListPath">
+                          <img
+                            :key="index"
+                            :src="serverUrl + item"
+                            alt=""
+                            @click.stop="previewImg(item)"
+                          />
                         </template>
                       </div>
                     </div>
@@ -129,39 +159,38 @@
                     class="processing-content-detail detail-result"
                     v-else-if="event.dispositionNode == '回告'"
                   >
-                    <p class="result-item">
-                      处置记录：{{ event.content.dispositionRecord }}
-                    </p>
-                    <div
-                      :class="[caseCenter ? 'row' : 'column']"
-                      class="result-item"
-                    >
+                    <p>处置记录：{{ event.content.dispositionRecord }}</p>
+                    <div :class="[caseCenter ? 'row' : 'column']">
                       <span>处置人：{{ event.content.employeeName }}</span>
                       <span>处置时间：{{ event.content.dispositionTime }}</span>
                     </div>
                     <div class="result-item">
                       <span>附件：</span>
                       <div
-                        class="img-box listScroll"
-                        v-if="imgListPath.length !== 0"
+                        class="img-box imgScroll"
+                        :class="[caseCenter ? 'img-box1' : 'img-box2']"
+                        v-if="event.imgListPath.length !== 0"
                       >
                         <img
-                          v-for="(img_item, img_index) in imgListPath"
+                          v-for="(img_item, img_index) in event.imgListPath"
                           :key="img_index"
                           :src="serverUrl + img_item"
                           alt=""
-                          @click.stop="previewImg(img_index)"
+                          @click.stop="previewImg(img_item)"
                         />
                       </div>
-                      <div class="file-box" v-if="fileListPath.length !== 0">
+                      <div
+                        class="file-box"
+                        v-if="event.fileListPath.length !== 0"
+                      >
                         <p
                           class=""
-                          v-for="(file_item, file_index) in fileListPath"
+                          v-for="(file_item, file_index) in event.fileListPath"
                           :key="file_index"
                           v-download="file_item"
                         >
                           {{ file_item.split("_")[1] }}&nbsp;<em
-                            style="color: #1ed8a0;font-weight: bold;"
+                            style="color: #1ed8a0; font-weight: bold"
                             >点击下载</em
                           >
                         </p>
@@ -184,7 +213,7 @@
       @click.native="imgDialogVisible = false"
       center
     >
-      <img style="width: 100%;height: 100%;" :src="clickImgSrc" />
+      <img style="width: 100%; height: 100%" :src="clickImgSrc" />
     </el-dialog>
   </div>
 </template>
@@ -219,9 +248,6 @@ export default {
       //   dispositionException: "" // 异常数量
       // },
       events: [],
-      uploadFilesConfig: [],
-      imgListPath: [],
-      fileListPath: [],
       serverUrl: globalApi.headImg,
       imgDialogVisible: false,
       clickImgSrc: ''
@@ -231,12 +257,8 @@ export default {
   watch: {},
 
   mounted () {
-    EventBus.$on('selectedCaseRecord', info => {
+    EventBus.$on('selectedCaseRecord', (info) => {
       this.disposeCaseInfo(info)
-    })
-
-    EventBus.$on('uploadFilesConfig', info => {
-      this.disposeUploadConfig(info)
     })
 
     if (this.$route.path !== '/caseCenter') {
@@ -252,10 +274,9 @@ export default {
   methods: {
     // 处理处置记录info
     disposeCaseInfo (info) {
-      // console.log("caseRecordInfo:", this.caseRecordInfo);
       this.events = info
       if (this.events.length !== 0) {
-        this.events.forEach(item => {
+        this.events.forEach((item) => {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
@@ -275,6 +296,19 @@ export default {
               break
             case 4:
               item.dispositionNode = '回告'
+              // if (item.content.disFinishAttachment) {
+              //   item.picList = []
+              //   const list = item.content.disFinishAttachment.split(',')
+              //   list.forEach((s) => {
+              //     item.picList.push(globalApi.headImg + s)
+              //   })
+              // }
+              if (item.content.disFinishAttachment) {
+                item.imgListPath = []
+                item.fileListPath = []
+                const list = item.content.disFinishAttachment.split(',')
+                this.disposeUploadConfig(list, item)
+              }
               item.icon = require('../assets/images/caseCenter/step5.svg')
               break
           }
@@ -294,13 +328,12 @@ export default {
     },
 
     // 处理已上传文件返回info
-    disposeUploadConfig (info) {
-      this.uploadFilesConfig = info
-      if (this.uploadFilesConfig.length !== 0) {
-        this.uploadFilesConfig.forEach(t => {
+    disposeUploadConfig (info, item) {
+      if (info.length !== 0) {
+        info.forEach((t) => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
-            this.imgListPath.push(t)
+            item.imgListPath.push(t)
           } else if (
             type === 'doc' ||
             type === 'docx' ||
@@ -309,23 +342,35 @@ export default {
             type === 'rar' ||
             type === 'zip'
           ) {
-            this.fileListPath.push(t)
+            item.fileListPath.push(t)
           }
         })
-        // console.log('uploadFilesConfig:', this.uploadFilesConfig)
       }
     },
 
     // 图片预览
-    previewImg (index) {
+    previewImg (path) {
       this.imgDialogVisible = true
-      this.clickImgSrc = this.serverUrl + this.imgListPath[index]
+      this.clickImgSrc = this.serverUrl + path
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.imgScroll::-webkit-scrollbar {
+  height: 3px;
+}
+.imgScroll::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 3px;
+  background: #00b7ff;
+}
+.imgScroll::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  background: transparent;
+}
+
 .step-box {
   color: #fff;
   font-size: 14px;
@@ -390,8 +435,41 @@ export default {
   .alarmMan {
     width: 135px;
   }
-  .picBox {
+  .dispose {
     display: flex;
+    justify-content: space-between;
+  }
+  .together {
+    box-sizing: border-box;
+    height: 57px;
+    padding: 8px 0px;
+  }
+  .together.hasBorder {
+    border-bottom: 1px dashed #00b8ff;
+  }
+  .picBox {
+    box-sizing: border-box;
+    margin-top: 10px;
+    clear: both;
+    display: flex;
+    height: 70px;
+    span {
+      display: inline-block;
+      width: 20px;
+      line-height: 15px;
+    }
+    .box2 {
+      width: 240px;
+    }
+    > div {
+      display: flex;
+      overflow-x: auto;
+      img {
+        width: 100px;
+        margin-right: 20px;
+        margin-bottom: 6px;
+      }
+    }
   }
   .processing-content-detail {
     color: #fff;
@@ -421,19 +499,23 @@ export default {
       margin-top: 10px;
     }
     .img-box {
+      box-sizing: border-box;
       display: flex;
-      width: 510px;
-      height: 80px;
       margin-top: 10px;
       overflow-x: auto;
       overflow-y: hidden;
       cursor: pointer;
       img {
-        width: 120px;
-        height: 68px;
-        margin-right: 10px;
-        vertical-align: top;
+        width: 100px;
+        margin-right: 20px;
+        margin-bottom: 6px;
       }
+    }
+    .img-box2 {
+      width: 240px;
+    }
+    .img-box1 {
+      width: 480px;
     }
     .file-box {
       padding-bottom: 20px;
@@ -442,7 +524,7 @@ export default {
         line-height: 26px;
       }
       p:nth-child(1) {
-        margin-top: 20px;
+        margin-top: 10px;
       }
     }
   }

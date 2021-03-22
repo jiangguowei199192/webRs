@@ -112,7 +112,12 @@
             </div>
             <div class="right listScroll">
               <template v-for="(item, index) in resList[selResIdx]">
-                <div :key="index">
+                <div
+                  :key="index"
+                  :class="{
+                    hasBorder: index !== resList[selResIdx].length - 1,
+                  }"
+                >
                   <div class="rTxt" v-show="selResIdx != 2">
                     <EllipsisTooltip
                       class="name"
@@ -963,7 +968,6 @@ export default {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid #00b7ff;
             .rTxt {
               width: 130px;
               display: flex;
@@ -999,6 +1003,9 @@ export default {
                 color: #cdcdcd;
               }
             }
+          }
+          > div.hasBorder {
+            border-bottom: 1px solid #00b7ff;
           }
         }
         .plan {
