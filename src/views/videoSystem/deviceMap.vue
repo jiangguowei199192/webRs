@@ -220,6 +220,7 @@ export default {
       padding-top: 10px;
       height: 72px;
       background: url(../../assets/images/list-unselected.png) no-repeat;
+      background-size:100% 100%;
       width: 230px;
       box-sizing: border-box;
       p {

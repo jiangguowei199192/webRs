@@ -1827,6 +1827,7 @@ export default {
       padding-top: 10px;
       height: 72px;
       background: url(../../assets/images/list-unselected.png) no-repeat;
+      background-size:100% 100%;
       width: 230px;
       box-sizing: border-box;
       p {
@@ -1837,6 +1838,7 @@ export default {
           width: 17px;
           height: 10px;
           background: url(../../assets/images/live.png) no-repeat;
+          background-size:100% 100%;
           margin-left: 12px;
         }
       }
@@ -1868,6 +1870,7 @@ export default {
           cursor: not-allowed;
           opacity: 0.5;
           background: url(../../assets/images/visible.png) no-repeat 4px center;
+
         }
       }
     }

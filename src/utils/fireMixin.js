@@ -32,7 +32,7 @@ const fireMixin = {
       })
     }
     // 获取火情报警信息
-    this.getTodayFireAlarmInfos()
+    // this.getTodayFireAlarmInfos()
   },
 
   beforeDestroy () {
@@ -40,7 +40,7 @@ const fireMixin = {
       EventBus.$off('getFireAlarmInfos_Done')
     }
     EventBus.$off('getFireAlarm')
-    EventBus.$off('refreshTodayFireAlarm')
+    // EventBus.$off('refreshTodayFireAlarm')
   },
 
   mounted () {
@@ -87,9 +87,9 @@ const fireMixin = {
     })
 
     // 刷新火情列表(过了24点)
-    EventBus.$on('refreshTodayFireAlarm', () => {
-      this.getTodayFireAlarmInfos()
-    })
+    // EventBus.$on('refreshTodayFireAlarm', () => {
+    //   this.getTodayFireAlarmInfos()
+    // })
   },
 
   methods: {
@@ -120,14 +120,14 @@ const fireMixin = {
       EventBus.$emit('getFireAlarmInfos_Done', true)
     },
     /** 获取今日火情警报信息 */
-    getTodayFireAlarmInfos () {
-      this.fireWarningArray = []
-      this.$axios.get(fireApi.getTodayFireAlarmInfos).then(res => {
-        if (res && res.data && res.data.code === 0) {
-          this.handlingFireWarningData(res.data.data)
-        }
-      })
-    },
+    // getTodayFireAlarmInfos () {
+    //   this.fireWarningArray = []
+    //   this.$axios.get(fireApi.getTodayFireAlarmInfos).then(res => {
+    //     if (res && res.data && res.data.code === 0) {
+    //       this.handlingFireWarningData(res.data.data)
+    //     }
+    //   })
+    // },
     /** 获取指定时间段内火情警报信息 */
     getDurationFireAlarmInfos (begin, end) {
       this.fireWarningArray = []
