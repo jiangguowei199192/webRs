@@ -106,7 +106,18 @@
                           <span>{{ content_item.designateStatus }}</span>
                         </div>
                         <div>
-                          <span>{{ content_item.receivingAlarmTime }}</span>
+                          <span>{{
+                            formatAcceptTime(
+                              content_item.receivingAlarmTime,
+                              event.createTime
+                            )
+                          }}</span>
+                          <span style="color: red">{{
+                            formatExceedTime(
+                              content_item.receivingAlarmTime,
+                              event.createTime
+                            )
+                          }}</span>
                         </div>
                       </div>
                     </template>
@@ -164,8 +175,8 @@
                       <span>处置人：{{ event.content.employeeName }}</span>
                       <span>处置时间：{{ event.content.dispositionTime }}</span>
                     </div>
-                    <div class="result-item">
-                      <span>附件：</span>
+                    <div>
+                      <span>相关附件：</span>
                       <div
                         class="img-box imgScroll"
                         :class="[caseCenter ? 'img-box1' : 'img-box2']"
@@ -268,10 +279,33 @@ export default {
 
   beforeDestroy () {
     EventBus.$off('selectedCaseRecord')
-    EventBus.$off('uploadFilesConfig')
   },
 
   methods: {
+    /**
+     * 格式化接警时间
+     */
+    formatAcceptTime (formatAcceptTime, createTime) {
+      if (!formatAcceptTime) return ''
+      const end = new Date(formatAcceptTime).getTime()
+      const start = new Date(createTime).getTime()
+      let minute = Math.ceil((end - start) / 1000.0 / 60)
+      if (minute === 0 && end > start) minute = 1
+      return '用时' + minute + '分钟'
+    },
+    /**
+     * 格式化超时时间
+     */
+    formatExceedTime (formatAcceptTime, createTime) {
+      if (!formatAcceptTime) return ''
+      const end = new Date(formatAcceptTime).getTime()
+      const start = new Date(createTime).getTime()
+      if (end - start > 10 * 60 * 1000) {
+        const minute = Math.ceil((end - start) / 1000.0 / 60)
+        return '超时' + minute + '分钟'
+      }
+      return ''
+    },
     // 处理处置记录info
     disposeCaseInfo (info) {
       this.events = info
@@ -303,9 +337,9 @@ export default {
               //     item.picList.push(globalApi.headImg + s)
               //   })
               // }
+              item.imgListPath = []
+              item.fileListPath = []
               if (item.content.disFinishAttachment) {
-                item.imgListPath = []
-                item.fileListPath = []
                 const list = item.content.disFinishAttachment.split(',')
                 this.disposeUploadConfig(list, item)
               }
@@ -494,9 +528,6 @@ export default {
     .column {
       display: flex;
       flex-direction: column;
-    }
-    .result-item {
-      margin-top: 10px;
     }
     .img-box {
       box-sizing: border-box;
