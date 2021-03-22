@@ -1876,12 +1876,15 @@ export default {
     }
     div.selected {
       background: url(../../assets/images/list-selected.png) no-repeat;
+      background-size:100% 100%;
     }
     div.list.unman {
       background: url(../../assets/images/unman_unselected.png) no-repeat;
+      background-size:100% 100%;
     }
     div.list.unman.selected {
       background: url(../../assets/images/unman_selected.png) no-repeat;
+      background-size:100% 100%;
     }
     div.empty {
       position: relative;
