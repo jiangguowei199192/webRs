@@ -33,6 +33,7 @@
   </div>
 </template>
 <script>
+import { api } from '@/api/videoSystem/realVideo'
 export default {
   props: {
     treeData: {
@@ -107,23 +108,66 @@ export default {
             deviceLongitude: $event.parent.data.deviceLongitude
           }
           const curData = Object.assign({}, data, obj)
-          if (this.isLiveTree) {
-            if (!curSpan.getAttribute('class')) {
-              curSpan.setAttribute('class', 'liveIcon')
-              curSpan.parentElement.parentElement.parentElement.classList.add(
-                'is-current'
-              )
-              console.log(curData)
-              this.$emit('videoChange', 1, curData)
-            } else {
-              curSpan.setAttribute('class', '')
-              this.$nextTick(() => {
-                curSpan.parentElement.parentElement.parentElement.classList.remove(
-                  'is-current'
-                )
-              })
+          // if (this.isLiveTree) {
+          //   if (!curSpan.getAttribute('class')) {
+          //     curSpan.setAttribute('class', 'liveIcon')
+          //     curSpan.parentElement.parentElement.parentElement.classList.add(
+          //       'is-current'
+          //     )
+          //     console.log(curData)
+          //     this.$emit('videoChange', 1, curData)
+          //   } else {
+          //     curSpan.setAttribute('class', '')
+          //     this.$nextTick(() => {
+          //       curSpan.parentElement.parentElement.parentElement.classList.remove(
+          //         'is-current'
+          //       )
+          //     })
 
-              this.$emit('videoChange', 2, curData)
+          //     this.$emit('videoChange', 2, curData)
+          //   }
+          // } else {
+          //   this.$emit('selectedDevice', curData)
+          // }
+          if (this.isLiveTree) {
+            const params = {
+              deviceInfoListJsonStr: JSON.stringify([
+                {
+                  deviceCode: $event.parent.data.id,
+                  channelId: data.streamType,
+                  accessType: data.accessType
+                }
+              ])
+            }
+            if (!curSpan.getAttribute('class')) {
+              this.$axios.post(api.getStreamUrl, params).then(res => {
+                if (res && res.data && res.data.code === 0) {
+                  const data = res.data.data
+                  data.forEach(list => {
+                    list.streamUrl = `ws://${list.ip}:${list.wsPort}/${list.app}/${list.stream}.flv`
+                  })
+                  curData.streamUrl = data[0].streamUrl
+                  curSpan.setAttribute('class', 'liveIcon')
+                  curSpan.parentElement.parentElement.parentElement.classList.add(
+                    'is-current'
+                  )
+                  console.log(curData)
+                  this.$emit('videoChange', 1, curData)
+                }
+              })
+            } else {
+              this.$axios.post(api.stopStreamUrl, params).then(res => {
+                if (res && res.data && res.data.code === 0) {
+                  curSpan.setAttribute('class', '')
+                  this.$nextTick(() => {
+                    curSpan.parentElement.parentElement.parentElement.classList.remove(
+                      'is-current'
+                    )
+                  })
+
+                  this.$emit('videoChange', 2, curData)
+                }
+              })
             }
           } else {
             this.$emit('selectedDevice', curData)

@@ -482,8 +482,17 @@ export default {
         labelTotal: item.label + '-' + list.label
       })
       console.log(curData)
+      const params = {
+        deviceInfoListJsonStr: JSON.stringify([
+          {
+            deviceCode: item.id,
+            channelId: list.streamType,
+            accessType: list.accessType
+          }
+        ])
+      }
       if (!this.onlineArray[index1].children[index2].isSelected) {
-        // 关闭其它所有的选中状态(防止其它设备通道有选中的)
+        // 关闭其它所有的选中状态（防止其它设备通道有选中的）
         this.onlineArray.forEach(item => {
           if (item.children && item.children.length > 0) {
             item.children.forEach(list => {
@@ -491,26 +500,50 @@ export default {
             })
           }
         })
-        this.selectedIndex = index1
-        this.$set(
-          this.onlineArray[index1].children[index2],
-          'isSelected',
-          true
-        )
-        this.playOrClose(1, curData)
+        this.$axios.post(api.getStreamUrl, params).then(res => {
+          if (res && res.data && res.data.code === 0) {
+            const data = res.data.data
+            data.forEach(list => {
+              //  ws://111.47.13.103:40007/live/6C01728PA4A9A6F0.flv
+              list.streamUrl = `ws://${list.ip}:${list.wsPort}/${list.app}/${list.stream}.flv`
+            })
+            curData.streamUrl = data[0].streamUrl
+            this.selectedIndex = index1
+            this.$set(
+              this.onlineArray[index1].children[index2],
+              'isSelected',
+              true
+            )
+            this.playOrClose(1, curData)
+          }
+        })
+        // this.$set(
+        //   this.onlineArray[index1].children[index2],
+        //   'isSelected',
+        //   true
+        // )
+        // this.playOrClose(1, curData)
       } else {
-        this.$set(
-          this.onlineArray[index1].children[index2],
-          'isSelected',
-          false
-        )
-        this.onlineArray.forEach(item => {
-          if (item.children && item.children.length > 0) {
-            item.children.forEach(list => {
-              list.isCurSelected = false
+        this.$axios.post(api.stopStreamUrl, params).then(res => {
+          if (res && res.data && res.data.code === 0) {
+            this.$set(
+              this.onlineArray[index1].children[index2],
+              'isSelected',
+              false
+            )
+            this.onlineArray.forEach(item => {
+              if (item.children && item.children.length > 0) {
+                item.children.forEach(list => {
+                  list.isCurSelected = false
+                })
+              }
             })
+            // 只要有关闭，则不选中任何 和树结构保持一致
+            this.selectedIndex = 200
+            this.playOrClose(2, curData)
           }
         })
+
         // const result = this.onlineArray[index1].children.some(child => {
         //   return child.isSelected === true
         // })
@@ -520,9 +553,6 @@ export default {
         // } else {
         //   this.selectedIndex = 200
         // }
-        // 只要有关闭，则不选中任何 和树结构保持一致
-        this.selectedIndex = 200
-        this.playOrClose(2, curData)
       }
     },
     // 清除其它按钮的记录次数
