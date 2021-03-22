@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 16:53:59
+ * @LastEditTime: 2021-03-22 14:34:30
 -->
 <template>
   <div>
@@ -157,23 +157,23 @@ export default {
         this.uploadList.splice(this.uploadList.length - 1, 1)
         this.$notify.closeAll()
         this.$notify.warning({
-          title: '提示',
+          title: '警告',
           message:
             '上传文件只能是 jpg/jpeg/png/doc/docx/xls/xlsx/rar/zip 等格式',
           duration: 3 * 1000
         })
-        return false
+        return
       }
       const limitSize = file.size / 1024 / 1024 < 10
       if (!limitSize) {
         this.uploadList.splice(this.uploadList.length - 1, 1)
         this.$notify.closeAll()
         this.$notify.warning({
-          title: '提示',
+          title: '警告',
           message: '单个文件大小不能超过 10MB',
           duration: 3 * 1000
         })
-        return false
+        return
       }
 
       this.uploadFiles.push(file.raw)
@@ -251,7 +251,7 @@ export default {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
     max-width: 780px;
-    // background-color: rgba(0, 65, 87, 0.85);
+    background-color: rgba(0, 65, 87, 0.85);
     .add-case-header {
       width: 218px;
       height: 30px;

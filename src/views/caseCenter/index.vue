@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 18:23:57
+ * @LastEditTime: 2021-03-22 15:11:16
 -->
 <template>
   <div class="caseCenter">
@@ -121,11 +121,23 @@
         </div>
       </div>
       <div class="handel-info ">
-        <h3><span>处置记录 | </span><span>聊天记录</span></h3>
-        <div class="handel-chat-record ">
-          <!-- 处置记录|聊天记录步骤条 -->
-          <CaseStep></CaseStep>
-        </div>
+        <h3>
+          <span :class="{ select: active === 0 }" @click.stop="active = 0"
+            >处置记录</span
+          ><span> | </span
+          ><span :class="{ select: active === 1 }" @click.stop="active = 1"
+            >聊天记录</span
+          >
+        </h3>
+        <!-- 处置记录 -->
+        <CaseStep class="handel-chat-record " v-show="active === 0"></CaseStep>
+        <!-- 聊天记录 -->
+        <ChatContent
+          class="handel-chat-record "
+          v-show="active === 1"
+          ref="chatContent"
+          :caseId="caseId"
+        ></ChatContent>
       </div>
     </div>
     <!-- 预览图片弹窗 -->
@@ -154,6 +166,7 @@
 import CasePage from './components/casePage'
 import CaseStep from '@/components/caseStep'
 import DisposeRecDialog from './components/disposeRecDialog'
+import ChatContent from '../gisDispatch/components/chatContent'
 import { caseApi } from '@/api/case'
 import { EventBus } from '@/utils/eventBus.js'
 import globalApi from '@/utils/globalApi'
@@ -162,6 +175,7 @@ export default {
   components: {
     CasePage,
     CaseStep,
+    ChatContent,
     DisposeRecDialog
   },
 
@@ -182,6 +196,7 @@ export default {
         ]
       },
       isShow: false,
+      active: 0,
       caseDetailInfo: {},
       clickRowId: '',
       caseRecordInfo: [],
@@ -190,7 +205,20 @@ export default {
       fileListPath: [],
       serverUrl: globalApi.headImg,
       imgDialogVisible: false,
-      clickImgSrc: ''
+      clickImgSrc: '',
+      topic: '',
+      caseId: ''
+    }
+  },
+
+  watch: {
+    active (now, old) {
+      if (now === 1) {
+        this.topic = 'web/river/caseHandling/' + this.caseId
+        this.$nextTick(() => {
+          this.$refs.chatContent.getChatList()
+        })
+      }
     }
   },
 
@@ -429,11 +457,15 @@ export default {
       h3 {
         position: absolute;
         font-size: 16px;
-        font-weight: bold;
+        font-weight: 700;
         line-height: 35px;
         padding: 5px 15px;
+        cursor: pointer;
         span:nth-child(1) {
           color: #82f3fa;
+        }
+        span.select {
+          color: #1ae256;
         }
       }
       .handel-chat-record {

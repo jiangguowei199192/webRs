@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-20 18:24:22
+ * @LastEditTime: 2021-03-22 15:10:31
 -->
 <template>
   <div class="step-box listScroll">
@@ -73,7 +73,7 @@
                         :key="index"
                         class="together"
                         :class="{
-                          hasBorder: index !== event.content.length - 1,
+                          hasBorder: index !== event.content.length - 1
                         }"
                       >
                         <div class="fl eTooltip">
@@ -85,15 +85,15 @@
                             v-if="!caseCenter"
                             :contentText="
                               content_item.employeeName +
-                              ' ' +
-                              content_item.deptName
+                                ' ' +
+                                content_item.deptName
                             "
                             class="name"
                           ></EllipsisTooltip>
                           <span v-else>{{
                             content_item.employeeName +
-                            " " +
-                            content_item.deptName
+                              " " +
+                              content_item.deptName
                           }}</span>
                         </div>
                         <div class="processing-content-detail fr">
@@ -136,15 +136,15 @@
                           v-if="!caseCenter"
                           :contentText="
                             event.content.employeeName +
-                            ' ' +
-                            event.content.deptName
+                              ' ' +
+                              event.content.deptName
                           "
                           class="name"
                         ></EllipsisTooltip>
                         <span v-else>{{
                           event.content.employeeName +
-                          " " +
-                          event.content.deptName
+                            " " +
+                            event.content.deptName
                         }}</span>
                       </div>
                       <span>{{ event.createTime }}</span>
@@ -195,7 +195,6 @@
                         v-if="event.fileListPath.length !== 0"
                       >
                         <p
-                          class=""
                           v-for="(file_item, file_index) in event.fileListPath"
                           :key="file_index"
                           v-download="file_item"
@@ -268,7 +267,7 @@ export default {
   watch: {},
 
   mounted () {
-    EventBus.$on('selectedCaseRecord', (info) => {
+    EventBus.$on('selectedCaseRecord', info => {
       this.disposeCaseInfo(info)
     })
 
@@ -293,6 +292,7 @@ export default {
       if (minute === 0 && end > start) minute = 1
       return '用时' + minute + '分钟'
     },
+
     /**
      * 格式化超时时间
      */
@@ -306,11 +306,12 @@ export default {
       }
       return ''
     },
+
     // 处理处置记录info
     disposeCaseInfo (info) {
       this.events = info
       if (this.events.length !== 0) {
-        this.events.forEach((item) => {
+        this.events.forEach(item => {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
@@ -364,7 +365,7 @@ export default {
     // 处理已上传文件返回info
     disposeUploadConfig (info, item) {
       if (info.length !== 0) {
-        info.forEach((t) => {
+        info.forEach(t => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             item.imgListPath.push(t)
@@ -440,6 +441,7 @@ export default {
   }
   /deep/.el-step__title.is-process,
   /deep/.el-step__title.is-wait {
+    font-size: 15px;
     font-weight: 700;
     color: #82f3fa;
   }
