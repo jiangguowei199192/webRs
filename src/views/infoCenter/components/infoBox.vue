@@ -1,11 +1,11 @@
 <template>
   <div class="base">
     <div class="title">
-      <span>{{ title }}</span>
+      <span>{{ newsInfo.title }}</span>
     </div>
     <div class="list webFsScroll">
-      <div class="list-item" v-for="(item, index) in list" :key="index">
-        <span class="item-title" :title="item.title">{{item.title}}</span>
+      <div class="list-item" v-for="(item, index) in newsInfo.list" :key="index">
+        <span class="item-title" :title="item.subTitle" @click="goOut(item.url)">{{item.subTitle}}</span>
         <span class="item-time">{{item.time}}</span>
       </div>
     </div>
@@ -14,25 +14,16 @@
 
 <script>
 export default {
-  props: ['title'],
+  props: ['newsInfo'],
   data () {
     return {
-      list: [
-        {
-          title:
-            '1.样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例样例',
-          time: '2021-03-18'
-        },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' },
-        { title: '1.样例', time: '2021-03-18' }
-      ]
+    }
+  },
+  methods: {
+    goOut (url) {
+      // window.location.href = url
+      var out = window.open('_blank')
+      out.location = url
     }
   }
 }
