@@ -55,16 +55,16 @@ const mapResMixin = {
       return info
     },
     /**
-     * 获取资源类型
+     * 获取资源类型(statusEnable:是否需要字点有效)
      */
-    getResources (typeCode) {
+    getResources (typeCode, statusEnable = true) {
       this.$axios
         .get(settingApi.queryByTypeCode, {
           params: { typeCode: typeCode }
         })
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            this.resTypes = res.data.data
+            if (statusEnable) { this.resTypes = res.data.data.filter(s => s.status === 0) } else this.resTypes = res.data.data
           }
         })
         .catch((err) => {

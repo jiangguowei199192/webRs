@@ -247,7 +247,6 @@ export default {
       this.clickRowId = info.id
       this.getCaseDetail()
       this.getCaseRecord()
-      this.disposeUploadConfig()
       this.$nextTick(() => {
         this.$refs.chatContent.getChatList()
       })
@@ -277,6 +276,7 @@ export default {
           // console.log('基本信息res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseDetailInfo = res.data.data
+            this.disposeUploadConfig()
           }
         })
         .catch(err => {
@@ -307,6 +307,8 @@ export default {
 
     // 处理已上传文件返回info
     disposeUploadConfig () {
+      this.imgListPath = []
+      this.fileListPath = []
       if (this.caseDetailInfo.disFinishAttachment) {
         this.uploadFilesConfig = this.caseDetailInfo.disFinishAttachment.split(
           ','

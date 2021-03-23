@@ -377,6 +377,7 @@ export default {
     // 每隔10分钟刷新一次案件详情
     this.detailTimeout = setTimeout(() => {
       me.getCaseDetail()
+      me.getCaseRecord()
     }, 10 * 60 * 1000)
   },
   mounted () {

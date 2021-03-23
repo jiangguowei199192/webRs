@@ -207,11 +207,11 @@ export default {
      */
     getResType () {
       if (this.resourcesDataType === '0') {
-        this.getResources('point_resources')
+        this.getResources('point_resources', false)
       } else if (this.resourcesDataType === '1') {
-        this.getResources('line_resources')
+        this.getResources('line_resources', false)
       } else if (this.resourcesDataType === '2') {
-        this.getResources('surface_resources')
+        this.getResources('surface_resources', false)
       }
     },
     /**

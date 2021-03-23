@@ -260,7 +260,7 @@ export default {
         })
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            this.caseSources = res.data.data
+            this.caseSources = res.data.data.filter(s => s.status === 0)
           }
         })
         .catch((err) => {
