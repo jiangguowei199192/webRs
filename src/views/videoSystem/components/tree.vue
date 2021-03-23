@@ -216,7 +216,7 @@ export default {
   font-family: Source Han Sans CN;
   // font-weight: bold;
   margin-top: 20px;
-  max-height: 750px;
+  max-height: 740px;
   // width: 248px;
   margin-right: 8px;
   overflow-y: auto;
