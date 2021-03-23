@@ -66,6 +66,7 @@
         style="width: 100%;"
         max-height="610"
         @selection-change="handleSelectionChange"
+        class="webFsScroll"
       >
         <el-table-column type="selection" align="center"></el-table-column>
         <el-table-column label="图片" align="center">
@@ -312,7 +313,8 @@ export default {
     margin-top: 16px;
     padding: 12px 14px;
     height: 800px;
-    background: #183157;
+    // background: #183157;
+    background: rgba(0, 65, 87, 0.85);
     position: relative;
     .selectBox {
       margin-left: 10px;
@@ -382,6 +384,28 @@ export default {
         }
       }
     }
+
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    /* --- 滚动条里面的滚动块 --- */
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgb(0, 180, 255);
+      background: rgba(0, 180, 255, 0.2);
+    }
+
+    /* --- 滚动条里面轨道 --- */
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background: #096090;
+    }
+
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-corner {
+      background: transparent;
+    }
     // 表格样式
     /deep/ .el-table__header-wrapper table thead th {
       font-size: 16px;
@@ -394,13 +418,13 @@ export default {
       line-height: 40px;
     }
     /deep/ .el-table {
-      background: #183157;
+      background: rgba(0, 65, 87, 0.85);
     }
     /deep/ .el-table__header-wrapper table thead th .cell {
       line-height: 16px;
     }
     /deep/ .el-table__body-wrapper table tr {
-      background: #183157;
+      background: rgba(0, 65, 87, 0.85);
       font-size: 16px;
       font-family: Source Han Sans CN;
       font-weight: 500;
