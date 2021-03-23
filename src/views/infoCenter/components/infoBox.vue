@@ -57,8 +57,8 @@ export default {
   margin: 20px 10px 0 32px;
   overflow: auto;
   .list-item {
-    height: 38px;
-    line-height: 38px;
+    height: 37px;
+    line-height: 37px;
     font-size: 18px;
     color: #00cff9;
     cursor: pointer;
