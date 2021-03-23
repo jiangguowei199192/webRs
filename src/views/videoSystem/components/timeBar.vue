@@ -1,7 +1,7 @@
 <template>
   <div class="control">
     <div class="numContainer">
-      <template v-for="(item,index) in 25">
+      <template v-for="(item, index) in 25">
         <span
           @click="jumpHour(index)"
           v-if="index % 3 != 0"
@@ -15,20 +15,28 @@
           :key="index"
           class="num"
           :style="'left:' + (index * step - 15) + 'px;'"
-        >{{formatTime(index)}}</span>
+          >{{ formatTime(index) }}</span
+        >
       </template>
     </div>
     <div class="barContainer">
       <div ref="bar" class="bar" @mousedown="barClick">
-        <template v-for="(item,index) in segments">
+        <template v-for="(item, index) in segments">
           <span
             :key="index"
             class="segment"
-            :style="'width:' + item.duration * minuteWidth + 'px;' + 'left:' + item.start * minuteWidth + 'px;'"
+            :style="
+              'width:' +
+              item.duration * minuteWidth +
+              'px;' +
+              'left:' +
+              item.start * minuteWidth +
+              'px;'
+            "
           ></span>
         </template>
         <div class="pointer" ref="pointer" v-drag="me">
-          <span>{{curTime}}</span>
+          <span>{{ curTime }}</span>
           <span class="icon"></span>
         </div>
       </div>
@@ -54,7 +62,7 @@ export default {
     drag: function (el, binding) {
       const me = binding.value
       const dragBox = el // 获取当前元素
-      dragBox.onmousedown = e => {
+      dragBox.onmousedown = (e) => {
         me.isDrag = true
         // 阻止事件冒泡
         if (e.stopPropagation) e.stopPropagation()
@@ -62,12 +70,14 @@ export default {
 
         // 算出鼠标相对元素的位置
         const disX = e.clientX - dragBox.offsetLeft
-        document.onmousemove = e => {
+        document.onmousemove = (e) => {
           // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
           let left = e.clientX - disX
           const maxLeft = me.$refs.bar.clientWidth + me.pointerLeft
           // 左边界限制
-          if (left < me.pointerLeft) { left = me.pointerLeft }
+          if (left < me.pointerLeft) {
+            left = me.pointerLeft
+          }
           // 右边限制
           if (left > maxLeft) {
             left = maxLeft
@@ -76,7 +86,7 @@ export default {
           dragBox.style.left = left + 'px'
           me.toHourMinute((left - me.pointerLeft) / me.minuteWidth)
         }
-        document.onmouseup = e => {
+        document.onmouseup = (e) => {
           me.$emit('jumpEvent', '')
           // 鼠标弹起来的时候不再移动
           document.onmousemove = null
@@ -111,8 +121,10 @@ export default {
     window.onresize = () => {
       this.calculateStep()
       var arry = this.curTime.split(':')
-      var minute = parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
-      this.$refs.pointer.style.left = minute * this.minuteWidth - this.pointerW + 5 + 'px'
+      var minute =
+        parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
+      this.$refs.pointer.style.left =
+        minute * this.minuteWidth - this.pointerW + 5 + 'px'
     }
   },
 
@@ -163,7 +175,8 @@ export default {
      */
     jumpMinute (minute) {
       if (this.isDrag) return
-      this.$refs.pointer.style.left = minute * this.minuteWidth - this.pointerW + 5 + 'px'
+      this.$refs.pointer.style.left =
+        minute * this.minuteWidth - this.pointerW + 5 + 'px'
       this.toHourMinute(minute)
     },
 
@@ -181,6 +194,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .control {
+  font-size: 12px;
   //以下四行取消双击选中文字效果
   -moz-user-select: none;
   -ms-user-select: none;

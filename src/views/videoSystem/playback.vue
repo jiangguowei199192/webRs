@@ -1490,7 +1490,7 @@ export default {
     padding-top: 10px;
     height: 72px;
     background: url(../../assets/images/list-unselected.png) no-repeat;
-    background-size:100% 100%;
+    background-size: 100% 100%;
     width: 230px;
     box-sizing: border-box;
     p {
@@ -1548,7 +1548,10 @@ export default {
   .box {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-right: 64px;
+    font-size: 16px;
+    margin-bottom: 11px;
     .back {
       display: flex;
       box-sizing: border-box;
@@ -1558,7 +1561,6 @@ export default {
       background: rgba(18, 30, 58, 0.85);
       align-items: center;
       cursor: pointer;
-      margin-bottom: 11px;
       span:nth-child(1) {
         display: inline-block;
         width: 21px;
@@ -1596,6 +1598,7 @@ export default {
     }
   }
   .tools {
+    font-size: 12px;
     position: absolute;
     left: 23px;
     right: 23px;

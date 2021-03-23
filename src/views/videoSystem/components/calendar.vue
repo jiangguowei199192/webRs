@@ -5,21 +5,21 @@
     </div>
     <div class="btnContainer">
       <div>
-        <span class="btn pre" @click="calendarPre(true,false)"></span>
-        <span class="month">{{dateInfo.curYear}}</span>
-        <span class="btn next" @click="calendarPre(true,true)"></span>
+        <span class="btn pre" @click="calendarPre(true, false)"></span>
+        <span class="month">{{ dateInfo.curYear }}</span>
+        <span class="btn next" @click="calendarPre(true, true)"></span>
       </div>
       <div>
-        <span class="btn pre" @click="calendarPre(false,false)"></span>
-        <span class="month">{{dateInfo.curMonth}}</span>
-        <span class="btn next" @click="calendarPre(false,true)"></span>
+        <span class="btn pre" @click="calendarPre(false, false)"></span>
+        <span class="month">{{ dateInfo.curMonth }}</span>
+        <span class="btn next" @click="calendarPre(false, true)"></span>
       </div>
     </div>
     <el-calendar v-model="showDate">
-      <template slot="dateCell" slot-scope="{date, data}">
-        <div style="position: relative;">
-          <span class="dayText">{{ data.day.split('-').slice(2).join() }}</span>
-          <template v-for="(item,index) in markData">
+      <template slot="dateCell" slot-scope="{ date, data }">
+        <div style="position: relative">
+          <span class="dayText">{{ data.day.split("-").slice(2).join() }}</span>
+          <template v-for="(item, index) in markData">
             <span v-if="item === data.day" class="mark" :key="index"></span>
           </template>
         </div>
@@ -34,9 +34,11 @@
         <span>图片</span>
       </div>
       <div class="picList">
-        <template v-for="(item,index) in snapList">
+        <template v-for="(item, index) in snapList">
           <div
-            :style="{background: 'url('+ serverUrl +item.filePath +') no-repeat'}"
+            :style="{
+              background: 'url(' + serverUrl + item.filePath + ') no-repeat',
+            }"
             :key="index"
             @click="showSnapDlg(item)"
           ></div>
@@ -46,12 +48,18 @@
     <el-dialog :visible.sync="picDlgVisible" width="803px" class="editDlg">
       <div class="picContainer2">
         <div
-          :style="{background: 'url('+ serverUrl + curSnap.filePath +') no-repeat'}"
+          :style="{
+            background: 'url(' + serverUrl + curSnap.filePath + ') no-repeat',
+          }"
           @click="showBigImage"
         ></div>
         <div>
           <span>说明:</span>
-          <el-input v-model="describe" placeholder="请输入图片说明" maxlength="50"></el-input>
+          <el-input
+            v-model="describe"
+            placeholder="请输入图片说明"
+            maxlength="50"
+          ></el-input>
           <button @click="closeDlg">取消</button>
           <button class="btn-confirm" @click="addDescribe">确定</button>
         </div>
@@ -62,7 +70,7 @@
       :visible.sync="imgDialogVisible"
       :show-close="false"
       type="primary"
-      :append-to-body ='true'
+      :append-to-body="true"
       @click.native="imgDialogVisible = false"
       center
     >
@@ -161,10 +169,10 @@ export default {
           id: this.curSnap.id,
           remark: this.describe
         })
-        .then(res => {
+        .then((res) => {
           var rs = res.data
           if (rs && rs.code === 0) {
-            var snap = this.snapList.find(s => s.id === this.curSnap.id)
+            var snap = this.snapList.find((s) => s.id === this.curSnap.id)
             if (snap !== undefined) snap.remark = this.describe
           }
         })
@@ -273,6 +281,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .container {
+  font-size: 12px;
   padding: 15px 0px 0px 0px;
 }
 
@@ -405,13 +414,13 @@ export default {
   overflow: hidden;
   .picList {
     //解决ie和谷歌等出现滚动条问题
-    width:calc(100% + 17px);
+    width: calc(100% + 17px);
     margin-top: 30px;
     height: 351px;
     overflow-y: scroll;
 
     > div {
-      margin-left:40px;
+      margin-left: 40px;
       display: inline-block;
       cursor: pointer;
       width: 190px;
