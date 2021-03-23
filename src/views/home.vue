@@ -231,12 +231,12 @@ export default {
     // 设备上线
     EventBus.$on('video/device/online', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
-      // this.$notify.success({ title: '提示', message: '设备上线！' })
+      this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
     EventBus.$on('video/device/offline', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
-      // this.$notify.success({ title: '提示', message: '设备下线！' })
+      this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
     EventBus.$on('video/realVideo/streamStart', (info) => {
