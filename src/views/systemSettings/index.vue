@@ -319,7 +319,7 @@ export default {
     .rightBoxBase {
       height: 879px;
       border: solid 10px transparent;
-      overflow: hidden;
+      overflow: auto;
     }
   }
 }

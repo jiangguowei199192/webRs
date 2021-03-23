@@ -589,8 +589,11 @@ export default {
     }
   }
   .pagination-wrap {
-    margin-top: -120px;
     text-align: center;
+    .tablePagination {
+      height: 35px;
+      line-height: 35px;
+    }
   }
 }
 

@@ -554,7 +554,7 @@ export default {
       width: 96px;
       height: 30px;
       background-color: #1eb0fc;
-      color: #ffffff;
+      color: #fff;
       text-align: center;
       line-height: 30px;
       font-size: 16px;
@@ -562,8 +562,11 @@ export default {
     }
   }
   .pagination-wrap {
-    margin-top: -120px;
     text-align: center;
+    .tablePagination {
+      height: 35px;
+      line-height: 35px;
+    }
   }
 }
 </style>

@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-22 14:34:30
+ * @LastEditTime: 2021-03-23 17:20:23
 -->
 <template>
   <div>
@@ -61,7 +61,7 @@
             multiple
             drag
             action="http://172.16.63.43:8850/fms-river-protection/file/uploads"
-            accept=".jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .rar, .zip"
+            accept=".jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .pdf, .rar, .zip"
             :limit="10"
             :file-list="uploadList"
             :auto-upload="false"
@@ -150,6 +150,7 @@ export default {
         'docx',
         'xls',
         'xlsx',
+        'pdf',
         'rar',
         'zip'
       ]
@@ -159,7 +160,7 @@ export default {
         this.$notify.warning({
           title: '警告',
           message:
-            '上传文件只能是 jpg/jpeg/png/doc/docx/xls/xlsx/rar/zip 等格式',
+            '上传文件只能是 jpg/jpeg/png/doc/docx/xls/xlsx/pdf/rar/zip 等格式',
           duration: 3 * 1000
         })
         return

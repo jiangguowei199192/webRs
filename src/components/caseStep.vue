@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-22 15:10:31
+ * @LastEditTime: 2021-03-23 17:21:51
 -->
 <template>
   <div class="step-box listScroll">
@@ -77,7 +77,7 @@
                         :key="index"
                         class="together"
                         :class="{
-                          hasBorder: index !== event.content.length - 1,
+                          hasBorder: index !== event.content.length - 1
                         }"
                       >
                         <div class="fl eTooltip">
@@ -89,15 +89,15 @@
                             v-if="!caseCenter"
                             :contentText="
                               content_item.employeeName +
-                              ' ' +
-                              content_item.deptName
+                                ' ' +
+                                content_item.deptName
                             "
                             class="name"
                           ></EllipsisTooltip>
                           <span v-else>{{
                             content_item.employeeName +
-                            " " +
-                            content_item.deptName
+                              " " +
+                              content_item.deptName
                           }}</span>
                         </div>
                         <div class="processing-content-detail fr">
@@ -140,15 +140,15 @@
                               v-if="!caseCenter"
                               :contentText="
                                 content_item.employeeName +
-                                ' ' +
-                                content_item.deptName
+                                  ' ' +
+                                  content_item.deptName
                               "
                               class="name"
                             ></EllipsisTooltip>
                             <span v-else>{{
                               content_item.employeeName +
-                              " " +
-                              content_item.deptName
+                                " " +
+                                content_item.deptName
                             }}</span>
                           </div>
                           <span>{{ content_item.createTime }}</span>
@@ -278,7 +278,7 @@ export default {
   watch: {},
 
   mounted () {
-    EventBus.$on('selectedCaseRecord', (info) => {
+    EventBus.$on('selectedCaseRecord', info => {
       this.disposeCaseInfo(info)
     })
 
@@ -326,7 +326,7 @@ export default {
     disposeCaseInfo (info) {
       this.events = info
       if (this.events.length !== 0) {
-        this.events.forEach((item) => {
+        this.events.forEach(item => {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
@@ -343,7 +343,7 @@ export default {
             case 3:
               item.dispositionNode = '处置'
               if (item.content) {
-                item.content.forEach((c) => {
+                item.content.forEach(c => {
                   c.imgListPath = []
                   c.fileListPath = []
                   if (c.disImgUrl) {
@@ -385,7 +385,7 @@ export default {
     // 处理已上传文件返回info
     disposeUploadConfig (info, item) {
       if (info.length !== 0) {
-        info.forEach((t) => {
+        info.forEach(t => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             item.imgListPath.push(t)
@@ -394,6 +394,7 @@ export default {
             type === 'docx' ||
             type === 'xls' ||
             type === 'xlsx' ||
+            type === 'pdf' ||
             type === 'rar' ||
             type === 'zip'
           ) {

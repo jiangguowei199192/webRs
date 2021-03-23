@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-23 11:28:14
+ * @LastEditTime: 2021-03-23 17:21:10
 -->
 <template>
   <div class="caseCenter">
@@ -302,6 +302,7 @@ export default {
             type === 'docx' ||
             type === 'xls' ||
             type === 'xlsx' ||
+            type === 'pdf' ||
             type === 'rar' ||
             type === 'zip'
           ) {
