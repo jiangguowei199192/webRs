@@ -1395,8 +1395,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .playBack {
-  padding: 20px;
-  padding-top: 0px;
+  box-sizing: border-box;
+  padding: 0 24px 37px 24px;
 }
 .leftContainer {
   box-sizing: border-box;
