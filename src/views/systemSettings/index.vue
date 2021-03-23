@@ -1,18 +1,19 @@
 <template>
-  <div style="margin-top: -5px; padding: 0 20px 20px 20px">
+  <div class="box-wrap">
     <div class="leftBox">
-      <div style="height: 800px">
+      <div class="setting-left-item">
         <SettingLeftItem
+          class="setting-item"
           v-for="data in leftMenu"
           :key="data.headerTitle"
           v-bind:itemData="data"
           v-on:leftBoxDidSelectedItem="leftBoxDidSelectedItem"
         ></SettingLeftItem>
       </div>
-      <button type="button" class="logoutBtn" @click="logoutClick">
+      <!-- <button type="button" class="logoutBtn" @click="logoutClick">
         <img :src="logoutIcon" />
         退出登录
-      </button>
+      </button> -->
     </div>
     <div class="rightBox">
       <div class="rightBoxBase webFsScroll">
@@ -293,26 +294,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.leftBox {
-  cursor: default;
-  float: left;
-  width: 283px;
-  height: 899px;
-  background: url("../../assets/images/Setting/setting-leftBox.png") no-repeat;
-  background-size: 100% 100%;
-}
-.rightBox {
-  cursor: default;
-  margin-left: 293px;
-  height: 899px;
-  background: url("../../assets/images/Setting/setting-rightBox.png") no-repeat;
-  background-size: 100% 100%;
-  .rightBoxBase {
-    height: 879px;
-    border: solid 10px transparent;
-    overflow: auto;
+.box-wrap {
+  margin-top: -5px;
+  padding: 0 20px 20px 20px;
+  .leftBox {
+    cursor: default;
+    float: left;
+    width: 283px;
+    height: 899px;
+    background: url("../../assets/images/Setting/setting-leftBox.png") no-repeat;
+    background-size: 100% 100%;
+    .setting-left-item {
+      padding: 10px 30px;
+      .setting-item {
+        margin-top: 20px;
+      }
+    }
+  }
+  .rightBox {
+    cursor: default;
+    margin-left: 293px;
+    height: 899px;
+    background: url("../../assets/images/Setting/setting-rightBox.png")
+      no-repeat;
+    background-size: 100% 100%;
+    .rightBoxBase {
+      height: 879px;
+      border: solid 10px transparent;
+      overflow: auto;
+    }
   }
 }
+
 .logoutBtn {
   width: 112px;
   height: 30px;
