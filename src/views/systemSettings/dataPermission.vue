@@ -68,7 +68,7 @@
         </el-table-column>
       </el-table>
 
-      <div style="text-align: center">
+      <div class="pagination-wrap">
         <el-pagination
           class="tablePagination"
           popper-class="pageSelect"
@@ -120,7 +120,7 @@ export default {
       resourceList: [],
       fieldList: '',
       pageTotal: 0,
-      pageSize: 15,
+      pageSize: 12,
       currentPage: 1,
       showDataPermission: false,
       selectedType: '',
@@ -144,7 +144,7 @@ export default {
       const _this = this
       this.$axios
         .get(backApi.getTypeDict, { params: { typeCode: 'resources' } })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.permissionTypeTree = res.data.data
             _this.selectedType = res.data.data[0]
@@ -183,9 +183,9 @@ export default {
           deviceNameOrCode: this.resourceSearch
         }
         const _this = this
-        this.$axios.post(backApi.getVideoListByType, param).then((res) => {
+        this.$axios.post(backApi.getVideoListByType, param).then(res => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.data.forEach((item) => {
+            res.data.data.data.forEach(item => {
               item.deviceStatus =
                 item.deviceStatus === 'enabled' ? '启用' : '禁用'
               item.onlineStatus =
@@ -207,7 +207,9 @@ export default {
         const param = {
           pageSize: this.pageSize,
           currentPage: this.currentPage,
-          resourcesType: this.selectedType.parentId ? this.selectedType.typeCode : '',
+          resourcesType: this.selectedType.parentId
+            ? this.selectedType.typeCode
+            : '',
           searchContent: this.resourceSearch,
           resourcesDataType: dataType
         }
@@ -216,7 +218,7 @@ export default {
           .post(backApi.getResourceListByType, param, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
           })
-          .then((res) => {
+          .then(res => {
             if (res && res.data && res.data.code === 0) {
               _this.resourceList = res.data.data.records
               _this.pageTotal = res.data.data.total
@@ -256,7 +258,7 @@ export default {
             {
               label: '长度',
               value: 'totalLength',
-              formatter: (row) => {
+              formatter: row => {
                 return row.totalLength + '千米'
               }
             },
@@ -305,7 +307,7 @@ export default {
           .post(backApi.authDetail, param, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
           })
-          .then((res) => {
+          .then(res => {
             if (res && res.data && res.data.code === 0) {
               _this.showDataPermission = true
               var resDept = res.data.data.authDept
@@ -331,7 +333,7 @@ export default {
       this.showDataPermission = false
 
       var selectResIdArr = []
-      this.selectedResources.forEach((item) => {
+      this.selectedResources.forEach(item => {
         selectResIdArr.push(item.id)
       })
 
@@ -359,7 +361,7 @@ export default {
         .post(backApi.resourcesAuth, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -395,18 +397,17 @@ export default {
   height: 54px;
   font-size: 16px;
   line-height: 54px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin: 0 30px;
 }
 .left-div {
   float: left;
   width: 280px;
-  height: 814px;
-  background-color: #183157;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
   margin-left: 30px;
   padding: 0 10px;
   .left-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -414,6 +415,7 @@ export default {
   .institution-search-input {
     width: 278px;
     margin-top: 4px;
+    display: block;
     /deep/.el-input__inner {
       background: #09546d;
       border-color: #1eb0fc;
@@ -429,7 +431,7 @@ export default {
     overflow: auto;
     margin-top: 15px;
     background-color: transparent;
-    color: #ffffff;
+    color: #fff;
     /deep/.el-tree-node {
       .el-tree-node__content {
         display: block !important;
@@ -475,13 +477,12 @@ export default {
 
 .right-div {
   min-width: 800px;
-  height: 814px;
-  background-color: #183157;
-  margin-left: 360px;
-  margin-right: 30px;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
+  margin: 0 30px 0 360px;
   padding: 0 14px;
   .right-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -489,6 +490,8 @@ export default {
   .search-tool {
     height: 34px;
     margin-top: 4px;
+    display: flex;
+    justify-content: flex-start;
     .people-search-input {
       width: 450px;
       vertical-align: top;
@@ -502,7 +505,6 @@ export default {
     .people-search-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -515,7 +517,6 @@ export default {
         margin-top: 5px;
       }
       .people-search-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -523,7 +524,6 @@ export default {
     .people-reset-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -535,7 +535,6 @@ export default {
         margin-top: 8px;
       }
       .people-reset-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -544,9 +543,9 @@ export default {
   .operate-table-tool {
     height: 53px;
     .selected-count {
-      display: inline-block;
-      margin-top: 18px;
-      margin-left: 10px;
+      float: left;
+      margin: 18px 0 0 10px;
+      font-size: 16px;
     }
     .add-btn {
       float: right;
@@ -561,6 +560,10 @@ export default {
       font-size: 16px;
       cursor: pointer;
     }
+  }
+  .pagination-wrap {
+    margin-top: -120px;
+    text-align: center;
   }
 }
 </style>

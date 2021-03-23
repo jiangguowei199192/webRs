@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-22 15:10:46
+ * @LastEditTime: 2021-03-23 11:27:46
 -->
 <template>
   <div class="fireBox">
@@ -188,7 +188,6 @@ export default {
 .mainBox {
   padding: 0;
   .toolBox {
-    margin: 18px 0 10px 0;
     font-size: 16px;
     .tool-title {
       margin: 0 8px 0 5px;

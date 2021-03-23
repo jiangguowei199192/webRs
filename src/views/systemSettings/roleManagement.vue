@@ -93,7 +93,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div style="text-align: center">
+      <div class="pagination-wrap">
         <el-pagination
           class="tablePagination"
           popper-class="pageSelect"
@@ -182,7 +182,7 @@ export default {
       currentRoleDetail: '',
 
       pageTotal: 100,
-      pageSize: 15,
+      pageSize: 12,
       currentPage: 1,
 
       showAddRole: false,
@@ -215,7 +215,7 @@ export default {
         .post(backApi.getRoleList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.roleList = res.data.data.records
             _this.pageTotal = res.data.data.total
@@ -268,7 +268,7 @@ export default {
         .post(backApi.getMenuTreeByRole, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.selectedPms = _this.handleSelectedMenu(res.data.data)
             _this.showAuthorization = true
@@ -276,7 +276,7 @@ export default {
         })
     },
     handleSelectedMenu (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         item.id = item.menuId
         item.children = item.roleMenuList
         if (item.roleMenuList) {
@@ -291,7 +291,7 @@ export default {
     },
     getMenuTree () {
       const _this = this
-      this.$axios.post(backApi.getMenuTree).then((res) => {
+      this.$axios.post(backApi.getMenuTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.permissionTree = _this.handlePermissionTree(res.data.data)
         }
@@ -299,13 +299,13 @@ export default {
     },
     handlePermissionTree (tree) {
       var tag = false
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children && item.children.length) {
           tag = true
         }
       })
       const _this = this
-      tree.forEach((item) => {
+      tree.forEach(item => {
         item.especially = tag
         if (item.children && item.children.length) {
           _this.handlePermissionTree(item.children)
@@ -325,7 +325,7 @@ export default {
           .post(backApi.roleAuth, param, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
           })
-          .then((res) => {
+          .then(res => {
             if (res && res.data && res.data.code === 0) {
               _this.getRoleList()
               Notification({
@@ -343,7 +343,7 @@ export default {
     seeRoleClick (row) {
       const param = { id: row.id }
       const _this = this
-      this.$axios.get(backApi.roleInfo, { params: param }).then((res) => {
+      this.$axios.get(backApi.roleInfo, { params: param }).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.currentRoleDetail = res.data.data
           _this.showRoleInfo = true
@@ -369,7 +369,7 @@ export default {
         .post(backApi.addRole, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getRoleList()
             Notification({
@@ -400,7 +400,7 @@ export default {
     async deleteUserConfirmClick () {
       this.showDeleteRole = false
       var roleIds = []
-      this.selectedRoles.forEach((item) => {
+      this.selectedRoles.forEach(item => {
         roleIds.push(item.id)
       })
       const param = { ids: roleIds }
@@ -409,7 +409,7 @@ export default {
         .post(backApi.deleteRole, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getRoleList()
             Notification({
@@ -426,7 +426,7 @@ export default {
     editRoleClick (row) {
       const param = { id: row.id }
       const _this = this
-      this.$axios.get(backApi.roleInfo, { params: param }).then((res) => {
+      this.$axios.get(backApi.roleInfo, { params: param }).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.currentRoleDetail = res.data.data
           _this.showEditRole = true
@@ -449,7 +449,7 @@ export default {
         .post(backApi.editRole, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getRoleList()
             Notification({
@@ -470,19 +470,17 @@ export default {
   height: 54px;
   font-size: 16px;
   line-height: 54px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin: 0 30px;
 }
 
 .base-div {
   min-width: 1150px;
-  height: 814px;
-  background-color: #183157;
-  margin-left: 30px;
-  margin-right: 30px;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
+  margin: 0 30px;
   padding: 0 14px;
   .right-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -490,9 +488,10 @@ export default {
   .search-tool {
     height: 34px;
     margin-top: 4px;
+    display: flex;
+    justify-content: flex-start;
     .role-status-text {
       color: #fff;
-      display: inline-block;
       font-size: 16px;
     }
     .role-status-select {
@@ -520,7 +519,6 @@ export default {
     .people-search-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -533,7 +531,6 @@ export default {
         margin-top: 5px;
       }
       .people-search-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -541,7 +538,6 @@ export default {
     .people-reset-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -562,9 +558,9 @@ export default {
   .operate-table-tool {
     height: 53px;
     .selected-count {
-      display: inline-block;
-      margin-top: 18px;
-      margin-left: 10px;
+      float: left;
+      margin: 18px 0 0 10px;
+      font-size: 16px;
     }
     .delete-btn {
       float: right;
@@ -572,7 +568,7 @@ export default {
       height: 30px;
       margin-top: 10px;
       background-color: #ff0000;
-      color: #ffffff;
+      color: #fff;
       text-align: center;
       line-height: 30px;
       font-size: 16px;
@@ -592,10 +588,14 @@ export default {
       cursor: pointer;
     }
   }
+  .pagination-wrap {
+    margin-top: -120px;
+    text-align: center;
+  }
 }
 
 .table-btn {
-  width: 46px;
+  width: 40px;
   height: 26px;
   background-color: #0b779e;
   color: #fefefe;

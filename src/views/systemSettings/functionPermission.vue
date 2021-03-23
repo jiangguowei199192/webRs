@@ -54,7 +54,7 @@ export default {
 
     async getPermissionTree () {
       const _this = this
-      this.$axios.get(backApi.getPermissionTree).then((res) => {
+      this.$axios.get(backApi.getPermissionTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.permissionTree = _this.handlePermissionTree(res.data.data[0])
           _this.$nextTick(() => {
@@ -65,13 +65,13 @@ export default {
     },
     handlePermissionTree (tree) {
       var tag = false
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.roleMenuList && item.roleMenuList.length) {
           tag = true
         }
       })
       const _this = this
-      tree.forEach((item) => {
+      tree.forEach(item => {
         item.especially = tag
         if (item.roleMenuList && item.roleMenuList.length) {
           _this.handlePermissionTree(item.roleMenuList)
@@ -88,14 +88,13 @@ export default {
   height: 54px;
   font-size: 16px;
   line-height: 54px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin: 0 30px;
 }
 
 .base-div {
   min-width: 600px;
   height: 674px;
-  background-color: #183157;
+  background-color: rgba(0, 65, 87, 0.85);
   margin-left: 30px;
   margin-right: 30px;
   padding: 70px 120px;
