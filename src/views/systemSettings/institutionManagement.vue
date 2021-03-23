@@ -37,7 +37,7 @@
         :props="{
           children: 'children',
           label: 'deptName',
-          value: 'deptCode',
+          value: 'deptCode'
         }"
         default-expand-all
         @node-click="deptTreeClick"
@@ -123,7 +123,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div style="text-align: center">
+      <div class="pagination-wrap">
         <el-pagination
           class="tablePagination"
           popper-class="pageSelect"
@@ -251,7 +251,7 @@ export default {
       selectedPeoples: [],
 
       pageTotal: 0,
-      pageSize: 15,
+      pageSize: 12,
       currentPage: 1,
 
       showAddPeople: false,
@@ -274,7 +274,7 @@ export default {
   methods: {
     async getDeptTree () {
       var _this = this
-      this.$axios.post(backApi.getDeptTree).then((res) => {
+      this.$axios.post(backApi.getDeptTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           if (_this.deptTree.length > 0) {
@@ -286,7 +286,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -310,7 +310,7 @@ export default {
         .post(backApi.getPeoplePage, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.peopleList = res.data.data.records
             _this.currentPage = res.data.data.current
@@ -329,7 +329,7 @@ export default {
         .post(iconLibaryApi.getAllPic, params, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.iconList = res.data.data.records
           }
@@ -378,7 +378,7 @@ export default {
         .post(backApi.deptInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.deptDetail = res.data.data
             _this.showEditDept = true
@@ -406,7 +406,7 @@ export default {
         .post(backApi.editDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getDeptTree()
             Notification({
@@ -427,7 +427,7 @@ export default {
         .post(backApi.deptInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.showDeptInfo = true
             _this.deptDetail = res.data.data
@@ -448,7 +448,7 @@ export default {
         .post(backApi.deleteDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getDeptTree()
             _this.peopleSearch = ''
@@ -488,7 +488,7 @@ export default {
         .post(backApi.addDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getDeptTree()
             Notification({
@@ -528,7 +528,7 @@ export default {
         .post(backApi.peopleInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.peopleInfo = res.data.data
           }
@@ -569,7 +569,7 @@ export default {
         .post(backApi.addPeople, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.data) {
             _this.getPeoplePage()
             Notification({
@@ -595,7 +595,7 @@ export default {
         .post(backApi.peopleInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.peopleInfo = res.data.data
             this.showEditPeople = true
@@ -622,7 +622,7 @@ export default {
         .post(backApi.editPeople, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.data) {
             _this.getPeoplePage()
             Notification({
@@ -654,7 +654,7 @@ export default {
       this.showDeleteTip = false
 
       var peopleIds = []
-      this.selectedPeoples.forEach((item) => {
+      this.selectedPeoples.forEach(item => {
         peopleIds.push(item.id)
       })
       const param = { ids: peopleIds }
@@ -663,7 +663,7 @@ export default {
         .post(backApi.deletePeople, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.data) {
             _this.getPeoplePage()
             Notification({
@@ -684,18 +684,18 @@ export default {
   height: 54px;
   font-size: 16px;
   line-height: 54px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin: 0 30px;
 }
 .left-div {
   float: left;
   width: 280px;
-  height: 814px;
-  background-color: #183157;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
   margin-left: 30px;
   padding: 0 10px;
+  position: relative;
   .left-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -703,6 +703,7 @@ export default {
   .institution-search-input {
     width: 278px;
     margin-top: 4px;
+    display: block;
     /deep/.el-input__inner {
       background: #09546d;
       border-color: #1eb0fc;
@@ -758,7 +759,6 @@ export default {
     }
   }
   .add-institution-btn {
-    margin: 20px auto 0 auto;
     text-align: center;
     width: 150px;
     height: 38px;
@@ -767,6 +767,10 @@ export default {
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(50%, -50%);
   }
 }
 
@@ -779,13 +783,12 @@ export default {
 }
 .right-div {
   min-width: 800px;
-  height: 814px;
-  background-color: #183157;
-  margin-left: 360px;
-  margin-right: 30px;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
+  margin: 0 30px 0 360px;
   padding: 0 14px;
   .right-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -793,6 +796,8 @@ export default {
   .search-tool {
     height: 34px;
     margin-top: 4px;
+    display: flex;
+    justify-content: flex-start;
     .people-search-input {
       width: 450px;
       vertical-align: top;
@@ -806,7 +811,6 @@ export default {
     .people-search-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -819,7 +823,6 @@ export default {
         margin-top: 5px;
       }
       .people-search-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -827,7 +830,6 @@ export default {
     .people-reset-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -839,7 +841,6 @@ export default {
         margin-top: 8px;
       }
       .people-reset-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -848,9 +849,9 @@ export default {
   .operate-table-tool {
     height: 53px;
     .selected-count {
-      display: inline-block;
-      margin-top: 18px;
-      margin-left: 10px;
+      float: left;
+      margin: 18px 0 0 10px;
+      font-size: 16px;
     }
     .delete-btn {
       float: right;
@@ -871,62 +872,19 @@ export default {
       width: 54px;
       height: 30px;
       background-color: #1eb0fc;
-      color: #ffffff;
+      color: #fff;
       text-align: center;
       line-height: 30px;
       font-size: 16px;
       cursor: pointer;
     }
   }
+  .pagination-wrap {
+    margin-top: -120px;
+    text-align: center;
+  }
 }
-// .el-table {
-//   color: #c5f3ff;
-//   font-size: 16px;
-//   background: transparent;
-//   border: none;
-//   /* 表格表头样式 */
-//   /deep/.el-table__header-wrapper th {
-//     color: #c5f3ff;
-//     font-size: 16px;
-//     height: 40px;
-//     padding: 0;
-//     background-color: rgba($color: #0b779e, $alpha: 0.66);
-//   }
-//   /* 表格每行高度*/
-//   /deep/.el-table__body td {
-//     height: 38px;
-//     padding: 0;
-//   }
-//   /* 每行的背景颜色 */
-//   /deep/.el-table__body td {
-//     background-color: transparent;
-//   }
-//   /* 所有单元格颜色、无边框 */
-//   /deep/td,
-//   /deep/tr,
-//   /deep/th {
-//     border: none;
-//     background-color: transparent;
-//   }
-//   /* 复选框样式 */
-//   /deep/.el-checkbox__inner {
-//     background-color: transparent;
-//     border-color: #c5f3ff;
-//     border-radius: 0px;
-//   }
-//   // /deep/.el-checkbox__input.is-checked {
-//   //   // background-color: #00cff9;
-//   //   border-radius: 2px;
-//   // }
-//   /*鼠标移入某行时的背景色*/
-//   /deep/tbody tr:hover > td {
-//     background-color: transparent;
-//   }
-// }
-// /* 去除表格底部线条 */
-// .el-table::before {
-//   height: 0px;
-// }
+
 .table-btn {
   width: 46px;
   height: 26px;

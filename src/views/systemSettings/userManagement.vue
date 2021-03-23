@@ -15,7 +15,7 @@
         :props="{
           children: 'children',
           label: 'deptName',
-          value: 'deptCode',
+          value: 'deptCode'
         }"
         default-expand-all
         @node-click="deptTreeClick"
@@ -139,7 +139,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div style="text-align: center">
+      <div class="pagination-wrap">
         <el-pagination
           class="tablePagination"
           popper-class="pageSelect"
@@ -264,7 +264,7 @@ export default {
   methods: {
     async getDeptTree () {
       const _this = this
-      this.$axios.post(backApi.getDeptTree).then((res) => {
+      this.$axios.post(backApi.getDeptTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           if (_this.deptTree.length > 0) {
@@ -276,7 +276,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -302,9 +302,9 @@ export default {
         .post(backApi.getUserList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.records.forEach((item) => {
+            res.data.data.records.forEach(item => {
               if (item.status === 0) {
                 item.enable = false
               } else {
@@ -364,7 +364,7 @@ export default {
         .post(backApi.userInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.currentUserDetail = res.data.data
             _this.showUserInfo = true
@@ -382,18 +382,16 @@ export default {
     async resetPasswordConfirmClick () {
       this.showResetPassword = false
       const param = { id: this.currentUser.id }
-      this.$axios
-        .post(backApi.resetPassword, param)
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            Notification({
-              title: '提示',
-              message: '操作成功',
-              type: 'success',
-              duration: 2 * 1000
-            })
-          }
-        })
+      this.$axios.post(backApi.resetPassword, param).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          Notification({
+            title: '提示',
+            message: '操作成功',
+            type: 'success',
+            duration: 2 * 1000
+          })
+        }
+      })
     },
 
     // 切换分页时触发
@@ -418,7 +416,7 @@ export default {
         .post(backApi.getPeoplePage, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.unbindPeopleList = res.data.data.records
             // console.log(_this.unbindPeopleList)
@@ -436,7 +434,7 @@ export default {
         .post(backApi.getRoleList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.roleList = res.data.data.records
           }
@@ -468,7 +466,7 @@ export default {
         .post(backApi.addUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.currentPage = 1
             _this.getUserList()
@@ -500,7 +498,7 @@ export default {
     async deleteUserConfirmClick () {
       this.showDeleteUser = false
       var userIds = []
-      this.selectedUsers.forEach((item) => {
+      this.selectedUsers.forEach(item => {
         userIds.push(item.id)
       })
       const param = { ids: userIds }
@@ -509,7 +507,7 @@ export default {
         .post(backApi.deleteUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getUserList()
             Notification({
@@ -532,7 +530,7 @@ export default {
         .post(backApi.updateUserStatus, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -552,7 +550,7 @@ export default {
         .post(backApi.userInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.currentUserDetail = res.data.data
             _this.unbindPeopleList.push({
@@ -584,7 +582,7 @@ export default {
         .post(backApi.editUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getUserList()
             Notification({
@@ -605,18 +603,17 @@ export default {
   height: 54px;
   font-size: 16px;
   line-height: 54px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin: 0 30px;
 }
 .left-div {
   float: left;
   width: 280px;
-  height: 814px;
-  background-color: #183157;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
   margin-left: 30px;
   padding: 0 10px;
   .left-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -624,6 +621,7 @@ export default {
   .institution-search-input {
     width: 278px;
     margin-top: 4px;
+    display: block;
     /deep/.el-input__inner {
       background: #09546d;
       border-color: #1eb0fc;
@@ -685,13 +683,12 @@ export default {
 
 .right-div {
   min-width: 900px;
-  height: 814px;
-  background-color: #183157;
-  margin-left: 360px;
-  margin-right: 30px;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
+  margin: 0 30px 0 360px;
   padding: 0 14px;
   .right-title {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
     height: 42px;
     line-height: 42px;
@@ -699,9 +696,10 @@ export default {
   .search-tool {
     height: 34px;
     margin-top: 4px;
+    display: flex;
+    justify-content: flex-start;
     .role-status-text {
       color: #fff;
-      display: inline-block;
       font-size: 16px;
     }
     .role-status-select {
@@ -729,7 +727,6 @@ export default {
     .people-search-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -742,7 +739,6 @@ export default {
         margin-top: 5px;
       }
       .people-search-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -750,7 +746,6 @@ export default {
     .people-reset-btn {
       width: 80px;
       height: 34px;
-      display: inline-block;
       margin-left: 10px;
       background: -webkit-linear-gradient(top, #086384, #0b779e);
       font-size: 16px;
@@ -762,7 +757,6 @@ export default {
         margin-top: 8px;
       }
       .people-reset-text {
-        display: inline-block;
         vertical-align: top;
         margin-left: 5px;
       }
@@ -771,9 +765,9 @@ export default {
   .operate-table-tool {
     height: 53px;
     .selected-count {
-      display: inline-block;
-      margin-top: 18px;
-      margin-left: 10px;
+      float: left;
+      margin: 18px 0 0 10px;
+      font-size: 16px;
     }
     .delete-btn {
       float: right;
@@ -781,7 +775,7 @@ export default {
       height: 30px;
       margin-top: 10px;
       background-color: #ff0000;
-      color: #ffffff;
+      color: #fff;
       text-align: center;
       line-height: 30px;
       font-size: 16px;
@@ -801,10 +795,14 @@ export default {
       cursor: pointer;
     }
   }
+  .pagination-wrap {
+    margin-top: -120px;
+    text-align: center;
+  }
 }
 
 .table-btn {
-  width: 46px;
+  width: 40px;
   height: 26px;
   background-color: #0b779e;
   color: #fefefe;
@@ -818,6 +816,6 @@ export default {
 }
 .table-btn-edit-password {
   margin-left: 10px;
-  width: 67px;
+  width: 66px;
 }
 </style>

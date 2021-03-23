@@ -295,15 +295,14 @@ export default {
 
 <style lang="scss" scoped>
 .box-wrap {
-  margin-top: -5px;
   padding: 0 20px 20px 20px;
   .leftBox {
     cursor: default;
     float: left;
-    width: 283px;
+    width: 286px;
     height: 899px;
-    background: url("../../assets/images/Setting/setting-leftBox.png") no-repeat;
-    background-size: 100% 100%;
+    background: url(../../assets/images/backgroundManagement/left_menu.svg)
+      no-repeat center/100% 100%;
     .setting-left-item {
       padding: 10px 30px;
       .setting-item {
@@ -315,13 +314,12 @@ export default {
     cursor: default;
     margin-left: 293px;
     height: 899px;
-    background: url("../../assets/images/Setting/setting-rightBox.png")
-      no-repeat;
-    background-size: 100% 100%;
+    background: url(../../assets/images/backgroundManagement/right_table.svg)
+      no-repeat center/100% 100%;
     .rightBoxBase {
       height: 879px;
       border: solid 10px transparent;
-      overflow: auto;
+      overflow: hidden;
     }
   }
 }
@@ -340,24 +338,16 @@ export default {
   cursor: pointer;
 }
 
-/* --- 改变滚动条样式 --- */
-/deep/ ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+::-webkit-scrollbar {
+  width: 3px;
 }
-/* --- 滚动条里面的滚动块 --- */
-/deep/ ::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  box-shadow: inset 0 0 5px rgb(0, 180, 255);
-  background: rgba(0, 180, 255, 0.2);
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 3px;
+  background: #00b7ff;
 }
-/* --- 滚动条里面轨道 --- */
-/deep/ ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background: #096090;
-}
-/deep/ ::-webkit-scrollbar-corner {
-  background: #096090;
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  background: transparent;
 }
 </style>

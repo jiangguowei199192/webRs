@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-22 15:52:29
+ * @LastEditTime: 2021-03-23 11:28:14
 -->
 <template>
   <div class="caseCenter">
@@ -348,7 +348,7 @@ export default {
   }
   .case-detail {
     width: 644px;
-    margin: 75px 0 0 10px;
+    margin: 58px 0 0 10px;
     .case-info {
       height: 258px;
       // background-color: rgba(0, 65, 87, 0.6);
