@@ -331,13 +331,6 @@ export default {
               break
             case 4:
               item.dispositionNode = '回告'
-              // if (item.content.disFinishAttachment) {
-              //   item.picList = []
-              //   const list = item.content.disFinishAttachment.split(',')
-              //   list.forEach((s) => {
-              //     item.picList.push(globalApi.headImg + s)
-              //   })
-              // }
               item.imgListPath = []
               item.fileListPath = []
               if (item.content.disFinishAttachment) {

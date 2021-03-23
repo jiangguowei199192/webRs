@@ -2,7 +2,7 @@ import { caseApi } from '@/api/case'
 import { resApi } from '@/api/res'
 import { deviceApi } from '@/api/device'
 import { EventBus } from '@/utils/eventBus.js'
-import globalApi from '@/utils/globalApi'
+// import globalApi from '@/utils/globalApi'
 const caseMixin = {
   data () {
     return {
@@ -217,7 +217,8 @@ const caseMixin = {
             )
             list.forEach((c) => {
               c.type = 'RP_Point'
-              if (c.resourcesIcon) { c.resourcesIcon = globalApi.headImg + c.resourcesIcon }
+              c.resourcesIcon = ''
+              // if (c.resourcesIcon) { c.resourcesIcon = globalApi.headImg + c.resourcesIcon }
             })
             this.points = list
             this.getPointsDone()

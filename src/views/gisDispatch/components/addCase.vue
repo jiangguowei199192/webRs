@@ -20,9 +20,9 @@
             maxlength="20"
           ></el-input>
         </el-form-item>
-        <el-form-item label="案件来源 :" class="time" prop="resourcesType">
+        <el-form-item label="案件来源 :" class="time" prop="infoSource">
           <el-select
-            v-model="caseForm.resourcesType"
+            v-model="caseForm.infoSource"
             :popper-append-to-body="false"
             placeholder="请选择案件来源"
           >
@@ -178,6 +178,7 @@ import { isNotNull, checkPhone } from '@/utils/formRules'
 import { caseApi } from '@/api/case'
 import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import assignMixin from '../mixins/assignMixin'
+import { settingApi } from '@/api/setting'
 export default {
   props: {
     isShow: {
@@ -200,6 +201,7 @@ export default {
         reportMan: [{ required: true, message: '请输入举报人' }],
         reportAddr: [{ required: true, message: '请输入举报地址' }],
         caseDesc: [{ required: true, message: '请输入案件描述' }],
+        infoSource: [{ required: true, message: '请选择案件来源' }],
         receivingAlarmMan: [{ required: true, message: '请输入接警人' }],
         longitude: isNotNull('请点选案件经纬度位置'),
         reportTel: [checkPhone()]
@@ -217,7 +219,8 @@ export default {
         receivingAlarmMan: '',
         latitude: '',
         longitude: '',
-        reportTel: ''
+        reportTel: '',
+        infoSource: ''
       },
       placeholder: '请输入'
     }
@@ -238,6 +241,7 @@ export default {
           this.$refs.gduMap.map2D._map.updateSize()
         }, 200)
         this.getUserList()
+        this.getCaseSources()
       } else {
         this.$refs.caseForm.resetFields()
       }
@@ -246,6 +250,23 @@ export default {
   mounted () {
   },
   methods: {
+    /**
+     * 获取案件来源
+     */
+    getCaseSources () {
+      this.$axios
+        .get(settingApi.queryByTypeCode, {
+          params: { typeCode: 'caseSources' }
+        })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            this.caseSources = res.data.data
+          }
+        })
+        .catch((err) => {
+          console.log('settingApi.queryByTypeCode Err : ' + err)
+        })
+    },
     /**
      * 点击地图回调事件
      */
