@@ -21,7 +21,6 @@ export default {
   },
   methods: {
     goOut (url) {
-      // window.location.href = url
       var out = window.open('_blank')
       out.location = url
     }

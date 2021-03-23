@@ -27,28 +27,28 @@
   </div>
 </template>
 <script>
-import InfoBox from "./components/infoBox";
-import QrcodeBox from "./components/qrcodeBox";
-import $ from "jquery";
+import InfoBox from './components/infoBox'
+import QrcodeBox from './components/qrcodeBox'
+import $ from 'jquery'
 
 export default {
-  name: "infoCenter",
+  name: 'infoCenter',
   components: { InfoBox, QrcodeBox },
-  data() {
+  data () {
     return {
       news1: '',
       news2: '',
       news3: '',
       news4: ''
-    };
+    }
   },
-  created() {
+  created () {
     var _this = this
     $.ajax({
       async: true,
-      type: "get",
-      dataType: "json",
-      url: "/assets/infoConfig.json",
+      type: 'get',
+      dataType: 'json',
+      url: '/assets/infoConfig.json',
       success: function (res) {
         _this.news1 = res.infoList[0]
         _this.news2 = res.infoList[1]
@@ -56,12 +56,12 @@ export default {
         _this.news4 = res.infoList[3]
       },
       error: function (err) {
-        console.log(err);
-      },
-    });
+        console.log(err)
+      }
+    })
   },
-  methods: {},
-};
+  methods: {}
+}
 </script>
 
 <style lang="scss" scoped>
