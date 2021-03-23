@@ -75,7 +75,7 @@ export default {
       this.$nextTick(() => {
         this.addParentDisabled()
       })
-      // console.log($event.parent.data)
+      console.log($event.parent.data)
       const parentData = $event.parent.data
       if (data._bIsDevice === true) {
         this.$emit('clickAnDeviceItem', data)
@@ -133,6 +133,7 @@ export default {
             const params = {
               deviceInfoListJsonStr: JSON.stringify([
                 {
+                  deviceTypeCode: data.deviceTypeCode,
                   deviceCode: $event.parent.data.id,
                   channelId: data.streamType,
                   accessType: data.accessType

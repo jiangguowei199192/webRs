@@ -485,6 +485,7 @@ export default {
       const params = {
         deviceInfoListJsonStr: JSON.stringify([
           {
+            deviceTypeCode: item.deviceTypeCode,
             deviceCode: item.id,
             channelId: list.streamType,
             accessType: list.accessType
@@ -1169,10 +1170,6 @@ export default {
     },
     // 预览或取消全部
     playAllVideos: debounce(function () {
-      const bs = document.querySelectorAll(
-        '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
-      )
-      console.log(bs)
       // 默认显示第一页，清除之前的数据
       this.currentPage = 1
       this.totalVideosArray = []
@@ -1181,62 +1178,181 @@ export default {
       if (this.isOnline) {
         this.selectedIndex = 200
         const divs = document.querySelectorAll('.leftContainer > div.list')
-        if (!this.isPlayAll) {
-          for (let i = 0; i < divs.length; i++) {
-            divs[i].classList.remove('selected')
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].classList.remove('selected')
+        }
+        console.log(this.totalVideosArray)
+        const deviceInfoListJsonStr = []
+        this.onlineArray.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.forEach(list => {
+              deviceInfoListJsonStr.push({
+                deviceTypeCode: item.deviceTypeCode,
+                deviceCode: item.id,
+                channelId: list.streamType,
+                accessType: list.accessType
+              })
+            })
           }
-          this.onlineArray.forEach(item => {
-            if (item.children && item.children.length > 0) {
-              item.children.forEach(list => {
-                list.isCurSelected && (list.isCurSelected = false)
-                if (list.onlineStatus === 'online') {
-                  list.isSelected = true
-                  const curData = Object.assign({}, list, {
-                    deviceCode: item.id,
-                    deviceAddress: item.deviceAddress,
-                    deviceBrand: item.deviceBrand,
-                    parentLabel: item.label,
-                    labelTotal: item.label + '-' + list.label
+        })
+        const params = {
+          deviceInfoListJsonStr: JSON.stringify(deviceInfoListJsonStr)
+        }
+        if (!this.isPlayAll) {
+          this.$axios.post(api.getStreamUrl, params).then(res => {
+            if (res && res.data && res.data.code === 0) {
+              this.totalVideosArray = []
+              // 1.设置样式
+              this.onlineArray.forEach(item => {
+                if (item.children && item.children.length > 0) {
+                  item.children.forEach(list => {
+                    list.isCurSelected && (list.isCurSelected = false)
+                    if (list.onlineStatus === 'online') {
+                      list.isSelected = true
+                      const curData = Object.assign({}, list, {
+                        deviceCode: item.id,
+                        deviceAddress: item.deviceAddress,
+                        deviceBrand: item.deviceBrand,
+                        parentLabel: item.label,
+                        labelTotal: item.label + '-' + list.label
+                      })
+                      this.totalVideosArray.push(curData)
+                    }
                   })
-                  this.totalVideosArray.push(curData)
                 }
               })
+              // 2.手动设置播放地址
+              const data = res.data.data
+              data.forEach(list => {
+                //  ws://111.47.13.103:40007/live/6C01728PA4A9A6F0.flv
+                list.streamUrl = `ws://${list.ip}:${list.wsPort}/${list.app}/${list.stream}.flv`
+              })
+              console.log(this.totalVideosArray)
+              this.totalVideosArray.forEach(item => {
+                if (item) {
+                  data.forEach(list => {
+                    if (
+                      item.deviceCode === list.deviceCode &&
+                      item.streamType === list.channelId
+                    ) {
+                      item.streamUrl = list.streamUrl
+                    }
+                  })
+                }
+              })
+              // 3.显示当前播放视频
+              this.getCurVideo()
+            } else {
+              this.getCurVideo()
             }
           })
         } else {
-          for (let i = 0; i < divs.length; i++) {
-            divs[i].classList.remove('selected')
-          }
-          this.onlineArray.forEach(item => {
-            if (item.children && item.children.length > 0) {
-              item.children.forEach(list => {
-                list.isCurSelected && (list.isCurSelected = false)
-                list.isSelected = false
+          this.$axios.post(api.stopStreamUrl, params).then(res => {
+            if (res && res.data && res.data.code === 0) {
+              this.onlineArray.forEach(item => {
+                if (item.children && item.children.length > 0) {
+                  item.children.forEach(list => {
+                    list.isCurSelected && (list.isCurSelected = false)
+                    list.isSelected = false
+                  })
+                }
               })
+              this.getCurVideo()
+            } else {
+              this.getCurVideo()
             }
           })
         }
       } else {
+        const bs = document.querySelectorAll(
+          '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
+        )
+        console.log(bs)
+        const deviceInfoListJsonStr = []
         for (let i = 0; i < bs.length; i++) {
           if (
             !JSON.parse(bs[i].getAttribute('obj')).children &&
             JSON.parse(bs[i].getAttribute('obj')).onlineStatus === 'online'
           ) {
-            if (!this.isPlayAll) {
-              bs[i].parentElement.setAttribute('class', 'liveIcon')
-              this.totalVideosArray.push(JSON.parse(bs[i].getAttribute('obj')))
+            const curObj = JSON.parse(bs[i].getAttribute('obj'))
+            if (
+              curObj.deviceTypeCode === 'WRJ' ||
+              curObj.deviceTypeCode === 'GDJK'
+            ) {
+              deviceInfoListJsonStr.push({
+                deviceTypeCode: curObj.deviceTypeCode,
+                deviceCode: curObj.deviceCode,
+                channelId: curObj.streamType,
+                accessType: curObj.accessType
+              })
+            }
+          }
+        }
+        const params = {
+          deviceInfoListJsonStr: JSON.stringify(deviceInfoListJsonStr)
+        }
+        if (!this.isPlayAll) {
+          this.$axios.post(api.getStreamUrl, params).then(res => {
+            if (res && res.data && res.data.code === 0) {
+              this.totalVideosArray = []
+              for (let i = 0; i < bs.length; i++) {
+                if (
+                  !JSON.parse(bs[i].getAttribute('obj')).children &&
+                  JSON.parse(bs[i].getAttribute('obj')).onlineStatus ===
+                    'online'
+                ) {
+                  bs[i].parentElement.setAttribute('class', 'liveIcon')
+                  this.totalVideosArray.push(
+                    JSON.parse(bs[i].getAttribute('obj'))
+                  )
+                }
+              }
+              // 2.手动设置播放地址
+              const data = res.data.data
+              data.forEach(list => {
+                //  ws://111.47.13.103:40007/live/6C01728PA4A9A6F0.flv
+                list.streamUrl = `ws://${list.ip}:${list.wsPort}/${list.app}/${list.stream}.flv`
+              })
+              console.log(this.totalVideosArray)
+              this.totalVideosArray.forEach(item => {
+                if (item) {
+                  data.forEach(list => {
+                    if (
+                      item.deviceCode === list.deviceCode &&
+                      item.streamType === list.channelId
+                    ) {
+                      item.streamUrl = list.streamUrl
+                    }
+                  })
+                }
+              })
+              this.getCurVideo()
             } else {
+              this.getCurVideo()
+            }
+          })
+        } else {
+          this.$axios.post(api.stopStreamUrl, params).then(res => {
+            if (res && res.data && res.data.code === 0) {
               // 移除所有激活的
               const divs = document.querySelectorAll('.el-tree-node')
               for (let i = 0; i < divs.length; i++) {
                 divs[i].classList.remove('is-current')
               }
-              bs[i].parentElement.setAttribute('class', '')
+              bs.forEach(b => {
+                b.parentElement.setAttribute('class', '')
+              })
+
+              this.getCurVideo()
+            } else {
+              this.getCurVideo()
             }
-          }
+          })
         }
       }
-
+      this.isPlayAll = !this.isPlayAll
+    }, 500),
+    getCurVideo () {
       // 若不够，数据则补位空格
       if (this.showVideoPageSize > this.totalVideosArray.length) {
         const j = this.totalVideosArray.length
@@ -1244,17 +1360,16 @@ export default {
           this.totalVideosArray.push('')
         }
       }
-      // this.curVideosArray = this.totalVideosArray.slice(
-      //   0,
-      //   this.showVideoPageSize
-      // )
-      for (let i = 0; i < this.showVideoPageSize; i++) {
-        setTimeout(() => {
-          this.curVideosArray.splice(i, 1, this.totalVideosArray[i])
-        }, 300)
-      }
-      this.isPlayAll = !this.isPlayAll
-    }, 500),
+      this.curVideosArray = this.totalVideosArray.slice(
+        0,
+        this.showVideoPageSize
+      )
+      // for (let i = 0; i < this.showVideoPageSize; i++) {
+      //   setTimeout(() => {
+      //     this.curVideosArray.splice(i, 1, this.totalVideosArray[i])
+      //   }, 300)
+      // }
+    },
     // 切换每屏显示的个数
     changeVideosType (n) {
       this.palace = n
@@ -1827,7 +1942,7 @@ export default {
       padding-top: 10px;
       height: 72px;
       background: url(../../assets/images/list-unselected.png) no-repeat;
-      background-size:100% 100%;
+      background-size: 100% 100%;
       width: 230px;
       box-sizing: border-box;
       p {
@@ -1838,7 +1953,7 @@ export default {
           width: 17px;
           height: 10px;
           background: url(../../assets/images/live.png) no-repeat;
-          background-size:100% 100%;
+          background-size: 100% 100%;
           margin-left: 12px;
         }
       }
@@ -1870,21 +1985,20 @@ export default {
           cursor: not-allowed;
           opacity: 0.5;
           background: url(../../assets/images/visible.png) no-repeat 4px center;
-
         }
       }
     }
     div.selected {
       background: url(../../assets/images/list-selected.png) no-repeat;
-      background-size:100% 100%;
+      background-size: 100% 100%;
     }
     div.list.unman {
       background: url(../../assets/images/unman_unselected.png) no-repeat;
-      background-size:100% 100%;
+      background-size: 100% 100%;
     }
     div.list.unman.selected {
       background: url(../../assets/images/unman_selected.png) no-repeat;
-      background-size:100% 100%;
+      background-size: 100% 100%;
     }
     div.empty {
       position: relative;
