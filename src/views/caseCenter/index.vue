@@ -10,10 +10,8 @@
   <div class="caseCenter">
     <!-- 案件列表 -->
     <CasePage
+      ref="table"
       class="case-table"
-      :tableInfo="tableInfo"
-      :subTitle="subTitle"
-      :api="getCaseList"
       @handelDisposeClick="handelDisposeClick"
       @handelClickRowInfo="handelClickRowInfo"
     ></CasePage>
@@ -181,20 +179,6 @@ export default {
 
   data () {
     return {
-      subTitle: '案件列表',
-      // 表格项
-      tableInfo: {
-        refresh: 0,
-        data: [],
-        fieldList: [
-          { label: '案件名称', value: 'caseName' },
-          { label: '举报地点', value: 'reportAddr' },
-          { label: '简要描述', value: 'caseDesc' },
-          { label: '案发时间', value: 'caseStartTime' },
-          { label: '接案时间', value: 'createTime' },
-          { label: '处置状态', value: 'caseStatus', type: 'handelStatus' }
-        ]
-      },
       isShow: false,
       active: 0,
       caseDetailInfo: {},
@@ -220,18 +204,14 @@ export default {
     }
   },
 
-  mounted () {
-    this.refreshTable()
-  },
+  mounted () {},
 
-  beforeDestroy () {
-    this.tableInfo.refresh = ''
-  },
+  beforeDestroy () {},
 
   methods: {
     // 刷新table
     refreshTable () {
-      this.tableInfo.refresh = Math.random()
+      this.$refs.table.getList()
     },
 
     // 单击处置按钮
@@ -272,14 +252,14 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then(res => {
+        .then((res) => {
           // console.log('基本信息res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseDetailInfo = res.data.data
             this.disposeUploadConfig()
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('caseApi.selectDetail Err : ' + err)
         })
     },
@@ -292,7 +272,7 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then(res => {
+        .then((res) => {
           // console.log('处置记录res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseRecordInfo = res.data.data.records
@@ -300,7 +280,7 @@ export default {
             EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('caseApi.selectCaseRecord Err : ' + err)
         })
     },
@@ -313,7 +293,7 @@ export default {
         this.uploadFilesConfig = this.caseDetailInfo.disFinishAttachment.split(
           ','
         )
-        this.uploadFilesConfig.forEach(t => {
+        this.uploadFilesConfig.forEach((t) => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             this.imgListPath.push(t)

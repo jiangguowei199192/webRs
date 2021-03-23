@@ -207,7 +207,15 @@ export default {
     radiusChange () {
       if (!this.$refs.gduMap) return
 
+      let valid = true
       if (!isNaN(this.radius)) {
+        if (this.radius < 0 || this.radius > 10) valid = false
+      } else valid = false
+
+      if (!valid) {
+        this.$notify.closeAll()
+        this.$notify.warning({ title: '提示', message: '周边范围请输入0-10有效数字' })
+      } else {
         this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
           this.caseInfo,
           this.radius * 1000

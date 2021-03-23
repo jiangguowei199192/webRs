@@ -12,13 +12,14 @@
       <div class="toolBox">
         <!-- <span class="tool-title">处置状态:</span> -->
         <el-select
-          placeholder="案件所属"
-          v-model="search.belong"
+          placeholder="处置状态"
+          v-model="query.caseStatus"
           class="belongSel"
           clearable
+          @change="search"
         >
           <el-option
-            v-for="(item, index) in deptTree"
+            v-for="(item, index) in caseStatus"
             :key="index"
             :label="item.typeName"
             :value="item.typeCode"
@@ -26,11 +27,11 @@
         </el-select>
         <el-input
           class="search"
-          v-model="queryParams.searchStr"
+          v-model="query.content"
           placeholder="请输入案件名称/地址/描述进行搜索"
-          @keyup.enter.native="addressSearchChange"
+          @keyup.enter.native="search"
         ></el-input>
-        <div class="btn" @click.stop="addressSearchChange">
+        <div class="btn" @click.stop="search">
           <img :src="searchIcon" />
           <span>搜索</span>
         </div>
@@ -61,7 +62,7 @@
         :data.sync="tableInfo.data"
         :tableHeight="610"
         :query="query"
-        :api="api"
+        :api="getCaseList"
         :checkedList.sync="checkedList"
         @disposeClick="disposeClick"
         @getClickRowInfo="getClickRowInfo"
@@ -72,61 +73,44 @@
 
 <script>
 import PageTable from '@/components/pageTable.vue'
-
+import { caseApi } from '@/api/case'
 export default {
   name: 'casePage',
 
   components: { PageTable },
-
-  props: {
-    // 子标题
-    subTitle: { type: String },
-    // 获取数据的接口
-    api: { type: Function },
-    // 查询条件
-    query: {
-      type: Object,
-      default: () => {
-        return {
-          timeBegin: '',
-          timeEnd: '',
-          reportAddr: ''
-        }
-      }
-    },
-    tableInfo: {
-      type: Object,
-      default: () => {
-        return {
-          refresh: 1,
-          initCurpage: 1,
-          data: [],
-          fieldList: [],
-          handle: {}
-        }
-      }
-    }
-  },
-
   data () {
     return {
       searchIcon: require('../../../assets/images/caseCenter/search.svg'),
       resetIcon: require('../../../assets/images/caseCenter/select.svg'),
       checkedList: [],
-      queryParams: { dateRange: [], searchStr: '' },
-      deptTree: [
-        { typeCode: 'YASZDWLX', typeName: '预案设置单位类型' },
-        { typeCode: 'dept_type', typeName: '组织类型' }
+      caseStatus: [
+        { typeCode: 0, typeName: '未处置' },
+        { typeCode: 1, typeName: '已处置' }
       ],
-      search: {
-        belong: '',
-        date: '',
-        other: ''
+      // 查询条件
+      query: {
+        caseStatus: '',
+        content: ''
+      },
+      // 表格项
+      tableInfo: {
+        refresh: 0,
+        data: [],
+        fieldList: [
+          { label: '案件名称', value: 'caseName' },
+          { label: '举报地点', value: 'reportAddr' },
+          { label: '简要描述', value: 'caseDesc' },
+          { label: '案发时间', value: 'caseStartTime' },
+          { label: '接案时间', value: 'createTime' },
+          { label: '处置状态', value: 'caseStatus', type: 'handelStatus' }
+        ]
       }
     }
   },
 
-  mounted () {},
+  mounted () {
+    this.getList()
+  },
 
   methods: {
     //  获取列表
@@ -139,35 +123,26 @@ export default {
       this.$refs.pageTable.clearSelection()
     },
 
-    // 按日期搜索列表
-    dateSearchChange () {
-      if (this.queryParams.dateRange) {
-        this.query.timeBegin = this.dateRange[0].getTime()
-        this.query.timeEnd = this.dateRange[1].getTime()
-        this.tableInfo.initCurpage = Math.random()
-        this.getList()
-      }
+    // 获取案件列表
+    getCaseList (params) {
+      return this.$axios.post(caseApi.selectPage, params, {
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      })
     },
 
     // 按地址搜索列表
-    addressSearchChange () {
-      if (this.queryParams.searchStr.length <= 0) {
-        this.$notify.warning({
-          title: '提示',
-          message: '请输入地址后查询 !',
-          duration: 3 * 1000
-        })
-        return
-      }
-      this.query.reportAddr = this.queryParams.searchStr
+    search () {
+      // 重置分页
+      this.tableInfo.initCurpage = Math.random()
       this.getList()
     },
 
     // 重置搜索
     resetSearchParams () {
-      this.dateRange = []
-      this.queryParams.searchStr = ''
-      this.query.timeBegin = this.query.timeEnd = this.query.reportAddr = ''
+      // 重置分页
+      this.tableInfo.initCurpage = Math.random()
+      this.query.caseStatus = ''
+      this.query.content = ''
       this.getList()
     },
 

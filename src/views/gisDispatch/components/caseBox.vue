@@ -100,9 +100,18 @@ export default {
      * 范围改变
      */
     radiusChange () {
+      let valid = true
       if (!isNaN(this.radius)) {
-        EventBus.$emit('caseRadiusChange', this.radius)
-      }
+        if (this.radius < 0 || this.radius > 10) valid = false
+      } else valid = false
+
+      if (!valid) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '提示',
+          message: '周边范围请输入0-10有效数字'
+        })
+      } else EventBus.$emit('caseRadiusChange', this.radius)
     }
   }
 }
