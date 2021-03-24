@@ -153,15 +153,15 @@ export default {
             selected: false
           }
           break
-        case 'fireList':
-          info = {
-            id: 'fireList',
-            title: '火情列表',
-            normalImgPath: require('../../assets/images/backgroundManagement/fireListNormal.png'),
-            selectedImgPath: require('../../assets/images/backgroundManagement/fireListSelected.png'),
-            selected: false
-          }
-          break
+        // case 'fireList':
+        //   info = {
+        //     id: 'fireList',
+        //     title: '火情列表',
+        //     normalImgPath: require('../../assets/images/backgroundManagement/fireListNormal.png'),
+        //     selectedImgPath: require('../../assets/images/backgroundManagement/fireListSelected.png'),
+        //     selected: false
+        //   }
+        //   break
         default:
           break
       }
@@ -207,11 +207,11 @@ export default {
         {
           headerTitle: '素材中心',
           info: [this.getLeftItemInfo('iconLibrary')]
-        },
-        {
-          headerTitle: '火情中心',
-          info: [this.getLeftItemInfo('fireList')]
         }
+        // {
+        //   headerTitle: '火情中心',
+        //   info: [this.getLeftItemInfo('fireList')]
+        // }
       ]
 
       this.gotoSubpage('institutionManagement')
@@ -256,9 +256,9 @@ export default {
         case 'iconLibrary':
           this.$router.push({ path: '/systemSettings/iconLibrary' })
           break
-        case 'fireList':
-          this.$router.push({ path: '/systemSettings/fireList' })
-          break
+        // case 'fireList':
+        //   this.$router.push({ path: '/systemSettings/fireList' })
+        //   break
         default:
           break
       }
