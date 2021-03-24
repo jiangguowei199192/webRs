@@ -419,7 +419,7 @@ export default {
         this.isActive = 3
       } else if (path === '/infoCenter') {
         this.isActive = 4
-      } else if (path === '/systemSettings') {
+      } else if (path === '/systemSettings/institutionManagement') {
         this.isActive = 5
       }
     },

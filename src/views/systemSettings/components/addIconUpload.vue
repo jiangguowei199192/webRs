@@ -108,7 +108,7 @@ export default {
 <style lang="less" scoped>
 .iconDialog {
   /deep/ .el-dialog {
-    background: #101b34;
+    background: #004157;
     .el-dialog__title,
     .el-upload__tip,
     .el-dialog__close {

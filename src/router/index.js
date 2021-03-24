@@ -76,6 +76,9 @@ const routes = [
         path: '/systemSettings',
         name: 'systemSettings',
         component: () => import('../views/systemSettings'),
+        redirect: {
+          name: 'institutionManagement'
+        },
         children: [
           {
             path: '/systemSettings/institutionManagement',
