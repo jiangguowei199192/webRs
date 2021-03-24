@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="isShow" class="resDlg">
+  <el-dialog :visible="isShow" class="browserScroll resDlg">
     <div>
       <gMap
         ref="gduMap"
