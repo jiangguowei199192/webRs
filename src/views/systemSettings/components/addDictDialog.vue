@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 09:16:43
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-05 14:46:06
+ * @LastEditTime: 2021-03-24 16:26:56
 -->
 <template>
   <el-dialog
@@ -152,6 +152,7 @@
 import {
   isNotNull,
   numberValidate,
+  validateName,
   limitIntOrCharMaxLength,
   lengthLimitedNumber
 } from '@/utils/formRules'
@@ -189,7 +190,9 @@ export default {
         updateUserName: ''
       },
       addDictRules: {
-        name: isNotNull('请输入类型名称'),
+        name: isNotNull('请输入类型名称').concat(
+          validateName('名称只包含汉字/数字/字母/下划线且不能以下划线开头结尾')
+        ),
         code: isNotNull('请输入类型码'),
         status: isNotNull('请选择状态'),
         order: numberValidate('输入必须为数字')

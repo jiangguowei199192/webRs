@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-02-26 13:33:14
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-03 09:38:27
+ * @LastEditTime: 2021-03-24 16:17:10
 -->
 <template>
   <div>
@@ -200,6 +200,7 @@ export default {
         .then(res => {
           //   console.log('火情确认/误报提交接口返回: ', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '操作成功!',

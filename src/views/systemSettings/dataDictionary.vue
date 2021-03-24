@@ -37,6 +37,7 @@
           :props="dictTreeProps"
           default-expand-all
           node-key="id"
+          highlight-current
           :expand-on-click-node="false"
           @node-click="dictTreeClick"
           :filter-node-method="dictSearchChange"
@@ -144,6 +145,10 @@ export default {
 
   mounted () {
     this.getDictTree()
+    setTimeout(() => {
+      this.dictTreeClick(this.dictTree[0])
+      this.$refs.dictTreeRef.setCurrentKey(this.dictTree[0].id)
+    }, 300)
   },
 
   methods: {
@@ -228,6 +233,7 @@ export default {
         .then(res => {
           // console.log('新增数据字典接口返回: ', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '新增成功!',
@@ -258,6 +264,7 @@ export default {
         .then(res => {
           // console.log('修改字典接口返回: ', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '修改成功!',
@@ -284,6 +291,7 @@ export default {
         .then(res => {
           // console.log("删除字典接口返回: ", res);
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '删除成功!',
@@ -395,7 +403,7 @@ export default {
     color: #fff;
     /deep/.el-tree-node {
       .el-tree-node__content {
-        display: block !important;
+        // display: block !important;
         height: 30px;
         line-height: 30px;
         border: 1px solid transparent;
@@ -411,7 +419,7 @@ export default {
         display: none;
       }
     }
-    /deep/.el-tree-node:focus > .el-tree-node__content {
+    /deep/.el-tree-node.is-current > .el-tree-node__content {
       color: #85cfe8;
       background-color: rgba(11, 119, 158, 0.66);
     }

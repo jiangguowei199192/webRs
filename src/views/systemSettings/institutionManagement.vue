@@ -722,7 +722,7 @@ export default {
     color: #ffffff;
     /deep/.el-tree-node {
       .el-tree-node__content {
-        display: block !important;
+        // display: block !important;
         height: 30px;
         line-height: 30px;
         border: 1px solid transparent;
