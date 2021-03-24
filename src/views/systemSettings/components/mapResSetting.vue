@@ -302,19 +302,18 @@ export default {
   padding: 20px 31px 0px 20px;
   .title {
     font-size: 16px;
-    color: #ffffff;
+    color: #fff;
   }
   .mainBox {
     margin-top: 16px;
+    font-size: 15px;
     .toolBox {
       margin-top: 18px;
       .txt1 {
-        margin-right: 17px;
-        margin-left: 12px;
+        margin: 0 17px 0 12px;
       }
       .txt2 {
-        margin-right: 17px;
-        margin-left: 17px;
+        margin: 0 17px;
       }
     }
   }

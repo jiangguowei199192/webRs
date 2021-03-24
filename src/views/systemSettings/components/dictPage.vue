@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 13:56:08
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-04 14:41:35
+ * @LastEditTime: 2021-03-23 19:32:05
 -->
 <template>
   <div class="dictDetBox">
@@ -342,6 +342,9 @@ export default {
 <style lang="scss" scoped>
 .dictDetBox {
   margin-left: 30px;
+  .mainBox {
+    font-size: 15px;
+  }
   .toolBox {
     margin-top: 13px;
   }

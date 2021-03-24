@@ -9,7 +9,8 @@
           <el-select
             v-model="queryParams.videoType"
             placeholder="请选择"
-            clearable class="select commSelect"
+            clearable
+            class="select commSelect"
             @change="queryParamsChange"
           >
             <el-option
@@ -63,13 +64,17 @@
             placeholder="请输入设备名称/编码进行搜索"
             @keydown.enter.native="searchVideoDatas"
           ></el-input>
-          <div class="btn" style="margin-left:40px;"
+          <div
+            class="btn"
+            style="margin-left:40px;"
             @click.stop="searchVideoDatas"
           >
             <img :src="searchIcon" />
             <span>搜索</span>
           </div>
-          <div class="btn resetBtn" style="margin-left:48px;"
+          <div
+            class="btn resetBtn"
+            style="margin-left:48px;"
             @click.stop="resetSearchParams"
           >
             <img :src="resetIcon" />
@@ -237,7 +242,7 @@ export default {
      */
     async getDeptTree () {
       var _this = this
-      this.$axios.post(backApi.getDeptTree).then((res) => {
+      this.$axios.post(backApi.getDeptTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
         }
@@ -245,7 +250,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -339,7 +344,7 @@ export default {
       this.showDeleteDev = false
 
       const ids = []
-      this.checkedList.forEach((d) => {
+      this.checkedList.forEach(d => {
         ids.push(d.deviceCode)
       })
       // const tmpConfig1 = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
@@ -347,8 +352,9 @@ export default {
       const formData = new FormData()
       formData.append('deviceCodeList', ids)
       // this.$axios.post(settingApi.deleteDeviceList, { deviceCodeList: ids}, tmpConfig1)
-      this.$axios.post(settingApi.deleteDeviceList, formData, tmpConfig2)
-        .then((res) => {
+      this.$axios
+        .post(settingApi.deleteDeviceList, formData, tmpConfig2)
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -365,7 +371,7 @@ export default {
           //   duration: 5 * 1000
           // })
         })
-        .catch((err) => {
+        .catch(err => {
           Notification({
             title: '提示',
             message: '删除设备异常:' + err,
@@ -388,7 +394,7 @@ export default {
         deviceCode: data.deviceCode,
         deviceStatus: event ? 'enabled' : 'disabled'
       }
-      this.$axios.post(settingApi.changeDeviceStatus, param).then((res) => {
+      this.$axios.post(settingApi.changeDeviceStatus, param).then(res => {
         if (res && res.data && res.data.code === 0) {
           Notification({
             title: '提示',
@@ -416,23 +422,22 @@ export default {
   padding: 20px 31px 0px 20px;
   .title {
     font-size: 16px;
-    color: #ffffff;
+    color: #fff;
   }
   .mainBox {
     margin-top: 16px;
+    font-size: 15px;
+    // background-color: rgba(0, 65, 87, 0.85);
     .toolBox {
       margin-top: 18px;
       .txt1 {
-        margin-right: 8px;
-        margin-left: 12px;
+        margin: 0 8px 0 12px;
       }
       .txt2 {
-        margin-right: 8px;
-        margin-left: 48px;
+        margin: 0 8px 0 48px;
       }
       .txt3 {
-        margin-right: 8px;
-        margin-left: 48px;
+        margin: 0 8px 0 48px;
       }
     }
     .commSelect {
@@ -445,7 +450,7 @@ export default {
       border-color: #39a4dd;
       border-radius: 0px;
       border: 1px solid #1eb0fc;
-      vertical-align:top;
+      vertical-align: top;
       padding: 3px 5px;
     }
     /deep/.el-input__inner {
@@ -471,7 +476,7 @@ export default {
       border-radius: 0px;
       width: 360px;
     }
-    .inputSearch{
+    .inputSearch {
       margin-left: 0px;
       width: 360px;
     }

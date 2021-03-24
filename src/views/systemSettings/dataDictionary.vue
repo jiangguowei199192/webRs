@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: auto 30px">
+  <div style="margin: auto 23px">
     <!-- 头部面包屑 -->
     <div class="head-title">系统设置 / 数据字典</div>
     <div style="display: flex">
@@ -363,9 +363,10 @@ export default {
 
 .left-tree {
   width: 280px;
-  height: 814px;
-  background-color: #183157;
+  height: 804px;
+  background-color: rgba(0, 65, 87, 0.85);
   padding: 0 10px;
+  position: relative;
   .tree-title {
     color: #fff;
     font-size: 15px;
@@ -375,6 +376,7 @@ export default {
   .dict-search-input {
     width: 278px;
     margin-top: 4px;
+    display: block;
     /deep/.el-input__inner {
       background: rgba(9, 84, 109, 0.3);
       border-color: #1eb0fc;
@@ -415,7 +417,7 @@ export default {
     }
   }
   .add-dict-btn {
-    margin: 20px auto 0 62px;
+    // margin: 20px auto 0 62px;
     text-align: center;
     width: 150px;
     height: 38px;
@@ -423,6 +425,10 @@ export default {
     color: #fff;
     border: none;
     font-size: 16px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(50%, -50%);
   }
   /deep/.el-menu {
     z-index: 1;
@@ -458,6 +464,8 @@ export default {
 
 .right-table {
   margin-top: 0;
-  flex-grow: 100;
+  flex-grow: 1;
+  background-color: rgba(0, 65, 87, 0.85);
+  min-width: 800px;
 }
 </style>

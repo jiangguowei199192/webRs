@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-02-24 15:45:20
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-03 15:05:22
+ * @LastEditTime: 2021-03-23 20:07:49
 -->
 <template>
   <div style="margin: auto 30px">
@@ -47,15 +47,20 @@ export default {
         refresh: 0,
         data: [],
         fieldList: [
-          { label: '报警时间', value: 'alarmTime', width: '160' },
-          { label: '报警地点', value: 'alarmAddress', width: '240' },
+          { label: '报警时间', value: 'alarmTime', width: '150' },
+          { label: '报警地点', value: 'alarmAddress', width: '200' },
           { label: '经度', value: 'alarmLongitude', width: '100' },
           { label: '纬度', value: 'alarmLatitude', width: '100' },
-          { label: '类型', value: 'alarmTypeName', width: '90' },
-          { label: '报警图片', value: 'alarmPicList', type: 'fireImage', width: '120' },
-          { label: '报警设备', value: 'deviceName', width: '140' },
+          { label: '类型', value: 'alarmTypeName', width: '85' },
+          {
+            label: '报警图片',
+            value: 'alarmPicList',
+            type: 'fireImage',
+            width: '120'
+          },
+          { label: '报警设备', value: 'deviceName', width: '110' },
           { label: '状态', value: 'alarmStatus', width: '70' },
-          { label: '确认时间', value: 'updateTime' }
+          { label: '确认时间', value: 'updateTime', width: '150' }
         ]
       },
       isShow: false,
@@ -104,5 +109,16 @@ export default {
   height: 54px;
   line-height: 54px;
   font-size: 16px;
+}
+/deep/::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+/deep/::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: #00b7ff;
+}
+/deep/::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>

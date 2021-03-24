@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-02-24 15:57:19
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-22 16:25:22
+ * @LastEditTime: 2021-03-24 14:37:14
 -->
 <template>
   <div class="fireBox">
@@ -193,6 +193,9 @@ export default {
 
 <style lang="scss" scoped>
 .fireBox {
+  font-size: 15px;
+  overflow: auto;
+  background-color: rgba(0, 65, 87, 0.85);
   .toolBox {
     margin: 18px 0 16px 0;
     .datePickerStyle {
