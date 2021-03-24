@@ -14,7 +14,6 @@
         <el-form
           :model="item"
           :inline="true"
-          label-width="90px"
           :rules="formRules"
           ref="markerForm"
         >
@@ -100,11 +99,7 @@
               @change="lanChange(item, index)"
             ></el-input>
           </el-form-item>
-          <el-form-item
-            label="图标 :"
-            style="line-height: 40px; margin-bottom: 11px"
-            prop="iconUrl"
-          >
+          <el-form-item label="图标 :" class="iconItem" prop="iconUrl">
             <div class="iconTool">
               <img :src="item.iconPath || defIcon" class="icon" />
               <el-popover
@@ -404,6 +399,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.iconItem {
+  line-height: 40px;
+  margin-bottom: 11px;
+}
 .iconTool {
   margin-bottom: 4px;
 }

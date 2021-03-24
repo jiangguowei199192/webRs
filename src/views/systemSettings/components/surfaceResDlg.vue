@@ -17,8 +17,6 @@
         <el-form
           :model="resForm"
           :inline="true"
-          label-width="90px"
-          style="margin-top: 17px"
           :rules="formRules"
           ref="areaForm"
         >
@@ -489,6 +487,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/.el-form {
+  margin-top: 17px;
+}
 .lineContent {
   .lineName {
     /deep/ .el-input__inner {

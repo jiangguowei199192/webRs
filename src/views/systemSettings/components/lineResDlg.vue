@@ -1,5 +1,5 @@
 <template>
-  <div class='lineBox'>
+  <div>
     <ResDialog
       :title="title"
       :drawType="1"
@@ -17,8 +17,6 @@
         <el-form
           :model="resForm"
           :inline="true"
-          label-width="90px"
-          style="margin-top: 17px"
           :rules="formRules"
           ref="lineForm"
         >
@@ -508,9 +506,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.lineBox{
-  font-size: 12px;
+/deep/.el-form {
+  margin-top: 17px;
 }
+
 .lineContent {
   .lineName {
     /deep/ .el-input__inner {

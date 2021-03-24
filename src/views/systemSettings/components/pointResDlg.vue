@@ -18,8 +18,6 @@
           ref="pointForm"
           :model="resForm"
           :inline="true"
-          label-width="90px"
-          style="margin-top: 17px"
           :rules="formRules"
         >
           <el-form-item label="资源名称 :" prop="resourcesName">
@@ -163,7 +161,7 @@
           </el-form-item>
           <el-form-item
             label="图标 :"
-            style="line-height: 40px; margin-bottom: 11px"
+            class="resourcesIcon"
             prop="resourcesIcon"
           >
             <div class="iconTool">
@@ -229,7 +227,6 @@
               <el-form
                 :model="item"
                 :inline="true"
-                label-width="90px"
                 :rules="areaRules"
                 ref="areaForm"
               >
@@ -868,5 +865,12 @@ export default {
 <style lang="scss" scoped>
 .iconTool {
   margin-bottom: 4px;
+}
+/deep/.el-form {
+  margin-top: 17px;
+  .resourcesIcon {
+    line-height: 40px;
+    margin-bottom: 11px;
+  }
 }
 </style>

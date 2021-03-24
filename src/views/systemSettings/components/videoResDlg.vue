@@ -21,7 +21,6 @@
           ref="formCtrl"
           :model="resForm"
           :inline="true"
-          label-width="90px"
           style="margin-top: 8px"
           :rules="formRules"
         >
