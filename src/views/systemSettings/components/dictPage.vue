@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 13:56:08
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-23 19:32:05
+ * @LastEditTime: 2021-03-24 16:29:49
 -->
 <template>
   <div class="dictDetBox">
@@ -168,6 +168,7 @@ export default {
     // 搜索子级字典
     searchDictDatas () {
       if (this.searchStr === '') {
+        this.$notify.closeAll()
         this.$notify.warning({
           title: '提示',
           message: '请输入子类名称后查询 !',
@@ -207,6 +208,7 @@ export default {
         .then(res => {
           // console.log('新增子级字典接口返回: ', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '新增成功!',
@@ -237,6 +239,7 @@ export default {
         .then(res => {
           // console.log('修改子级字典接口返回: ', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '修改成功!',
@@ -287,6 +290,11 @@ export default {
         .post(dataDictApi.editDict, params)
         .then(res => {
           if (res && res.data && res.data.code === 0) {
+            this.$notify.success({
+              title: '提示',
+              message: '修改成功!',
+              duration: 3 * 1000
+            })
             this.getList()
           }
         })
@@ -298,6 +306,7 @@ export default {
     // 点击批量删除
     delDicts () {
       if (this.checkedList.length <= 0) {
+        this.$notify.closeAll()
         this.$notify.warning({
           title: '提示',
           message: '请选择要删除的字典!',
@@ -322,6 +331,7 @@ export default {
         .then(res => {
           // console.log("删除字典接口返回: ", res);
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.$notify.success({
               title: '提示',
               message: '删除成功!',

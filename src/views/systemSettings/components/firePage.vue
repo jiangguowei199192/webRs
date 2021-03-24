@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-02-24 15:57:19
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-24 14:37:14
+ * @LastEditTime: 2021-03-24 16:17:19
 -->
 <template>
   <div class="fireBox">
@@ -146,6 +146,7 @@ export default {
     // 按地址搜索列表
     addressSearchChange () {
       if (this.queryParams.searchStr.length <= 0) {
+        this.$notify.closeAll()
         this.$notify.warning({
           title: '提示',
           message: '请输入地址后查询 !',

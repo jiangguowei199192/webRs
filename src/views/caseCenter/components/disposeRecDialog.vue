@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-23 17:20:23
+ * @LastEditTime: 2021-03-24 15:21:20
 -->
 <template>
   <div>
@@ -178,6 +178,7 @@ export default {
       }
 
       this.uploadFiles.push(file.raw)
+      this.uploadFileList()
     },
 
     // 移除上传文件
@@ -186,6 +187,10 @@ export default {
       if (index !== -1) {
         this.uploadFiles.splice(index, 1)
       }
+    },
+
+    onUploadSuccess (response, file, fileList) {
+      console.log(response, file, fileList)
     },
 
     // 上传文件
