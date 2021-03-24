@@ -412,13 +412,16 @@ export default {
       font-family: Source Han Sans CN;
       font-weight: 500;
       color: #c5f3ff;
-      background-color: #0f5f86;
+       background-color: rgba(53, 176, 220, 0.66);;
       padding: 0;
       height: 40px;
       line-height: 40px;
     }
     /deep/ .el-table {
       background: rgba(0, 65, 87, 0.85);
+    }
+    /deep/ .el-table tr {
+      background-color:transparent;
     }
     /deep/ .el-table__header-wrapper table thead th .cell {
       line-height: 16px;
