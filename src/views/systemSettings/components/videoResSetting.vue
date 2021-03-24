@@ -420,6 +420,7 @@ export default {
 <style lang="scss" scoped>
 .videoResBox {
   padding: 20px 31px 0px 20px;
+  font-size: 16px;
   .title {
     font-size: 16px;
     color: #fff;

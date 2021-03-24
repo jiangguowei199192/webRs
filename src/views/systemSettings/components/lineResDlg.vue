@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='lineBox'>
     <ResDialog
       :title="title"
       :drawType="1"
@@ -508,6 +508,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.lineBox{
+  font-size: 12px;
+}
 .lineContent {
   .lineName {
     /deep/ .el-input__inner {

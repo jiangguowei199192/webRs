@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="isShow" width="1440px" class="resDlg">
+  <el-dialog :visible="isShow" class="resDlg">
     <div>
       <gMap
         ref="gduMap"
@@ -55,11 +55,11 @@
         <span>创建时间:</span>
         <span class="value">{{ createTime }}</span>
         <span class="name">创建人:</span>
-        <span class="value">{{createUser}}</span>
+        <span class="value">{{ createUser }}</span>
         <span class="name">最后修改时间:</span>
-        <span class="value">{{updateTime}}</span>
+        <span class="value">{{ updateTime }}</span>
         <span class="name">最后修改人:</span>
-        <span class="value">{{updateUser}}</span>
+        <span class="value">{{ updateUser }}</span>
       </div>
       <span class="btnClose" @click.stop="cancel">关闭</span>
     </div>
@@ -276,7 +276,9 @@ export default {
      *  修改绘制元素
      */
     addOrUpdateFeature (data) {
-      const tmpFt = this.$refs.gduMap.map2D.customDrawHelper.addOrUpdateFeature(data)
+      const tmpFt = this.$refs.gduMap.map2D.customDrawHelper.addOrUpdateFeature(
+        data
+      )
       setTimeout(() => {
         // 待自动定位结束后定位到指定图形
         this.$refs.gduMap.map2D.customDrawHelper.locateFeatureByID(data.drawId)
@@ -316,7 +318,9 @@ export default {
 
 <style lang="scss" scoped>
 .resDlg {
+  font-size: 14px;
   /deep/.el-dialog {
+    width:1440px;
     overflow: hidden;
     .el-dialog__header {
       display: none;
@@ -359,6 +363,51 @@ export default {
         line-height: 21px;
         color: #fff;
         font-size: 14px;
+      }
+    }
+    /* 取消/确定按钮 */
+    .resDlgClose {
+      margin: 15px 20px 20px 0;
+      text-align: center;
+      position: relative;
+
+      .infos {
+        display: inline-block;
+        font-size: 14px;
+        line-height: 30px;
+        text-align: center;
+        color: #fff;
+
+        .name {
+          margin-left: 45px;
+        }
+
+        .value {
+          margin-left: 5px;
+        }
+      }
+
+      .btnClose {
+        position: absolute;
+        top: 10px;
+        right: 0px;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: inline-block;
+        width: 66px;
+        height: 30px;
+        background: transparent;
+        border: 1px solid #1eb0fc;
+        border-radius: 4px;
+        font-size: 14px;
+        line-height: 30px;
+        text-align: center;
+        margin-left: 20px;
+        color: #1eb0fc;
+      }
+
+      .btnClose:active {
+        opacity: 0.8;
       }
     }
     .toolBox {

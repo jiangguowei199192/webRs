@@ -299,6 +299,7 @@ export default {
 
 <style lang="scss" scoped>
 .mapResBox {
+  font-size: 16px;
   padding: 20px 31px 0px 20px;
   .title {
     font-size: 16px;
