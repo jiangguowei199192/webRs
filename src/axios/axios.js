@@ -45,14 +45,14 @@ service.interceptors.response.use(
     if (response.data.code !== 0) {
       var errorMsg = '网络异常'
       // 401错误码都是跟权限相关
-      if (response.data.code === 401) { errorMsg = response.data.msg } else {
-        errorCode.forEach(item => {
-          if (item.code === response.data.code) {
-            errorMsg = item.str
-            // return false
-          }
-        })
-      }
+      // if (response.data.code === 401) { errorMsg = response.data.msg } else {
+      errorCode.forEach(item => {
+        if (item.code === response.data.code) {
+          errorMsg = item.str
+          // return false
+        }
+      })
+      // }
       Notification.closeAll()
       Notification({
         title: '错误',

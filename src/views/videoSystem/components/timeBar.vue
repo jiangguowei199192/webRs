@@ -1,20 +1,22 @@
 <template>
   <div class="control">
     <div class="numContainer">
-      <template v-for="(item, index) in 25">
+      <template v-for="(item, index) in points">
         <span
           @click="jumpHour(index)"
           v-if="index % 3 != 0"
           :key="index"
           class="point"
-          :style="'left:' + (index * step - 2) + 'px;'"
+          ref="circle"
+          :style="'left:' + item.point + '%;'"
         ></span>
         <span
           @click="jumpHour(index)"
           v-if="index % 3 == 0"
           :key="index"
           class="num"
-          :style="'left:' + (index * step - 15) + 'px;'"
+          ref="num"
+          :style="'left:' + item.num + '%;'"
           >{{ formatTime(index) }}</span
         >
       </template>
@@ -27,17 +29,17 @@
             class="segment"
             :style="
               'width:' +
-              item.duration * minuteWidth +
-              'px;' +
+              (item.duration * minuteWidth * 100.0) / barWidth +
+              '%;' +
               'left:' +
-              item.start * minuteWidth +
-              'px;'
+              (item.start * minuteWidth * 100.0) / barWidth +
+              '%;'
             "
           ></span>
         </template>
         <div class="pointer" ref="pointer" v-drag="me">
           <span>{{ curTime }}</span>
-          <span class="icon"></span>
+          <span class="icon" ref="icon"></span>
         </div>
       </div>
     </div>
@@ -53,7 +55,12 @@ export default {
       pointerW: 0, // pointer宽度
       pointerLeft: 0, // pointer左边距
       me: '',
-      isDrag: false
+      isDrag: false,
+      points: [],
+      barWidth: 1,
+      pointerIconW: 1, // pointer icon宽度
+      circleWidth: 1, // 圆形刻度的宽度
+      numWidth: 1// 数字刻度的宽度
     }
   },
 
@@ -73,7 +80,7 @@ export default {
         document.onmousemove = (e) => {
           // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
           let left = e.clientX - disX
-          const maxLeft = me.$refs.bar.clientWidth + me.pointerLeft
+          const maxLeft = me.barWidth + me.pointerLeft
           // 左边界限制
           if (left < me.pointerLeft) {
             left = me.pointerLeft
@@ -83,7 +90,7 @@ export default {
             left = maxLeft
           }
           // 移动当前元素
-          dragBox.style.left = left + 'px'
+          dragBox.style.left = (left * 100) / me.barWidth + '%'
           me.toHourMinute((left - me.pointerLeft) / me.minuteWidth)
         }
         document.onmouseup = (e) => {
@@ -114,17 +121,25 @@ export default {
   },
 
   mounted () {
-    this.pointerW = this.$refs.pointer.clientWidth
-    this.pointerLeft = -this.pointerW + 5
-    this.$refs.pointer.style.left = this.pointerLeft + 'px'
-    this.calculateStep()
+    this.points = [
+      { point: 0, num: 0 },
+      { point: 0, num: 0 }
+    ]
+    this.$nextTick(() => {
+      this.calculateStep()
+      this.$refs.pointer.style.left =
+        (this.pointerLeft * 100.0) / this.barWidth + '%'
+    })
     window.onresize = () => {
       this.calculateStep()
       var arry = this.curTime.split(':')
       var minute =
         parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
       this.$refs.pointer.style.left =
-        minute * this.minuteWidth - this.pointerW + 5 + 'px'
+        ((minute * this.minuteWidth - this.pointerW + this.pointerIconW) *
+          100.0) /
+          this.barWidth +
+        '%'
     }
   },
 
@@ -137,9 +152,22 @@ export default {
      * 计算刻度尺
      */
     calculateStep () {
-      var w = this.$refs.bar.clientWidth
-      this.step = w / 24
-      this.minuteWidth = w / (24 * 60)
+      this.pointerW = this.$refs.pointer.clientWidth
+      this.pointerLeft = -this.pointerW + this.pointerIconW
+      this.barWidth = this.$refs.bar.clientWidth
+      this.pointerIconW = this.$refs.icon.clientWidth / 2
+      this.numWidth = this.$refs.num[0].clientWidth / 2
+      this.circleWidth = this.$refs.circle[0].clientWidth / 2
+      this.step = this.barWidth / 24.0
+      this.minuteWidth = this.barWidth / (24.0 * 60)
+      this.points = []
+      for (let i = 0; i < 25; i++) {
+        const left =
+          ((i * this.step - this.circleWidth) * 100.0) / this.barWidth
+        const left2 = ((i * this.step - this.numWidth) * 100.0) / this.barWidth
+        const n = { point: left, num: left2 }
+        this.points.push(n)
+      }
     },
 
     /**
@@ -176,7 +204,10 @@ export default {
     jumpMinute (minute) {
       if (this.isDrag) return
       this.$refs.pointer.style.left =
-        minute * this.minuteWidth - this.pointerW + 5 + 'px'
+        ((minute * this.minuteWidth - this.pointerW + this.pointerIconW) *
+          100.0) /
+          this.barWidth +
+        '%'
       this.toHourMinute(minute)
     },
 
@@ -185,7 +216,8 @@ export default {
      */
     barClick: function (event) {
       var x = event.offsetX
-      this.$refs.pointer.style.left = x - this.pointerW + 5 + 'px'
+      this.$refs.pointer.style.left =
+        ((x - this.pointerW + this.pointerIconW) * 100.0) / this.barWidth + '%'
       this.toHourMinute(x / this.minuteWidth)
       this.$emit('jumpEvent', '')
     }
@@ -205,15 +237,23 @@ export default {
 .numContainer {
   height: 20px;
   position: relative;
-}
-
-.num {
-  font-size: 12px;
-  font-family: PingFang SC;
-  color: rgba(209, 209, 209, 1);
-  position: absolute;
-  top: -2px;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  .num {
+    font-size: 12px;
+    font-family: PingFang SC;
+    color: rgba(209, 209, 209, 1);
+    position: absolute;
+    cursor: pointer;
+  }
+  .point {
+    width: 4px;
+    height: 4px;
+    background: rgba(209, 209, 209, 1);
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+  }
 }
 
 .barContainer {
@@ -242,13 +282,13 @@ export default {
     display: flex;
     position: absolute;
     height: 42px;
-    width: 70px;
+    //width: 70px;
     top: -7px;
     justify-content: space-between;
     align-items: center;
     :nth-child(1) {
       padding: 1px 3px;
-      font-size: 13px;
+      //font-size: 13px;
       font-weight: bold;
       color: rgba(255, 255, 255, 1);
       background: rgba(239, 128, 24, 1);
@@ -259,18 +299,9 @@ export default {
       display: inline-block;
       width: 10px;
       height: 42px;
-      background: url(../../../assets/images/time-pointer.png) no-repeat;
+      background: url(../../../assets/images/time-pointer.svg) no-repeat;
+      background-size: 100% 100%;
     }
   }
-}
-
-.point {
-  width: 4px;
-  height: 4px;
-  background: rgba(209, 209, 209, 1);
-  border-radius: 50%;
-  position: absolute;
-  top: 5px;
-  cursor: pointer;
 }
 </style>

@@ -1,6 +1,6 @@
 const error = [
   {
-    code: 401, desc: '', str: ''
+    code: 401, desc: '', str: '当前用户无角色权限，请管理员添加角色权限后重新登录'
   },
   {
     code: 1001, desc: 'user_status_forbidden', str: '用户被禁用'
