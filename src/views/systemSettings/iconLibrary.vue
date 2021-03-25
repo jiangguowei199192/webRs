@@ -21,11 +21,7 @@
           ></el-option>
         </el-select>-->
         <span>是否引用：</span>
-        <el-select
-          v-model="isQuote"
-          placeholder="请选择"
-          style="width:150px;height:34px;margin-right:10px;"
-        >
+        <el-select v-model="isQuote" placeholder="请选择" class="quoteSelect">
           <el-option label="全部" value="all"></el-option>
           <el-option
             v-for="item in requiedOptions"
@@ -34,12 +30,7 @@
             :value="item.value"
           ></el-option>
         </el-select>
-        <el-input
-          v-model.trim="iconName"
-          maxlength="10"
-          style="width:450px;height:34px;margin-right:10px;"
-          placeholder="请输入图标名称进行搜索"
-        ></el-input>
+        <el-input v-model.trim="iconName" maxlength="10" class="input" placeholder="请输入图标名称进行搜索"></el-input>
         <div class="btn" @click.stop="searchPic">
           <img :src="userSerchIcon" alt />
           <span>搜索</span>
@@ -308,6 +299,16 @@ export default {
     font-weight: 500;
     color: #ffffff;
   }
+  /deep/.quoteSelect {
+    width: 150px;
+    height: 34px;
+    margin-right: 10px;
+  }
+  /deep/.input {
+    width: 450px;
+    height: 34px;
+    margin-right: 10px;
+  }
   .contentBox {
     box-sizing: border-box;
     margin-top: 16px;
@@ -412,7 +413,7 @@ export default {
       font-family: Source Han Sans CN;
       font-weight: 500;
       color: #c5f3ff;
-       background-color: rgba(53, 176, 220, 0.66);;
+      background-color: rgba(53, 176, 220, 0.66);
       padding: 0;
       height: 40px;
       line-height: 40px;
@@ -421,7 +422,7 @@ export default {
       background: rgba(0, 65, 87, 0.85);
     }
     /deep/ .el-table tr {
-      background-color:transparent;
+      background-color: transparent;
     }
     /deep/ .el-table__header-wrapper table thead th .cell {
       line-height: 16px;
