@@ -31,10 +31,10 @@
             @closeMarkForm="closeMarkForm"
             ref="drawArea"
           ></canvas-area>
-          <template v-if="showAR">
+          <!-- <template v-if="showAR">
             <div class="header" @dblclick.stop="stopEvent">AR实景地图指挥</div>
-          </template>
-          <div class="footer" @dblclick.stop="stopEvent">
+          </template> -->
+          <!-- <div class="footer" @dblclick.stop="stopEvent">
             <a @mouseenter="showActive(1)" @mouseleave="showActive(0)" title="AR" @click="changeAR">
               <img :src="arPic" alt title="AR" />
               <img v-show="active === 1" class="hide_tab" :src="arSelectedPic" />
@@ -47,25 +47,25 @@
             >
               <img :src="alarmPic" alt />
               <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
-            </a>
-            <a
+            </a> -->
+            <!-- <a
               @mouseenter="showActive(3)"
               @mouseleave="showActive(0)"
               title="抓取"
               @click.stop="showImg"
             >
               <img :src="capturePic" alt />
-              <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />
+              <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" /> -->
               <!-- 用于显示截取的图片 -->
-              <img
+              <!-- <img
                 :src="`${picUrl}${cutImgUrl}`"
                 class="cutImg"
                 id="pic"
                 v-show="showCutImg"
                 @click.stop="cutDialogVisible=true;isAdd=true"
               />
-            </a>
-            <a
+            </a> -->
+            <!-- <a
               @mouseenter="showActive(4)"
               @mouseleave="showActive(0)"
               title="图库"
@@ -73,9 +73,9 @@
             >
               <img :src="photoPic" alt />
               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
-            </a>
-            <template v-if="showAR">
-              <a
+            </a> -->
+            <!-- <template v-if="showAR"> -->
+              <!-- <a
                 @mouseenter="showActive(5)"
                 @mouseleave="showActive(0)"
                 title="标签管理"
@@ -83,7 +83,7 @@
               >
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
-              </a>
+              </a> -->
               <!-- <a @mouseenter="showActive(6)" @mouseleave="showActive(0)" title="搜索">
                 <img :src="searchPic" alt />
                 <img v-show="active === 6" class="hide_tab" :src="searchSelectedPic" />
@@ -98,7 +98,7 @@
                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
               </a>-->
               <!-- 新增 -->
-              <a
+              <!-- <a
                 @mouseenter="showActive(8)"
                 @mouseleave="showActive(0)"
                 title="退出全屏"
@@ -107,8 +107,8 @@
                 <img :src="fScreen" />
                 <img v-show="active === 8" class="hide_tab" :src="fScreenSelected" />
               </a>
-            </template>
-          </div>
+            </template> -->
+          <!-- </div> -->
           <!-- 实时警情弹框 -->
           <div class="realPoliceInfo" v-show="showCurindex==1" @dblclick.stop="stopEvent">
             <div class="title">实时警情</div>
@@ -364,7 +364,7 @@
         </div>
       </div>
       <!-- 自动巡航 -->
-      <div
+      <!-- <div
         class="cruise"
         v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
       >
@@ -383,7 +383,7 @@
 AR功能开启中，巡航操作暂不可用。"
           />
         </template>
-      </div>
+      </div> -->
       <!-- 显示AR标签 -->
       <div
         class="fullScreenAr"

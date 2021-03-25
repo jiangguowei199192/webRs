@@ -260,13 +260,13 @@ export default {
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示
-    EventBus.$on('video/aRAiResult', (info) => {
-      EventBus.$emit('getArChange', info)
-    })
+    // EventBus.$on('video/aRAiResult', (info) => {
+    //   EventBus.$emit('getArChange', info)
+    // })
     // 云台角度信息
-    EventBus.$on('video/webControlPztNotice', (info) => {
-      EventBus.$emit('video/webControlPztChange', info)
-    })
+    // EventBus.$on('video/webControlPztNotice', (info) => {
+    //   EventBus.$emit('video/webControlPztChange', info)
+    // })
   },
   destroyed () {
     EventBus.$off('video/device/online')
