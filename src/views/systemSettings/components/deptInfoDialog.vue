@@ -127,7 +127,9 @@
               <el-form-item label="图标">
                 <div class="icon-tool">
                   <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
-                    <img src="../../../assets/images/backgroundManagement/nopicture.png">
+                    <img
+                      src="../../../assets/images/backgroundManagement/nopicture.png"
+                    />
                   </el-avatar>
                 </div>
               </el-form-item>
@@ -233,10 +235,8 @@ export default {
     },
 
     clickToolItem (item) {
-      if (
-        item.name === 'point'
-      ) {
-        this.toolItems.forEach((t) => {
+      if (item.name === 'point') {
+        this.toolItems.forEach(t => {
           if (item !== t) {
             t.isSelect = false
           }
@@ -299,7 +299,9 @@ export default {
 
 <style lang="scss" scoped>
 .add-dept-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     overflow: hidden;
     .el-dialog__header {
       display: none;
@@ -310,7 +312,7 @@ export default {
     }
     .add-dept-div {
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
     }
     .map-tool {
       width: 100%;
@@ -408,7 +410,7 @@ export default {
         width: 456px;
         height: 447px;
         border: 1px solid #1eb0fc;
-        background-color: #121e3a;
+        background-color: rgba(0, 65, 87, 0.95);
         padding: 0 12px;
         .content-header {
           height: 33px;

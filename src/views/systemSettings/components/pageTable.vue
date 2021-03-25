@@ -2,7 +2,7 @@
   <div class="tableBox" :class="className">
     <!-- 显示表格 -->
     <el-table
-      class="manageTable"
+      class="manageTable listScroll"
       ref="table"
       :data="data"
       style="width: 100%"
@@ -343,7 +343,7 @@ export default {
   .handerBox {
     .btn {
       display: inline-block;
-      width: 46px;
+      width: 40px;
       height: 26px;
       background: #0b779e;
       cursor: pointer;
@@ -364,5 +364,9 @@ export default {
       cursor: pointer;
     }
   }
+}
+/deep/::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
 }
 </style>

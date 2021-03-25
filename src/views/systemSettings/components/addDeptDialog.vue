@@ -494,7 +494,7 @@ export default {
         width: 456px;
         height: 447px;
         border: 1px solid #1eb0fc;
-        background-color: rgba(0, 65, 87, 0.85);
+        background-color: rgba(0, 65, 87, 0.95);
         padding: 0 12px;
         .content-header {
           height: 33px;

@@ -10,7 +10,7 @@
         placeholder=""
       ></el-input>
       <div v-show="showDeptTreeRightMenu">
-        <ul id="menu" class="dept-tree-right-menu">
+        <!-- <ul id="menu" class="dept-tree-right-menu">
           <li class="menu-item" @click="deptEditClick">
             <div class="menu-div">
               <el-image :src="deptEditIcon" class="item-icon"></el-image>
@@ -29,7 +29,21 @@
               <span class="item-span">删除</span>
             </div>
           </li>
-        </ul>
+        </ul> -->
+        <el-menu id="menu" text-color="#fff">
+          <el-menu-item index="1" @click="deptEditClick">
+            <el-image :src="deptEditIcon"></el-image>
+            <span>修改</span>
+          </el-menu-item>
+          <el-menu-item index="2" @click="deptSeeClick">
+            <el-image :src="deptSeeIcon"></el-image>
+            <span>查看</span>
+          </el-menu-item>
+          <el-menu-item index="3" @click="deptDeleteClick">
+            <el-image :src="deptDeleteIcon"></el-image>
+            <span>删除</span>
+          </el-menu-item>
+        </el-menu>
       </div>
       <el-tree
         ref="insDeptTreeRef"
@@ -359,8 +373,8 @@ export default {
       this.showDeptTreeRightMenu = false
       this.showDeptTreeRightMenu = true
       const menu = document.querySelector('#menu')
-      menu.style.left = event.pageX + 'px'
-      menu.style.top = event.pageY + 'px'
+      menu.style.left = event.pageX - 350 + 'px'
+      menu.style.top = event.pageY - 250 + 'px'
       // 添加监听鼠标事件，点击任何位置将菜单关闭
       document.addEventListener('click', this.closeRightMenu, true)
     },
@@ -902,35 +916,68 @@ export default {
   margin-left: 18px;
 }
 
-.dept-tree-right-menu {
+// .dept-tree-right-menu {
+//   z-index: 1;
+//   position: absolute;
+//   height: 81px;
+//   width: 80px;
+//   border-radius: 2px;
+//   background-color: rgba(0, 65, 87, 0.85);
+//   border: 1px solid #00ccff;
+//   overflow: hidden;
+//   .menu-item {
+//     cursor: pointer;
+//     text-align: center;
+//     padding: 0 5px;
+//     color: #fff;
+//     .menu-div {
+//       border-bottom: 1px solid rgba($color: #00ccff, $alpha: 0.8);
+//       height: 27px;
+//       .item-icon {
+//         width: 14px;
+//         height: 14px;
+//         top: 3px;
+//       }
+//       .item-span {
+//         display: inline-block;
+//         margin-left: 10px;
+//         font-size: 12px;
+//         color: #fff;
+//         line-height: 27px;
+//       }
+//     }
+//   }
+// }
+/deep/.el-menu {
   z-index: 1;
   position: absolute;
-  height: 81px;
   width: 80px;
+  height: 81px;
   border-radius: 2px;
-  background-color: #183157;
+  background-color: rgba(0, 65, 87, 0.85);
   border: 1px solid #00ccff;
+  border-bottom: 0;
   overflow: hidden;
-  .menu-item {
-    cursor: pointer;
+  .el-menu-item {
+    height: 27px;
+    line-height: 27px;
     text-align: center;
-    padding: 0 5px;
-    .menu-div {
-      border-bottom: 1px solid rgba($color: #00ccff, $alpha: 0.8);
-      height: 27px;
-      .item-icon {
-        width: 14px;
-        height: 14px;
-        top: 3px;
-      }
-      .item-span {
-        display: inline-block;
-        margin-left: 10px;
-        font-size: 12px;
-        color: #fff;
-        line-height: 27px;
-      }
+    border-bottom: 1px solid rgba($color: #00ccff, $alpha: 0.8);
+    cursor: pointer;
+    .el-image {
+      width: 14px;
+      height: 14px;
+      right: 8px;
+      margin-left: 3px;
     }
+    span {
+      font-size: 12px;
+    }
+  }
+  .el-menu-item.is-active,
+  .el-menu-item:hover {
+    background-color: rgba(11, 119, 158, 0.66) !important;
+    color: #fff;
   }
 }
 </style>

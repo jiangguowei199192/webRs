@@ -4,13 +4,13 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 09:16:43
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-24 16:26:56
+ * @LastEditTime: 2021-03-25 15:12:06
 -->
 <template>
   <el-dialog
     :visible.sync="isShow"
     :close-on-click-modal="false"
-    width="480px"
+    width="510px"
     class="add-dict-dlg dialog-wrap"
   >
     <div class="add-dict-header">
@@ -22,7 +22,7 @@
       :model="addDictForm"
       :rules="addDictRules"
       :inline="true"
-      label-width="80px"
+      label-width="83px"
       class="add-dict-form"
     >
       <el-form-item label="类型名称 :" prop="name">
@@ -81,14 +81,13 @@
             v-model="showPopover"
             v-if="!isDisabled"
           >
-            <div class="iconBox webFsScroll">
+            <div class="iconBox listScroll">
               <span
                 class="icon"
                 v-for="(item, index) in icons"
                 :key="index"
                 :style="{
-                  background:
-                    'url(' + serverUrl + item.iconPath + ') no-repeat',
+                  background: 'url(' + serverUrl + item.iconPath + ') no-repeat'
                 }"
                 @click.stop="selectIcon(item)"
               ></span>
@@ -190,7 +189,7 @@ export default {
       },
       addDictRules: {
         name: isNotNull('请输入类型名称').concat(
-          validateName('名称只包含汉字/数字/字母/下划线且不能以下划线开头结尾')
+          validateName('名称只能包含汉字/数字/字母')
         ),
         code: isNotNull('请输入类型码'),
         status: isNotNull('请选择状态'),
@@ -257,7 +256,7 @@ export default {
     lengthLimitedNumber,
 
     confirmClick (formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (!valid) return false
         this.$emit('confirmClick', this.addDictForm)
       })
@@ -280,13 +279,13 @@ export default {
         .post(iconLibaryApi.getAllPic, params, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           // console.log('图标库接口返回:', res)
           if (res && res.data && res.data.code === 0) {
             this.icons = res.data.data.records
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('接口错误: ' + err)
         })
     },
@@ -294,7 +293,7 @@ export default {
     selectIcon (item) {
       this.showPopover = false
       this.addDictForm.icon = item.iconPath
-      this.$refs.addDictForm.validateField('icon', (valid) => {})
+      this.$refs.addDictForm.validateField('icon', valid => {})
     },
 
     iconBoxCilck () {
@@ -309,6 +308,7 @@ export default {
 .add-dict-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .add-dict-form {
       margin-top: 30px;
       .el-input__inner {

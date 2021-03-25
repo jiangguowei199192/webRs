@@ -139,7 +139,7 @@ export default {
   watch: {
     isShow (val) {
       if (val) {
-        this.toolItems.forEach((t) => {
+        this.toolItems.forEach(t => {
           t.isSelect = false
         })
         setTimeout(() => {
@@ -194,7 +194,7 @@ export default {
         item.name === 'line' ||
         item.name === 'area'
       ) {
-        this.toolItems.forEach((t) => {
+        this.toolItems.forEach(t => {
           if (item !== t) {
             t.isSelect = false
           }
@@ -310,9 +310,11 @@ export default {
 <style lang="scss" scoped>
 .resDlg {
   font-size: 14px;
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
     width: 1440px;
     overflow: hidden;
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -320,7 +322,7 @@ export default {
       padding: 0;
       width: 100%;
       height: 690px;
-      background: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       box-sizing: border-box;
       border: 1px solid #1eb0fc;
     }
@@ -453,7 +455,8 @@ export default {
       top: 97px;
       align-items: center;
       .content {
-        background: rgba($color: #121e3a, $alpha: 0.95);
+        // background: rgba($color: #121e3a, $alpha: 0.95);
+        background-color: rgba(0, 65, 87, 0.95);
         width: 516px;
         height: 447px;
       }

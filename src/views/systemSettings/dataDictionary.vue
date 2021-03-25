@@ -348,8 +348,8 @@ export default {
       this.treeRightMenuShow = true
       this.rightClickDict = data
       const menu = document.querySelector('#menu')
-      menu.style.left = event.pageX + 'px'
-      menu.style.top = event.pageY + 'px'
+      menu.style.left = event.pageX - 350 + 'px'
+      menu.style.top = event.pageY - 250 + 'px'
       document.addEventListener('click', this.closeRightMenu)
     },
 
@@ -444,7 +444,7 @@ export default {
     width: 80px;
     height: 81px;
     border-radius: 2px;
-    background-color: #183157;
+    background-color: rgba(0, 65, 87, 0.85);
     border: 1px solid #00ccff;
     border-bottom: 0;
     overflow: hidden;
@@ -452,7 +452,6 @@ export default {
       height: 27px;
       line-height: 27px;
       text-align: center;
-      font-size: 12px;
       border-bottom: 1px solid rgba($color: #00ccff, $alpha: 0.8);
       cursor: pointer;
       .el-image {
@@ -460,6 +459,9 @@ export default {
         height: 14px;
         right: 8px;
         margin-left: 3px;
+      }
+      span {
+        font-size: 12px;
       }
     }
     .el-menu-item.is-active,

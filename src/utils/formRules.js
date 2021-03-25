@@ -195,7 +195,7 @@ export function validateName (msg) {
   rules.push({
     validator: (rule, value, callback) => {
       if (!value) callback()
-      else if (!(/^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$/).test(value)) { callback(new Error(msg)) } else { callback() }
+      else if (!(/^[a-zA-Z0-9\u4e00-\u9fa5]+$/ig).test(value)) { callback(new Error(msg)) } else { callback() }
     },
     message: '',
     trigger: 'blur'
