@@ -56,7 +56,6 @@
         :api="getChildDictList"
       ></DictPage>
     </div>
-
     <!-- 新增/修改/查看字典弹窗 -->
     <AddDictDialog
       ref="addDictRef"
@@ -70,19 +69,28 @@
       :handelType.sync="handelType"
       @confirmClick="confirmClickSubmit"
     ></AddDictDialog>
+    <!-- 删除弹窗 -->
+    <DeleteDialog
+      :isShow.sync="showDeleteTip"
+      @close="showDeleteTip = false"
+      @confirmClick="delTipConfirmClick"
+      @cancelClick="showDeleteTip = false"
+    ></DeleteDialog>
   </div>
 </template>
 
 <script>
 import DictPage from './components/dictPage.vue'
 import AddDictDialog from './components/addDictDialog.vue'
+import DeleteDialog from './components/deleteDialog'
 import { dataDictApi } from '@/api/dataDict'
 import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   components: {
     DictPage,
-    AddDictDialog
+    AddDictDialog,
+    DeleteDialog
   },
 
   data () {
@@ -99,6 +107,7 @@ export default {
       },
       isShow: false,
       treeRightMenuShow: false,
+      showDeleteTip: false,
       selectedDict: '',
       rightClickDict: '',
       dictInfo: {},
@@ -280,7 +289,7 @@ export default {
     },
 
     // 删除父级字典提交
-    delDictClickSubmit () {
+    delTipConfirmClick () {
       var arr = []
       arr.push(this.rightClickDict.id)
       var params = { ids: arr }
@@ -325,16 +334,7 @@ export default {
         this.handelType = 'checkParentDict'
         this.handelData()
       } else if (key === '3') {
-        // 删除字典
-        this.$confirm('此操作将删除该节点, 是否继续?', '警告', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          showClose: false
-        })
-          .then(() => {
-            this.delDictClickSubmit()
-          })
-          .catch(() => {})
+        this.showDeleteTip = true
       }
     },
 
