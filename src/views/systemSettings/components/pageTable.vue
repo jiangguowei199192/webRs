@@ -6,7 +6,6 @@
       ref="table"
       :data="data"
       style="width: 100%"
-      :height="tableHeight"
       :row-style="changeRowStyle"
       :cell-style="changeCellStyle"
       @selection-change="selectionChange"

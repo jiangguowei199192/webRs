@@ -64,19 +64,11 @@
             placeholder="请输入设备名称/编码进行搜索"
             @keydown.enter.native="searchVideoDatas"
           ></el-input>
-          <div
-            class="btn"
-            style="margin-left:40px;"
-            @click.stop="searchVideoDatas"
-          >
+          <div class="btn searchBtn" @click.stop="searchVideoDatas">
             <img :src="searchIcon" />
             <span>搜索</span>
           </div>
-          <div
-            class="btn resetBtn"
-            style="margin-left:48px;"
-            @click.stop="resetSearchParams"
-          >
+          <div class="btn resetBtn videoReset" @click.stop="resetSearchParams">
             <img :src="resetIcon" />
             <span>重置</span>
           </div>
@@ -103,6 +95,7 @@
         :handle="tableInfo.handle"
         :data.sync="tableInfo.data"
         :tableHeight="560"
+        className="videoTable"
         :query="query"
         :api="api"
         :checkedList.sync="checkedList"
@@ -242,7 +235,7 @@ export default {
      */
     async getDeptTree () {
       var _this = this
-      this.$axios.post(backApi.getDeptTree).then(res => {
+      this.$axios.post(backApi.getDeptTree).then((res) => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
         }
@@ -250,7 +243,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach(item => {
+      tree.forEach((item) => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -344,7 +337,7 @@ export default {
       this.showDeleteDev = false
 
       const ids = []
-      this.checkedList.forEach(d => {
+      this.checkedList.forEach((d) => {
         ids.push(d.deviceCode)
       })
       // const tmpConfig1 = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
@@ -354,7 +347,7 @@ export default {
       // this.$axios.post(settingApi.deleteDeviceList, { deviceCodeList: ids}, tmpConfig1)
       this.$axios
         .post(settingApi.deleteDeviceList, formData, tmpConfig2)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -371,7 +364,7 @@ export default {
           //   duration: 5 * 1000
           // })
         })
-        .catch(err => {
+        .catch((err) => {
           Notification({
             title: '提示',
             message: '删除设备异常:' + err,
@@ -394,7 +387,7 @@ export default {
         deviceCode: data.deviceCode,
         deviceStatus: event ? 'enabled' : 'disabled'
       }
-      this.$axios.post(settingApi.changeDeviceStatus, param).then(res => {
+      this.$axios.post(settingApi.changeDeviceStatus, param).then((res) => {
         if (res && res.data && res.data.code === 0) {
           Notification({
             title: '提示',
@@ -443,6 +436,12 @@ export default {
     }
     .commSelect {
       width: 360px;
+    }
+    .videoReset {
+      margin-left: 48px;
+    }
+    .searchBtn {
+      margin-left: 40px;
     }
     .datePickerStyle {
       width: 360px;

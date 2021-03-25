@@ -329,8 +329,8 @@ input[type="number"] {
   color: #c5f3ff;
   background: transparent;
   border: none;
-  height: 620px !important;
-
+  height: 620px;
+  overflow-y: scroll;
   /* 表格表头样式 */
   .el-table__header-wrapper th {
     color: #c5f3ff;
@@ -373,6 +373,11 @@ input[type="number"] {
   }
 }
 
+.videoTable {
+.el-table {
+    height: 560px;
+  }
+}
 /* table头部操作工具 */
 .mainBox {
   box-sizing: border-box;
@@ -1083,6 +1088,7 @@ input[type="number"] {
       height: 16px;
       background: url(../assets/images/backgroundManagement/delete.png)
         no-repeat;
+      background-size: 100% 100%;
       cursor: pointer;
     }
 
