@@ -22,6 +22,7 @@
         >
           <el-form-item label="资源名称 :" prop="resourcesName">
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resForm.resourcesName"
             ></EllipsisTooltip>
@@ -36,6 +37,7 @@
           </el-form-item>
           <el-form-item label="资源地址 :" prop="resourcesAddr">
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resForm.resourcesAddr"
             ></EllipsisTooltip>
@@ -64,6 +66,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resourcesTypeName"
             ></EllipsisTooltip>
@@ -88,6 +91,7 @@
               :class="{ active: !disabled }"
             ></el-cascader>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="deptName"
             ></EllipsisTooltip>
@@ -108,6 +112,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="belongAreaName"
             ></EllipsisTooltip>
@@ -147,6 +152,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="employeeName"
             ></EllipsisTooltip>
@@ -240,6 +246,7 @@
                     maxlength="20"
                   ></el-input>
                   <EllipsisTooltip
+                    class="nameTooltip"
                     v-show="disabled"
                     :contentText="item.pointName"
                   ></EllipsisTooltip>
@@ -261,6 +268,7 @@
                     ></el-option>
                   </el-select>
                   <EllipsisTooltip
+                    class="nameTooltip"
                     v-show="disabled"
                     :contentText="item.pointTypeName"
                   ></EllipsisTooltip>
@@ -276,6 +284,7 @@
                     :class="{ active: !disabled }"
                   ></el-cascader>
                   <EllipsisTooltip
+                    class="nameTooltip"
                     v-show="disabled"
                     :contentText="item.deptName"
                   ></EllipsisTooltip>
@@ -336,7 +345,7 @@
 
 <script>
 import ResDialog from './resDialog.vue'
-import EllipsisTooltip from './ellipsisTooltip.vue'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import {
   isNotNull,
   lonValidate,
@@ -539,7 +548,7 @@ export default {
       this.$nextTick(() => {
         this.resetData()
       })
-      this.getResources('point_resources')
+      this.getResources('pointresources')
       this.getAreaResources()
       this.getOrgans()
       this.getControlAreas()
@@ -562,7 +571,7 @@ export default {
       this.isShow = true
       this.isUpdate = true
       this.areaIds = []
-      this.getResources('point_resources')
+      this.getResources('pointresources')
       this.getAreaResources()
       this.getOrgans()
       this.getControlAreas()
@@ -795,6 +804,12 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.isShow = false
             this.$emit('refreshTable')
+            const msg = this.isUpdate ? '修改成功' : '新增成功'
+            this.$notify.closeAll()
+            this.$notify.info({
+              title: '提示',
+              message: msg
+            })
           }
         })
         .catch((err) => {

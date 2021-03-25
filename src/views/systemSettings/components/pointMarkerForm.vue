@@ -27,6 +27,7 @@
               maxlength="20"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="item.pointName"
             ></EllipsisTooltip>
@@ -41,6 +42,7 @@
               maxlength="50"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="item.pointAddr"
             ></EllipsisTooltip>
@@ -56,6 +58,7 @@
               :class="{ active: !disabled }"
             ></el-cascader>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="item.deptName"
             ></EllipsisTooltip>
@@ -77,6 +80,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="item.belongAreaName"
             ></EllipsisTooltip>
@@ -162,7 +166,7 @@ import {
 } from '@/utils/formRules'
 import { copyData } from '@/utils/public'
 import globalApi from '@/utils/globalApi'
-import EllipsisTooltip from './ellipsisTooltip.vue'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 export default {
   props: {
     // 是否禁止编辑
@@ -399,11 +403,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.iconItem {
-  line-height: 40px;
-  margin-bottom: 11px;
-}
-.iconTool {
-  margin-bottom: 4px;
+.listForm {
+  .iconItem {
+    line-height: 40px;
+    margin-bottom: 11px;
+  }
+  .iconTool {
+    margin-bottom: 4px;
+  }
 }
 </style>

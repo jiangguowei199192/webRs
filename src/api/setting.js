@@ -23,6 +23,8 @@ export const settingApi = {
   deleteDevice: '/cloud-video/device/delete', // 设置：设备接入-删除设备
   getUsedDeviceCount: '/cloud-video/device/getUsedDeviceCount', //
   getDeviceTree: '/cloud-video/device/getDeviceTree', // 设置：绑定设备-查询组织机构已绑定设备列表和可绑定设备列表
+  updateDevice: '/cloud-video/device/updateDevice', // 修改无人机、高点监控设备
+  deleteDeviceList: '/cloud-video/device/deleteList', // 批量删除设备
   updateWRJ: '/cloud-video/device/updateWRJ', // 设置：设备接入-修改无人机设备
   updateGDJK: '/cloud-video/device/updateGDJK', // 设置：设备接入-修改高点监控
   deptBandDevice: '/cloud-video/deptAndDevice/deptBandDevice', // 设置：组织绑定设备

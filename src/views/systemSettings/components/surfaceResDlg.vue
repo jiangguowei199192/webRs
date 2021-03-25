@@ -31,9 +31,9 @@
               maxlength="20"
             ></el-input>
             <EllipsisTooltip
+              class="resName nameTooltip"
               v-show="disabled"
               :contentText="resForm.resourcesName"
-              :outerShellWidth="377"
             ></EllipsisTooltip>
           </el-form-item>
           <el-form-item label="资源类型 :" prop="resourcesType">
@@ -53,6 +53,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resourcesTypeName"
             ></EllipsisTooltip>
@@ -77,6 +78,7 @@
               :class="{ active: !disabled }"
             ></el-cascader>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="deptName"
             ></EllipsisTooltip>
@@ -97,6 +99,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="belongAreaName"
             ></EllipsisTooltip>
@@ -172,7 +175,7 @@
 
 <script>
 import ResDialog from './resDialog.vue'
-import EllipsisTooltip from './ellipsisTooltip.vue'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import PointMarkerForm from './pointMarkerForm.vue'
 import { mapResApi } from '@/api/mapRes'
 import mapResMixin from './mixins/mapResMixin'
@@ -239,7 +242,7 @@ export default {
         this.disabled = false
         this.resetData()
       })
-      this.getResources('surface_resources')
+      this.getResources('surfaceresources')
       this.getAreaResources()
       this.getOrgans()
       this.getIconList()
@@ -265,7 +268,7 @@ export default {
       this.isShow = true
       this.isUpdate = true
       this.pointIds = []
-      this.getResources('surface_resources')
+      this.getResources('surfaceresources')
       this.getAreaResources()
       this.getOrgans()
       this.getIconList()
@@ -446,6 +449,12 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.isShow = false
             this.$emit('refreshTable')
+            const msg = this.isUpdate ? '修改成功' : '新增成功'
+            this.$notify.closeAll()
+            this.$notify.info({
+              title: '提示',
+              message: msg
+            })
           }
         })
         .catch((err) => {
@@ -490,11 +499,14 @@ export default {
 .surfaceContent {
   .lineName {
     /deep/ .el-input__inner {
-      width: 393px;
+      width: 400px;
     }
   }
   /deep/.el-form {
     margin-top: 17px;
+    .resName {
+      width: 400px;
+    }
   }
 }
 </style>

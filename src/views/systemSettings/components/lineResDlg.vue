@@ -22,9 +22,9 @@
         >
           <el-form-item label="资源名称 :" prop="resourcesName">
             <EllipsisTooltip
+              class="resName nameTooltip"
               v-show="disabled"
               :contentText="resForm.resourcesName"
-              :outerShellWidth="377"
             ></EllipsisTooltip>
             <el-input
               v-show="!disabled"
@@ -52,6 +52,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resourcesTypeName"
             ></EllipsisTooltip>
@@ -76,6 +77,7 @@
               :class="{ active: !disabled }"
             ></el-cascader>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="deptName"
             ></EllipsisTooltip>
@@ -96,6 +98,7 @@
               ></el-option>
             </el-select>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="belongAreaName"
             ></EllipsisTooltip>
@@ -110,6 +113,7 @@
               maxlength="20"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resForm.lineOrigin"
             ></EllipsisTooltip>
@@ -124,6 +128,7 @@
               maxlength="20"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="disabled"
               :contentText="resForm.lineDestination"
             ></EllipsisTooltip>
@@ -202,7 +207,7 @@
 
 <script>
 import ResDialog from './resDialog.vue'
-import EllipsisTooltip from './ellipsisTooltip.vue'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import PointMarkerForm from './pointMarkerForm.vue'
 import { numberValidate, checkPhone, maxNumValidate } from '@/utils/formRules'
 import mapResMixin from './mixins/mapResMixin'
@@ -275,7 +280,7 @@ export default {
         this.disabled = false
         this.resetData()
       })
-      this.getResources('line_resources')
+      this.getResources('lineresources')
       this.getAreaResources()
       this.getOrgans()
       this.getIconList()
@@ -301,7 +306,7 @@ export default {
       this.isShow = true
       this.isUpdate = true
       this.pointIds = []
-      this.getResources('line_resources')
+      this.getResources('lineresources')
       this.getAreaResources()
       this.getOrgans()
       this.getIconList()
@@ -465,6 +470,12 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.isShow = false
             this.$emit('refreshTable')
+            const msg = this.isUpdate ? '修改成功' : '新增成功'
+            this.$notify.closeAll()
+            this.$notify.info({
+              title: '提示',
+              message: msg
+            })
           }
         })
         .catch((err) => {
@@ -509,10 +520,13 @@ export default {
 .lineContent {
   /deep/.el-form {
     margin-top: 17px;
+    .resName {
+      width: 400px;
+    }
   }
   .lineName {
     /deep/ .el-input__inner {
-      width: 393px;
+      width: 400px;
     }
   }
   /deep/.length.el-input {

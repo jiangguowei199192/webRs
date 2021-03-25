@@ -48,6 +48,7 @@
               @input="limitMaxLength($event, 20, resForm, 'name')"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="readonly"
               :contentText="resForm.name"
             ></EllipsisTooltip>
@@ -62,6 +63,7 @@
               @input="limitIntOrCharMaxLength($event, 30, resForm, 'devCode')"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="readonly"
               :contentText="resForm.devCode"
             ></EllipsisTooltip>
@@ -76,6 +78,7 @@
               @input="limitMaxLength($event, 50, resForm, 'address')"
             ></el-input>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="readonly"
               :contentText="resForm.address"
             ></EllipsisTooltip>
@@ -93,6 +96,7 @@
               :class="{ active: !readonly }"
             ></el-cascader>
             <EllipsisTooltip
+              class="nameTooltip"
               v-show="readonly"
               :contentText="resForm.organName"
             ></EllipsisTooltip>
@@ -343,7 +347,7 @@
 
 <script>
 import ResDialog from './resDialog.vue'
-import EllipsisTooltip from './ellipsisTooltip.vue'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import {
   isNotNull,
   lonValidate,
@@ -600,9 +604,9 @@ export default {
           this.$refs.resDlgCtrl.showInfos(data)
         })
       }
-      this.$nextTick(() => {
-        this.updateDlgSize(this.resForm.type)
-      })
+      // this.$nextTick(() => {
+      //   this.updateDlgSize(this.resForm.type)
+      // })
     },
     updateLonOrLat () {
       let bLonOK = false

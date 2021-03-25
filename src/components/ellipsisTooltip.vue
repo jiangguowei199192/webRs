@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="gEllipsis"
-    :class="isMultiLine ? 'mltiLine' : 'singleLine'"
-    ref="editor"
-  >
-    <div :class="contentClass" :style="lineClamp">
+  <div class="gEllipsis" :class="isMultiLine ? 'mltiLine' : 'singleLine'">
+    <div :class="contentClass" :style="lineClamp" ref="editor">
       <el-tooltip
         effect="dark"
         :disabled="!isElTooltipShow"
