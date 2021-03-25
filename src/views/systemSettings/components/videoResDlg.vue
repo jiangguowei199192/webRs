@@ -7,13 +7,16 @@
       :bVideoPoint="true"
       :isShow.sync="isShow"
       :isRead.sync="readonly"
-      :infoTop="infoTop"
-      :infoHeight="infoHeight"
+      :resType="resForm.type"
       @mapResAddOrModify="mapResAddOrModify"
       @submitResForm="submitResForm"
     >
-      <div slot="content" class="mapResForm">
-        <div class="pTitle" style="margin-top:6px;">
+      <div
+        slot="content"
+        class="mapResForm videoResBox"
+        :class="{ wrj: resForm.type === 'WRJ' }"
+      >
+        <div class="pTitle">
           <span></span>
           <span>视频资源信息</span>
         </div>
@@ -21,7 +24,6 @@
           ref="formCtrl"
           :model="resForm"
           :inline="true"
-          style="margin-top: 8px"
           :rules="formRules"
         >
           <el-form-item label="资源类型 :" prop="type">
@@ -31,7 +33,6 @@
               :placeholder="placeholder2"
               :class="{ active: !readonly || !isEdit }"
               :disabled="readonly || isEdit"
-              @change="devTypeChange($event)"
             >
               <el-option
                 v-for="item in resTypes"
@@ -61,7 +62,7 @@
               v-model="resForm.devCode"
               :placeholder="readonly || isEdit ? '' : placeholder"
               :disabled="readonly || isEdit"
-              :class="{ active: !readonly || !isEdit}"
+              :class="{ active: !readonly || !isEdit }"
               @input="limitIntOrCharMaxLength($event, 30, resForm, 'devCode')"
             ></el-input>
             <EllipsisTooltip
@@ -167,7 +168,10 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="H旋转范围 :" v-show="resForm.type === 'GDJK' && bShowRotate">
+          <el-form-item
+            label="H旋转范围 :"
+            v-show="resForm.type === 'GDJK' && bShowRotate"
+          >
             <el-input
               v-model="resForm.HStart"
               :placeholder="placeholder"
@@ -175,8 +179,8 @@
               class="rangeInput rangeInputer"
               @input="limitMaxLength($event, 4, resForm, 'HStart')"
             ></el-input>
-            <span style="color:white;">°</span>
-            <span style="padding: 0px 7px;color:white;">-</span>
+            <span style="color: white">°</span>
+            <span class="rotate">-</span>
           </el-form-item>
           <el-form-item v-show="resForm.type === 'GDJK' && bShowRotate">
             <el-input
@@ -186,9 +190,12 @@
               class="rangeInput rangeInputer"
               @input="limitMaxLength($event, 4, resForm, 'HEnd')"
             ></el-input>
-            <span style="color:white;">°</span>
+            <span style="color: white">°</span>
           </el-form-item>
-          <el-form-item label="V旋转范围 :" v-show="resForm.type === 'GDJK' && bShowRotate">
+          <el-form-item
+            label="V旋转范围 :"
+            v-show="resForm.type === 'GDJK' && bShowRotate"
+          >
             <el-input
               v-model="resForm.VStart"
               :placeholder="placeholder"
@@ -196,8 +203,8 @@
               class="rangeInput rangeInputer"
               @input="limitMaxLength($event, 4, resForm, 'VStart')"
             ></el-input>
-            <span style="color:white;">°</span>
-            <span style="padding: 0px 7px;color:white;">-</span>
+            <span style="color: white">°</span>
+            <span class="rotate">-</span>
           </el-form-item>
           <el-form-item v-show="resForm.type === 'GDJK' && bShowRotate">
             <el-input
@@ -207,7 +214,7 @@
               class="rangeInput rangeInputer"
               @input="limitMaxLength($event, 4, resForm, 'VEnd')"
             ></el-input>
-            <span style="color:white;">°</span>
+            <span style="color: white">°</span>
           </el-form-item>
           <el-form-item label="用户 :" v-show="resForm.type === 'GDJK'">
             <el-input
@@ -233,7 +240,10 @@
               :placeholder="placeholder"
               :disabled="readonly"
               :class="{ active: !readonly }"
-              @input="formatLimitedFloat($event, 3, 7, resForm, 'longitude', true);updateLonOrLat()"
+              @input="
+                formatLimitedFloat($event, 3, 7, resForm, 'longitude', true);
+                updateLonOrLat();
+              "
             ></el-input>
           </el-form-item>
           <el-form-item label="纬度 :" prop="latitude">
@@ -242,7 +252,10 @@
               :placeholder="placeholder"
               :disabled="readonly"
               :class="{ active: !readonly }"
-              @input="formatLimitedFloat($event, 2, 7, resForm, 'latitude', true);updateLonOrLat()"
+              @input="
+                formatLimitedFloat($event, 2, 7, resForm, 'latitude', true);
+                updateLonOrLat();
+              "
             ></el-input>
           </el-form-item>
           <el-form-item label="高度 :" v-show="resForm.type === 'GDJK'">
@@ -260,7 +273,9 @@
               :placeholder="placeholder"
               :disabled="readonly"
               :class="{ active: !readonly }"
-              @input="lengthLimitedNumber($event, 3, resForm, 'baseOrientation')"
+              @input="
+                lengthLimitedNumber($event, 3, resForm, 'baseOrientation')
+              "
             ></el-input>
           </el-form-item>
           <el-form-item label="排序 :">
@@ -272,7 +287,7 @@
               @input="lengthLimitedNumber($event, 4, resForm, 'sort')"
             ></el-input>
           </el-form-item>
-          <el-form-item label="图标 :" style="line-height: 40px" prop="icon">
+          <el-form-item label="图标 :" class="iconItem" prop="icon">
             <div class="iconTool">
               <!-- <el-avatar
                 :size="30"
@@ -280,7 +295,7 @@
                 style="margin-top: 5px"
                 :key="avatarUrl"
               ></el-avatar> -->
-              <img :src="avatarUrl || defIcon" class="icon" draggable="false"/>
+              <img :src="avatarUrl || defIcon" class="icon" draggable="false" />
               <el-popover
                 placement="top"
                 trigger="click"
@@ -303,7 +318,11 @@
                   ></span>
                 </div>
                 <div class="chooseBox" slot="reference">
-                  <el-image class="btn" :src="chooseIcon" draggable="false"></el-image>
+                  <el-image
+                    class="btn"
+                    :src="chooseIcon"
+                    draggable="false"
+                  ></el-image>
                   选择图标
                 </div>
               </el-popover>
@@ -344,8 +363,7 @@ import { EventBus } from '@/utils/eventBus.js'
 import mapResMixin from './mixins/mapResMixin'
 import globalApi from '@/utils/globalApi'
 export default {
-  props: {
-  },
+  props: {},
   data () {
     return {
       serverUrl: globalApi.headImg,
@@ -357,8 +375,6 @@ export default {
       isShow: false,
       showPopover: false,
       bShowRotate: false,
-      infoTop: 83,
-      infoHeight: 438,
       resTypes: [
         {
           value: 'WRJ',
@@ -470,14 +486,18 @@ export default {
         this.resForm.enable = data.deviceStatus
         this.resForm.brand = data.deviceBrand
         this.resForm.model = data.deviceModel
-        if (data.deviceExpirationDate !== null &&
+        if (
+          data.deviceExpirationDate !== null &&
           data.deviceExpirationDate !== '' &&
-          data.deviceExpirationDate !== undefined) {
+          data.deviceExpirationDate !== undefined
+        ) {
           this.resForm.warrantyDate = new Date(data.deviceExpirationDate)
         }
-        if (data.deviceRotationRange !== null &&
+        if (
+          data.deviceRotationRange !== null &&
           data.deviceRotationRange !== '' &&
-          data.deviceRotationRange !== undefined) {
+          data.deviceRotationRange !== undefined
+        ) {
           const tmpRange = JSON.parse(data.deviceRotationRange)
           this.resForm.HStart = tmpRange.HStart
           this.resForm.HEnd = tmpRange.HEnd
@@ -595,7 +615,7 @@ export default {
       let tmpLat = 0
       if (this.resForm.longitude !== '') {
         // eslint-disable-next-line
-        const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/
+        const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/;
         if (lonreg.test(this.resForm.longitude)) {
           tmpLon = parseFloat(this.resForm.longitude)
           bLonOK = true
@@ -604,7 +624,7 @@ export default {
       }
       if (this.resForm.latitude !== '') {
         // eslint-disable-next-line
-        const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/
+        const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/;
         if (latreg.test(this.resForm.latitude)) {
           tmpLat = parseFloat(this.resForm.latitude)
           bLatOK = true
@@ -704,10 +724,13 @@ export default {
         const tmpConfig = {}
         if (this.isEdit === true) {
           tmpDatas.deviceTypeCode = this.resForm.type
-          tmpConfig.headers = { 'Content-Type': 'application/json;charset=UTF-8' }
+          tmpConfig.headers = {
+            'Content-Type': 'application/json;charset=UTF-8'
+          }
         }
 
-        this.$axios.post(tmpApi, tmpDatas, tmpConfig)
+        this.$axios
+          .post(tmpApi, tmpDatas, tmpConfig)
           .then((res) => {
             if (res && res.data && res.data.code === 0) {
               Notification({
@@ -744,18 +767,18 @@ export default {
       this.resForm.longitude = data.coordinates[0].toFixed(7)
       this.resForm.latitude = data.coordinates[1].toFixed(7)
     },
-    updateDlgSize (type) {
-      if (type === 'WRJ') {
-        this.infoTop = 83
-        this.infoHeight = 438
-      } else if (type === 'GDJK') {
-        this.infoTop = 50
-        this.infoHeight = 520
-      }
-    },
-    devTypeChange (event) {
-      this.updateDlgSize(event)
-    },
+    // updateDlgSize (type) {
+    //   if (type === 'WRJ') {
+    //     this.infoTop = 83
+    //     this.infoHeight = 438
+    //   } else if (type === 'GDJK') {
+    //     this.infoTop = 50
+    //     this.infoHeight = 520
+    //   }
+    // },
+    // devTypeChange (event) {
+    //   this.updateDlgSize(event)
+    // },
     /**
      *  选择图标
      */
@@ -778,6 +801,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.videoResBox {
+  height: 520px;
+  width: 496px;
+  /deep/.el-form {
+    margin-top: 8px;
+    .iconItem {
+      line-height: 40px;
+    }
+  }
+  .pTitle {
+    margin-top: 6px;
+  }
+  .rotate {
+    padding: 0px 7px;
+    color: white;
+  }
+}
+.videoResBox.wrj {
+  height: 438px;
+}
 .rangeInputer {
   display: inline;
 }

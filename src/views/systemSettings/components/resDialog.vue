@@ -26,7 +26,7 @@
       <transition name="hideContent">
         <div
           class="contentBox"
-          :style="'top:' + infoTop + 'px;'"
+          :class="{ wrj: resType === 'WRJ', gdjk: resType === 'GDJK' }"
           v-show="!unfold"
         >
           <div
@@ -34,10 +34,7 @@
             v-show="!unfold"
             @click.stop="unfold = true"
           ></div>
-          <div
-            class="content"
-            :style="'height:' + infoHeight + 'px;width:' + infoWidth + 'px;'"
-          >
+          <div class="content">
             <slot name="content"></slot>
           </div>
         </div>
@@ -70,6 +67,9 @@
 import { timeFormat } from '@/utils/date'
 export default {
   props: {
+    resType: {
+      type: String
+    },
     isShow: {
       type: Boolean,
       required: false
@@ -88,18 +88,6 @@ export default {
     bVideoPoint: {
       type: Boolean,
       required: false
-    },
-    infoTop: {
-      type: Number,
-      default: 97
-    },
-    infoWidth: {
-      type: Number,
-      default: 496
-    },
-    infoHeight: {
-      type: Number,
-      default: 447
     }
   },
   data () {
@@ -320,7 +308,7 @@ export default {
 .resDlg {
   font-size: 14px;
   /deep/.el-dialog {
-    width:1440px;
+    width: 1440px;
     overflow: hidden;
     .el-dialog__header {
       display: none;
@@ -458,6 +446,7 @@ export default {
       display: flex;
       position: absolute;
       right: 0px;
+      top: 97px;
       align-items: center;
       .content {
         background: rgba($color: #121e3a, $alpha: 0.95);
@@ -468,6 +457,12 @@ export default {
         background-image: url("../../../assets/images/backgroundManagement/fold.png");
         cursor: pointer;
       }
+    }
+    .contentBox.wrj {
+      top: 83px;
+    }
+    .contentBox.gdjk {
+      top: 50px;
     }
     .showUnfoldBtn-enter,
     .showUnfoldBtn-leave-to {

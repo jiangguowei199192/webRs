@@ -863,14 +863,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.iconTool {
-  margin-bottom: 4px;
-}
-/deep/.el-form {
-  margin-top: 17px;
-  .resourcesIcon {
-    line-height: 40px;
-    margin-bottom: 11px;
+.pointContent {
+  width: 496px;
+  height: 447px;
+  .iconTool {
+    margin-bottom: 4px;
+  }
+  /deep/.el-form {
+    margin-top: 17px;
+    .resourcesIcon {
+      line-height: 40px;
+      margin-bottom: 11px;
+    }
   }
 }
 </style>

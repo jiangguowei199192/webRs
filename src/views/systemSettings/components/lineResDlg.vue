@@ -506,11 +506,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/.el-form {
-  margin-top: 17px;
-}
-
 .lineContent {
+  width: 496px;
+  height: 447px;
+  /deep/.el-form {
+    margin-top: 17px;
+  }
   .lineName {
     /deep/ .el-input__inner {
       width: 393px;

@@ -9,7 +9,7 @@
       ref="resDlg"
       :isRead="disabled"
     >
-      <div slot="content" class="lineContent mapResForm">
+      <div slot="content" class="surfaceContent mapResForm">
         <div class="pTitle">
           <span></span>
           <span>面资源信息</span>
@@ -487,14 +487,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/.el-form {
-  margin-top: 17px;
-}
-.lineContent {
+.surfaceContent {
+  width: 496px;
+  height: 447px;
   .lineName {
     /deep/ .el-input__inner {
       width: 393px;
     }
+  }
+  /deep/.el-form {
+    margin-top: 17px;
   }
 }
 </style>
