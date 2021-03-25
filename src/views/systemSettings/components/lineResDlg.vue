@@ -507,8 +507,6 @@ export default {
 
 <style lang="scss" scoped>
 .lineContent {
-  width: 496px;
-  height: 447px;
   /deep/.el-form {
     margin-top: 17px;
   }

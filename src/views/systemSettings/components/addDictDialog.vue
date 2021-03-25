@@ -87,7 +87,8 @@
                 v-for="(item, index) in icons"
                 :key="index"
                 :style="{
-                  background: 'url(' + serverUrl + item.iconPath + ') no-repeat'
+                  background:
+                    'url(' + serverUrl + item.iconPath + ') no-repeat',
                 }"
                 @click.stop="selectIcon(item)"
               ></span>
@@ -98,7 +99,7 @@
                 :src="chooseIcon"
                 draggable="false"
               ></el-image>
-              选择图标
+              <span>选择图标</span>
             </div>
           </el-popover>
         </div>
@@ -135,9 +136,7 @@
       v-if="handelType == 'checkParentDict' || handelType == 'checkChildDict'"
       class="handelBtns"
     >
-      <span
-        style="margin-right: 190px;"
-        @click.stop="cancelClick('addDictForm')"
+      <span style="margin-right: 190px" @click.stop="cancelClick('addDictForm')"
         >关闭</span
       >
     </div>
@@ -258,7 +257,7 @@ export default {
     lengthLimitedNumber,
 
     confirmClick (formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (!valid) return false
         this.$emit('confirmClick', this.addDictForm)
       })
@@ -281,13 +280,13 @@ export default {
         .post(iconLibaryApi.getAllPic, params, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           // console.log('图标库接口返回:', res)
           if (res && res.data && res.data.code === 0) {
             this.icons = res.data.data.records
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('接口错误: ' + err)
         })
     },
@@ -295,7 +294,7 @@ export default {
     selectIcon (item) {
       this.showPopover = false
       this.addDictForm.icon = item.iconPath
-      this.$refs.addDictForm.validateField('icon', valid => {})
+      this.$refs.addDictForm.validateField('icon', (valid) => {})
     },
 
     iconBoxCilck () {

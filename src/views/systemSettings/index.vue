@@ -16,7 +16,7 @@
       </button> -->
     </div>
     <div class="rightBox">
-      <div class="rightBoxBase webFsScroll">
+      <div class="rightBoxBase">
         <router-view></router-view>
       </div>
     </div>
@@ -338,15 +338,15 @@ export default {
   cursor: pointer;
 }
 
-::-webkit-scrollbar {
+/deep/::-webkit-scrollbar {
   width: 3px;
 }
-::-webkit-scrollbar-thumb {
+/deep/::-webkit-scrollbar-thumb {
   /*滚动条里面小方块*/
   border-radius: 3px;
   background: #00b7ff;
 }
-::-webkit-scrollbar-track {
+/deep/::-webkit-scrollbar-track {
   /*滚动条里面轨道*/
   background: transparent;
 }

@@ -11,11 +11,7 @@
       @mapResAddOrModify="mapResAddOrModify"
       @submitResForm="submitResForm"
     >
-      <div
-        slot="content"
-        class="mapResForm videoResBox"
-        :class="{ wrj: resForm.type === 'WRJ' }"
-      >
+      <div slot="content" class="mapResForm videoResBox">
         <div class="pTitle">
           <span></span>
           <span>视频资源信息</span>
@@ -323,7 +319,7 @@
                     :src="chooseIcon"
                     draggable="false"
                   ></el-image>
-                  选择图标
+                  <span>选择图标</span>
                 </div>
               </el-popover>
             </div>
@@ -802,8 +798,6 @@ export default {
 
 <style lang="scss" scoped>
 .videoResBox {
-  height: 520px;
-  width: 496px;
   /deep/.el-form {
     margin-top: 8px;
     .iconItem {
@@ -817,9 +811,6 @@ export default {
     padding: 0px 7px;
     color: white;
   }
-}
-.videoResBox.wrj {
-  height: 438px;
 }
 .rangeInputer {
   display: inline;

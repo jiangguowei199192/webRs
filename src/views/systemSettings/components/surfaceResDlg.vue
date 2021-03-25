@@ -488,8 +488,6 @@ export default {
 
 <style lang="scss" scoped>
 .surfaceContent {
-  width: 496px;
-  height: 447px;
   .lineName {
     /deep/ .el-input__inner {
       width: 393px;

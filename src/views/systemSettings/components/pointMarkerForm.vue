@@ -123,7 +123,7 @@
                 </div>
                 <div class="chooseBox" slot="reference">
                   <el-image class="btn" :src="chooseIcon"></el-image>
-                  选择图标
+                  <span>选择图标</span>
                 </div>
               </el-popover>
             </div>

@@ -621,33 +621,35 @@ input[type="number"] {
 .iconTool {
   display: inline-block;
   height: 40px;
-  vertical-align: middle;
+  display: flex;
+  align-items: center;
   width: 150px;
 
   .icon {
-    margin-top: 5px;
+    //margin-top: 5px;
     width: 30px;
     height: 30px;
     border-radius: 50%;
+    margin-right: 8px;
   }
 
   .chooseBox {
-    display: inline-block;
-    width: 86px;
+    box-sizing: border-box;
+    display: flex;
+    width: 100px;
     height: 24px;
     border: 1px solid #1ea7f0;
     color: #aaa;
     font-size: 12px;
     line-height: 24px;
-    margin: 8px 24px auto 8px;
-    vertical-align: top;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 
     .btn {
       width: 12px;
       height: 12px;
-      margin: 6px auto auto 10px;
-      vertical-align: top;
+      margin-right: 8px;
     }
   }
 }
@@ -838,7 +840,8 @@ input[type="number"] {
       display: inline-block;
       width: 21px;
       height: 16px;
-      background-image: url("../assets/images/fire_title.png");
+      background: url("../assets/images/fire_title.png") no-repeat;
+      background-size: 100% 100%;
       margin-right: 10px;
       position: relative;
       top: 3px;
@@ -855,7 +858,7 @@ input[type="number"] {
     font-size: 12px;
     color: #fff;
     line-height: 40px;
-    width: 90px;
+    width: 100px;
   }
 
   .el-form-item__content {

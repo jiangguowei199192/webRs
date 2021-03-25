@@ -34,7 +34,10 @@
             v-show="!unfold"
             @click.stop="unfold = true"
           ></div>
-          <div class="content">
+          <div
+            class="content"
+            :class="{ wrj: resType === 'WRJ', gdjk: resType === 'GDJK' }"
+          >
             <slot name="content"></slot>
           </div>
         </div>
@@ -342,7 +345,8 @@ export default {
         display: inline-block;
         width: 21px;
         height: 16px;
-        background-image: url("../../../assets/images/fire_title.png");
+        background: url("../../../assets/images/fire_title.png") no-repeat;
+        background-size: 100% 100%;
         margin-right: 10px;
         position: relative;
         top: 2px;
@@ -436,7 +440,7 @@ export default {
     }
     .hideContent-enter,
     .hideContent-leave-to {
-      transform: translateX(496px);
+      transform: translateX(516px);
     }
     .hideContent-enter-active,
     .hideContent-leave-active {
@@ -450,11 +454,21 @@ export default {
       align-items: center;
       .content {
         background: rgba($color: #121e3a, $alpha: 0.95);
+        width: 516px;
+        height: 447px;
+      }
+      .content.wrj {
+        height: 438px;
+      }
+      .content.gdjk {
+        height: 520px;
       }
       .unfold {
         width: 14px;
         height: 61px;
-        background-image: url("../../../assets/images/backgroundManagement/fold.png");
+        background: url("../../../assets/images/backgroundManagement/fold.png")
+          no-repeat;
+        background-size: 100% 100%;
         cursor: pointer;
       }
     }
@@ -478,7 +492,9 @@ export default {
       height: 61px;
       top: 283px;
       right: 0px;
-      background-image: url("../../../assets/images/backgroundManagement/unfold.png");
+      background: url("../../../assets/images/backgroundManagement/unfold.png")
+        no-repeat;
+      background-size: 100% 100%;
       cursor: pointer;
     }
   }
