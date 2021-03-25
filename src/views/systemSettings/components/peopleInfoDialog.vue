@@ -3,7 +3,7 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="540px"
+    width="570px"
     class="people-info-dlg"
   >
     <div class="add-people-header">
@@ -46,15 +46,15 @@
 
     <div class="note">
       <div>
-        <span>创建时间：{{peopleInfo.createTime}}</span>
+        <span>创建时间：{{ peopleInfo.createTime }}</span>
         <span style="display: inline-block; margin-left: 20px"
-          >创建人：{{peopleInfo.createUserName}}</span
+          >创建人：{{ peopleInfo.createUserName }}</span
         >
       </div>
       <div style="margin-top: 10px">
-        <span>最后修改时间：{{peopleInfo.updateTime}}</span>
+        <span>最后修改时间：{{ peopleInfo.updateTime }}</span>
         <span style="display: inline-block; margin-left: 20px"
-          >最后修改人：{{peopleInfo.updateUserName}}</span
+          >最后修改人：{{ peopleInfo.updateUserName }}</span
         >
       </div>
     </div>
@@ -69,8 +69,7 @@
 export default {
   props: ['isShow', 'peopleInfo'],
   data () {
-    return {
-    }
+    return {}
   },
   methods: {
     confirmClick () {
@@ -82,7 +81,9 @@ export default {
 
 <style lang="scss" scoped>
 .people-info-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -90,13 +91,13 @@ export default {
       padding: 0px 20px;
       width: 100%;
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
         height: 40px;
         border-bottom: 1px solid #1eb0fc;
         .header-icon {
           display: inline-block;
-          width: 22px;
+          width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
           margin-top: 15px;

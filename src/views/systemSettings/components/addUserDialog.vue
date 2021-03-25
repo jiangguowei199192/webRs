@@ -3,7 +3,7 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="480px"
+    width="510px"
     class="add-people-dlg"
   >
     <div class="add-people-header">
@@ -43,7 +43,7 @@
             label: 'deptName',
             value: 'deptCode',
             checkStrictly: true,
-            emitPath: false,
+            emitPath: false
           }"
           :show-all-levels="false"
         ></el-cascader>
@@ -143,7 +143,7 @@ export default {
 
         if (newUserInfo.roles) {
           var roleArr = []
-          newUserInfo.roles.forEach((role) => {
+          newUserInfo.roles.forEach(role => {
             roleArr.push(role.roleCode)
           })
           this.addUserForm.roles = roleArr
@@ -194,7 +194,7 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.adduserRef.validate(async (valid) => {
+      this.$refs.adduserRef.validate(async valid => {
         if (!valid) {
           return
         }
@@ -211,7 +211,9 @@ export default {
 
 <style lang="scss" scoped>
 .add-people-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -219,13 +221,13 @@ export default {
       padding: 0px 20px;
       width: 100%;
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
         height: 40px;
         border-bottom: 1px solid #1eb0fc;
         .header-icon {
           display: inline-block;
-          width: 22px;
+          width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
           margin-top: 15px;
@@ -253,7 +255,7 @@ export default {
       }
       .role-sel {
         .el-input__inner {
-          width: 390px;
+          width: 385px;
         }
       }
       .el-form-item {

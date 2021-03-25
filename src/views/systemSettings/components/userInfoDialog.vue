@@ -3,7 +3,7 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="540px"
+    width="570px"
     class="people-info-dlg"
   >
     <div class="add-people-header">
@@ -30,7 +30,13 @@
       </el-form-item>
       <el-form-item label="关联角色:" prop="roles">
         <div style="width: 450px; margin-top: 7px;">
-          <div class="role-item" v-for="item in peopleInfoForm.roles" :key="item.id">{{item.roleName}}</div>
+          <div
+            class="role-item"
+            v-for="item in peopleInfoForm.roles"
+            :key="item.id"
+          >
+            {{ item.roleName }}
+          </div>
         </div>
       </el-form-item>
       <el-form-item label="用户状态:" prop="status">
@@ -48,15 +54,15 @@
     </el-form>
     <div class="note">
       <div>
-        <span>创建时间：{{peopleInfoForm.createTime}}</span>
+        <span>创建时间：{{ peopleInfoForm.createTime }}</span>
         <span style="display: inline-block; margin-left: 20px"
-          >创建人：{{peopleInfoForm.createUser}}</span
+          >创建人：{{ peopleInfoForm.createUser }}</span
         >
       </div>
       <div style="margin-top: 10px">
-        <span>最后修改时间：{{peopleInfoForm.updateTime}}</span>
+        <span>最后修改时间：{{ peopleInfoForm.updateTime }}</span>
         <span style="display: inline-block; margin-left: 20px"
-          >最后修改人：{{peopleInfoForm.updateUser}}</span
+          >最后修改人：{{ peopleInfoForm.updateUser }}</span
         >
       </div>
     </div>
@@ -115,7 +121,9 @@ export default {
 
 <style lang="scss" scoped>
 .people-info-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -123,13 +131,13 @@ export default {
       padding: 0px 20px;
       width: 100%;
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
         height: 40px;
         border-bottom: 1px solid #1eb0fc;
         .header-icon {
           display: inline-block;
-          width: 22px;
+          width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
           margin-top: 15px;
@@ -187,7 +195,7 @@ export default {
         line-height: 24px;
         color: #fff;
         font-size: 12px;
-        border: 1px solid #1EB0FC;
+        border: 1px solid #1eb0fc;
         text-align: center;
         margin-right: 10px;
         overflow: hidden;

@@ -17,7 +17,7 @@
 
       <div class="add-dept-header">
         <div class="header-icon"></div>
-        <div class="header-text">{{title}}</div>
+        <div class="header-text">{{ title }}</div>
       </div>
 
       <div class="toolBox">
@@ -76,7 +76,7 @@
                     label: 'deptName',
                     value: 'deptCode',
                     checkStrictly: true,
-                    emitPath: false,
+                    emitPath: false
                   }"
                   :show-all-levels="false"
                 ></el-cascader>
@@ -134,7 +134,9 @@
               <el-form-item label="图标">
                 <div class="icon-tool">
                   <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
-                    <img src="../../../assets/images/backgroundManagement/nopicture.png">
+                    <img
+                      src="../../../assets/images/backgroundManagement/nopicture.png"
+                    />
                   </el-avatar>
                   <el-popover
                     placement="top"
@@ -142,7 +144,7 @@
                     popper-class="iconPopover"
                     v-model="showPopover"
                   >
-                    <div class="iconBox webFsScroll">
+                    <div class="iconBox listScroll">
                       <!-- <span
                         class="close"
                         @click.stop="showPopover = false"
@@ -154,7 +156,7 @@
                         :key="index"
                         :style="{
                           background:
-                            'url(' + serverUrl + item.iconPath + ') no-repeat',
+                            'url(' + serverUrl + item.iconPath + ') no-repeat'
                         }"
                       ></span>
                     </div>
@@ -282,7 +284,7 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.addDeptRef.validate(async (valid) => {
+      this.$refs.addDeptRef.validate(async valid => {
         if (!valid) {
           return
         }
@@ -317,10 +319,8 @@ export default {
     },
 
     clickToolItem (item) {
-      if (
-        item.name === 'point'
-      ) {
-        this.toolItems.forEach((t) => {
+      if (item.name === 'point') {
+        this.toolItems.forEach(t => {
           if (item !== t) {
             t.isSelect = false
           }
@@ -383,7 +383,9 @@ export default {
 
 <style lang="scss" scoped>
 .add-dept-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     overflow: hidden;
     .el-dialog__header {
       display: none;
@@ -394,7 +396,7 @@ export default {
     }
     .add-dept-div {
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
     }
     .map-tool {
       width: 100%;
@@ -443,7 +445,7 @@ export default {
       left: 1px;
       .header-icon {
         display: inline-block;
-        width: 22px;
+        width: 19px;
         height: 16px;
         background-image: url("../../../assets/images/fire_title.png");
         margin-top: 15px;
@@ -492,7 +494,7 @@ export default {
         width: 456px;
         height: 447px;
         border: 1px solid #1eb0fc;
-        background-color: #121e3a;
+        background-color: rgba(0, 65, 87, 0.85);
         padding: 0 12px;
         .content-header {
           height: 33px;

@@ -12,7 +12,7 @@
       <div class="header-text">角色授权</div>
     </div>
 
-    <div style="overflow: auto; margin-top: 10px">
+    <div style="overflow: auto; margin-top: 10px" class="listScroll">
       <el-tree
         ref="permissionTree"
         :data="permissionTree"
@@ -22,7 +22,7 @@
         :props="{
           children: 'children',
           label: 'menuName',
-          value: 'id',
+          value: 'id'
         }"
         :render-content="renderContent"
         class="permission-tree"
@@ -51,7 +51,10 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$emit('confirmClick', this.$refs.permissionTree.getCheckedKeys(true))
+      this.$emit(
+        'confirmClick',
+        this.$refs.permissionTree.getCheckedKeys(true)
+      )
     },
 
     cancelClick () {
@@ -82,7 +85,9 @@ export default {
 
 <style lang="scss" scoped>
 .role-auth-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -91,13 +96,13 @@ export default {
       width: 100%;
       height: 690px;
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
         height: 40px;
         border-bottom: 1px solid #1eb0fc;
         .header-icon {
           display: inline-block;
-          width: 22px;
+          width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
           margin-top: 15px;

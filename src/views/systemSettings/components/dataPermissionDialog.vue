@@ -3,7 +3,7 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="1105px"
+    width="1145px"
     class="permission-dlg"
   >
     <div class="add-people-header">
@@ -43,7 +43,7 @@
               show-checkbox
               node-key="deptCode"
               :default-checked-keys="depts"
-              class="dept-tree"
+              class="dept-tree listScroll"
               style="height: 422px; margin-top: 10px; margin-left: 16px"
               :filter-node-method="filterNode"
               @check-change="deptTree1Change"
@@ -66,7 +66,7 @@
                 :expand-on-click-node="false"
                 node-key="id"
                 :current-node-key="selectedDept2.id"
-                class="dept-tree"
+                class="dept-tree listScroll"
                 style="margin: 0 0px 0 20px; height: 400px"
               ></el-tree>
             </div>
@@ -108,7 +108,7 @@
 
               <el-table
                 ref="accountTableRef"
-                class="accountTable"
+                class="accountTable listScroll"
                 :data="userList"
                 :row-key="getRowKeys"
                 empty-text="暂无数据"
@@ -166,7 +166,7 @@
 
           <div class="selected-user-div">
             <div class="selected-title">已关联用户</div>
-            <div class="selected-box">
+            <div class="selected-box listScroll">
               <div
                 class="selected-item"
                 v-for="item in selectedAccounts"
@@ -250,9 +250,7 @@ export default {
         this.$nextTick(() => {
           if (_this.$refs.accountTableRef) {
             _this.selectedAccounts.forEach(item => {
-              const user = _this.userList.find(
-                (u) => u.id === item.id
-              )
+              const user = _this.userList.find(u => u.id === item.id)
               if (user !== undefined) {
                 _this.$refs.accountTableRef.selection.push(user)
               } else {
@@ -279,7 +277,7 @@ export default {
 
     async getDeptTree () {
       const _this = this
-      this.$axios.post(backApi.getDeptTree).then((res) => {
+      this.$axios.post(backApi.getDeptTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           _this.selectedDept2 = _this.deptTree[0]
@@ -289,7 +287,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -342,9 +340,9 @@ export default {
         .post(backApi.getUserList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.records.forEach((item) => {
+            res.data.data.records.forEach(item => {
               if (item.status === 0) {
                 item.enable = '无效'
               } else {
@@ -408,7 +406,7 @@ export default {
           this.$refs.accountTableRef.selection
         ) {
           const user = this.$refs.accountTableRef.selection.find(
-            (u) => u.id === item.id
+            u => u.id === item.id
           )
           if (user !== undefined) {
             const ind = this.$refs.accountTableRef.selection.indexOf(user)
@@ -425,7 +423,9 @@ export default {
 
 <style lang="scss" scoped>
 .permission-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -433,12 +433,12 @@ export default {
       padding: 0px 20px;
       width: 100%;
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
         height: 40px;
         .header-icon {
           display: inline-block;
-          width: 22px;
+          width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
           margin-top: 15px;
@@ -486,7 +486,8 @@ export default {
           float: left;
           width: 243px;
           height: 100%;
-          background-color: rgba($color: #183157, $alpha: 0.95);
+          // background-color: rgba($color: #183157, $alpha: 0.95);
+          background-color: rgb(1, 77, 99);
           .range-title {
             height: 36px;
             width: 100%;
@@ -516,7 +517,8 @@ export default {
           float: left;
           width: 311px;
           height: 100%;
-          background-color: rgba($color: #183157, $alpha: 0.95);
+          // background-color: rgba($color: #183157, $alpha: 0.95);
+          background-color: rgb(1, 77, 99);
           margin-left: 5px;
           .dept-title {
             height: 36px;
@@ -577,7 +579,8 @@ export default {
           float: left;
           width: 870px;
           height: 100%;
-          background-color: rgba($color: #183157, $alpha: 0.95);
+          // background-color: rgba($color: #183157, $alpha: 0.95);
+          background-color: rgb(1, 77, 99);
           .user-list-title {
             width: 100%;
             height: 40px;
@@ -699,7 +702,7 @@ export default {
               margin-top: 10px;
               margin-left: 15px;
               width: 536px;
-
+              overflow-y: auto;
               /* 表格表头样式 */
               .el-table__header-wrapper th {
                 color: #c5f3ff;
@@ -747,7 +750,8 @@ export default {
           float: left;
           width: 190px;
           height: 100%;
-          background-color: rgba($color: #183157, $alpha: 0.95);
+          // background-color: rgba($color: #183157, $alpha: 0.95);
+          background-color: rgb(1, 77, 99);
           margin-left: 5px;
           .selected-title {
             height: 40px;
@@ -821,6 +825,16 @@ export default {
         cursor: pointer;
       }
     }
+  }
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: #00b7ff;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 </style>

@@ -3,7 +3,7 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="480px"
+    width="510px"
     class="add-role-dlg"
   >
     <div class="add-people-header">
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.addRoleRef.validate(async (valid) => {
+      this.$refs.addRoleRef.validate(async valid => {
         if (!valid) {
           return
         }
@@ -92,7 +92,9 @@ export default {
 
 <style lang="scss" scoped>
 .add-role-dlg.el-dialog__wrapper {
+  background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    background-color: transparent;
     .el-dialog__header {
       display: none;
     }
@@ -100,13 +102,13 @@ export default {
       padding: 0px 20px;
       width: 100%;
       border: 1px solid #1eb0fc;
-      background-color: #121e3a;
+      background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
         height: 40px;
         border-bottom: 1px solid #1eb0fc;
         .header-icon {
           display: inline-block;
-          width: 22px;
+          width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
           margin-top: 15px;
