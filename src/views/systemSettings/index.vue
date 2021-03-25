@@ -232,7 +232,7 @@ export default {
           break
         case 'functionPermission':
           this.$router.push({
-            path: '/backgroundManagement/functionPermission'
+            path: '/systemSettings/functionPermission'
           })
           break
         case 'dataPermission':
