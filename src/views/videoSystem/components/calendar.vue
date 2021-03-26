@@ -45,7 +45,7 @@
         </template>
       </div>
     </div>
-    <el-dialog :visible.sync="picDlgVisible" width="803px" class="editDlg">
+    <el-dialog :visible.sync="picDlgVisible" class="editDlg">
       <div class="picContainer2">
         <div
           :style="{
@@ -312,15 +312,18 @@ export default {
 
   .pre {
     background: url(../../../assets/images/calendar-pre.png) no-repeat;
+    background-size: 100% 100%;
   }
 
   .next {
     background: url(../../../assets/images/calendar-next.png) no-repeat;
+    background-size: 100% 100%;
   }
 }
 
 .title {
   background: url(../../../assets/images/header-bg.png) no-repeat;
+  background-size: 100% 100%;
   width: 202px;
   height: 45px;
   margin-left: 10px;
@@ -334,6 +337,7 @@ export default {
 
 .editDlg.el-dialog__wrapper {
   /deep/.el-dialog {
+    width: 803px;
     .el-dialog__header {
       display: none;
     }
@@ -344,6 +348,7 @@ export default {
       width: 100%;
       height: 549px;
       background: url(../../../assets/images/picture-box.png) no-repeat;
+      background-size: 100% 100%;
       .picContainer2 {
         padding: 26px 30px;
         div:nth-child(1) {
@@ -468,6 +473,7 @@ export default {
     width: 20px;
     height: 20px;
     background: url(../../../assets/images/search-white.png) no-repeat;
+    background-size: 100% 100%;
     position: relative;
     top: 5px;
     left: 36px;
