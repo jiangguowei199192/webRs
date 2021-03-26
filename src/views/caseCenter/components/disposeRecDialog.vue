@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-25 09:11:10
+ * @LastEditTime: 2021-03-26 10:38:42
 -->
 <template>
   <div>
@@ -257,7 +257,8 @@ export default {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
     max-width: 780px;
-    background-color: rgba(0, 65, 87, 0.85);
+    // background-color: rgba(0, 65, 87, 0.85);
+    background-color: transparent;
     .add-case-header {
       width: 218px;
       height: 30px;
