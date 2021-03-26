@@ -233,6 +233,7 @@ export default {
           height: 24px;
           cursor: pointer;
           background: url(../../../assets/images/gisDispatch/link.svg) no-repeat;
+          background-size: 100% 100%;
           margin-right: 20px;
         }
       }
