@@ -447,6 +447,7 @@ export default {
         width: 19px;
         height: 16px;
         background-image: url("../../../assets/images/fire_title.png");
+        background-size: 100% 100%;
         margin-top: 15px;
         margin-left: 18px;
       }
@@ -502,6 +503,7 @@ export default {
             width: 19px;
             height: 16px;
             background-image: url("../../../assets/images/fire_title.png");
+            background-size: 100% 100%;
             margin-top: 10px;
           }
           .text {

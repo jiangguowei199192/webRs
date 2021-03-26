@@ -901,6 +901,7 @@ export default {
     .tablePagination {
       height: 35px;
       line-height: 35px;
+      margin-top: 35px;
     }
   }
 }
