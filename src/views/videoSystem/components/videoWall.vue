@@ -33,7 +33,7 @@
           ></canvas-area>
           <!-- <template v-if="showAR">
             <div class="header" @dblclick.stop="stopEvent">AR实景地图指挥</div>
-          </template> -->
+          </template>-->
           <!-- <div class="footer" @dblclick.stop="stopEvent">
             <a @mouseenter="showActive(1)" @mouseleave="showActive(0)" title="AR" @click="changeAR">
               <img :src="arPic" alt title="AR" />
@@ -47,25 +47,25 @@
             >
               <img :src="alarmPic" alt />
               <img v-show="active === 2" class="hide_tab" :src="alarmSelectedPic" />
-            </a> -->
-            <!-- <a
+          </a>-->
+          <!-- <a
               @mouseenter="showActive(3)"
               @mouseleave="showActive(0)"
               title="抓取"
               @click.stop="showImg"
             >
               <img :src="capturePic" alt />
-              <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" /> -->
-              <!-- 用于显示截取的图片 -->
-              <!-- <img
+          <img v-show="active === 3" class="hide_tab" :src="captureSelectedPic" />-->
+          <!-- 用于显示截取的图片 -->
+          <!-- <img
                 :src="`${picUrl}${cutImgUrl}`"
                 class="cutImg"
                 id="pic"
                 v-show="showCutImg"
                 @click.stop="cutDialogVisible=true;isAdd=true"
               />
-            </a> -->
-            <!-- <a
+          </a>-->
+          <!-- <a
               @mouseenter="showActive(4)"
               @mouseleave="showActive(0)"
               title="图库"
@@ -73,9 +73,9 @@
             >
               <img :src="photoPic" alt />
               <img v-show="active === 4" class="hide_tab" :src="photoSelectedPic" />
-            </a> -->
-            <!-- <template v-if="showAR"> -->
-              <!-- <a
+          </a>-->
+          <!-- <template v-if="showAR"> -->
+          <!-- <a
                 @mouseenter="showActive(5)"
                 @mouseleave="showActive(0)"
                 title="标签管理"
@@ -83,8 +83,8 @@
               >
                 <img :src="tagPic" alt />
                 <img v-show="active === 5" class="hide_tab" :src="tagSelectedPic" />
-              </a> -->
-              <!-- <a @mouseenter="showActive(6)" @mouseleave="showActive(0)" title="搜索">
+          </a>-->
+          <!-- <a @mouseenter="showActive(6)" @mouseleave="showActive(0)" title="搜索">
                 <img :src="searchPic" alt />
                 <img v-show="active === 6" class="hide_tab" :src="searchSelectedPic" />
               </a>
@@ -96,9 +96,9 @@
               >
                 <img :src="settingPic" title="设置" alt />
                 <img v-show="active === 7" class="hide_tab" :src="settingSelectedPic" />
-              </a>-->
-              <!-- 新增 -->
-              <!-- <a
+          </a>-->
+          <!-- 新增 -->
+          <!-- <a
                 @mouseenter="showActive(8)"
                 @mouseleave="showActive(0)"
                 title="退出全屏"
@@ -107,7 +107,7 @@
                 <img :src="fScreen" />
                 <img v-show="active === 8" class="hide_tab" :src="fScreenSelected" />
               </a>
-            </template> -->
+          </template>-->
           <!-- </div> -->
           <!-- 实时警情弹框 -->
           <div class="realPoliceInfo" v-show="showCurindex==1" @dblclick.stop="stopEvent">
@@ -141,8 +141,7 @@
             <img src="../../../assets/images/AR/X.png" @click="showCurindex=1000" />
           </div>
           <!-- 标签弹框 -->
-          <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showCurindex==4">
-            <!-- <p>常用标签</p> -->
+          <!-- <div class="tagInfo" @dblclick.stop="stopEvent" v-show="showCurindex==4">
             <div>
               <div :class="{'active':ruleForm.tagType==='0'}" class="mar11">
                 <img src="../../../assets/images/AR/high2.png" @click="changeType('0')" alt />
@@ -176,7 +175,6 @@
 
               <p>重点场所</p>
             </div>
-            <!-- <p>自定义标签</p> -->
             <div>
               <div :class="{'active':ruleForm.tagType==='11'}" class="mar12">
                 <img src="../../../assets/images/AR/line.png" @click="changeType('11')" alt />
@@ -191,7 +189,7 @@
               <p>区域</p>
             </div>
             <img src="../../../assets/images/AR/X.png" alt @click="closeTagType" />
-          </div>
+          </div>-->
           <!-- 图库弹框 -->
           <div class="picStorage" @dblclick.stop="stopEvent" v-show="showCurindex==3">
             <!-- 关闭按钮 -->
@@ -383,7 +381,7 @@
 AR功能开启中，巡航操作暂不可用。"
           />
         </template>
-      </div> -->
+      </div>-->
       <!-- 显示AR标签 -->
       <div
         class="fullScreenAr"
@@ -404,7 +402,7 @@ AR功能开启中，巡航操作暂不可用。"
       <!-- 新版云台操作 -->
       <div
         class="operate"
-        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.isShowOperate||false"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.accessType!=='1'&&videoInfo.isShowOperate||false"
       >
         <div class="circle">
           <div
@@ -422,6 +420,29 @@ AR功能开启中，巡航操作暂不可用。"
             <span>X{{step}}</span>
           </div>
           <div @mousedown="startChange(9999)" @mouseup="stopChange(9999)"></div>
+          <span id="zoomValue">X{{zoomValue}}</span>
+        </div>
+      </div>
+      <div
+        class="operate"
+        v-show="videoInfo.deviceTypeCode==='GDJK'&&videoInfo.accessType==='1'&&videoInfo.isShowOperate||false"
+      >
+        <div class="circle">
+          <div
+            v-for="(item,index) in 8"
+            :key="index"
+            @mousedown="startChangeGB(index)"
+            @mouseup="stopChangeGB(index)"
+          ></div>
+        </div>
+        <div class="extra">
+          <div title="变倍" :class="{selected:curSelectedIcon==0}" @click="curSelectedIcon=0"></div>
+          <div title="变焦" :class="{selected:curSelectedIcon==1}" @click="curSelectedIcon=1"></div>
+          <div @mousedown="startChangeGB(999,true)" @mouseup="stopChangeGB(999)"></div>
+          <div @click.stop="addStep" title="步速">
+            <span>X{{step}}</span>
+          </div>
+          <div @mousedown="startChangeGB(9999,true)" @mouseup="stopChangeGB(9999)"></div>
           <span id="zoomValue">X{{zoomValue}}</span>
         </div>
       </div>
@@ -1796,26 +1817,26 @@ export default {
     },
     // 鼠标按下
     startChange (index) {
-      if (this.showCurindex === 4) {
-        this.resetForm('ruleForm')
-      }
+      // if (this.showCurindex === 4) {
+      //   this.resetForm('ruleForm')
+      // }
       // 鼠标按下每隔一秒通知后台获取云台信息
-      if (this.showAR) {
-        this.timer = setInterval(() => {
-          if (this.showCurindex !== 4) {
-            // 按住期间执行的代码
-            new MqttService().client.send(
-              'video/webControlPzt',
-              JSON.stringify({
-                deviceCode: this.videoInfo.deviceCode,
-                channelId: this.videoInfo.streamType
-              })
-            )
-          }
-          // 更新坐标角度
-          // this.getPtzInfo()
-        }, 1500)
-      }
+      // if (this.showAR) {
+      //   this.timer = setInterval(() => {
+      //     if (this.showCurindex !== 4) {
+      //       // 按住期间执行的代码
+      //       new MqttService().client.send(
+      //         'video/webControlPzt',
+      //         JSON.stringify({
+      //           deviceCode: this.videoInfo.deviceCode,
+      //           channelId: this.videoInfo.streamType
+      //         })
+      //       )
+      //     }
+      //     // 更新坐标角度
+      //     // this.getPtzInfo()
+      //   }, 1500)
+      // }
       const params = {
         device_id: this.videoInfo.deviceCode,
         channel_id: this.videoInfo.streamType
@@ -2037,6 +2058,225 @@ export default {
             console.log('成功！')
           }
         })
+    },
+    //  以下新增国标
+    // 鼠标按下国标
+    startChangeGB (index, isInOut = false) {
+      const params = {}
+      if (!isInOut) {
+        switch (index) {
+          case 7:
+            ++this.recordNums.leftUp
+            this.clearRecord('leftUp')
+            // 左上
+            params.leftRight = 1
+            params.upDown = 1
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.leftUp > 255
+                ? 255
+                : this.step * this.recordNums.leftUp
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideoGB(1, params)
+            break
+          case 0:
+            ++this.recordNums.up
+            this.clearRecord('up')
+            // 上移
+            params.upDown = 1
+            params.leftRight = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.up > 255
+                ? 255
+                : this.step * this.recordNums.up
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideoGB(1, params)
+            break
+          case 1:
+            ++this.recordNums.rightUp
+            this.clearRecord('rightUp')
+            // 右上
+            params.leftRight = 2
+            params.upDown = 1
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.rightUp > 255
+                ? 255
+                : this.step * this.recordNums.rightUp
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideoGB(1, params)
+            break
+          case 6:
+            ++this.recordNums.left
+            this.clearRecord('left')
+            // 左
+            params.leftRight = 1
+            params.upDown = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.left > 255
+                ? 255
+                : this.step * this.recordNums.left
+            params.zoomSpeed = 0
+            this.changeViewVideoGB(1, params)
+            console.dir(params)
+            break
+          case 2:
+            ++this.recordNums.right
+            this.clearRecord('right')
+            // 右
+            params.leftRight = 2
+            params.upDown = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.right > 255
+                ? 255
+                : this.step * this.recordNums.right
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideoGB(1, params)
+            break
+          case 5:
+            ++this.recordNums.leftDown
+            this.clearRecord('leftDown')
+            // 左下
+            params.leftRight = 1
+            params.upDown = 2
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.leftDown > 255
+                ? 255
+                : this.step * this.recordNums.leftDown
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideoGB(1, params)
+            break
+          case 4:
+            ++this.recordNums.down
+            this.clearRecord('down')
+            // 下
+            params.upDown = 2
+            params.leftRight = 0
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.down > 255
+                ? 255
+                : this.step * this.recordNums.down
+            params.zoomSpeed = 0
+            console.dir(params)
+            this.changeViewVideoGB(1, params)
+            break
+          case 3:
+            ++this.recordNums.rightDown
+            this.clearRecord('rightDown')
+            // 右下
+            params.leftRight = 2
+            params.upDown = 2
+            params.inOut = 0
+            params.moveSpeed =
+              this.step * this.recordNums.rightDown > 255
+                ? 255
+                : this.step * this.recordNums.rightDown
+            params.zoomSpeed = 0
+            this.changeViewVideoGB(1, params)
+            console.dir(params)
+            break
+          default:
+            break
+        }
+      } else {
+        if (index === 999) {
+          if (this.curSelectedIcon === 0) {
+            const params = {}
+            // 变倍+
+            params.leftRight = 0
+            params.upDown = 0
+            params.moveSpeed = 0
+
+            params.inOut = 2
+            params.zoomSpeed = this.zoomSpeed++ > 15 ? 15 : this.zoomSpeed
+            this.changeViewVideoGB(1, params)
+          } else {
+            const params = {}
+            // 变焦+
+            params.focus = 2
+            params.focusSpeed = this.focusSpeed++ > 255 ? 255 : this.focusSpeed
+            params.lris = 0
+            params.lrisSpeed = 0
+            this.changeViewVideoGB(2, params)
+          }
+        } else {
+          if (this.curSelectedIcon === 0) {
+            const params = {}
+            params.leftRight = 0
+            params.upDown = 0
+            params.moveSpeed = 0
+
+            params.inOut = 1
+            this.zoomSpeed--
+            this.zoomSpeed = this.zoomSpeed < 0 ? 0 : this.zoomSpeed
+            params.zoomSpeed = this.zoomSpeed
+            this.changeViewVideoGB(1, params)
+          } else {
+            const params = {}
+            params.focus = 1
+            this.focusSpeed--
+            this.focusSpeed = this.focusSpeed < 0 ? 0 : this.focusSpeed
+            params.focusSpeed = this.focusSpeed
+            params.lris = 0
+            params.lrisSpeed = 0
+            this.changeViewVideoGB(2, params)
+          }
+        }
+      }
+    },
+    // 鼠标松开国标
+    stopChangeGB () {
+      const params = {}
+      params.leftRight = 0
+      params.upDown = 0
+      params.inOut = 0
+      params.moveSpeed = 0
+      params.zoomSpeed = 0
+      console.log('停止')
+      console.dir(params)
+      this.changeViewVideoGB(1, params)
+    },
+    // 云台操作GB
+    changeViewVideoGB (type, params) {
+      if (type === 1) {
+        this.$axios
+          .post(
+            '/video-service3/api/ptz/' +
+              `${this.videoInfo.deviceCode}` +
+              '/' +
+              `${this.videoInfo.streamType}`,
+            params
+          )
+          .then(res => {
+            if (res && res.data && res.data.code === 0) {
+              console.log('控制成功了')
+            }
+          })
+      } else {
+        this.$axios
+          .post(
+            '/video-service3/api/fi/' +
+              this.videoInfo.deviceCode +
+              '/' +
+              this.videoInfo.streamType,
+            params
+          )
+          .then(res => {
+            if (res && res.data && res.data.code === 0) {
+              console.log('控制成功了')
+            }
+          })
+      }
     }
   },
   filters: {

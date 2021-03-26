@@ -969,7 +969,7 @@ export default {
       } else {
         this.$axios
           .post(
-            '/api/fi/' +
+            '/video-service3/api/fi/' +
               this.curSelectedVideo.deviceCode +
               '/' +
               this.curSelectedVideo.id,
