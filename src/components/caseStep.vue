@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-09 17:11:42
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-24 17:38:28
+ * @LastEditTime: 2021-03-26 10:05:21
 -->
 <template>
   <div class="step-box listScroll">
@@ -532,6 +532,7 @@ export default {
         width: 100px;
         margin-right: 20px;
         margin-bottom: 6px;
+        cursor: pointer;
       }
     }
   }

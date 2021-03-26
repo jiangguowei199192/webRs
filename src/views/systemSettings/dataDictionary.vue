@@ -334,6 +334,7 @@ export default {
         this.handelType = 'checkParentDict'
         this.handelData()
       } else if (key === '3') {
+        // 删除字典
         this.showDeleteTip = true
       }
     },

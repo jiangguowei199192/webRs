@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-24 17:37:25
+ * @LastEditTime: 2021-03-26 10:32:26
 -->
 <template>
   <div class="caseCenter">
@@ -342,13 +342,13 @@ export default {
 <style lang="scss" scoped>
 .caseCenter {
   display: flex;
-  padding: 0 60px 60px 60px;
+  padding: 0 25px 16px 25px;
   .case-table {
-    width: 1120px;
+    width: 1180px;
   }
   .case-detail {
-    width: 644px;
-    margin: 58px 0 0 10px;
+    width: 654px;
+    margin: 58px 0 0 20px;
     .case-info {
       height: 258px;
       // background-color: rgba(0, 65, 87, 0.6);
@@ -368,7 +368,7 @@ export default {
         padding: 0 20px;
       }
       .case-content {
-        width: 614px;
+        width: 624px;
         height: 216px;
         margin-top: 10px;
         overflow-y: auto;
@@ -447,7 +447,7 @@ export default {
       }
     }
     .handel-info {
-      width: 624px;
+      width: 634px;
       height: 530px;
       // background-color: rgba(0, 65, 87, 0.6);
       background: url(../../assets/images/caseCenter/chat_wrap.svg) no-repeat
@@ -455,6 +455,7 @@ export default {
       padding: 10px;
       margin-top: 10px;
       overflow-x: hidden;
+      position: relative;
       h3 {
         position: absolute;
         font-size: 16px;

@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-23 11:27:46
+ * @LastEditTime: 2021-03-26 10:26:56
 -->
 <template>
   <div class="fireBox">
@@ -132,6 +132,15 @@ export default {
 
     // 按地址搜索列表
     search () {
+      if (this.query.content === '' && this.query.caseStatus === '') {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '提示',
+          message: '请输入查询条件 !',
+          duration: 3 * 1000
+        })
+        return
+      }
       // 重置分页
       this.tableInfo.initCurpage = Math.random()
       this.getList()
@@ -179,7 +188,7 @@ export default {
       }
     }
     .btn {
-      margin-left: 212px;
+      margin-left: 270px;
       img {
         width: 20px;
         height: 25px;

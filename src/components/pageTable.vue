@@ -195,7 +195,7 @@ export default {
         query: {
           // 查询条件
           currentPage: 1, // 当前页
-          pageSize: 10 // 每页条数
+          pageSize: 12 // 每页条数
         }
       },
       serverUrl: globalApi.headImg,
@@ -418,6 +418,11 @@ export default {
   }
   .inActiveColor {
     background: #af0e03;
+  }
+  .tablePagination {
+    height: 35px;
+    line-height: 35px;
+    margin-top: 150px;
   }
 }
 </style>
