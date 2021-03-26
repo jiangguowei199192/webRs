@@ -4,7 +4,6 @@
     append-to-body
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="328px"
     class="delete-tip-dial"
   >
     <div>
@@ -51,6 +50,7 @@ export default {
 .delete-tip-dial.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 330px;
     background-color: transparent;
     box-shadow: none;
     .el-dialog__header {

@@ -3,7 +3,6 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="510px"
     class="add-role-dlg"
   >
     <div class="add-people-header">
@@ -16,18 +15,17 @@
       :model="addRoleFrom"
       :rules="addRoleRules"
       :inline="true"
-      label-width="80px"
       class="add-people-form"
     >
-      <el-form-item label="角色名称" prop="roleName">
+      <el-form-item label="角色名称 :" prop="roleName">
         <el-input v-model="addRoleFrom.roleName"></el-input>
       </el-form-item>
 
-      <el-form-item label="排序" prop="num">
+      <el-form-item label="排序 :" prop="num">
         <el-input v-model="addRoleFrom.num"></el-input>
       </el-form-item>
 
-      <el-form-item label="备注" prop="note">
+      <el-form-item label="备注 :" prop="note">
         <el-input
           v-model="addRoleFrom.note"
           type="textarea"
@@ -94,6 +92,7 @@ export default {
 .add-role-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 520px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -111,6 +110,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {
@@ -140,6 +140,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 100px;
       }
       .el-form-item__error {
         margin-top: -10px;
@@ -148,7 +149,7 @@ export default {
         background-color: rgba($color: #09546d, $alpha: 0.3);
         border-color: #1eb0fc;
         border-radius: 0;
-        width: 390px;
+        width: 408px;
         height: 78px;
         color: #fff;
         font-size: 12px;

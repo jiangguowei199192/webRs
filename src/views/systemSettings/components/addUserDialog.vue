@@ -3,7 +3,6 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="510px"
     class="add-people-dlg"
   >
     <div class="add-people-header">
@@ -15,26 +14,25 @@
       :model="addUserForm"
       :rules="addUserRules"
       :inline="true"
-      label-width="80px"
       class="add-people-form"
     >
-      <el-form-item label="用户名" prop="username">
+      <el-form-item label="用户名 :" prop="username">
         <el-input
           v-model="addUserForm.username"
           placeholder="请输入"
         ></el-input>
       </el-form-item>
-      <el-form-item label="账号" prop="account">
+      <el-form-item label="账号 :" prop="account">
         <el-input
           v-model="addUserForm.account"
           placeholder="请输入"
           :disabled="accountDisable"
         ></el-input>
       </el-form-item>
-      <el-form-item label="联系方式" prop="phone">
+      <el-form-item label="联系方式 :" prop="phone">
         <el-input v-model="addUserForm.phone" placeholder="请输入"></el-input>
       </el-form-item>
-      <el-form-item label="用户层级" prop="dept">
+      <el-form-item label="用户层级 :" prop="dept">
         <el-cascader
           v-model="addUserForm.dept"
           :options="deptTree"
@@ -48,7 +46,7 @@
           :show-all-levels="false"
         ></el-cascader>
       </el-form-item>
-      <el-form-item label="关联角色" prop="roles">
+      <el-form-item label="关联角色 :" prop="roles">
         <el-select
           v-model="addUserForm.roles"
           :popper-append-to-body="false"
@@ -64,7 +62,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="用户状态" prop="status">
+      <el-form-item label="用户状态 :" prop="status">
         <el-select
           v-model="addUserForm.status"
           :popper-append-to-body="false"
@@ -78,7 +76,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="到期时间" prop="dueToTime">
+      <el-form-item label="到期时间 :" prop="dueToTime">
         <el-date-picker
           v-model="addUserForm.dueToTime"
           type="date"
@@ -88,10 +86,10 @@
         >
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="排序" prop="num">
+      <el-form-item label="排序 :" prop="num">
         <el-input v-model="addUserForm.num" placeholder="请输入"></el-input>
       </el-form-item>
-      <el-form-item label="绑定人员" prop="people">
+      <el-form-item label="绑定人员 :" prop="people">
         <el-select
           v-model="addUserForm.people"
           :popper-append-to-body="false"
@@ -213,6 +211,7 @@ export default {
 .add-people-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 520px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -230,6 +229,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {
@@ -255,7 +255,8 @@ export default {
       }
       .role-sel {
         .el-input__inner {
-          width: 385px;
+          width: 408px;
+          height: 24px !important;
         }
       }
       .el-form-item {
@@ -264,6 +265,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 100px;
       }
       .el-form-item__error {
         margin-top: -10px;

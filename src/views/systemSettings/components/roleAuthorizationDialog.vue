@@ -4,7 +4,6 @@
     v-if="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="1083px"
     class="role-auth-dlg"
   >
     <div class="add-people-header">
@@ -87,6 +86,7 @@ export default {
 .role-auth-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 1080px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -105,6 +105,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {

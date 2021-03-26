@@ -4,13 +4,12 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 09:16:43
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-25 15:12:06
+ * @LastEditTime: 2021-03-26 15:14:09
 -->
 <template>
   <el-dialog
     :visible.sync="isShow"
     :close-on-click-modal="false"
-    width="510px"
     class="add-dict-dlg dialog-wrap"
   >
     <div class="add-dict-header">
@@ -22,7 +21,6 @@
       :model="addDictForm"
       :rules="addDictRules"
       :inline="true"
-      label-width="83px"
       class="add-dict-form"
     >
       <el-form-item label="类型名称 :" prop="name">
@@ -135,7 +133,7 @@
       v-if="handelType == 'checkParentDict' || handelType == 'checkChildDict'"
       class="handelBtns"
     >
-      <span style="margin-right: 190px" @click.stop="cancelClick('addDictForm')"
+      <span class="btn-close" @click.stop="cancelClick('addDictForm')"
         >关闭</span
       >
     </div>
@@ -308,6 +306,7 @@ export default {
 .add-dict-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 520px;
     background-color: transparent;
     .add-dict-form {
       margin-top: 30px;
@@ -315,7 +314,7 @@ export default {
         background-color: rgba($color: #09546d, $alpha: 0.3);
         border-color: #1eb0fc;
         border-radius: 0;
-        width: 390px;
+        width: 415px;
         height: 28px;
         color: #fff;
         font-size: 12px;
@@ -327,6 +326,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 100px;
       }
       .el-form-item__error {
         margin-top: -5px;
@@ -335,7 +335,7 @@ export default {
         background-color: rgba($color: #09546d, $alpha: 0.3);
         border-color: #1eb0fc;
         border-radius: 0;
-        width: 390px;
+        width: 415px;
         height: 85px;
         color: #fff;
         font-size: 12px;
@@ -364,6 +364,9 @@ export default {
     }
     .handelBtns {
       margin-right: 0;
+      .btn-close {
+        margin-right: 200px;
+      }
       span {
         background: #1eb0fc;
         color: #fff;

@@ -3,7 +3,6 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="570px"
     class="people-info-dlg"
   >
     <div class="add-people-header">
@@ -14,32 +13,31 @@
     <el-form
       :model="peopleInfo"
       :inline="true"
-      label-width="80px"
       class="add-people-form"
       v-if="peopleInfo"
     >
-      <el-form-item label="姓名:">
+      <el-form-item label="姓名 :">
         <div class="subtext1">{{ peopleInfo.employeeName }}</div>
       </el-form-item>
-      <el-form-item label="性别:">
+      <el-form-item label="性别 :">
         <div class="subtext1">{{ peopleInfo.employeeGender }}</div>
       </el-form-item>
-      <el-form-item label="身份证号:">
+      <el-form-item label="身份证号 :">
         <div class="subtext1">{{ peopleInfo.employeeIdentity }}</div>
       </el-form-item>
-      <el-form-item label="联系方式:">
+      <el-form-item label="联系方式 :">
         <div class="subtext1">{{ peopleInfo.employeeTel }}</div>
       </el-form-item>
-      <el-form-item label="所属机构:">
+      <el-form-item label="所属机构 :">
         <div class="subtext1">{{ peopleInfo.deptName }}</div>
       </el-form-item>
-      <el-form-item label="办公电话:">
+      <el-form-item label="办公电话 :">
         <div class="subtext1">{{ peopleInfo.officePhone }}</div>
       </el-form-item>
-      <el-form-item label="排序:">
+      <el-form-item label="排序 :">
         <div class="subtext1">{{ peopleInfo.employeeSort }}</div>
       </el-form-item>
-      <el-form-item label="备注:">
+      <el-form-item label="备注 :">
         <div class="subtext1">{{ peopleInfo.employeeRemark }}</div>
       </el-form-item>
     </el-form>
@@ -83,6 +81,7 @@ export default {
 .people-info-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 565px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -100,6 +99,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {
@@ -130,6 +130,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 90px;
       }
       .el-form-item__error {
         margin-top: -10px;

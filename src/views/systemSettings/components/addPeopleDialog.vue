@@ -3,7 +3,6 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="510px"
     class="add-people-dlg"
   >
     <div class="add-people-header">
@@ -15,13 +14,12 @@
       :model="addPeopleForm"
       :rules="addPeopleRules"
       :inline="true"
-      label-width="80px"
       class="add-people-form"
     >
-      <el-form-item label="姓名" prop="name">
+      <el-form-item label="姓名 :" prop="name">
         <el-input v-model="addPeopleForm.name" placeholder="请输入"></el-input>
       </el-form-item>
-      <el-form-item label="性别" prop="six">
+      <el-form-item label="性别 :" prop="six">
         <el-select
           v-model="addPeopleForm.six"
           :popper-append-to-body="false"
@@ -35,16 +33,16 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="身份证号" prop="idcard">
+      <el-form-item label="身份证号 :" prop="idcard">
         <el-input
           v-model="addPeopleForm.idcard"
           placeholder="请输入"
         ></el-input>
       </el-form-item>
-      <el-form-item label="联系方式" prop="phone">
+      <el-form-item label="联系方式 :" prop="phone">
         <el-input v-model="addPeopleForm.phone" placeholder="请输入"></el-input>
       </el-form-item>
-      <el-form-item label="所属机构" prop="dept">
+      <el-form-item label="所属机构 :" prop="dept">
         <el-cascader
           v-model="addPeopleForm.dept"
           :options="deptTree"
@@ -58,16 +56,16 @@
           :show-all-levels="false"
         ></el-cascader>
       </el-form-item>
-      <el-form-item label="办公电话" prop="telphone">
+      <el-form-item label="办公电话 :" prop="telphone">
         <el-input
           v-model="addPeopleForm.telphone"
           placeholder="请输入"
         ></el-input>
       </el-form-item>
-      <el-form-item label="排序" prop="num">
+      <el-form-item label="排序 :" prop="num">
         <el-input v-model="addPeopleForm.num" placeholder="请输入"></el-input>
       </el-form-item>
-      <el-form-item label="备注" prop="note">
+      <el-form-item label="备注 :" prop="note">
         <el-input
           v-model="addPeopleForm.note"
           placeholder="请输入"
@@ -179,6 +177,7 @@ export default {
 .add-people-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 520px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -196,6 +195,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {
@@ -225,6 +225,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 100px;
       }
       .el-form-item__error {
         margin-top: -10px;
@@ -233,7 +234,7 @@ export default {
         background-color: rgba($color: #09546d, $alpha: 0.3);
         border-color: #1eb0fc;
         border-radius: 0;
-        width: 390px;
+        width: 408px;
         height: 78px;
         color: #fff;
         font-size: 12px;

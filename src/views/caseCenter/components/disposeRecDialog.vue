@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-26 10:38:42
+ * @LastEditTime: 2021-03-26 15:36:18
 -->
 <template>
   <div>
@@ -19,7 +19,6 @@
         :model="addCaseForm"
         :rules="addCaseFormRules"
         :inline="true"
-        label-width="auto"
         class="add-case-form"
       >
         <el-form-item label="处置结果 :" prop="record">
@@ -44,7 +43,7 @@
           <el-form-item
             label="处置人 :"
             prop="people"
-            style="margin-right: 20px"
+            style="margin-right: 10px"
           >
             <el-input
               v-model="addCaseForm.people"
@@ -256,7 +255,7 @@ export default {
 .add-case-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
-    max-width: 780px;
+    width: 750px;
     // background-color: rgba(0, 65, 87, 0.85);
     background-color: transparent;
     .add-case-header {
@@ -268,9 +267,10 @@ export default {
       color: #fff;
       line-height: 30px;
       padding: 0 20px;
+      margin-top: 18px;
     }
     .add-case-form {
-      margin: 30px 0 0 5px;
+      margin: 25px 0 0 5px;
       .el-input__inner {
         background-color: rgba(9, 84, 109, 0.85);
         border-color: #00d2ff;
@@ -287,6 +287,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 100px;
       }
       .el-textarea__inner {
         background-color: rgba(9, 84, 109, 0.85);

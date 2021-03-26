@@ -3,26 +3,20 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="570px"
     class="role-info-dlg"
   >
     <div class="add-people-header">
       <div class="header-icon"></div>
       <div class="header-text">查看角色</div>
     </div>
-    <el-form
-      :model="roleInfoForm"
-      :inline="true"
-      label-width="80px"
-      class="add-people-form"
-    >
-      <el-form-item label="角色名称:" prop="roleName">
+    <el-form :model="roleInfoForm" :inline="true" class="add-people-form">
+      <el-form-item label="角色名称 :" prop="roleName">
         <div class="subtext1">{{ roleInfoForm.roleName }}</div>
       </el-form-item>
-      <el-form-item label="排序:" prop="num">
+      <el-form-item label="排序 :" prop="num">
         <div class="subtext1">{{ roleInfoForm.num }}</div>
       </el-form-item>
-      <el-form-item label="备注:" prop="beizhu">
+      <el-form-item label="备注 :" prop="beizhu">
         <div class="subtext1">{{ roleInfoForm.beizhu }}</div>
       </el-form-item>
     </el-form>
@@ -87,6 +81,7 @@ export default {
 .role-info-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 565px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -104,6 +99,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {
@@ -134,6 +130,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 90px;
       }
       .el-form-item__error {
         margin-top: -10px;

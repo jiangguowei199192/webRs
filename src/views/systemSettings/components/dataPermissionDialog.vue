@@ -3,7 +3,6 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="1145px"
     class="permission-dlg"
   >
     <div class="add-people-header">
@@ -425,13 +424,14 @@ export default {
 .permission-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 1145px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
     }
     .el-dialog__body {
       padding: 0px 20px;
-      width: 100%;
+      // width: 100%;
       border: 1px solid #1eb0fc;
       background-color: rgba(0, 65, 87, 0.85);
       .add-people-header {
@@ -441,6 +441,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {

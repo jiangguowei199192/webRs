@@ -3,52 +3,46 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="570px"
     class="people-info-dlg"
   >
     <div class="add-people-header">
       <div class="header-icon"></div>
       <div class="header-text">查看用户信息</div>
     </div>
-    <el-form
-      :model="peopleInfoForm"
-      :inline="true"
-      label-width="80px"
-      class="add-people-form"
-    >
-      <el-form-item label="用户名:" prop="username">
+    <el-form :model="peopleInfoForm" :inline="true" class="add-people-form">
+      <el-form-item label="用户名 :" prop="username">
         <div class="subtext1">{{ peopleInfoForm.username }}</div>
       </el-form-item>
-      <el-form-item label="账号:" prop="account">
+      <el-form-item label="账号 :" prop="account">
         <div class="subtext1">{{ peopleInfoForm.account }}</div>
       </el-form-item>
-      <el-form-item label="联系方式:" prop="phone">
+      <el-form-item label="联系方式 :" prop="phone">
         <div class="subtext1">{{ peopleInfoForm.phone }}</div>
       </el-form-item>
-      <el-form-item label="用户层级:" prop="dept">
+      <el-form-item label="用户层级 :" prop="dept">
         <div class="subtext1">{{ peopleInfoForm.dept }}</div>
       </el-form-item>
-      <el-form-item label="关联角色:" prop="roles">
-        <div style="width: 450px; margin-top: 7px;">
-          <div
+      <el-form-item label="关联角色 :" prop="roles">
+        <div class="role-form">
+          <span
             class="role-item"
             v-for="item in peopleInfoForm.roles"
             :key="item.id"
           >
             {{ item.roleName }}
-          </div>
+          </span>
         </div>
       </el-form-item>
-      <el-form-item label="用户状态:" prop="status">
+      <el-form-item label="用户状态 :" prop="status">
         <div class="subtext1">{{ peopleInfoForm.status }}</div>
       </el-form-item>
-      <el-form-item label="到期时间:" prop="dueToTime">
+      <el-form-item label="到期时间 :" prop="dueToTime">
         <div class="subtext1">{{ peopleInfoForm.dueToTime }}</div>
       </el-form-item>
-      <el-form-item label="排序:" prop="num">
+      <el-form-item label="排序 :" prop="num">
         <div class="subtext1">{{ peopleInfoForm.num }}</div>
       </el-form-item>
-      <el-form-item label="绑定人员:" prop="people">
+      <el-form-item label="绑定人员 :" prop="people">
         <div class="subtext1">{{ peopleInfoForm.people }}</div>
       </el-form-item>
     </el-form>
@@ -123,6 +117,7 @@ export default {
 .people-info-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 565px;
     background-color: transparent;
     .el-dialog__header {
       display: none;
@@ -140,6 +135,7 @@ export default {
           width: 19px;
           height: 16px;
           background-image: url("../../../assets/images/fire_title.png");
+          background-size: 100% 100%;
           margin-top: 15px;
         }
         .header-text {
@@ -170,6 +166,7 @@ export default {
       .el-form-item__label {
         color: #fff;
         font-size: 12px;
+        width: 90px;
       }
       .el-form-item__error {
         margin-top: -10px;
@@ -188,6 +185,10 @@ export default {
         color: #fff;
         font-size: 12px;
         width: 180px;
+      }
+      .role-form {
+        width: 460px;
+        margin-top: 7px;
       }
       .role-item {
         width: 76px;
