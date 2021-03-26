@@ -43,6 +43,7 @@
     <!-- 放大显示视频和图片的对话框 -->
     <el-dialog
       custom-class="el-dialog-custom"
+      class="browserScroll"
       :visible.sync="imgDlgVis"
       :show-close="false"
       center
