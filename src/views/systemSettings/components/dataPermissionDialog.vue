@@ -510,6 +510,7 @@ export default {
             }
             .el-radio__label {
               color: #fff;
+              font-size: 13px;
             }
           }
         }
@@ -556,7 +557,7 @@ export default {
             background-color: transparent;
           }
           .el-tree-node__label {
-            font-size: 14px;
+            font-size: 12px;
           }
           .el-tree-node__content:hover,
           .el-tree-node:focus > .el-tree-node__content {

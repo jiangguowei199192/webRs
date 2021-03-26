@@ -422,7 +422,10 @@ export default {
   .tablePagination {
     height: 35px;
     line-height: 35px;
-    margin-top: 150px;
+    margin-top: 115px;
+  }
+  .manageTable.el-table {
+    height: 660px !important;
   }
 }
 </style>

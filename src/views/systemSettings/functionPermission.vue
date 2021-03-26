@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title">用户权限 / 功能权限</div>
-    <div class="base-div">
+    <div class="base-div listScroll">
       <el-tree
         ref="permissionTreeRef"
         :data="permissionTree"
@@ -9,7 +9,7 @@
         node-key="menuId"
         default-expand-all
         :render-content="renderContent"
-        class="permission-tree"
+        class="permission-tree "
       ></el-tree>
     </div>
   </div>

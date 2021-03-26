@@ -733,7 +733,7 @@ export default {
     overflow: auto;
     margin-top: 15px;
     background-color: transparent;
-    color: #ffffff;
+    color: #fff;
     /deep/.el-tree-node {
       .el-tree-node__content {
         // display: block !important;
@@ -743,6 +743,9 @@ export default {
         background-color: transparent;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+      .el-tree-node__label {
+        font-size: 13px;
       }
       .el-tree-node__content:hover,
       .el-tree-node:focus > .el-tree-node__content {

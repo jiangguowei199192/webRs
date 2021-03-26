@@ -412,6 +412,9 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .el-tree-node__label {
+        font-size: 13px;
+      }
       .el-tree-node__content:hover {
         color: #fff;
         background-color: rgba(11, 119, 158, 0.66);

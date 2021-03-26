@@ -443,7 +443,7 @@ export default {
         text-overflow: ellipsis;
       }
       .el-tree-node__label {
-        font-size: 14px;
+        font-size: 13px;
       }
       .el-tree-node__content:hover,
       .el-tree-node:focus > .el-tree-node__content {

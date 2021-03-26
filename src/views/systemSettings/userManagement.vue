@@ -648,9 +648,9 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      // .el-tree-node__label {
-      //   font-size: 14px;
-      // }
+      .el-tree-node__label {
+        font-size: 13px;
+      }
       .el-tree-node__content:hover,
       .el-tree-node:focus > .el-tree-node__content {
         background-color: rgba(15, 95, 134, 0.5) !important;
