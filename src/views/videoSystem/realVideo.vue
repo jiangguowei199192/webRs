@@ -2457,7 +2457,9 @@ export default {
   /deep/.el-dialog {
     width: 803px;
     height: 549px;
+    font-size: 16px;
     background: url(../../assets/images/dialog-bg.png) no-repeat;
+    background-size: 100% 100%;
     .el-dialog__header {
       display: none;
     }
