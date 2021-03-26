@@ -7,13 +7,14 @@
     class="detail-info"
   >
     <div class="title">{{ title }}</div>
-    <div class="img-box">
-      <img src="../../../../public/assets/images/camera_type.png" />
+    <div class="img-box" v-if="info">
+      <img :src="info.bigImage.url" />
       <img
         style="float: right"
-        src="../../../../public/assets/images/camera_type.png"
+        :src="info.pedestrian.image.url"
       />
     </div>
+
     <el-form :model="deviceInfo" class="device-info-form">
       <el-form-item label="监控设备:" prop="deviceName">
         <span>{{ deviceInfo.deviceName }}</span>
@@ -45,29 +46,32 @@
 
 <script>
 export default {
-  props: ['isShow', 'type'],
+  props: ['isShow', 'type', 'info'],
   data () {
     return {
       title: '',
       deviceInfo: {
-        deviceName: '样例',
-        address: '样例',
-        time: '样例'
+        deviceName: '',
+        address: '',
+        time: ''
       },
       detailInfo: {
-        six: '男',
-        age: '20-30',
-        coat: '蓝色',
-        dowm: '黑色',
-        hairColor: '黑色'
+        six: '',
+        age: '',
+        coat: '',
+        dowm: '',
+        hairColor: '',
+
+        carType: '',
+        carBrand: '',
+        carStyle: '',
+        carColor: '',
+        carNumber: '',
+
+        boatType: '',
+        boatDirection: ''
       },
-      detailInfoItems: [
-        { label: '性别:', prop: 'six' },
-        { label: '年龄组:', prop: 'age' },
-        { label: '上衣:', prop: 'coat' },
-        { label: '下衣:', prop: 'dowm' },
-        { label: '发色:', prop: 'hairColor' }
-      ]
+      detailInfoItems: []
     }
   },
   watch: {
@@ -88,25 +92,38 @@ export default {
           case '车': {
             this.title = '车信息'
             this.detailInfoItems = [
-              { label: '类型:', prop: 'six' },
-              { label: '品牌:', prop: 'age' },
-              { label: '款式:', prop: 'coat' },
-              { label: '颜色:', prop: 'dowm' },
-              { label: '车牌号:', prop: 'hairColor' }
+              { label: '类型:', prop: 'carType' },
+              { label: '品牌:', prop: 'carBrand' },
+              { label: '款式:', prop: 'carStyle' },
+              { label: '颜色:', prop: 'carColor' },
+              { label: '车牌号:', prop: 'carNumber' }
             ]
             break
           }
           case '船': {
             this.title = '船信息'
             this.detailInfoItems = [
-              { label: '类型:', prop: 'six' },
-              { label: '方向:', prop: 'age' }
+              { label: '类型:', prop: 'boatType' },
+              { label: '方向:', prop: 'boatDirection' }
             ]
             break
           }
           default:
             break
         }
+      }
+    },
+    info (newI) {
+      if (newI) {
+        this.deviceInfo.deviceName = newI.camera.name
+        this.deviceInfo.address = newI.camera.latitude + ',' + newI.camera.longitude
+        this.deviceInfo.time = newI.captureTime
+
+        this.detailInfo.six = newI.pedestrian.attributeMap.genderCode.valueStr
+        this.detailInfo.age = newI.pedestrian.attributeMap.ageType.valueStr
+        this.detailInfo.coat = newI.pedestrian.attributeMap.coatColor.valueStr
+        this.detailInfo.dowm = newI.pedestrian.attributeMap.pantsColor.valueStr
+        this.detailInfo.hairColor = newI.pedestrian.attributeMap.hairColor.valueStr
       }
     }
   },
