@@ -1,37 +1,52 @@
 <template>
   <div class="container">
-    <el-radio-group v-model="radio" size="small" class="radio-group">
-      <el-radio-button label="人"></el-radio-button>
-      <el-radio-button label="车"></el-radio-button>
-      <el-radio-button label="船"></el-radio-button>
-    </el-radio-group>
+    <div class="date-tool">
+      <el-radio-group v-model="radio" size="small" class="radio-group" @change="radioChange">
+        <el-radio-button label="人"></el-radio-button>
+        <el-radio-button label="车"></el-radio-button>
+        <el-radio-button label="船"></el-radio-button>
+      </el-radio-group>
+
+      <el-date-picker
+        class="datePickerStyle"
+        type="datetimerange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        v-model="dateRange"
+        @change="dateSearchChange"
+        value-format="timestamp"
+        :clearable="false"
+      ></el-date-picker>
+    </div>
+
     <div class="list webFsScroll">
       <div
         class="list-item"
         v-for="(item, index) in list"
         :key="index"
-        @click="showDetailInfo = true"
+        @click="showDetailInfoClick(item,index)"
       >
         <div>
-          <img src="../../../public/assets/images/camera_type.png" />
-          <img src="../../../public/assets/images/camera_type.png" />
+          <img :src="item.bigImage.url" />
+          <img :src="item.pedestrian.image.url" />
         </div>
         <div class="text-base">
           <div>
             <span class="item-text1">监控设备：</span>
-            <span class="item-text2" :title="item.deviceName">{{
-              item.deviceName
+            <span class="item-text2" :title="item.camera.name">{{
+              item.camera.name
             }}</span>
           </div>
           <div class="address">
             <span class="item-text1">地址：</span>
-            <span class="item-text2" :title="item.address">{{
-              item.address
+            <span class="item-text2" :title="item.camera.latitude + ',' + item.camera.longitude">{{
+              item.camera.latitude + ',' + item.camera.longitude
             }}</span>
           </div>
           <div class="address">
             <span class="item-text1">时间：</span>
-            <span class="item-text2" :title="item.time">{{ item.time }}</span>
+            <span class="item-text2" :title="item.captureTime">{{ item.captureTime }}</span>
           </div>
         </div>
       </div>
@@ -53,6 +68,7 @@
     <DetailInfo
       :isShow="showDetailInfo"
       :type="radio"
+      :info="detailInfo"
       @close="showDetailInfo = false"
       @confirmClick="showDetailInfo = false"
     ></DetailInfo>
@@ -60,6 +76,10 @@
 </template>
 <script>
 import DetailInfo from './components/detailInfo'
+import axios from 'axios'
+import qs from 'qs'
+import { structureApi } from '@/api/structureData.js'
+import { timeFormat } from '@/utils/date'
 
 export default {
   name: 'structureData',
@@ -67,33 +87,94 @@ export default {
   data () {
     return {
       radio: '人',
-      list: [
-        {
-          deviceName: '样例样例样例样例样例样例样例样例样例',
-          address: '样例样例样例样例样例样例样例样例样例',
-          time: '2021-03-18 15:09:06'
-        },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' },
-        { deviceName: '样例', address: '样例', time: '2021-03-18 15:09:06' }
-      ],
+      dateRange: [],
+      list: [],
       pageTotal: 100,
       pageSize: 18,
       currentPage: 1,
-      showDetailInfo: false
+      showDetailInfo: false,
+      detailInfo: ''
     }
   },
-  methods: {
-    currentPageChange () {},
-    sizeChange () {}
+  created () {
+    // 默认的日期范围，最近一周
+    var start = new Date()
+    var end = new Date()
+    this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
+    this.dateRange[1] = end.getTime()
+
+    this.getList()
   },
-  created () {}
+  methods: {
+    async getList () {
+      var xsRequest = axios.create({
+        baseURL: 'http://172.16.63.246:8005', // http://127.0.0.1:8005
+        timeout: 10000,
+        withCredentials: true,
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      })
+      xsRequest.interceptors.request.use((config) => {
+        config.data = qs.stringify({ ...config.data })
+        return config
+      })
+
+      var capType = 1
+      if (this.radio === '人') {
+        capType = 1
+      } else if (this.radio === '车') {
+        capType = 2
+      } else if (this.radio === '船') {
+        capType = 3
+      }
+      var param = {
+        captureType: capType,
+        currentPage: this.currentPage,
+        pageSize: this.pageSize,
+        timeType: 0,
+        startTime: this.dateRange[0],
+        endTime: this.dateRange[1]
+      }
+      xsRequest.post(structureApi.dataList, param).then((res) => {
+        if (res.data.code === 0) {
+          res.data.data.captures.forEach(item => {
+            item.captureTime = timeFormat(item.captureTime)
+          })
+          this.list = res.data.data.captures
+          this.pageTotal = res.data.data.page.total
+        }
+      })
+    },
+
+    radioChange (radio) {
+      this.getList()
+    },
+
+    // 按日期搜索列表
+    dateSearchChange () {
+      this.startTime = this.dateRange[0]
+      this.endTime = this.dateRange[1]
+      this.currentPage = 1
+      this.getList()
+    },
+
+    currentPageChange (curPage) {
+      this.currentPage = curPage
+      this.getList()
+    },
+
+    sizeChange (size) {
+      this.pageSize = size
+      this.currentPage = 1
+      this.getList()
+    },
+
+    showDetailInfoClick (item, index) {
+      this.showDetailInfo = true
+      this.detailInfo = item
+    }
+  }
 }
 </script>
 
@@ -125,6 +206,43 @@ export default {
     }
   }
 }
+.date-tool {
+  .datePickerStyle {
+    width: 400px;
+    height: 36px;
+    background-color: rgba(9, 84, 109, 0.3);
+    border-color: #39a4dd;
+    border-radius: 0px;
+    border: 1px solid #1eb0fc;
+    vertical-align: top;
+    padding: 3px 5px;
+    margin-left: 10px;
+  }
+  /deep/.el-input__inner {
+    color: white;
+  }
+  /deep/.el-date-editor .el-range-input {
+    color: white;
+    background: transparent;
+    font-size: 14px;
+  }
+  /deep/.el-range-separator {
+    color: white;
+    font-size: 12px;
+    line-height: 28px;
+  }
+  /deep/.el-input__prefix,
+  /deep/.el-input__icon {
+    line-height: 28px;
+  }
+  /deep/.el-cascader .el-input .el-input__inner {
+    background-color: rgba(9, 84, 109, 0.3);
+    border-color: #39a4dd;
+    border-radius: 0px;
+    width: 400px;
+  }
+}
+
 .list {
   height: 760px;
   margin-left: 10px;
@@ -146,7 +264,7 @@ export default {
     }
     .text-base {
       margin-left: 10px;
-      margin-right: 10px
+      margin-right: 10px;
     }
     .address {
       margin-top: 5px;
