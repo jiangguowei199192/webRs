@@ -48,7 +48,7 @@ export default {
       async: true,
       type: 'get',
       dataType: 'json',
-      url: '/assets/infoConfig.json',
+      url: '/webRs/assets/infoConfig.json',
       success: function (res) {
         _this.news1 = res.infoList[0]
         _this.news2 = res.infoList[1]
