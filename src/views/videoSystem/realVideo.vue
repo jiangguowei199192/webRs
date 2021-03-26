@@ -526,23 +526,23 @@ export default {
       }
     },
     // 云台操作8个方位键
-    startPz (index) {
+    startPz: debounce(function (index) {
       // accessType 0 sdk 1 GB
       if (this.curSelectedVideo.accessType !== '1') {
         this.startChangeSdk(index)
       } else {
         this.startChangeGB(index)
       }
-    },
-    stopPz (index) {
+    }, 500),
+    stopPz: debounce(function (index) {
       if (this.curSelectedVideo.accessType !== '1') {
         this.stopChangeSdk(index)
       } else {
         this.stopChangeGB(index)
       }
-    },
+    }, 500),
     // 鼠标按下sdk
-    startChangeSdk: debounce(function (index) {
+    startChangeSdk (index) {
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
         channel_id: this.curSelectedVideo.streamType
@@ -665,9 +665,9 @@ export default {
         default:
           break
       }
-    }, 500),
+    },
     // 鼠标松开sdk
-    stopChangeSdk: debounce(function (index) {
+    stopChangeSdk (index) {
       if (index === 4) return
       const params = {
         device_id: this.curSelectedVideo.deviceCode,
@@ -738,7 +738,7 @@ export default {
       }
       console.log(params)
       this.changeViewVideoSdk(params)
-    }, 500),
+    },
     // 云台操作 sdk
     changeViewVideoSdk (params) {
       this.$axios
