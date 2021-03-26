@@ -955,7 +955,7 @@ export default {
       if (type === 1) {
         this.$axios
           .post(
-            '/api/ptz/' +
+            '/video-service3/api/ptz/' +
               `${this.curSelectedVideo.deviceCode}` +
               '/' +
               `${this.curSelectedVideo.streamType}`,

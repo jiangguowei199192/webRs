@@ -554,6 +554,7 @@
   height: 237px;
   background-image: url('../images/device-box.png');
   color: white;
+  font-size: 16px;
 }
 .titleInfo {
   position: absolute;
