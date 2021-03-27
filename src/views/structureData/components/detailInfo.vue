@@ -8,10 +8,29 @@
   >
     <div class="title">{{ title }}</div>
     <div class="img-box" v-if="info">
-      <img :src="info.bigImage.url" />
+      <div class="bigImage" ref="bigImage">
+        <img :src="info.bigImage.url" />
+        <span
+          v-show="info.rect.show"
+          :style="
+            'left:' +
+            info.rect.left +
+            '%;' +
+            'top:' +
+            info.rect.top +
+            '%;' +
+            'width:' +
+            info.rect.width +
+            '%;' +
+            'height:' +
+            info.rect.height +
+            '%;'
+          "
+        ></span>
+      </div>
       <img
         style="float: right"
-        :src="info.pedestrian.image.url"
+        :src="info.pedestrian && info.pedestrian.image.url"
       />
     </div>
 
@@ -31,10 +50,9 @@
       <el-form-item
         v-for="(item, index) in detailInfoItems"
         :key="index"
-        :label="item.label"
-        :prop="item.prop"
+        :label="item.categorZH"
       >
-        <span>{{ detailInfo[item.prop] }}</span>
+        <span>{{ item.valueStr }}</span>
       </el-form-item>
     </el-form>
 
@@ -80,56 +98,96 @@ export default {
         switch (this.type) {
           case '人': {
             this.title = '人员信息'
-            this.detailInfoItems = [
-              { label: '性别:', prop: 'six' },
-              { label: '年龄组:', prop: 'age' },
-              { label: '上衣:', prop: 'coat' },
-              { label: '下衣:', prop: 'dowm' },
-              { label: '发色:', prop: 'hairColor' }
-            ]
+            // this.detailInfoItems = [
+            //   { label: '性别:', prop: 'six' },
+            //   { label: '年龄组:', prop: 'age' },
+            //   { label: '上衣:', prop: 'coat' },
+            //   { label: '下衣:', prop: 'dowm' },
+            //   { label: '发色:', prop: 'hairColor' }
+            // ]
             break
           }
           case '车': {
             this.title = '车信息'
-            this.detailInfoItems = [
-              { label: '类型:', prop: 'carType' },
-              { label: '品牌:', prop: 'carBrand' },
-              { label: '款式:', prop: 'carStyle' },
-              { label: '颜色:', prop: 'carColor' },
-              { label: '车牌号:', prop: 'carNumber' }
-            ]
+            // this.detailInfoItems = [
+            //   { label: '类型:', prop: 'carType' },
+            //   { label: '品牌:', prop: 'carBrand' },
+            //   { label: '款式:', prop: 'carStyle' },
+            //   { label: '颜色:', prop: 'carColor' },
+            //   { label: '车牌号:', prop: 'carNumber' }
+            // ]
             break
           }
           case '船': {
             this.title = '船信息'
-            this.detailInfoItems = [
-              { label: '类型:', prop: 'boatType' },
-              { label: '方向:', prop: 'boatDirection' }
-            ]
+            // this.detailInfoItems = [
+            //   { label: '类型:', prop: 'boatType' },
+            //   { label: '方向:', prop: 'boatDirection' }
+            // ]
             break
           }
           default:
             break
         }
+        this.$nextTick(() => {
+          this.setRectPosition()
+        })
       }
     },
     info (newI) {
       if (newI) {
         this.deviceInfo.deviceName = newI.camera.name
-        this.deviceInfo.address = newI.camera.latitude + ',' + newI.camera.longitude
+        this.deviceInfo.address =
+          newI.camera.latitude + ',' + newI.camera.longitude
         this.deviceInfo.time = newI.captureTime
 
-        this.detailInfo.six = newI.pedestrian.attributeMap.genderCode.valueStr
-        this.detailInfo.age = newI.pedestrian.attributeMap.ageType.valueStr
-        this.detailInfo.coat = newI.pedestrian.attributeMap.coatColor.valueStr
-        this.detailInfo.dowm = newI.pedestrian.attributeMap.pantsColor.valueStr
-        this.detailInfo.hairColor = newI.pedestrian.attributeMap.hairColor.valueStr
+        // this.detailInfo.six = newI.pedestrian.attributeMap.genderCode.valueStr
+        // this.detailInfo.age = newI.pedestrian.attributeMap.ageType.valueStr
+        // this.detailInfo.coat = newI.pedestrian.attributeMap.coatColor.valueStr
+        // this.detailInfo.dowm = newI.pedestrian.attributeMap.pantsColor.valueStr
+        // this.detailInfo.hairColor = newI.pedestrian.attributeMap.hairColor.valueStr
+        this.detailInfoItems = []
+        let num = 0
+        if (!newI.pedestrian) return
+        const attrs = newI.pedestrian.attributeMap
+        for (const item in attrs) {
+          num += 1
+          if (num > 5) {
+            return
+          }
+          this.detailInfoItems.push(attrs[item])
+        }
       }
     }
   },
   methods: {
     confirmClick () {
       this.$emit('confirmClick')
+    },
+    /**
+     * 计算识别框尺寸
+     */
+    setRectPosition () {
+      // 计算识别框的位置和尺寸
+      const bWidth = this.$refs.bigImage.clientWidth
+      const bHeigth = this.$refs.bigImage.clientHeight
+      if (!this.info.pedestrian) {
+        return
+      }
+      const w = this.info.pedestrian.position.width
+      const h = this.info.pedestrian.position.height
+      const left = this.info.pedestrian.position.start.x
+      const top = this.info.pedestrian.position.start.y
+      const imgW = this.info.bigImage.width
+      const imgH = this.info.bigImage.height
+      const ratio = (bWidth * 1.0) / imgW
+      const ratio2 = (bHeigth * 1.0) / imgH
+      this.info.rect = { width: '', height: '', top: '', left: '' }
+      this.info.rect.width = (w * 100.0 * ratio) / bWidth
+      this.info.rect.height = (h * 100.0 * ratio2) / bHeigth
+      this.info.rect.left = (left * 100.0) / imgW
+      this.info.rect.top = (top * 100.0) / imgH
+      this.info.rect.show = true
     }
   }
 }
@@ -170,6 +228,17 @@ export default {
         img {
           width: 174px;
           height: 174px;
+        }
+        .bigImage {
+          display: inline-block;
+          position: relative;
+          width: 174px;
+          height: 174px;
+          span {
+            position: absolute;
+            display: inline-block;
+            border: 1px solid red;
+          }
         }
       }
       .device-info-form {

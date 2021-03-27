@@ -1,7 +1,12 @@
 <template>
   <div class="container">
     <div class="date-tool">
-      <el-radio-group v-model="radio" size="small" class="radio-group" @change="radioChange">
+      <el-radio-group
+        v-model="radio"
+        size="small"
+        class="radio-group"
+        @change="radioChange"
+      >
         <el-radio-button label="人"></el-radio-button>
         <el-radio-button label="车"></el-radio-button>
         <el-radio-button label="船"></el-radio-button>
@@ -25,11 +30,30 @@
         class="list-item"
         v-for="(item, index) in list"
         :key="index"
-        @click="showDetailInfoClick(item,index)"
+        @click="showDetailInfoClick(item, index)"
       >
         <div>
-          <img :src="item.bigImage.url" />
-          <img :src="item.pedestrian.image.url" />
+          <div class="bigImage" ref="bigImage">
+            <img :src="item.bigImage.url" />
+            <span
+              v-show="item.rect.show"
+              :style="
+                'left:' +
+                item.rect.left +
+                '%;' +
+                'top:' +
+                item.rect.top +
+                '%;' +
+                'width:' +
+                item.rect.width +
+                '%;' +
+                'height:' +
+                item.rect.height +
+                '%;'
+              "
+            ></span>
+          </div>
+          <img :src="item.pedestrian && item.pedestrian.image.url" />
         </div>
         <div class="text-base">
           <div>
@@ -40,13 +64,17 @@
           </div>
           <div class="address">
             <span class="item-text1">地址：</span>
-            <span class="item-text2" :title="item.camera.latitude + ',' + item.camera.longitude">{{
-              item.camera.latitude + ',' + item.camera.longitude
-            }}</span>
+            <span
+              class="item-text2"
+              :title="item.camera.latitude + ',' + item.camera.longitude"
+              >{{ item.camera.latitude + "," + item.camera.longitude }}</span
+            >
           </div>
           <div class="address">
             <span class="item-text1">时间：</span>
-            <span class="item-text2" :title="item.captureTime">{{ item.captureTime }}</span>
+            <span class="item-text2" :title="item.captureTime">{{
+              item.captureTime
+            }}</span>
           </div>
         </div>
       </div>
@@ -138,11 +166,36 @@ export default {
       }
       xsRequest.post(structureApi.dataList, param).then((res) => {
         if (res.data.code === 0) {
-          res.data.data.captures.forEach(item => {
+          res.data.data.captures.forEach((item) => {
             item.captureTime = timeFormat(item.captureTime)
+            item.rect = { width: 0, height: 0, top: '', left: '', show: false }
           })
           this.list = res.data.data.captures
           this.pageTotal = res.data.data.page.total
+          this.$nextTick(() => {
+            // 计算识别框的位置和尺寸
+            const bWidth = this.$refs.bigImage[0].clientWidth
+            const bHeigth = this.$refs.bigImage[0].clientHeight
+            this.list.forEach((item) => {
+              if (!item.pedestrian) {
+                return
+              }
+              const w = item.pedestrian.position.width
+              const h = item.pedestrian.position.height
+              const left = item.pedestrian.position.start.x
+              const top = item.pedestrian.position.start.y
+              const imgW = item.bigImage.width
+              const imgH = item.bigImage.height
+              const ratio = (bWidth * 1.0) / imgW
+              const ratio2 = (bHeigth * 1.0) / imgH
+              item.rect = { width: '', height: '', top: '', left: '' }
+              item.rect.width = (w * 100.0 * ratio) / bWidth
+              item.rect.height = (h * 100.0 * ratio2) / bHeigth
+              item.rect.left = (left * 100.0) / imgW
+              item.rect.top = (top * 100.0) / imgH
+              item.rect.show = true
+            })
+          })
         }
       })
     },
@@ -249,6 +302,7 @@ export default {
   margin-right: 10px;
   overflow: auto;
   .list-item {
+    box-sizing: border-box;
     display: inline-block;
     width: 280px;
     height: 230px;
@@ -256,11 +310,23 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     margin-top: 20px;
+    padding: 10px 0 0 10px;
     cursor: pointer;
     img {
       width: 124px;
       height: 124px;
-      margin: 10px 0 0 10px;
+    }
+    .bigImage {
+      display: inline-block;
+      position: relative;
+      width: 124px;
+      height: 124px;
+      margin-right: 10px;
+      span {
+        position: absolute;
+        display: inline-block;
+        border: 1px solid red;
+      }
     }
     .text-base {
       margin-left: 10px;
