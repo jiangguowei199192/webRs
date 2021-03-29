@@ -475,7 +475,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .home {
-  background: url(../assets/images/home/bg.svg) no-repeat;
+  background: url(../assets/images/home/bg.png) no-repeat;
   background-size: 100% 100%;
   .el-header {
     -webkit-user-select: none;
