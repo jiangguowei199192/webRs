@@ -8,7 +8,7 @@
       <InfoBox :newsInfo="news3" class="jbqy"></InfoBox>
       <InfoBox :newsInfo="news4" class="cgzs"></InfoBox>
     </div>
-    <div>
+    <div class="qrcode">
       <div class="qrcodeBase1">
         <QrcodeBox
           :src="require('../../assets/images/infoCenter/qrcode-nyj.png')"
@@ -67,43 +67,38 @@ export default {
 <style lang="scss" scoped>
 .infoCenter {
   font-size: 12px;
+  padding: 0px 16px;
+  display: flex;
+  flex-direction: column;
 }
 .jbzc {
   float: left;
-  margin-left: 25px;
 }
 .gzjz {
   float: right;
-  margin-right: 25px;
 }
 .jbqy {
   float: left;
-  margin-left: 25px;
   margin-top: 20px;
 }
 .cgzs {
   float: right;
-  margin-right: 25px;
   margin-top: 20px;
 }
+
+.qrcode {
+  display: flex;
+  box-sizing: border-box;
+}
 .qrcodeBase1 {
-  width: 916px;
-  float: left;
-  margin-left: 25px;
+  width: 50%;
+  padding: 18px 14px;
   .nyncj {
     float: right;
-    margin-top: 18px;
-    margin-bottom: 18px;
   }
 }
 .qrcodeBase2 {
-  width: 916px;
-  float: right;
-  margin-right: 25px;
-  .nyzf {
-    float: left;
-    margin-top: 18px;
-    margin-bottom: 18px;
-  }
+  width: 50%;
+  padding: 18px 14px;
 }
 </style>

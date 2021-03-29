@@ -1,12 +1,23 @@
 <template>
-  <div class="base">
-    <div class="title">
-      <span>{{ newsInfo.title }}</span>
-    </div>
-    <div class="list webFsScroll">
-      <div class="list-item" v-for="(item, index) in newsInfo.list" :key="index">
-        <span class="item-title" :title="item.subTitle" @click="goOut(item.url)">{{item.subTitle}}</span>
-        <span class="item-time">{{item.time}}</span>
+  <div class="baseBox">
+    <div class="base">
+      <div class="title">
+        <span>{{ newsInfo.title }}</span>
+      </div>
+      <div class="list listScroll">
+        <div
+          class="list-item"
+          v-for="(item, index) in newsInfo.list"
+          :key="index"
+        >
+          <span
+            class="item-title"
+            :title="item.subTitle"
+            @click="goOut(item.url)"
+            >{{ item.subTitle }}</span
+          >
+          <span class="item-time">{{ item.time }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -16,8 +27,7 @@
 export default {
   props: ['newsInfo'],
   data () {
-    return {
-    }
+    return {}
   },
   methods: {
     goOut (url) {
@@ -29,11 +39,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.baseBox {
+  box-sizing: border-box;
+  width: 50%;
+  padding: 0px 14px;
+}
 .base {
-  width: 916px;
+  box-sizing: border-box;
   height: 385px;
   background: url(../../../assets/images/infoCenter/policy-bg.png) no-repeat;
   background-size: 100% 100%;
+  padding-top: 20px;
 }
 .title {
   width: 218px;
@@ -45,7 +61,6 @@ export default {
     rgba($color: #00d2ff, $alpha: 0)
   );
   margin-left: 20px;
-  margin-top: 20px;
   font-size: 18px;
   font-weight: bold;
   span {
@@ -57,21 +72,23 @@ export default {
   margin: 20px 10px 0 32px;
   overflow: auto;
   .list-item {
+    display: flex;
+    justify-content: space-between;
     height: 37px;
     line-height: 37px;
     font-size: 18px;
     color: #00cff9;
     cursor: pointer;
     .item-title {
-      width: 700px;
-      float: left;
-      overflow: hidden;
-      text-overflow: ellipsis;
       white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-break: break-all;
     }
     .item-time {
-      float: right;
+      min-width: 120px;
       margin-right: 28px;
+      text-align: right;
     }
   }
 }

@@ -17,9 +17,10 @@ export default {
 
 <style lang="scss" scoped>
 .qrcodeBox {
+  box-sizing: border-box;
   border: 1px solid #0188c0;
   width: 288px;
-  height: 100px;
+  height: 96px;
   img {
     width: 80px;
     height: 80px;
