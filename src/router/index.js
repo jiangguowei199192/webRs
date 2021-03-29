@@ -52,6 +52,12 @@ const routes = [
         name: 'playbackSystem',
         component: () => import('../views/videoSystem/playback')
       },
+      // 告警中心
+      {
+        path: '/warningInfo',
+        name: 'warningInfo',
+        component: () => import('../views/warningInfo')
+      },
 
       // 案件中心
       {

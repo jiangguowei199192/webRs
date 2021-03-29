@@ -44,14 +44,8 @@
                       <span class="el-dropdown-link">
                         <img :src="settingPic" alt />
                       </span>
-                      <el-dropdown-menu
-                        slot="dropdown"
-                        :append-to-body="false"
-                        class="settingDrop"
-                      >
-                        <el-dropdown-item command="0"
-                          >修改密码</el-dropdown-item
-                        >
+                      <el-dropdown-menu slot="dropdown" :append-to-body="false" class="settingDrop">
+                        <el-dropdown-item command="0">修改密码</el-dropdown-item>
                         <el-dropdown-item command="1">退出</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -117,9 +111,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -209,6 +201,9 @@ export default {
           content: '视频侦查'
         },
         {
+          content: '告警中心'
+        },
+        {
           content: '结构化数据'
         },
         {
@@ -229,34 +224,34 @@ export default {
   created () {
     this.projectTitle = globalApi.projectTitle || '智慧农业实战应用平台'
     // 设备上线
-    EventBus.$on('video/device/online', (info) => {
+    EventBus.$on('video/device/online', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', (info) => {
+    EventBus.$on('video/device/offline', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', (info) => {
+    EventBus.$on('video/realVideo/streamStart', info => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', (info) => {
+    EventBus.$on('video/realVideo/streamEnd', info => {
       EventBus.$emit('streamEnd', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', (info) => {
+    EventBus.$on('droneInfos', info => {
       this.parseDroneRealtimeInfo(info)
     })
     // 人员识别提示
-    EventBus.$on('video/people/found', (info) => {
+    EventBus.$on('video/people/found', info => {
       this.$notify.closeAll()
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
     })
     // 人员显示
-    EventBus.$on('video/people/real', (info) => {
+    EventBus.$on('video/people/real', info => {
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示
@@ -318,8 +313,10 @@ export default {
       } else if (index === 2) {
         this.$router.push({ path: '/videoSystem' })
       } else if (index === 3) {
-        this.$router.push({ path: '/structureData' })
+        this.$router.push({ path: '/warningInfo' })
       } else if (index === 4) {
+        this.$router.push({ path: '/structureData' })
+      } else if (index === 5) {
         this.$router.push({ path: '/infoCenter' })
       } else {
         this.$router.push({ path: '/systemSettings' })
@@ -327,12 +324,12 @@ export default {
       // this.getPath()
     },
     init () {
-      amapApi.getLocation({}).then((res) => {
+      amapApi.getLocation({}).then(res => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then((res) => {
+            amapApi.getWeather({ city: cityCode }).then(res => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -348,7 +345,7 @@ export default {
       const tmpAxios = this.$axios
       this.$axios
         .get(loginApi.getUserDetail)
-        .then((res) => {
+        .then(res => {
           if (res.data.code === 0) {
             const data = res.data.data
             // 获取案件聊天记录时，需要知道哪些消息是自己发的
@@ -358,9 +355,9 @@ export default {
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
               })
-              .then((res2) => {
+              .then(res2 => {
                 if (res2.data.code === 0) {
-                  res2.data.data.forEach((deptCode) => {
+                  res2.data.data.forEach(deptCode => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
                   tmpThis.realtimeInfoTopicArray.unshift(
@@ -368,12 +365,12 @@ export default {
                   )
                 }
               })
-              .catch((err2) => {
+              .catch(err2 => {
                 console.log('loginApi.getDeptByDeptCode Err : ' + err2)
               })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('loginApi.getUserDetail Err : ' + err)
         })
     },
@@ -415,12 +412,14 @@ export default {
         path === '/playback'
       ) {
         this.isActive = 2
-      } else if (path === '/structureData') {
+      } else if (path === '/warningInfo') {
         this.isActive = 3
-      } else if (path === '/infoCenter') {
+      } else if (path === '/structureData') {
         this.isActive = 4
-      } else if (path === '/systemSettings/institutionManagement') {
+      } else if (path === '/infoCenter') {
         this.isActive = 5
+      } else if (path === '/systemSettings/institutionManagement') {
+        this.isActive = 6
       }
     },
     handleCommand (command) {
@@ -441,7 +440,7 @@ export default {
       this.dialogVisible = false
     },
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           this.updatePassAxios()
         } else {
@@ -456,7 +455,7 @@ export default {
         newPassword: this.$md5(this.form.newPass),
         confirmPassword: this.$md5(this.form.confirmPass)
       }
-      this.$axios.post(loginApi.updatePass, params).then((res) => {
+      this.$axios.post(loginApi.updatePass, params).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.$notify({
             title: '成功',
@@ -541,22 +540,23 @@ export default {
             justify-content: space-between;
             margin-left: 90px;
             margin-right: 20px;
-            font-size: 20px;
+            font-size: 16px;
             font-family: Microsoft YaHei;
             font-weight: 400;
             color: #0fbfe0;
             .list {
-              width: 147px;
+              width: 114px;
               height: 43px;
-              background: url(../assets/images/home/normal.png) no-repeat;
+              // background: url(../assets/images/home/normal.png) no-repeat;
               background-size: 100% 100%;
               line-height: 40px;
               text-align: center;
               cursor: pointer;
             }
             .list.active {
-              color: #fff;
-              background: url(../assets/images/home/active.png) no-repeat;
+              font-weight: 400;
+              color: #ffba00;
+              background: url(../assets/images/home/active.svg) no-repeat;
               background-size: 100% 100%;
             }
           }
