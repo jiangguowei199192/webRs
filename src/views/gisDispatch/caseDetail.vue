@@ -275,7 +275,7 @@ export default {
       ],
       planSteps: [
         {
-          name: '接警',
+          name: '接案',
           content:
             '认真接听案情。在接线员接案后第一时间 问清相关信息，重点询问发生时间、地址、 人数、携带工具',
           visible: false,
