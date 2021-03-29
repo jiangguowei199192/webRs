@@ -351,13 +351,13 @@ export default {
       const menu = document.querySelector('#menu')
       menu.style.left = event.pageX - 350 + 'px'
       menu.style.top = event.pageY - 250 + 'px'
-      document.addEventListener('click', this.closeRightMenu)
+      document.addEventListener('click', this.closeRightMenu, true)
     },
 
     // 关闭菜单
     closeRightMenu () {
       this.treeRightMenuShow = false
-      document.removeEventListener('click', this.closeRightMenu)
+      document.removeEventListener('click', this.closeRightMenu, true)
     }
   }
 }
@@ -424,7 +424,7 @@ export default {
       }
     }
     /deep/.el-tree-node.is-current > .el-tree-node__content {
-      color: #85cfe8;
+      color: #1eb0fc;
       background-color: rgba(11, 119, 158, 0.66);
     }
   }
