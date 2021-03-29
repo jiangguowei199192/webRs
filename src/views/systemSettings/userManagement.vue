@@ -160,6 +160,7 @@
       :deptTree="deptTree"
       :unbindPeopleList="unbindPeopleList"
       :roleList="roleList"
+      :selectedDept="selectedDept"
       @close="showAddUser = false"
       @confirmClick="addUserConfirmClick"
       @cancelClick="showAddUser = false"

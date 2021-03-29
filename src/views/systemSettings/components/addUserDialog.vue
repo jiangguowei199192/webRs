@@ -35,7 +35,8 @@
       <el-form-item label="用户层级 :" prop="dept">
         <el-cascader
           v-model="addUserForm.dept"
-          :options="deptTree"
+          :key="refreshRender"
+          :options="userLevel"
           :props="{
             expandTrigger: 'hover',
             label: 'deptName',
@@ -121,7 +122,8 @@ export default {
     'deptTree',
     'unbindPeopleList',
     'roleList',
-    'userInfo'
+    'userInfo',
+    'selectedDept'
   ],
   watch: {
     isShow (newS) {
@@ -129,6 +131,15 @@ export default {
         if (this.$refs.adduserRef) {
           this.$refs.adduserRef.resetFields()
         }
+      } else {
+        this.deptTree.forEach(t => {
+          if (this.selectedDept.parentDeptCode === t.parentDeptCode) {
+            this.userLevel = this.deptTree
+          } else {
+            ++this.refreshRender
+            this.userLevel = t.children
+          }
+        })
       }
     },
 
@@ -179,7 +190,9 @@ export default {
       userStatusTypes: [
         { id: 0, label: '无效' },
         { id: 1, label: '有效' }
-      ]
+      ],
+      userLevel: [],
+      refreshRender: 0
     }
   },
   created () {

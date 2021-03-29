@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-26 10:32:26
+ * @LastEditTime: 2021-03-29 14:09:06
 -->
 <template>
   <div class="caseCenter">
@@ -468,6 +468,7 @@ export default {
         }
       }
       .handel-chat-record {
+        height: 450px;
         font-size: 14px;
         padding-right: 8px;
         margin-top: 50px;
