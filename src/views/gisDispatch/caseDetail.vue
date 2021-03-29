@@ -717,7 +717,8 @@ export default {
     height: 208px;
     pointer-events: auto;
     position: absolute;
-    top: 157px;
+    //top: 157px;
+    top: 87px;
     left: 17px;
     background: url(../../assets/images/gisDispatch/single-case.svg) no-repeat;
     background-size: 100% 100%;
@@ -858,7 +859,8 @@ export default {
     height: 608px;
     pointer-events: auto;
     position: absolute;
-    top: 397px;
+    //top: 397px;
+    top: 327px;
     left: 17px;
     background: url(../../assets/images/gisDispatch/dispose-box.svg) no-repeat;
     background-size: 100% 100%;
@@ -886,7 +888,8 @@ export default {
     height: 235px;
     pointer-events: auto;
     position: absolute;
-    top: 151px;
+    //top: 151px;
+    top: 87px;
     right: 23px;
     background: url(../../assets/images/gisDispatch/around-box.svg) no-repeat;
     background-size: 100% 100%;
@@ -1018,7 +1021,8 @@ export default {
         .plan {
           width: 134px;
           position: absolute;
-          top: 514px;
+          //top: 514px;
+          top: 444px;
           right: 23px;
           font-family: Source Han Sans CN;
           font-weight: 500;

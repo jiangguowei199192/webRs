@@ -14,7 +14,7 @@
             <span>km</span>
             <div class="rTxt">
               <span>共</span>
-              <span class="lTxt">0</span>
+              <span class="lTxt">{{members.length}}</span>
               <span>条</span>
             </div>
           </div>
@@ -98,14 +98,14 @@ export default {
       msg: '',
       userId: '',
       username: '',
-      radius: 5,
+      radius: '',
       members: []
     }
   },
   watch: {
     isShow (val) {
       if (val) {
-        this.radius = 5
+        this.radius = ''
         this.selectList = []
         setTimeout(() => {
           if (!this.$refs.gduMap) return
@@ -117,10 +117,12 @@ export default {
             this.caseInfo.latitude
           )
           this.$refs.gduMap.map2D.setZoom(12)
-          this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
-            this.caseInfo,
-            this.radius * 1000
-          )
+          if (this.radius) {
+            this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
+              this.caseInfo,
+              this.radius * 1000
+            )
+          }
         }, 200)
         this.getUserList()
       }
@@ -186,8 +188,7 @@ export default {
      */
     getMembersDone () {
       if (!this.$refs.gduMap) return
-
-      if (!isNaN(this.radius)) {
+      if (this.radius && !isNaN(this.radius)) {
         this.$refs.gduMap.map2D.gisDispatchManager.addDatasInRadius(
           this.peoples,
           this.caseInfo,
@@ -214,7 +215,10 @@ export default {
 
       if (!valid) {
         this.$notify.closeAll()
-        this.$notify.warning({ title: '提示', message: '周边范围请输入0-10有效数字' })
+        this.$notify.warning({
+          title: '提示',
+          message: '周边范围请输入0-10有效数字'
+        })
       } else {
         this.$refs.gduMap.map2D.gisDispatchManager.addOrUpdateFence(
           this.caseInfo,
