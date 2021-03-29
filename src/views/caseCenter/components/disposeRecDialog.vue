@@ -177,7 +177,6 @@ export default {
       }
 
       this.uploadFiles.push(file.raw)
-      this.uploadFileList()
     },
 
     // 移除上传文件

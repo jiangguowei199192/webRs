@@ -104,8 +104,8 @@
 </template>
 <script>
 import DetailInfo from './components/detailInfo'
-import axios from 'axios'
-import qs from 'qs'
+// import axios from 'axios'
+// import qs from 'qs'
 import { structureApi } from '@/api/structureData.js'
 import { timeFormat } from '@/utils/date'
 
@@ -135,18 +135,18 @@ export default {
   },
   methods: {
     async getList () {
-      var xsRequest = axios.create({
-        baseURL: 'http://172.16.63.246:8005', // http://127.0.0.1:8005
-        timeout: 10000,
-        withCredentials: true,
-        paramsSerializer: function (params) {
-          return qs.stringify(params, { arrayFormat: 'repeat' })
-        }
-      })
-      xsRequest.interceptors.request.use((config) => {
-        config.data = qs.stringify({ ...config.data })
-        return config
-      })
+      // var xsRequest = axios.create({
+      //   baseURL: 'http://172.16.63.246:8005', // http://127.0.0.1:8005
+      //   timeout: 10000,
+      //   withCredentials: true,
+      //   paramsSerializer: function (params) {
+      //     return qs.stringify(params, { arrayFormat: 'repeat' })
+      //   }
+      // })
+      // xsRequest.interceptors.request.use((config) => {
+      //   config.data = qs.stringify({ ...config.data })
+      //   return config
+      // })
 
       var capType = 1
       if (this.radio === '人') {
@@ -164,7 +164,7 @@ export default {
         startTime: this.dateRange[0],
         endTime: this.dateRange[1]
       }
-      xsRequest.post(structureApi.dataList, param).then((res) => {
+      this.$axios.post(structureApi.dataList, param).then((res) => {
         if (res.data.code === 0) {
           res.data.data.captures.forEach((item) => {
             item.captureTime = timeFormat(item.captureTime)
@@ -197,6 +197,8 @@ export default {
             })
           })
         }
+      }).catch((err) => {
+        console.log('structureApi.dataList           a Err : ' + err)
       })
     },
 
