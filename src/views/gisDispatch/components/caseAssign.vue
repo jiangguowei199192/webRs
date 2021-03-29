@@ -14,7 +14,7 @@
             <span>km</span>
             <div class="rTxt">
               <span>共</span>
-              <span class="lTxt">{{members.length}}</span>
+              <span class="lTxt">{{ members.length }}</span>
               <span>条</span>
             </div>
           </div>
@@ -107,6 +107,7 @@ export default {
       if (val) {
         this.radius = ''
         this.selectList = []
+        this.search = ''
         setTimeout(() => {
           if (!this.$refs.gduMap) return
           this.$refs.gduMap.map2D._map.updateSize()
