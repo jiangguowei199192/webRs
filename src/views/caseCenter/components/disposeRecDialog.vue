@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-10 16:07:40
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-26 15:36:18
+ * @LastEditTime: 2021-03-30 09:57:17
 -->
 <template>
   <div>
@@ -177,6 +177,7 @@ export default {
       }
 
       this.uploadFiles.push(file.raw)
+      this.uploadFileList()
     },
 
     // 移除上传文件
