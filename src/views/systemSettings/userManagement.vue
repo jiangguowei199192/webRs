@@ -15,7 +15,7 @@
         :props="{
           children: 'children',
           label: 'deptName',
-          value: 'deptCode'
+          value: 'deptCode',
         }"
         default-expand-all
         @node-click="deptTreeClick"
@@ -158,9 +158,9 @@
       :isShow.sync="showAddUser"
       title="新增用户"
       :deptTree="deptTree"
-      :unbindPeopleList="unbindPeopleList"
       :roleList="roleList"
       :selectedDept="selectedDept"
+      :isAddUser="isAddUser"
       @close="showAddUser = false"
       @confirmClick="addUserConfirmClick"
       @cancelClick="showAddUser = false"
@@ -170,9 +170,9 @@
       :isShow.sync="showEditUser"
       title="修改用户"
       :deptTree="deptTree"
-      :unbindPeopleList="unbindPeopleList"
       :roleList="roleList"
       :userInfo="currentUserDetail"
+      :isAddUser="isAddUser"
       @close="showEditUser = false"
       @confirmClick="editUserConfirmClick"
       @cancelClick="showEditUser = false"
@@ -253,19 +253,18 @@ export default {
 
       currentUser: '',
       currentUserDetail: '',
-      unbindPeopleList: '',
-      roleList: ''
+      roleList: '',
+      isAddUser: false // 是否是新增用户
     }
   },
   created () {
     this.getDeptTree()
-    this.getUnbindPeopleList()
     this.getRoleList()
   },
   methods: {
     async getDeptTree () {
       const _this = this
-      this.$axios.post(backApi.getDeptTree).then(res => {
+      this.$axios.post(backApi.getDeptTree).then((res) => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           if (_this.deptTree.length > 0) {
@@ -277,7 +276,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach(item => {
+      tree.forEach((item) => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -303,9 +302,9 @@ export default {
         .post(backApi.getUserList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.records.forEach(item => {
+            res.data.data.records.forEach((item) => {
               if (item.status === 0) {
                 item.enable = false
               } else {
@@ -365,7 +364,7 @@ export default {
         .post(backApi.userInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.currentUserDetail = res.data.data
             _this.showUserInfo = true
@@ -383,7 +382,7 @@ export default {
     async resetPasswordConfirmClick () {
       this.showResetPassword = false
       const param = { id: this.currentUser.id }
-      this.$axios.post(backApi.resetPassword, param).then(res => {
+      this.$axios.post(backApi.resetPassword, param).then((res) => {
         if (res && res.data && res.data.code === 0) {
           Notification({
             title: '提示',
@@ -406,25 +405,6 @@ export default {
       this.getUserList()
     },
 
-    async getUnbindPeopleList () {
-      const param = {
-        isAccount: 0,
-        currentPage: 1,
-        pageSize: 10000
-      }
-      const _this = this
-      this.$axios
-        .post(backApi.getPeoplePage, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        })
-        .then(res => {
-          if (res && res.data && res.data.code === 0) {
-            _this.unbindPeopleList = res.data.data.records
-            // console.log(_this.unbindPeopleList)
-          }
-        })
-    },
-
     async getRoleList () {
       const param = {
         currentPage: 1,
@@ -435,7 +415,7 @@ export default {
         .post(backApi.getRoleList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.roleList = res.data.data.records
           }
@@ -444,6 +424,7 @@ export default {
 
     // 添加用户时触发
     addUserClick () {
+      this.isAddUser = true
       this.showAddUser = true
     },
 
@@ -467,7 +448,7 @@ export default {
         .post(backApi.addUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.currentPage = 1
             _this.getUserList()
@@ -499,7 +480,7 @@ export default {
     async deleteUserConfirmClick () {
       this.showDeleteUser = false
       var userIds = []
-      this.selectedUsers.forEach(item => {
+      this.selectedUsers.forEach((item) => {
         userIds.push(item.id)
       })
       const param = { ids: userIds }
@@ -508,7 +489,7 @@ export default {
         .post(backApi.deleteUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.getUserList()
             Notification({
@@ -531,7 +512,7 @@ export default {
         .post(backApi.updateUserStatus, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -551,13 +532,10 @@ export default {
         .post(backApi.userInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.currentUserDetail = res.data.data
-            _this.unbindPeopleList.push({
-              id: res.data.data.employeeId,
-              employeeName: res.data.data.employeeName
-            })
+            _this.isAddUser = false
             _this.showEditUser = true
           }
         })
@@ -583,7 +561,7 @@ export default {
         .post(backApi.editUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.getUserList()
             Notification({

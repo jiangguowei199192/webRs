@@ -41,7 +41,7 @@
             label: 'deptName',
             value: 'deptCode',
             checkStrictly: true,
-            emitPath: false
+            emitPath: false,
           }"
           :show-all-levels="false"
         ></el-cascader>
@@ -113,16 +113,16 @@
 
 <script>
 import { numberValidate, checkPhone } from '@/utils/formRules'
-
+import { backApi } from '@/api/back'
 export default {
   props: [
     'isShow',
     'title',
     'deptTree',
-    'unbindPeopleList',
     'roleList',
     'userInfo',
-    'selectedDept'
+    'selectedDept',
+    'isAddUser'
   ],
   watch: {
     isShow (newS) {
@@ -130,8 +130,11 @@ export default {
         if (this.$refs.adduserRef) {
           this.$refs.adduserRef.resetFields()
         }
-      } else if (this.selectedDept) {
-        this.addUserForm.dept = this.selectedDept.deptCode
+      } else {
+        this.getUnbindPeopleList()
+        if (this.selectedDept) {
+          this.addUserForm.dept = this.selectedDept.deptCode
+        }
       }
     },
 
@@ -144,7 +147,7 @@ export default {
 
         if (newUserInfo.roles) {
           var roleArr = []
-          newUserInfo.roles.forEach(role => {
+          newUserInfo.roles.forEach((role) => {
             roleArr.push(role.roleCode)
           })
           this.addUserForm.roles = roleArr
@@ -159,6 +162,7 @@ export default {
   },
   data () {
     return {
+      unbindPeopleList: [],
       accountDisable: false,
       addUserForm: {
         username: '',
@@ -177,7 +181,8 @@ export default {
         status: [{ required: true, message: '请选择' }],
         dept: [{ required: true, message: '请选择' }],
         num: numberValidate('请输入数字'),
-        phone: [checkPhone()]
+        phone: [checkPhone()],
+        people: [{ required: true, message: '请选择绑定人员' }]
       },
       userStatusTypes: [
         { id: 0, label: '无效' },
@@ -196,12 +201,46 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.adduserRef.validate(async valid => {
+      this.$refs.adduserRef.validate(async (valid) => {
         if (!valid) {
           return
         }
         this.$emit('confirmClick', this.addUserForm, this.userInfo)
       })
+    },
+
+    /**
+     *  获取未绑定人员列表
+     */
+    getUnbindPeopleList () {
+      const param = {
+        isAccount: 0,
+        currentPage: 1,
+        pageSize: 10000
+      }
+      const _this = this
+      this.$axios
+        .post(backApi.getPeoplePage, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            _this.unbindPeopleList = res.data.data.records
+            if (
+              !this.isAddUser &&
+              _this.userInfo.employeeId &&
+              _this.userInfo.employeeName
+            ) {
+              _this.unbindPeopleList.push({
+                id: _this.userInfo.employeeId,
+                employeeName: _this.userInfo.employeeName
+              })
+            }
+          }
+        })
+        .catch((err) => {
+          console.log('backApi.getPeoplePage : ' + err)
+        })
     },
 
     cancelClick () {
