@@ -233,10 +233,15 @@ export default {
         if (this.$refs.accountTableRef) {
           this.$refs.accountTableRef.clearSelection()
         }
+        this.selectedRadio = ''
+        this.showRangeDept = false
       }
     },
     radio (newR) {
       this.selectedRadio = newR
+      if (newR === 3) {
+        this.showRangeDept = true
+      }
     },
     institutionSearch (val) {
       this.$refs.deptTreeRef1.filter(val)
@@ -248,8 +253,8 @@ export default {
         const _this = this
         this.$nextTick(() => {
           if (_this.$refs.accountTableRef) {
-            _this.selectedAccounts.forEach(item => {
-              const user = _this.userList.find(u => u.id === item.id)
+            _this.selectedAccounts.forEach((item) => {
+              const user = _this.userList.find((u) => u.id === item.id)
               if (user !== undefined) {
                 _this.$refs.accountTableRef.selection.push(user)
               } else {
@@ -276,7 +281,7 @@ export default {
 
     async getDeptTree () {
       const _this = this
-      this.$axios.post(backApi.getDeptTree).then(res => {
+      this.$axios.post(backApi.getDeptTree).then((res) => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           _this.selectedDept2 = _this.deptTree[0]
@@ -286,7 +291,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach(item => {
+      tree.forEach((item) => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -339,9 +344,9 @@ export default {
         .post(backApi.getUserList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.records.forEach(item => {
+            res.data.data.records.forEach((item) => {
               if (item.status === 0) {
                 item.enable = '无效'
               } else {
@@ -405,7 +410,7 @@ export default {
           this.$refs.accountTableRef.selection
         ) {
           const user = this.$refs.accountTableRef.selection.find(
-            u => u.id === item.id
+            (u) => u.id === item.id
           )
           if (user !== undefined) {
             const ind = this.$refs.accountTableRef.selection.indexOf(user)
