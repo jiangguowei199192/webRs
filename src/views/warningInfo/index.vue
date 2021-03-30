@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-30 16:53:36
+ * @LastEditTime: 2021-03-30 17:30:40
 -->
 <template>
   <div class="container">
@@ -61,7 +61,7 @@
         :clearable="false"
       ></el-date-picker>
     </div>
-    <!-- 详情栏 -->
+    <!-- 列表展示栏 -->
     <div class="list listScroll">
       <div
         class="list-item"
@@ -70,7 +70,7 @@
         @click.stop="showDetailInfoClick(list_item, list_index)"
       >
         <div class="header-info">
-          <div>人员滞留</div>
+          <div>{{ list_item.alarmTypeName }}</div>
           <div><span>正常</span><span> | </span><span>橙色警告</span></div>
         </div>
         <div class="content-wrap">
@@ -99,7 +99,7 @@
               <span class="item-text1">告警设备：</span>
               <EllipsisTooltip
                 class="item-text2"
-                :contentText="list_item.alarmTypeName"
+                :contentText="list_item.deviceId.deviceName"
               ></EllipsisTooltip>
             </div>
             <div class="base-time">
