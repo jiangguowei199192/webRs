@@ -101,6 +101,9 @@ export default {
     peopleInfo: {
       type: Object,
       required: false
+    },
+    selectedDept: {
+      required: false
     }
   },
   watch: {
@@ -109,6 +112,8 @@ export default {
         if (this.$refs.addPeopleRef) {
           this.$refs.addPeopleRef.resetFields()
         }
+      } else if (this.selectedDept) {
+        this.addPeopleForm.dept = this.selectedDept.deptCode
       }
     },
     peopleInfo (newP) {

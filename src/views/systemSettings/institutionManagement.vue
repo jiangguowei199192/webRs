@@ -156,6 +156,7 @@
       :isShow.sync="showAddPeople"
       title="新增人员"
       :deptTree="deptTree"
+      :selectedDept="selectedDept"
       @close="showAddPeople = false"
       @confirmClick="addPeopleConfirmClick"
       @cancelClick="addPeopleCancelClick"
