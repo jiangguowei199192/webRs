@@ -1,3 +1,3 @@
 export const structureApi = {
-  dataList: '/spaceTimeQuery/queryData'
+  dataList: '/stru-service/structuration/spaceTimeQuery/queryData'
 }

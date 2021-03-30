@@ -34,7 +34,7 @@
       >
         <div>
           <div class="bigImage" ref="bigImage">
-            <img :src="item.bigImage.url" />
+            <img :src="item.bigImage.url || noPic" />
             <span
               v-show="item.rect.show"
               :style="
@@ -53,7 +53,7 @@
               "
             ></span>
           </div>
-          <img :src="item.pedestrian && item.pedestrian.image.url" />
+          <img :src="(item.pedestrian && item.pedestrian.image.url) || noPic" />
         </div>
         <div class="text-base">
           <div>
@@ -121,7 +121,8 @@ export default {
       pageSize: 18,
       currentPage: 1,
       showDetailInfo: false,
-      detailInfo: ''
+      detailInfo: '',
+      noPic: require('../../assets/images/gisDispatch/no-pic.svg')
     }
   },
   created () {
@@ -164,42 +165,51 @@ export default {
         startTime: this.dateRange[0],
         endTime: this.dateRange[1]
       }
-      this.$axios.post(structureApi.dataList, param).then((res) => {
-        if (res.data.code === 0) {
-          res.data.data.captures.forEach((item) => {
-            item.captureTime = timeFormat(item.captureTime)
-            item.rect = { width: 0, height: 0, top: '', left: '', show: false }
-          })
-          this.list = res.data.data.captures
-          this.pageTotal = res.data.data.page.total
-          this.$nextTick(() => {
-            // 计算识别框的位置和尺寸
-            const bWidth = this.$refs.bigImage[0].clientWidth
-            const bHeigth = this.$refs.bigImage[0].clientHeight
-            this.list.forEach((item) => {
-              if (!item.pedestrian) {
-                return
+      this.$axios
+        .post(structureApi.dataList, param)
+        .then((res) => {
+          if (res.data.code === 0) {
+            res.data.data.captures.forEach((item) => {
+              item.captureTime = timeFormat(item.captureTime)
+              item.rect = {
+                width: 0,
+                height: 0,
+                top: '',
+                left: '',
+                show: false
               }
-              const w = item.pedestrian.position.width
-              const h = item.pedestrian.position.height
-              const left = item.pedestrian.position.start.x
-              const top = item.pedestrian.position.start.y
-              const imgW = item.bigImage.width
-              const imgH = item.bigImage.height
-              const ratio = (bWidth * 1.0) / imgW
-              const ratio2 = (bHeigth * 1.0) / imgH
-              item.rect = { width: '', height: '', top: '', left: '' }
-              item.rect.width = (w * 100.0 * ratio) / bWidth
-              item.rect.height = (h * 100.0 * ratio2) / bHeigth
-              item.rect.left = (left * 100.0) / imgW
-              item.rect.top = (top * 100.0) / imgH
-              item.rect.show = true
             })
-          })
-        }
-      }).catch((err) => {
-        console.log('structureApi.dataList           a Err : ' + err)
-      })
+            this.list = res.data.data.captures
+            this.pageTotal = res.data.data.page.total
+            this.$nextTick(() => {
+              // 计算识别框的位置和尺寸
+              const bWidth = this.$refs.bigImage[0].clientWidth
+              const bHeigth = this.$refs.bigImage[0].clientHeight
+              this.list.forEach((item) => {
+                if (!item.pedestrian) {
+                  return
+                }
+                const w = item.pedestrian.position.width
+                const h = item.pedestrian.position.height
+                const left = item.pedestrian.position.start.x
+                const top = item.pedestrian.position.start.y
+                const imgW = item.bigImage.width
+                const imgH = item.bigImage.height
+                const ratio = (bWidth * 1.0) / imgW
+                const ratio2 = (bHeigth * 1.0) / imgH
+                item.rect = { width: '', height: '', top: '', left: '' }
+                item.rect.width = (w * 100.0 * ratio) / bWidth
+                item.rect.height = (h * 100.0 * ratio2) / bHeigth
+                item.rect.left = (left * 100.0) / imgW
+                item.rect.top = (top * 100.0) / imgH
+                item.rect.show = true
+              })
+            })
+          }
+        })
+        .catch((err) => {
+          console.log('structureApi.dataList           a Err : ' + err)
+        })
     },
 
     radioChange (radio) {

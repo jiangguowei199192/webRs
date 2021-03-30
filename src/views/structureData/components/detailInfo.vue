@@ -9,7 +9,7 @@
     <div class="title">{{ title }}</div>
     <div class="img-box" v-if="info">
       <div class="bigImage" ref="bigImage">
-        <img :src="info.bigImage.url" />
+        <img :src="info.bigImage.url || noPic" />
         <span
           v-show="info.rect.show"
           :style="
@@ -30,7 +30,7 @@
       </div>
       <img
         style="float: right"
-        :src="info.pedestrian && info.pedestrian.image.url"
+        :src="(info.pedestrian && info.pedestrian.image.url) || noPic"
       />
     </div>
 
@@ -89,7 +89,8 @@ export default {
         boatType: '',
         boatDirection: ''
       },
-      detailInfoItems: []
+      detailInfoItems: [],
+      noPic: require('../../../assets/images/gisDispatch/no-pic.svg')
     }
   },
   watch: {
