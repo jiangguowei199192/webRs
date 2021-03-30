@@ -1,8 +1,21 @@
+<!--
+ * @Descripttion: 天下风云出我辈, 一入江湖岁月催; 皇图霸业谈笑中, 不胜人生一场醉.
+ * @version: v_1.0
+ * @Author: liangkaiLee
+ * @Date: 2021-03-30 11:45:51
+ * @LastEditors: liangkaiLee
+ * @LastEditTime: 2021-03-30 16:53:36
+-->
 <template>
   <div class="container">
     <!-- 多条件筛选栏 -->
     <div class="date-tool">
-      <el-select placeholder="告警设备" class="select-input" clearable>
+      <el-select
+        placeholder="告警设备"
+        class="select-input"
+        v-model="query.alarmEquipment"
+        clearable
+      >
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -10,7 +23,12 @@
           :value="item.typeCode"
         ></el-option>
       </el-select>
-      <el-select placeholder="等级" class="select-input" clearable>
+      <el-select
+        placeholder="等级"
+        class="select-input"
+        v-model="query.alarmLevel"
+        clearable
+      >
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -18,7 +36,12 @@
           :value="item.typeCode"
         ></el-option>
       </el-select>
-      <el-select placeholder="告警类型" class="select-input" clearable>
+      <el-select
+        placeholder="告警类型"
+        class="select-input"
+        v-model="query.alarmType"
+        clearable
+      >
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -42,9 +65,9 @@
     <div class="list listScroll">
       <div
         class="list-item"
-        v-for="(item, index) in list"
-        :key="index"
-        @click="showDetailInfoClick(item, index)"
+        v-for="(list_item, list_index) in list"
+        :key="list_index"
+        @click.stop="showDetailInfoClick(list_item, list_index)"
       >
         <div class="header-info">
           <div>人员滞留</div>
@@ -52,38 +75,39 @@
         </div>
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
-            <img :src="item.bigImage.url || noPic" />
+            <img :src="list_item.imageUrl || noPic" />
             <span
-              v-show="item.rect.show"
+              v-show="list_item.rect.show"
               :style="
                 'left:' +
-                  item.rect.left +
+                  list_item.rect.left +
                   '%;' +
                   'top:' +
-                  item.rect.top +
+                  list_item.rect.top +
                   '%;' +
                   'width:' +
-                  item.rect.width +
+                  list_item.rect.width +
                   '%;' +
                   'height:' +
-                  item.rect.height +
+                  list_item.rect.height +
                   '%;'
               "
             ></span>
           </div>
-          <!-- <img :src="(item.pedestrian && item.pedestrian.image.url) || noPic" /> -->
           <div class="text-base">
             <div class="base-equipment">
               <span class="item-text1">告警设备：</span>
-              <span class="item-text2" :title="item.camera.name">{{
-                item.camera.name
-              }}</span>
+              <EllipsisTooltip
+                class="item-text2"
+                :contentText="list_item.alarmTypeName"
+              ></EllipsisTooltip>
             </div>
             <div class="base-time">
               <span class="item-text1">时间：</span>
-              <span class="item-text2" :title="item.captureTime">{{
-                item.captureTime
-              }}</span>
+              <EllipsisTooltip
+                class="item-text2"
+                :contentText="list_item.captureTime"
+              ></EllipsisTooltip>
             </div>
           </div>
         </div>
@@ -106,15 +130,21 @@
   </div>
 </template>
 <script>
-import { structureApi } from '@/api/structureData.js'
+// import { structureApi } from '@/api/structureData.js'
+import EllipsisTooltip from '@/components/ellipsisTooltip'
 import { timeFormat } from '@/utils/date'
+import axios from 'axios'
+import qs from 'qs'
 
 export default {
   name: 'warningInfo',
 
+  components: {
+    EllipsisTooltip
+  },
+
   data () {
     return {
-      radio: '人',
       dateRange: [],
       list: [],
       pageTotal: 100,
@@ -126,9 +156,16 @@ export default {
       caseStatus: [
         { typeCode: 0, typeName: '未处置' },
         { typeCode: 1, typeName: '已处置' }
-      ]
+      ],
+      // 查询条件
+      query: {
+        alarmEquipment: '',
+        alarmLevel: '',
+        alarmType: ''
+      }
     }
   },
+
   created () {
     // 默认的日期范围，最近一周
     var start = new Date()
@@ -138,22 +175,33 @@ export default {
 
     this.getList()
   },
+
   methods: {
     getList () {
-      var capType = 1
-      var param = {
-        captureType: capType,
-        currentPage: this.currentPage,
+      var xsRequest = axios.create({
+        baseURL: 'http://172.16.63.43:8080',
+        timeout: 10000,
+        withCredentials: true,
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      })
+      xsRequest.interceptors.request.use(config => {
+        config.data = qs.stringify({ ...config.data })
+        return config
+      })
+      var params = {
+        page: this.currentPage,
         pageSize: this.pageSize,
-        timeType: 0,
         startTime: this.dateRange[0],
         endTime: this.dateRange[1]
       }
-      this.$axios
-        .post(structureApi.dataList, param)
+      xsRequest
+        .post('/structuration/spaceTimeQuery/queryAlarms', params)
         .then(res => {
+          // console.log('设备列表返回:', res)
           if (res.data.code === 0) {
-            res.data.data.captures.forEach(item => {
+            res.data.data.forEach(item => {
               item.captureTime = timeFormat(item.captureTime)
               item.rect = {
                 width: 0,
@@ -163,36 +211,41 @@ export default {
                 show: false
               }
             })
-            this.list = res.data.data.captures
-            this.pageTotal = res.data.data.page.total
+            this.list = res.data.data
             this.$nextTick(() => {
-              // 计算识别框的位置和尺寸
               const bWidth = this.$refs.bigImage[0].clientWidth
               const bHeigth = this.$refs.bigImage[0].clientHeight
               this.list.forEach(item => {
-                if (!item.pedestrian) {
-                  return
+                if (!item.sectionLocations) {
+                  return false
+                } else {
+                  let w = null
+                  let h = null
+                  let left = null
+                  let top = null
+                  item.sectionLocations.forEach(r => {
+                    w = r.width
+                    h = r.height
+                    left = r.left
+                    top = r.top
+                  })
+                  const imgW = item.imgeWidth
+                  const imgH = item.imgeHeight
+                  const ratio = (bWidth * 1.0) / imgW
+                  const ratio2 = (bHeigth * 1.0) / imgH
+                  item.rect = { width: '', height: '', top: '', left: '' }
+                  item.rect.width = (w * 100.0 * ratio) / bWidth
+                  item.rect.height = (h * 100.0 * ratio2) / bHeigth
+                  item.rect.left = (left * 100.0) / imgW
+                  item.rect.top = (top * 100.0) / imgH
+                  item.rect.show = true
                 }
-                const w = item.pedestrian.position.width
-                const h = item.pedestrian.position.height
-                const left = item.pedestrian.position.start.x
-                const top = item.pedestrian.position.start.y
-                const imgW = item.bigImage.width
-                const imgH = item.bigImage.height
-                const ratio = (bWidth * 1.0) / imgW
-                const ratio2 = (bHeigth * 1.0) / imgH
-                item.rect = { width: '', height: '', top: '', left: '' }
-                item.rect.width = (w * 100.0 * ratio) / bWidth
-                item.rect.height = (h * 100.0 * ratio2) / bHeigth
-                item.rect.left = (left * 100.0) / imgW
-                item.rect.top = (top * 100.0) / imgH
-                item.rect.show = true
               })
             })
           }
         })
         .catch(err => {
-          console.log('structureApi.dataList Err : ' + err)
+          console.log('structureApi.alarmList Err : ' + err)
         })
     },
 
@@ -200,7 +253,6 @@ export default {
       this.getList()
     },
 
-    // 按日期搜索列表
     dateSearchChange () {
       this.startTime = this.dateRange[0]
       this.endTime = this.dateRange[1]
@@ -327,23 +379,24 @@ export default {
         position: absolute;
         right: 0;
         bottom: 6px;
-        font-size: 14px;
         .base-equipment,
         .base-time {
           margin-top: 10px;
         }
         .item-text1 {
+          display: inline-block;
+          font-size: 14px;
           color: #00d1ff;
         }
         .item-text2 {
+          display: inline-block;
+          max-width: 135px;
+          font-size: 14px;
           color: #fff;
-          vertical-align: bottom;
+          vertical-align: top;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-        }
-        span {
-          max-width: 160px;
         }
       }
     }
