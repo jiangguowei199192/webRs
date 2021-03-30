@@ -17,25 +17,20 @@ const streamMixin = {
     this.online = this.dataInfo.online !== 'offline'
     if (!this.online) return
     if (this.dataInfo.deviceTypeCode === 'GDJK') {
+      // eslint-disable-next-line no-eval
+      this.dataInfo.channelInfo = eval(this.dataInfo.channelInfo)
+      if (!this.dataInfo.channelInfo || this.dataInfo.channelInfo.length === 0) return
+      const list = []
+      this.dataInfo.channelInfo.forEach(c => {
+        list.push({
+          deviceCode: this.dataInfo.id,
+          channelId: c.channelId,
+          deviceTypeCode: this.dataInfo.deviceTypeCode,
+          accessType: this.dataInfo.accessType
+        })
+      })
       this.param = {
-        deviceInfoListJsonStr: JSON.stringify([
-          {
-            // deviceCode: '5J06005PAKAB2E5',
-            deviceCode: this.dataInfo.id,
-            channelId: '0',
-            deviceTypeCode: this.dataInfo.deviceTypeCode,
-            accessType: this.dataInfo.accessType
-            // accessType: '0'
-          },
-          {
-            // deviceCode: '5J06005PAKAB2E5',
-            deviceCode: this.dataInfo.id,
-            channelId: '1',
-            deviceTypeCode: this.dataInfo.deviceTypeCode,
-            accessType: this.dataInfo.accessType
-            // accessType: '0'
-          }
-        ])
+        deviceInfoListJsonStr: JSON.stringify(list)
       }
     } else {
       this.param = {
