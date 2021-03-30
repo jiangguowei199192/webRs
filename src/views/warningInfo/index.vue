@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-30 17:30:40
+ * @LastEditTime: 2021-03-30 19:46:48
 -->
 <template>
   <div class="container">
@@ -70,8 +70,10 @@
         @click.stop="showDetailInfoClick(list_item, list_index)"
       >
         <div class="header-info">
-          <div>{{ list_item.alarmTypeName }}</div>
-          <div><span>正常</span><span> | </span><span>橙色警告</span></div>
+          <div class="info-title">{{ list_item.alarmTypeName }}</div>
+          <div class="info-status">
+            <span>正常</span><span> | </span><span>橙色警告</span>
+          </div>
         </div>
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
@@ -249,10 +251,6 @@ export default {
         })
     },
 
-    radioChange (radio) {
-      this.getList()
-    },
-
     dateSearchChange () {
       this.startTime = this.dateRange[0]
       this.endTime = this.dateRange[1]
@@ -357,7 +355,17 @@ export default {
       line-height: 35px;
       border-bottom: 1px solid #39a4dd;
       font-size: 14px;
+      .info-title {
+        color: #00d1ff;
+      }
+      .info-status > span:nth-child(1) {
+        color: #4eff00;
+      }
+      .info-status > span:nth-child(3) {
+        color: #ef4e22;
+      }
     }
+
     .content-wrap {
       display: flex;
       justify-content: space-between;
