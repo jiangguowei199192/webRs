@@ -66,22 +66,23 @@
         <div class="bigImg">
           <img :src="info.imageUrl" alt />
           <span
-            v-show="info.rect.show"
-            :style="
-            'left:' +
-            info.rect.left +
-            '%;' +
-            'top:' +
-            info.rect.top +
-            '%;' +
-            'width:' +
-            info.rect.width +
-            '%;' +
-            'height:' +
-            info.rect.height +
-            '%;'
-          "
-          ></span>
+              v-for="(list,index) in info.rect.points"
+              :key="index"
+              :style="
+                'left:' +
+                  list.left +
+                  '%;' +
+                  'top:' +
+                  list.top +
+                  '%;' +
+                  'width:' +
+                  list.width +
+                  '%;' +
+                  'height:' +
+                 list.height +
+                  '%;'
+              "
+            ></span>
         </div>
         <div class="tools">
           <span>区域检测</span>

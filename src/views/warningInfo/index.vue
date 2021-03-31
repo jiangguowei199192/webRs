@@ -10,12 +10,7 @@
   <div class="container">
     <!-- 多条件筛选栏 -->
     <div class="date-tool">
-      <el-select
-        placeholder="告警设备"
-        class="select-input"
-        v-model="query.alarmEquipment"
-        clearable
-      >
+      <el-select placeholder="告警设备" class="select-input" v-model="query.alarmEquipment" clearable>
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -23,12 +18,7 @@
           :value="item.typeCode"
         ></el-option>
       </el-select>
-      <el-select
-        placeholder="等级"
-        class="select-input"
-        v-model="query.alarmLevel"
-        clearable
-      >
+      <el-select placeholder="等级" class="select-input" v-model="query.alarmLevel" clearable>
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -36,12 +26,7 @@
           :value="item.typeCode"
         ></el-option>
       </el-select>
-      <el-select
-        placeholder="告警类型"
-        class="select-input"
-        v-model="query.alarmType"
-        clearable
-      >
+      <el-select placeholder="告警类型" class="select-input" v-model="query.alarmType" clearable>
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -65,33 +50,36 @@
     <div class="list listScroll">
       <div
         class="list-item"
-        v-for="(list_item, list_index) in list"
+        v-for="(item, list_index) in list"
         :key="list_index"
-        @click.stop="showDetailInfoClick(list_item, list_index)"
+        @click.stop="showDetailInfoClick(item, list_index)"
       >
         <div class="header-info">
-          <div class="info-title">{{ list_item.alarmTypeName }}</div>
+          <div class="info-title">{{ item.alarmTypeName }}</div>
           <div class="info-status">
-            <span>正常</span><span> | </span><span>橙色警告</span>
+            <span>正常</span>
+            <span>|</span>
+            <span>橙色警告</span>
           </div>
         </div>
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
-            <img :src="list_item.imageUrl || noPic" />
+            <img :src="item.imageUrl || noPic" />
             <span
-              v-show="list_item.rect.show"
+              v-for="(list,index) in item.rect.points"
+              :key="index"
               :style="
                 'left:' +
-                  list_item.rect.left +
+                  list.left +
                   '%;' +
                   'top:' +
-                  list_item.rect.top +
+                  list.top +
                   '%;' +
                   'width:' +
-                  list_item.rect.width +
+                  list.width +
                   '%;' +
                   'height:' +
-                  list_item.rect.height +
+                 list.height +
                   '%;'
               "
             ></span>
@@ -99,17 +87,11 @@
           <div class="text-base">
             <div class="base-equipment">
               <span class="item-text1">告警设备：</span>
-              <EllipsisTooltip
-                class="item-text2"
-                :contentText="list_item.deviceId.deviceName"
-              ></EllipsisTooltip>
+              <EllipsisTooltip class="item-text2" :contentText="item.deviceId.deviceName"></EllipsisTooltip>
             </div>
             <div class="base-time">
               <span class="item-text1">时间：</span>
-              <EllipsisTooltip
-                class="item-text2"
-                :contentText="list_item.captureTime"
-              ></EllipsisTooltip>
+              <EllipsisTooltip class="item-text2" :contentText="item.captureTime"></EllipsisTooltip>
             </div>
           </div>
         </div>
@@ -129,11 +111,7 @@
         @size-change="sizeChange"
       ></el-pagination>
     </div>
-       <DetailInfo
-      :dialogVisible="showDetailInfo"
-      :info="detailInfo"
-      @close="showDetailInfo = false"
-    ></DetailInfo>
+    <DetailInfo :dialogVisible="showDetailInfo" :info="detailInfo" @close="showDetailInfo = false"></DetailInfo>
   </div>
 </template>
 <script>
@@ -213,41 +191,30 @@ export default {
             res.data.data.forEach(item => {
               item.captureTime = timeFormat(item.captureTime)
               item.rect = {
-                width: 0,
-                height: 0,
-                top: '',
-                left: '',
+                points: [],
                 show: false
               }
             })
             this.list = res.data.data
             this.$nextTick(() => {
-              // const bWidth = this.$refs.bigImage[0].clientWidth
-              // const bHeigth = this.$refs.bigImage[0].clientHeight
               this.list.forEach(item => {
                 if (!item.sectionLocations) {
-                  return false
+
                 } else {
-                  let w = null
-                  let h = null
-                  let left = null
-                  let top = null
-                  item.sectionLocations.forEach(r => {
-                    w = r.width
-                    h = r.height
-                    left = r.left
-                    top = r.top
-                  })
+                  item.rect = {
+                    show: false,
+                    points: []
+                  }
                   const imgW = item.imgeWidth
                   const imgH = item.imgeHeight
-                  // const ratio = (bWidth * 1.0) / imgW
-                  // const ratio2 = (bHeigth * 1.0) / imgH
-                  item.rect = { width: '', height: '', top: '', left: '' }
-
-                  item.rect.width = (w * 100.0) / imgW
-                  item.rect.height = (h * 100.0) / imgH
-                  item.rect.left = (left * 100.0) / imgW
-                  item.rect.top = (top * 100.0) / imgH
+                  item.sectionLocations.forEach(r => {
+                    item.rect.points.push({
+                      width: (r.width * 100.0) / imgW,
+                      height: (r.height * 100.0) / imgH,
+                      left: (r.left * 100.0) / imgW,
+                      top: (r.top * 100.0) / imgH
+                    })
+                  })
                   item.rect.show = true
                 }
               })
