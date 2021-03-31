@@ -129,10 +129,16 @@
         @size-change="sizeChange"
       ></el-pagination>
     </div>
+       <DetailInfo
+      :dialogVisible="showDetailInfo"
+      :info="detailInfo"
+      @close="showDetailInfo = false"
+    ></DetailInfo>
   </div>
 </template>
 <script>
 // import { structureApi } from '@/api/structureData.js'
+import DetailInfo from './warningDetail'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
 import { timeFormat } from '@/utils/date'
 import axios from 'axios'
@@ -142,7 +148,8 @@ export default {
   name: 'warningInfo',
 
   components: {
-    EllipsisTooltip
+    EllipsisTooltip,
+    DetailInfo
   },
 
   data () {
