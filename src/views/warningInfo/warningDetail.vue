@@ -44,7 +44,7 @@
             <div>取消</div>
             <div>确定</div>
           </div>
-          <div class="box webFsScroll">
+          <div class="warningBox webFsScroll">
             <div class="list">
               <div class="circle">1</div>
               <div class="extra">
@@ -192,7 +192,7 @@ export default {
           width: 337px;
           text-align: right;
         }
-        div.box {
+        div.warningBox {
           box-sizing: border-box;
           width: 334px;
           background: #004157;
