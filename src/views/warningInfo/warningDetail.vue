@@ -14,15 +14,15 @@
         <ul class="baseInfo">
           <li>
             <span class="title">告警类型：</span>
-            <span>船舶出现</span>
+            <span>{{info.alarmTypeName||'-'}}</span>
           </li>
           <li>
             <span class="title">告警设备：</span>
-            <span>高点监控1号</span>
+            <span>{{info.deviceId?info.deviceId.deviceName:'-'}}</span>
           </li>
           <li>
             <span class="title">告警时间：</span>
-            <span>2021-01-02 19:20:40</span>
+            <span>{{info.captureTime}}</span>
           </li>
         </ul>
         <div class="content-title">案件核实</div>
@@ -64,8 +64,24 @@
       </div>
       <div class="rightInfo">
         <div class="bigImg">
-          <img src alt />
-          <span></span>
+          <img :src="info.imageUrl" alt />
+          <span
+            v-show="info.rect.show"
+            :style="
+            'left:' +
+            info.rect.left +
+            '%;' +
+            'top:' +
+            info.rect.top +
+            '%;' +
+            'width:' +
+            info.rect.width +
+            '%;' +
+            'height:' +
+            info.rect.height +
+            '%;'
+          "
+          ></span>
         </div>
         <div class="tools">
           <span>区域检测</span>
@@ -83,6 +99,9 @@ export default {
     dialogVisible: {
       type: Boolean,
       default: false
+    },
+    info: {
+      type: Object
     }
   },
   data () {
@@ -97,7 +116,8 @@ export default {
     closeDialog () {
       this.$emit('close')
     }
-  }
+  },
+  watch: {}
 }
 </script>
 <style lang="less" scoped>
@@ -218,12 +238,17 @@ export default {
           height: 466px;
           border: 1px solid #ccc;
           position: relative;
+          img {
+            width: 100%;
+            height: 100%;
+          }
           span {
             position: absolute;
+            border: 1px solid red;
           }
         }
         div.tools {
-          padding-left:8px;
+          padding-left: 8px;
           height: 40px;
           line-height: 40px;
           background: rgba(0, 0, 0, 0.8);
@@ -232,7 +257,7 @@ export default {
             font-family: Source Han Sans CN;
             font-weight: 500;
             color: #ffffff;
-            margin-right:9px;
+            margin-right: 9px;
           }
         }
       }

@@ -160,7 +160,7 @@ export default {
       pageSize: 18,
       currentPage: 1,
       showDetailInfo: false,
-      detailInfo: '',
+      detailInfo: { rect: { show: false } },
       noPic: require('../../assets/images/gisDispatch/no-pic.svg'),
       caseStatus: [
         { typeCode: 0, typeName: '未处置' },
@@ -222,8 +222,8 @@ export default {
             })
             this.list = res.data.data
             this.$nextTick(() => {
-              const bWidth = this.$refs.bigImage[0].clientWidth
-              const bHeigth = this.$refs.bigImage[0].clientHeight
+              // const bWidth = this.$refs.bigImage[0].clientWidth
+              // const bHeigth = this.$refs.bigImage[0].clientHeight
               this.list.forEach(item => {
                 if (!item.sectionLocations) {
                   return false
@@ -240,11 +240,12 @@ export default {
                   })
                   const imgW = item.imgeWidth
                   const imgH = item.imgeHeight
-                  const ratio = (bWidth * 1.0) / imgW
-                  const ratio2 = (bHeigth * 1.0) / imgH
+                  // const ratio = (bWidth * 1.0) / imgW
+                  // const ratio2 = (bHeigth * 1.0) / imgH
                   item.rect = { width: '', height: '', top: '', left: '' }
-                  item.rect.width = (w * 100.0 * ratio) / bWidth
-                  item.rect.height = (h * 100.0 * ratio2) / bHeigth
+
+                  item.rect.width = (w * 100.0) / imgW
+                  item.rect.height = (h * 100.0) / imgH
                   item.rect.left = (left * 100.0) / imgW
                   item.rect.top = (top * 100.0) / imgH
                   item.rect.show = true
@@ -277,6 +278,7 @@ export default {
     },
 
     showDetailInfoClick (item, index) {
+      console.dir(item)
       this.showDetailInfo = true
       this.detailInfo = item
     }
