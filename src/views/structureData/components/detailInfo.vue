@@ -130,9 +130,9 @@ export default {
           default:
             break
         }
-        this.$nextTick(() => {
-          this.setRectPosition()
-        })
+        // this.$nextTick(() => {
+        //   this.setRectPosition()
+        // })
       }
     },
     info (newI) {

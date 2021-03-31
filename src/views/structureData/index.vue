@@ -183,8 +183,8 @@ export default {
             this.pageTotal = res.data.data.page.total
             this.$nextTick(() => {
               // 计算识别框的位置和尺寸
-              const bWidth = this.$refs.bigImage[0].clientWidth
-              const bHeigth = this.$refs.bigImage[0].clientHeight
+              // const bWidth = this.$refs.bigImage[0].clientWidth
+              // const bHeigth = this.$refs.bigImage[0].clientHeight
               this.list.forEach((item) => {
                 if (!item.pedestrian) {
                   return
@@ -195,11 +195,13 @@ export default {
                 const top = item.pedestrian.position.start.y
                 const imgW = item.bigImage.width
                 const imgH = item.bigImage.height
-                const ratio = (bWidth * 1.0) / imgW
-                const ratio2 = (bHeigth * 1.0) / imgH
+                // const ratio = (bWidth * 1.0) / imgW
+                // const ratio2 = (bHeigth * 1.0) / imgH
                 item.rect = { width: '', height: '', top: '', left: '' }
-                item.rect.width = (w * 100.0 * ratio) / bWidth
-                item.rect.height = (h * 100.0 * ratio2) / bHeigth
+                item.rect.width = (w * 100.0) / imgW
+                item.rect.height = (h * 100.0) / imgH
+                // item.rect.width = (w * 100.0 * ratio) / bWidth
+                // item.rect.height = (h * 100.0 * ratio2) / bHeigth
                 item.rect.left = (left * 100.0) / imgW
                 item.rect.top = (top * 100.0) / imgH
                 item.rect.show = true
