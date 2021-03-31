@@ -1,4 +1,4 @@
-import { caseApi } from '@/api/case'
+import { backApi } from '@/api/back'
 const assignMixin = {
   data () {
     return {
@@ -46,9 +46,13 @@ const assignMixin = {
     getUserList () {
       this.$axios
         .post(
-          caseApi.selectUsers,
+          backApi.getUserList,
           {
-            content: this.search
+            currentPage: 1,
+            contentNew: this.search,
+            isBinding: true,
+            pageSize: 999,
+            status: 1
           },
           {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
@@ -56,15 +60,13 @@ const assignMixin = {
         )
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            let list = res.data.data
+            this.peoples = []
+            let list = res.data.data.records
             list = JSON.parse(
               JSON.stringify(list).replace(/userLongitude/g, 'longitude')
             )
             list = JSON.parse(
               JSON.stringify(list).replace(/userLatitude/g, 'latitude')
-            )
-            list = JSON.parse(
-              JSON.stringify(list).replace(/employeeId/g, 'id')
             )
             list.forEach((c) => {
               c.type = 'RP_Member'
@@ -75,7 +77,7 @@ const assignMixin = {
           }
         })
         .catch((err) => {
-          console.log('caseApi.selectUsers Err : ' + err)
+          console.log('backApi.getUserList Err : ' + err)
         })
     }
   }

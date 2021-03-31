@@ -142,7 +142,7 @@
               @change="getUserList()"
               v-model="search"
               class="search"
-              placeholder="请输入姓名/身份证号进行搜索"
+              placeholder="请输入人员姓名/组织名称进行搜索"
             >
               <i slot="suffix"></i
             ></el-input>
