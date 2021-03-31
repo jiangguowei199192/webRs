@@ -215,6 +215,7 @@
         title="处置记录"
         class="dispose"
         :clickRowId="caseInfo.id"
+        :reportTime="caseInfo.reportTime"
       ></DisposeRecDialog>
       <ChatBox :isShow.sync="showChatBox" :caseId="caseInfo.id"></ChatBox>
       <CaseAssign :isShow.sync="showAssign" :caseInfo="caseInfo"></CaseAssign>

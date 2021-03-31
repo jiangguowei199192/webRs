@@ -41,6 +41,7 @@
             :placeholder="placeholder"
             class="timeStyle"
             value-format="yyyy-MM-dd HH:mm:ss"
+            @change="startTimeChange"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="报警时间 :" prop="reportTime" class="time">
@@ -50,6 +51,7 @@
             :placeholder="placeholder"
             class="timeStyle"
             value-format="yyyy-MM-dd HH:mm:ss"
+             @change="reportTimeChange"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="举报人 :" prop="reportMan">
@@ -250,6 +252,38 @@ export default {
   mounted () {
   },
   methods: {
+    /**
+     * 案发时间改变
+     */
+    startTimeChange () {
+      if (!this.caseForm.caseStartTime) return
+      const time = new Date(this.caseForm.caseStartTime).getTime()
+      const report = new Date(this.caseForm.reportTime).getTime()
+      if (report <= time) {
+        this.caseForm.caseStartTime = ''
+        this.$notify.closeAll()
+        this.$notify.info({
+          title: '提示',
+          message: '当前所选时间已晚于案件报警时间，请重新选择'
+        })
+      }
+    },
+    /**
+     * 报警时间改变
+     */
+    reportTimeChange () {
+      if (!this.caseForm.reportTime) return
+      const time = new Date(this.caseForm.caseStartTime).getTime()
+      const report = new Date(this.caseForm.reportTime).getTime()
+      if (report <= time) {
+        this.caseForm.reportTime = ''
+        this.$notify.closeAll()
+        this.$notify.info({
+          title: '提示',
+          message: '当前所选时间已早于报警时间，请重新选择'
+        })
+      }
+    },
     /**
      * 获取案件来源
      */

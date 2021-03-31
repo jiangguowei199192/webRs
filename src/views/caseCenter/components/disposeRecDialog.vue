@@ -38,6 +38,7 @@
               type="datetime"
               :placeholder="placeholder"
               value-format="yyyy-MM-dd HH:mm:ss"
+              @change="selectDisposeTime"
             ></el-date-picker>
           </el-form-item>
           <el-form-item
@@ -94,7 +95,8 @@ export default {
   props: {
     isShow: { type: Boolean, required: true },
     title: { type: String, required: true },
-    clickRowId: { type: String, required: false }
+    clickRowId: { type: String, required: false },
+    reportTime: { type: String, required: false }
   },
 
   data () {
@@ -110,7 +112,7 @@ export default {
       addCaseFormRules: {
         record: isNotNull('请输入处置结果'),
         people: isNotNull('请输入处置人'),
-        time: isNotNull('请选择报警时间')
+        time: isNotNull('请选择处置时间')
       },
       uploadList: [],
       uploadFiles: []
@@ -134,6 +136,23 @@ export default {
       this.uploadFiles = this.uploadList = []
       this.$emit('update:isShow', false)
       this.$emit('update:clickRowId', '')
+    },
+
+    /**
+     * 选择处置时间
+     */
+    selectDisposeTime () {
+      if (!this.addCaseForm.time) return
+      const time = new Date(this.reportTime).getTime()
+      const dispose = new Date(this.addCaseForm.time).getTime()
+      if (dispose <= time) {
+        this.addCaseForm.time = ''
+        this.$notify.closeAll()
+        this.$notify.info({
+          title: '提示',
+          message: '当前所选时间已早于报警时间，请重新选择'
+        })
+      }
     },
 
     // 上传文件前的处理
