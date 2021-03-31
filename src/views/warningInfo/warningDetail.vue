@@ -7,7 +7,7 @@
   >
     <div class="content-title">
       告警详情
-      <img :src="X" alt />
+      <img :src="X" alt @click="closeDialog" />
     </div>
     <div class="info">
       <div class="leftInfo">
@@ -237,7 +237,6 @@ export default {
         .bigImg {
           width: 489px;
           height: 466px;
-          border: 1px solid #ccc;
           position: relative;
           img {
             width: 100%;

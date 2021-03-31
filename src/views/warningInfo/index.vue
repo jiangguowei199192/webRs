@@ -138,7 +138,7 @@ export default {
       pageSize: 18,
       currentPage: 1,
       showDetailInfo: false,
-      detailInfo: { rect: { show: false } },
+      detailInfo: { rect: { show: false, points: [] } },
       noPic: require('../../assets/images/gisDispatch/no-pic.svg'),
       caseStatus: [
         { typeCode: 0, typeName: '未处置' },
