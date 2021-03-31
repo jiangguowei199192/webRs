@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-30 09:56:08
+ * @LastEditTime: 2021-03-31 14:26:28
 -->
 <template>
   <div class="caseCenter">
@@ -252,7 +252,7 @@ export default {
           this.fileListPath.push(t)
         }
       })
-      console.log('uploadFilesConfig:', this.uploadFilesConfig)
+      // console.log('uploadFilesConfig:', this.uploadFilesConfig)
     },
 
     // 获取案件列表
