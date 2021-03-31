@@ -335,8 +335,8 @@ export default {
         for (let i = 0; i < this.selectList.length; i++) {
           const s =
             i === this.selectList.length - 1
-              ? this.selectList[i].id
-              : this.selectList[i].id + ','
+              ? this.selectList[i].employeeId
+              : this.selectList[i].employeeId + ','
           this.caseForm.designateMan += s
         }
       }

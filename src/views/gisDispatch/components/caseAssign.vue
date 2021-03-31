@@ -154,7 +154,7 @@ export default {
       }
       const ids = []
       this.selectList.forEach((item) => {
-        ids.push(item.id)
+        ids.push(item.employeeId)
       })
       this.$axios
         .post(
