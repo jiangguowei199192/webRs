@@ -400,26 +400,38 @@ export default {
     async deleteUserConfirmClick () {
       this.showDeleteRole = false
       var roleIds = []
+      let flag = false
       this.selectedRoles.forEach(item => {
         roleIds.push(item.id)
+        if (item.userCount > 0) {
+          Notification({
+            title: '警告',
+            message: '当前存在关联用户数不为0的角色, 不允许进行删除操作 !',
+            type: 'warning',
+            duration: 3 * 1000
+          })
+          flag = true
+        }
       })
-      const param = { ids: roleIds }
-      const _this = this
-      this.$axios
-        .post(backApi.deleteRole, param, {
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-        })
-        .then(res => {
-          if (res && res.data && res.data.code === 0) {
-            _this.getRoleList()
-            Notification({
-              title: '提示',
-              message: '操作成功',
-              type: 'success',
-              duration: 2 * 1000
-            })
-          }
-        })
+      if (!flag) {
+        const param = { ids: roleIds }
+        const _this = this
+        this.$axios
+          .post(backApi.deleteRole, param, {
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+          })
+          .then(res => {
+            if (res && res.data && res.data.code === 0) {
+              _this.getRoleList()
+              Notification({
+                title: '提示',
+                message: '操作成功',
+                type: 'success',
+                duration: 2 * 1000
+              })
+            }
+          })
+      }
     },
 
     // 修改角色时触发
