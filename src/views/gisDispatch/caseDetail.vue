@@ -76,7 +76,7 @@
       </div>
       <div class="disposeBox">
         <div class="gisTitle">
-          <span>案件信息</span>
+          <span>处置记录</span>
         </div>
         <div class="disposeInfo">
           <CaseStep class="record"></CaseStep>

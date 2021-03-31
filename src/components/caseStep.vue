@@ -17,210 +17,184 @@
         <img :src="event.icon" slot="icon" />
         <template slot="description">
           <div class="step-row">
-            <table
-              width="100%"
-              border="0"
-              cellspacing="0"
-              cellpadding="0"
-              class="processing-content"
+            <div v-if="event.dispositionNode == '受理'">
+              <div class="processing-content-detail">
+                <EllipsisTooltip
+                  :contentText="'接案人员: ' + event.content.receivingAlarmMan"
+                  class="tooltip name"
+                ></EllipsisTooltip>
+                <EllipsisTooltip
+                  :contentText="event.createTime"
+                  class="tooltip time"
+                ></EllipsisTooltip>
+              </div>
+            </div>
+            <div
+              v-else-if="event.dispositionNode == '批示'"
+              v-for="(content_item, content_index) in event.content"
+              :key="content_index"
             >
-              <tr>
-                <td>
-                  <div v-if="event.dispositionNode == '受理'">
-                    <EllipsisTooltip
-                      v-if="!caseCenter"
-                      :contentText="
-                        '接案人员: ' + event.content.receivingAlarmMan
-                      "
-                      class="name alarmMan"
-                    ></EllipsisTooltip>
-                    <div v-else class="processing-content-detail fl">
-                      <span>{{
-                        "接案人员：" + event.content.receivingAlarmMan
-                      }}</span>
-                    </div>
-                    <div class="processing-content-detail fr">
-                      <span>{{ event.createTime }}</span>
-                    </div>
-                  </div>
-                  <div
-                    v-else-if="event.dispositionNode == '批示'"
-                    v-for="(content_item, content_index) in event.content"
-                    :key="content_index"
-                  >
-                    <div class="fl">
+              <div class="processing-content-detail">
+                <EllipsisTooltip
+                  :contentText="content_item.checkComment"
+                  class="tooltip name"
+                ></EllipsisTooltip>
+                <EllipsisTooltip
+                  :contentText="event.createTime"
+                  class="tooltip time"
+                ></EllipsisTooltip>
+              </div>
+              <div style="clear: both; text-align: right; color: #fff">
+                <EllipsisTooltip
+                  :contentText="
+                    (content_item.employeeName || '') +
+                    ' ' +
+                    (content_item.deptName || '')
+                  "
+                  class="tooltip"
+                  style="width: 100%"
+                ></EllipsisTooltip>
+              </div>
+            </div>
+            <div v-else-if="event.dispositionNode == '召集'">
+              <div class="processing-content-detail">
+                已推送{{ event.content.length }}人
+              </div>
+              <template v-for="(content_item, index) in event.content">
+                <div
+                  :key="index"
+                  class="together"
+                  :class="{
+                    hasBorder: index !== event.content.length - 1,
+                  }"
+                >
+                  <div class="processing-content-detail">
+                    <div class="nameBox">
+                      <img
+                        class="police"
+                        src="../assets/images/caseCenter/police.svg"
+                      />
                       <EllipsisTooltip
-                        v-if="!caseCenter"
-                        :contentText="content_item.checkComment"
-                        class="name checkComment"
+                        :contentText="
+                          (content_item.employeeName || '') +
+                          ' ' +
+                          (content_item.deptName || '')
+                        "
+                        class="tooltip employee"
                       ></EllipsisTooltip>
-                      <span v-else>{{ content_item.checkComment }}</span>
                     </div>
-                    <div class="processing-content-detail fr">
-                      <span>{{ content_item.checkTime }}</span>
-                    </div>
-                    <div
-                      class="processing-content-detail"
-                      style="clear: both; text-align: right"
+                    <EllipsisTooltip
+                      :contentText="content_item.createTime"
+                      class="tooltip time"
+                    ></EllipsisTooltip>
+                  </div>
+                  <div class="processing-content-detail2" style="clear: both">
+                    <span>{{ content_item.designateStatus || "" }}</span>
+                    <span
+                      v-html="
+                        formatAcceptTime(
+                          content_item.designateStatus,
+                          content_item.receivingAlarmTime,
+                          content_item.createTime
+                        )
+                      "
                     >
-                      {{
-                        content_item.employeeName + " " + content_item.deptName
-                      }}
-                    </div>
+                    </span>
+                    <span style="color: red">{{
+                      formatExceedTime(
+                        content_item.receivingAlarmTime,
+                        content_item.createTime
+                      )
+                    }}</span>
                   </div>
-                  <div v-else-if="event.dispositionNode == '召集'">
-                    <div class="processing-content-detail">
-                      已推送{{ event.content.length }}人
+                </div>
+              </template>
+            </div>
+            <div v-else-if="event.dispositionNode == '处置'">
+              <template v-for="(content_item, index) in event.content">
+                <div :key="index" class="dispose">
+                  <div class="processing-content-detail">
+                    <div class="nameBox">
+                      <img
+                        class="police"
+                        src="../assets/images/caseCenter/police.svg"
+                      />
+                      <EllipsisTooltip
+                        :contentText="
+                          (content_item.employeeName || '') +
+                          ' ' +
+                          (content_item.deptName || '')
+                        "
+                        class="tooltip employee"
+                      ></EllipsisTooltip>
                     </div>
-                    <template v-for="(content_item, index) in event.content">
-                      <div
-                        :key="index"
-                        class="together"
-                        :class="{
-                          hasBorder: index !== event.content.length - 1
-                        }"
-                      >
-                        <div class="fl eTooltip">
-                          <img
-                            class="police"
-                            src="../assets/images/caseCenter/police.svg"
-                          />
-                          <EllipsisTooltip
-                            v-if="!caseCenter"
-                            :contentText="
-                              content_item.employeeName +
-                                ' ' +
-                                content_item.deptName
-                            "
-                            class="name"
-                          ></EllipsisTooltip>
-                          <span v-else>{{
-                            content_item.employeeName +
-                              " " +
-                              content_item.deptName
-                          }}</span>
-                        </div>
-                        <div class="processing-content-detail fr">
-                          <span>{{ content_item.createTime }}</span>
-                        </div>
-                        <div
-                          class="processing-content-detail"
-                          style="clear: both"
-                        >
-                          <span>{{ content_item.designateStatus }}</span>
-                          <span>{{
-                            formatAcceptTime(
-                              content_item.receivingAlarmTime,
-                              content_item.createTime
-                            )
-                          }}</span>
-                          <span style="color: red">{{
-                            formatExceedTime(
-                              content_item.receivingAlarmTime,
-                              content_item.createTime
-                            )
-                          }}</span>
-                        </div>
-                      </div>
-                    </template>
+                    <EllipsisTooltip
+                      :contentText="content_item.createTime"
+                      class="tooltip time"
+                    ></EllipsisTooltip>
                   </div>
                   <div
-                    class="processing-content-detail"
-                    v-else-if="event.dispositionNode == '处置'"
+                    class="picBox"
+                    v-show="content_item.imgListPath.length > 0"
                   >
-                    <template v-for="(content_item, index) in event.content">
-                      <div :key="index" class="dispose">
-                        <div class="disposeMan">
-                          <div class="eTooltip">
-                            <img
-                              class="police"
-                              src="../assets/images/caseCenter/police.svg"
-                            />
-                            <EllipsisTooltip
-                              v-if="!caseCenter"
-                              :contentText="
-                                content_item.employeeName +
-                                  ' ' +
-                                  content_item.deptName
-                              "
-                              class="name"
-                            ></EllipsisTooltip>
-                            <span v-else>{{
-                              content_item.employeeName +
-                                " " +
-                                content_item.deptName
-                            }}</span>
-                          </div>
-                          <span>{{ content_item.createTime }}</span>
-                        </div>
-                        <div
-                          class="picBox"
-                          v-show="content_item.imgListPath.length > 0"
-                        >
-                          <span>上传照片</span>
-                          <div
-                            class="imgScroll"
-                            :class="[caseCenter ? 'box1' : 'box2']"
-                          >
-                            <template
-                              v-for="(item, index) in content_item.imgListPath"
-                            >
-                              <img
-                                :key="index"
-                                :src="serverUrl + item"
-                                alt=""
-                                @click.stop="previewImg(item)"
-                              />
-                            </template>
-                          </div>
-                        </div>
-                      </div>
-                    </template>
-                  </div>
-                  <div
-                    class="processing-content-detail detail-result"
-                    v-else-if="event.dispositionNode == '回告'"
-                  >
-                    <p>处置记录：{{ event.content.dispositionRecord }}</p>
-                    <div :class="[caseCenter ? 'row' : 'column']">
-                      <span>处置人：{{ event.content.employeeName }}</span>
-                      <span>处置时间：{{ event.content.dispositionTime }}</span>
-                    </div>
-                    <div>
-                      <span>相关附件：</span>
-                      <div
-                        class="img-box imgScroll"
-                        :class="[caseCenter ? 'img-box1' : 'img-box2']"
-                        v-if="event.imgListPath.length !== 0"
+                    <span>上<br />传<br />照<br />片</span>
+                    <div
+                      class="imgScroll"
+                      :class="[caseCenter ? 'box1' : 'box2']"
+                    >
+                      <template
+                        v-for="(item, index) in content_item.imgListPath"
                       >
                         <img
-                          v-for="(img_item, img_index) in event.imgListPath"
-                          :key="img_index"
-                          :src="serverUrl + img_item"
+                          :key="index"
+                          :src="serverUrl + item"
                           alt=""
-                          @click.stop="previewImg(img_item)"
+                          @click.stop="previewImg(item)"
                         />
-                      </div>
-                      <div
-                        class="file-box"
-                        v-if="event.fileListPath.length !== 0"
-                      >
-                        <p
-                          v-for="(file_item, file_index) in event.fileListPath"
-                          :key="file_index"
-                          v-download="file_item"
-                        >
-                          {{ file_item.split("_")[1] }}&nbsp;<em
-                            style="color: #1ed8a0; font-weight: bold"
-                            >点击下载</em
-                          >
-                        </p>
-                      </div>
+                      </template>
                     </div>
                   </div>
-                </td>
-              </tr>
-            </table>
+                </div>
+              </template>
+            </div>
+            <div
+              class="detail-result"
+              v-else-if="event.dispositionNode == '回告'"
+            >
+              <p>处置记录：{{ event.content.dispositionRecord }}</p>
+              <div class="column">
+                <span>处置人：{{ event.content.employeeName }}</span>
+                <span>处置时间：{{ event.content.dispositionTime }}</span>
+              </div>
+              <div>
+                <span>相关附件：</span>
+                <div
+                  class="img-box imgScroll"
+                  :class="[caseCenter ? 'img-box1' : 'img-box2']"
+                  v-if="event.imgListPath.length !== 0"
+                >
+                  <img
+                    v-for="(img_item, img_index) in event.imgListPath"
+                    :key="img_index"
+                    :src="serverUrl + img_item"
+                    alt=""
+                    @click.stop="previewImg(img_item)"
+                  />
+                </div>
+                <div class="file-box" v-if="event.fileListPath.length !== 0">
+                  <p
+                    v-for="(file_item, file_index) in event.fileListPath"
+                    :key="file_index"
+                    v-download="file_item"
+                  >
+                    {{ file_item.split("_")[1] }}&nbsp;<em
+                      style="color: #1ed8a0; font-weight: bold"
+                      >点击下载</em
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </template>
       </el-step></el-steps
@@ -278,7 +252,7 @@ export default {
   watch: {},
 
   mounted () {
-    EventBus.$on('selectedCaseRecord', info => {
+    EventBus.$on('selectedCaseRecord', (info) => {
       this.disposeCaseInfo(info)
     })
 
@@ -295,7 +269,7 @@ export default {
     /**
      * 格式化接警时间
      */
-    formatAcceptTime (formatAcceptTime, createTime) {
+    formatAcceptTime (designateStatus, formatAcceptTime, createTime) {
       let end = new Date().getTime()
       if (formatAcceptTime) {
         end = new Date(formatAcceptTime).getTime()
@@ -303,7 +277,8 @@ export default {
       const start = new Date(createTime).getTime()
       let minute = Math.ceil((end - start) / 1000.0 / 60)
       if (minute === 0 && end > start) minute = 1
-      return ' | 用时' + minute + '分钟'
+      const str = designateStatus ? '&nbsp;|&nbsp;' : ''
+      return str + '用时' + minute + '分钟&nbsp;'
     },
 
     /**
@@ -317,7 +292,7 @@ export default {
       const start = new Date(createTime).getTime()
       if (end - start > 10 * 60 * 1000) {
         const minute = Math.ceil((end - start) / 1000.0 / 60) - 10
-        return ' (超时' + minute + '分钟)'
+        return '(超时' + minute + '分钟)'
       }
       return ''
     },
@@ -326,7 +301,7 @@ export default {
     disposeCaseInfo (info) {
       this.events = info
       if (this.events.length !== 0) {
-        this.events.forEach(item => {
+        this.events.forEach((item) => {
           switch (item.dispositionNode) {
             case 0:
               item.dispositionNode = '受理'
@@ -343,7 +318,7 @@ export default {
             case 3:
               item.dispositionNode = '处置'
               if (item.content) {
-                item.content.forEach(c => {
+                item.content.forEach((c) => {
                   c.imgListPath = []
                   c.fileListPath = []
                   if (c.disImgUrl) {
@@ -385,7 +360,7 @@ export default {
     // 处理已上传文件返回info
     disposeUploadConfig (info, item) {
       if (info.length !== 0) {
-        info.forEach(t => {
+        info.forEach((t) => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             item.imgListPath.push(t)
@@ -458,7 +433,12 @@ export default {
   }
 
   /deep/.el-step.is-vertical .el-step__main {
+    box-sizing: border-box;
     padding: 0px 10px 28px 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
   }
   /deep/.el-step__title.is-process,
   /deep/.el-step__title.is-wait {
@@ -466,42 +446,39 @@ export default {
     font-weight: 700;
     color: #82f3fa;
   }
-  .eTooltip {
-    display: flex;
-    align-items: center;
-    color: #fff;
-  }
-  .police {
-    width: 16px;
-    height: 15px;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
-  .fl {
-    float: left;
-  }
-  .fr {
-    float: right;
-  }
   .name {
-    width: 110px;
+    margin-right: 5px;
+    width: 50%;
+  }
+  .tooltip {
     color: #fff;
     display: inline-block;
     height: 20px;
+    line-height: 20px;
+  }
+  .nameBox {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    .police {
+      width: 16px;
+      height: 15px;
+      margin-right: 8px;
+    }
+    .employee {
+      width: 80%;
+    }
+  }
+  .time {
+    text-align: right;
+    width: 50%;
   }
   .checkComment {
     width: 130px;
   }
-  .alarmMan {
-    width: 135px;
-  }
   .dispose {
     box-sizing: border-box;
     margin-bottom: 10px;
-    .disposeMan {
-      display: flex;
-      justify-content: space-between;
-    }
   }
   .together {
     box-sizing: border-box;
@@ -525,6 +502,9 @@ export default {
     .box2 {
       width: 240px;
     }
+    .box1 {
+      width: 480px;
+    }
     > div {
       display: flex;
       overflow-x: auto;
@@ -538,20 +518,19 @@ export default {
   }
   .processing-content-detail {
     color: #fff;
-  }
-  .detail-img {
     display: flex;
-    width: 450px;
-    height: 80px;
-    overflow-x: auto;
-    img {
-      width: 120px;
-      height: 68px;
-      margin-right: 10px;
-      vertical-align: top;
-    }
+    justify-content: space-between;
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+  }
+  .processing-content-detail2 {
+    color: #fff;
+    display: flex;
+    width: 100%;
   }
   .detail-result {
+    color: #fff;
     .row {
       display: flex;
       justify-content: space-between;
@@ -569,6 +548,7 @@ export default {
       cursor: pointer;
       img {
         width: 100px;
+        height: 60px;
         margin-right: 20px;
         margin-bottom: 6px;
       }
