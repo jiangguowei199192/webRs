@@ -27,8 +27,8 @@
         </ul>
         <div class="content-title">案件核实</div>
         <div class="btns">
-          <div>正常</div>
-          <div>异常</div>
+          <div>确认</div>
+          <div>误报</div>
         </div>
         <div class="remark">
           <div>备注：</div>
