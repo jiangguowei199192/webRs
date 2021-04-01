@@ -198,9 +198,7 @@ export default {
             this.list = res.data.data
             this.$nextTick(() => {
               this.list.forEach(item => {
-                if (!item.sectionLocations) {
-
-                } else {
+                if (item.sectionLocations) {
                   item.rect = {
                     show: false,
                     points: []
