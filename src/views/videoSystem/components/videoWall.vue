@@ -3124,32 +3124,40 @@ export default {
           }
           div:nth-child(1) {
             background: url(../../../assets/images/device/7.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(1):hover {
             background: url(../../../assets/images/device/7_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(2) {
             background: url(../../../assets/images/device/8.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(2):hover {
             background: url(../../../assets/images/device/8_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(3) {
             background: url(../../../assets/images/device/9.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(3):hover {
             background: url(../../../assets/images/device/9_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(4) {
             margin-right: 10px;
             background: url(../../../assets/images/device/4.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(4):hover {
             background: url(../../../assets/images/device/4_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(5) {
             width: 64px;
@@ -3160,6 +3168,7 @@ export default {
             // left: -5px;
             margin-right: 10px;
             background: url(../../../assets/images/device/5.png) no-repeat;
+            background-size: 100% 100%;
             cursor: text;
             margin-bottom: 5px;
           }
@@ -3169,31 +3178,39 @@ export default {
           // }
           div:nth-child(6) {
             background: url(../../../assets/images/device/6.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(6):hover {
             background: url(../../../assets/images/device/6_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(7) {
             background: url(../../../assets/images/device/1.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(7):hover {
             background: url(../../../assets/images/device/1_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(8) {
             background: url(../../../assets/images/device/2.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(8):hover {
             background: url(../../../assets/images/device/2_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(9) {
             background: url(../../../assets/images/device/3.png) no-repeat;
+            background-size: 100% 100%;
           }
           div:nth-child(9):hover {
             background: url(../../../assets/images/device/3_selected.png)
               no-repeat;
+            background-size: 100% 100%;
           }
         }
         .btns {
