@@ -339,6 +339,9 @@ const error = [
     code: 20003, desc: 'RECORD_NOT_CHANGEABLE', str: '记录不能更改'
   },
   {
+    code: 30001, desc: 'RESOURCE_HAS_NOT_DEPT_CODE', str: '该资源未分配组织，请先分配组织'
+  },
+  {
     code: 88501, desc: 'request_timed_out', str: '请求超时'
   },
   {
