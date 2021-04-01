@@ -218,7 +218,11 @@
         :reportTime="caseInfo.reportTime"
       ></DisposeRecDialog>
       <ChatBox :isShow.sync="showChatBox" :caseId="caseInfo.id"></ChatBox>
-      <CaseAssign :isShow.sync="showAssign" :caseInfo="caseInfo"></CaseAssign>
+      <CaseAssign
+        :isShow.sync="showAssign"
+        :caseInfo="caseInfo"
+        @assignSuccess="assignSuccess"
+      ></CaseAssign>
     </div>
   </CaseMain>
 </template>
@@ -377,6 +381,7 @@ export default {
     const me = this
     // 每隔10分钟刷新一次案件详情
     this.detailTimeout = setTimeout(() => {
+      me.getPushList()
       me.getCaseDetail()
       me.getCaseRecord()
     }, 10 * 60 * 1000)
@@ -399,6 +404,12 @@ export default {
     this.getCaseRecord()
   },
   methods: {
+    /**
+     * 分派成功
+     */
+    assignSuccess () {
+      this.getPushList()
+    },
     /**
      * 更新案件范围
      */
@@ -439,19 +450,21 @@ export default {
             const list = res.data.data
             this.pushList = []
             list.forEach((l) => {
-              let txt = ''
-              for (let i = 0; i < l.pushMans.length; i++) {
-                const s =
-                  i === l.pushMans.length.length - 1
-                    ? l.pushMans[i].employeeName
-                    : l.pushMans[i].employeeName + ' '
-                txt += s
+              if (l.pushMans && l.pushMans.length > 0) {
+                let txt = ''
+                for (let i = 0; i < l.pushMans.length; i++) {
+                  const s =
+                    i === l.pushMans.length.length - 1
+                      ? l.pushMans[i].employeeName
+                      : l.pushMans[i].employeeName + ' '
+                  txt += s
+                }
+                const p = {
+                  time: l.pushTime,
+                  txt: txt
+                }
+                this.pushList.push(p)
               }
-              const p = {
-                time: l.pushTime,
-                txt: txt
-              }
-              this.pushList.push(p)
             })
           }
         })

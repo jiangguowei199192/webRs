@@ -108,6 +108,7 @@ export default {
         this.radius = ''
         this.selectList = []
         this.search = ''
+        this.members = []
         setTimeout(() => {
           if (!this.$refs.gduMap) return
           this.$refs.gduMap.map2D._map.updateSize()
@@ -170,6 +171,7 @@ export default {
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
             this.$emit('update:isShow', false)
+            this.$emit('assignSuccess')
           }
         })
         .catch((err) => {
@@ -188,20 +190,45 @@ export default {
      * 获取组织人员完毕回调
      */
     getMembersDone () {
-      if (!this.$refs.gduMap) return
-      if (this.radius && !isNaN(this.radius)) {
-        this.$refs.gduMap.map2D.gisDispatchManager.addDatasInRadius(
-          this.peoples,
-          this.caseInfo,
-          this.radius * 1000
+      // 过滤掉已经派遣过的人员
+      this.$axios
+        .post(
+          caseApi.selectPushList,
+          { id: this.caseInfo.id },
+          { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        this.members = []
-        this.peoples.forEach((l) => {
-          if (l.inRadius) {
-            this.members.push(l)
+        .then((res) => {
+          if (res && res.data && res.data.code === 0) {
+            const list = res.data.data
+            list.forEach((l) => {
+              if (l.pushMans && l.pushMans.length > 0) {
+                l.pushMans.forEach(m => {
+                  const man = this.peoples.find(p => p.employeeId === m.employeeId)
+                  if (man) {
+                    const ind = this.peoples.indexOf(man)
+                    if (ind !== -1) { this.peoples.splice(ind, 1) }
+                  }
+                })
+              }
+            })
+
+            if (this.$refs.gduMap && this.radius && !isNaN(this.radius)) {
+              this.$refs.gduMap.map2D.gisDispatchManager.addDatasInRadius(
+                this.peoples,
+                this.caseInfo,
+                this.radius * 1000
+              )
+              this.peoples.forEach((l) => {
+                if (l.inRadius) {
+                  this.members.push(l)
+                }
+              })
+            } else this.members = this.peoples
           }
         })
-      } else this.members = this.peoples
+        .catch((err) => {
+          console.log('caseApi.selectPushList Err : ' + err)
+        })
     },
     /**
      * 范围改变
