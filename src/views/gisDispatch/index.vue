@@ -224,24 +224,6 @@ export default {
     }
   },
   methods: {
-    setclass () {
-      return 'addr'
-    },
-    addCamera () {
-      this.onlineArray.forEach((o) => {
-        o.longitude = o.deviceLongitude
-        o.latitude = o.deviceLatitude
-        o.type = 'RP_Case'
-        o.url = o.children[0].streamUrl
-        // if (o.onlineStatus === 'online' && o.children && o.children.length > 0) {
-        //   o.urls = []
-        //   o.children.forEach((l) => {
-        //     o.urls.push(l.streamUrl)
-        //   })
-        // }
-      })
-      this.$refs.caseMain.addDatas(this.onlineArray)
-    },
     /**
      * 获取无人机资源完毕回调
      */
@@ -369,7 +351,11 @@ export default {
      * 跳转到案件处理
      */
     jumpCase (item) {
-      const data = { id: item.id }
+      const data = {
+        id: item.id,
+        latitude: item.latitude,
+        longitude: item.longitude
+      }
       const newpage = this.$router.resolve({
         path: '/gisDispatchDispose',
         query: {

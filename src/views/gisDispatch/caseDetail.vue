@@ -376,6 +376,8 @@ export default {
     this.caseInfo.id = data.id
     this.caseInfo.type = 'RP_Case'
     this.caseInfo.hasFence = true
+    this.caseInfo.longitude = data.longitude
+    this.caseInfo.latitude = data.latitude
     this.getCaseDetail()
     this.getPushList()
     const me = this
@@ -489,6 +491,8 @@ export default {
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
+            delete data.latitude
+            delete data.longitude
             copyData(data, this.caseInfo)
             const img = this.getCaseImg(data.disFinishAttachment)
             if (img) {
@@ -497,8 +501,8 @@ export default {
             setTimeout(() => {
               this.$refs.caseMain.addCaseMarker([this.caseInfo])
               this.$refs.caseMain.zoomToCenter(
-                data.longitude,
-                data.latitude,
+                this.caseInfo.longitude,
+                this.caseInfo.latitude,
                 13
               )
               this.$refs.caseMain.addOrUpdateFence(this.caseInfo, 5000)
