@@ -4,13 +4,13 @@
       <div class="title">{{ configJson.projectTitle }}</div>
       <img class="logo" :src="logoPic" alt />
       <br />
-      <b class="label">用户名：</b>
+      <b class="label">账号：</b>
       <el-input
         placeholder="请输入用户名"
         auto-complete="new-password"
         clearable
         maxlength="20"
-        v-model="loginInfo.username"
+        v-model.trim="loginInfo.username"
         name="userName"
         class="username"
       ></el-input>
@@ -24,7 +24,7 @@
         auto-complete="new-password"
         clearable
         maxlength="20"
-        v-model="loginInfo.password"
+        v-model.trim="loginInfo.password"
         class="username password"
         name="passWord"
         @keyup.enter.native="jumpToMain"

@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <el-container>
-      <el-header :class="{ fixed: isFixed }">
-        <div class="headerTitle" v-show="!menuDisable ">
+      <el-header :class="{ fixed: isFixed }" v-show="showHeader">
+        <div class="headerTitle">
           <div class="realTime">
             <span class="extra">{{ timeObj.year }}</span> 年
             <span class="extra">{{ timeObj.month }}</span> 月
@@ -23,7 +23,7 @@
           <div class="content">
             <div class="title">{{ projectTitle }}</div>
             <div class="container">
-              <div class="box" :class="{ disable: menuDisable }">
+              <div class="box" >
                 <div
                   v-for="(item, index) in systems"
                   :key="index"
@@ -38,7 +38,7 @@
                 <div class="info">
                   <div class="person">
                     <img :src="perSonPic" alt />
-                    <span class="uName">{{ userName || "-" }}</span>
+                    <span class="uName" :title="userName">{{ userName?userName.length>4?userName.slice(0,4)+'...':userName:'-' }}</span>
 
                     <el-dropdown @command="handleCommand">
                       <span class="el-dropdown-link">
@@ -182,7 +182,7 @@ export default {
       timerWeather: null,
       userName: '',
       isFixed: false,
-      menuDisable: false, // 菜单禁用
+      showHeader: true,
       projectTitle: '',
       timeObj: '', // 当前时间
       curCity: '', // 所在城市
@@ -226,12 +226,12 @@ export default {
     // 设备上线
     EventBus.$on('video/device/online', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
-      // this.$notify.success({ title: '提示', message: '设备上线！' })
+      this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
     EventBus.$on('video/device/offline', info => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
-      // this.$notify.success({ title: '提示', message: '设备下线！' })
+      this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
     EventBus.$on('video/realVideo/streamStart', info => {
@@ -271,9 +271,9 @@ export default {
     EventBus.$off('droneInfos')
     EventBus.$off('video/people/found')
     EventBus.$off('video/people/real')
-    EventBus.$off('video/aRAiResult')
-    EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
-    EventBus.$off('video/webControlPztNotice')
+    // EventBus.$off('video/aRAiResult')
+    // EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
+    // EventBus.$off('video/webControlPztNotice')
     // 退出时，关闭mqtt连接
     if (this.mqtt) {
       this.mqtt.needReconnect = false
@@ -396,14 +396,12 @@ export default {
     getPath () {
       const path = this.$route.path
       this.isFixed = false
-      this.menuDisable = false
-      if (path === '/gisDispatchDispose') {
-        this.menuDisable = true
-      }
-
-      if (path === '/gisDispatch' || path === '/gisDispatchDispose') {
+      this.showHeader = true
+      if (path === '/gisDispatch') {
         this.isFixed = true
         this.isActive = 0
+      } else if (path === '/gisDispatchDispose') {
+        this.showHeader = false
       } else if (path === '/caseCenter') {
         this.isActive = 1
       } else if (
@@ -560,9 +558,6 @@ export default {
               background-size: 100% 100%;
             }
           }
-          div.box.disable {
-            pointer-events: none;
-          }
           div.settings {
             position: relative;
             width: 348px;
@@ -595,9 +590,12 @@ export default {
                   font-family: Microsoft YaHei;
                   font-weight: 400;
                   color: #0fbfe0;
-                  margin: 0 32px 0 18px;
+                  // margin: 0 32px 0 18px;
                   position: relative;
                   top: -6px;
+                  display: inline-block;
+                  width:75px;
+                  text-align:center;
                 }
                 /deep/ ul.settingDrop {
                   box-sizing: border-box;
