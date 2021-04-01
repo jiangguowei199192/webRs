@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-26 10:26:56
+ * @LastEditTime: 2021-04-01 11:21:30
 -->
 <template>
   <div class="fireBox">
@@ -60,7 +60,6 @@
         :fieldList="tableInfo.fieldList"
         :handle="tableInfo.handle"
         :data.sync="tableInfo.data"
-        :tableHeight="610"
         :query="query"
         :api="getCaseList"
         :checkedList.sync="checkedList"

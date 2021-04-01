@@ -2,7 +2,7 @@
   <div class="tableBox" :class="className">
     <!-- 显示表格 -->
     <el-table
-      class="manageTable"
+      class="manageTable listScroll"
       ref="table"
       :data="data"
       style="width: 100%"
@@ -191,11 +191,11 @@ export default {
       listInfo: {
         tableHeight: 0, // 表格最大高度
         total: 0, // 总条数
-        pageSizes: [10, 20, 50, 100], // 分页数量列表
+        pageSizes: [15, 20, 50, 100], // 分页数量列表
         query: {
           // 查询条件
           currentPage: 1, // 当前页
-          pageSize: 12 // 每页条数
+          pageSize: 15 // 每页条数
         }
       },
       serverUrl: globalApi.headImg,
@@ -422,10 +422,10 @@ export default {
   .tablePagination {
     height: 35px;
     line-height: 35px;
-    margin-top: 115px;
+    margin-top: 40px;
   }
   .manageTable.el-table {
-    height: 660px !important;
+    height: 740px;
   }
 }
 </style>
