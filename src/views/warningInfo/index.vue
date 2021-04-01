@@ -111,7 +111,7 @@
         @size-change="sizeChange"
       ></el-pagination>
     </div>
-    <DetailInfo :dialogVisible="showDetailInfo" :info="detailInfo" @close="showDetailInfo = false"></DetailInfo>
+    <DetailInfo :dialogVisible="showDetailInfo" :info="detailInfo" @close="showDetailInfo = false;getList()"></DetailInfo>
   </div>
 </template>
 <script>

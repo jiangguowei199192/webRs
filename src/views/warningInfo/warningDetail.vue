@@ -2,7 +2,7 @@
   <el-dialog
     class="detailInfo"
     :visible.sync="dialogVisible"
-    @before-close="closeDialog"
+    :before-close="closeDialog"
     :show-close="false"
   >
     <div class="content-title">
@@ -84,12 +84,12 @@
               "
             ></span>
         </div>
-        <div class="tools">
+        <!-- <div class="tools">
           <span>区域检测</span>
           <el-switch v-model="areaWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
           <span>事件检测</span>
           <el-switch v-model="eventWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
-        </div>
+        </div> -->
       </div>
     </div>
   </el-dialog>
@@ -131,8 +131,8 @@ export default {
     .content-title {
       img {
         position: absolute;
-        right: 8px;
-        top: 4px;
+        right: 12px;
+        top: 14px;
         cursor: pointer;
       }
     }
@@ -162,6 +162,7 @@ export default {
           text-align: center;
           border: 1px solid #39a4dd;
           color: #39a4dd;
+          cursor: pointer;
         }
         div:nth-child(1) {
           margin-right: 10px;
@@ -236,7 +237,7 @@ export default {
       div.rightInfo {
         .bigImg {
           width: 489px;
-          height: 466px;
+          height: 516px;
           position: relative;
           img {
             width: 100%;

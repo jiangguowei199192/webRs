@@ -74,7 +74,7 @@ var mqttService;
 
     // mqtt 消息到来的callback
     var onMessageArrived = function (message) {
-      // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+      console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
       if (message.topic === 'gdu/realVideo/streamHadNotData') {
