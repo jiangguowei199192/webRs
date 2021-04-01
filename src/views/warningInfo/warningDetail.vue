@@ -210,7 +210,7 @@ export default {
               text-align: center;
               line-height: 20px;
               background: #39a4dd;
-              border-radius: 70%;
+              border-radius: 50%;
               font-size: 16px;
               font-family: Source Han Sans CN;
               font-weight: 400;
