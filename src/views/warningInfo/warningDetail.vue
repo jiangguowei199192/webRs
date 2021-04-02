@@ -27,38 +27,39 @@
         </ul>
         <div class="content-title">案件核实</div>
         <div class="btns">
-          <div>确认</div>
-          <div>误报</div>
+          <div @click.stop="confirmWarn(2)">确认</div>
+          <div @click.stop="confirmWarn(3)">误报</div>
         </div>
         <div class="remark">
           <div>备注：</div>
           <el-input
             type="textarea"
             placeholder="请输入内容"
-            v-model.trim="textarea"
+            v-model.trim="remark"
             maxlength="30"
             show-word-limit
             class="word"
           ></el-input>
           <div class="btns">
-            <div>取消</div>
-            <div>确定</div>
+            <div @click="this.remark=''">取消</div>
+            <div @click="addRemark">确定</div>
           </div>
           <div class="warningBox webFsScroll">
-            <div class="list">
+            <div class="list" v-for="(item,index) in remarkList" :key="index">
+              <div class="circle">{{index+1}}</div>
+              <div class="extra">
+                <span class="descrip">{{item.remark||'-'}}</span>
+                <div class="time">{{item.createTime||'-'}}</div>
+              </div>
+            </div>
+            <div class="empty" v-show="remarkList.length===0">暂无备注信息</div>
+            <!-- <div class="list">
               <div class="circle">1</div>
               <div class="extra">
                 <span class="descrip">这是一条很长很长很长的内容这是一条很长很长很长的内容这是一条很长很长很长的内容</span>
                 <div class="time">2021-05-16 08:21:33</div>
               </div>
-            </div>
-            <div class="list">
-              <div class="circle">1</div>
-              <div class="extra">
-                <span class="descrip">这是一条很长很长很长的内容这是一条很长很长很长的内容这是一条很长很长很长的内容</span>
-                <div class="time">2021-05-16 08:21:33</div>
-              </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -66,9 +67,9 @@
         <div class="bigImg">
           <img :src="info.imageUrl" alt />
           <span
-              v-for="(list,index) in info.rect.points"
-              :key="index"
-              :style="
+            v-for="(list,index) in info.rect.points"
+            :key="index"
+            :style="
                 'left:' +
                   list.left +
                   '%;' +
@@ -82,14 +83,14 @@
                  list.height +
                   '%;'
               "
-            ></span>
+          ></span>
         </div>
         <!-- <div class="tools">
           <span>区域检测</span>
           <el-switch v-model="areaWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
           <span>事件检测</span>
           <el-switch v-model="eventWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
-        </div> -->
+        </div>-->
       </div>
     </div>
   </el-dialog>
@@ -110,13 +111,13 @@ export default {
   data () {
     return {
       X: require('../../assets/images/X.svg'),
-      textarea: '',
-      areaWatch: true,
-      eventWatch: true
+      remark: '',
+      remarkList: []
     }
   },
   methods: {
-    getList () {
+    // 确认/误报
+    confirmWarn (status) {
       var xsRequest = axios.create({
         baseURL: 'http://172.16.63.43:8080',
         timeout: 10000,
@@ -129,30 +130,107 @@ export default {
         config.data = qs.stringify({ ...config.data })
         return config
       })
-      var params = {
-        startTime: this.dateRange[0],
-        endTime: this.dateRange[1],
-        currentPage: this.currentPage,
-        sizeOfPage: this.pageSize,
-        alarmStatus: this.query.alarmStatus,
-        alarmLevel: this.query.alarmLevel
+      const params = {
+        id: this.info.id,
+        status
       }
       xsRequest
-        .post('/tAlarm/update', params)
+        .post('/structuration/tAlarm/update', params)
         .then(res => {
-          console.log('设备列表返回:', res)
           if (res.data.code === 0) {
+            this.$notify.success({
+              title: '成功',
+              message: '告警核实结果状态修改成功',
+              duration: 3 * 1000
+            })
           }
         })
         .catch(err => {
-          console.log('structureApi.alarmList Err : ' + err)
+          console.log(err)
+        })
+    },
+    // 添加备注
+    addRemark () {
+      const xsRequest = axios.create({
+        baseURL: 'http://172.16.63.43:8080',
+        timeout: 10000,
+        withCredentials: true,
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      })
+      xsRequest.interceptors.request.use(config => {
+        config.data = qs.stringify({ ...config.data })
+        return config
+      })
+      const params = {
+        alarmId: this.info.id,
+        authorId: JSON.parse(localStorage.getItem('userDetail')).id,
+        authName: JSON.parse(localStorage.getItem('userDetail')).username,
+        remark: this.remark
+      }
+      xsRequest
+        .post('/structuration/tAlarmRemark/insert', params)
+        .then(res => {
+          if (res.data.code === 0) {
+            this.$notify.success({
+              title: '成功',
+              message: '添加备注成功',
+              duration: 3 * 1000
+            })
+            this.getRemarkList()
+            this.remark = ''
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    getRemarkList () {
+      const xsRequest = axios.create({
+        baseURL: 'http://172.16.63.43:8080',
+        timeout: 10000,
+        withCredentials: true,
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      })
+      xsRequest.interceptors.request.use(config => {
+        config.data = qs.stringify({ ...config.data })
+        return config
+      })
+      const params = {
+        alarmId: this.info.id,
+        page: 1,
+        sizeOfPage: 10000
+      }
+      xsRequest
+        .post('/structuration/tAlarmRemark/query', params)
+        .then(res => {
+          if (res && res.data && res.data.code === 0) {
+            const data = res.data.data
+            this.remarkList = data.data
+          }
+        })
+        .catch(err => {
+          console.log(err)
         })
     },
     closeDialog () {
       this.$emit('close')
     }
   },
-  watch: {}
+  watch: {
+    info: {
+      handler (nv, ov) {
+        if (nv.rect.show) {
+          this.getRemarkList()
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -265,6 +343,10 @@ export default {
                 margin-bottom: 15px;
               }
             }
+          }
+          div.empty{
+            color:#fff;
+            text-align: center;
           }
         }
       }
