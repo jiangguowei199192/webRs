@@ -4,13 +4,18 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-30 19:46:48
+ * @LastEditTime: 2021-04-02 13:57:10
 -->
 <template>
   <div class="container">
     <!-- 多条件筛选栏 -->
     <div class="date-tool">
-      <el-select placeholder="告警设备" class="select-input" v-model="query.alarmEquipment" clearable>
+      <el-select
+        placeholder="告警设备"
+        class="select-input"
+        v-model="query.alarmEquipment"
+        clearable
+      >
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -18,7 +23,12 @@
           :value="item.typeCode"
         ></el-option>
       </el-select>
-      <el-select placeholder="等级" class="select-input" v-model="query.alarmLevel" clearable>
+      <el-select
+        placeholder="等级"
+        class="select-input"
+        v-model="query.alarmLevel"
+        clearable
+      >
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -26,7 +36,12 @@
           :value="item.typeCode"
         ></el-option>
       </el-select>
-      <el-select placeholder="告警类型" class="select-input" v-model="query.alarmType" clearable>
+      <el-select
+        placeholder="告警类型"
+        class="select-input"
+        v-model="query.alarmType"
+        clearable
+      >
         <el-option
           v-for="(item, index) in caseStatus"
           :key="index"
@@ -55,18 +70,18 @@
         @click.stop="showDetailInfoClick(item, list_index)"
       >
         <div class="header-info">
-          <div class="info-title">{{ item.alarmTypeName }}</div>
+          <div class="info-title">{{ item.alarmType }}</div>
           <div class="info-status">
-            <span>正常</span>
-            <span>|</span>
-            <span>橙色警告</span>
+            <span :style="statusStyle">{{ item.alarmStatus }}</span>
+            <span> | </span>
+            <span :style="levelStyle">{{ item.alarmLevel }}</span>
           </div>
         </div>
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
             <img :src="item.imageUrl || noPic" />
             <span
-              v-for="(list,index) in item.rect.points"
+              v-for="(list, index) in item.rect.points"
               :key="index"
               :style="
                 'left:' +
@@ -79,7 +94,7 @@
                   list.width +
                   '%;' +
                   'height:' +
-                 list.height +
+                  list.height +
                   '%;'
               "
             ></span>
@@ -87,11 +102,17 @@
           <div class="text-base">
             <div class="base-equipment">
               <span class="item-text1">告警设备：</span>
-              <EllipsisTooltip class="item-text2" :contentText="item.deviceId.deviceName"></EllipsisTooltip>
+              <EllipsisTooltip
+                class="item-text2"
+                :contentText="String(item.deviceId)"
+              ></EllipsisTooltip>
             </div>
             <div class="base-time">
               <span class="item-text1">时间：</span>
-              <EllipsisTooltip class="item-text2" :contentText="item.captureTime"></EllipsisTooltip>
+              <EllipsisTooltip
+                class="item-text2"
+                :contentText="item.captureTime"
+              ></EllipsisTooltip>
             </div>
           </div>
         </div>
@@ -111,14 +132,21 @@
         @size-change="sizeChange"
       ></el-pagination>
     </div>
-    <DetailInfo :dialogVisible="showDetailInfo" :info="detailInfo" @close="showDetailInfo = false;getList()"></DetailInfo>
+    <DetailInfo
+      :dialogVisible="showDetailInfo"
+      :info="detailInfo"
+      @close="
+        showDetailInfo = false;
+        getList();
+      "
+    ></DetailInfo>
   </div>
 </template>
 <script>
 // import { structureApi } from '@/api/structureData.js'
 import DetailInfo from './warningDetail'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
-import { timeFormat } from '@/utils/date'
+import { timeFormat, timeFormat3 } from '@/utils/date'
 import axios from 'axios'
 import qs from 'qs'
 
@@ -147,9 +175,12 @@ export default {
       // 查询条件
       query: {
         alarmEquipment: '',
+        alarmStatus: '',
         alarmLevel: '',
         alarmType: ''
-      }
+      },
+      statusStyle: '',
+      levelStyle: ''
     }
   },
 
@@ -157,9 +188,8 @@ export default {
     // 默认的日期范围，最近一周
     var start = new Date()
     var end = new Date()
-    this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
-    this.dateRange[1] = end.getTime()
-
+    this.dateRange[0] = timeFormat3(start.getTime() - 1000 * 60 * 60 * 24 * 7)
+    this.dateRange[1] = timeFormat3(end.getTime())
     this.getList()
   },
 
@@ -178,42 +208,77 @@ export default {
         return config
       })
       var params = {
-        page: this.currentPage,
-        pageSize: this.pageSize,
         startTime: this.dateRange[0],
-        endTime: this.dateRange[1]
+        endTime: this.dateRange[1],
+        currentPage: this.currentPage,
+        sizeOfPage: this.pageSize,
+        alarmStatus: this.query.alarmStatus,
+        alarmLevel: this.query.alarmLevel
       }
       xsRequest
-        .post('/structuration/spaceTimeQuery/queryAlarms', params)
+        .post('/structuration/tAlarm/query', params)
         .then(res => {
-          // console.log('设备列表返回:', res)
+          console.log('设备列表返回:', res)
           if (res.data.code === 0) {
-            res.data.data.forEach(item => {
+            res.data.data.data.forEach(item => {
               item.captureTime = timeFormat(item.captureTime)
               item.rect = {
                 points: [],
                 show: false
               }
             })
-            this.list = res.data.data
+            this.list = res.data.data.data
+            this.pageTotal = res.data.data.total
             this.$nextTick(() => {
               this.list.forEach(item => {
-                if (item.sectionLocations) {
-                  item.rect = {
-                    show: false,
-                    points: []
-                  }
-                  const imgW = item.imgeWidth
-                  const imgH = item.imgeHeight
-                  item.sectionLocations.forEach(r => {
-                    item.rect.points.push({
-                      width: (r.width * 100.0) / imgW,
-                      height: (r.height * 100.0) / imgH,
-                      left: (r.left * 100.0) / imgW,
-                      top: (r.top * 100.0) / imgH
-                    })
-                  })
-                  item.rect.show = true
+                // if (item.sectionLocations) {
+                //   item.rect = {
+                //     show: false,
+                //     points: []
+                //   }
+                //   const imgW = item.imgeWidth
+                //   const imgH = item.imgeHeight
+                //   item.sectionLocations.forEach(r => {
+                //     item.rect.points.push({
+                //       width: (r.width * 100.0) / imgW,
+                //       height: (r.height * 100.0) / imgH,
+                //       left: (r.left * 100.0) / imgW,
+                //       top: (r.top * 100.0) / imgH
+                //     })
+                //   })
+                //   item.rect.show = true
+                // }
+                switch (item.alarmStatus) {
+                  case 1:
+                    item.alarmStatus = '未处理'
+                    this.statusStyle = 'color:#00d1ff'
+                    break
+                  case 2:
+                    item.alarmStatus = '异常'
+                    this.statusStyle = 'color:#af0e03'
+                    break
+                  case 3:
+                    item.alarmStatus = '误报'
+                    this.statusStyle = 'color:#ef4e22'
+                    break
+                }
+                switch (item.alarmLevel) {
+                  case 1:
+                    item.alarmLevel = '红色预警'
+                    this.levelStyle = 'color:#af0e03'
+                    break
+                  case 2:
+                    item.alarmLevel = '橙色预警'
+                    this.levelStyle = 'color:#ef4e22'
+                    break
+                  case 3:
+                    item.alarmLevel = '黄色预警'
+                    this.levelStyle = 'color:#e5ff00'
+                    break
+                  case 4:
+                    item.alarmLevel = '蓝色预警'
+                    this.levelStyle = 'color:#00d1ff'
+                    break
                 }
               })
             })

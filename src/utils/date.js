@@ -85,3 +85,17 @@ export function timeFormat2 (timestamp) {
   const time = timeFormat(timestamp)
   return time.substr(5)
 }
+
+// 将时间戳转化成xxY/xxM/xxD xxH:xxM:xxS格式
+export function timeFormat3 (timestamp) {
+  // timestamp是整数，否则要parseInt转换,不会出现少个0的情况
+  const add0 = function (m) { return m < 10 ? '0' + m : m }
+  var time = new Date(timestamp)
+  var year = time.getFullYear()
+  var month = time.getMonth() + 1
+  var date = time.getDate()
+  var hours = time.getHours()
+  var minutes = time.getMinutes()
+  var seconds = time.getSeconds()
+  return year + '/' + add0(month) + '/' + add0(date) + ' ' + add0(hours) + ':' + add0(minutes) + ':' + add0(seconds)
+}
