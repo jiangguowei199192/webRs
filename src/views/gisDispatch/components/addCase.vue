@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import { isNotNull, checkPhone } from '@/utils/formRules'
+import { isNotNull, checkPhone, checkIdcard } from '@/utils/formRules'
 import { caseApi } from '@/api/case'
 import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import assignMixin from '../mixins/assignMixin'
@@ -206,7 +206,8 @@ export default {
         infoSource: [{ required: true, message: '请选择案件来源' }],
         receivingAlarmMan: [{ required: true, message: '请输入接警人' }],
         longitude: isNotNull('请点选案件经纬度位置'),
-        reportTel: [checkPhone()]
+        reportTel: [checkPhone()],
+        reporterIdentity: [checkIdcard()]
       },
       caseForm: {
         reporterGender: '',
