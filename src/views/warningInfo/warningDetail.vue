@@ -165,7 +165,7 @@ export default {
       })
       const params = {
         alarmId: this.info.id,
-        authorId: JSON.parse(localStorage.getItem('userDetail')).id,
+        authorId: JSON.parse(localStorage.getItem('userDetail')).customerId,
         authName: JSON.parse(localStorage.getItem('userDetail')).username,
         remark: this.remark
       }
@@ -223,7 +223,7 @@ export default {
   watch: {
     info: {
       handler (nv, ov) {
-        if (nv.rect.show) {
+        if (nv) {
           this.getRemarkList()
         }
       },
