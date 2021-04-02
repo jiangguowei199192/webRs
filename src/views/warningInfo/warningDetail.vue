@@ -223,7 +223,7 @@ export default {
   watch: {
     info: {
       handler (nv, ov) {
-        if (nv) {
+        if (nv.rect.show) {
           this.getRemarkList()
         }
       },
