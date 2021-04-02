@@ -441,7 +441,7 @@ export default {
       this.init()
     },
     // 点击在线设备中红外光或可见光
-    playDeviceVideo (item, list, index1, index2) {
+    playDeviceVideo: debounce(function (item, list, index1, index2) {
       const curData = Object.assign({}, list, {
         isShowOperate: false,
         deviceCode: item.id,
@@ -524,7 +524,7 @@ export default {
         //   this.selectedIndex = 200
         // }
       }
-    },
+    }, 500),
     // 云台操作8个方位键
     startPz: debounce(function (index) {
       // accessType 0 sdk 1 GB
