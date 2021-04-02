@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-02 14:05:37
+ * @LastEditTime: 2021-04-02 15:03:25
 -->
 <template>
   <div class="container">
@@ -13,11 +13,12 @@
       <el-select
         placeholder="告警设备"
         class="select-input"
-        v-model="query.alarmEquipment"
+        v-model="query.alarmType"
+        @change="searchList"
         clearable
       >
         <el-option
-          v-for="(item, index) in caseStatus"
+          v-for="(item, index) in caseDevice"
           :key="index"
           :label="item.typeName"
           :value="item.typeCode"
@@ -28,9 +29,10 @@
         class="select-input"
         v-model="query.alarmLevel"
         clearable
+        @change="searchList"
       >
         <el-option
-          v-for="(item, index) in caseStatus"
+          v-for="(item, index) in caseLevel"
           :key="index"
           :label="item.typeName"
           :value="item.typeCode"
@@ -39,8 +41,9 @@
       <el-select
         placeholder="告警类型"
         class="select-input"
-        v-model="query.alarmType"
+        v-model="query.alarmLevel"
         clearable
+        @change="searchList"
       >
         <el-option
           v-for="(item, index) in caseStatus"
@@ -70,17 +73,27 @@
         @click.stop="showDetailInfoClick(item, list_index)"
       >
         <div class="header-info">
-          <div class="info-title">{{ item.alarmType }}</div>
+          <div class="info-title">{{ item.alarmTypeName }}</div>
           <div class="info-status">
-            <span :style="statusStyle">{{ item.alarmStatus }}</span>
+            <span :style="statusStyle">{{
+              `${item.alarmStatus == 1 ? "未处理" : ""}${
+                item.alarmStatus == 2 ? "异常" : ""
+              }${item.alarmStatus == 3 ? "误报" : ""}`
+            }}</span>
             <span> | </span>
-            <span :style="levelStyle">{{ item.alarmLevel }}</span>
+            <span :style="levelStyle">{{
+              `${item.alarmLevel == 1 ? "红色预警" : ""}${
+                item.alarmLevel == 2 ? "橙色预警" : ""
+              }${item.alarmLevel == 3 ? "黄色预警" : ""}${
+                item.alarmLevel == 4 ? "蓝色预警" : ""
+              }`
+            }}</span>
           </div>
         </div>
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
             <img :src="item.imageUrl || noPic" />
-            <span
+            <!-- <span
               v-for="(list, index) in item.rect.points"
               :key="index"
               :style="
@@ -97,7 +110,7 @@
                   list.height +
                   '%;'
               "
-            ></span>
+            ></span> -->
           </div>
           <div class="text-base">
             <div class="base-equipment">
@@ -168,13 +181,24 @@ export default {
       showDetailInfo: false,
       detailInfo: { rect: { show: false, points: [] } },
       noPic: require('../../assets/images/gisDispatch/no-pic.svg'),
+      caseDevice: [
+        { typeCode: 1, typeName: '人' },
+        { typeCode: 2, typeName: '船' },
+        { typeCode: 3, typeName: '车' }
+      ],
       caseStatus: [
-        { typeCode: 0, typeName: '未处置' },
-        { typeCode: 1, typeName: '已处置' }
+        { typeCode: 1, typeName: '未处理' },
+        { typeCode: 2, typeName: '异常' },
+        { typeCode: 3, typeName: '误报' }
+      ],
+      caseLevel: [
+        { typeCode: 1, typeName: '红色预警' },
+        { typeCode: 2, typeName: '橙色预警' },
+        { typeCode: 3, typeName: '黄色预警' },
+        { typeCode: 4, typeName: '蓝色预警' }
       ],
       // 查询条件
       query: {
-        alarmEquipment: '',
         alarmStatus: '',
         alarmLevel: '',
         alarmType: ''
@@ -188,8 +212,8 @@ export default {
     // 默认的日期范围，最近一周
     var start = new Date()
     var end = new Date()
-    this.dateRange[0] = timeFormat3(start.getTime() - 1000 * 60 * 60 * 24 * 7)
-    this.dateRange[1] = timeFormat3(end.getTime())
+    this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
+    this.dateRange[1] = end.getTime()
     this.getList()
   },
 
@@ -208,8 +232,8 @@ export default {
         return config
       })
       var params = {
-        startTime: this.dateRange[0],
-        endTime: this.dateRange[1],
+        startTime: timeFormat3(this.dateRange[0]),
+        endTime: timeFormat3(this.dateRange[1]),
         currentPage: this.currentPage,
         sizeOfPage: this.pageSize,
         alarmStatus: this.query.alarmStatus,
@@ -248,38 +272,31 @@ export default {
                   })
                   item.rect.show = true
                 }
-                // switch (item.alarmStatus) {
-                //   case 1:
-                //     item.alarmStatus = '未处理'
-                //     this.statusStyle = 'color:#00d1ff'
-                //     break
-                //   case 2:
-                //     item.alarmStatus = '异常'
-                //     this.statusStyle = 'color:#af0e03'
-                //     break
-                //   case 3:
-                //     item.alarmStatus = '误报'
-                //     this.statusStyle = 'color:#ef4e22'
-                //     break
-                // }
-                // switch (item.alarmLevel) {
-                //   case 1:
-                //     item.alarmLevel = '红色预警'
-                //     this.levelStyle = 'color:#af0e03'
-                //     break
-                //   case 2:
-                //     item.alarmLevel = '橙色预警'
-                //     this.levelStyle = 'color:#ef4e22'
-                //     break
-                //   case 3:
-                //     item.alarmLevel = '黄色预警'
-                //     this.levelStyle = 'color:#e5ff00'
-                //     break
-                //   case 4:
-                //     item.alarmLevel = '蓝色预警'
-                //     this.levelStyle = 'color:#00d1ff'
-                //     break
-                // }
+                switch (item.alarmStatus) {
+                  case 1:
+                    this.statusStyle = 'color:#00d1ff'
+                    break
+                  case 2:
+                    this.statusStyle = 'color:#af0e03'
+                    break
+                  case 3:
+                    this.statusStyle = 'color:#ef4e22'
+                    break
+                }
+                switch (item.alarmLevel) {
+                  case 1:
+                    this.levelStyle = 'color:#af0e03'
+                    break
+                  case 2:
+                    this.levelStyle = 'color:#ef4e22'
+                    break
+                  case 3:
+                    this.levelStyle = 'color:#e5ff00'
+                    break
+                  case 4:
+                    this.levelStyle = 'color:#00d1ff'
+                    break
+                }
               })
             })
           }
@@ -294,6 +311,13 @@ export default {
       this.endTime = this.dateRange[1]
       this.currentPage = 1
       this.getList()
+    },
+
+    searchList () {
+      this.currentPage = 1
+      this.getList()
+      this.query.alarmStatus = this.query.alarmLevel = this.query.alarmType =
+        ''
     },
 
     currentPageChange (curPage) {
