@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-02 13:57:10
+ * @LastEditTime: 2021-04-02 14:04:24
 -->
 <template>
   <div class="container">
@@ -163,7 +163,7 @@ export default {
       dateRange: [],
       list: [],
       pageTotal: 100,
-      pageSize: 18,
+      pageSize: 15,
       currentPage: 1,
       showDetailInfo: false,
       detailInfo: { rect: { show: false, points: [] } },
@@ -218,7 +218,7 @@ export default {
       xsRequest
         .post('/structuration/tAlarm/query', params)
         .then(res => {
-          console.log('设备列表返回:', res)
+          // console.log('设备列表返回:', res)
           if (res.data.code === 0) {
             res.data.data.data.forEach(item => {
               item.captureTime = timeFormat(item.captureTime)
