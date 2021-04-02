@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-02 14:04:24
+ * @LastEditTime: 2021-04-02 14:05:37
 -->
 <template>
   <div class="container">
@@ -125,7 +125,7 @@
         popper-class="pageSelect"
         :total="pageTotal"
         :page-size="pageSize"
-        :page-sizes="[18, 30, 50, 100]"
+        :page-sizes="[15, 30, 50, 100]"
         :current-page.sync="currentPage"
         layout="total, sizes, prev, pager, next, jumper"
         @current-change="currentPageChange"
