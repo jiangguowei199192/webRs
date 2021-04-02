@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-02 14:55:38
+ * @LastEditTime: 2021-04-02 15:03:25
 -->
 <template>
   <div class="container">
@@ -93,7 +93,7 @@
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
             <img :src="item.imageUrl || noPic" />
-            <span
+            <!-- <span
               v-for="(list, index) in item.rect.points"
               :key="index"
               :style="
@@ -110,7 +110,7 @@
                   list.height +
                   '%;'
               "
-            ></span>
+            ></span> -->
           </div>
           <div class="text-base">
             <div class="base-equipment">
