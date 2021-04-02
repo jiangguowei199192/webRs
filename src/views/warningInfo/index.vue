@@ -231,55 +231,55 @@ export default {
             this.pageTotal = res.data.data.total
             this.$nextTick(() => {
               this.list.forEach(item => {
-                // if (item.sectionLocations) {
-                //   item.rect = {
-                //     show: false,
-                //     points: []
-                //   }
-                //   const imgW = item.imgeWidth
-                //   const imgH = item.imgeHeight
-                //   item.sectionLocations.forEach(r => {
-                //     item.rect.points.push({
-                //       width: (r.width * 100.0) / imgW,
-                //       height: (r.height * 100.0) / imgH,
-                //       left: (r.left * 100.0) / imgW,
-                //       top: (r.top * 100.0) / imgH
-                //     })
-                //   })
-                //   item.rect.show = true
+                if (item.sectionLocations) {
+                  item.rect = {
+                    show: false,
+                    points: []
+                  }
+                  const imgW = item.imgeWidth
+                  const imgH = item.imgeHeight
+                  item.sectionLocations.forEach(r => {
+                    item.rect.points.push({
+                      width: (r.width * 100.0) / imgW,
+                      height: (r.height * 100.0) / imgH,
+                      left: (r.left * 100.0) / imgW,
+                      top: (r.top * 100.0) / imgH
+                    })
+                  })
+                  item.rect.show = true
+                }
+                // switch (item.alarmStatus) {
+                //   case 1:
+                //     item.alarmStatus = '未处理'
+                //     this.statusStyle = 'color:#00d1ff'
+                //     break
+                //   case 2:
+                //     item.alarmStatus = '异常'
+                //     this.statusStyle = 'color:#af0e03'
+                //     break
+                //   case 3:
+                //     item.alarmStatus = '误报'
+                //     this.statusStyle = 'color:#ef4e22'
+                //     break
                 // }
-                switch (item.alarmStatus) {
-                  case 1:
-                    item.alarmStatus = '未处理'
-                    this.statusStyle = 'color:#00d1ff'
-                    break
-                  case 2:
-                    item.alarmStatus = '异常'
-                    this.statusStyle = 'color:#af0e03'
-                    break
-                  case 3:
-                    item.alarmStatus = '误报'
-                    this.statusStyle = 'color:#ef4e22'
-                    break
-                }
-                switch (item.alarmLevel) {
-                  case 1:
-                    item.alarmLevel = '红色预警'
-                    this.levelStyle = 'color:#af0e03'
-                    break
-                  case 2:
-                    item.alarmLevel = '橙色预警'
-                    this.levelStyle = 'color:#ef4e22'
-                    break
-                  case 3:
-                    item.alarmLevel = '黄色预警'
-                    this.levelStyle = 'color:#e5ff00'
-                    break
-                  case 4:
-                    item.alarmLevel = '蓝色预警'
-                    this.levelStyle = 'color:#00d1ff'
-                    break
-                }
+                // switch (item.alarmLevel) {
+                //   case 1:
+                //     item.alarmLevel = '红色预警'
+                //     this.levelStyle = 'color:#af0e03'
+                //     break
+                //   case 2:
+                //     item.alarmLevel = '橙色预警'
+                //     this.levelStyle = 'color:#ef4e22'
+                //     break
+                //   case 3:
+                //     item.alarmLevel = '黄色预警'
+                //     this.levelStyle = 'color:#e5ff00'
+                //     break
+                //   case 4:
+                //     item.alarmLevel = '蓝色预警'
+                //     this.levelStyle = 'color:#00d1ff'
+                //     break
+                // }
               })
             })
           }

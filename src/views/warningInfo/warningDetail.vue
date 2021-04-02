@@ -13,7 +13,7 @@
       <div class="leftInfo">
         <ul class="baseInfo">
           <li>
-            <span class="title">告警类型：</span>
+            <span class="title">事件类型：</span>
             <span>{{info.alarmTypeName||'-'}}</span>
           </li>
           <li>
@@ -95,6 +95,8 @@
   </el-dialog>
 </template>
 <script>
+import axios from 'axios'
+import qs from 'qs'
 export default {
   props: {
     dialogVisible: {
@@ -114,6 +116,38 @@ export default {
     }
   },
   methods: {
+    getList () {
+      var xsRequest = axios.create({
+        baseURL: 'http://172.16.63.43:8080',
+        timeout: 10000,
+        withCredentials: true,
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      })
+      xsRequest.interceptors.request.use(config => {
+        config.data = qs.stringify({ ...config.data })
+        return config
+      })
+      var params = {
+        startTime: this.dateRange[0],
+        endTime: this.dateRange[1],
+        currentPage: this.currentPage,
+        sizeOfPage: this.pageSize,
+        alarmStatus: this.query.alarmStatus,
+        alarmLevel: this.query.alarmLevel
+      }
+      xsRequest
+        .post('/tAlarm/update', params)
+        .then(res => {
+          console.log('设备列表返回:', res)
+          if (res.data.code === 0) {
+          }
+        })
+        .catch(err => {
+          console.log('structureApi.alarmList Err : ' + err)
+        })
+    },
     closeDialog () {
       this.$emit('close')
     }
