@@ -124,8 +124,8 @@
 
 .pointBox .ulBox ul li span:nth-child(1),
 .routeBox .ulBox ul li span:nth-child(1),
-.camerBox .ulBox ul li span:nth-child(1),
-.droneBox .ulBox ul li span:nth-child(1) {
+.camerBox .ulBox ul li span:nth-child(1)
+ {
   margin-right: 6px;
   display     : inline-block;
   min-width   : 70px;
@@ -213,6 +213,3 @@
   background-size: 100% 100%;
 }
 
-.droneBox .ulBox ul li span:nth-child(1) {
-  width: 50px;
-}

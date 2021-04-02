@@ -57,12 +57,14 @@
                 <el-input
                   v-model="addDeptForm.deptName"
                   placeholder="请输入"
+                  maxlength="20"
                 ></el-input>
               </el-form-item>
               <el-form-item label="机构地址 :" prop="address">
                 <el-input
                   v-model="addDeptForm.address"
                   placeholder="请输入"
+                  maxlength="50"
                 ></el-input>
               </el-form-item>
               <el-form-item label="上级机构 :" prop="fatherDept">
@@ -74,7 +76,7 @@
                     label: 'deptName',
                     value: 'deptCode',
                     checkStrictly: true,
-                    emitPath: false
+                    emitPath: false,
                   }"
                   :show-all-levels="false"
                 ></el-cascader>
@@ -89,12 +91,14 @@
                 <el-input
                   v-model="addDeptForm.deptCode"
                   placeholder="请输入"
+                  maxlength="20"
                 ></el-input>
               </el-form-item>
               <el-form-item label="机构简称 :">
                 <el-input
                   v-model="addDeptForm.shortName"
                   placeholder="请输入"
+                  maxlength="10"
                 ></el-input>
               </el-form-item>
               <el-form-item label="经度 :">
@@ -154,7 +158,7 @@
                         :key="index"
                         :style="{
                           background:
-                            'url(' + serverUrl + item.iconPath + ') no-repeat'
+                            'url(' + serverUrl + item.iconPath + ') no-repeat',
                         }"
                       ></span>
                     </div>
@@ -282,7 +286,7 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.addDeptRef.validate(async valid => {
+      this.$refs.addDeptRef.validate(async (valid) => {
         if (!valid) {
           return
         }
@@ -318,7 +322,7 @@ export default {
 
     clickToolItem (item) {
       if (item.name === 'point') {
-        this.toolItems.forEach(t => {
+        this.toolItems.forEach((t) => {
           if (item !== t) {
             t.isSelect = false
           }
@@ -383,7 +387,7 @@ export default {
 .add-dept-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
-    width: 1440px;
+    width: 1080px;
     background-color: transparent;
     overflow: hidden;
     .el-dialog__header {

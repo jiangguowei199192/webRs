@@ -17,7 +17,11 @@
       class="add-people-form"
     >
       <el-form-item label="姓名 :" prop="name">
-        <el-input v-model="addPeopleForm.name" placeholder="请输入"></el-input>
+        <el-input
+          v-model="addPeopleForm.name"
+          placeholder="请输入"
+          maxlength="20"
+        ></el-input>
       </el-form-item>
       <el-form-item label="性别 :" prop="six">
         <el-select
@@ -51,7 +55,7 @@
             label: 'deptName',
             value: 'deptCode',
             checkStrictly: true,
-            emitPath: false
+            emitPath: false,
           }"
           :show-all-levels="false"
         ></el-cascader>
@@ -71,6 +75,7 @@
           placeholder="请输入"
           type="textarea"
           resize="none"
+          maxlength="500"
         ></el-input>
       </el-form-item>
     </el-form>
@@ -163,7 +168,7 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.addPeopleRef.validate(async valid => {
+      this.$refs.addPeopleRef.validate(async (valid) => {
         if (!valid) {
           return
         }

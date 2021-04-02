@@ -20,6 +20,7 @@
         <el-input
           v-model="addUserForm.username"
           placeholder="请输入"
+          maxlength="20"
         ></el-input>
       </el-form-item>
       <el-form-item label="账号 :" prop="account">
@@ -27,6 +28,7 @@
           v-model="addUserForm.account"
           placeholder="请输入"
           :disabled="accountDisable"
+          maxlength="20"
         ></el-input>
       </el-form-item>
       <el-form-item label="联系方式 :" prop="phone">
@@ -82,7 +84,6 @@
           type="date"
           placeholder="请选择"
           value-format="timestamp"
-          style="width: 150px"
         >
         </el-date-picker>
       </el-form-item>
@@ -287,6 +288,9 @@ export default {
     }
     .add-people-form {
       margin-top: 35px;
+      .el-date-editor.el-input {
+        width: 150px;
+      }
       .el-input__inner {
         background-color: rgba($color: #09546d, $alpha: 0.3);
         border-color: #1eb0fc;

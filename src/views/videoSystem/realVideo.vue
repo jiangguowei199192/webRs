@@ -995,6 +995,7 @@ export default {
       if (video !== undefined && video !== null) {
         if (video.deviceTypeCode === 'WRJ') {
           this.setDroneDevCode(video.deviceCode)
+          if (!this.$refs.gduMap) return
           const tmpMap = this.$refs.gduMap.map2D
           setTimeout(() => {
             tmpMap._map.updateSize()

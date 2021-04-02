@@ -18,7 +18,7 @@
       class="add-people-form"
     >
       <el-form-item label="角色名称 :" prop="roleName">
-        <el-input v-model="addRoleFrom.roleName"></el-input>
+        <el-input v-model="addRoleFrom.roleName" maxlength="20"></el-input>
       </el-form-item>
 
       <el-form-item label="排序 :" prop="num">
@@ -30,6 +30,7 @@
           v-model="addRoleFrom.note"
           type="textarea"
           resize="none"
+          maxlength="500"
         ></el-input>
       </el-form-item>
     </el-form>
@@ -73,7 +74,7 @@ export default {
   },
   methods: {
     confirmClick () {
-      this.$refs.addRoleRef.validate(async valid => {
+      this.$refs.addRoleRef.validate(async (valid) => {
         if (!valid) {
           return
         }

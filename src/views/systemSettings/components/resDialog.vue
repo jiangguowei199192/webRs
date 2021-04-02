@@ -312,7 +312,7 @@ export default {
   font-size: 14px;
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
-    width: 1440px;
+    width: 1080px;
     overflow: hidden;
     background-color: transparent;
     .el-dialog__header {

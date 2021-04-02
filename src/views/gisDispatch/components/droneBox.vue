@@ -49,20 +49,22 @@
             <span>{{ info.latitude }}</span>
           </li>
           <li>
+            <span class="speedV">水平速度：</span>
+            <span class="height">{{
+              info.hSpeed ? info.hSpeed + "m/s" : info.hSpeed
+            }}</span>
             <span>高度：</span>
-            <span>{{ info.height ? info.height + "m" : info.height }}</span>
-            <span>水平速度：</span>
             <span class="speed">{{
-              info.hSpeed ? info.hSpeed + "m" : info.hSpeed
+              info.height ? info.height + "m" : info.height
             }}</span>
           </li>
           <li>
             <span class="speedV">垂直速度：</span>
-            <span>{{ info.vSpeed ? info.vSpeed + "m/s" : info.vSpeed }}</span>
+            <span >{{ info.vSpeed ? info.vSpeed + "m/s" : info.vSpeed }}</span>
           </li>
           <li>
             <span>电量： </span>
-            <span>{{
+            <span class="height">{{
               info.batteryLeft ? info.batteryLeft + "%" : info.batteryLeft
             }}</span>
             <span>航向角：</span>
@@ -183,7 +185,7 @@ export default {
       background: url(../../../assets/images/gisDispatch/no-videoL.svg)
         no-repeat;
       background-size: 100% 100%;
-      margin-right: 23px;
+      margin-right: 18px;
     }
     .ulBox {
       box-sizing: border-box;
@@ -209,7 +211,10 @@ export default {
         color: #fff;
       }
       .speedV {
-        min-width: 90px;
+        min-width: 85px;
+      }
+      .height {
+        margin-right: 10px;
       }
     }
   }
