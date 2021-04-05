@@ -38,21 +38,39 @@
 <script>
 export default {
   props: ['isShow', 'permissionTree', 'selectedPms'],
+  data () {
+    return {
+      keys: []
+    }
+  },
   watch: {
     isShow (newS) {
       if (newS) {
         this.$nextTick(() => {
-          this.$refs.permissionTree.setCheckedNodes(this.selectedPms)
+          // console.log(this.selectedPms)
+          this.keys = []
+          this.handleSelectedKeys(this.selectedPms)
+          this.$refs.permissionTree.setCheckedKeys(this.keys)
           this.changeTreeClass()
         })
       }
     }
   },
   methods: {
+    handleSelectedKeys (tree) {
+      tree.forEach(s => {
+        if (s.roleMenuList && s.roleMenuList.length > 0) {
+          this.handleSelectedKeys(s.roleMenuList)
+        } else this.keys.push(s.id)
+      })
+    },
+
     confirmClick () {
+      // console.log(this.$refs.permissionTree.getHalfCheckedKeys())
+      // console.log(this.$refs.permissionTree.getCheckedKeys())
       this.$emit(
         'confirmClick',
-        this.$refs.permissionTree.getCheckedKeys(true)
+        this.$refs.permissionTree.getCheckedKeys().concat(this.$refs.permissionTree.getHalfCheckedKeys())
       )
     },
 
