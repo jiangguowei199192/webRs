@@ -3775,6 +3775,7 @@ export default {
       width: 165px;
       height: 164px;
       background: url(../../../assets/images/operate/circle.png) no-repeat;
+      background-size: 100% 100%;
       position: relative;
       div {
         width: 36px;
@@ -3900,20 +3901,24 @@ export default {
         top: -42px;
         background: url(../../../assets/images/operate/zoom.png) no-repeat
           center;
+        background-size: 100% 100%;
       }
       div:nth-child(1).selected {
         background: url(../../../assets/images/operate/zoom_selected.png)
           no-repeat center;
+        background-size: 100% 100%;
       }
       div:nth-child(2) {
         left: 22px;
         top: -60px;
         background: url(../../../assets/images/operate/focus.png) no-repeat
           center;
+        background-size: 100% 100%;
       }
       div:nth-child(2).selected {
         background: url(../../../assets/images/operate/focus_selected.png)
           no-repeat center;
+        background-size: 100% 100%;
       }
       div:nth-child(3) {
         width: 51px;
@@ -3921,10 +3926,12 @@ export default {
         left: 54px;
         top: -54px;
         background: url(../../../assets/images/operate/add.png) no-repeat center;
+        background-size: 100% 100%;
       }
       div:nth-child(3):hover {
         background: url(../../../assets/images/operate/add_selected.png)
           no-repeat center;
+        background-size: 100% 100%;
       }
       div:nth-child(4) {
         left: 64px;
@@ -3947,10 +3954,12 @@ export default {
         top: -42px;
         background: url(../../../assets/images/operate/minus.png) no-repeat
           center;
+        background-size: 100% 100%;
       }
       div:nth-child(5):hover {
         background: url(../../../assets/images/operate/minus_selected.png)
           no-repeat center;
+        background-size: 100% 100%;
       }
     }
   }
