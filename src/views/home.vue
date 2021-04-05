@@ -245,13 +245,10 @@ export default {
     EventBus.$on('droneInfos', info => {
       this.parseDroneRealtimeInfo(info)
     })
-    // 人员识别提示
-    EventBus.$on('video/people/found', info => {
-      this.$notify.closeAll()
-      this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
-    })
     // 人员显示
     EventBus.$on('video/people/real', info => {
+      this.$notify.closeAll()
+      this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
       EventBus.$emit('peopleRealChange', info)
     })
     // AR显示

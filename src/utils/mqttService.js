@@ -50,10 +50,6 @@ var mqttService;
       instance.client.subscribe('video/device/offline')
       // 订阅云台操作获取角度
       // instance.client.subscribe('video/webControlPztNotice')
-      // 订阅人员识别
-      instance.client.subscribe('video/people/found')
-      // 订阅人员识别数据
-      instance.client.subscribe('video/people/real')
       // 订阅AR数据
       // instance.client.subscribe('video/aRAiResult')
       // 飞机实时信息
@@ -84,6 +80,8 @@ var mqttService;
         EventBus.$emit('droneInfos', message)
       } else if (message.topic.indexOf('web/river/caseHandling') !== -1) {
         EventBus.$emit('web/river/caseHandling', message)
+      } else if (message.topic.indexOf('gdu/ai/output') !== -1) {
+        EventBus.$emit('video/people/real', message)
       } else {
         console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }

@@ -1769,13 +1769,23 @@ export default {
     EventBus.$on('peopleRealChange', info => {
       this.totalVideosArray.forEach((item, index) => {
         if (
-          item.deviceCode === info.deviceCode &&
-          item.streamType === info.channelId
+          item.deviceCode === info.deviceId.slice(0, info.deviceId.length - 1) &&
+          item.streamType === info.channelId.slice(info.deviceId.length - 1)
         ) {
           this.$set(
             this.totalVideosArray[index],
             'positionList',
-            info.positionList
+            info.targets
+          )
+          this.$set(
+            this.totalVideosArray[index],
+            'width',
+            info.width
+          )
+          this.$set(
+            this.totalVideosArray[index],
+            'height',
+            info.height
           )
         }
       })
@@ -1787,74 +1797,87 @@ export default {
           this.$set(
             this.curVideosArray[index],
             'positionList',
-            info.positionList
+            info.targets
+          )
+          this.$set(
+            this.totalVideosArray[index],
+            'width',
+            info.width
+          )
+          this.$set(
+            this.totalVideosArray[index],
+            'height',
+            info.height
           )
         }
       })
     })
     // AR数据
-    EventBus.$on('getArChange', info => {
-      console.log('收到的ar数据', info)
-      this.totalVideosArray.forEach((item, index) => {
-        if (
-          item.deviceCode === info.deviceCode &&
-          item.streamType === info.channelId
-        ) {
-          if (info.arPositionList && info.arPositionList.length > 0) {
-            info.arPositionList.forEach(item => {
-              if (item.onePointArray) {
-                this.$set(
-                  this.totalVideosArray[index],
-                  'onePointArray',
-                  item.onePointArray
-                )
-              } else {
-                this.$set(this.totalVideosArray[index], 'onePointArray', [])
-              }
-              if (item.pointsArray) {
-                this.$set(
-                  this.totalVideosArray[index],
-                  'pointsArray',
-                  item.pointsArray
-                )
-              } else {
-                this.$set(this.totalVideosArray[index], 'pointsArray', [])
-              }
-            })
-          }
-        }
-      })
-      this.curVideosArray.forEach((item, index) => {
-        if (
-          item.deviceCode === info.deviceCode &&
-          item.streamType === info.channelId
-        ) {
-          if (info.arPositionList && info.arPositionList.length > 0) {
-            info.arPositionList.forEach(item => {
-              if (item.onePointArray) {
-                this.$set(
-                  this.curVideosArray[index],
-                  'onePointArray',
-                  item.onePointArray
-                )
-              } else {
-                this.$set(this.curVideosArray[index], 'onePointArray', [])
-              }
-              if (item.pointsArray) {
-                this.$set(
-                  this.curVideosArray[index],
-                  'pointsArray',
-                  item.pointsArray
-                )
-              } else {
-                this.$set(this.curVideosArray[index], 'pointsArray', [])
-              }
-            })
-          }
-        }
-      })
-    })
+    // EventBus.$on('getArChange', info => {
+    //   console.log('收到的ar数据', info)
+    //   this.totalVideosArray.forEach((item, index) => {
+    //     if (
+    //       item.deviceCode === info.deviceCode &&
+    //       item.streamType === info.channelId
+    //     ) {
+    //       if (info.arPositionList && info.arPositionList.length > 0) {
+    //         info.arPositionList.forEach(item => {
+    //           if (item.onePointArray) {
+    //             this.$set(
+    //               this.totalVideosArray[index],
+    //               'onePointArray',
+    //               item.onePointArray
+    //             )
+    //           } else {
+    //             this.$set(this.totalVideosArray[index], 'onePointArray', [])
+    //           }
+    //           if (item.pointsArray) {
+    //             this.$set(
+    //               this.totalVideosArray[index],
+    //               'pointsArray',
+    //               item.pointsArray
+    //             )
+    //           } else {
+    //             this.$set(this.totalVideosArray[index], 'pointsArray', [])
+    //           }
+    //         })
+    //       }
+    //     }
+    //   })
+    //   this.curVideosArray.forEach((item, index) => {
+    //     if (
+    //       item.deviceCode === info.deviceCode &&
+    //       item.streamType === info.channelId
+    //     ) {
+    //       if (info.arPositionList && info.arPositionList.length > 0) {
+    //         info.arPositionList.forEach(item => {
+    //           if (item.onePointArray) {
+    //             this.$set(
+    //               this.curVideosArray[index],
+    //               'onePointArray',
+    //               item.onePointArray
+    //             )
+    //           } else {
+    //             this.$set(this.curVideosArray[index], 'onePointArray', [])
+    //           }
+    //           if (item.pointsArray) {
+    //             this.$set(
+    //               this.curVideosArray[index],
+    //               'pointsArray',
+    //               item.pointsArray
+    //             )
+    //           } else {
+    //             this.$set(this.curVideosArray[index], 'pointsArray', [])
+    //           }
+    //         })
+    //       }
+    //     }
+    //   })
+    // })
     this.bSaveMultiDroneInfos = true
+  },
+  beforeDestroy () {
+    EventBus.$off('peopleRealChange')
   }
 }
 </script>

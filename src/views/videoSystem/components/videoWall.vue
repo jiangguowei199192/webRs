@@ -333,7 +333,7 @@
         <span
           v-for="(item,index) in videoInfo.positionList"
           :key="index"
-          :style="{left:item.left/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',top:item.top/720*(videoInfo.isShowOperate?1080:playerHeight)+'px',width:item.width/1280*(videoInfo.isShowOperate?1920:playerWidth)+'px',height:item.height/720*(videoInfo.isShowOperate?1080:playerHeight)+'px'}"
+          :style="{left:(item.x/videoInfo.width)*100+'%',top:(item.y/videoInfo.height)*100+'%',width:(item.w/videoInfo.width)*100+'%',height:(item.h/videoInfo.height)*100+'%'}"
           :class="{ship:item.label==1}"
         ></span>
       </div>
@@ -1019,38 +1019,38 @@ export default {
     },
     deviceCode (val) {
       this.setDroneDevCode(val)
-    },
-    'videoInfo.isShowOperate' (nv, ov) {
-      if (nv) {
-        if (this.videoInfo.deviceTypeCode === 'GDJK') {
-          // 开启人员识别
-          new MqttService().client.send(
-            'video/start/algorithm',
-            JSON.stringify({
-              deviceCode: this.videoInfo.deviceCode,
-              channelId: this.videoInfo.streamType,
-              streamUrl: this.videoInfo.streamUrl,
-              isOpen: 1
-            })
-          )
-          console.log('开启人员识别')
-        }
-      } else {
-        if (this.videoInfo.deviceTypeCode === 'GDJK') {
-          // 关闭人员识别
-          new MqttService().client.send(
-            'video/stop/algorithm',
-            JSON.stringify({
-              deviceCode: this.videoInfo.deviceCode,
-              channelId: this.videoInfo.streamType,
-              streamUrl: this.videoInfo.streamUrl,
-              isOpen: 0
-            })
-          )
-          console.log('关闭人员识别')
-        }
-      }
     }
+    // 'videoInfo.isShowOperate' (nv, ov) {
+    //   if (nv) {
+    //     if (this.videoInfo.deviceTypeCode === 'GDJK') {
+    //       // 开启人员识别
+    //       new MqttService().client.send(
+    //         'video/start/algorithm',
+    //         JSON.stringify({
+    //           deviceCode: this.videoInfo.deviceCode,
+    //           channelId: this.videoInfo.streamType,
+    //           streamUrl: this.videoInfo.streamUrl,
+    //           isOpen: 1
+    //         })
+    //       )
+    //       console.log('开启人员识别')
+    //     }
+    //   } else {
+    //     if (this.videoInfo.deviceTypeCode === 'GDJK') {
+    //       // 关闭人员识别
+    //       new MqttService().client.send(
+    //         'video/stop/algorithm',
+    //         JSON.stringify({
+    //           deviceCode: this.videoInfo.deviceCode,
+    //           channelId: this.videoInfo.streamType,
+    //           streamUrl: this.videoInfo.streamUrl,
+    //           isOpen: 0
+    //         })
+    //       )
+    //       console.log('关闭人员识别')
+    //     }
+    //   }
+    // }
   },
 
   destroyed () {
