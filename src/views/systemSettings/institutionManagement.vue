@@ -406,7 +406,7 @@ export default {
         id: this.rightClickDept.id,
         deptName: form.deptName,
         parentDeptCode: form.fatherDept,
-        deptAddr: form.address,
+        deptAddress: form.address,
         deptIcon: icon,
         deptLatitude: form.latitude,
         deptLongitude: form.longitude,
