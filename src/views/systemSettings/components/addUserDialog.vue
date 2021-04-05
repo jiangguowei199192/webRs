@@ -83,7 +83,7 @@
           v-model="addUserForm.dueToTime"
           type="date"
           placeholder="请选择"
-          value-format="timestamp"
+          value-format="yyyy-MM-dd HH:mm:ss"
         >
         </el-date-picker>
       </el-form-item>
