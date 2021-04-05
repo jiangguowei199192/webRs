@@ -15,7 +15,8 @@ const mapResMixin = {
         children: 'children',
         label: 'deptName',
         value: 'deptCode',
-        emitPath: false
+        emitPath: false,
+        checkStrictly: true
       }
     }
   },

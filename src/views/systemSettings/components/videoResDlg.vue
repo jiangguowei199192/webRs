@@ -456,7 +456,6 @@ export default {
     }
   },
   created () {
-    this.organsProps.checkStrictly = true
     this.getOrgans()
     this.getIconList()
     this.getAreaResources()

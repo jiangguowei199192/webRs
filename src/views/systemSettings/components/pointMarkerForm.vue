@@ -226,7 +226,8 @@ export default {
         children: 'children',
         label: 'deptName',
         value: 'deptCode',
-        emitPath: false
+        emitPath: false,
+        checkStrictly: true
       },
       formRules: {
         pointName: [{ required: true, message: '请输入资源名称' }],
