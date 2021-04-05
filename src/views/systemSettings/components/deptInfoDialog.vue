@@ -444,6 +444,7 @@ export default {
           }
           .el-form-item {
             margin-top: -20px;
+            margin-right: 0px;
           }
           .el-form-item__label {
             color: #fff;
