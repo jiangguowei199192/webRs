@@ -342,7 +342,8 @@ export default {
   .handerBox {
     .btn {
       display: inline-block;
-      width: 40px;
+      // width: 40px;
+      padding: 0 5px;
       height: 26px;
       background: #0b779e;
       cursor: pointer;

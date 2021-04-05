@@ -110,6 +110,18 @@
       @confirmClick="deleteUserConfirmClick"
       @cancelClick="showDeleteDev = false"
     ></DeleteDialog>
+    <!-- 实时监测弹窗 -->
+    <LiveMonitorDialog
+      ref="disposeRecRef"
+      :isShow.sync="monitorIsShow"
+      title="实时监测"
+    ></LiveMonitorDialog>
+    <!-- 事件配置弹窗 -->
+    <EventConfigDialog
+      ref="disposeRecRef"
+      :isShow.sync="configIsShow"
+      title="事件配置"
+    ></EventConfigDialog>
   </div>
 </template>
 
@@ -121,7 +133,18 @@ import { Notification } from 'element-ui'
 import { settingApi } from '@/api/setting'
 import { EventBus } from '@/utils/eventBus.js'
 import DeleteDialog from './deleteDialog.vue'
+import LiveMonitorDialog from './liveMonitorDialog'
+import EventConfigDialog from './eventConfigDialog'
+
 export default {
+  components: {
+    PageTable,
+    VideoResDlg,
+    DeleteDialog,
+    LiveMonitorDialog,
+    EventConfigDialog
+  },
+
   props: {
     // 对话框组件名称
     dlgView: {
@@ -164,6 +187,7 @@ export default {
       }
     }
   },
+
   data () {
     return {
       selectCount: 0,
@@ -207,17 +231,16 @@ export default {
         dateRange: '',
         searchStr: ''
       },
-      showDeleteDev: false
+      showDeleteDev: false,
+      monitorIsShow: false,
+      configIsShow: false
     }
   },
-  components: {
-    PageTable,
-    VideoResDlg,
-    DeleteDialog
-  },
+
   created () {
     this.getDeptTree()
   },
+
   mounted () {
     this.getList()
     EventBus.$on('updateDeviceList', this.getList)
@@ -226,16 +249,18 @@ export default {
       that.$refs.elcascader.dropDownVisible = false
     }
   },
+
   beforeDestroy () {
     EventBus.$off('updateDeviceList', this.getList)
   },
+
   methods: {
     /**
      * 获取机构树
      */
     async getDeptTree () {
       var _this = this
-      this.$axios.post(backApi.getDeptTree).then((res) => {
+      this.$axios.post(backApi.getDeptTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
         }
@@ -243,7 +268,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -337,7 +362,7 @@ export default {
       this.showDeleteDev = false
 
       const ids = []
-      this.checkedList.forEach((d) => {
+      this.checkedList.forEach(d => {
         ids.push(d.deviceCode)
       })
       // const tmpConfig1 = { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
@@ -347,7 +372,7 @@ export default {
       // this.$axios.post(settingApi.deleteDeviceList, { deviceCodeList: ids}, tmpConfig1)
       this.$axios
         .post(settingApi.deleteDeviceList, formData, tmpConfig2)
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -364,7 +389,7 @@ export default {
           //   duration: 5 * 1000
           // })
         })
-        .catch((err) => {
+        .catch(err => {
           Notification({
             title: '提示',
             message: '删除设备异常:' + err,
@@ -377,7 +402,13 @@ export default {
      * 点击表单操作按钮
      */
     handleClick (event, data) {
-      this.$refs.dlg.showResDlg(event, data)
+      if (event === 'modify' || event === 'readonly') {
+        this.$refs.dlg.showResDlg(event, data)
+      } else if (event === 'monitor') {
+        this.monitorIsShow = true
+      } else if (event === 'config') {
+        this.configIsShow = true
+      }
     },
     /**
      * 点击表单开关操作按钮
@@ -387,7 +418,7 @@ export default {
         deviceCode: data.deviceCode,
         deviceStatus: event ? 'enabled' : 'disabled'
       }
-      this.$axios.post(settingApi.changeDeviceStatus, param).then((res) => {
+      this.$axios.post(settingApi.changeDeviceStatus, param).then(res => {
         if (res && res.data && res.data.code === 0) {
           Notification({
             title: '提示',
