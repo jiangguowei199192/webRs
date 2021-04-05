@@ -156,12 +156,12 @@
   </div>
 </template>
 <script>
-// import { structureApi } from '@/api/structureData.js'
+import { structureApi } from '@/api/structureData.js'
 import DetailInfo from './warningDetail'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
 import { timeFormat, timeFormat3 } from '@/utils/date'
-import axios from 'axios'
-import qs from 'qs'
+// import axios from 'axios'
+// import qs from 'qs'
 
 export default {
   name: 'warningInfo',
@@ -219,18 +219,18 @@ export default {
 
   methods: {
     getList () {
-      var xsRequest = axios.create({
-        baseURL: 'http://172.16.63.43:8080',
-        timeout: 10000,
-        withCredentials: true,
-        paramsSerializer: function (params) {
-          return qs.stringify(params, { arrayFormat: 'repeat' })
-        }
-      })
-      xsRequest.interceptors.request.use(config => {
-        config.data = qs.stringify({ ...config.data })
-        return config
-      })
+      // var xsRequest = axios.create({
+      //   baseURL: 'http://172.16.63.43:8080',
+      //   timeout: 10000,
+      //   withCredentials: true,
+      //   paramsSerializer: function (params) {
+      //     return qs.stringify(params, { arrayFormat: 'repeat' })
+      //   }
+      // })
+      // xsRequest.interceptors.request.use(config => {
+      //   config.data = qs.stringify({ ...config.data })
+      //   return config
+      // })
       var params = {
         startTime: timeFormat3(this.dateRange[0]),
         endTime: timeFormat3(this.dateRange[1]),
@@ -239,8 +239,9 @@ export default {
         alarmStatus: this.query.alarmStatus,
         alarmLevel: this.query.alarmLevel
       }
-      xsRequest
-        .post('/structuration/tAlarm/query', params)
+      // xsRequest
+      //   .post(structureApi.queryAlarmList, params)
+      this.$axios.post(structureApi.queryAlarmList, params)
         .then(res => {
           // console.log('设备列表返回:', res)
           if (res.data.code === 0) {
