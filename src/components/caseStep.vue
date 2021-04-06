@@ -161,7 +161,7 @@
               class="detail-result"
               v-else-if="event.dispositionNode == '回告'"
             >
-              <p>处置记录：{{ event.content.dispositionRecord }}</p>
+              <p style="white-space:normal">处置记录：{{ event.content.dispositionRecord }}</p>
               <div class="column">
                 <span>处置人：{{ event.content.employeeName }}</span>
                 <span>处置时间：{{ event.content.dispositionTime }}</span>
@@ -419,7 +419,7 @@ export default {
     background: #00ccff;
     color: #fff;
   }
-  /deep/ .el-step.is-vertical .el-step__line {
+  /deep/.el-step.is-vertical .el-step__line {
     width: 1px;
     top: 34px;
     left: 17px;
@@ -430,6 +430,9 @@ export default {
   }
   /deep/.el-step .el-step__description {
     padding-right: 0px;
+  }
+  /deep/.el-step.is-vertical {
+    flex-basis: auto !important;
   }
 
   /deep/.el-step.is-vertical .el-step__main {
