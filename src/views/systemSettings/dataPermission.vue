@@ -146,12 +146,22 @@ export default {
         .get(backApi.getTypeDict, { params: { typeCode: 'resources' } })
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
+            this.handlePermissionTree(res.data.data, false)
             _this.permissionTypeTree = res.data.data
             _this.selectedType = res.data.data[0]
-            _this.setFieldList(res.data.data[0].typeCode)
+            _this.setFieldList(_this.selectedType)
             _this.getResourceList()
           }
         })
+    },
+
+    handlePermissionTree (tree, isRes) {
+      tree.forEach((item) => {
+        if (isRes || item.typeCode.indexOf('resources') !== -1) {
+          item.isRes = true
+        } else item.isRes = false
+        if (item.children && item.children.length > 0) { this.handlePermissionTree(item.children, item.isRes) }
+      })
     },
 
     filterNode (value, data) {
@@ -163,7 +173,7 @@ export default {
 
     permissionTypeTreeClick (item) {
       this.selectedType = item
-      this.setFieldList(item.typeCode)
+      this.setFieldList(item)
 
       this.currentPage = 1
       this.resourceSearch = ''
@@ -171,7 +181,7 @@ export default {
     },
 
     async getResourceList () {
-      if (this.selectedType.typeCode.indexOf('resources') === -1) {
+      if (!this.selectedType.isRes) {
         // 视频资源
         const param = {
           pageSize: this.pageSize,
@@ -227,9 +237,9 @@ export default {
       }
     },
 
-    setFieldList (typeCode) {
+    setFieldList (item) {
       var list = []
-      if (typeCode.indexOf('resources') === -1) {
+      if (!item.isRes) {
         list = [
           { label: '设备类型', value: 'deviceTypeCode' },
           { label: '设备名称', value: 'deviceName' },
@@ -240,7 +250,7 @@ export default {
           { label: '排序', value: 'orderNum' }
         ]
       } else {
-        if (typeCode.indexOf('point') !== -1) {
+        if (item.typeCode.indexOf('point') !== -1) {
           list = [
             { label: '资源名称', value: 'resourcesName' },
             { label: '地址', value: 'resourcesAddr' },
@@ -249,7 +259,7 @@ export default {
             { label: '排序', value: 'resourcesSort' }
           ]
         }
-        if (typeCode.indexOf('line') !== -1) {
+        if (item.typeCode.indexOf('line') !== -1) {
           list = [
             { label: '线路名称', value: 'resourcesName' },
             { label: '类型', value: 'resourcesTypeName' },
@@ -266,7 +276,7 @@ export default {
             { label: '排序', value: 'resourcesSort' }
           ]
         }
-        if (typeCode.indexOf('surface') !== -1) {
+        if (item.typeCode.indexOf('surface') !== -1) {
           list = [
             { label: '名称', value: 'resourcesName' },
             { label: '类型', value: 'resourcesTypeName' },
