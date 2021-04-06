@@ -75,7 +75,7 @@ var mqttService;
 
     // mqtt 消息到来的callback
     var onMessageArrived = function (message) {
-      console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+      // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
       if (message.topic === 'gdu/realVideo/streamHadNotData') {
@@ -141,7 +141,7 @@ var mqttService;
         'pc_' +
         new Date().getTime().toString()
       // eslint-disable-next-line no-undef
-      instance.client = new Paho.Client(globalApi.mqttServer, globalApi.mqttPort, '/gduMqtt', clientID)
+      instance.client = new Paho.Client(globalApi.mqttServer || globalApi.mqttServer2, globalApi.mqttPort, '/gduMqtt', clientID)
       // instance.client.trace = onTrace
       instance.client.startTrace()
       // set callback handlers

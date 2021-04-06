@@ -32,11 +32,7 @@
                   @click.stop="jumpTo(index)"
                 >
                   <span>{{ item.content }}</span>
-                  <img
-                    ref="flashImg"
-                    v-show="index == 3 && isActive == 3"
-                    :src="flashIcon"
-                  />
+                  <img v-show="index == 3 && showFlashIcon" :src="flashIcon" />
                 </div>
               </div>
               <div class="settings">
@@ -167,6 +163,7 @@ export default {
     return {
       flashIcon: require('../assets/images/structureData/flash.gif'),
       flashTimer: null,
+      showFlashIcon: false,
       form: {
         oldPass: '',
         newPass: '',
@@ -275,7 +272,14 @@ export default {
     })
     // 告警设备更新
     EventBus.$on('alarmsUpdate', info => {
-      this.parseAlarmsInfo(info)
+      if (info) {
+        this.showFlashIcon = true
+        clearTimeout(this.flashTimer)
+        this.flashTimer = setTimeout(() => {
+          this.showFlashIcon = false
+        }, 3000)
+        EventBus.$emit('deviceUpdate', info)
+      }
     })
     // AR显示
     // EventBus.$on('video/aRAiResult', (info) => {
@@ -417,17 +421,6 @@ export default {
         }
       }
     },
-    // 告警设备更新
-    parseAlarmsInfo (msg) {
-      // console.log('alarmsMsg:', msg)
-      if (msg) {
-        this.$refs.flashImg.forEach(t => (t.hidden = false))
-        clearTimeout(this.flashTimer)
-        this.flashTimer = setTimeout(() => {
-          this.$refs.flashImg.forEach(t => (t.hidden = true))
-        }, 4000)
-      }
-    },
     getPath () {
       const path = this.$route.path
       this.isFixed = false
@@ -447,7 +440,6 @@ export default {
         this.isActive = 2
       } else if (path === '/warningInfo') {
         this.isActive = 3
-        this.$refs.flashImg.forEach(t => (t.hidden = true))
       } else if (path === '/structureData') {
         this.isActive = 4
       } else if (path === '/infoCenter') {

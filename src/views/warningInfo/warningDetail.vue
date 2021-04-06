@@ -66,7 +66,7 @@
       <div class="rightInfo">
         <div class="bigImg">
           <img :src="info.imageUrl" alt />
-          <span
+          <!-- <span
             v-for="(list,index) in info.rect.points"
             :key="index"
             :style="
@@ -83,7 +83,7 @@
                  list.height +
                   '%;'
               "
-          ></span>
+          ></span> -->
         </div>
         <!-- <div class="tools">
           <span>区域检测</span>

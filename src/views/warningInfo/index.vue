@@ -4,14 +4,14 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-06 15:48:52
+ * @LastEditTime: 2021-04-06 19:50:00
 -->
 <template>
   <div class="container">
     <!-- 多条件筛选栏 -->
     <div class="date-tool">
       <div class="fl">
-        <el-select
+        <!-- <el-select
           placeholder="告警设备"
           class="select-input"
           v-model="query.alarmType"
@@ -24,7 +24,7 @@
             :label="item.deviceName"
             :value="item.deviceCode"
           ></el-option>
-        </el-select>
+        </el-select> -->
         <el-select
           placeholder="等级"
           class="select-input"
@@ -163,6 +163,7 @@ import { structureApi } from '@/api/structureData.js'
 import DetailInfo from './warningDetail'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
 import { timeFormat, timeFormat3 } from '@/utils/date'
+import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   name: 'warningInfo',
@@ -204,7 +205,8 @@ export default {
         alarmStatus: '',
         alarmLevel: '',
         alarmType: ''
-      }
+      },
+      alarmsTimer: null
     }
   },
 
@@ -215,6 +217,18 @@ export default {
     this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
     this.dateRange[1] = end.getTime()
     this.getList()
+  },
+
+  mounted () {
+    // 刷新告警设备列表
+    EventBus.$on('deviceUpdate', info => {
+      if (info) {
+        clearInterval(this.alarmsTimer)
+        this.alarmsTimer = setInterval(() => {
+          this.getList()
+        }, 10000)
+      }
+    })
   },
 
   methods: {
