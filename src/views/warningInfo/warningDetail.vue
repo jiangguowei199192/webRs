@@ -96,8 +96,6 @@
   </el-dialog>
 </template>
 <script>
-// import axios from 'axios'
-// import qs from 'qs'
 import { structureApi } from '@/api/structureData.js'
 export default {
   props: {
@@ -172,6 +170,8 @@ export default {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
             this.remarkList = data.data
+          } else {
+            this.remarkList = []
           }
         })
         .catch(err => {
