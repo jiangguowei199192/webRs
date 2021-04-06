@@ -400,14 +400,14 @@ export default {
           }
         })
     },
-    async editDeptConfirmClick (form, icon) {
+    async editDeptConfirmClick (form) {
       this.showEditDept = false
       const param = {
         id: this.rightClickDept.id,
         deptName: form.deptName,
         parentDeptCode: form.fatherDept,
         deptAddress: form.address,
-        deptIcon: icon,
+        deptIcon: form.icon,
         deptLatitude: form.latitude,
         deptLongitude: form.longitude,
         deptRemark: form.note,
@@ -483,13 +483,13 @@ export default {
     },
 
     // 添加机构确定时触发
-    async addDeptConfirmClick (form, icon) {
+    async addDeptConfirmClick (form) {
       this.showAddDept = false
       const param = {
         deptName: form.deptName,
         parentDeptCode: form.fatherDept,
         deptAddress: form.address,
-        deptIcon: icon,
+        deptIcon: form.icon,
         deptLatitude: form.latitude,
         deptLongitude: form.longitude,
         deptRemark: form.note,

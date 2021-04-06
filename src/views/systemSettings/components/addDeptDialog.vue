@@ -135,11 +135,12 @@
               </el-form-item>
               <el-form-item label="图标 :">
                 <div class="icon-tool">
-                  <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
+                  <!-- <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
                     <img
                       src="../../../assets/images/backgroundManagement/nopicture.png"
                     />
-                  </el-avatar>
+                  </el-avatar> -->
+                  <img :src="deptIconUrl || defIcon" class="icon" />
                   <el-popover
                     placement="top"
                     trigger="click"
@@ -201,6 +202,7 @@ export default {
         if (this.$refs.addDeptRef) {
           this.$refs.addDeptRef.resetFields()
           this.deptIconUrl = ''
+          this.addDeptForm.icon = ''
         }
       }
     },
@@ -223,12 +225,14 @@ export default {
         if (newD.deptStatus === '已注销') {
           this.addDeptForm.status = 1
         }
-        this.deptIconUrl = newD.deptIcon
+        this.deptIconUrl = newD.deptIcon ? this.serverUrl + newD.deptIcon : ''
+        this.addDeptForm.icon = newD.deptIcon
       }
     }
   },
   data () {
     return {
+      defIcon: require('../../../assets/images/backgroundManagement/nopicture.png'),
       chooseIcon: require('../../../assets/images/backgroundManagement/chooseIcon.png'),
       deptIconUrl: '',
       addDeptForm: {
@@ -242,7 +246,8 @@ export default {
         latitude: '',
         status: 0,
         note: '',
-        num: ''
+        num: '',
+        icon: ''
       },
       addDeptRules: {
         deptName: [{ required: true, message: '请输入' }],
@@ -290,7 +295,7 @@ export default {
         if (!valid) {
           return
         }
-        this.$emit('confirmClick', this.addDeptForm, this.deptIconUrl)
+        this.$emit('confirmClick', this.addDeptForm)
       })
     },
 
@@ -306,6 +311,7 @@ export default {
     selectIcon (item) {
       this.showPopover = false
       this.deptIconUrl = this.serverUrl + item.iconPath
+      this.addDeptForm.icon = item.iconPath
     },
 
     // 折叠
@@ -561,6 +567,11 @@ export default {
             height: 30px;
             vertical-align: middle;
             margin: 8px 0 10px 0;
+            .icon {
+              width: 0.3rem;
+              height: 0.3rem;
+              border-radius: 50%;
+            }
             .choose-icon-btn {
               display: inline-block;
               width: 102px;

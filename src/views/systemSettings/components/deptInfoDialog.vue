@@ -126,11 +126,12 @@
               </el-form-item>
               <el-form-item label="图标">
                 <div class="icon-tool">
-                  <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
+                  <!-- <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
                     <img
                       src="../../../assets/images/backgroundManagement/nopicture.png"
                     />
-                  </el-avatar>
+                  </el-avatar> -->
+                  <img :src="deptIconUrl || defIcon" class="icon" />
                 </div>
               </el-form-item>
               <el-form-item label="备注">
@@ -170,11 +171,14 @@ export default {
     deptInfo (newInfo) {
       if (newInfo) {
         this.deptIconUrl = newInfo.deptIcon
+          ? this.serverUrl + newInfo.deptIcon
+          : ''
       }
     }
   },
   data () {
     return {
+      defIcon: require('../../../assets/images/backgroundManagement/nopicture.png'),
       deptIconUrl: '',
       addDeptForm: {
         deptName: '',
@@ -236,7 +240,7 @@ export default {
 
     clickToolItem (item) {
       if (item.name === 'point') {
-        this.toolItems.forEach(t => {
+        this.toolItems.forEach((t) => {
           if (item !== t) {
             t.isSelect = false
           }
@@ -472,6 +476,11 @@ export default {
             display: inline-block;
             height: 30px;
             vertical-align: middle;
+            .icon {
+              width: 0.3rem;
+              height: 0.3rem;
+              border-radius: 50%;
+            }
           }
         }
       }
