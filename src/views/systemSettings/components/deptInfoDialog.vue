@@ -98,14 +98,14 @@
               </el-form-item>
               <el-form-item label="经度">
                 <el-input
-                  v-model="deptInfo.deptLatitude"
+                  v-model="deptInfo.deptLongitude"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
               <el-form-item label="纬度">
                 <el-input
-                  v-model="deptInfo.deptLongitude"
+                  v-model="deptInfo.deptLatitude"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
