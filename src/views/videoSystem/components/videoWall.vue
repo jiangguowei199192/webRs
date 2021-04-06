@@ -3363,6 +3363,7 @@ export default {
       width: 100%;
       height: 73px;
       background-image: url("../../../assets/images/AR/ar_footer.png");
+      background-size: 100% 100%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -3380,19 +3381,24 @@ export default {
       }
       .detectBtn {
         background-image: url("../../../assets/images/drone/detect.png");
+        background-size: 100% 100%;
       }
       .detectBtnActive {
         background-image: url("../../../assets/images/drone/detect-active.png");
+        background-size: 100% 100%;
       }
       .puzzleBtn {
         background-image: url("../../../assets/images/drone/puzzle.png");
+        background-size: 100% 100%;
       }
       .puzzleBtn:active {
         background-image: url("../../../assets/images/drone/puzzle-active.png");
+        background-size: 100% 100%;
       }
       .scanningStyle {
         background: url("../../../assets/images/drone/scanning.png") center
           center no-repeat;
+        background-size: 100% 100%;
         width: 40px;
         height: 40px;
         animation: scanning 4s steps(32) infinite;
@@ -3417,15 +3423,19 @@ export default {
       }
       .pointBtn {
         background-image: url("../../../assets/images/drone/point.png");
+        background-size: 100% 100%;
       }
       .pointBtnActive {
         background-image: url("../../../assets/images/drone/point-active.png");
+        background-size: 100% 100%;
       }
       .routeBtn {
         background-image: url("../../../assets/images/drone/route.png");
+        background-size: 100% 100%;
       }
       .routeBtnActive {
         background-image: url("../../../assets/images/drone/route-active.png");
+        background-size: 100% 100%;
       }
     }
     .realInfo {
@@ -3460,6 +3470,7 @@ export default {
       width: 283px;
       height: 183px;
       background-image: url("../../../assets/images/drone/map-box.png");
+      background-size: 100% 100%;
       pointer-events: visible;
       .mapArea,
       .smallVideoArea {
@@ -3479,6 +3490,7 @@ export default {
           height: 41px;
           width: 41px;
           background-image: url("../../../assets/images/drone/size-change.png");
+          background-size: 100% 100%;
         }
         .sizeChange:hover {
           opacity: 0.8;
@@ -3531,6 +3543,7 @@ export default {
           height: 16px;
           top: 14px;
           background-image: url("../../../assets/images/drone/popupTitleImg.png");
+          background-size: 100% 100%;
         }
         .titleText {
           position: absolute;
@@ -3559,6 +3572,7 @@ export default {
           height: 14px;
           width: 14px;
           background-image: url("../../../assets/images/AR/X.png");
+          background-size: 100% 100%;
           cursor: pointer;
           right: 0px;
           top: 14px;
