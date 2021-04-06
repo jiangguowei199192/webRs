@@ -113,7 +113,7 @@
                   placeholder="请输入"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="机构状态 :">
+              <el-form-item label="机构状态 :" prop="status">
                 <el-select
                   v-model="addDeptForm.status"
                   :popper-append-to-body="false"
@@ -240,7 +240,7 @@ export default {
         shortName: '',
         longitude: '',
         latitude: '',
-        status: '',
+        status: 0,
         note: '',
         num: ''
       },

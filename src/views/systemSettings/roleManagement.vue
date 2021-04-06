@@ -261,7 +261,7 @@ export default {
     // 角色授权时触发
     authorizationClick (row) {
       this.currentRole = row
-      const param = { role_code: row.roleCode }
+      const param = { roleCode: row.roleCode }
       const _this = this
       this.$axios
         .post(backApi.getMenuTreeByRole, param, {
