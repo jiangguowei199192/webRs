@@ -1,5 +1,6 @@
 import { EventBus } from '@/utils/eventBus.js'
 import globalApi from '@/utils/globalApi'
+import { formatDate } from '@/utils/date'
 var mqttService;
 (function () {
   var instance
@@ -56,6 +57,8 @@ var mqttService;
       instance.client.subscribe('gdu/#')
       // 案件聊天信息
       instance.client.subscribe('web/river/caseHandling/#')
+      // 案件处置流程改变
+      instance.client.subscribe('fms-river-protection/notice')
     }
 
     // mqtt client失去连接后的callback
@@ -70,11 +73,11 @@ var mqttService;
 
     // mqtt 消息到来的callback
     var onMessageArrived = function (message) {
-      console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+      // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
       if (message.topic === 'gdu/realVideo/streamHadNotData') {
-        console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+        console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
         EventBus.$emit('streamHadNotData', object)
       } else if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
@@ -82,8 +85,10 @@ var mqttService;
         EventBus.$emit('web/river/caseHandling', message)
       } else if (message.topic.indexOf('gdu/ai/output') !== -1) {
         EventBus.$emit('video/people/real', message)
+      } else if (message.topic.indexOf('fms-river-protection/notice') !== -1) {
+        EventBus.$emit('web/river/caseNotice', object)
       } else {
-        console.log((new Date()).format('yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+        console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }
     }
 

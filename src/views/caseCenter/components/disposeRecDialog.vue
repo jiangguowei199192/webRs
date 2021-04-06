@@ -231,7 +231,7 @@ export default {
           .catch(err => {
             console.log('caseApi.uploadFile Err : ' + err)
           })
-      }
+      } else this.finishCase()
     },
 
     // 结案
@@ -252,6 +252,7 @@ export default {
           if (res && res.data && res.data.code === 0) {
             this.$emit('confirmRecordClick', this.addCaseForm)
             this.updateIsShow('addCaseForm')
+            this.$emit('finishCaseSuccess')
           }
         })
         .catch(err => {

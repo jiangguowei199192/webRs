@@ -70,7 +70,10 @@
               v-show="caseInfo.caseStatus !== 1"
             ></span>
             <span @click.stop="showChatBox = true"></span>
-            <span @click.stop="showDispose = true"></span>
+            <span
+              @click.stop="showDispose = true"
+              v-show="caseInfo.caseStatus !== 1"
+            ></span>
           </div>
         </div>
       </div>
@@ -216,6 +219,7 @@
         class="dispose"
         :clickRowId="caseInfo.id"
         :reportTime="caseInfo.reportTime"
+        @finishCaseSuccess="finishCaseSuccess"
       ></DisposeRecDialog>
       <ChatBox :isShow.sync="showChatBox" :caseId="caseInfo.id"></ChatBox>
       <CaseAssign
@@ -367,6 +371,7 @@ export default {
   },
   destroyed () {
     EventBus.$off('caseRadiusChange')
+    EventBus.$off('web/river/caseNotice')
     if (this.detailTimeout) {
       clearTimeout(this.detailTimeout)
     }
@@ -384,8 +389,8 @@ export default {
     // 每隔10分钟刷新一次案件详情
     this.detailTimeout = setTimeout(() => {
       me.getPushList()
-      me.getCaseDetail()
-      me.getCaseRecord()
+      // me.getCaseDetail()
+      // me.getCaseRecord()
     }, 10 * 60 * 1000)
   },
   mounted () {
@@ -403,9 +408,29 @@ export default {
       me.getCamerasDone()
       me.getDronesDone()
     })
+    EventBus.$on('web/river/caseNotice', (info) => {
+      if (info) {
+        let caseId = ''
+        for (const item in info) {
+          caseId = info[item].substr(3)
+          break
+        }
+        if (caseId === me.caseInfo.id) {
+          me.getCaseDetail()
+          me.getCaseRecord()
+        }
+      }
+    })
     this.getCaseRecord()
   },
   methods: {
+    /**
+     * 处置案件成功
+     */
+    finishCaseSuccess () {
+      this.getCaseDetail()
+      this.getCaseRecord()
+    },
     /**
      * 分派成功
      */
