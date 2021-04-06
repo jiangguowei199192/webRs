@@ -273,7 +273,6 @@
             stripe
             empty-text="no data"
             tooltip-effect="dark"
-            height="216px"
           >
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
@@ -1836,6 +1835,7 @@ export default {
 }
 
 .el-table {
+  height: 216px;
   /* --- 改变滚动条样式 --- */
   ::-webkit-scrollbar {
     width: 17px;
