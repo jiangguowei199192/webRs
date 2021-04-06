@@ -41,7 +41,7 @@
             class="word"
           ></el-input>
           <div class="btns">
-            <div @click="this.remark=''">取消</div>
+            <div @click="remark=''">取消</div>
             <div @click="addRemark">确定</div>
           </div>
           <div class="warningBox webFsScroll">
