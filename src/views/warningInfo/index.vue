@@ -4,65 +4,71 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-02 15:03:25
+ * @LastEditTime: 2021-04-06 11:24:45
 -->
 <template>
   <div class="container">
     <!-- 多条件筛选栏 -->
     <div class="date-tool">
-      <el-select
-        placeholder="告警设备"
-        class="select-input"
-        v-model="query.alarmType"
-        @change="searchList"
-        clearable
-      >
-        <el-option
-          v-for="(item, index) in caseDevice"
-          :key="index"
-          :label="item.typeName"
-          :value="item.typeCode"
-        ></el-option>
-      </el-select>
-      <el-select
-        placeholder="等级"
-        class="select-input"
-        v-model="query.alarmLevel"
-        clearable
-        @change="searchList"
-      >
-        <el-option
-          v-for="(item, index) in caseLevel"
-          :key="index"
-          :label="item.typeName"
-          :value="item.typeCode"
-        ></el-option>
-      </el-select>
-      <el-select
-        placeholder="告警类型"
-        class="select-input"
-        v-model="query.alarmLevel"
-        clearable
-        @change="searchList"
-      >
-        <el-option
-          v-for="(item, index) in caseStatus"
-          :key="index"
-          :label="item.typeName"
-          :value="item.typeCode"
-        ></el-option>
-      </el-select>
-      <el-date-picker
-        class="datePickerStyle"
-        type="datetimerange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        v-model="dateRange"
-        @change="dateSearchChange"
-        value-format="timestamp"
-        :clearable="false"
-      ></el-date-picker>
+      <div class="fl">
+        <el-select
+          placeholder="告警设备"
+          class="select-input"
+          v-model="query.alarmType"
+          @change="searchList"
+          clearable
+        >
+          <el-option
+            v-for="(item, device_index) in caseDevice"
+            :key="device_index"
+            :label="item.deviceName"
+            :value="item.deviceCode"
+          ></el-option>
+        </el-select>
+        <el-select
+          placeholder="等级"
+          class="select-input"
+          v-model="query.alarmLevel"
+          clearable
+          @change="searchList"
+        >
+          <el-option
+            v-for="(item, level_index) in caseLevel"
+            :key="level_index"
+            :label="item.levelName"
+            :value="item.levelCode"
+          ></el-option>
+        </el-select>
+        <el-select
+          placeholder="告警类型"
+          class="select-input"
+          v-model="query.alarmStatus"
+          clearable
+          @change="searchList"
+        >
+          <el-option
+            v-for="(item, status_index) in caseStatus"
+            :key="status_index"
+            :label="item.statusName"
+            :value="item.statusCode"
+          ></el-option>
+        </el-select>
+        <el-date-picker
+          class="datePickerStyle"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          v-model="dateRange"
+          @change="dateSearchChange"
+          value-format="timestamp"
+          :clearable="false"
+        ></el-date-picker>
+      </div>
+      <div class="resetBtn fl" @click.stop="resetSearchParams">
+        <img :src="resetIcon" />
+        <span>重置</span>
+      </div>
     </div>
     <!-- 列表展示栏 -->
     <div class="list listScroll">
@@ -73,21 +79,36 @@
         @click.stop="showDetailInfoClick(item, list_index)"
       >
         <div class="header-info">
-          <div class="info-title">{{ item.alarmTypeName }}</div>
+          <div class="info-title">{{ item.alarmTypeName || "-" }}</div>
           <div class="info-status">
-            <span :style="statusStyle">{{
-              `${item.alarmStatus == 1 ? "未处理" : ""}${
-                item.alarmStatus == 2 ? "异常" : ""
-              }${item.alarmStatus == 3 ? "误报" : ""}`
-            }}</span>
+            <span
+              :class="{
+                undispose: item.alarmStatus == 1,
+                abnormal: item.alarmStatus == 2,
+                distort: item.alarmStatus == 3
+              }"
+              >{{
+                `${item.alarmStatus == 1 ? "未处理" : ""}${
+                  item.alarmStatus == 2 ? "异常" : ""
+                }${item.alarmStatus == 3 ? "误报" : ""}`
+              }}</span
+            >
             <span> | </span>
-            <span :style="levelStyle">{{
-              `${item.alarmLevel == 1 ? "红色预警" : ""}${
-                item.alarmLevel == 2 ? "橙色预警" : ""
-              }${item.alarmLevel == 3 ? "黄色预警" : ""}${
-                item.alarmLevel == 4 ? "蓝色预警" : ""
-              }`
-            }}</span>
+            <span
+              :class="{
+                red_alert: item.alarmLevel == 1,
+                orange_alert: item.alarmLevel == 2,
+                yellow_alert: item.alarmLevel == 3,
+                blue_alert: item.alarmLevel == 4
+              }"
+              >{{
+                `${item.alarmLevel == 1 ? "红色预警" : ""}${
+                  item.alarmLevel == 2 ? "橙色预警" : ""
+                }${item.alarmLevel == 3 ? "黄色预警" : ""}${
+                  item.alarmLevel == 4 ? "蓝色预警" : ""
+                }`
+              }}</span
+            >
           </div>
         </div>
         <div class="content-wrap">
@@ -117,14 +138,14 @@
               <span class="item-text1">告警设备：</span>
               <EllipsisTooltip
                 class="item-text2"
-                :contentText="String(item.deviceId)"
+                :contentText="item.deviceId ? item.deviceId.deviceName : '-'"
               ></EllipsisTooltip>
             </div>
             <div class="base-time">
               <span class="item-text1">时间：</span>
               <EllipsisTooltip
                 class="item-text2"
-                :contentText="item.captureTime"
+                :contentText="item.captureTime || '-'"
               ></EllipsisTooltip>
             </div>
           </div>
@@ -173,6 +194,7 @@ export default {
 
   data () {
     return {
+      resetIcon: require('../../assets/images/backgroundManagement/reset.svg'),
       dateRange: [],
       list: [],
       pageTotal: 100,
@@ -182,20 +204,20 @@ export default {
       detailInfo: { rect: { show: false, points: [] } },
       noPic: require('../../assets/images/gisDispatch/no-pic.svg'),
       caseDevice: [
-        { typeCode: 1, typeName: '人' },
-        { typeCode: 2, typeName: '船' },
-        { typeCode: 3, typeName: '车' }
+        { deviceCode: 1, deviceName: '人' },
+        { deviceCode: 2, deviceName: '船' },
+        { deviceCode: 3, deviceName: '车' }
       ],
       caseStatus: [
-        { typeCode: 1, typeName: '未处理' },
-        { typeCode: 2, typeName: '异常' },
-        { typeCode: 3, typeName: '误报' }
+        { statusCode: 1, statusName: '未处理' },
+        { statusCode: 2, statusName: '异常' },
+        { statusCode: 3, statusName: '误报' }
       ],
       caseLevel: [
-        { typeCode: 1, typeName: '红色预警' },
-        { typeCode: 2, typeName: '橙色预警' },
-        { typeCode: 3, typeName: '黄色预警' },
-        { typeCode: 4, typeName: '蓝色预警' }
+        { levelCode: 1, levelName: '红色预警' },
+        { levelCode: 2, levelName: '橙色预警' },
+        { levelCode: 3, levelName: '黄色预警' },
+        { levelCode: 4, levelName: '蓝色预警' }
       ],
       // 查询条件
       query: {
@@ -241,7 +263,8 @@ export default {
       }
       // xsRequest
       //   .post(structureApi.queryAlarmList, params)
-      this.$axios.post(structureApi.queryAlarmList, params)
+      this.$axios
+        .post(structureApi.queryAlarmList, params)
         .then(res => {
           // console.log('设备列表返回:', res)
           if (res.data.code === 0) {
@@ -273,31 +296,6 @@ export default {
                   })
                   item.rect.show = true
                 }
-                switch (item.alarmStatus) {
-                  case 1:
-                    this.statusStyle = 'color:#00d1ff'
-                    break
-                  case 2:
-                    this.statusStyle = 'color:#af0e03'
-                    break
-                  case 3:
-                    this.statusStyle = 'color:#ef4e22'
-                    break
-                }
-                switch (item.alarmLevel) {
-                  case 1:
-                    this.levelStyle = 'color:#af0e03'
-                    break
-                  case 2:
-                    this.levelStyle = 'color:#ef4e22'
-                    break
-                  case 3:
-                    this.levelStyle = 'color:#e5ff00'
-                    break
-                  case 4:
-                    this.levelStyle = 'color:#00d1ff'
-                    break
-                }
               })
             })
           }
@@ -317,8 +315,13 @@ export default {
     searchList () {
       this.currentPage = 1
       this.getList()
+    },
+
+    resetSearchParams () {
+      this.currentPage = 1
       this.query.alarmStatus = this.query.alarmLevel = this.query.alarmType =
         ''
+      this.getList()
     },
 
     currentPageChange (curPage) {
@@ -362,6 +365,25 @@ export default {
       height: 36px;
     }
   }
+  .resetBtn {
+    box-sizing: border-box;
+    width: 80px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    background: linear-gradient(120deg, #086384, #0b779e);
+    margin-left: 15px;
+    cursor: pointer;
+    img {
+      width: 20px;
+      height: 18px;
+      margin-right: 10px;
+      vertical-align: text-bottom;
+    }
+    span {
+      font-size: 15px;
+    }
+  }
   .datePickerStyle {
     width: 400px;
     height: 36px;
@@ -396,13 +418,14 @@ export default {
 }
 
 .list {
+  width: 100%;
   height: 760px;
-  margin: 20px 10px 0 10px;
+  margin: 60px 10px 0 10px;
   overflow: auto;
   .list-item {
     box-sizing: border-box;
     display: inline-block;
-    width: 340px;
+    width: 344px;
     height: 180px;
     border: 1px solid #39a4dd;
     margin: 0 12px 20px 12px;
@@ -422,11 +445,26 @@ export default {
       .info-title {
         color: #00d1ff;
       }
-      .info-status > span:nth-child(1) {
-        color: #4eff00;
+      .info-status > .undispose {
+        color: #09eebc;
       }
-      .info-status > span:nth-child(3) {
-        color: #ef4e22;
+      .info-status > .abnormal {
+        color: #f00e0e;
+      }
+      .info-status > .distort {
+        color: #f0670c;
+      }
+      .info-status > .red_alert {
+        color: #c52509;
+      }
+      .info-status > .orange_alert {
+        color: #e7a61b;
+      }
+      .info-status > .yellow_alert {
+        color: #e4e71b;
+      }
+      .info-status > .blue_alert {
+        color: #1b51e7;
       }
     }
 
