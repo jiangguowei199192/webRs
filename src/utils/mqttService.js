@@ -87,9 +87,11 @@ var mqttService;
         EventBus.$emit('web/river/caseHandling', message)
       } else if (message.topic.indexOf('gdu/ai/output') !== -1) {
         EventBus.$emit('video/people/real', message)
+      } else if (message.topic.indexOf('fms-river-protection/notice') !== -1) {
+        EventBus.$emit('web/river/caseNotice', object)
       } else if (message.topic.indexOf('gdu/web/struct/alarms') !== -1) {
         EventBus.$emit('alarmsUpdate', message)
-      } else if (message.topic.indexOf('web/river/caseHandling') !== -1) { } else {
+      } else {
         console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }
     }
