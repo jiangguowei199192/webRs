@@ -1771,11 +1771,21 @@ export default {
         if (
           item.id === info.channelID
         ) {
-          this.$set(
-            this.totalVideosArray[index],
-            'positionList',
-            info.targets
-          )
+          if (info.targetNum > 0) {
+            this.$notify.closeAll()
+            this.$notify.warning({ title: '提示', message: '发现疑似目标!' })
+            this.$set(
+              this.totalVideosArray[index],
+              'positionList',
+              info.targets
+            )
+          } else {
+            this.$set(
+              this.totalVideosArray[index],
+              'positionList',
+              []
+            )
+          }
           this.$set(
             this.totalVideosArray[index],
             'width',

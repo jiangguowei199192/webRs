@@ -266,8 +266,6 @@ export default {
     })
     // 人员显示
     EventBus.$on('video/people/real', info => {
-      this.$notify.closeAll()
-      this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
       EventBus.$emit('peopleRealChange', info)
     })
     // 告警设备更新
