@@ -202,7 +202,8 @@
                 placement="top"
                 :open-delay="500"
               >
-                <div class="download" @click="download" />
+                <img :src="downloadIcon" @click.stop="download" />
+                <!-- <div class="download" @click="download" /> -->
               </el-tooltip>
               <el-tooltip
                 popper-class="gTooltip"
@@ -384,6 +385,7 @@ export default {
       stop: require('../../assets/images/stop-disable.png'),
       play: require('../../assets/images/play-disable.png'),
       pause: require('../../assets/images/pause.png'),
+      downloadIcon: require('../../assets/images/download.png'),
       records: [], // timeBar上的回放记录
       snapList: [], // 抓图列表
       curCalendar: '' // 当前日历时间 YYYY-MM-DD
@@ -1501,6 +1503,7 @@ export default {
         width: 17px;
         height: 10px;
         background: url(../../assets/images/live.png) no-repeat;
+        background-size: 100% 100%;
         margin-left: 12px;
       }
     }
@@ -1531,12 +1534,15 @@ export default {
   }
   div.selected {
     background: url(../../assets/images/list-selected.png) no-repeat;
+    background-size: 100% 100%;
   }
   div.list.unman {
     background: url(../../assets/images/unman_unselected.png) no-repeat;
+    background-size: 100% 100%;
   }
   div.list.unman.selected {
     background: url(../../assets/images/unman_selected.png) no-repeat;
+    background-size: 100% 100%;
   }
 }
 
@@ -1566,6 +1572,7 @@ export default {
         width: 21px;
         height: 17px;
         background: url(../../assets/images/back.png) no-repeat;
+        background-size: 100% 100%;
         margin-left: 16px;
         margin-right: 13px;
       }
@@ -1616,6 +1623,8 @@ export default {
       img {
         margin-right: 20px;
         cursor: pointer;
+        height: 28px;
+        width: 28px;
       }
     }
     .leftTool {
@@ -1658,11 +1667,13 @@ export default {
         width: 28px;
         height: 25px;
         background: url("../../assets/images/download.png") no-repeat;
+        background-size: 100% 100%;
         cursor: pointer;
       }
 
       .download:active {
         background: url("../../assets/images/download-press.png") no-repeat;
+        background-size: 100% 100%;
       }
     }
   }
@@ -1741,6 +1752,7 @@ export default {
       height: 100%;
       padding: 0 15px;
       background: url(../../assets/images/bg.png) no-repeat;
+      background-size: 100% 100%;
       > div {
         div {
           // cursor: pointer;
@@ -1764,11 +1776,13 @@ export default {
       width: 100%;
       height: 359px;
       background: url(../../assets/images/download-box.png) no-repeat;
+      background-size: 100% 100%;
       .downloadContainer {
         padding: 20px;
         .title {
           display: inline-block;
           background: url(../../assets/images/header-bg.png) no-repeat;
+          background-size: 100% 100%;
           width: 202px;
           height: 45px;
           span {
@@ -1779,13 +1793,15 @@ export default {
           }
         }
         .downloadBtn {
+          box-sizing: border-box;
           cursor: pointer;
           position: absolute;
-          left: 637px;
+          right: 84px;
           display: inline-block;
-          width: 112px;
+          width: 82px;
           height: 32px;
           background: url(../../assets/images/downloag-bg.png) no-repeat;
+          background-size: 100% 100%;
           padding: 0px 0px 0px 17px;
           span {
             font-size: 14px;
@@ -1796,16 +1812,18 @@ export default {
         }
         .downloadBtn:active {
           background: url(../../assets/images/downloag-bg-press.png) no-repeat;
+          background-size: 100% 100%;
         }
         .close {
           cursor: pointer;
           position: absolute;
           top: 28px;
-          left: 757px;
+          right: 28px;
           display: inline-block;
           width: 18px;
           height: 18px;
           background: url(../../assets/images/close.png) no-repeat;
+          background-size: 100% 100%;
         }
       }
     }

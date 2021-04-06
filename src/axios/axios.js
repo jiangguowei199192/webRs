@@ -80,13 +80,15 @@ service.interceptors.response.use(
       window.location.href = '/webRs/login'
       return
     }
-    Notification.closeAll()
-    Notification({
-      title: '错误',
-      message: error.response || '请求无响应，网络出错啦！',
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // Notification.closeAll()
+    // Notification({
+    //   title: '错误',
+    //   message: error.response || '请求无响应，网络出错啦！',
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
+    const message = JSON.stringify(error.response) || '请求无响应，网络出错啦！'
+    console.log('error.response：' + message)
   }
 )
 
