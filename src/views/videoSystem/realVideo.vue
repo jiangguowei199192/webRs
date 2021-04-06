@@ -302,7 +302,7 @@
       :show-close="false"
       :before-close="clearRemark"
     >
-      <img :src="`${picUrl}${cutImgUrl}`" width="743px" height="428px" alt />
+      <img :src="`${picUrl}${cutImgUrl}`" alt class="cutImg" />
       <span slot="footer" class="dialog-footer">
         <div class="remark">
           <div class="replain">
@@ -2478,6 +2478,10 @@ export default {
 }
 .cutDialog {
   background: rgba(0, 0, 0, 0.6);
+  .cutImg{
+     width:743px;
+     height:428px
+  }
   /deep/.el-dialog {
     width: 803px;
     height: 549px;
