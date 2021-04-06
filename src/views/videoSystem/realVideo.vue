@@ -1769,8 +1769,7 @@ export default {
     EventBus.$on('peopleRealChange', info => {
       this.totalVideosArray.forEach((item, index) => {
         if (
-          item.deviceCode === info.deviceId.slice(0, info.deviceId.length - 1) &&
-          item.streamType === info.channelId.slice(info.deviceId.length - 1)
+          item.id === info.channelID
         ) {
           this.$set(
             this.totalVideosArray[index],
@@ -1791,8 +1790,7 @@ export default {
       })
       this.curVideosArray.forEach((item, index) => {
         if (
-          item.deviceCode === info.deviceCode &&
-          item.streamType === info.channelId
+          item.id === info.channelID
         ) {
           this.$set(
             this.curVideosArray[index],

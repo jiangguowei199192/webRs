@@ -10,20 +10,20 @@ const createServerConfig = function (compilation) {
   const cfgJson = {
     projectTitle: '智慧农业实战应用平台',
     baseUrlList: [
+      // {
+      //   // 普宙应用管理平台v1.0
+      //   baseUrl: 'http://172.16.63.43:8850',
+      //   mqttServer: '172.16.63.43',
+      //   mqttPort: 2883,
+      //   headImg: 'http://172.16.63.43:80'
+      // }
       {
         // 普宙应用管理平台v1.0
-        baseUrl: 'http://172.16.63.43:8850',
-        mqttServer: '172.16.63.43',
+        baseUrl: 'http://122.112.203.178:8850',
+        mqttServer: '122.112.203.178',
         mqttPort: 2883,
-        headImg: 'http://172.16.63.43:80'
+        headImg: '122.112.203.178:80'
       }
-      // 消防内网
-      // {
-      //   baseUrl: 'http://172.1.53.131:50020',
-      //   mqttServer: '172.1.53.131',
-      //   mqttPort: 50022,
-      //   headImg: 'http://172.1.53.131:80'
-      // }
     ]
   }
   return JSON.stringify(cfgJson)
