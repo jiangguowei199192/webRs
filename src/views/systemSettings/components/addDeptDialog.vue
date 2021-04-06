@@ -568,8 +568,8 @@ export default {
             vertical-align: middle;
             margin: 8px 0 10px 0;
             .icon {
-              width: 0.3rem;
-              height: 0.3rem;
+              width: 30px;
+              height: 30px;
               border-radius: 50%;
             }
             .choose-icon-btn {

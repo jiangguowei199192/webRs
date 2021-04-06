@@ -477,8 +477,8 @@ export default {
             height: 30px;
             vertical-align: middle;
             .icon {
-              width: 0.3rem;
-              height: 0.3rem;
+              width: 30px;
+              height: 30px;
               border-radius: 50%;
             }
           }
