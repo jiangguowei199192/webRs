@@ -119,27 +119,13 @@ export default {
   methods: {
     // 确认/误报
     confirmWarn (status) {
-      // var xsRequest = axios.create({
-      //   baseURL: 'http://172.16.63.43:8080',
-      //   timeout: 10000,
-      //   withCredentials: true,
-      //   paramsSerializer: function (params) {
-      //     return qs.stringify(params, { arrayFormat: 'repeat' })
-      //   }
-      // })
-      // xsRequest.interceptors.request.use(config => {
-      //   config.data = qs.stringify({ ...config.data })
-      //   return config
-      // })
       const params = {
         id: this.info.id,
         status
       }
-      // xsRequest
-      //   .post('/structuration/tAlarm/update', params)
       this.$axios.post(structureApi.updateAlarm, params)
         .then(res => {
-          if (res.data.code === 0) {
+          if (res && res.data && res.data.code === 0) {
             this.$notify.success({
               title: '成功',
               message: '告警核实结果状态修改成功',
@@ -153,29 +139,15 @@ export default {
     },
     // 添加备注
     addRemark () {
-      // const xsRequest = axios.create({
-      //   baseURL: 'http://172.16.63.43:8080',
-      //   timeout: 10000,
-      //   withCredentials: true,
-      //   paramsSerializer: function (params) {
-      //     return qs.stringify(params, { arrayFormat: 'repeat' })
-      //   }
-      // })
-      // xsRequest.interceptors.request.use(config => {
-      //   config.data = qs.stringify({ ...config.data })
-      //   return config
-      // })
       const params = {
         alarmId: this.info.id,
         authorId: JSON.parse(localStorage.getItem('userDetail')).customerId,
         authName: JSON.parse(localStorage.getItem('userDetail')).username,
         remark: this.remark
       }
-      // xsRequest
-      //   .post('/structuration/tAlarmRemark/insert', params)
       this.$axios.post(structureApi.insertAlarmRemark, params)
         .then(res => {
-          if (res.data.code === 0) {
+          if (res && res.data && res.data.code === 0) {
             this.$notify.success({
               title: '成功',
               message: '添加备注成功',
@@ -190,25 +162,11 @@ export default {
         })
     },
     getRemarkList () {
-      // const xsRequest = axios.create({
-      //   baseURL: 'http://172.16.63.43:8080',
-      //   timeout: 10000,
-      //   withCredentials: true,
-      //   paramsSerializer: function (params) {
-      //     return qs.stringify(params, { arrayFormat: 'repeat' })
-      //   }
-      // })
-      // xsRequest.interceptors.request.use(config => {
-      //   config.data = qs.stringify({ ...config.data })
-      //   return config
-      // })
       const params = {
         alarmId: this.info.id,
         page: 1,
         sizeOfPage: 10000
       }
-      // xsRequest
-      //   .post('/structuration/tAlarmRemark/query', params)
       this.$axios.post(structureApi.queryAlarmRemarkList, params)
         .then(res => {
           if (res && res.data && res.data.code === 0) {
@@ -225,9 +183,9 @@ export default {
     }
   },
   watch: {
-    info: {
+    dialogVisible: {
       handler (nv, ov) {
-        if (nv.rect.show) {
+        if (nv) {
           this.getRemarkList()
         }
       },
