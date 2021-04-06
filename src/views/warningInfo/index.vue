@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-06 11:24:45
+ * @LastEditTime: 2021-04-06 15:48:52
 -->
 <template>
   <div class="container">
@@ -114,24 +114,6 @@
         <div class="content-wrap">
           <div class="bigImage" ref="bigImage">
             <img :src="item.imageUrl || noPic" />
-            <!-- <span
-              v-for="(list, index) in item.rect.points"
-              :key="index"
-              :style="
-                'left:' +
-                  list.left +
-                  '%;' +
-                  'top:' +
-                  list.top +
-                  '%;' +
-                  'width:' +
-                  list.width +
-                  '%;' +
-                  'height:' +
-                  list.height +
-                  '%;'
-              "
-            ></span> -->
           </div>
           <div class="text-base">
             <div class="base-equipment">
@@ -181,8 +163,6 @@ import { structureApi } from '@/api/structureData.js'
 import DetailInfo from './warningDetail'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
 import { timeFormat, timeFormat3 } from '@/utils/date'
-// import axios from 'axios'
-// import qs from 'qs'
 
 export default {
   name: 'warningInfo',
@@ -224,9 +204,7 @@ export default {
         alarmStatus: '',
         alarmLevel: '',
         alarmType: ''
-      },
-      statusStyle: '',
-      levelStyle: ''
+      }
     }
   },
 
@@ -241,18 +219,6 @@ export default {
 
   methods: {
     getList () {
-      // var xsRequest = axios.create({
-      //   baseURL: 'http://172.16.63.43:8080',
-      //   timeout: 10000,
-      //   withCredentials: true,
-      //   paramsSerializer: function (params) {
-      //     return qs.stringify(params, { arrayFormat: 'repeat' })
-      //   }
-      // })
-      // xsRequest.interceptors.request.use(config => {
-      //   config.data = qs.stringify({ ...config.data })
-      //   return config
-      // })
       var params = {
         startTime: timeFormat3(this.dateRange[0]),
         endTime: timeFormat3(this.dateRange[1]),
@@ -261,15 +227,17 @@ export default {
         alarmStatus: this.query.alarmStatus,
         alarmLevel: this.query.alarmLevel
       }
-      // xsRequest
-      //   .post(structureApi.queryAlarmList, params)
       this.$axios
         .post(structureApi.queryAlarmList, params)
         .then(res => {
           // console.log('设备列表返回:', res)
           if (res.data.code === 0) {
             res.data.data.data.forEach(item => {
-              item.captureTime = timeFormat(item.captureTime)
+              if (item.captureTime === 0) {
+                item.captureTime = timeFormat(new Date())
+              } else {
+                item.captureTime = timeFormat(item.captureTime)
+              }
               item.rect = {
                 points: [],
                 show: false

@@ -59,6 +59,8 @@ var mqttService;
       instance.client.subscribe('web/river/caseHandling/#')
       // 案件处置流程改变
       instance.client.subscribe('fms-river-protection/notice')
+      // 告警设备更新
+      instance.client.subscribe('gdu/web/struct/alarms')
     }
 
     // mqtt client失去连接后的callback
@@ -73,7 +75,7 @@ var mqttService;
 
     // mqtt 消息到来的callback
     var onMessageArrived = function (message) {
-      // console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
+      console.log('onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       var object = JSON.parse(message.payloadString)
       EventBus.$emit(message.topic, object)
       if (message.topic === 'gdu/realVideo/streamHadNotData') {
@@ -85,9 +87,9 @@ var mqttService;
         EventBus.$emit('web/river/caseHandling', message)
       } else if (message.topic.indexOf('gdu/ai/output') !== -1) {
         EventBus.$emit('video/people/real', message)
-      } else if (message.topic.indexOf('fms-river-protection/notice') !== -1) {
-        EventBus.$emit('web/river/caseNotice', object)
-      } else {
+      } else if (message.topic.indexOf('gdu/web/struct/alarms') !== -1) {
+        EventBus.$emit('alarmsUpdate', message)
+      } else if (message.topic.indexOf('web/river/caseHandling') !== -1) { } else {
         console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }
     }

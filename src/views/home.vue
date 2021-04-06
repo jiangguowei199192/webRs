@@ -23,7 +23,7 @@
           <div class="content">
             <div class="title">{{ projectTitle }}</div>
             <div class="container">
-              <div class="box" >
+              <div class="box">
                 <div
                   v-for="(item, index) in systems"
                   :key="index"
@@ -32,20 +32,37 @@
                   @click.stop="jumpTo(index)"
                 >
                   <span>{{ item.content }}</span>
+                  <img
+                    ref="flashImg"
+                    v-show="index == 3 && isActive == 3"
+                    :src="flashIcon"
+                  />
                 </div>
               </div>
               <div class="settings">
                 <div class="info">
                   <div class="person">
                     <img :src="perSonPic" alt />
-                    <span class="uName" :title="userName">{{ userName?userName.length>4?userName.slice(0,4)+'...':userName:'-' }}</span>
+                    <span class="uName" :title="userName">{{
+                      userName
+                        ? userName.length > 4
+                          ? userName.slice(0, 4) + "..."
+                          : userName
+                        : "-"
+                    }}</span>
 
                     <el-dropdown @command="handleCommand">
                       <span class="el-dropdown-link">
                         <img :src="settingPic" alt />
                       </span>
-                      <el-dropdown-menu slot="dropdown" :append-to-body="false" class="settingDrop">
-                        <el-dropdown-item command="0">修改密码</el-dropdown-item>
+                      <el-dropdown-menu
+                        slot="dropdown"
+                        :append-to-body="false"
+                        class="settingDrop"
+                      >
+                        <el-dropdown-item command="0"
+                          >修改密码</el-dropdown-item
+                        >
                         <el-dropdown-item command="1">退出</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -111,7 +128,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -125,6 +144,7 @@ import { loginApi } from '@/api/login'
 import globalApi from '../utils/globalApi'
 const droneOffline = 'gdu/appOutLine'
 const droneCmdReq = 'gdu/commandCtrlReq'
+
 export default {
   name: 'Home',
   data () {
@@ -145,6 +165,8 @@ export default {
       }
     }
     return {
+      flashIcon: require('../assets/images/structureData/flash.gif'),
+      flashTimer: null,
       form: {
         oldPass: '',
         newPass: '',
@@ -251,6 +273,10 @@ export default {
       this.$notify.warning({ title: '提示', message: '发现可疑人员!' })
       EventBus.$emit('peopleRealChange', info)
     })
+    // 告警设备更新
+    EventBus.$on('alarmsUpdate', info => {
+      this.parseAlarmsInfo(info)
+    })
     // AR显示
     // EventBus.$on('video/aRAiResult', (info) => {
     //   EventBus.$emit('getArChange', info)
@@ -268,6 +294,7 @@ export default {
     EventBus.$off('droneInfos')
     EventBus.$off('video/people/found')
     EventBus.$off('video/people/real')
+    EventBus.$off('alarmsUpdate')
     // EventBus.$off('video/aRAiResult')
     // EventBus.$off('video/deviceIid/channleID/datalink/firewarning')
     // EventBus.$off('video/webControlPztNotice')
@@ -390,6 +417,17 @@ export default {
         }
       }
     },
+    // 告警设备更新
+    parseAlarmsInfo (msg) {
+      // console.log('alarmsMsg:', msg)
+      if (msg) {
+        this.$refs.flashImg.forEach(t => (t.hidden = false))
+        clearTimeout(this.flashTimer)
+        this.flashTimer = setTimeout(() => {
+          this.$refs.flashImg.forEach(t => (t.hidden = true))
+        }, 4000)
+      }
+    },
     getPath () {
       const path = this.$route.path
       this.isFixed = false
@@ -409,6 +447,7 @@ export default {
         this.isActive = 2
       } else if (path === '/warningInfo') {
         this.isActive = 3
+        this.$refs.flashImg.forEach(t => (t.hidden = true))
       } else if (path === '/structureData') {
         this.isActive = 4
       } else if (path === '/infoCenter') {
@@ -547,6 +586,14 @@ export default {
               line-height: 40px;
               text-align: center;
               cursor: pointer;
+              position: relative;
+              img {
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                top: 5px;
+                right: 3px;
+              }
             }
             .list.active {
               font-weight: 400;
@@ -591,8 +638,8 @@ export default {
                   position: relative;
                   top: -6px;
                   display: inline-block;
-                  width:75px;
-                  text-align:center;
+                  width: 75px;
+                  text-align: center;
                 }
                 /deep/ ul.settingDrop {
                   box-sizing: border-box;

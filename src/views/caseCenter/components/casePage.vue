@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-01 11:21:30
+ * @LastEditTime: 2021-04-06 13:18:44
 -->
 <template>
   <div class="fireBox">
@@ -80,7 +80,7 @@ export default {
   data () {
     return {
       searchIcon: require('../../../assets/images/caseCenter/search.svg'),
-      resetIcon: require('../../../assets/images/caseCenter/select.svg'),
+      resetIcon: require('../../../assets/images/backgroundManagement/reset.svg'),
       checkedList: [],
       caseStatus: [
         { typeCode: 0, typeName: '未处置' },
@@ -197,9 +197,10 @@ export default {
     .resetBtn {
       margin-left: 25px;
       img {
-        width: 12px;
-        height: 10px;
+        width: 20px;
+        height: 18px;
         margin-right: 10px;
+        vertical-align: text-bottom;
       }
     }
     span {
