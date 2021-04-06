@@ -141,7 +141,7 @@ var mqttService;
         'pc_' +
         new Date().getTime().toString()
       // eslint-disable-next-line no-undef
-      instance.client = new Paho.Client(globalApi.mqttServer || globalApi.mqttServer2, globalApi.mqttPort, '/gduMqtt', clientID)
+      instance.client = new Paho.Client(globalApi.mqttServer, globalApi.mqttPort, '/gduMqtt', clientID)
       // instance.client.trace = onTrace
       instance.client.startTrace()
       // set callback handlers
