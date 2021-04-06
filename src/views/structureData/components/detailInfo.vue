@@ -4,7 +4,7 @@
     :close-on-click-modal="false"
     @close="$emit('close')"
     width="21.25%"
-    class="detail-info"
+    class="detail-info browserScroll"
   >
     <div class="title">{{ title }}</div>
     <div class="img-box" v-if="info">
@@ -153,7 +153,7 @@ export default {
         const attrs = newI.pedestrian.attributeMap
         for (const item in attrs) {
           num += 1
-          if (num > 5) {
+          if (num > 21) {
             return
           }
           this.detailInfoItems.push(attrs[item])

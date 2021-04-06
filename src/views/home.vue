@@ -214,7 +214,7 @@ export default {
       isActive: 0, // GIS调度平台
       systems: [
         {
-          content: 'GIS调度平台'
+          content: '调度平台'
         },
         {
           content: '案件中心'
