@@ -146,8 +146,10 @@
               class="search"
               placeholder="请输入人员姓名/组织名称进行搜索"
             >
-              <i slot="suffix"></i
-            ></el-input>
+              <!-- <i slot="suffix" @click="getUserList()"></i
+            > -->
+            </el-input>
+            <i class="suffix" @click.stop="getUserList()"></i>
             <div class="list listScroll">
               <template v-for="(item, index) in peoples">
                 <div :key="index">
@@ -253,6 +255,7 @@ export default {
   },
   mounted () {},
   methods: {
+    getMembersDone () {},
     /**
      * 案发时间改变
      */
@@ -552,6 +555,21 @@ export default {
         border-top: none;
         padding-left: 10px;
         width: 326px;
+        position: relative;
+        .suffix {
+          position: absolute;
+          width: 16px;
+          height: 21px;
+          background: url("../../../assets/images/gisDispatch/search.svg");
+          background-size: 100% 100%;
+          top: 15px;
+          right: 14px;
+          cursor: pointer;
+        }
+        .suffix:active {
+          background: url("../../../assets/images/gisDispatch/search-press.svg");
+          background-size: 100% 100%;
+        }
         .search {
           margin-top: 10px;
           box-sizing: border-box;

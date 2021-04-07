@@ -24,8 +24,9 @@
             class="search"
             placeholder="请输入人员姓名/组织名称进行搜索"
           >
-            <i slot="suffix"></i
-          ></el-input>
+            <!-- <i slot="suffix"></i> -->
+          </el-input>
+          <i class="suffix" @click.stop="getUserList()"></i>
           <div class="list listScroll">
             <template v-for="(item, index) in members">
               <div :key="index">
@@ -202,11 +203,15 @@ export default {
             const list = res.data.data
             list.forEach((l) => {
               if (l.pushMans && l.pushMans.length > 0) {
-                l.pushMans.forEach(m => {
-                  const man = this.peoples.find(p => p.employeeId === m.employeeId)
+                l.pushMans.forEach((m) => {
+                  const man = this.peoples.find(
+                    (p) => p.employeeId === m.employeeId
+                  )
                   if (man) {
                     const ind = this.peoples.indexOf(man)
-                    if (ind !== -1) { this.peoples.splice(ind, 1) }
+                    if (ind !== -1) {
+                      this.peoples.splice(ind, 1)
+                    }
                   }
                 })
               }
@@ -337,6 +342,21 @@ export default {
         width: 322px;
         border-right: 1px solid #00d2ff;
         padding-left: 39px;
+        position: relative;
+        .suffix {
+          position: absolute;
+          width: 16px;
+          height: 21px;
+          background: url("../../../assets/images/gisDispatch/search.svg");
+          background-size: 100% 100%;
+          top: 40px;
+          right: 28px;
+          cursor: pointer;
+        }
+        .suffix:active {
+          background: url("../../../assets/images/gisDispatch/search-press.svg");
+          background-size: 100% 100%;
+        }
         .radius {
           display: flex;
           color: #fff;
