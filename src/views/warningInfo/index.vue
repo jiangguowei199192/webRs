@@ -120,7 +120,7 @@
               <span class="item-text1">告警设备：</span>
               <EllipsisTooltip
                 class="item-text2"
-                :contentText="item.deviceId ? item.deviceId.deviceName : '-'"
+                :contentText="item.deviceName||'-'"
               ></EllipsisTooltip>
             </div>
             <div class="base-time">

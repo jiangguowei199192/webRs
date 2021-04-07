@@ -18,7 +18,7 @@
           </li>
           <li>
             <span class="title">告警设备：</span>
-            <span>{{info.deviceId?info.deviceId.deviceName:'-'}}</span>
+            <span>{{info.deviceName||'-'}}</span>
           </li>
           <li>
             <span class="title">告警时间：</span>
