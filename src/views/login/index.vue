@@ -142,14 +142,23 @@ export default {
       // 将selectedServerIndex保存至本地，当没走登录页时，读取本地selectedServerIndex来配置baseUrl
       localStorage.setItem('selectedServerIndex', this.selectedServerIndex)
 
+      if (/[\u4E00-\u9FA5]/g.test(this.loginInfo.username)) {
+        Notification({
+          title: '提示',
+          message: '账号不能包含中文',
+          type: 'warning',
+          duration: 5 * 1000
+        })
+        return
+      }
       if (
         this.loginInfo.username.length <= 0 ||
         this.loginInfo.password.length <= 0
       ) {
         Notification({
-          title: '错误',
-          message: '请输入用户名和密码',
-          type: 'error',
+          title: '提示',
+          message: '请输入账号和密码',
+          type: 'warning',
           duration: 5 * 1000
         })
         return
