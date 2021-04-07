@@ -51,7 +51,7 @@
             :placeholder="placeholder"
             class="timeStyle"
             value-format="yyyy-MM-dd HH:mm:ss"
-             @change="reportTimeChange"
+            @change="reportTimeChange"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="举报人 :" prop="reportMan">
@@ -194,6 +194,7 @@ export default {
   mixins: [assignMixin],
   data () {
     return {
+      addCase: false,
       caseSources: [],
       isInit: false,
       formRules: {
@@ -250,8 +251,7 @@ export default {
       }
     }
   },
-  mounted () {
-  },
+  mounted () {},
   methods: {
     /**
      * 案发时间改变
@@ -295,7 +295,7 @@ export default {
         })
         .then((res) => {
           if (res && res.data && res.data.code === 0) {
-            this.caseSources = res.data.data.filter(s => s.status === 0)
+            this.caseSources = res.data.data.filter((s) => s.status === 0)
           }
         })
         .catch((err) => {
@@ -331,7 +331,8 @@ export default {
       this.$refs.caseForm.validate((valid) => {
         v = valid
       })
-      if (!v) return
+      if (!v || this.addCase) return
+      this.addCase = true
       if (this.selectList.length > 0) {
         for (let i = 0; i < this.selectList.length; i++) {
           const s =
@@ -346,11 +347,13 @@ export default {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
         .then((res) => {
+          this.addCase = false
           if (res && res.data && res.data.code === 0) {
             this.$emit('addCaseOK')
           }
         })
         .catch((err) => {
+          this.addCase = false
           console.log('caseApi.caseAdd Err : ' + err)
         })
     }
