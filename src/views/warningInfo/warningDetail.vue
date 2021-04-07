@@ -14,15 +14,15 @@
         <ul class="baseInfo">
           <li>
             <span class="title">事件类型：</span>
-            <span>{{info.alarmTypeName||'-'}}</span>
+            <span>{{ info.alarmTypeName || "-" }}</span>
           </li>
           <li>
             <span class="title">告警设备：</span>
-            <span>{{info.deviceId?info.deviceId.deviceName:'-'}}</span>
+            <span>{{ info.deviceName ? info.deviceName : "-" }}</span>
           </li>
           <li>
             <span class="title">告警时间：</span>
-            <span>{{info.captureTime}}</span>
+            <span>{{ info.captureTime }}</span>
           </li>
         </ul>
         <div class="content-title">案件核实</div>
@@ -41,18 +41,20 @@
             class="word"
           ></el-input>
           <div class="btns">
-            <div @click="remark=''">取消</div>
+            <div @click="remark = ''">取消</div>
             <div @click="addRemark">确定</div>
           </div>
           <div class="warningBox webFsScroll">
-            <div class="list" v-for="(item,index) in remarkList" :key="index">
-              <div class="circle">{{index+1}}</div>
+            <div class="list" v-for="(item, index) in remarkList" :key="index">
+              <div class="circle">{{ index + 1 }}</div>
               <div class="extra">
-                <span class="descrip">{{item.remark||'-'}}</span>
-                <div class="time">{{item.createTime||'-'}}</div>
+                <span class="descrip">{{ item.remark || "-" }}</span>
+                <div class="time">{{ item.createTime || "-" }}</div>
               </div>
             </div>
-            <div class="empty" v-show="remarkList.length===0">暂无备注信息</div>
+            <div class="empty" v-show="remarkList.length === 0">
+              暂无备注信息
+            </div>
             <!-- <div class="list">
               <div class="circle">1</div>
               <div class="extra">
@@ -121,7 +123,8 @@ export default {
         id: this.info.id,
         status
       }
-      this.$axios.post(structureApi.updateAlarm, params)
+      this.$axios
+        .post(structureApi.updateAlarm, params)
         .then(res => {
           if (res && res.data && res.data.code === 0) {
             this.$notify.success({
@@ -143,7 +146,8 @@ export default {
         authName: JSON.parse(localStorage.getItem('userDetail')).username,
         remark: this.remark
       }
-      this.$axios.post(structureApi.insertAlarmRemark, params)
+      this.$axios
+        .post(structureApi.insertAlarmRemark, params)
         .then(res => {
           if (res && res.data && res.data.code === 0) {
             this.$notify.success({
@@ -165,7 +169,8 @@ export default {
         page: 1,
         sizeOfPage: 10000
       }
-      this.$axios.post(structureApi.queryAlarmRemarkList, params)
+      this.$axios
+        .post(structureApi.queryAlarmRemarkList, params)
         .then(res => {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
@@ -306,8 +311,8 @@ export default {
               }
             }
           }
-          div.empty{
-            color:#fff;
+          div.empty {
+            color: #fff;
             text-align: center;
           }
         }

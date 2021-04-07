@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-06 20:13:08
+ * @LastEditTime: 2021-04-07 09:33:28
 -->
 <template>
   <div class="container">
@@ -120,7 +120,7 @@
               <span class="item-text1">告警设备：</span>
               <EllipsisTooltip
                 class="item-text2"
-                :contentText="item.deviceId ? item.deviceId.deviceName : '-'"
+                :contentText="item.deviceName ? item.deviceName : '-'"
               ></EllipsisTooltip>
             </div>
             <div class="base-time">
