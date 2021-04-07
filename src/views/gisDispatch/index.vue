@@ -244,7 +244,7 @@ export default {
      * 获取面资源完毕回调
      */
     getAreasDone () {
-      this.resInfos[4].num = this.areas ? this.lines.length : 0
+      this.resInfos[4].num = this.areas ? this.areas.length : 0
       this.getResDataWidth()
       this.$refs.caseMain.addRouteOrLineDatas(this.areas)
     },
