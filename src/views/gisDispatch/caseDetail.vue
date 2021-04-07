@@ -634,7 +634,7 @@ export default {
      * 获取线资源完毕回调
      */
     getLinesDone () {
-      const count = this.$refs.caseMain.addDatasInRadius(
+      const count = this.$refs.caseMain.addDatasInRadius2(
         this.lines,
         this.caseInfo,
         this.radius

@@ -95,6 +95,17 @@ export default {
       )
     },
     /**
+     * 加载圆形围栏范围内的线资源
+     */
+    addDatasInRadius2 (data, rCenrer, radius) {
+      if (!this.$refs.gduMap) return
+      return this.$refs.gduMap.map2D.gisDispatchManager.addDatasInRadius2(
+        data,
+        rCenrer,
+        radius
+      )
+    },
+    /**
      * 除去除了案件外的所有资源
      */
     clearAllOtherFeatures () {
