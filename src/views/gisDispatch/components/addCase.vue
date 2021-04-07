@@ -332,6 +332,7 @@ export default {
         v = valid
       })
       if (!v || this.addCase) return
+      this.caseForm.designateMan = ''
       this.addCase = true
       if (this.selectList.length > 0) {
         for (let i = 0; i < this.selectList.length; i++) {
