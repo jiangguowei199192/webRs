@@ -270,6 +270,7 @@ export default {
     })
     // 告警设备更新
     EventBus.$on('alarmsUpdate', info => {
+      // console.log('info:', info)
       if (info) {
         this.showFlashIcon = true
         clearTimeout(this.flashTimer)

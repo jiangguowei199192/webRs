@@ -77,7 +77,10 @@ var mqttService;
     var onMessageArrived = function (message) {
       // console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       if (!message.payloadString) return
-      var object = JSON.parse(message.payloadString)
+      let object = ''
+      try {
+        object = JSON.parse(message.payloadString)
+      } catch { }
       EventBus.$emit(message.topic, object)
       if (message.topic === 'gdu/realVideo/streamHadNotData') {
         console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
@@ -86,12 +89,12 @@ var mqttService;
         EventBus.$emit('web/river/caseHandling', message)
       } else if (message.topic.indexOf('gdu/ai/output') !== -1) {
         EventBus.$emit('video/people/real', object)
+      } else if (message.topic.indexOf('gdu/web/struct/alarms') !== -1) {
+        EventBus.$emit('alarmsUpdate', message)
       } else if (message.topic.substr(0, 4) === 'gdu/') {
         EventBus.$emit('droneInfos', message)
       } else if (message.topic.indexOf('fms-river-protection/notice') !== -1) {
         EventBus.$emit('web/river/caseNotice', object)
-      } else if (message.topic.indexOf('gdu/web/struct/alarms') !== -1) {
-        EventBus.$emit('alarmsUpdate', message)
       } else {
         console.log(formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss') + '  onMessageArrived---------topic:' + message.topic + '----------' + message.payloadString)
       }
