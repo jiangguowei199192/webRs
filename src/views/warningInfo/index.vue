@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-06 19:50:00
+ * @LastEditTime: 2021-04-06 20:13:08
 -->
 <template>
   <div class="container">
@@ -229,6 +229,10 @@ export default {
         }, 10000)
       }
     })
+  },
+
+  destroyed () {
+    EventBus.$off('deviceUpdate')
   },
 
   methods: {

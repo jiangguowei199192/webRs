@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 11:30:49
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-31 14:26:28
+ * @LastEditTime: 2021-04-07 09:05:01
 -->
 <template>
   <div class="caseCenter">
@@ -225,19 +225,21 @@ export default {
     // 单击表格行
     handelClickRowInfo (info) {
       // console.log('rowdata:', info)
-      this.clickRowId = info.id
-      this.getCaseDetail()
-      this.getCaseRecord()
-      this.$nextTick(() => {
-        this.$refs.chatContent.getChatList()
-      })
+      if (info) {
+        this.clickRowId = info.id
+        this.getCaseDetail()
+        this.getCaseRecord()
+        this.$nextTick(() => {
+          this.$refs.chatContent.getChatList()
+        })
+      }
     },
 
     // 按钮操作提交
     confirmRecordClick (data) {
       this.refreshTable()
       this.uploadFilesConfig = data.uploadFileUrl.split(',')
-      this.uploadFilesConfig.forEach((t) => {
+      this.uploadFilesConfig.forEach(t => {
         const type = t.split('.')[1]
         if (type === 'jpg' || type === 'jpeg' || type === 'png') {
           this.imgListPath.push(t)
@@ -270,14 +272,14 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then((res) => {
+        .then(res => {
           // console.log('基本信息res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseDetailInfo = res.data.data
             this.disposeUploadConfig()
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('caseApi.selectDetail Err : ' + err)
         })
     },
@@ -290,7 +292,7 @@ export default {
           { id: this.clickRowId },
           { headers: { 'Content-Type': 'application/json;charset=UTF-8' } }
         )
-        .then((res) => {
+        .then(res => {
           // console.log('处置记录res：', res)
           if (res && res.data && res.data.code === 0) {
             this.caseRecordInfo = res.data.data.records
@@ -298,7 +300,7 @@ export default {
             EventBus.$emit('uploadFilesConfig', this.uploadFilesConfig)
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('caseApi.selectCaseRecord Err : ' + err)
         })
     },
@@ -311,7 +313,7 @@ export default {
         this.uploadFilesConfig = this.caseDetailInfo.disFinishAttachment.split(
           ','
         )
-        this.uploadFilesConfig.forEach((t) => {
+        this.uploadFilesConfig.forEach(t => {
           const type = t.split('.')[1]
           if (type === 'jpg' || type === 'jpeg' || type === 'png') {
             this.imgListPath.push(t)
