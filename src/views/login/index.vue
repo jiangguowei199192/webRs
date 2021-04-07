@@ -6,7 +6,7 @@
       <br />
       <b class="label">账号：</b>
       <el-input
-        placeholder="请输入用户名"
+        placeholder="请输入账号"
         auto-complete="new-password"
         clearable
         maxlength="20"
