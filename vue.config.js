@@ -18,7 +18,7 @@ const createServerConfig = function (compilation) {
       //   headImg: 'http://172.16.63.43:80'
       // }
       {
-        // 普宙应用管理平台v1.0
+        // 长江大保护
         baseUrl: 'http://122.112.203.178:8850',
         mqttServer: '122.112.203.178',
         mqttPort: 2883,
