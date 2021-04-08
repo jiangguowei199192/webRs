@@ -141,6 +141,7 @@ import globalApi from '../../utils/globalApi'
 export default {
   data () {
     return {
+      mapResList: [],
       showCaseDlg: false,
       caseFold: false,
       dateRange: [],
@@ -231,6 +232,8 @@ export default {
       this.resInfos[2].num = this.drones ? this.drones.length : 0
       this.getResDataWidth()
       this.$refs.caseMain.addDatas(this.drones)
+      // this.mapResList = this.mapResList.concat(this.drones)
+      // this.$refs.caseMain.zoomToExtent(this.mapResList)
     },
     /**
      * 获取高点监控资源完毕回调
@@ -239,6 +242,8 @@ export default {
       this.resInfos[3].num = this.cameras ? this.cameras.length : 0
       this.getResDataWidth()
       this.$refs.caseMain.addDatas(this.cameras)
+      // this.mapResList = this.mapResList.concat(this.cameras)
+      // this.$refs.caseMain.zoomToExtent(this.mapResList)
     },
     /**
      * 获取面资源完毕回调
@@ -263,6 +268,8 @@ export default {
       this.resInfos[6].num = this.points ? this.points.length : 0
       this.getResDataWidth()
       this.$refs.caseMain.addDatas(this.points)
+      // this.mapResList = this.mapResList.concat(this.points)
+      // this.$refs.caseMain.zoomToExtent(this.mapResList)
     },
     /**
      * 获取组织机构完毕回调
@@ -271,6 +278,8 @@ export default {
       this.resInfos[0].num = this.organs ? this.organs.length : 0
       this.getResDataWidth()
       this.$refs.caseMain.addDatas(this.organs)
+      this.mapResList = this.mapResList.concat(this.organs)
+      this.$refs.caseMain.zoomToExtent(this.mapResList)
     },
     /**
      * 获取组织人员完毕回调
@@ -279,6 +288,8 @@ export default {
       this.resInfos[1].num = this.members ? this.members.length : 0
       this.getResDataWidth()
       this.$refs.caseMain.addDatas(this.members)
+      // this.mapResList = this.mapResList.concat(this.members)
+      // this.$refs.caseMain.zoomToExtent(this.mapResList)
     },
     /**
      * 隐藏/显示图层
@@ -401,6 +412,9 @@ export default {
             this.$refs.caseMain.addCaseMarker(this.cases)
             this.caseNums[1].num = this.cases.filter(
               (c) => c.caseStatus === '0'
+            ).length
+            this.caseNums[2].num = this.cases.filter(
+              (c) => c.caseStatus === '2'
             ).length
             this.caseNums[3].num = this.cases.filter(
               (c) => c.caseStatus === '1'

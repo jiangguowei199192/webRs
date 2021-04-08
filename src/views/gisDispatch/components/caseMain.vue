@@ -66,6 +66,13 @@ export default {
     window.onresize = null
   },
   methods: {
+    /**
+     * 定位到指定范围
+     */
+    zoomToExtent (data) {
+      const t = this.$refs.gduMap.map2D.gisDispatchManager.getExtent(data)
+      this.$refs.gduMap.map2D.zoomToExtent(t.minX, t.minY, t.maxX, t.maxY, false)
+    },
     addDatas (data) {
       if (!this.$refs.gduMap) return
       this.$refs.gduMap.map2D.gisDispatchManager.addDatas(data)

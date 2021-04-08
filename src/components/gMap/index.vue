@@ -14,7 +14,7 @@
     <div
       class="simpleSearchCtrl"
       :class="{ simpleSearchCtrl_Mini: bMiniSearchStyle }"
-      v-if="bShowAllTools && bShowSimpleSearchTools"
+      v-show="bShowAllTools && bShowSimpleSearchTools"
     >
       <input
         class="simpleInputText"
@@ -277,8 +277,8 @@ export default {
       measureType: 0,
       bShowTheTif: true,
       map2D: null,
-      lon: 110.200431,
-      lat: 32.751584,
+      lon: 114.3208895,
+      lat: 30.6183919,
       mouseLon: '0',
       mouseLat: '0',
       lonFlag: 'N',
@@ -337,6 +337,10 @@ export default {
     },
     // 简易搜索框(火情警报、设备地图页面会用到)
     bShowSimpleSearchTools: {
+      type: Boolean,
+      default: false
+    },
+    bUseimpleSearch: {
       type: Boolean,
       default: false
     },
@@ -400,8 +404,6 @@ export default {
     this.pointEndID = '_pointEnd_' + tmpStamp
 
     this.mapTypeBasic = 1
-    this.lon = 110.200431
-    this.lat = 32.751584
   },
 
   mounted () {
@@ -578,7 +580,7 @@ export default {
     // 初始化搜索提示框
     initSearchBox () {
       var that = this
-      if (this.bShowSimpleSearchTools) {
+      if (this.bShowSimpleSearchTools || this.bUseimpleSearch) {
         // eslint-disable-next-line
         this.simpleAutoTips = new AMap.Autocomplete({
           input: this.simpleAddrSearchID
@@ -680,42 +682,42 @@ export default {
       }
       this.simpleAutoTips.Ub.style.visibility = 'hidden'
 
-      let strs = addrStr.split(',')
-      const strs2 = addrStr.split('，')
-      if (strs.length !== 2 && strs2.length === 2) {
-        strs = strs2
-      }
-      if (strs.length === 2) {
-        try {
-          if (!String.prototype.trim) {
-            // eslint-disable-next-line
-            String.prototype.trim = function () {
-              return this.replace(/^\s*|\s*$/g, '')
-            }
-          }
-          strs[0] = strs[0].trim()
-          strs[1] = strs[1].trim()
-          // eslint-disable-next-line
-          const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/;
-          // eslint-disable-next-line
-          const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/;
-          if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
-            const tmpLon = parseFloat(strs[0])
-            const tmpLat = parseFloat(strs[1])
-            this.addCustomMarker(addrStr, tmpLon, tmpLat)
-            this.mapMoveTo(tmpLon, tmpLat, false)
-            return
-          } else if (lonreg.test(strs[1]) && latreg.test(strs[0])) {
-            const tmpLon = parseFloat(strs[1])
-            const tmpLat = parseFloat(strs[0])
-            this.mapMoveTo(tmpLon, tmpLat, false)
-            this.addCustomMarker(addrStr, tmpLon, tmpLat)
-            return
-          }
-        } catch (error) {
-          console.log('LonLat Reg exception : ' + error)
-        }
-      }
+      // let strs = addrStr.split(',')
+      // const strs2 = addrStr.split('，')
+      // if (strs.length !== 2 && strs2.length === 2) {
+      //   strs = strs2
+      // }
+      // if (strs.length === 2) {
+      //   try {
+      //     if (!String.prototype.trim) {
+      //       // eslint-disable-next-line
+      //       String.prototype.trim = function () {
+      //         return this.replace(/^\s*|\s*$/g, '')
+      //       }
+      //     }
+      //     strs[0] = strs[0].trim()
+      //     strs[1] = strs[1].trim()
+      //     // eslint-disable-next-line
+      //     const lonreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,14})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,14}|180)$/;
+      //     // eslint-disable-next-line
+      //     const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,14}|90\.0{0,14}|[0-8]?\d{1}|90)$/;
+      //     if (lonreg.test(strs[0]) && latreg.test(strs[1])) {
+      //       const tmpLon = parseFloat(strs[0])
+      //       const tmpLat = parseFloat(strs[1])
+      //       this.addCustomMarker(addrStr, tmpLon, tmpLat)
+      //       this.mapMoveTo(tmpLon, tmpLat, false)
+      //       return
+      //     } else if (lonreg.test(strs[1]) && latreg.test(strs[0])) {
+      //       const tmpLon = parseFloat(strs[1])
+      //       const tmpLat = parseFloat(strs[0])
+      //       this.mapMoveTo(tmpLon, tmpLat, false)
+      //       this.addCustomMarker(addrStr, tmpLon, tmpLat)
+      //       return
+      //     }
+      //   } catch (error) {
+      //     console.log('LonLat Reg exception : ' + error)
+      //   }
+      // }
 
       const that = this
       AMapHelper.getTips({ keywords: addrStr })
@@ -729,6 +731,7 @@ export default {
                 const tmpLat = parseFloat(tmpStrs[1])
                 this.addCustomMarker(addrStr, tmpLon, tmpLat)
                 that.mapMoveTo(tmpLon, tmpLat, false)
+                that.$emit('searchAddrOk', tmpLon, tmpLat)
                 break
               } catch (error) {
                 console.log('tmpTips.forEach exception : ' + error)
@@ -1620,7 +1623,7 @@ export default {
     bottom: 145px;
   }
   .lonLatTools {
-    font-size:16px;
+    font-size: 16px;
     position: absolute;
     background-color: #00000066;
     color: white;

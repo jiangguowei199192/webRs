@@ -6,7 +6,7 @@
         ref="caseForm"
         :model="caseForm"
         :inline="true"
-        class="caseForm"
+        class="caseForm listScroll"
         :rules="formRules"
       >
         <div class="step1">
@@ -84,6 +84,7 @@
             :placeholder="placeholder"
             class="caseName"
             maxlength="50"
+            @change="reportAddrChange()"
           ></el-input>
         </el-form-item>
         <el-form-item label="    " prop="longitude" class="map">
@@ -91,11 +92,12 @@
             <gMap
               ref="gduMap"
               handleType="devMap"
-              :bShowSimpleSearchTools="true"
               :bShowBasic="false"
               :bShowMeasure="false"
               :bShowLonLat="false"
               :bAutoLocate="false"
+              :bUseimpleSearch="true"
+              @searchAddrOk="searchAddrOk"
             ></gMap>
           </div>
         </el-form-item>
@@ -183,6 +185,7 @@ import { caseApi } from '@/api/case'
 import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import assignMixin from '../mixins/assignMixin'
 import { settingApi } from '@/api/setting'
+import { formatDate } from '@/utils/date'
 export default {
   props: {
     isShow: {
@@ -235,6 +238,11 @@ export default {
     isShow (val) {
       if (val) {
         this.selectList = []
+        this.caseForm.caseStartTime = formatDate(
+          new Date(),
+          'yyyy-MM-dd HH:mm:ss'
+        )
+        this.caseForm.reportTime = this.caseForm.caseStartTime
         setTimeout(() => {
           if (!this.isInit) {
             this.isInit = true
@@ -245,6 +253,8 @@ export default {
           this.$refs.gduMap.resetSearchText()
           this.$refs.gduMap.map2D.customMarkerLayerManager.clear()
           this.$refs.gduMap.map2D._map.updateSize()
+          this.$refs.gduMap.map2D.zoomToCenter(114.3208895, 30.6183919)
+          this.$refs.gduMap.map2D.setZoom(15)
         }, 200)
         this.getUserList()
         this.getCaseSources()
@@ -257,13 +267,27 @@ export default {
   methods: {
     getMembersDone () {},
     /**
+     * 举报地址改变
+     */
+    reportAddrChange () {
+      this.$refs.gduMap.simpleSearchAddrs(this.caseForm.reportAddr, false)
+    },
+    /**
+     * 地址搜索成功
+     */
+    searchAddrOk (lon, lat) {
+      this.caseForm.longitude = lon
+      this.caseForm.latitude = lat
+      this.$refs.caseForm.validateField('longitude', (valid) => {})
+    },
+    /**
      * 案发时间改变
      */
     startTimeChange () {
-      if (!this.caseForm.caseStartTime) return
+      if (!this.caseForm.reportTime || !this.caseForm.caseStartTime) return
       const time = new Date(this.caseForm.caseStartTime).getTime()
       const report = new Date(this.caseForm.reportTime).getTime()
-      if (report <= time) {
+      if (report < time) {
         this.caseForm.caseStartTime = ''
         this.$notify.closeAll()
         this.$notify.info({
@@ -276,10 +300,10 @@ export default {
      * 报警时间改变
      */
     reportTimeChange () {
-      if (!this.caseForm.reportTime) return
+      if (!this.caseForm.reportTime || !this.caseForm.caseStartTime) return
       const time = new Date(this.caseForm.caseStartTime).getTime()
       const report = new Date(this.caseForm.reportTime).getTime()
-      if (report <= time) {
+      if (report < time) {
         this.caseForm.reportTime = ''
         this.$notify.closeAll()
         this.$notify.info({
@@ -312,6 +336,7 @@ export default {
       const tmpMap = this.$refs.gduMap.map2D
       this.caseForm.longitude = lonlat[0]
       this.caseForm.latitude = lonlat[1]
+      this.$refs.caseForm.validateField('longitude', (valid) => {})
       tmpMap.customMarkerLayerManager.clear()
       tmpMap.customMarkerLayerManager.addMarker({
         name: null,
@@ -379,7 +404,7 @@ export default {
     }
     .el-dialog__body {
       height: 1022px;
-      padding: 22px 22px 19px 22px;
+      padding: 22px 0px 19px 22px;
       border: 1px solid #00a7e8;
       box-sizing: border-box;
       background-color: rgba($color: #004157, $alpha: 0.85);
@@ -410,7 +435,7 @@ export default {
         font-family: Source Han Sans CN;
         font-weight: 400;
         color: #fefefe;
-        width: 100px;
+        width: 110px;
         padding: 0px 15px 0px 0px;
         line-height: 26px;
       }
@@ -443,6 +468,7 @@ export default {
       }
     }
     .caseForm {
+      overflow-y: auto;
       .step1 {
         margin-bottom: 11px;
         span:nth-child(1) {
@@ -496,10 +522,10 @@ export default {
         }
       }
       .map {
-        height: 110px;
+        height: 230px;
         .mapBox {
           width: 520px;
-          height: 110px;
+          height: 230px;
         }
       }
       .des {
