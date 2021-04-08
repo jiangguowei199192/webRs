@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 09:16:43
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-26 15:14:09
+ * @LastEditTime: 2021-04-08 17:01:38
 -->
 <template>
   <el-dialog
@@ -262,7 +262,7 @@ export default {
 
     cancelClick (formName) {
       this.$refs[formName].resetFields()
-      this.isDisabled = this.codeDisabled = false
+      this.showPopover = this.isDisabled = this.codeDisabled = false
       this.$emit('update:isShow', false)
       this.$emit('update:handelType', '')
     },

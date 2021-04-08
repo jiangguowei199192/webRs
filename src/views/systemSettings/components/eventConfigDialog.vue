@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-08 11:49:51
+ * @LastEditTime: 2021-04-08 16:53:26
 -->
 <template>
   <div>
@@ -26,33 +26,21 @@
             :label="item.label"
             :name="item.name"
           >
-            <div v-show="tab_index == 0">
-              <div class="tab-pane-header">
-                <span>{{ item.label }}</span>
-                <span>{{ item.describe }}</span>
-              </div>
-              <div class="tab-pane-detail"></div>
+            <div class="tab-pane-header">
+              <span>{{ item.label }}</span>
+              <span>{{ item.describe }}</span>
             </div>
-            <div v-show="tab_index == 1">
-              <div class="tab-pane-header">
-                <span>{{ item.label }}</span>
-                <span>{{ item.describe }}</span>
-              </div>
-              <div class="tab-pane-detail"></div>
+            <div v-show="tab_index == 0" class="tab-pane-detail">
+              {{ item.label }}
             </div>
-            <div v-show="tab_index == 2">
-              <div class="tab-pane-header">
-                <span>{{ item.label }}</span>
-                <span>{{ item.describe }}</span>
-              </div>
-              <div class="tab-pane-detail"></div>
+            <div v-show="tab_index == 1" class="tab-pane-detail">
+              {{ item.label }}
             </div>
-            <div v-show="tab_index == 3">
-              <div class="tab-pane-header">
-                <span>{{ item.label }}</span>
-                <span>{{ item.describe }}</span>
-              </div>
-              <div class="tab-pane-detail"></div>
+            <div v-show="tab_index == 2" class="tab-pane-detail">
+              {{ item.label }}
+            </div>
+            <div v-show="tab_index == 3" class="tab-pane-detail">
+              {{ item.label }}
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -178,8 +166,8 @@ export default {
       }
       .el-tab-pane {
         height: 580px;
-        // background-color: #03585e44;
         padding-left: 20px;
+        // background-color: #03585e44;
       }
       .tab-pane-header {
         height: 40px;
@@ -197,6 +185,10 @@ export default {
           font-size: 14px;
           margin-left: 20px;
         }
+      }
+      .tab-pane-detail {
+        margin-top: 20px;
+        height: 516px;
       }
     }
     .handelBtns {
