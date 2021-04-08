@@ -48,8 +48,8 @@
           <div class="caseList" v-show="!caseFold">
             <div class="title">案件列表</div>
             <div class="btns">
-              <span @click.stop="addCase"></span>
-              <span @click.stop="getCaseList"></span>
+              <span @click.stop="addCase" class="add"></span>
+              <span @click.stop="getCaseList" class="refresh"></span>
             </div>
             <div class="caseNum">
               <template v-for="(item, index) in caseNums">
@@ -631,8 +631,16 @@ export default {
           cursor: pointer;
           margin-left: 20px;
         }
+        .add:active {
+          background: url(../../assets/images/gisDispatch/+-press.svg) no-repeat;
+          background-size: 100% 100%;
+        }
         span:nth-child(2) {
           background: url(../../assets/images/gisDispatch/refresh.svg) no-repeat;
+          background-size: 100% 100%;
+        }
+        .refresh:active {
+          background: url(../../assets/images/gisDispatch/refresh-press.svg) no-repeat;
           background-size: 100% 100%;
         }
       }
