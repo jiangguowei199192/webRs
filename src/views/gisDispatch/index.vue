@@ -83,7 +83,8 @@
                   ></EllipsisTooltip>
                   <div class="caseInfo">
                     <div class="left">
-                      <img :src="item.img || noPic" />
+                      <!-- <img :src="item.img || noPic" /> -->
+                      <img :src="noPic" />
                       <span :class="{ green: item.caseStatus === '1' }">{{
                         formatCaseStatus(item.caseStatus)
                       }}</span>
