@@ -24,7 +24,7 @@
             :label="item.deviceName"
             :value="item.deviceCode"
           ></el-option>
-        </el-select> -->
+        </el-select>-->
         <el-select
           placeholder="等级"
           class="select-input"
@@ -87,13 +87,14 @@
                 abnormal: item.alarmStatus == 2,
                 distort: item.alarmStatus == 3
               }"
-              >{{
-                `${item.alarmStatus == 1 ? "未处理" : ""}${
-                  item.alarmStatus == 2 ? "异常" : ""
-                }${item.alarmStatus == 3 ? "误报" : ""}`
-              }}</span
             >
-            <span> | </span>
+              {{
+              `${item.alarmStatus == 1 ? "未处理" : ""}${
+              item.alarmStatus == 2 ? "异常" : ""
+              }${item.alarmStatus == 3 ? "误报" : ""}`
+              }}
+            </span>
+            <span>|</span>
             <span
               :class="{
                 red_alert: item.alarmLevel == 1,
@@ -101,14 +102,15 @@
                 yellow_alert: item.alarmLevel == 3,
                 blue_alert: item.alarmLevel == 4
               }"
-              >{{
-                `${item.alarmLevel == 1 ? "红色预警" : ""}${
-                  item.alarmLevel == 2 ? "橙色预警" : ""
-                }${item.alarmLevel == 3 ? "黄色预警" : ""}${
-                  item.alarmLevel == 4 ? "蓝色预警" : ""
-                }`
-              }}</span
             >
+              {{
+              `${item.alarmLevel == 1 ? "红色预警" : ""}${
+              item.alarmLevel == 2 ? "橙色预警" : ""
+              }${item.alarmLevel == 3 ? "黄色预警" : ""}${
+              item.alarmLevel == 4 ? "蓝色预警" : ""
+              }`
+              }}
+            </span>
           </div>
         </div>
         <div class="content-wrap">
@@ -118,17 +120,11 @@
           <div class="text-base">
             <div class="base-equipment">
               <span class="item-text1">告警设备：</span>
-              <EllipsisTooltip
-                class="item-text2"
-                :contentText="item.deviceName || '-'"
-              ></EllipsisTooltip>
+              <EllipsisTooltip class="item-text2" :contentText="item.deviceName || '-'"></EllipsisTooltip>
             </div>
             <div class="base-time">
               <span class="item-text1">时间：</span>
-              <EllipsisTooltip
-                class="item-text2"
-                :contentText="item.captureTime || '-'"
-              ></EllipsisTooltip>
+              <EllipsisTooltip class="item-text2" :contentText="item.captureTime || '-'"></EllipsisTooltip>
             </div>
           </div>
         </div>
@@ -205,8 +201,7 @@ export default {
         alarmStatus: '',
         alarmLevel: '',
         alarmType: ''
-      },
-      alarmsTimer: null
+      }
     }
   },
 
@@ -223,10 +218,7 @@ export default {
     // 刷新告警设备列表
     EventBus.$on('deviceUpdate', info => {
       if (info) {
-        clearInterval(this.alarmsTimer)
-        this.alarmsTimer = setInterval(() => {
-          this.getList()
-        }, 10000)
+        this.getList()
       }
     })
   },
