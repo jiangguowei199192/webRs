@@ -38,7 +38,7 @@ export default {
           },
           { label: '设备名称', value: 'deviceName' },
           { label: '配置告警类型', value: '' },
-          { label: '实时监测配置', value: '' },
+          { label: '实时检测配置', value: '' },
           { label: '所属单位', value: 'deviceDeptName' },
           { label: '在线状态', value: 'onlineStatus' },
           { label: '启用', value: 'deviceStatus', type: 'switch' }

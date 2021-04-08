@@ -422,7 +422,9 @@ export default {
     background: #af0e03;
   }
   .activingColor {
-    background: #b35802;
+    background: #b35202;
+    pointer-events: none;
+    cursor: not-allowed;
   }
   .tablePagination {
     height: 35px;
