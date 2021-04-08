@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-22 16:10:13
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-05 15:40:58
+ * @LastEditTime: 2021-04-07 16:55:19
 -->
 <template>
   <div>
@@ -64,7 +64,7 @@ export default {
               event: 'readonly'
             },
             {
-              label: '实时监测',
+              label: '实时检测',
               event: 'monitor'
             },
             {

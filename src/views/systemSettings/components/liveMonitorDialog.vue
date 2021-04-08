@@ -4,16 +4,30 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-05 15:47:27
+ * @LastEditTime: 2021-04-08 11:54:33
 -->
 <template>
   <div>
     <el-dialog
       :visible.sync="isShow"
       :close-on-click-modal="false"
-      class="add-case-dlg dialog-wrap"
+      class="monitor-dlg dialog-wrap"
     >
-      <div class="add-case-header">{{ title }}</div>
+      <div class="monitor-header">{{ title }}</div>
+      <div class="monitor-content">
+        <div class="people-test">
+          <span class="fl test-title">人员检测：</span>
+          <el-switch class="fl" v-model="peopleStatus"> </el-switch>
+        </div>
+        <div class="car-test">
+          <span class="fl test-title">车辆检测：</span>
+          <el-switch class="fl" v-model="carStatus"> </el-switch>
+        </div>
+        <div class="boat-test">
+          <span class="fl test-title">船只检测：</span>
+          <el-switch class="fl" v-model="boatStatus"> </el-switch>
+        </div>
+      </div>
       <div class="handelBtns">
         <span @click.stop="updateIsShow()">取消</span>
         <span>确定</span>
@@ -31,7 +45,10 @@ export default {
 
   data () {
     return {
-      placeholder: '请输入'
+      placeholder: '请输入',
+      peopleStatus: true,
+      carStatus: true,
+      boatStatus: true
     }
   },
 
@@ -51,13 +68,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.add-case-dlg.el-dialog__wrapper {
+.monitor-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
-    width: 750px;
-    // background-color: rgba(0, 65, 87, 0.85);
+    width: 970px;
     background-color: transparent;
-    .add-case-header {
+    .el-dialog__body {
+      height: 530px;
+      position: relative;
+    }
+    .monitor-header {
       width: 218px;
       height: 30px;
       background: linear-gradient(90deg, #00d2ff 0%, rgba(0, 210, 255, 0) 100%);
@@ -68,81 +88,31 @@ export default {
       padding: 0 20px;
       margin-top: 18px;
     }
-    .add-case-form {
-      margin: 25px 0 0 5px;
-      .el-input__inner {
-        background-color: rgba(9, 84, 109, 0.85);
-        border-color: #00d2ff;
-        border-radius: 0;
-        width: 240px;
-        height: 28px;
-        color: #00caf6;
-        font-size: 12px;
-      }
-      .el-form-item {
-        display: block;
-        margin: 5px 0 25px 0;
-      }
-      .el-form-item__label {
-        color: #fff;
-        font-size: 12px;
-        width: 100px;
-      }
-      .el-textarea__inner {
-        background-color: rgba(9, 84, 109, 0.85);
-        border-color: #00d2ff;
-        border-radius: 0;
-        width: 635px;
-        height: 85px;
-        color: #00caf6;
-        font-size: 12px;
-        margin-top: 8px;
-      }
-      .el-input .el-input__count .el-input__count-inner,
-      .el-textarea .el-input__count {
-        background: transparent;
-        bottom: -5px;
-      }
-      .upload-box {
-        width: 404px;
-        height: 208px;
-        background-color: rgba(9, 84, 109, 0.85);
-        border-radius: 4px;
-        cursor: pointer;
-        .el-upload-dragger {
-          background-color: transparent;
-          border: 1px dashed #00d2ff;
-          box-sizing: border-box;
-          width: 404px;
-          height: 208px;
+    .monitor-content {
+      margin-top: 20px;
+      padding: 0 20px;
+      .people-test,
+      .car-test,
+      .boat-test {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        margin-bottom: 10px;
+        .test-title {
+          width: 100px;
+          font-size: 16px;
+          color: #00d1ff;
         }
-        .el-icon-upload {
-          font-size: 80px;
-          color: #00caf6;
-          margin: 30px 0 0 5px;
-        }
-        .el-upload__text {
-          color: #00caf6;
-          font-size: 13px;
-        }
-        .el-upload-list {
-          height: 50px;
-          overflow-y: auto;
-        }
-        .el-upload-list__item {
-          font-size: 12px;
-          margin-top: 0;
-        }
-        .el-upload-list__item-name,
-        .el-icon-document {
-          color: #00caf6;
+        .el-switch {
+          display: block;
+          margin-left: 15px;
         }
       }
     }
     .handelBtns {
-      margin-right: 0;
-      display: flex;
-      justify-content: flex-end;
+      position: absolute;
+      right: 0;
+      bottom: 0;
       span {
         display: inline-block;
         box-sizing: border-box;

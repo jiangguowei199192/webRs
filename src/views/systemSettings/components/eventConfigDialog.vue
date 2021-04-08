@@ -4,16 +4,59 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-05 15:47:35
+ * @LastEditTime: 2021-04-08 11:49:51
 -->
 <template>
   <div>
     <el-dialog
       :visible.sync="isShow"
       :close-on-click-modal="false"
-      class="add-case-dlg dialog-wrap"
+      class="config-dlg dialog-wrap"
     >
-      <div class="add-case-header">{{ title }}</div>
+      <div class="config-header">{{ title }}</div>
+      <div class="config-content">
+        <el-tabs
+          :tab-position="tabPosition"
+          v-model="activeName"
+          @tab-click="handleClick"
+        >
+          <el-tab-pane
+            v-for="(item, tab_index) in tabList"
+            :key="tab_index"
+            :label="item.label"
+            :name="item.name"
+          >
+            <div v-show="tab_index == 0">
+              <div class="tab-pane-header">
+                <span>{{ item.label }}</span>
+                <span>{{ item.describe }}</span>
+              </div>
+              <div class="tab-pane-detail"></div>
+            </div>
+            <div v-show="tab_index == 1">
+              <div class="tab-pane-header">
+                <span>{{ item.label }}</span>
+                <span>{{ item.describe }}</span>
+              </div>
+              <div class="tab-pane-detail"></div>
+            </div>
+            <div v-show="tab_index == 2">
+              <div class="tab-pane-header">
+                <span>{{ item.label }}</span>
+                <span>{{ item.describe }}</span>
+              </div>
+              <div class="tab-pane-detail"></div>
+            </div>
+            <div v-show="tab_index == 3">
+              <div class="tab-pane-header">
+                <span>{{ item.label }}</span>
+                <span>{{ item.describe }}</span>
+              </div>
+              <div class="tab-pane-detail"></div>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
       <div class="handelBtns">
         <span @click.stop="updateIsShow()">取消</span>
         <span>确定</span>
@@ -31,7 +74,34 @@ export default {
 
   data () {
     return {
-      placeholder: '请输入'
+      placeholder: '请输入',
+      activeName: 'boat',
+      tabPosition: 'left',
+      tabList: [
+        {
+          name: 'boat',
+          label: '船舶出现',
+          describe:
+            '在监控图像或二维地图中设定检测区域，检测船舶在指定区域内出现的事件'
+        },
+        {
+          name: 'fish',
+          label: '钓鱼行为',
+          describe:
+            '在监控图像或二维地图中设定检测区域，检测钓鱼行为在指定区域内出现的事件'
+        },
+        {
+          name: 'stranded',
+          label: '人员滞留',
+          describe:
+            '在监控图像中设定检测区域和人员滞留时长，检测人员在警戒区域滞留超过设定时长的事件'
+        },
+        {
+          name: 'invade',
+          label: '人员入侵',
+          describe: '在监控图像中设定检测区域，检测人员进入警戒区域的事件'
+        }
+      ]
     }
   },
 
@@ -45,19 +115,27 @@ export default {
     // 更新isShow状态
     updateIsShow () {
       this.$emit('update:isShow', false)
+    },
+
+    handleClick (tab, event) {
+      console.log(tab, event)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.add-case-dlg.el-dialog__wrapper {
+.config-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
-    width: 750px;
-    // background-color: rgba(0, 65, 87, 0.85);
+    width: 1168px;
     background-color: transparent;
-    .add-case-header {
+    .el-dialog__body {
+      color: #fff;
+      height: 720px;
+      position: relative;
+    }
+    .config-header {
       width: 218px;
       height: 30px;
       background: linear-gradient(90deg, #00d2ff 0%, rgba(0, 210, 255, 0) 100%);
@@ -68,81 +146,63 @@ export default {
       padding: 0 20px;
       margin-top: 18px;
     }
-    .add-case-form {
-      margin: 25px 0 0 5px;
-      .el-input__inner {
-        background-color: rgba(9, 84, 109, 0.85);
-        border-color: #00d2ff;
-        border-radius: 0;
-        width: 240px;
-        height: 28px;
-        color: #00caf6;
-        font-size: 12px;
+    .config-content {
+      margin-top: 20px;
+      .el-tabs__header {
+        width: 150px;
+        height: 620px;
+        border-right: 1px solid #00a7e8;
       }
-      .el-form-item {
-        display: block;
-        margin: 5px 0 25px 0;
+      .el-tabs__active-bar {
+        background-color: transparent;
+        // background-color: #00d1ff;
+        height: 30px !important;
+        margin-top: 7.5px;
       }
-      .el-form-item__label {
+      .el-tabs__nav-wrap::after {
+        background-color: transparent;
+      }
+      .el-tabs__item.is-left {
+        text-align: center;
+        margin-right: 20px;
+        font-size: 16px;
+        color: #00d1ff;
+        height: 45px;
+        line-height: 45px;
+      }
+      .el-tabs__item.is-left.is-active {
         color: #fff;
-        font-size: 12px;
-        width: 100px;
       }
-      .el-textarea__inner {
-        background-color: rgba(9, 84, 109, 0.85);
-        border-color: #00d2ff;
-        border-radius: 0;
-        width: 635px;
-        height: 85px;
-        color: #00caf6;
-        font-size: 12px;
-        margin-top: 8px;
+      #tab-boat {
+        margin-top: 15px;
       }
-      .el-input .el-input__count .el-input__count-inner,
-      .el-textarea .el-input__count {
-        background: transparent;
-        bottom: -5px;
+      .el-tab-pane {
+        height: 580px;
+        // background-color: #03585e44;
+        padding-left: 20px;
       }
-      .upload-box {
-        width: 404px;
-        height: 208px;
-        background-color: rgba(9, 84, 109, 0.85);
-        border-radius: 4px;
-        cursor: pointer;
-        .el-upload-dragger {
-          background-color: transparent;
-          border: 1px dashed #00d2ff;
-          box-sizing: border-box;
-          width: 404px;
-          height: 208px;
+      .tab-pane-header {
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 1px solid #00a7e8;
+        span:nth-child(1) {
+          display: inline-block;
+          width: 100px;
+          color: #00d1ff;
+          font-size: 20px;
         }
-        .el-icon-upload {
-          font-size: 80px;
-          color: #00caf6;
-          margin: 30px 0 0 5px;
-        }
-        .el-upload__text {
-          color: #00caf6;
-          font-size: 13px;
-        }
-        .el-upload-list {
-          height: 50px;
-          overflow-y: auto;
-        }
-        .el-upload-list__item {
-          font-size: 12px;
-          margin-top: 0;
-        }
-        .el-upload-list__item-name,
-        .el-icon-document {
-          color: #00caf6;
+        span:nth-child(2) {
+          display: inline-block;
+          color: #ebebeb;
+          font-size: 14px;
+          margin-left: 20px;
         }
       }
     }
     .handelBtns {
-      margin-right: 0;
-      display: flex;
-      justify-content: flex-end;
+      position: absolute;
+      right: 0;
+      bottom: 0;
       span {
         display: inline-block;
         box-sizing: border-box;
@@ -152,7 +212,7 @@ export default {
         border-radius: 2px;
         line-height: 32px;
         text-align: center;
-        background: transparent;
+        background-color: transparent;
         font-size: 16px;
         color: #1eb0fc;
         cursor: pointer;

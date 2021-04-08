@@ -114,7 +114,7 @@
     <LiveMonitorDialog
       ref="disposeRecRef"
       :isShow.sync="monitorIsShow"
-      title="实时监测"
+      title="实时检测"
     ></LiveMonitorDialog>
     <!-- 事件配置弹窗 -->
     <EventConfigDialog
