@@ -1,11 +1,3 @@
-<!--
- * @Descripttion: 天下风云出我辈, 一入江湖岁月催; 皇图霸业谈笑中, 不胜人生一场醉.
- * @version: v_1.0
- * @Author: liangkaiLee
- * @Date: 2021-03-22 16:10:13
- * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-07 16:55:19
--->
 <template>
   <div>
     <VideoResSetting

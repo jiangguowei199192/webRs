@@ -62,11 +62,11 @@
             <span
               v-else-if="item.type === 'handelStatus' && scope.row[item.value]"
               class="handelBtn"
-              :class="
-                scope.row[item.value] == '已处置'
-                  ? 'activeColor'
-                  : 'inActiveColor'
-              "
+              :class="{
+                inActiveColor: scope.row[item.value] == '未处置',
+                activedColor: scope.row[item.value] == '已处置',
+                activingColor: scope.row[item.value] == '处置中'
+              }"
               @click.stop="disposeClick(scope.$index, scope.row)"
               >{{ scope.row[item.value] }}</span
             >
@@ -341,6 +341,8 @@ export default {
                   r.caseStatus = '未处置'
                 } else if (r.caseStatus === '1') {
                   r.caseStatus = '已处置'
+                } else if (r.caseStatus === '2') {
+                  r.caseStatus = '处置中'
                 }
               })
               // 默认选中首行
@@ -410,7 +412,7 @@ export default {
     color: #fefefe;
     cursor: pointer;
   }
-  .activeColor {
+  .activedColor {
     background: #02b337;
     pointer-events: none;
     cursor: not-allowed;
@@ -418,6 +420,9 @@ export default {
   }
   .inActiveColor {
     background: #af0e03;
+  }
+  .activingColor {
+    background: #b35802;
   }
   .tablePagination {
     height: 35px;
