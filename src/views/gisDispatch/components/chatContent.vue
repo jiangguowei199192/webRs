@@ -31,9 +31,7 @@
             :autoplay="true"
             oncontextmenu="return false"
             fluent
-            :stretch="true"
             :live="false"
-            aspect="fullscreen"
             :poster="poster"
           ></LivePlayer>
         </div>
@@ -64,9 +62,7 @@
         :autoplay="true"
         oncontextmenu="return false"
         fluent
-        :stretch="true"
         :live="false"
-        aspect="fullscreen"
         :poster="poster"
       ></LivePlayer>
     </el-dialog>

@@ -63,7 +63,6 @@
             action="http://172.16.63.43:8850/fms-river-protection/file/uploads"
             accept=".jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .pdf, .rar, .zip"
             :limit="10"
-            :file-list="uploadList"
             :auto-upload="false"
             :on-change="onUploadChange"
             :on-remove="onRemoveFile"
@@ -72,7 +71,7 @@
             <div class="el-upload__text">
               将文件拖到此处，或<em style="color: #1ed8a0">点击上传</em>
               <p>
-                支持文件类型:xls、xlsx、docx、jpg、jpeg、png、zip...(10M以内)
+                支持文件类型:xls、xlsx、docx、jpg、jpeg、png、zip...(1M以内)
               </p>
             </div>
           </el-upload>
@@ -113,9 +112,9 @@ export default {
         record: isNotNull('请输入处置结果'),
         people: isNotNull('请输入处置人'),
         time: isNotNull('请选择处置时间')
-      },
-      uploadList: [],
-      uploadFiles: []
+      }
+      // uploadList: [],
+      // uploadFiles: []
     }
   },
 
@@ -132,8 +131,10 @@ export default {
   methods: {
     // 更新isShow状态
     updateIsShow (formName) {
+      this.addCaseForm.uploadFileUrl = ''
+      this.$refs.uploadForm.clearFiles()
       this.$refs[formName].resetFields()
-      this.uploadFiles = this.uploadList = []
+      // this.uploadFiles = this.uploadList = []
       this.$emit('update:isShow', false)
       this.$emit('update:clickRowId', '')
     },
@@ -173,7 +174,11 @@ export default {
         'zip'
       ]
       if (fileType.indexOf(fileName) === -1) {
-        this.uploadList.splice(this.uploadList.length - 1, 1)
+        // this.uploadList.splice(this.uploadList.length - 1, 1)
+        this.$refs.uploadForm.uploadFiles.splice(
+          this.$refs.uploadForm.uploadFiles.length - 1,
+          1
+        )
         this.$notify.closeAll()
         this.$notify.warning({
           title: '警告',
@@ -183,28 +188,31 @@ export default {
         })
         return
       }
-      const limitSize = file.size / 1024 / 1024 < 10
+      const limitSize = file.size / 1024 / 1024 <= 1
       if (!limitSize) {
-        this.uploadList.splice(this.uploadList.length - 1, 1)
+        // this.uploadList.splice(this.uploadList.length - 1, 1)
+        this.$refs.uploadForm.uploadFiles.splice(
+          this.$refs.uploadForm.uploadFiles.length - 1,
+          1
+        )
         this.$notify.closeAll()
         this.$notify.warning({
           title: '警告',
-          message: '单个文件大小不能超过 10MB',
+          message: '单个文件大小不能超过 1MB',
           duration: 3 * 1000
         })
-        return
       }
 
-      this.uploadFiles.push(file.raw)
+      // this.uploadFiles.push(file.raw)
       // this.uploadFileList()
     },
 
     // 移除上传文件
     onRemoveFile (file, fileList) {
-      const index = this.uploadFiles.indexOf(file.raw)
-      if (index !== -1) {
-        this.uploadFiles.splice(index, 1)
-      }
+      // const index = this.uploadFiles.indexOf(file.raw)
+      // if (index !== -1) {
+      //   this.uploadFiles.splice(index, 1)
+      // }
     },
 
     onUploadSuccess (response, file, fileList) {
@@ -213,22 +221,25 @@ export default {
 
     // 上传文件
     uploadFileList () {
-      if (this.uploadFiles.length !== 0) {
+      if (this.$refs.uploadForm.uploadFiles.length !== 0) {
         const formData = new FormData()
-        this.uploadFiles.forEach(f => {
-          formData.append('files', f)
+        // this.uploadFiles.forEach((f) => {
+        //   formData.append('files', f)
+        // })
+        this.$refs.uploadForm.uploadFiles.forEach((file) => {
+          formData.append('files', file.raw)
         })
         const config = { headers: { 'Content-Type': 'multipart/form-data' } }
         this.$axios
           .post(caseApi.uploadFiles, formData, config)
-          .then(res => {
+          .then((res) => {
             // console.log('上传文件res:', res)
             if (res && res.data && res.data.code === 0) {
               this.addCaseForm.uploadFileUrl = res.data.data
               this.finishCase()
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.log('caseApi.uploadFile Err : ' + err)
           })
       } else this.finishCase()
@@ -247,7 +258,7 @@ export default {
         .post(caseApi.finishCase, params, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           // console.log('处置记录提交res:', res)
           if (res && res.data && res.data.code === 0) {
             this.$emit('confirmRecordClick', this.addCaseForm)
@@ -255,14 +266,14 @@ export default {
             this.$emit('finishCaseSuccess')
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('caseApi.finishCase Err : ' + err)
         })
     },
 
     // 处置info录入提交
     confirmCaseRecord (formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (!valid) return false
         this.uploadFileList()
       })
