@@ -592,7 +592,7 @@ export default {
             .list.active {
               //width: 180px;
               font-weight: 400;
-              color: #ffba00;
+              color: #fff;
               background: url(../assets/images/home/active.svg) no-repeat;
               background-size: 100% 100%;
             }
