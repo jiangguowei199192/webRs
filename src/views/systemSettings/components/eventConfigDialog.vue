@@ -326,6 +326,29 @@ export default {
           margin-top: 10px;
           .select {
             display: inline-block;
+            > span {
+              margin-right: 18px;
+              font-weight: 500;
+              color: #00d1ff;
+              font-size: 16px;
+            }
+
+            .el-input__inner {
+              border-radius: 0;
+              border: 1px solid #1eb0fc;
+              background: #034157;
+            }
+          }
+          .select:nth-child(1) {
+            > div {
+              width: 255px;
+            }
+          }
+          .select:nth-child(2) {
+            margin-left: 50px;
+            > div {
+              width: 140px;
+            }
           }
         }
       }
