@@ -1,5 +1,5 @@
 <template>
-  <div class="camerBox">
+  <div class="camerBox gisBox">
     <div class="gisTitle">
       <span>高点信息</span>
     </div>
@@ -28,20 +28,32 @@
       <div class="ulBox">
         <ul>
           <li>
-            <span>设备名称：</span>
-            <span>{{ dataInfo.name }}</span>
+            <span class="left">设备名称：</span>
+            <EllipsisTooltip
+              :contentText="dataInfo.deviceName || ''"
+              class="txt"
+            ></EllipsisTooltip>
           </li>
           <li>
-            <span>设备编码：</span>
-            <span>{{ dataInfo.id }}</span>
+            <span class="left">设备编码：</span>
+            <EllipsisTooltip
+              :contentText="dataInfo.id || ''"
+              class="txt"
+            ></EllipsisTooltip>
           </li>
           <li>
-            <span>设备品牌：</span>
-            <span>{{ dataInfo.brand }}</span>
+            <span class="left">设备品牌：</span>
+            <EllipsisTooltip
+              :contentText="dataInfo.brand || ''"
+              class="txt"
+            ></EllipsisTooltip>
           </li>
           <li>
-            <span>所在地区： </span>
-            <span>{{ dataInfo.address }}</span>
+            <span class="left">所在地区：</span>
+            <EllipsisTooltip
+              :contentText="dataInfo.address || ''"
+              class="txt"
+            ></EllipsisTooltip>
           </li>
         </ul>
       </div>
@@ -75,6 +87,7 @@
 <script>
 import LivePlayer from '@liveqing/liveplayer'
 import streamMixin from '../mixins/streamMixin'
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 export default {
   name: 'camerBox',
   data () {
@@ -84,11 +97,11 @@ export default {
     }
   },
   components: {
-    LivePlayer
+    LivePlayer,
+    EllipsisTooltip
   },
   mixins: [streamMixin],
-  mounted () {
-  },
+  mounted () {},
   methods: {
     /**
      *  显示视频放大对话框窗口

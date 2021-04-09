@@ -95,6 +95,7 @@ export default {
     formatCaseStatus (caseStatus) {
       if (caseStatus === '0' || caseStatus === 0) return '未处置'
       else if (caseStatus === '1' || caseStatus === 1) return '已处置'
+      else if (caseStatus === '2' || caseStatus === 2) return '处置中'
     },
     /**
      * 范围改变

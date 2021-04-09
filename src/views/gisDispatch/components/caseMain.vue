@@ -21,6 +21,11 @@
 import camerBox from '../components/camerBox'
 import droneBox from '../components/droneBox'
 import caseBox from '../components/caseBox'
+import organBox from '../components/organBox'
+import pointBox from '../components/pointBox'
+import areaBox from '../components/areaBox'
+import memberBox from '../components/memberBox'
+import routeBox from '../components/routeBox'
 import createVueCompFunc from '@/utils/createVueComp'
 export default {
   name: 'caseMain',
@@ -71,7 +76,13 @@ export default {
      */
     zoomToExtent (data) {
       const t = this.$refs.gduMap.map2D.gisDispatchManager.getExtent(data)
-      this.$refs.gduMap.map2D.zoomToExtent(t.minX, t.minY, t.maxX, t.maxY, false)
+      this.$refs.gduMap.map2D.zoomToExtent(
+        t.minX,
+        t.minY,
+        t.maxX,
+        t.maxY,
+        false
+      )
     },
     addDatas (data) {
       if (!this.$refs.gduMap) return
@@ -156,6 +167,16 @@ export default {
         return createVueCompFunc(caseBox, props)
       } else if (props.dataInfo.type === 'RP_Drone') {
         return createVueCompFunc(droneBox, props)
+      } else if (props.dataInfo.type === 'RP_Institution') {
+        return createVueCompFunc(organBox, props)
+      } else if (props.dataInfo.type === 'RP_Point') {
+        return createVueCompFunc(pointBox, props)
+      } else if (props.dataInfo.type === 'RP_Area') {
+        return createVueCompFunc(areaBox, props)
+      } else if (props.dataInfo.type === 'RP_Member') {
+        return createVueCompFunc(memberBox, props)
+      } else if (props.dataInfo.type === 'RP_Route') {
+        return createVueCompFunc(routeBox, props)
       }
     },
     /**

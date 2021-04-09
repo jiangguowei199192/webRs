@@ -32,7 +32,7 @@
           </li>
           <li>
             <span>状态：</span>
-            <span>{{ formatOnlineStatus(dataInfo.onlineStatus) }}</span>
+            <span>{{ formatOnlineStatus(dataInfo.online) }}</span>
           </li>
           <li>
             <span>品牌： </span>
