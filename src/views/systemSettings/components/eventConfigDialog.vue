@@ -75,7 +75,7 @@
         </el-tabs>
       </div>
       <div class="handelBtns">
-        <span @click.stop="updateIsShow()">取消</span>
+        <span @click.stop=" cancel()">取消</span>
         <span>确定</span>
       </div>
     </el-dialog>
@@ -139,7 +139,7 @@ export default {
 
   methods: {
     // 更新isShow状态
-    updateIsShow () {
+    cancel () {
       this.$emit('update:isShow', false)
     },
 
@@ -296,7 +296,7 @@ export default {
             }
             .areas {
               > p {
-                margin-top: 30px;
+                margin-top: 20px;
                 margin-bottom: 17px;
                 padding-left: 15px;
                 font-size: 16px;
@@ -306,6 +306,9 @@ export default {
               }
               div.btns {
                 padding-left: 15px;
+                .el-button+.el-button{
+                  margin:0;
+                }
                 .el-button {
                   width: 72px;
                   height: 25px;
@@ -317,7 +320,10 @@ export default {
                   font-family: Source Han Sans CN;
                   font-weight: bold;
                   color: #ffffff;
+                  margin-right:10px !important;
+                  margin-top:10px!important;
                 }
+
               }
             }
           }
