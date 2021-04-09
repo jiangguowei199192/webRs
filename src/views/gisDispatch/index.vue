@@ -668,7 +668,7 @@ export default {
         > div {
           display: flex;
           flex-direction: column;
-          margin-right: 38px;
+          margin-right: 18px;
           align-items: center;
           div:nth-child(1) {
             width: 91px;
@@ -680,7 +680,7 @@ export default {
             font-family: Orbitron;
             font-weight: bold;
             color: #fefefe;
-            line-height: 113px;
+            line-height: 118px;
             text-align: center;
           }
           span:nth-child(2) {
