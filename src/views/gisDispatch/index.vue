@@ -76,7 +76,10 @@
                 <div
                   :key="index"
                   @click.stop="jumpCase(item)"
-                  :class="{ green: item.caseStatus === '1' }"
+                  :class="{
+                    green: item.caseStatus === '1',
+                    yellow: item.caseStatus === '2',
+                  }"
                 >
                   <EllipsisTooltip
                     :contentText="item.caseName"
@@ -86,9 +89,13 @@
                     <div class="left">
                       <!-- <img :src="item.img || noPic" /> -->
                       <img :src="noPic" />
-                      <span :class="{ green: item.caseStatus === '1' }">{{
-                        formatCaseStatus(item.caseStatus)
-                      }}</span>
+                      <span
+                        :class="{
+                          green: item.caseStatus === '1',
+                          yellow: item.caseStatus === '2',
+                        }"
+                        >{{ formatCaseStatus(item.caseStatus) }}</span
+                      >
                     </div>
                     <div class="right">
                       <EllipsisTooltip
@@ -113,7 +120,13 @@
                     src="../../assets/images/gisDispatch/jump.svg"
                     @click.stop="jumpCase(item)"
                   />
-                  <div class="tag" :class="{ green: item.caseStatus === '1' }">
+                  <div
+                    class="tag"
+                    :class="{
+                      green: item.caseStatus === '1',
+                      yellow: item.caseStatus === '2',
+                    }"
+                  >
                     {{ formatCaseStatus(item.caseStatus) }}
                   </div>
                 </div>
@@ -317,6 +330,7 @@ export default {
     formatCaseStatus (caseStatus) {
       if (caseStatus === '0') return '未处置'
       else if (caseStatus === '1') return '已处置'
+      else if (caseStatus === '2') return '处置中'
     },
     /**
      * 新增案件成功
@@ -732,6 +746,11 @@ export default {
               no-repeat;
             background-size: 100% 100%;
           }
+          .tag.yellow {
+            background: url(../../assets/images/gisDispatch/yellow-tag.svg)
+              no-repeat;
+            background-size: 100% 100%;
+          }
           .caseName {
             height: 21px;
             line-height: 21px;
@@ -762,6 +781,9 @@ export default {
               }
               span.green {
                 color: #6dd23e;
+              }
+              span.yellow {
+                color: #eaff00;
               }
             }
             .right {
@@ -797,6 +819,11 @@ export default {
         }
         > div.green {
           background: url(../../assets/images/gisDispatch/green-case.svg)
+            no-repeat;
+          background-size: 100% 100%;
+        }
+        > div.yellow {
+          background: url(../../assets/images/gisDispatch/yellow-case.svg)
             no-repeat;
           background-size: 100% 100%;
         }
