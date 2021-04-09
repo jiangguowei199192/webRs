@@ -1,46 +1,75 @@
-<!--
- * @Descripttion: 天下风云出我辈, 一入江湖岁月催; 皇图霸业谈笑中, 不胜人生一场醉.
- * @version: v_1.0
- * @Author: liangkaiLee
- * @Date: 2021-04-05 15:35:59
- * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-08 16:53:26
--->
 <template>
   <div>
-    <el-dialog
-      :visible.sync="isShow"
-      :close-on-click-modal="false"
-      class="config-dlg dialog-wrap"
-    >
+    <el-dialog :visible.sync="isShow" :close-on-click-modal="false" class="config-dlg dialog-wrap">
       <div class="config-header">{{ title }}</div>
       <div class="config-content">
-        <el-tabs
-          :tab-position="tabPosition"
-          v-model="activeName"
-          @tab-click="handleClick"
-        >
+        <el-tabs :tab-position="tabPosition" v-model="activeName" @tab-click="handleClick">
           <el-tab-pane
-            v-for="(item, tab_index) in tabList"
-            :key="tab_index"
-            :label="item.label"
+            v-for="(item, index) in tabList"
+            :key="index"
+            :label="item.title"
             :name="item.name"
           >
             <div class="tab-pane-header">
-              <span>{{ item.label }}</span>
+              <span>{{ item.title }}</span>
               <span>{{ item.describe }}</span>
             </div>
-            <div v-show="tab_index == 0" class="tab-pane-detail">
-              {{ item.label }}
-            </div>
-            <div v-show="tab_index == 1" class="tab-pane-detail">
-              {{ item.label }}
-            </div>
-            <div v-show="tab_index == 2" class="tab-pane-detail">
-              {{ item.label }}
-            </div>
-            <div v-show="tab_index == 3" class="tab-pane-detail">
-              {{ item.label }}
+            <div class="tab-pane-detail">
+              <div class="descript">
+                <span>事件状态：</span>
+                <el-switch v-model="value" active-color="#1EB0FC" inactive-color="#DCDFE6"></el-switch>
+              </div>
+              <div class="descript">
+                <span>检测区域：</span>
+                <span>点击“绘制区域”绘制闭合的凸多边形区域，最多绘制20个区域点坐标。默认为全部区域。</span>
+              </div>
+              <div class="drawCanvas">
+                <div class="left">
+                  <div class="content">
+                    <img src="../../../assets/images/Login/login-bg.svg" alt />
+                  </div>
+                  <div class="tools">
+                    <div class="left">
+                      <img src="../../../assets/images/backgroundManagement/pause.svg" alt />
+                      <img src="../../../assets/images/backgroundManagement/capture.svg" alt />
+                      <img src="../../../assets/images/backgroundManagement/visible.svg" alt />
+                      <img src="../../../assets/images/backgroundManagement/infrared.svg" alt />
+                    </div>
+                  </div>
+                </div>
+                <div class="right">
+                  <div class="btns">
+                    <el-button>继续绘制</el-button>
+                    <el-button>清除全部</el-button>
+                  </div>
+                  <div class="areas">
+                    <p>已绘制区域：</p>
+                    <div class="btns">
+                      <el-button>区域1</el-button>
+                      <el-button>区域2</el-button>
+                      <el-button>区域3</el-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="selectBox">
+                <div class="select">
+                  <span>有效时间：</span>
+                  <el-date-picker v-model="date" type="datetime" placeholder="选择日期时间"></el-date-picker>
+                </div>
+
+                <div class="select">
+                  <span>事件等级：</span>
+                  <el-select v-model="alarmLevel" placeholder="请选择">
+                    <el-option
+                      v-for="item in alarmLevelData"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                </div>
+              </div>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -62,31 +91,40 @@ export default {
 
   data () {
     return {
-      placeholder: '请输入',
+      value: true,
+      date: '',
+      alarmLevel: '',
+      alarmLevelData: [
+        { value: 1, label: '红色预警' },
+        { value: 2, label: '橙色预警' },
+        { value: 3, label: '黄色预警' },
+        { value: 4, label: '蓝色预警' }
+      ],
       activeName: 'boat',
       tabPosition: 'left',
+      // tabs 内容
       tabList: [
         {
           name: 'boat',
-          label: '船舶出现',
+          title: '船舶出现',
           describe:
             '在监控图像或二维地图中设定检测区域，检测船舶在指定区域内出现的事件'
         },
         {
           name: 'fish',
-          label: '钓鱼行为',
+          title: '钓鱼行为',
           describe:
             '在监控图像或二维地图中设定检测区域，检测钓鱼行为在指定区域内出现的事件'
         },
         {
           name: 'stranded',
-          label: '人员滞留',
+          title: '人员滞留',
           describe:
             '在监控图像中设定检测区域和人员滞留时长，检测人员在警戒区域滞留超过设定时长的事件'
         },
         {
           name: 'invade',
-          label: '人员入侵',
+          title: '人员入侵',
           describe: '在监控图像中设定检测区域，检测人员进入警戒区域的事件'
         }
       ]
@@ -138,7 +176,7 @@ export default {
       margin-top: 20px;
       .el-tabs__header {
         width: 150px;
-        height: 620px;
+        height: 640px;
         border-right: 1px solid #00a7e8;
       }
       .el-tabs__active-bar {
@@ -165,7 +203,6 @@ export default {
         margin-top: 15px;
       }
       .el-tab-pane {
-        height: 580px;
         padding-left: 20px;
         // background-color: #03585e44;
       }
@@ -174,21 +211,123 @@ export default {
         line-height: 40px;
         border-bottom: 1px solid #00a7e8;
         span:nth-child(1) {
-          display: inline-block;
-          width: 100px;
-          color: #00d1ff;
           font-size: 20px;
+          font-family: Source Han Sans CN;
+          font-weight: 500;
+          color: #00d1ff;
         }
         span:nth-child(2) {
-          display: inline-block;
-          color: #ebebeb;
           font-size: 14px;
+          font-family: Source Han Sans CN;
+          font-weight: 500;
+          color: #ffffff;
+          line-height: 14px;
+          opacity: 0.4;
           margin-left: 20px;
         }
       }
       .tab-pane-detail {
         margin-top: 20px;
-        height: 516px;
+        div.descript {
+          > span:nth-child(1) {
+            font-size: 16px;
+            font-family: Source Han Sans CN;
+            font-weight: 500;
+            color: #00d1ff;
+            margin-right: 17px;
+          }
+        }
+        div.descript:nth-child(2) {
+          margin-top: 17px;
+          span:nth-child(2) {
+            font-size: 14px;
+            font-family: Source Han Sans CN;
+            font-weight: 500;
+            color: #ffffff;
+            line-height: 14px;
+            opacity: 0.4;
+          }
+        }
+        div.drawCanvas {
+          font-size: 12px;
+          font-family: Source Han Sans CN;
+          font-weight: bold;
+          color: #ffffff;
+          display: flex;
+          margin-top: 13px;
+          .left {
+            width: 680px;
+            .content {
+              position: relative;
+              height: 390px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
+            }
+            .tools {
+              height: 40px;
+              background: rgba(0, 0, 0, 0.8);
+              display: flex;
+              .left {
+                padding-left: 15px;
+                > img {
+                  margin-top: 7px;
+                  margin-right: 15px;
+                }
+              }
+            }
+          }
+          .right {
+            flex: 1;
+            > div.btns {
+              padding-left: 28px;
+              .el-button {
+                width: 100px;
+                height: 30px;
+                background: #39a4dd;
+                border: none;
+                padding: 0;
+                font-size: 16px;
+                font-family: Source Han Sans CN;
+                font-weight: 400;
+                color: #ffffff;
+              }
+            }
+            .areas {
+              > p {
+                margin-top: 30px;
+                margin-bottom: 17px;
+                padding-left: 15px;
+                font-size: 16px;
+                font-family: Source Han Sans CN;
+                font-weight: 500;
+                color: #00d1ff;
+              }
+              div.btns {
+                padding-left: 15px;
+                .el-button {
+                  width: 72px;
+                  height: 25px;
+                  background: #39a4dd;
+                  border-radius: 2px;
+                  border: none;
+                  padding: 0;
+                  font-size: 12px;
+                  font-family: Source Han Sans CN;
+                  font-weight: bold;
+                  color: #ffffff;
+                }
+              }
+            }
+          }
+        }
+        div.selectBox {
+          margin-top: 10px;
+          .select {
+            display: inline-block;
+          }
+        }
       }
     }
     .handelBtns {
