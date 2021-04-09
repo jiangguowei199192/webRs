@@ -191,7 +191,7 @@ export default {
       listInfo: {
         tableHeight: 0, // 表格最大高度
         total: 0, // 总条数
-        pageSizes: [15, 20, 50, 100], // 分页数量列表
+        pageSizes: [15, 30, 50, 100], // 分页数量列表
         query: {
           // 查询条件
           currentPage: 1, // 当前页
@@ -379,20 +379,23 @@ export default {
   // background-color: rgba(0, 65, 87, 0.6);
   background: url(../assets/images/caseCenter/table_wrap.svg) no-repeat
     center/100% 100%;
-  height: 839px;
-  padding: 10px 10px 0 10px;
-  .btn {
-    display: inline-block;
-    width: 46px;
-    height: 26px;
-    background: #0b779e;
-    cursor: pointer;
-    font-size: 14px;
-    color: #fefefe;
-    line-height: 26px;
-  }
-  .btn:not(:last-child) {
-    margin-right: 18px;
+  width: 1175px;
+  height: 836px;
+  padding: 12px 12px 0 12px;
+  .handerBox {
+    .btn {
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      background: #0b779e;
+      cursor: pointer;
+      font-size: 14px;
+      color: #fefefe;
+      line-height: 26px;
+    }
+    .btn:not(:last-child) {
+      margin-right: 18px;
+    }
   }
   .picBox {
     display: flex;
@@ -416,15 +419,14 @@ export default {
     background: #02b337;
     pointer-events: none;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.72;
   }
   .inActiveColor {
     background: #af0e03;
   }
   .activingColor {
-    background: #b35202;
-    pointer-events: none;
-    cursor: not-allowed;
+    background: #d6c104;
+    opacity: 0.95;
   }
   .tablePagination {
     height: 35px;
@@ -434,5 +436,12 @@ export default {
   .manageTable.el-table {
     height: 740px;
   }
+  /deep/.el-table__body-wrapper {
+    height: 700px;
+  }
+}
+/deep/::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
 }
 </style>

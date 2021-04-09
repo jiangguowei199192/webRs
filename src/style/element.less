@@ -301,7 +301,7 @@
   display: none;
 }
 
-.el-tooltip__popper{
+.el-tooltip__popper {
   max-width: 300px;
 }
 
@@ -334,8 +334,6 @@ input[type="number"] {
   color: #c5f3ff;
   background: transparent;
   border: none;
-  height: 620px;
-  overflow-y: scroll;
   /* 表格表头样式 */
   .el-table__header-wrapper th {
     color: #c5f3ff;
@@ -344,7 +342,10 @@ input[type="number"] {
     padding: 0;
     background-color: rgba(53, 176, 220, 0.66);
   }
-
+  .el-table__body-wrapper {
+    height: 570px;
+    overflow-y: auto;
+  }
   /* 表格每行高度*/
   .el-table__body td {
     background-color: transparent;

@@ -266,7 +266,7 @@ export default {
       selectedPeoples: [],
 
       pageTotal: 0,
-      pageSize: 12,
+      pageSize: 15,
       currentPage: 1,
 
       showAddPeople: false,
@@ -805,6 +805,7 @@ export default {
   background-color: rgba(0, 65, 87, 0.85);
   margin: 0 30px 0 360px;
   padding: 0 14px;
+  position: relative;
   .right-title {
     color: #fff;
     font-size: 16px;
@@ -899,10 +900,20 @@ export default {
   }
   .pagination-wrap {
     text-align: center;
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translate(-50%, 0%);
     .tablePagination {
       height: 35px;
       line-height: 35px;
-      margin-top: 35px;
+      // margin-top: 35px;
+    }
+  }
+  .manageTable.el-table {
+    height: 670px !important;
+    /deep/.el-table__body-wrapper {
+      height: 550px !important;
     }
   }
 }

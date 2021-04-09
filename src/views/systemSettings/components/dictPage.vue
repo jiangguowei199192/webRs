@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 13:56:08
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-03-24 16:29:49
+ * @LastEditTime: 2021-04-08 19:54:59
 -->
 <template>
   <div class="dictDetBox">
@@ -45,7 +45,6 @@
         :fieldList="tableInfo.fieldList"
         :handle="tableInfo.handle"
         :data.sync="tableInfo.data"
-        :tableHeight="610"
         :query="query"
         :api="api"
         :checkedList.sync="checkedList"
@@ -354,6 +353,7 @@ export default {
   margin-left: 30px;
   .mainBox {
     font-size: 15px;
+    height: 804px;
   }
   .toolBox {
     margin-top: 13px;

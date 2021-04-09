@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-01-26 09:16:43
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-08 17:01:38
+ * @LastEditTime: 2021-04-08 20:08:07
 -->
 <template>
   <el-dialog
@@ -196,11 +196,11 @@ export default {
       statusType: [
         {
           id: 0,
-          label: '有效'
+          label: '启用'
         },
         {
           id: 1,
-          label: '无效'
+          label: '禁用'
         }
       ],
       isDisabled: false,

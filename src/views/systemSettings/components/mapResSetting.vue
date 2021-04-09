@@ -64,7 +64,6 @@
         :handle="tableInfo.handle"
         :initCurpage="tableInfo.initCurpage"
         :data.sync="tableInfo.data"
-        :tableHeight="610"
         :query="query"
         :api="getListApi"
         :checkedList.sync="checkedList"
@@ -243,7 +242,7 @@ export default {
     deleteRes () {
       this.showDelDlg = false
       const ids = []
-      this.checkedList.forEach((item) => {
+      this.checkedList.forEach(item => {
         ids.push(item.id)
       })
       const param = { ids: ids }
@@ -251,7 +250,7 @@ export default {
         .post(mapResApi.batchDel, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             if (this.tableInfo.data.length === ids.length) {
               // 重置分页
@@ -260,7 +259,7 @@ export default {
             this.getList()
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('mapResApi.batchDel Err : ' + err)
         })
     },
@@ -282,14 +281,14 @@ export default {
         .get(mapResApi.selectDetail, {
           params: { resourcesId: row.id }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             if (update) {
               this.$refs.dlg.updateRes(res.data.data)
             } else this.$refs.dlg.lookRes(res.data.data)
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('mapResApi.selectDetail Err : ' + err)
         })
     }
@@ -316,6 +315,9 @@ export default {
       .txt2 {
         margin: 0 17px;
       }
+    }
+    /deep/.tablePagination {
+      margin-top: 20px;
     }
   }
 }

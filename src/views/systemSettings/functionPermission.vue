@@ -93,7 +93,7 @@ export default {
 
 .base-div {
   min-width: 600px;
-  height: 674px;
+  height: 664px;
   background-color: rgba(0, 65, 87, 0.85);
   margin-left: 30px;
   margin-right: 30px;

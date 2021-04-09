@@ -30,7 +30,12 @@
             :value="item.value"
           ></el-option>
         </el-select>
-        <el-input v-model.trim="iconName" maxlength="10" class="input" placeholder="请输入图标名称进行搜索"></el-input>
+        <el-input
+          v-model.trim="iconName"
+          maxlength="10"
+          class="input"
+          placeholder="请输入图标名称进行搜索"
+        ></el-input>
         <div class="btn" @click.stop="searchPic">
           <img :src="userSerchIcon" alt />
           <span>搜索</span>
@@ -43,7 +48,7 @@
       <div class="operate">
         <div class="slectedNum">
           已选
-          <span>{{multipleSelection.length}}</span> 项
+          <span>{{ multipleSelection.length }}</span> 项
         </div>
         <div>
           <el-button class="add" @click.stop="addIcon">添加</el-button>
@@ -71,14 +76,27 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="iconName" label="名称" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column
+          prop="iconName"
+          label="名称"
+          align="center"
+          show-overflow-tooltip
+        ></el-table-column>
         <el-table-column prop="iconLength" label="大小" align="center">
           <template slot-scope="scope">
-            <span>{{scope.row.iconLength|filterB}}</span>
+            <span>{{ scope.row.iconLength | filterB }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="iconSize" label="尺寸" align="center"></el-table-column>
-        <el-table-column prop="updateTime" label="时间" align="center"></el-table-column>
+        <el-table-column
+          prop="iconSize"
+          label="尺寸"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="updateTime"
+          label="时间"
+          align="center"
+        ></el-table-column>
         <!-- <el-table-column label="状态" align="center">
           <template slot-scope="scope">
             <span
@@ -90,9 +108,9 @@
         <el-table-column label="是否引用" align="center">
           <template slot-scope="scope">
             <span
-              :style="{color:scope.row.isQuote!==0?
- '#C5F3FF': '#999'}"
-            >{{scope.row.isQuote!==0?'已引用':'未引用'}}</span>
+              :style="{ color: scope.row.isQuote !== 0 ? '#C5F3FF' : '#999' }"
+              >{{ scope.row.isQuote !== 0 ? "已引用" : "未引用" }}</span
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -101,7 +119,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="pageInfo.curPage"
-        :page-sizes="[10, 20, 30, 40]"
+        :page-sizes="[15, 30, 50, 100]"
         :page-size="pageInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pageInfo.totalCount"
@@ -110,7 +128,11 @@
     </div>
     <iconUploadDialog
       :dialogVisible="dialogVisible"
-      @closeDialog="()=>{this.dialogVisible=false}"
+      @closeDialog="
+        () => {
+          this.dialogVisible = false;
+        }
+      "
       @updatePic="resetPic"
     ></iconUploadDialog>
   </div>
@@ -154,7 +176,7 @@ export default {
       multipleSelection: [], // 保存选择的数据
       pageInfo: {
         curPage: 1,
-        pageSize: 20,
+        pageSize: 15,
         totalCount: 0
       }
     }

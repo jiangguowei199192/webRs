@@ -6,6 +6,7 @@
       ref="table"
       :data="data"
       style="width: 100%"
+      :height="tableHeight"
       :row-style="changeRowStyle"
       :cell-style="changeCellStyle"
       @selection-change="selectionChange"
@@ -177,11 +178,11 @@ export default {
       listInfo: {
         tableHeight: 0, // 表格最大高度
         total: 0, // 总条数
-        pageSizes: [10, 20, 50, 100], // 分页数量列表
+        pageSizes: [15, 30, 50, 100], // 分页数量列表
         query: {
           // 查询条件
           currentPage: 1, // 当前页
-          pageSize: 10 // 每页条数
+          pageSize: 15 // 每页条数
         }
       },
       serverUrl: globalApi.headImg,

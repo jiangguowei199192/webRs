@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-05 14:05:55
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-06 13:18:44
+ * @LastEditTime: 2021-04-09 14:19:05
 -->
 <template>
   <div class="fireBox">
@@ -84,7 +84,8 @@ export default {
       checkedList: [],
       caseStatus: [
         { typeCode: 0, typeName: '未处置' },
-        { typeCode: 1, typeName: '已处置' }
+        { typeCode: 1, typeName: '已处置' },
+        { typeCode: 2, typeName: '处置中' }
       ],
       // 查询条件
       query: {

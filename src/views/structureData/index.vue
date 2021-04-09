@@ -25,7 +25,7 @@
       ></el-date-picker>
     </div>
 
-    <div class="list webFsScroll">
+    <div class="list listScroll">
       <div
         class="list-item"
         v-for="(item, index) in list"
@@ -39,17 +39,17 @@
               v-show="item.rect.show"
               :style="
                 'left:' +
-                item.rect.left +
-                '%;' +
-                'top:' +
-                item.rect.top +
-                '%;' +
-                'width:' +
-                item.rect.width +
-                '%;' +
-                'height:' +
-                item.rect.height +
-                '%;'
+                  item.rect.left +
+                  '%;' +
+                  'top:' +
+                  item.rect.top +
+                  '%;' +
+                  'width:' +
+                  item.rect.width +
+                  '%;' +
+                  'height:' +
+                  item.rect.height +
+                  '%;'
               "
             ></span>
           </div>
@@ -167,9 +167,9 @@ export default {
       }
       this.$axios
         .post(structureApi.dataList, param)
-        .then((res) => {
+        .then(res => {
           if (res.data.code === 0) {
-            res.data.data.captures.forEach((item) => {
+            res.data.data.captures.forEach(item => {
               item.captureTime = timeFormat(item.captureTime)
               item.rect = {
                 width: 0,
@@ -185,7 +185,7 @@ export default {
               // 计算识别框的位置和尺寸
               // const bWidth = this.$refs.bigImage[0].clientWidth
               // const bHeigth = this.$refs.bigImage[0].clientHeight
-              this.list.forEach((item) => {
+              this.list.forEach(item => {
                 if (!item.pedestrian) {
                   return
                 }
@@ -209,7 +209,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('structureApi.dataList           a Err : ' + err)
         })
     },
@@ -250,7 +250,7 @@ export default {
   font-size: 12px;
   background: url(../../assets/images/structureData/bg.png) no-repeat;
   background-size: 100% 100%;
-  height: 885px;
+  height: 864px;
   margin: 0px 29px 37px 29px;
   padding-top: 21px;
 }
@@ -311,7 +311,7 @@ export default {
 }
 
 .list {
-  height: 760px;
+  height: 750px;
   margin-left: 10px;
   margin-right: 10px;
   overflow: auto;

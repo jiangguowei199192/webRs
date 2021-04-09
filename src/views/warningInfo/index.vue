@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-07 11:28:54
+ * @LastEditTime: 2021-04-09 14:20:06
 -->
 <template>
   <div class="container">
@@ -89,9 +89,9 @@
               }"
             >
               {{
-              `${item.alarmStatus == 1 ? "未处理" : ""}${
-              item.alarmStatus == 2 ? "异常" : ""
-              }${item.alarmStatus == 3 ? "误报" : ""}`
+                `${item.alarmStatus == 1 ? "未处理" : ""}${
+                  item.alarmStatus == 2 ? "异常" : ""
+                }${item.alarmStatus == 3 ? "误报" : ""}`
               }}
             </span>
             <span>|</span>
@@ -104,11 +104,11 @@
               }"
             >
               {{
-              `${item.alarmLevel == 1 ? "红色预警" : ""}${
-              item.alarmLevel == 2 ? "橙色预警" : ""
-              }${item.alarmLevel == 3 ? "黄色预警" : ""}${
-              item.alarmLevel == 4 ? "蓝色预警" : ""
-              }`
+                `${item.alarmLevel == 1 ? "红色预警" : ""}${
+                  item.alarmLevel == 2 ? "橙色预警" : ""
+                }${item.alarmLevel == 3 ? "黄色预警" : ""}${
+                  item.alarmLevel == 4 ? "蓝色预警" : ""
+                }`
               }}
             </span>
           </div>
@@ -120,11 +120,17 @@
           <div class="text-base">
             <div class="base-equipment">
               <span class="item-text1">告警设备：</span>
-              <EllipsisTooltip class="item-text2" :contentText="item.deviceName || '-'"></EllipsisTooltip>
+              <EllipsisTooltip
+                class="item-text2"
+                :contentText="item.deviceName || '-'"
+              ></EllipsisTooltip>
             </div>
             <div class="base-time">
               <span class="item-text1">时间：</span>
-              <EllipsisTooltip class="item-text2" :contentText="item.captureTime || '-'"></EllipsisTooltip>
+              <EllipsisTooltip
+                class="item-text2"
+                :contentText="item.captureTime || '-'"
+              ></EllipsisTooltip>
             </div>
           </div>
         </div>
@@ -327,7 +333,7 @@ export default {
   font-size: 12px;
   background: url(../../assets/images/structureData/bg.png) no-repeat;
   background-size: 100% 100%;
-  height: 885px;
+  height: 864px;
   margin: 0px 29px 37px 29px;
   padding-top: 21px;
 }
@@ -396,14 +402,14 @@ export default {
 }
 
 .list {
-  width: 100%;
-  height: 760px;
-  margin: 60px 10px 0 10px;
+  // width: 100%;
+  height: 740px;
+  margin: 56px 10px 0 10px;
   overflow: auto;
   .list-item {
     box-sizing: border-box;
     display: inline-block;
-    width: 344px;
+    width: 342px;
     height: 180px;
     border: 1px solid #39a4dd;
     margin: 0 12px 20px 12px;

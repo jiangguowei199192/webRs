@@ -15,7 +15,7 @@
         :props="{
           children: 'children',
           label: 'deptName',
-          value: 'deptCode',
+          value: 'deptCode'
         }"
         default-expand-all
         @node-click="deptTreeClick"
@@ -264,7 +264,7 @@ export default {
   methods: {
     async getDeptTree () {
       const _this = this
-      this.$axios.post(backApi.getDeptTree).then((res) => {
+      this.$axios.post(backApi.getDeptTree).then(res => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           if (_this.deptTree.length > 0) {
@@ -276,7 +276,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach((item) => {
+      tree.forEach(item => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -302,9 +302,9 @@ export default {
         .post(backApi.getUserList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.records.forEach((item) => {
+            res.data.data.records.forEach(item => {
               if (item.status === 0) {
                 item.enable = false
               } else {
@@ -364,7 +364,7 @@ export default {
         .post(backApi.userInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.currentUserDetail = res.data.data
             _this.showUserInfo = true
@@ -382,7 +382,7 @@ export default {
     async resetPasswordConfirmClick () {
       this.showResetPassword = false
       const param = { id: this.currentUser.id }
-      this.$axios.post(backApi.resetPassword, param).then((res) => {
+      this.$axios.post(backApi.resetPassword, param).then(res => {
         if (res && res.data && res.data.code === 0) {
           Notification({
             title: '提示',
@@ -415,7 +415,7 @@ export default {
         .post(backApi.getRoleList, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.roleList = res.data.data.records
           }
@@ -448,7 +448,7 @@ export default {
         .post(backApi.addUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.currentPage = 1
             _this.getUserList()
@@ -480,7 +480,7 @@ export default {
     async deleteUserConfirmClick () {
       this.showDeleteUser = false
       var userIds = []
-      this.selectedUsers.forEach((item) => {
+      this.selectedUsers.forEach(item => {
         userIds.push(item.id)
       })
       const param = { ids: userIds }
@@ -489,7 +489,7 @@ export default {
         .post(backApi.deleteUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getUserList()
             Notification({
@@ -512,7 +512,7 @@ export default {
         .post(backApi.updateUserStatus, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
@@ -532,7 +532,7 @@ export default {
         .post(backApi.userInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.currentUserDetail = res.data.data
             _this.isAddUser = false
@@ -561,7 +561,7 @@ export default {
         .post(backApi.editUser, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             _this.getUserList()
             Notification({
@@ -666,6 +666,7 @@ export default {
   background-color: rgba(0, 65, 87, 0.85);
   margin: 0 30px 0 360px;
   padding: 0 14px;
+  position: relative;
   .right-title {
     color: #fff;
     font-size: 16px;
@@ -776,14 +777,27 @@ export default {
   }
   .pagination-wrap {
     text-align: center;
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translate(-50%, 0%);
     .tablePagination {
       height: 35px;
       line-height: 35px;
-      margin-top: 35px;
+      // margin-top: 35px;
+    }
+  }
+  .manageTable.el-table {
+    height: 670px !important;
+    /deep/.el-table__body-wrapper {
+      height: 550px !important;
     }
   }
 }
-
+/deep/::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
 .table-btn {
   width: 40px;
   height: 26px;

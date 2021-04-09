@@ -94,7 +94,6 @@
         :fieldList="tableInfo.fieldList"
         :handle="tableInfo.handle"
         :data.sync="tableInfo.data"
-        :tableHeight="560"
         className="videoTable"
         :query="query"
         :api="api"
@@ -514,6 +513,9 @@ export default {
     .inputSearch {
       margin-left: 0px;
       width: 360px;
+    }
+    /deep/.tablePagination{
+      margin-top: 10px;
     }
   }
 }

@@ -313,13 +313,17 @@ export default {
   .rightBox {
     cursor: default;
     margin-left: 293px;
-    height: 899px;
+    height: 902px;
     background: url(../../assets/images/backgroundManagement/right_table.svg)
       no-repeat center/100% 100%;
     .rightBoxBase {
       height: 879px;
       border: solid 10px transparent;
       overflow: auto;
+    }
+    /deep/::-webkit-scrollbar {
+      width: 3px;
+      height: 3px;
     }
   }
 }
