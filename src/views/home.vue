@@ -8,7 +8,7 @@
             <span class="extra">{{ timeObj.month }}</span> 月
             <span class="extra">{{ timeObj.day }}</span> 日
             <span class="extra">{{ timeObj.weekday }}</span>
-            <span class="curCity extra">{{ curCity }}</span>
+            <!-- <span class="curCity extra">{{ curCity }}</span> -->
             <template v-if="weatherReport">
               <span>天气：</span>
               <span class="extra">{{ weatherReport.weather }}</span>
@@ -223,7 +223,7 @@ export default {
           content: '告警中心'
         },
         {
-          content: '结构化数据'
+          content: '智能数据中心'
         },
         {
           content: '信息要闻'
@@ -243,33 +243,33 @@ export default {
   created () {
     this.projectTitle = globalApi.projectTitle || '智慧农业实战应用平台'
     // 设备上线
-    EventBus.$on('video/device/online', info => {
+    EventBus.$on('video/device/online', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备上线！' })
     })
     // 设备下线
-    EventBus.$on('video/device/offline', info => {
+    EventBus.$on('video/device/offline', (info) => {
       EventBus.$emit('UpdateDeviceOnlineStatus', info)
       // this.$notify.success({ title: '提示', message: '设备下线！' })
     })
     // 通道上线
-    EventBus.$on('video/realVideo/streamStart', info => {
+    EventBus.$on('video/realVideo/streamStart', (info) => {
       EventBus.$emit('streamStart', info)
     })
     // 通道下线
-    EventBus.$on('video/realVideo/streamEnd', info => {
+    EventBus.$on('video/realVideo/streamEnd', (info) => {
       EventBus.$emit('streamEnd', info)
     })
     // 飞机实时信息
-    EventBus.$on('droneInfos', info => {
+    EventBus.$on('droneInfos', (info) => {
       this.parseDroneRealtimeInfo(info)
     })
     // 人员显示
-    EventBus.$on('video/people/real', info => {
+    EventBus.$on('video/people/real', (info) => {
       EventBus.$emit('peopleRealChange', info)
     })
     // 告警设备更新
-    EventBus.$on('alarmsUpdate', info => {
+    EventBus.$on('alarmsUpdate', (info) => {
       // console.log('info:', info)
       if (info) {
         this.showFlashIcon = true
@@ -351,12 +351,12 @@ export default {
       // this.getPath()
     },
     init () {
-      amapApi.getLocation({}).then(res => {
+      amapApi.getLocation({}).then((res) => {
         if (res) {
           if (res && res.data && res.data.info === 'OK') {
             this.curCity = res.data.city || ''
             const cityCode = res.data.adcode
-            amapApi.getWeather({ city: cityCode }).then(res => {
+            amapApi.getWeather({ city: cityCode }).then((res) => {
               if (res && res.data && res.data.info === 'OK') {
                 this.weatherReport = res.data.lives[0]
               }
@@ -372,7 +372,7 @@ export default {
       const tmpAxios = this.$axios
       this.$axios
         .get(loginApi.getUserDetail)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             const data = res.data.data
             // 获取案件聊天记录时，需要知道哪些消息是自己发的
@@ -382,9 +382,9 @@ export default {
               .get(loginApi.getDeptByDeptCode, {
                 params: { deptCode: res.data.data.deptCode }
               })
-              .then(res2 => {
+              .then((res2) => {
                 if (res2.data.code === 0) {
-                  res2.data.data.forEach(deptCode => {
+                  res2.data.data.forEach((deptCode) => {
                     tmpThis.realtimeInfoTopicArray.push('gdu/' + deptCode)
                   })
                   tmpThis.realtimeInfoTopicArray.unshift(
@@ -392,12 +392,12 @@ export default {
                   )
                 }
               })
-              .catch(err2 => {
+              .catch((err2) => {
                 console.log('loginApi.getDeptByDeptCode Err : ' + err2)
               })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('loginApi.getUserDetail Err : ' + err)
         })
     },
@@ -465,7 +465,7 @@ export default {
       this.dialogVisible = false
     },
     submitForm (formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           this.updatePassAxios()
         } else {
@@ -480,7 +480,7 @@ export default {
         newPassword: this.$md5(this.form.newPass),
         confirmPassword: this.$md5(this.form.confirmPass)
       }
-      this.$axios.post(loginApi.updatePass, params).then(res => {
+      this.$axios.post(loginApi.updatePass, params).then((res) => {
         if (res && res.data && res.data.code === 0) {
           this.$notify({
             title: '成功',
@@ -570,8 +570,11 @@ export default {
             font-weight: 400;
             color: #0fbfe0;
             .list {
-              width: 114px;
-              height: 43px;
+              width: 180px;
+              margin-left: -40px;
+              height: 39px;
+              position: relative;
+              left: 20px;
               // background: url(../assets/images/home/normal.png) no-repeat;
               background-size: 100% 100%;
               line-height: 40px;
@@ -587,6 +590,7 @@ export default {
               }
             }
             .list.active {
+              //width: 180px;
               font-weight: 400;
               color: #ffba00;
               background: url(../assets/images/home/active.svg) no-repeat;

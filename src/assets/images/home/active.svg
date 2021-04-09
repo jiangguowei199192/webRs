@@ -1,7 +1,17 @@
 <svg 
  xmlns="http://www.w3.org/2000/svg"
  xmlns:xlink="http://www.w3.org/1999/xlink"
- width="115.5px" height="33.5px">
-<path fill-rule="evenodd"  stroke="rgb(255, 186, 0)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M105.469,0.500 C111.098,0.500 114.500,0.500 114.500,0.500 C114.500,0.500 114.500,4.463 114.500,9.599 M114.500,23.655 C114.500,28.667 114.500,32.500 114.500,32.500 C114.500,32.500 111.098,32.500 105.469,32.500 M9.472,32.500 C3.879,32.500 0.500,32.500 0.500,32.500 C0.500,32.500 0.500,28.548 0.500,23.422 M0.500,9.596 C0.500,4.461 0.500,0.500 0.500,0.500 C0.500,0.500 3.879,0.500 9.472,0.500 "/>
+ width="181.5px" height="40.5px">
+<defs>
+<linearGradient id="PSgrad_0" x1="0%" x2="99.863%" y1="0%" y2="5.234%">
+  <stop offset="0%" stop-color="rgb(8,142,194)" stop-opacity="1" />
+  <stop offset="0%" stop-color="rgb(0,204,255)" stop-opacity="1" />
+  <stop offset="100%" stop-color="rgb(0,204,255)" stop-opacity="0.10196" />
+</linearGradient>
+
+</defs>
+<path fill-rule="evenodd"  stroke="rgb(0, 183, 255)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" opacity="0.8" fill="none"
+ d="M0.500,0.500 L157.547,0.500 L180.500,39.500 L23.452,39.500 L0.500,0.500 Z"/>
+<path fill-rule="evenodd"  opacity="0.8" fill="url(#PSgrad_0)"
+ d="M6.500,3.500 L154.500,3.500 L174.500,36.500 L26.500,36.500 L6.500,3.500 Z"/>
 </svg>

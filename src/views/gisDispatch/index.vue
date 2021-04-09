@@ -7,12 +7,13 @@
         </div>
         <div class="data">
           <template v-for="(item, index) in resInfos">
-            <div :key="index" :style="{ color: item.color }">
+            <div :key="index" style="color: #20f2f5">
               <img :src="item.img" />
               <span>{{ item.name }}</span>
               <span>
                 <span
-                  :style="{ background: item.color, width: item.width + '%' }"
+                  style="background: #20f2f5"
+                  :style="{ width: item.width + '%' }"
                   class="rect"
                 ></span>
               </span>
@@ -640,31 +641,32 @@ export default {
           background-size: 100% 100%;
         }
         .refresh:active {
-          background: url(../../assets/images/gisDispatch/refresh-press.svg) no-repeat;
+          background: url(../../assets/images/gisDispatch/refresh-press.svg)
+            no-repeat;
           background-size: 100% 100%;
         }
       }
       //案件数目
       .caseNum {
         display: flex;
-        margin-left: 55px;
-        margin-top: 28px;
+        margin-left: 37px;
+        margin-top: 5px;
         > div {
           display: flex;
           flex-direction: column;
           margin-right: 38px;
           align-items: center;
           div:nth-child(1) {
-            width: 72px;
-            height: 72px;
-            background: url(../../assets/images/gisDispatch/num-box.svg)
+            width: 91px;
+            height: 103px;
+            background: url(../../assets/images/gisDispatch/num-box.png)
               no-repeat;
             background-size: 100% 100%;
             font-size: 24px;
             font-family: Orbitron;
             font-weight: bold;
             color: #fefefe;
-            line-height: 72px;
+            line-height: 113px;
             text-align: center;
           }
           span:nth-child(2) {

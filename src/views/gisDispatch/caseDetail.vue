@@ -99,7 +99,7 @@
               <template v-for="(item, index) in resInfos">
                 <div
                   :key="index"
-                  :style="{ color: item.color }"
+                  style="color: #20f2f5"
                   @click.stop="changeDetailList(index)"
                   :class="{ select: selResIdx === index }"
                 >
