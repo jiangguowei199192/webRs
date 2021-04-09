@@ -120,6 +120,7 @@
     <EventConfigDialog
       ref="disposeRecRef"
       :isShow.sync="configIsShow"
+      :curData="curData"
       title="事件配置"
     ></EventConfigDialog>
   </div>
@@ -190,6 +191,7 @@ export default {
 
   data () {
     return {
+      curData: {},
       selectCount: 0,
       searchIcon: require('../../../assets/images/backgroundManagement/searchIcon.png'),
       resetIcon: require('../../../assets/images/backgroundManagement/resetIcon.png'),
@@ -407,6 +409,8 @@ export default {
       } else if (event === 'monitor') {
         this.monitorIsShow = true
       } else if (event === 'config') {
+        this.curData = JSON.parse(JSON.stringify(data))
+        console.dir(this.curData)
         this.configIsShow = true
       }
     },

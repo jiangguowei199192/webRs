@@ -30,10 +30,10 @@
                   </div>
                   <div class="tools">
                     <div class="left">
-                      <img src="../../../assets/images/backgroundManagement/pause.svg" alt />
-                      <img src="../../../assets/images/backgroundManagement/capture.svg" alt />
-                      <img src="../../../assets/images/backgroundManagement/visible.svg" alt />
-                      <img src="../../../assets/images/backgroundManagement/infrared.svg" alt />
+                      <img src="../../../assets/images/backgroundManagement/pause.svg" alt title="播放" />
+                      <img src="../../../assets/images/backgroundManagement/capture.svg" title="截取" alt />
+                      <img src="../../../assets/images/backgroundManagement/visible.svg" title="可见光" alt />
+                      <img src="../../../assets/images/backgroundManagement/infrared.svg" title="红外光" alt />
                     </div>
                   </div>
                 </div>
@@ -86,7 +86,16 @@
 export default {
   props: {
     isShow: { type: Boolean, required: true },
-    title: { type: String, required: true }
+    title: {
+      type: String,
+      default: '事件配置'
+    },
+    curData: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
   },
 
   data () {
@@ -274,6 +283,7 @@ export default {
                 > img {
                   margin-top: 7px;
                   margin-right: 15px;
+                  cursor: pointer;
                 }
               }
             }
