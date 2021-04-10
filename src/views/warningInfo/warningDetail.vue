@@ -1,82 +1,87 @@
 <template>
-  <el-dialog
-    class="detailInfo"
-    :visible.sync="dialogVisible"
-    :before-close="closeDialog"
-    :show-close="false"
-  >
-    <div class="content-title">
-      告警详情
-      <img :src="X" alt @click="closeDialog" />
-    </div>
-    <div class="info">
-      <div class="leftInfo">
-        <ul class="baseInfo">
-          <li>
-            <span class="title">事件类型：</span>
-            <span>{{ info.alarmTypeName || "-" }}</span>
-          </li>
-          <li>
-            <span class="title">告警设备：</span>
-            <span>{{ info.deviceName || "-" }}</span>
-          </li>
-          <li>
-            <span class="title">告警时间：</span>
-            <span>{{ info.captureTime }}</span>
-          </li>
-        </ul>
-        <div class="content-title">案件核实</div>
-        <div class="btns">
-          <div @click.stop="confirmWarn(2)">确认</div>
-          <div @click.stop="confirmWarn(3)">误报</div>
-        </div>
-        <div class="remark">
-          <div>备注：</div>
-          <el-input
-            type="textarea"
-            placeholder="请输入内容"
-            v-model.trim="remark"
-            maxlength="30"
-            show-word-limit
-            class="word"
-          ></el-input>
+  <div>
+    <el-dialog
+      class="detailInfo"
+      :visible.sync="dialogVisible"
+      :before-close="closeDialog"
+      :show-close="false"
+    >
+      <div class="content-title">
+        告警详情
+        <img :src="X" alt @click="closeDialog" />
+      </div>
+      <div class="info">
+        <div class="leftInfo">
+          <ul class="baseInfo">
+            <li>
+              <span class="title">事件类型：</span>
+              <span>{{ info.alarmTypeName || "-" }}</span>
+            </li>
+            <li>
+              <span class="title">告警设备：</span>
+              <span>{{ info.deviceName || "-" }}</span>
+            </li>
+            <li>
+              <span class="title">告警时间：</span>
+              <span>{{ info.captureTime }}</span>
+            </li>
+          </ul>
+          <div class="content-title">案件核实</div>
           <div class="btns">
-            <div @click="remark = ''">取消</div>
-            <div @click="addRemark">确定</div>
+            <div @click.stop="confirmWarn(2)">确认</div>
+            <div @click.stop="confirmWarn(3)">误报</div>
           </div>
-          <div class="warningBox webFsScroll">
-            <div class="list" v-for="(item, index) in remarkList" :key="index">
-              <div class="circle">{{ index + 1 }}</div>
-              <div class="extra">
-                <span class="descrip">{{ item.remark || "-" }}</span>
-                <div class="time">{{ item.createTime || "-" }}</div>
+          <div class="remark">
+            <div>备注：</div>
+            <el-input
+              type="textarea"
+              placeholder="请输入内容"
+              v-model.trim="remark"
+              maxlength="30"
+              show-word-limit
+              class="word"
+            ></el-input>
+            <div class="btns">
+              <div @click="remark = ''">取消</div>
+              <div @click="addRemark">确定</div>
+            </div>
+            <div class="warningBox webFsScroll">
+              <div
+                class="list"
+                v-for="(item, index) in remarkList"
+                :key="index"
+              >
+                <div class="circle">{{ index + 1 }}</div>
+                <div class="extra">
+                  <span class="descrip">{{ item.remark || "-" }}</span>
+                  <div class="time">{{ item.createTime || "-" }}</div>
+                </div>
               </div>
-            </div>
-            <div class="empty" v-show="remarkList.length === 0">
-              暂无备注信息
-            </div>
-            <!-- <div class="list">
+              <div class="empty" v-show="remarkList.length === 0">
+                暂无备注信息
+              </div>
+              <!-- <div class="list">
               <div class="circle">1</div>
               <div class="extra">
                 <span class="descrip">这是一条很长很长很长的内容这是一条很长很长很长的内容这是一条很长很长很长的内容</span>
                 <div class="time">2021-05-16 08:21:33</div>
               </div>
             </div> -->
+            </div>
           </div>
         </div>
-      </div>
-      <div class="rightInfo">
-        <div class="tabs">
-          <span @click.stop="tabIndex = 0" :class="{ select: tabIndex === 0 }"
-            >抓拍图</span
-          >
-          <!-- <span @click.stop="tabIndex = 1" :class="{ select: tabIndex === 1 }"
+        <div class="rightInfo">
+          <div class="tabs">
+            <span @click.stop="tabIndex = 0" :class="{ select: tabIndex === 0 }"
+              >抓拍图</span
+            >
+            <!-- <span @click.stop="tabIndex = 1" :class="{ select: tabIndex === 1 }"
             >抓拍视频</span
           > -->
-        </div>
-        <div class="bigImg" v-show="tabIndex === 0">
-          <img :src="info.imageUrl" alt />
-          <!-- <span
+          </div>
+          <div class="bigImg" v-show="tabIndex === 0">
+            <img :src="info.imageUrl" alt @click.stop="previewImg" />
+            <!-- <span
             v-for="(list,index) in info.rect.points"
             :key="index"
             :style="
@@ -94,40 +99,55 @@
                   '%;'
               "
           ></span> -->
-        </div>
-        <div class="videoBox" v-show="tabIndex === 1">
-          <div class="video">
-            <LivePlayer
-              :videoUrl="videoUrl"
-              :show-custom-button="false"
-              :muted="false"
-              :controls="false"
-              :autoplay="true"
-              oncontextmenu="return false"
-              fluent
-              :live="false"
-              aspect="fullscreen"
-            ></LivePlayer>
-            <div class="playBtns">
-               <img src="../../assets/images/warningCenter/stop.svg" alt />
-               <img src="../../assets/images/warningCenter/play.svg" alt />
-               <img src="../../assets/images/warningCenter/pause.svg" alt />
+          </div>
+          <div class="videoBox" v-show="tabIndex === 1">
+            <div class="video">
+              <LivePlayer
+                :videoUrl="videoUrl"
+                :show-custom-button="false"
+                :muted="false"
+                :controls="false"
+                :autoplay="true"
+                oncontextmenu="return false"
+                fluent
+                :live="false"
+                aspect="fullscreen"
+              ></LivePlayer>
+              <div class="playBtns">
+                <img src="../../assets/images/warningCenter/stop.svg" alt />
+                <img src="../../assets/images/warningCenter/play.svg" alt />
+                <img src="../../assets/images/warningCenter/pause.svg" alt />
+              </div>
             </div>
           </div>
-        </div>
-        <!-- <div class="tools">
+          <!-- <div class="tools">
           <span>区域检测</span>
           <el-switch v-model="areaWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
           <span>事件检测</span>
           <el-switch v-model="eventWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
         </div>-->
+        </div>
       </div>
-    </div>
-  </el-dialog>
+    </el-dialog>
+    <!-- 预览图片弹窗 -->
+    <el-dialog
+      :visible.sync="imgDialogVisible"
+      custom-class="el-dialog-custom"
+      :show-close="false"
+      close-on-press-escape
+      type="primary"
+      @click.native="imgDialogVisible = false"
+      center
+    >
+      <img class="custom-dialog-img" :src="clickImgSrc" />
+    </el-dialog>
+  </div>
 </template>
+
 <script>
 import { structureApi } from '@/api/structureData.js'
 import LivePlayer from '@liveqing/liveplayer'
+
 export default {
   props: {
     dialogVisible: {
@@ -138,18 +158,23 @@ export default {
       type: Object
     }
   },
+
   components: {
     LivePlayer
   },
+
   data () {
     return {
       X: require('../../assets/images/X.svg'),
       remark: '',
       remarkList: [],
       tabIndex: 0,
-      videoUrl: ''
+      videoUrl: '',
+      imgDialogVisible: false,
+      clickImgSrc: ''
     }
   },
+
   methods: {
     // 确认/误报
     confirmWarn (status) {
@@ -168,7 +193,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
@@ -193,7 +218,7 @@ export default {
             this.remark = ''
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
@@ -213,14 +238,21 @@ export default {
             this.remarkList = []
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
     closeDialog () {
       this.$emit('close')
+    },
+
+    // 图片预览
+    previewImg () {
+      this.imgDialogVisible = true
+      this.clickImgSrc = this.info.imageUrl
     }
   },
+
   watch: {
     dialogVisible: {
       handler (nv, ov) {
@@ -234,7 +266,13 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
+.custom-dialog-img {
+  width: 120%;
+  height: 100%;
+  margin: 2% 0 0 -10%;
+}
 .detailInfo {
   /deep/.el-dialog {
     width: 908px;
@@ -377,6 +415,7 @@ export default {
           width: 100%;
           height: 426px;
           position: relative;
+          cursor: pointer;
           img {
             width: 100%;
             height: 100%;

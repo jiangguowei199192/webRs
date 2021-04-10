@@ -17,17 +17,17 @@
           v-show="info.rect.show"
           :style="
             'left:' +
-            info.rect.left +
-            '%;' +
-            'top:' +
-            info.rect.top +
-            '%;' +
-            'width:' +
-            info.rect.width +
-            '%;' +
-            'height:' +
-            info.rect.height +
-            '%;'
+              info.rect.left +
+              '%;' +
+              'top:' +
+              info.rect.top +
+              '%;' +
+              'width:' +
+              info.rect.width +
+              '%;' +
+              'height:' +
+              info.rect.height +
+              '%;'
           "
         ></span>
       </div>
@@ -84,17 +84,17 @@
           v-show="rect"
           :style="
             'left:' +
-            rect.left +
-            '%;' +
-            'top:' +
-            rect.top +
-            '%;' +
-            'width:' +
-            rect.width +
-            '%;' +
-            'height:' +
-            rect.height +
-            '%;'
+              rect.left +
+              '%;' +
+              'top:' +
+              rect.top +
+              '%;' +
+              'width:' +
+              rect.width +
+              '%;' +
+              'height:' +
+              rect.height +
+              '%;'
           "
         ></span>
       </div>
