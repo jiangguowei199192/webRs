@@ -1773,8 +1773,8 @@ export default {
           item.id === info.channelID
         ) {
           if (info.targetNum > 0) {
-            this.$notify.closeAll()
-            this.$notify.warning({ title: '提示', message: '发现疑似目标!' })
+            // this.$notify.closeAll()
+            // this.$notify.warning({ title: '提示', message: '发现疑似目标!' })
             this.$set(
               this.totalVideosArray[index],
               'positionList',
