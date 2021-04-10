@@ -10,7 +10,7 @@
             <span class="extra">{{ timeObj.weekday }}</span>
             <!-- <span class="curCity extra">{{ curCity }}</span> -->
             <template v-if="weatherReport">
-              <span>天气：</span>
+              <span class="curWeather">天气：</span>
               <span class="extra">{{ weatherReport.weather }}</span>
               <span class="extra">
                 {{ weatherReport.temperature }}
@@ -533,6 +533,9 @@ export default {
         }
         span.curCity {
           margin: 0 20px;
+        }
+        span.curWeather{
+          margin-left: 20px;
         }
       }
       .content {
