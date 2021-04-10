@@ -514,8 +514,11 @@ export default {
       margin-left: 0px;
       width: 360px;
     }
-    /deep/.tablePagination{
-      margin-top: 10px;
+    /deep/.tablePagination {
+      margin-top: 20px;
+    }
+    /deep/.el-table__body-wrapper {
+      height: 515px;
     }
   }
 }

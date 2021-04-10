@@ -232,69 +232,6 @@
   }
 }
 
-.el-message-box {
-  display: inline-block;
-  width: 490px;
-  height: 190px;
-  background-color: transparent;
-  background: url(../assets/images/confirm-bg.png) no-repeat;
-  border-radius: 0px;
-  border: none;
-  box-shadow: none;
-  padding-bottom: 0px;
-  position: relative;
-
-  .el-button {
-    width: 87px;
-    height: 32px;
-    border: 1px solid #1eb0fc;
-    border-radius: 4px;
-    font-size: 16px;
-    padding: 0px;
-    line-height: 32px;
-    background-color: transparent;
-    color: #1fb0fc;
-  }
-
-  .el-button--primary {
-    background-color: #1eb0fc;
-    color: #fff;
-  }
-
-  .el-message-box__header {
-    padding: 0px;
-    display: inline-block;
-    width: 202px;
-    height: 45px;
-    background: url(../assets/images/info-title.png) no-repeat;
-    margin-top: 10px;
-    margin-left: 10px;
-  }
-
-  .el-message-box__title {
-    padding-left: 40px;
-    margin-bottom: 0;
-    font-size: 16px;
-    line-height: 45px;
-    color: #ffff;
-  }
-
-  .el-message-box__content {
-    text-align: center;
-    padding: 0px;
-    color: #1fb0fc;
-    font-size: 18px;
-    padding: 18px 0px;
-  }
-
-  .el-message-box__btns {
-    position: absolute;
-    bottom: 20px;
-    padding: 0px;
-    right: 30px;
-  }
-}
-
 //tooltip样式
 .el-tooltip__popper .popper__arrow,
 .el-tooltip__popper .popper__arrow::after {
@@ -693,6 +630,34 @@ input[type="number"] {
     background: #1eb0fc;
     color: #fff;
   }
+}
+
+// message消息提示
+.el-message {
+  width: 289px;
+  height: 33px;
+  line-height: 33px;
+  background: #00a7e8;
+  border: none;
+  border-radius: 2px;
+}
+.el-message__content {
+  font-size: 14px;
+  color: #fff !important;
+  margin-left: 20px !important;
+}
+.el-message__icon {
+  width: 18px;
+  height: 18px;
+  font-size: 22px;
+}
+.el-message__icon.el-icon-success {
+  background: url(../assets/images/structureData/success.svg) no-repeat;
+  color: transparent;
+}
+.el-message__icon.el-icon-error {
+  background: url(../assets/images/structureData/error.svg) no-repeat;
+  color: transparent;
 }
 
 //调度平台新增案件，人员分派下拉选框弹窗
