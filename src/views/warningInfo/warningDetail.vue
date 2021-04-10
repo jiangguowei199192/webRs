@@ -131,6 +131,7 @@
     </el-dialog>
     <!-- 预览图片弹窗 -->
     <el-dialog
+      class="browserScroll"
       :visible.sync="imgDialogVisible"
       custom-class="el-dialog-custom"
       :show-close="false"
@@ -184,7 +185,7 @@ export default {
       }
       this.$axios
         .post(structureApi.updateAlarm, params)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '告警核实结果状态修改成功 !',
@@ -193,7 +194,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -207,7 +208,7 @@ export default {
       }
       this.$axios
         .post(structureApi.insertAlarmRemark, params)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '添加备注成功 !',
@@ -218,7 +219,7 @@ export default {
             this.remark = ''
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -230,7 +231,7 @@ export default {
       }
       this.$axios
         .post(structureApi.queryAlarmRemarkList, params)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
             this.remarkList = data.data
@@ -238,7 +239,7 @@ export default {
             this.remarkList = []
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -451,6 +452,13 @@ export default {
             height: 34px;
             width: 100%;
             background-color: rgba($color: #000000, $alpha: 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+              margin-right: 19px;
+              cursor: pointer;
+            }
           }
         }
       }
