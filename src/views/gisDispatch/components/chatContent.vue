@@ -38,8 +38,33 @@
         <span v-else class="msg">{{ msg }}</span>
       </div>
     </div>
+    <div
+      v-show="imgDlgVis"
+      class="dlg browserScroll"
+      @click.stop="imgDlgVis = false"
+    >
+      <div>
+        <img
+          :src="dlgData.msg"
+          v-if="dlgData.type === 'img'"
+          style="height: 100%; width: 100%"
+        />
+        <LivePlayer
+          v-else-if="dlgData.type === 'video'"
+          :videoUrl="dlgData.msg"
+          :show-custom-button="false"
+          :muted="false"
+          :controls="false"
+          :autoplay="true"
+          oncontextmenu="return false"
+          fluent
+          :live="false"
+          :poster="poster"
+        ></LivePlayer>
+      </div>
+    </div>
     <!-- 放大显示视频和图片的对话框 -->
-    <el-dialog
+    <!-- <el-dialog
       custom-class="el-dialog-custom"
       class="browserScroll"
       :visible.sync="imgDlgVis"
@@ -65,7 +90,7 @@
         :live="false"
         :poster="poster"
       ></LivePlayer>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -246,6 +271,27 @@ export default {
     .rightTalk {
       text-align: right;
     }
+  }
+}
+.dlg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  margin: 0;
+  pointer-events: auto;
+  font-size: 0.14rem;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+  z-index: 2001;
+  background-color: rgba(0, 0, 0, 0.5);
+  > div {
+    width: 1080px;
+    height: 720px;
+    margin: auto;
+    margin-top: 15vh;
   }
 }
 </style>

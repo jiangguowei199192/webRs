@@ -16,7 +16,7 @@
             >
           </div>
           <div class="info" v-show="active === 0">
-            <img :src="caseInfo.img || noPic" class="left" />
+            <img :src="noPic" class="left" />
             <div class="right">
               <EllipsisTooltip
                 class="caseName"
