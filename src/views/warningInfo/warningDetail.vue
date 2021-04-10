@@ -66,7 +66,15 @@
         </div>
       </div>
       <div class="rightInfo">
-        <div class="bigImg">
+        <div class="tabs">
+          <span @click.stop="tabIndex = 0" :class="{ select: tabIndex === 0 }"
+            >抓拍图</span
+          >
+          <!-- <span @click.stop="tabIndex = 1" :class="{ select: tabIndex === 1 }"
+            >抓拍视频</span
+          > -->
+        </div>
+        <div class="bigImg" v-show="tabIndex === 0">
           <img :src="info.imageUrl" alt />
           <!-- <span
             v-for="(list,index) in info.rect.points"
@@ -87,6 +95,26 @@
               "
           ></span> -->
         </div>
+        <div class="videoBox" v-show="tabIndex === 1">
+          <div class="video">
+            <LivePlayer
+              :videoUrl="videoUrl"
+              :show-custom-button="false"
+              :muted="false"
+              :controls="false"
+              :autoplay="true"
+              oncontextmenu="return false"
+              fluent
+              :live="false"
+              aspect="fullscreen"
+            ></LivePlayer>
+            <div class="playBtns">
+               <img src="../../assets/images/warningCenter/stop.svg" alt />
+               <img src="../../assets/images/warningCenter/play.svg" alt />
+               <img src="../../assets/images/warningCenter/pause.svg" alt />
+            </div>
+          </div>
+        </div>
         <!-- <div class="tools">
           <span>区域检测</span>
           <el-switch v-model="areaWatch" active-color="#00D1FD" inactive-color="#AEAEAE"></el-switch>
@@ -99,6 +127,7 @@
 </template>
 <script>
 import { structureApi } from '@/api/structureData.js'
+import LivePlayer from '@liveqing/liveplayer'
 export default {
   props: {
     dialogVisible: {
@@ -109,11 +138,16 @@ export default {
       type: Object
     }
   },
+  components: {
+    LivePlayer
+  },
   data () {
     return {
       X: require('../../assets/images/X.svg'),
       remark: '',
-      remarkList: []
+      remarkList: [],
+      tabIndex: 0,
+      videoUrl: ''
     }
   },
   methods: {
@@ -134,7 +168,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -159,7 +193,7 @@ export default {
             this.remark = ''
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -179,7 +213,7 @@ export default {
             this.remarkList = []
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -200,7 +234,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .detailInfo {
   /deep/.el-dialog {
     width: 908px;
@@ -318,9 +352,30 @@ export default {
         }
       }
       div.rightInfo {
+        width: 4.89rem;
+        .tabs {
+          width: 115px;
+          height: 36px;
+          background: #194a6f;
+          border-radius: 2px;
+          text-align: center;
+          color: #fff;
+          margin-bottom: 13px;
+          span {
+            display: inline-block;
+            width: 115px;
+            height: 100%;
+            border-radius: 2px;
+            line-height: 36px;
+            cursor: pointer;
+          }
+          span.select {
+            background: #39a4dd;
+          }
+        }
         .bigImg {
-          width: 489px;
-          height: 516px;
+          width: 100%;
+          height: 426px;
           position: relative;
           img {
             width: 100%;
@@ -342,6 +397,21 @@ export default {
             font-weight: 500;
             color: #ffffff;
             margin-right: 9px;
+          }
+        }
+        .videoBox {
+          position: relative;
+          width: 100%;
+          .video {
+            width: 100%;
+            height: 426px;
+          }
+          .playBtns {
+            position: absolute;
+            bottom: 0px;
+            height: 34px;
+            width: 100%;
+            background-color: rgba($color: #000000, $alpha: 0.6);
           }
         }
       }

@@ -9,7 +9,10 @@
     <div class="title">{{ title }}</div>
     <div class="img-box" v-if="info">
       <div class="bigImage" ref="bigImage">
-        <img :src="info.bigImage.url || noPic" />
+        <img
+          :src="info.bigImage.url || noPic"
+          @click.stop="showBigImg(info.bigImage.url, info.rect)"
+        />
         <span
           v-show="info.rect.show"
           :style="
@@ -31,6 +34,12 @@
       <img
         style="float: right"
         :src="(info.pedestrian && info.pedestrian.image.url) || noPic"
+        @click.stop="
+          showBigImg(
+            (info.pedestrian && info.pedestrian.image.url) || null,
+            null
+          )
+        "
       />
     </div>
 
@@ -59,6 +68,37 @@
     <div class="confirm-tool">
       <div class="confirm-btn" @click="confirmClick">关闭</div>
     </div>
+    <el-dialog
+      custom-class="el-dialog-custom"
+      class="browserScroll"
+      :visible.sync="imgDlgVis"
+      :show-close="false"
+      center
+      :append-to-body="true"
+    >
+      <div style="position: relative">
+        <img :src="bigImg" style="height: 100%; width: 100%" />
+        <span
+          class="detectBox"
+          style="position: absolute"
+          v-show="rect"
+          :style="
+            'left:' +
+            rect.left +
+            '%;' +
+            'top:' +
+            rect.top +
+            '%;' +
+            'width:' +
+            rect.width +
+            '%;' +
+            'height:' +
+            rect.height +
+            '%;'
+          "
+        ></span>
+      </div>
+    </el-dialog>
   </el-dialog>
 </template>
 
@@ -67,6 +107,9 @@ export default {
   props: ['isShow', 'type', 'info'],
   data () {
     return {
+      bigImg: '',
+      rect: '',
+      imgDlgVis: false,
       title: '',
       deviceInfo: {
         deviceName: '',
@@ -165,6 +208,13 @@ export default {
     confirmClick () {
       this.$emit('confirmClick')
     },
+    showBigImg (url, rect) {
+      if (!url) return
+      this.imgDlgVis = true
+      this.bigImg = url
+      if (!rect || !rect.show) this.rect = ''
+      else this.rect = rect
+    },
     /**
      * 计算识别框尺寸
      */
@@ -229,6 +279,7 @@ export default {
         img {
           width: 174px;
           height: 174px;
+          cursor: pointer;
         }
         .bigImage {
           display: inline-block;
@@ -239,6 +290,7 @@ export default {
             position: absolute;
             display: inline-block;
             border: 1px solid red;
+            pointer-events: none;
           }
         }
       }
