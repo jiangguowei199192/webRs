@@ -1,7 +1,10 @@
 <template>
   <div>
     <el-dialog :visible.sync="isShow" :close-on-click-modal="false" class="config-dlg dialog-wrap">
-      <div class="config-header">{{ title }}</div>
+      <div class="config-header">
+        {{ title }}
+        <img src="../../../assets/images/backgroundManagement/X.svg" />
+      </div>
       <div class="config-content">
         <el-tabs :tab-position="tabPosition" v-model="activeName" @tab-click="handleClick">
           <el-tab-pane
@@ -26,14 +29,45 @@
               <div class="drawCanvas">
                 <div class="left">
                   <div class="content">
-                    <img src="../../../assets/images/Login/login-bg.svg" alt />
+                    <img src="../../../assets/images/Login/video-bg.jpg" v-if="isShowCapture" />
+                    <LivePlayer
+                      v-else
+                      :videoUrl="streamUrl"
+                      :show-custom-button="false"
+                      :muted="false"
+                      :controls="false"
+                      :autoplay="false"
+                      oncontextmenu="return false"
+                      fluent
+                      :stretch="true"
+                      :live="true"
+                      aspect="fullscreen"
+                      class="playerStyle"
+                    ></LivePlayer>
                   </div>
                   <div class="tools">
                     <div class="left">
-                      <img src="../../../assets/images/backgroundManagement/pause.svg" alt title="播放" />
-                      <img src="../../../assets/images/backgroundManagement/capture.svg" title="截取" alt />
-                      <img src="../../../assets/images/backgroundManagement/visible.svg" title="可见光" alt />
-                      <img src="../../../assets/images/backgroundManagement/infrared.svg" title="红外光" alt />
+                      <img
+                        src="../../../assets/images/backgroundManagement/pause.svg"
+                        alt
+                        title="播放"
+                        @click="isShowCapture=!isShowCapture"
+                      />
+                      <img
+                        src="../../../assets/images/backgroundManagement/capture.svg"
+                        title="截取"
+                        alt
+                      />
+                      <img
+                        src="../../../assets/images/backgroundManagement/visible.svg"
+                        title="可见光"
+                        alt
+                      />
+                      <img
+                        src="../../../assets/images/backgroundManagement/infrared.svg"
+                        title="红外光"
+                        alt
+                      />
                     </div>
                   </div>
                 </div>
@@ -45,9 +79,10 @@
                   <div class="areas">
                     <p>已绘制区域：</p>
                     <div class="btns">
-                      <el-button>区域1</el-button>
-                      <el-button>区域2</el-button>
-                      <el-button>区域3</el-button>
+                      <el-button v-for="(item,index) in 5" :key="index">
+                        区域{{index+1}}
+                        <i class="el-icon-close el-icon-right"></i>
+                      </el-button>
                     </div>
                   </div>
                 </div>
@@ -83,7 +118,11 @@
 </template>
 
 <script>
+import LivePlayer from '@liveqing/liveplayer'
 export default {
+  components: {
+    LivePlayer
+  },
   props: {
     isShow: { type: Boolean, required: true },
     title: {
@@ -100,6 +139,8 @@ export default {
 
   data () {
     return {
+      isShowCapture: true,
+      streamUrl: 'ws://122.112.217.132:8888/live/6C01728PA4A9A760.flv',
       value: true,
       date: '',
       alarmLevel: '',
@@ -180,6 +221,12 @@ export default {
       line-height: 30px;
       padding: 0 20px;
       margin-top: 18px;
+      img {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+      }
     }
     .config-content {
       margin-top: 20px;
@@ -316,8 +363,8 @@ export default {
               }
               div.btns {
                 padding-left: 15px;
-                .el-button+.el-button{
-                  margin:0;
+                .el-button + .el-button {
+                  margin: 0;
                 }
                 .el-button {
                   width: 72px;
@@ -330,10 +377,14 @@ export default {
                   font-family: Source Han Sans CN;
                   font-weight: bold;
                   color: #ffffff;
-                  margin-right:10px !important;
-                  margin-top:10px!important;
+                  margin-right: 10px !important;
+                  margin-top: 10px !important;
+                  i {
+                    position: relative;
+                    right: -8px;
+                    font-size:12px;
+                  }
                 }
-
               }
             }
           }
