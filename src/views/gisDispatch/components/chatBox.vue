@@ -138,7 +138,21 @@ export default {
         return
       }
 
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      if (fileType !== 'mp4' && f.size / 1024.0 / 1024 > 1) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '图片文件大小不能超过1MB'
+        })
+      } else if (fileType === 'mp4' && f.size / 1024.0 / 1024 > 20) {
+        this.$notify.closeAll()
+        this.$notify.warning({
+          title: '警告',
+          message: '视频文件大小不能超过20MB'
+        })
+      }
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' }, timeout: 20000 }
       const formData = new FormData()
       formData.append('file', f)
       this.$axios
