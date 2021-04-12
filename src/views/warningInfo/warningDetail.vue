@@ -71,13 +71,16 @@
           </div>
         </div>
         <div class="rightInfo">
-          <div class="tabs">
+          <div class="tabs" :class="{ hasVideo: videoUrl }">
             <span @click.stop="tabIndex = 0" :class="{ select: tabIndex === 0 }"
               >抓拍图</span
             >
-            <!-- <span @click.stop="tabIndex = 1" :class="{ select: tabIndex === 1 }"
-            >抓拍视频</span
-          > -->
+            <span
+              @click.stop="showVideo()"
+              :class="{ select: tabIndex === 1 }"
+              v-show="videoUrl"
+              >抓拍视频</span
+            >
           </div>
           <div class="bigImg" v-show="tabIndex === 0">
             <img :src="info.imageUrl" alt @click.stop="previewImg" />
@@ -101,24 +104,46 @@
           ></span> -->
           </div>
           <div class="videoBox" v-show="tabIndex === 1">
-            <div class="video">
+            <div class="video" :class="{ noVideo: !isPlay }">
               <LivePlayer
-                :videoUrl="videoUrl"
+                v-show="url"
+                :videoUrl="url"
                 :show-custom-button="false"
                 :muted="false"
                 :controls="false"
-                :autoplay="true"
+                :autoplay="false"
                 oncontextmenu="return false"
                 fluent
                 :live="false"
                 aspect="fullscreen"
+                :poster="poster"
+                ref="player"
               ></LivePlayer>
               <div class="playBtns">
-                <img src="../../assets/images/warningCenter/stop.svg" alt />
-                <img src="../../assets/images/warningCenter/play.svg" alt />
-                <img src="../../assets/images/warningCenter/pause.svg" alt />
+                <img
+                  src="../../assets/images/warningCenter/stop.svg"
+                  alt
+                  @click.stop="stop()"
+                />
+                <img
+                  v-show="!isPlay"
+                  src="../../assets/images/warningCenter/play.svg"
+                  alt
+                  @click.stop="play()"
+                />
+                <img
+                  v-show="isPlay"
+                  src="../../assets/images/warningCenter/pause.svg"
+                  alt
+                  @click.stop="pause()"
+                />
               </div>
             </div>
+            <timeBar
+              ref="timebar"
+              :startTime="videoStart"
+              :curTime="curTime"
+            ></timeBar>
           </div>
           <!-- <div class="tools">
           <span>区域检测</span>
@@ -148,7 +173,7 @@
 <script>
 import { structureApi } from '@/api/structureData.js'
 import LivePlayer from '@liveqing/liveplayer'
-
+import timeBar from './components/timeBar'
 export default {
   props: {
     dialogVisible: {
@@ -161,7 +186,8 @@ export default {
   },
 
   components: {
-    LivePlayer
+    LivePlayer,
+    timeBar
   },
 
   data () {
@@ -170,13 +196,58 @@ export default {
       remark: '',
       remarkList: [],
       tabIndex: 0,
+      url: '',
       videoUrl: '',
+      // videoUrl:
+      //   'http://122.112.203.178:8850/video-service1/record/live/6C01728PA4A9A760/2021-04-12/00-00-01.mp4',
       imgDialogVisible: false,
-      clickImgSrc: ''
+      clickImgSrc: '',
+      isPlay: false,
+      poster: require('../../assets/images/loading.gif'),
+      curTime: 0, // 告警视频播放时间
+      timeInit: false,
+      videoStart: '2021-4-12 09:00:00' // 告警视频开始时间
     }
   },
 
   methods: {
+    // 播放时间更新
+    timeupdate () {
+      this.curTime = Math.floor(this.$refs.player.player.currentTime())
+    },
+    // 显示视频
+    showVideo () {
+      this.tabIndex = 1
+      if (!this.timeInit) {
+        this.timeInit = true
+        this.curTime = 0
+        this.$refs.timebar.init()
+      }
+    },
+    // 播放
+    play () {
+      let isOn = false
+      if (!this.url) {
+        this.url = this.videoUrl
+        isOn = true
+      }
+      this.$nextTick(() => {
+        this.$refs.player.player.play()
+        if (isOn) this.$refs.player.player.on('timeupdate', this.timeupdate)
+        this.isPlay = true
+      })
+    },
+    // 暂停
+    pause () {
+      this.$refs.player.player.pause()
+      this.isPlay = false
+    },
+    // 停止
+    stop () {
+      this.url = ''
+      this.isPlay = false
+      this.curTime = 0
+    },
     // 确认/误报
     confirmWarn (status) {
       const params = {
@@ -258,7 +329,11 @@ export default {
     dialogVisible: {
       handler (nv, ov) {
         if (nv) {
+          this.tabIndex = 0
+          this.timeInit = false
           this.getRemarkList()
+        } else if (this.url) {
+          this.stop()
         }
       },
       immediate: true,
@@ -412,6 +487,9 @@ export default {
             background: #39a4dd;
           }
         }
+        .tabs.hasVideo {
+          width: 230px;
+        }
         .bigImg {
           width: 100%;
           height: 426px;
@@ -440,11 +518,17 @@ export default {
           }
         }
         .videoBox {
-          position: relative;
           width: 100%;
           .video {
+            position: relative;
             width: 100%;
             height: 426px;
+            margin-bottom: 4px;
+          }
+          .video.noVideo {
+            background: url(../../assets/images/video.svg) no-repeat center
+              center;
+            background-color: #16789e;
           }
           .playBtns {
             position: absolute;
