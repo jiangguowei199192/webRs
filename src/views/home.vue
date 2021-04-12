@@ -571,7 +571,7 @@ export default {
             font-size: 16px;
             font-family: Microsoft YaHei;
             font-weight: 400;
-            color: #0fbfe0;
+            color: #00d0fc;
             .list {
               width: 180px;
               margin-left: -40px;

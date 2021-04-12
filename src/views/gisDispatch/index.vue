@@ -161,7 +161,7 @@ export default {
       caseFold: false,
       dateRange: [],
       rotate: false,
-      isfoldTool: true, // 是否折叠底部工具栏
+      isfoldTool: false, // 是否折叠底部工具栏
       tools: [
         {
           showLayer: true,
