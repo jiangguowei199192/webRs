@@ -36,7 +36,7 @@
                       :show-custom-button="false"
                       :muted="false"
                       :controls="false"
-                      :autoplay="false"
+                      :autoplay="true"
                       oncontextmenu="return false"
                       fluent
                       :stretch="true"
@@ -51,23 +51,44 @@
                         src="../../../assets/images/backgroundManagement/play.svg"
                         alt
                         title="播放"
-                        @click="isShowCapture=!isShowCapture"
+                        @click="showVideoOrCapture"
                       />
                       <img
                         src="../../../assets/images/backgroundManagement/capture.svg"
                         title="截取"
+                         @click="isShowCapture=true"
                         alt
                       />
-                      <img
-                        src="../../../assets/images/backgroundManagement/visible.svg"
-                        title="可见光"
-                        alt
-                      />
-                      <img
-                        src="../../../assets/images/backgroundManagement/infrared.svg"
-                        title="红外光"
-                        alt
-                      />
+                      <template>
+                        <img
+                          src="../../../assets/images/backgroundManagement/visible-selected.svg"
+                          title="可见光"
+                          alt
+                          v-if="isVisibleSelected"
+                        />
+                        <img
+                          src="../../../assets/images/backgroundManagement/visible.svg"
+                          title="可见光"
+                          @click.stop="isVisibleSelected=!isVisibleSelected"
+                          alt
+                          v-else
+                        />
+                      </template>
+                      <template>
+                        <img
+                          src="../../../assets/images/backgroundManagement/infrared.svg"
+                          title="红外光"
+                          alt
+                          v-if="isVisibleSelected"
+                          @click.stop="isVisibleSelected = !isVisibleSelected"
+                        />
+                        <img
+                          src="../../../assets/images/backgroundManagement/infrared-selected.svg"
+                          title="红外光"
+                          alt
+                          v-else
+                        />
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -139,8 +160,8 @@ export default {
 
   data () {
     return {
+      isVisibleSelected: true,
       isShowCapture: true,
-      streamUrl: 'ws://122.112.217.132:8888/live/6C01728PA4A9A760.flv',
       value: true,
       date: '',
       alarmLevel: '',
@@ -180,7 +201,6 @@ export default {
       ]
     }
   },
-
   watch: {
     isShow (val) {}
   },
@@ -188,6 +208,10 @@ export default {
   mounted () {},
 
   methods: {
+    showVideoOrCapture () {
+      this.isShowCapture = false
+      this.streamUrl = 'ws://122.112.217.132:8888/live/6C01728PA4A9A760.flv'
+    },
     // 更新isShow状态
     cancel () {
       this.$emit('update:isShow', false)
@@ -330,6 +354,8 @@ export default {
                 > img {
                   margin-top: 7px;
                   margin-right: 15px;
+                  width:26px;
+                  height:26px;
                   cursor: pointer;
                 }
               }
@@ -382,7 +408,7 @@ export default {
                   i {
                     position: relative;
                     right: -8px;
-                    font-size:12px;
+                    font-size: 12px;
                   }
                 }
               }
