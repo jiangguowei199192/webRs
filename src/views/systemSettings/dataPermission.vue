@@ -143,7 +143,7 @@ export default {
       const _this = this
       this.$axios
         .get(backApi.getTypeDict, { params: { typeCode: 'resources' } })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             this.handlePermissionTree(res.data.data, false)
             _this.permissionTypeTree = res.data.data
@@ -155,7 +155,7 @@ export default {
     },
 
     handlePermissionTree (tree, isRes) {
-      tree.forEach(item => {
+      tree.forEach((item) => {
         if (isRes || item.typeCode.indexOf('resources') !== -1) {
           item.isRes = true
         } else item.isRes = false
@@ -194,9 +194,9 @@ export default {
           deviceNameOrCode: this.resourceSearch
         }
         const _this = this
-        this.$axios.post(backApi.getVideoListByType, param).then(res => {
+        this.$axios.post(backApi.getVideoListByType, param).then((res) => {
           if (res && res.data && res.data.code === 0) {
-            res.data.data.data.forEach(item => {
+            res.data.data.data.forEach((item) => {
               item.deviceStatus =
                 item.deviceStatus === 'enabled' ? '启用' : '禁用'
               item.onlineStatus =
@@ -229,7 +229,7 @@ export default {
           .post(backApi.getResourceListByType, param, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
           })
-          .then(res => {
+          .then((res) => {
             if (res && res.data && res.data.code === 0) {
               _this.resourceList = res.data.data.records
               _this.pageTotal = res.data.data.total
@@ -269,7 +269,7 @@ export default {
             {
               label: '长度',
               value: 'totalLength',
-              formatter: row => {
+              formatter: (row) => {
                 return row.totalLength + '千米'
               }
             },
@@ -318,13 +318,13 @@ export default {
           .post(backApi.authDetail, param, {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
           })
-          .then(res => {
+          .then((res) => {
             if (res && res.data && res.data.code === 0) {
               _this.showDataPermission = true
               var resDept = res.data.data.authDept
               if (resDept && resDept.length) {
                 var deptCodes = []
-                resDept.forEach(item => {
+                resDept.forEach((item) => {
                   deptCodes.push(item.authDept)
                 })
                 _this.defaultAuthDepts = deptCodes
@@ -344,8 +344,8 @@ export default {
       this.showDataPermission = false
 
       var selectResIdArr = []
-      this.selectedResources.forEach(item => {
-        if (this.selectedType.typeCode.indexOf('resources') === -1) {
+      this.selectedResources.forEach((item) => {
+        if (!this.selectedType.isRes) {
           selectResIdArr.push(item.deviceCode)
         } else {
           selectResIdArr.push(item.id)
@@ -353,12 +353,12 @@ export default {
       })
 
       var deptCodes = []
-      depts.forEach(dept => {
+      depts.forEach((dept) => {
         deptCodes.push(dept.deptCode)
       })
 
       var userIds = []
-      users.forEach(user => {
+      users.forEach((user) => {
         userIds.push(user.id)
       })
 
@@ -376,7 +376,7 @@ export default {
         .post(backApi.resourcesAuth, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             Notification({
               title: '提示',
