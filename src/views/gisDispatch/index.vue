@@ -32,12 +32,14 @@
           <transition name="showContent">
             <div v-show="!isfoldTool" class="toolBox">
               <template v-for="(item, index) in tools">
-                <div
-                  :key="index"
-                  @click.stop="showOrHideLayer(item, index)"
-                  :class="{ unselect: !item.showLayer }"
-                >
-                  <img :src="item.img" />
+                <div :key="index">
+                  <div
+                    @click.stop="showOrHideLayer(item, index)"
+                    :class="{ unselect: !item.showLayer }"
+                  >
+                    <img :src="item.img" />
+                  </div>
+                  <span>{{ item.name }}</span>
                 </div>
               </template>
             </div>
@@ -164,30 +166,37 @@ export default {
       isfoldTool: false, // 是否折叠底部工具栏
       tools: [
         {
+          name: '组织机构',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/institutionL.svg')
         },
         {
+          name: '组织人员',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/peopleL.svg')
         },
         {
+          name: '无人机',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/droneL.svg')
         },
         {
+          name: '高点监控',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/cameraL.svg')
         },
         {
+          name: '重点区域',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/areaL.svg')
         },
         {
+          name: '重要路线',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/routeL.svg')
         },
         {
+          name: '关注点位',
           showLayer: true,
           img: require('../../assets/images/gisDispatch/pointL.svg')
         }
@@ -549,30 +558,38 @@ export default {
     }
     > div {
       overflow: hidden;
+      height: 100%;
       .toolBox {
         display: flex;
+        position: relative;
+        top: 14px;
         > div {
-          width: 51px;
-          height: 44px;
-          margin-right: 20px;
-          background: url(../../assets/images/gisDispatch/box.svg) no-repeat;
-          background-size: 100% 100%;
-          text-align: center;
-          cursor: pointer;
-          position: relative;
-          img {
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+          display: flex;
+          flex-direction: column;
+          > div {
+            width: 51px;
+            height: 44px;
+            margin-right: 20px;
+            background: url(../../assets/images/gisDispatch/box.svg) no-repeat;
+            background-size: 100% 100%;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 8px;
+            img {
+              position: absolute;
+              width: 28px;
+              height: 28px;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
           }
-        }
-        > div.unselect {
-          background: url(../../assets/images/gisDispatch/box-unselect.svg)
-            no-repeat;
-          background-size: 100% 100%;
+          > div.unselect {
+            background: url(../../assets/images/gisDispatch/box-unselect.svg)
+              no-repeat;
+            background-size: 100% 100%;
+          }
         }
       }
     }

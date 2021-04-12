@@ -2,8 +2,8 @@
  xmlns="http://www.w3.org/2000/svg"
  xmlns:xlink="http://www.w3.org/1999/xlink"
  width="51.5px" height="44.5px">
-<path fill-rule="evenodd"  fill="rgb(71, 135, 41)"
- d="M37.989,43.490 L12.989,43.490 L0.489,21.990 L12.989,0.491 L37.990,0.491 L50.490,21.990 L37.989,43.490 Z"/>
-<path fill-rule="evenodd"  stroke="rgb(110, 210, 64)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M37.989,43.490 L12.989,43.490 L0.489,21.990 L12.989,0.491 L37.990,0.491 L50.490,21.990 L37.989,43.490 Z"/>
+<path fill-rule="evenodd"  fill="rgb(20, 132, 174)"
+ d="M37.989,43.490 L12.989,43.490 L0.488,21.990 L12.989,0.491 L37.989,0.491 L50.490,21.990 L37.989,43.490 Z"/>
+<path fill-rule="evenodd"  stroke="rgb(0, 167, 232)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+ d="M37.989,43.490 L12.989,43.490 L0.488,21.990 L12.989,0.491 L37.989,0.491 L50.490,21.990 L37.989,43.490 Z"/>
 </svg>
