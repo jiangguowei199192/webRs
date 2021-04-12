@@ -48,7 +48,7 @@
                   <div class="tools">
                     <div class="left">
                       <img
-                        src="../../../assets/images/backgroundManagement/pause.svg"
+                        src="../../../assets/images/backgroundManagement/play.svg"
                         alt
                         title="播放"
                         @click="isShowCapture=!isShowCapture"
