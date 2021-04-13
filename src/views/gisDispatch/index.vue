@@ -935,6 +935,9 @@ export default {
         width: 175px;
         height: 40px;
         padding: 0px 0px 0px 0px;
+        .el-input__inner::placeholder {
+          color: #00d1fe;
+        }
         .el-input__inner {
           border: none;
           background: transparent;
