@@ -203,8 +203,10 @@ export default {
       imgDialogVisible: false,
       clickImgSrc: '',
       isPlay: false,
+      duration: 0, // 视频长度
       poster: require('../../assets/images/loading.gif'),
       curTime: 0, // 告警视频播放时间
+
       timeInit: false,
       videoStart: '2021-4-12 09:00:00' // 告警视频开始时间
     }
@@ -233,9 +235,16 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.player.player.play()
-        if (isOn) this.$refs.player.player.on('timeupdate', this.timeupdate)
+        if (isOn) {
+          this.$refs.player.player.on('timeupdate', this.timeupdate)
+          this.$refs.player.player.on('loadedmetadata', this.onLoadedMetadata)
+        }
         this.isPlay = true
       })
+    },
+    // 获取视频总时长
+    onLoadedMetadata () {
+      this.duration = this.$refs.player.player.duration()
     },
     // 暂停
     pause () {

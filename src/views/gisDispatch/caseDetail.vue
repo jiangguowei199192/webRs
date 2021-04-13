@@ -39,7 +39,7 @@
               <div class="time">
                 <img src="../../assets/images/gisDispatch/time.svg" />
                 <EllipsisTooltip
-                  :contentText="caseInfo.reportTime"
+                  :contentText="caseInfo.caseStartTime"
                   class="reportAddr"
                 ></EllipsisTooltip>
               </div>
@@ -261,6 +261,7 @@ export default {
         reportAddr: '',
         reportTel: '',
         reportTime: '',
+        caseStartTime: '',
         longitude: '',
         latitude: '',
         type: '',

@@ -63,7 +63,7 @@
                 </div>
               </template>
             </div>
-            <el-date-picker
+            <!-- <el-date-picker
               v-model="dateRange"
               type="datetimerange"
               range-separator="一"
@@ -72,7 +72,27 @@
               class="caseDate"
               value-format="yyyy-MM-dd HH:mm:ss"
               @change="getCaseList"
-            ></el-date-picker>
+            ></el-date-picker> -->
+            <div class="timeBox">
+              <span class="timeIcon"></span>
+              <el-date-picker
+                v-model="startTime"
+                type="datetime"
+                placeholder="请选择案件开始时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                class="caseDate"
+                @change="startTimeChange"
+              ></el-date-picker>
+              <span class="separator"></span>
+              <el-date-picker
+                v-model="endTime"
+                type="datetime"
+                placeholder="请选择案件结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                class="caseDate"
+                @change="endTimeChange"
+              ></el-date-picker>
+            </div>
             <div class="list listScroll">
               <template v-for="(item, index) in cases">
                 <div
@@ -107,7 +127,7 @@
                       ></EllipsisTooltip>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/time.svg" />
-                        <span>{{ item.createTime }}</span>
+                        <span>{{ item.caseStartTime }}</span>
                       </div>
                       <div class="time">
                         <img src="../../assets/images/gisDispatch/addr.svg" />
@@ -161,7 +181,9 @@ export default {
       mapResList: [],
       showCaseDlg: false,
       caseFold: false,
-      dateRange: [],
+      startTime: '',
+      endTime: '',
+      // dateRange: [],
       rotate: false,
       isfoldTool: false, // 是否折叠底部工具栏
       tools: [
@@ -250,6 +272,44 @@ export default {
   },
   methods: {
     /**
+     * 开始时间改变
+     */
+    startTimeChange () {
+      if (!this.startTime || !this.endTime) {
+        this.getCaseList()
+        return
+      }
+      const start = new Date(this.startTime).getTime()
+      const end = new Date(this.endTime).getTime()
+      if (end <= start) {
+        this.startTime = ''
+        this.$notify.closeAll()
+        this.$notify.info({
+          title: '提示',
+          message: '当前所选开始时间已晚于结束时间，请重新选择'
+        })
+      } else this.getCaseList()
+    },
+    /**
+     * 结束时间改变
+     */
+    endTimeChange () {
+      if (!this.startTime || !this.endTime) {
+        this.getCaseList()
+        return
+      }
+      const start = new Date(this.startTime).getTime()
+      const end = new Date(this.endTime).getTime()
+      if (end <= start) {
+        this.endTime = ''
+        this.$notify.closeAll()
+        this.$notify.info({
+          title: '提示',
+          message: '当前所选结束时间已早于开始时间，请重新选择'
+        })
+      } else this.getCaseList()
+    },
+    /**
      * 获取无人机资源完毕回调
      */
     getDronesDone () {
@@ -331,7 +391,9 @@ export default {
       // 今日 23:59:59
       const end = new Date(time + 24 * 60 * 60 * 1000 - 1)
       const start = new Date(time - 6 * 24 * 60 * 60 * 1000)
-      this.dateRange = [timeFormat(start), timeFormat(end)]
+      // this.dateRange = [timeFormat(start), timeFormat(end)]
+      this.startTime = timeFormat(start)
+      this.endTime = timeFormat(end)
     },
     /**
      * 格式化案件状态
@@ -410,14 +472,8 @@ export default {
           {
             currentPage: 1,
             pageSize: 1000,
-            startTime:
-              this.dateRange && this.dateRange.length > 0
-                ? this.dateRange[0]
-                : '',
-            endTime:
-              this.dateRange && this.dateRange.length > 1
-                ? this.dateRange[2]
-                : ''
+            startTime: this.startTime,
+            endTime: this.endTime
           },
           {
             headers: { 'Content-Type': 'application/json;charset=UTF-8' }
@@ -846,28 +902,93 @@ export default {
         }
       }
     }
-    .caseDate {
+    .timeBox {
+      box-sizing: border-box;
       margin-left: 40px;
       margin-top: 11px;
       width: 436px;
       height: 40px;
       background-color: rgba($color: #004157, $alpha: 0.9);
       border: 1px solid rgba($color: #00d1fe, $alpha: 0.9);
-      /deep/.el-range-input {
-        background: transparent;
-        font-size: 16px;
-        font-family: Source Han Sans CN;
-        font-weight: 400;
-        color: #00d1fe;
-        width: 41%;
+      display: flex;
+      align-items: center;
+      .separator {
+        box-sizing: border-box;
+        margin: 0px 25px 0px 0px;
+        display: inline-block;
+        width: 20px;
+        height: 1px;
+        background: #00d1fe;
       }
-      /deep/.el-range-separator {
-        color: #00d1fe;
+      .timeIcon {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: url(../../assets/images/gisDispatch/datetime.svg) no-repeat;
+        background-size: 100% 100%;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      /deep/.caseDate {
+        box-sizing: border-box;
+        width: 175px;
+        height: 40px;
+        padding: 0px 0px 0px 0px;
+        .el-input__inner {
+          border: none;
+          background: transparent;
+          font-size: 14px;
+          font-family: Source Han Sans CN;
+          font-weight: 400;
+          color: #00d1fe;
+          width: 100%;
+          height: 100%;
+          padding: 0px;
+          line-height: 40px;
+        }
+        .el-input__prefix {
+          display: none;
+        }
+        .el-input__suffix {
+          font-size: 14px;
+          .el-input__icon {
+            line-height: 40px;
+            width: 20px;
+            color: #00d1fe;
+          }
+        }
+      }
+      /deep/.hideIcon {
+        width: 194px;
+        padding: 0px 0px 0px 33px;
+        .el-input__prefix {
+          display: none;
+        }
       }
     }
-    /deep/.caseDate.el-input__inner {
-      border-radius: 0px;
-    }
+    // .caseDate {
+    //   margin-left: 40px;
+    //   margin-top: 11px;
+    //   width: 436px;
+    //   height: 40px;
+    //   background-color: rgba($color: #004157, $alpha: 0.9);
+    //   border: 1px solid rgba($color: #00d1fe, $alpha: 0.9);
+    //   /deep/.el-range-input {
+    //     background: transparent;
+    //     font-size: 16px;
+    //     font-family: Source Han Sans CN;
+    //     font-weight: 400;
+    //     color: #00d1fe;
+    //     width: 41%;
+    //   }
+    //   /deep/.el-range-separator {
+    //     color: #00d1fe;
+    //   }
+    // }
+    // /deep/.caseDate.el-input__inner {
+    //   border-radius: 0px;
+    // }
     //折叠
     .foldBox {
       width: 60px;
