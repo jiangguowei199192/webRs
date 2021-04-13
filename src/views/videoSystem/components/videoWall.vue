@@ -334,7 +334,7 @@
           v-for="(item,index) in videoInfo.positionList"
           :key="index"
           :style="{left:(item.x/videoInfo.width)*100+'%',top:(item.y/videoInfo.height)*100+'%',width:(item.w/videoInfo.width)*100+'%',height:(item.h/videoInfo.height)*100+'%'}"
-          :class="{ship:item.label==1}"
+          :class="{ship:item.classId==1}"
         ></span>
       </div>
       <!-- 刻度尺 -->
