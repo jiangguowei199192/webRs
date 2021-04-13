@@ -57,6 +57,41 @@
                 @click.stop="imgClick(scope.row)"
               />
             </div>
+            <!-- 事件配置/实时检测 -->
+            <div
+              v-else-if="
+                (item.type == 'eventConfig'
+                  ? item.type == 'eventConfig'
+                  : item.type == 'realDetect') && scope.row[item.value]
+              "
+              :class="{
+                eventBox: item.type == 'eventConfig',
+                detectBox: item.type == 'realDetect'
+              }"
+            >
+              <div v-show="scope.row[item.value].split(',').length < 2">
+                <EllipsisTooltip
+                  class="tool-span"
+                  :contentText="scope.row[item.value]"
+                ></EllipsisTooltip>
+              </div>
+              <div v-show="scope.row[item.value].split(',').length >= 2">
+                <EllipsisTooltip
+                  class="tool-span"
+                  :contentText="scope.row[item.value].split(',')[0]"
+                ></EllipsisTooltip>
+                <EllipsisTooltip
+                  class="tool-span"
+                  :contentText="scope.row[item.value].split(',')[1]"
+                ></EllipsisTooltip>
+                <span :title="scope.row[item.value]">
+                  <EllipsisTooltip
+                    class="tool-span"
+                    :contentText="'...'"
+                  ></EllipsisTooltip>
+                </span>
+              </div>
+            </div>
             <span v-else>
               {{ scope.row[item.value] }}
             </span>
@@ -107,9 +142,13 @@
 <script>
 import globalApi from '@/utils/globalApi'
 import { timeFormat } from '@/utils/date'
+import EllipsisTooltip from '@/components/ellipsisTooltip'
 
 export default {
   name: 'PageTable',
+  components: {
+    EllipsisTooltip
+  },
   props: {
     // 自定义类名
     className: {
@@ -282,6 +321,22 @@ export default {
                 } else if (d.alarmStatus === 'mistaken') {
                   d.alarmStatus = '误报'
                 }
+                if (d.deviceCode) {
+                  d.deviceCode =
+                    '船舶出现' +
+                    ',人员入侵' +
+                    ',钓鱼行为' +
+                    ',非法捕捞' +
+                    ',车辆违停'
+                }
+                if (d.deviceAddress) {
+                  d.deviceAddress =
+                    '车辆检测' +
+                    ',船只检测' +
+                    ',人员检测' +
+                    ',口罩检测' +
+                    ',电子围栏'
+                }
                 if (d.alarmTime) {
                   d.alarmTime = timeFormat(d.alarmTime)
                 }
@@ -365,7 +420,34 @@ export default {
       cursor: pointer;
     }
   }
+  .eventBox,
+  .detectBox {
+    .tool-span {
+      display: inline-block;
+      width: 80px;
+      height: 26px;
+      line-height: 26px;
+      color: #fff;
+      background-color: #00b7ff;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+    .tool-span:last-child {
+      width: 40px;
+      font-size: 20px;
+      cursor: progress;
+    }
+  }
+  .detectBox {
+    .tool-span {
+      color: #c5f3ff;
+      background-color: transparent;
+      border: 1px solid #0b779e;
+      border-radius: 4px;
+    }
+  }
 }
+
 /deep/::-webkit-scrollbar {
   width: 3px;
   height: 3px;

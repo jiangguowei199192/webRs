@@ -256,7 +256,7 @@ export default {
       }
       this.$axios
         .post(structureApi.updateAlarm, params)
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '告警核实结果状态修改成功 !',
@@ -265,7 +265,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
@@ -279,7 +279,7 @@ export default {
       }
       this.$axios
         .post(structureApi.insertAlarmRemark, params)
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '添加备注成功 !',
@@ -290,7 +290,7 @@ export default {
             this.remark = ''
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
@@ -302,7 +302,7 @@ export default {
       }
       this.$axios
         .post(structureApi.queryAlarmRemarkList, params)
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
             this.remarkList = data.data
@@ -310,7 +310,7 @@ export default {
             this.remarkList = []
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
@@ -345,9 +345,9 @@ export default {
 
 <style lang="scss" scoped>
 .custom-dialog-img {
-  width: 120%;
-  height: 100%;
-  margin: 2% 0 0 -10%;
+  width: 130%;
+  height: 116%;
+  margin: -5% 0 0 -14.5%;
 }
 .detailInfo {
   /deep/.el-dialog {
