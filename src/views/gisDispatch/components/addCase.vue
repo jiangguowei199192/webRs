@@ -212,7 +212,7 @@ export default {
         infoSource: [{ required: true, message: '请选择案件来源' }],
         receivingAlarmMan: [{ required: true, message: '请输入接警人' }],
         longitude: isNotNull('请点选案件经纬度位置'),
-        reportTel: [checkPhone()],
+        reportTel: isNotNull('请输入举报电话').concat(checkPhone()),
         reporterIdentity: [checkIdcard()]
       },
       caseForm: {
@@ -265,7 +265,11 @@ export default {
   },
   mounted () {},
   methods: {
-    getMembersDone () {},
+    getMembersDone () {
+      this.peoples.forEach((c) => {
+        c.isCheck = true
+      })
+    },
     /**
      * 举报地址改变
      */

@@ -17,17 +17,17 @@
           v-show="info.rect.show"
           :style="
             'left:' +
-              info.rect.left +
-              '%;' +
-              'top:' +
-              info.rect.top +
-              '%;' +
-              'width:' +
-              info.rect.width +
-              '%;' +
-              'height:' +
-              info.rect.height +
-              '%;'
+            info.rect.left +
+            '%;' +
+            'top:' +
+            info.rect.top +
+            '%;' +
+            'width:' +
+            info.rect.width +
+            '%;' +
+            'height:' +
+            info.rect.height +
+            '%;'
           "
         ></span>
       </div>
@@ -69,32 +69,32 @@
       <div class="confirm-btn" @click="confirmClick">关闭</div>
     </div>
     <el-dialog
-      custom-class="el-dialog-custom"
+      custom-class="el-dialog-struct"
       class="browserScroll"
       :visible.sync="imgDlgVis"
       :show-close="false"
       center
       :append-to-body="true"
     >
-      <div style="position: relative">
-        <img :src="bigImg" style="height: 100%; width: 100%" />
+      <div style="position: relative; text-align: center">
+        <img :src="bigImg" class="structImg" />
         <span
           class="detectBox"
           style="position: absolute"
           v-show="rect"
           :style="
             'left:' +
-              rect.left +
-              '%;' +
-              'top:' +
-              rect.top +
-              '%;' +
-              'width:' +
-              rect.width +
-              '%;' +
-              'height:' +
-              rect.height +
-              '%;'
+            rect.left +
+            '%;' +
+            'top:' +
+            rect.top +
+            '%;' +
+            'width:' +
+            rect.width +
+            '%;' +
+            'height:' +
+            rect.height +
+            '%;'
           "
         ></span>
       </div>
