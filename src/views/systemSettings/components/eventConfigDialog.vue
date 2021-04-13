@@ -13,11 +13,11 @@
             :label="item.title"
             :name="item.name"
           >
-            <div class="tab-pane-header">
+            <div class="tab-pane-header" >
               <span>{{ item.title }}</span>
               <span>{{ item.describe }}</span>
             </div>
-            <div class="tab-pane-detail">
+            <div class="tab-pane-detail" v-if="index==activeName" >
               <div class="descript">
                 <span>事件状态：</span>
                 <el-switch v-model="value" active-color="#1EB0FC" inactive-color="#DCDFE6"></el-switch>
@@ -29,7 +29,15 @@
               <div class="drawCanvas">
                 <div class="left">
                   <div class="content">
-                    <img src="../../../assets/images/Login/video-bg.jpg" v-if="isShowCapture" />
+                    <!-- <img src="../../../assets/images/Login/video-bg.jpg"  /> -->
+                    <div
+                      class="canvas"
+                      v-if="isShowCapture"
+                      :style="{backgroundImage:'url('+caputrePic+')'}"
+                    >
+                       <!-- :style="{backgroundImage:'url('+caputrePic+')'}" -->
+                      <canvas-draw ref="mychild"  ></canvas-draw>
+                    </div>
                     <LivePlayer
                       v-else
                       :videoUrl="streamUrl"
@@ -56,7 +64,7 @@
                       <img
                         src="../../../assets/images/backgroundManagement/capture.svg"
                         title="截取"
-                         @click="isShowCapture=true"
+                        @click="isShowCapture=true"
                         alt
                       />
                       <template>
@@ -94,8 +102,8 @@
                 </div>
                 <div class="right">
                   <div class="btns">
-                    <el-button>继续绘制</el-button>
-                    <el-button>清除全部</el-button>
+                    <el-button @click="goDraw">继续绘制</el-button>
+                    <el-button @click="clearAllDraw">清除全部</el-button>
                   </div>
                   <div class="areas">
                     <p>已绘制区域：</p>
@@ -140,9 +148,11 @@
 
 <script>
 import LivePlayer from '@liveqing/liveplayer'
+import canvasDraw from './canvasDraw'
 export default {
   components: {
-    LivePlayer
+    LivePlayer,
+    canvasDraw
   },
   props: {
     isShow: { type: Boolean, required: true },
@@ -157,9 +167,9 @@ export default {
       }
     }
   },
-
   data () {
     return {
+      caputrePic: require('../../../assets/images/Login/video-bg.jpg'),
       isVisibleSelected: true,
       isShowCapture: true,
       value: true,
@@ -171,43 +181,47 @@ export default {
         { value: 3, label: '黄色预警' },
         { value: 4, label: '蓝色预警' }
       ],
-      activeName: 'boat',
+      activeName: 0,
       tabPosition: 'left',
       // tabs 内容
       tabList: [
         {
-          name: 'boat',
+          name: '0',
           title: '船舶出现',
           describe:
             '在监控图像或二维地图中设定检测区域，检测船舶在指定区域内出现的事件'
         },
         {
-          name: 'fish',
+          name: '1',
           title: '钓鱼行为',
           describe:
             '在监控图像或二维地图中设定检测区域，检测钓鱼行为在指定区域内出现的事件'
         },
         {
-          name: 'stranded',
+          name: '2',
           title: '人员滞留',
           describe:
             '在监控图像中设定检测区域和人员滞留时长，检测人员在警戒区域滞留超过设定时长的事件'
         },
         {
-          name: 'invade',
+          name: '3',
           title: '人员入侵',
           describe: '在监控图像中设定检测区域，检测人员进入警戒区域的事件'
         }
       ]
     }
   },
-  watch: {
-    isShow (val) {}
-  },
-
-  mounted () {},
 
   methods: {
+    // 继续绘制
+    goDraw () {
+      console.log(this.$refs.mychild)
+
+      this.$refs.mychild[0].startDraw()
+    },
+    clearAllDraw () {
+      this.$refs.mychild[0].clearAllDraw()
+    },
     showVideoOrCapture () {
       this.isShowCapture = false
       this.streamUrl = 'ws://122.112.217.132:8888/live/6C01728PA4A9A760.flv'
@@ -220,6 +234,10 @@ export default {
     handleClick (tab, event) {
       console.log(tab, event)
     }
+  },
+  mounted () {},
+  watch: {
+    isShow (val) {}
   }
 }
 </script>
@@ -340,7 +358,7 @@ export default {
             .content {
               position: relative;
               height: 390px;
-              img {
+              div.canvas {
                 width: 100%;
                 height: 100%;
               }
@@ -354,8 +372,8 @@ export default {
                 > img {
                   margin-top: 7px;
                   margin-right: 15px;
-                  width:26px;
-                  height:26px;
+                  width: 26px;
+                  height: 26px;
                   cursor: pointer;
                 }
               }
