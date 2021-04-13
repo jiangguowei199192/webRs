@@ -21,20 +21,15 @@
     </div>
     <div class="barContainer">
       <div ref="bar" class="bar">
-        <template v-for="(item, index) in segments">
-          <span
-            :key="index"
-            class="segment"
-            :style="
-              'width:' +
-              (item.duration * minuteWidth * 100.0) / barWidth +
-              '%;' +
-              'left:' +
-              (item.start * minuteWidth * 100.0) / barWidth +
-              '%;'
-            "
-          ></span>
-        </template>
+        <span
+          class="segment"
+          :style="
+            'width:' +
+            (duration * secondWidth * 100.0) / barWidth +
+            '%;' +
+            'left:50%'
+          "
+        ></span>
         <div class="pointer" ref="pointer">
           <span>{{ formatCurtime(curTime) }}</span>
           <span class="icon" ref="icon"></span>
@@ -49,7 +44,7 @@ export default {
   data () {
     return {
       step: 0,
-      minuteWidth: 0,
+      secondWidth: 0,
       pointerW: 0, // pointer宽度
       pointerLeft: 0, // pointer左边距
       me: '',
@@ -68,6 +63,10 @@ export default {
       default: () => []
     },
     curTime: {
+      type: Number,
+      default: () => ''
+    },
+    duration: {
       type: Number,
       default: () => ''
     },
@@ -204,7 +203,7 @@ export default {
     .segment {
       position: absolute;
       height: 100%;
-      background: rgba(0, 215, 255, 1);
+      background: #00D8FF;
       opacity: 0.65;
     }
   }

@@ -320,7 +320,7 @@ export default {
     },
 
     showDetailInfoClick (item, index) {
-      console.dir(item)
+      // console.dir(item)
       this.showDetailInfo = true
       this.detailInfo = item
     }

@@ -143,6 +143,7 @@
               ref="timebar"
               :startTime="videoStart"
               :curTime="curTime"
+              :duration="duration"
             ></timeBar>
           </div>
           <!-- <div class="tools">
@@ -199,11 +200,11 @@ export default {
       url: '',
       videoUrl: '',
       // videoUrl:
-      //   'http://122.112.203.178:8850/video-service1/record/live/6C01728PA4A9A760/2021-04-12/00-00-01.mp4',
+      //   'http://119.3.108.251/videos/6C01728PA4A9A101/2021_04_13_11_01_47_848-boat-intrusion.avi',
       imgDialogVisible: false,
       clickImgSrc: '',
       isPlay: false,
-      duration: 0, // 视频长度
+      duration: 10, // 视频长度
       poster: require('../../assets/images/loading.gif'),
       curTime: 0, // 告警视频播放时间
 
@@ -213,6 +214,16 @@ export default {
   },
 
   methods: {
+    // 获取视频开始时间
+    getStartTime () {
+      if (!this.videoUrl) return
+      const s = this.videoUrl.lastIndexOf('/')
+      const str = this.videoUrl.slice(s + 1)
+      const time1 = str.slice(0, 10)
+      const time2 = str.slice(11, 19)
+      this.videoStart =
+        time1.replace(/_/g, '-') + ' ' + time2.replace(/_/g, ':')
+    },
     // 播放时间更新
     timeupdate () {
       this.curTime = Math.floor(this.$refs.player.player.currentTime())
@@ -265,7 +276,7 @@ export default {
       }
       this.$axios
         .post(structureApi.updateAlarm, params)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '告警核实结果状态修改成功 !',
@@ -274,7 +285,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -288,7 +299,7 @@ export default {
       }
       this.$axios
         .post(structureApi.insertAlarmRemark, params)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '添加备注成功 !',
@@ -299,7 +310,7 @@ export default {
             this.remark = ''
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -311,7 +322,7 @@ export default {
       }
       this.$axios
         .post(structureApi.queryAlarmRemarkList, params)
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
             this.remarkList = data.data
@@ -319,7 +330,7 @@ export default {
             this.remarkList = []
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
         })
     },
@@ -341,6 +352,8 @@ export default {
           this.tabIndex = 0
           this.timeInit = false
           this.getRemarkList()
+          this.videoUrl = this.info.videoUrl
+          this.getStartTime()
         } else if (this.url) {
           this.stop()
         }
