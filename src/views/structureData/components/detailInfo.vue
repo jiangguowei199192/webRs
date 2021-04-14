@@ -54,7 +54,7 @@
       </el-form-item>
     </el-form>
     <span class="decorate" v-show="detailInfoItems.length > 0"></span>
-    <div class="infoList listScroll">
+    <div class="infoList listScroll" ref="list">
       <template v-for="(item, index) in detailInfoItems">
         <div :key="index">
           <span class="txt">{{ item.categorZH + ":" }}</span>
@@ -157,6 +157,7 @@ export default {
   watch: {
     isShow (newS) {
       if (newS) {
+        this.detailInfoItems = []
         switch (this.type) {
           case '人': {
             this.title = '人员信息'
@@ -194,6 +195,9 @@ export default {
         // this.$nextTick(() => {
         //   this.setRectPosition()
         // })
+        this.$nextTick(() => {
+          this.$refs.list.scrollTop = 0
+        })
       }
     },
     info (newI) {
@@ -208,7 +212,6 @@ export default {
         // this.detailInfo.coat = newI.pedestrian.attributeMap.coatColor.valueStr
         // this.detailInfo.dowm = newI.pedestrian.attributeMap.pantsColor.valueStr
         // this.detailInfo.hairColor = newI.pedestrian.attributeMap.hairColor.valueStr
-        this.detailInfoItems = []
         // let num = 0
         if (!newI.pedestrian) return
         const attrs = newI.pedestrian.attributeMap

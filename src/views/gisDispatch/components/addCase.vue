@@ -15,161 +15,167 @@
       ></gMap>
       <div class="overlayer"></div>
       <div class="title">新增案件</div>
-      <div class="form">
-        <el-form
-          ref="caseForm"
-          :model="caseForm"
-          :inline="true"
-          class="caseForm listScroll"
-          :rules="formRules"
-        >
-          <div class="step1">
-            <span>1</span>
-            <span>报案信息</span>
-          </div>
-          <el-form-item label="案件名称 :" prop="caseName">
-            <el-input
-              v-model="caseForm.caseName"
-              :placeholder="placeholder"
-              maxlength="20"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="案件来源 :" prop="infoSource" class="time">
-            <el-select
-              v-model="caseForm.infoSource"
-              :popper-append-to-body="false"
-              placeholder="请选择案件来源"
-            >
-              <el-option
-                v-for="item in caseSources"
-                :key="item.typeCode"
-                :label="item.typeName"
-                :value="item.typeCode"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="案发时间 :" prop="caseStartTime">
-            <el-date-picker
-              v-model="caseForm.caseStartTime"
-              type="datetime"
-              :placeholder="placeholder"
-              class="timeStyle"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              @change="startTimeChange"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item label="报警时间 :" prop="reportTime" class="time">
-            <el-date-picker
-              v-model="caseForm.reportTime"
-              type="datetime"
-              :placeholder="placeholder"
-              class="timeStyle"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              @change="reportTimeChange"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item label="举报人 :" prop="reportMan">
-            <el-input
-              v-model="caseForm.reportMan"
-              :placeholder="placeholder"
-              maxlength="10"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="性别 :" class="sex" prop="reporterGender">
-            <el-radio v-model="caseForm.reporterGender" label="男">男</el-radio>
-            <el-radio v-model="caseForm.reporterGender" label="女">女</el-radio>
-          </el-form-item>
-          <el-form-item label="身份证号 :" prop="reporterIdentity">
-            <el-input
-              v-model="caseForm.reporterIdentity"
-              :placeholder="placeholder"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="举报电话 :" class="time" prop="reportTel">
-            <el-input
-              v-model="caseForm.reportTel"
-              :placeholder="placeholder"
-              maxlength="11"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="举报地址 :" prop="reportAddr">
-            <el-input
-              v-model="caseForm.reportAddr"
-              :placeholder="placeholder"
-              class="caseName"
-              maxlength="50"
-              @change="reportAddrChange()"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="案件描述 :" prop="caseDesc" class="des">
-            <el-input
-              v-model="caseForm.caseDesc"
-              :placeholder="placeholder"
-              type="textarea"
-              resize="none"
-              maxlength="200"
-            ></el-input>
-          </el-form-item>
-          <div class="step1">
-            <span>2</span>
-            <span>接案信息</span>
-          </div>
-          <el-form-item
-            label="接警人 :"
-            prop="receivingAlarmMan"
-            class="acceptPeople"
+      <div class="formBox">
+        <div class="form listScroll" ref="form">
+          <el-form
+            ref="caseForm"
+            :model="caseForm"
+            :inline="true"
+            class="caseForm"
+            :rules="formRules"
           >
-            <el-input
-              v-model="caseForm.receivingAlarmMan"
-              :placeholder="placeholder"
-              maxlength="10"
-            ></el-input>
-          </el-form-item>
-          <div class="step1">
-            <span>3</span>
-            <span>指派信息</span>
-          </div>
-          <el-form-item label="指派人 :" prop="designateMan">
-            <div class="select listScroll">
-              <template v-for="(item, index) in selectList">
-                <div :key="index">
-                  <EllipsisTooltip
-                    :contentText="item.employeeName"
-                    class="name"
-                  ></EllipsisTooltip>
-                  <span class="close" @click.stop="deleteSelect(item)"></span>
-                </div>
-              </template>
+            <div class="step1">
+              <span>1</span>
+              <span>报案信息</span>
             </div>
-            <div class="userBox">
+            <el-form-item label="案件名称 :" prop="caseName">
               <el-input
-                @change="getUserList()"
-                v-model="search"
-                class="search"
-                placeholder="请输入人员姓名/组织名称进行搜索"
+                v-model="caseForm.caseName"
+                :placeholder="placeholder"
+                maxlength="20"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="案件来源 :" prop="infoSource" class="time">
+              <el-select
+                v-model="caseForm.infoSource"
+                :popper-append-to-body="false"
+                placeholder="请选择案件来源"
               >
-                <i slot="suffix" @click="getUserList()"></i>
-              </el-input>
-              <i class="suffix" @click.stop="getUserList()"></i>
-              <div class="list listScroll">
-                <template v-for="(item, index) in peoples">
+                <el-option
+                  v-for="item in caseSources"
+                  :key="item.typeCode"
+                  :label="item.typeName"
+                  :value="item.typeCode"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="案发时间 :" prop="caseStartTime">
+              <el-date-picker
+                v-model="caseForm.caseStartTime"
+                type="datetime"
+                :placeholder="placeholder"
+                class="timeStyle"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @change="startTimeChange"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item label="报警时间 :" prop="reportTime" class="time">
+              <el-date-picker
+                v-model="caseForm.reportTime"
+                type="datetime"
+                :placeholder="placeholder"
+                class="timeStyle"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @change="reportTimeChange"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item label="举报人 :" prop="reportMan">
+              <el-input
+                v-model="caseForm.reportMan"
+                :placeholder="placeholder"
+                maxlength="10"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="性别 :" class="sex" prop="reporterGender">
+              <el-radio v-model="caseForm.reporterGender" label="男"
+                >男</el-radio
+              >
+              <el-radio v-model="caseForm.reporterGender" label="女"
+                >女</el-radio
+              >
+            </el-form-item>
+            <el-form-item label="身份证号 :" prop="reporterIdentity">
+              <el-input
+                v-model="caseForm.reporterIdentity"
+                :placeholder="placeholder"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="举报电话 :" class="time" prop="reportTel">
+              <el-input
+                v-model="caseForm.reportTel"
+                :placeholder="placeholder"
+                maxlength="11"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="举报地址 :" prop="reportAddr">
+              <el-input
+                v-model="caseForm.reportAddr"
+                :placeholder="placeholder"
+                class="caseName"
+                maxlength="50"
+                @change="reportAddrChange()"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="案件描述 :" prop="caseDesc" class="des">
+              <el-input
+                v-model="caseForm.caseDesc"
+                :placeholder="placeholder"
+                type="textarea"
+                resize="none"
+                maxlength="200"
+              ></el-input>
+            </el-form-item>
+            <div class="step1">
+              <span>2</span>
+              <span>接案信息</span>
+            </div>
+            <el-form-item
+              label="接警人 :"
+              prop="receivingAlarmMan"
+              class="acceptPeople"
+            >
+              <el-input
+                v-model="caseForm.receivingAlarmMan"
+                :placeholder="placeholder"
+                maxlength="10"
+              ></el-input>
+            </el-form-item>
+            <div class="step1">
+              <span>3</span>
+              <span>指派信息</span>
+            </div>
+            <el-form-item label="指派人 :" prop="designateMan">
+              <div class="select listScroll">
+                <template v-for="(item, index) in selectList">
                   <div :key="index">
-                    <span
-                      :class="{ check: item.isCheck }"
-                      class="checkBox"
-                      @click.stop="selectPeople(item)"
-                    ></span>
-                    <img src="../../../assets/images/gisDispatch/user.png" />
                     <EllipsisTooltip
-                      :contentText="item.employeeName + ' ' + item.deptName"
+                      :contentText="item.employeeName"
                       class="name"
                     ></EllipsisTooltip>
+                    <span class="close" @click.stop="deleteSelect(item)"></span>
                   </div>
                 </template>
               </div>
-            </div>
-          </el-form-item>
-        </el-form>
+              <div class="userBox">
+                <el-input
+                  @change="getUserList()"
+                  v-model="search"
+                  class="search"
+                  placeholder="请输入人员姓名/组织名称进行搜索"
+                >
+                  <i slot="suffix" @click="getUserList()"></i>
+                </el-input>
+                <i class="suffix" @click.stop="getUserList()"></i>
+                <div class="list listScroll">
+                  <template v-for="(item, index) in peoples">
+                    <div :key="index">
+                      <span
+                        :class="{ check: item.isCheck }"
+                        class="checkBox"
+                        @click.stop="selectPeople(item)"
+                      ></span>
+                      <img src="../../../assets/images/gisDispatch/user.png" />
+                      <EllipsisTooltip
+                        :contentText="item.employeeName + ' ' + item.deptName"
+                        class="name"
+                      ></EllipsisTooltip>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
       <div class="btns">
         <span @click.stop="cancel()">取消</span>
@@ -240,11 +246,15 @@ export default {
         this.caseForm.longitude = ''
         this.caseForm.latitude = ''
         this.selectList = []
+        this.peoples = []
         this.caseForm.caseStartTime = formatDate(
           new Date(),
           'yyyy-MM-dd HH:mm:ss'
         )
         this.caseForm.reportTime = this.caseForm.caseStartTime
+        this.$nextTick(() => {
+          this.$refs.form.scrollTop = 0
+        })
         setTimeout(() => {
           if (!this.isInit) {
             this.isInit = true
@@ -502,20 +512,21 @@ export default {
         border-radius: 0px;
       }
     }
-    .form {
+    .formBox {
       width: 540px;
       height: 462px;
+      padding-top: 14px;
       position: absolute;
       top: 58px;
       right: 0px;
       background-color: rgba($color: #004157, $alpha: 0.85);
       box-sizing: border-box;
-      padding-top: 14px;
+      .form {
+        height: 434px;
+        overflow-y: auto;
+      }
     }
     .caseForm {
-      overflow-y: auto;
-      height: 438px;
-      box-sizing: border-box;
       .step1 {
         margin-left: 21px;
         margin-bottom: 11px;
