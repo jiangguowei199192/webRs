@@ -15,14 +15,16 @@ const createServerConfig = function (compilation) {
       //   baseUrl: 'http://172.16.63.43:8850',
       //   mqttServer: '172.16.63.43',
       //   mqttPort: 2883,
-      //   headImg: 'http://172.16.63.43:80'
+      //   headImg: 'http://172.16.63.43:80',
+      //   viedoServer: 'http://122.112.217.132:18888'
       // }
       {
         // 长江大保护
         baseUrl: 'http://122.112.203.178:8850',
         mqttServer: '122.112.203.178',
         mqttPort: 2883,
-        headImg: 'http://122.112.203.178:80'
+        headImg: 'http://122.112.203.178:80',
+        viedoServer: 'http://122.112.217.132:18888'
       }
     ]
   }

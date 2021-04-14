@@ -166,6 +166,7 @@ import DetailInfo from './warningDetail'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
 import { timeFormat, timeFormat3 } from '@/utils/date'
 import { EventBus } from '@/utils/eventBus.js'
+import globalApi from '../../utils/globalApi'
 
 export default {
   name: 'warningInfo',
@@ -234,6 +235,16 @@ export default {
   },
 
   methods: {
+    // 替换算法的图片和视频地址
+    replaceUrl (srcUrl) {
+      if (globalApi.viedoServer) {
+        let s = srcUrl.indexOf('//')
+        const str = srcUrl.slice(s + 2)
+        s = str.indexOf('/')
+        const url = globalApi.viedoServer + str.slice(s)
+        return url
+      } else return srcUrl
+    },
     getList () {
       var params = {
         startTime: timeFormat3(this.dateRange[0]),
@@ -254,6 +265,7 @@ export default {
               } else {
                 item.captureTime = timeFormat(item.captureTime)
               }
+              item.imageUrl = this.replaceUrl(item.imageUrl)
               item.rect = {
                 points: [],
                 show: false

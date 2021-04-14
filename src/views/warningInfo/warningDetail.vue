@@ -175,6 +175,7 @@
 import { structureApi } from '@/api/structureData.js'
 import LivePlayer from '@liveqing/liveplayer'
 import timeBar from './components/timeBar'
+import globalApi from '../../utils/globalApi'
 export default {
   props: {
     dialogVisible: {
@@ -198,17 +199,17 @@ export default {
       remarkList: [],
       tabIndex: 0,
       url: '',
-      videoUrl: '',
-      // videoUrl:
-      //   'http://119.3.108.251/videos/6C01728PA4A9A101/2021_04_13_11_01_47_848-boat-intrusion.avi',
+      // videoUrl: '',
+      videoUrl:
+        'http://119.3.108.251/videos/6C01728PA4A9A101/2021_04_13_19_45_24_955-boat-intrusion.mp4',
       imgDialogVisible: false,
       clickImgSrc: '',
       isPlay: false,
-      duration: 10, // 视频长度
+      duration: 0, // 视频长度
       poster: require('../../assets/images/loading.gif'),
       curTime: 0, // 告警视频播放时间
-
       timeInit: false,
+      videoInit: false,
       videoStart: '2021-4-12 09:00:00' // 告警视频开始时间
     }
   },
@@ -223,22 +224,41 @@ export default {
       const time2 = str.slice(11, 19)
       this.videoStart =
         time1.replace(/_/g, '-') + ' ' + time2.replace(/_/g, ':')
+
+      this.videoUrl = this.replaceUrl(this.videoUrl)
+    },
+    // 替换算法的图片和视频地址
+    replaceUrl (srcUrl) {
+      if (globalApi.viedoServer) {
+        let s = srcUrl.indexOf('//')
+        const str = srcUrl.slice(s + 2)
+        s = str.indexOf('/')
+        const url = globalApi.viedoServer + str.slice(s)
+        return url
+      } else return srcUrl
     },
     // 播放时间更新
     timeupdate () {
-      this.curTime = Math.floor(this.$refs.player.player.currentTime())
+      if (this.isPlay) {
+        this.curTime = Math.floor(this.$refs.player.player.currentTime())
+      }
     },
     // 显示视频
     showVideo () {
       this.tabIndex = 1
       if (!this.timeInit) {
         this.timeInit = true
-        this.curTime = 0
         this.$refs.timebar.init()
       }
     },
+    // 播放完毕
+    ended () {
+      this.isPlay = false
+    },
     // 播放
     play () {
+      if (!this.videoUrl) return
+      const me = this
       let isOn = false
       if (!this.url) {
         this.url = this.videoUrl
@@ -248,7 +268,17 @@ export default {
         this.$refs.player.player.play()
         if (isOn) {
           this.$refs.player.player.on('timeupdate', this.timeupdate)
-          this.$refs.player.player.on('loadedmetadata', this.onLoadedMetadata)
+          this.$refs.player.player.on('ended', this.ended)
+          this.$refs.player.player.on('error', function (error) {
+            console.log(me.url + 'error: ' + JSON.stringify(error))
+          })
+          if (!this.videoInit) {
+            this.$refs.player.player.on(
+              'loadedmetadata',
+              this.onLoadedMetadata
+            )
+            this.videoInit = true
+          }
         }
         this.isPlay = true
       })
@@ -256,6 +286,10 @@ export default {
     // 获取视频总时长
     onLoadedMetadata () {
       this.duration = this.$refs.player.player.duration()
+      const me = this
+      setTimeout(() => {
+        me.pause()
+      }, 200)
     },
     // 暂停
     pause () {
@@ -264,8 +298,8 @@ export default {
     },
     // 停止
     stop () {
-      this.url = ''
       this.isPlay = false
+      this.url = ''
       this.curTime = 0
     },
     // 确认/误报
@@ -349,11 +383,18 @@ export default {
     dialogVisible: {
       handler (nv, ov) {
         if (nv) {
+          this.info.imageUrl = this.replaceUrl(this.info.imageUrl)
           this.tabIndex = 0
-          this.timeInit = false
+          this.videoInit = false
           this.getRemarkList()
-          this.videoUrl = this.info.videoUrl
+          this.duration = 0
+          this.curTime = 0
+          this.timeInit = false
           this.getStartTime()
+          this.videoUrl = this.info.videoUrl
+          if (!this.videoInit) {
+            this.play()
+          }
         } else if (this.url) {
           this.stop()
         }

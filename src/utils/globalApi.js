@@ -5,6 +5,7 @@ var mqttPort = ''
 var projectTitle = ''
 var headImg = ''
 var configJson = ''
+var viedoServer = ''
 console.log(process.env.NODE_ENV)
 
 $.ajax({
@@ -31,6 +32,7 @@ if (selectedServerIndex !== null) {
   mqttPort = selectedData.mqttPort
   headImg = selectedData.headImg
   projectTitle = configJson.projectTitle
+  viedoServer = selectedData.viedoServer
 }
 
 // if (process.env.NODE_ENV === 'production') {
@@ -71,6 +73,7 @@ export default {
   mqttServer,
   mqttPort,
   headImg,
+  viedoServer,
   projectTitle,
   configJson,
   systemAdmin,
