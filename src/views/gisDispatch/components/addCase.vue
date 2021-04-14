@@ -1,176 +1,176 @@
 <template>
   <el-dialog :visible="isShow" class="caseDlg browserScroll">
     <div>
+      <gMap
+        ref="gduMap"
+        handleType="devMap"
+        :bShowBasic="false"
+        :bShowMeasure="false"
+        :bShowLonLat="false"
+        :bAutoLocate="false"
+        :bUseimpleSearch="true"
+        :baseMapIndex="2"
+        @searchAddrOk="searchAddrOk"
+        class="map"
+      ></gMap>
+      <div class="overlayer"></div>
       <div class="title">新增案件</div>
-      <el-form
-        ref="caseForm"
-        :model="caseForm"
-        :inline="true"
-        class="caseForm listScroll"
-        :rules="formRules"
-      >
-        <div class="step1">
-          <span>1</span>
-          <span>报案信息</span>
-        </div>
-        <el-form-item label="案件名称 :" prop="caseName">
-          <el-input
-            v-model="caseForm.caseName"
-            :placeholder="placeholder"
-            maxlength="20"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="案件来源 :" class="time" prop="infoSource">
-          <el-select
-            v-model="caseForm.infoSource"
-            :popper-append-to-body="false"
-            placeholder="请选择案件来源"
-          >
-            <el-option
-              v-for="item in caseSources"
-              :key="item.typeCode"
-              :label="item.typeName"
-              :value="item.typeCode"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="案发时间 :" prop="caseStartTime">
-          <el-date-picker
-            v-model="caseForm.caseStartTime"
-            type="datetime"
-            :placeholder="placeholder"
-            class="timeStyle"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            @change="startTimeChange"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="报警时间 :" prop="reportTime" class="time">
-          <el-date-picker
-            v-model="caseForm.reportTime"
-            type="datetime"
-            :placeholder="placeholder"
-            class="timeStyle"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            @change="reportTimeChange"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="举报人 :" prop="reportMan">
-          <el-input
-            v-model="caseForm.reportMan"
-            :placeholder="placeholder"
-            maxlength="10"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="性别 :" class="sex" prop="reporterGender">
-          <el-radio v-model="caseForm.reporterGender" label="男">男</el-radio>
-          <el-radio v-model="caseForm.reporterGender" label="女">女</el-radio>
-        </el-form-item>
-        <el-form-item label="身份证号 :" prop="reporterIdentity">
-          <el-input
-            v-model="caseForm.reporterIdentity"
-            :placeholder="placeholder"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="举报电话 :" class="time" prop="reportTel">
-          <el-input
-            v-model="caseForm.reportTel"
-            :placeholder="placeholder"
-            maxlength="11"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="举报地址 :" prop="reportAddr">
-          <el-input
-            v-model="caseForm.reportAddr"
-            :placeholder="placeholder"
-            class="caseName"
-            maxlength="50"
-            @change="reportAddrChange()"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="    " prop="longitude" class="map">
-          <div class="mapBox">
-            <gMap
-              ref="gduMap"
-              handleType="devMap"
-              :bShowBasic="false"
-              :bShowMeasure="false"
-              :bShowLonLat="false"
-              :bAutoLocate="false"
-              :bUseimpleSearch="true"
-              @searchAddrOk="searchAddrOk"
-            ></gMap>
-          </div>
-        </el-form-item>
-        <el-form-item label="案件描述 :" prop="caseDesc" class="des">
-          <el-input
-            v-model="caseForm.caseDesc"
-            :placeholder="placeholder"
-            type="textarea"
-            resize="none"
-            maxlength="200"
-          ></el-input>
-        </el-form-item>
-        <div class="step1">
-          <span>2</span>
-          <span>接案信息</span>
-        </div>
-        <el-form-item
-          label="接警人 :"
-          prop="receivingAlarmMan"
-          class="acceptPeople"
+      <div class="form">
+        <el-form
+          ref="caseForm"
+          :model="caseForm"
+          :inline="true"
+          class="caseForm listScroll"
+          :rules="formRules"
         >
-          <el-input
-            v-model="caseForm.receivingAlarmMan"
-            :placeholder="placeholder"
-            maxlength="10"
-          ></el-input>
-        </el-form-item>
-        <div class="step1">
-          <span>3</span>
-          <span>指派信息</span>
-        </div>
-        <el-form-item label="指派人 :" prop="designateMan">
-          <div class="select listScroll">
-            <template v-for="(item, index) in selectList">
-              <div :key="index">
-                <EllipsisTooltip
-                  :contentText="item.employeeName"
-                  class="name"
-                ></EllipsisTooltip>
-                <span class="close" @click.stop="deleteSelect(item)"></span>
-              </div>
-            </template>
+          <div class="step1">
+            <span>1</span>
+            <span>报案信息</span>
           </div>
-          <div class="userBox">
+          <el-form-item label="案件名称 :" prop="caseName">
             <el-input
-              @change="getUserList()"
-              v-model="search"
-              class="search"
-              placeholder="请输入人员姓名/组织名称进行搜索"
+              v-model="caseForm.caseName"
+              :placeholder="placeholder"
+              maxlength="20"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="案件来源 :" prop="infoSource" class="time">
+            <el-select
+              v-model="caseForm.infoSource"
+              :popper-append-to-body="false"
+              placeholder="请选择案件来源"
             >
-              <!-- <i slot="suffix" @click="getUserList()"></i
-            > -->
-            </el-input>
-            <i class="suffix" @click.stop="getUserList()"></i>
-            <div class="list listScroll">
-              <template v-for="(item, index) in peoples">
+              <el-option
+                v-for="item in caseSources"
+                :key="item.typeCode"
+                :label="item.typeName"
+                :value="item.typeCode"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="案发时间 :" prop="caseStartTime">
+            <el-date-picker
+              v-model="caseForm.caseStartTime"
+              type="datetime"
+              :placeholder="placeholder"
+              class="timeStyle"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              @change="startTimeChange"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item label="报警时间 :" prop="reportTime" class="time">
+            <el-date-picker
+              v-model="caseForm.reportTime"
+              type="datetime"
+              :placeholder="placeholder"
+              class="timeStyle"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              @change="reportTimeChange"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item label="举报人 :" prop="reportMan">
+            <el-input
+              v-model="caseForm.reportMan"
+              :placeholder="placeholder"
+              maxlength="10"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="性别 :" class="sex" prop="reporterGender">
+            <el-radio v-model="caseForm.reporterGender" label="男">男</el-radio>
+            <el-radio v-model="caseForm.reporterGender" label="女">女</el-radio>
+          </el-form-item>
+          <el-form-item label="身份证号 :" prop="reporterIdentity">
+            <el-input
+              v-model="caseForm.reporterIdentity"
+              :placeholder="placeholder"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="举报电话 :" class="time" prop="reportTel">
+            <el-input
+              v-model="caseForm.reportTel"
+              :placeholder="placeholder"
+              maxlength="11"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="举报地址 :" prop="reportAddr">
+            <el-input
+              v-model="caseForm.reportAddr"
+              :placeholder="placeholder"
+              class="caseName"
+              maxlength="50"
+              @change="reportAddrChange()"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="案件描述 :" prop="caseDesc" class="des">
+            <el-input
+              v-model="caseForm.caseDesc"
+              :placeholder="placeholder"
+              type="textarea"
+              resize="none"
+              maxlength="200"
+            ></el-input>
+          </el-form-item>
+          <div class="step1">
+            <span>2</span>
+            <span>接案信息</span>
+          </div>
+          <el-form-item
+            label="接警人 :"
+            prop="receivingAlarmMan"
+            class="acceptPeople"
+          >
+            <el-input
+              v-model="caseForm.receivingAlarmMan"
+              :placeholder="placeholder"
+              maxlength="10"
+            ></el-input>
+          </el-form-item>
+          <div class="step1">
+            <span>3</span>
+            <span>指派信息</span>
+          </div>
+          <el-form-item label="指派人 :" prop="designateMan">
+            <div class="select listScroll">
+              <template v-for="(item, index) in selectList">
                 <div :key="index">
-                  <span
-                    :class="{ check: item.isCheck }"
-                    class="checkBox"
-                    @click.stop="selectPeople(item)"
-                  ></span>
-                  <img src="../../../assets/images/gisDispatch/user.png" />
                   <EllipsisTooltip
-                    :contentText="item.employeeName + ' ' + item.deptName"
+                    :contentText="item.employeeName"
                     class="name"
                   ></EllipsisTooltip>
+                  <span class="close" @click.stop="deleteSelect(item)"></span>
                 </div>
               </template>
             </div>
-          </div>
-        </el-form-item>
-      </el-form>
+            <div class="userBox">
+              <el-input
+                @change="getUserList()"
+                v-model="search"
+                class="search"
+                placeholder="请输入人员姓名/组织名称进行搜索"
+              >
+                <i slot="suffix" @click="getUserList()"></i>
+              </el-input>
+              <i class="suffix" @click.stop="getUserList()"></i>
+              <div class="list listScroll">
+                <template v-for="(item, index) in peoples">
+                  <div :key="index">
+                    <span
+                      :class="{ check: item.isCheck }"
+                      class="checkBox"
+                      @click.stop="selectPeople(item)"
+                    ></span>
+                    <img src="../../../assets/images/gisDispatch/user.png" />
+                    <EllipsisTooltip
+                      :contentText="item.employeeName + ' ' + item.deptName"
+                      class="name"
+                    ></EllipsisTooltip>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
       <div class="btns">
         <span @click.stop="cancel()">取消</span>
         <span @click.stop="submit()">确定</span>
@@ -237,6 +237,8 @@ export default {
   watch: {
     isShow (val) {
       if (val) {
+        this.caseForm.longitude = ''
+        this.caseForm.latitude = ''
         this.selectList = []
         this.caseForm.caseStartTime = formatDate(
           new Date(),
@@ -267,7 +269,7 @@ export default {
   methods: {
     getMembersDone () {
       this.peoples.forEach((c) => {
-        c.isCheck = true
+        this.selectPeople(c)
       })
     },
     /**
@@ -282,7 +284,7 @@ export default {
     searchAddrOk (lon, lat) {
       this.caseForm.longitude = lon
       this.caseForm.latitude = lat
-      this.$refs.caseForm.validateField('longitude', (valid) => {})
+      // this.$refs.caseForm.validateField('longitude', (valid) => {})
     },
     /**
      * 案发时间改变
@@ -340,7 +342,7 @@ export default {
       const tmpMap = this.$refs.gduMap.map2D
       this.caseForm.longitude = lonlat[0]
       this.caseForm.latitude = lonlat[1]
-      this.$refs.caseForm.validateField('longitude', (valid) => {})
+      // this.$refs.caseForm.validateField('longitude', (valid) => {})
       tmpMap.customMarkerLayerManager.clear()
       tmpMap.customMarkerLayerManager.addMarker({
         name: null,
@@ -364,6 +366,17 @@ export default {
         v = valid
       })
       if (!v || this.addCase) return
+
+      if (!this.caseForm.longitude) {
+        this.$notify.closeAll()
+        this.$notify.info({
+          title: '提示',
+          message:
+            '当前案件地址未在地图上找到对应位置，请在地图上选点标识或重新输入'
+        })
+        return
+      }
+
       this.caseForm.designateMan = ''
       this.addCase = true
       if (this.selectList.length > 0) {
@@ -397,9 +410,11 @@ export default {
 <style lang="scss" scoped>
 .caseDlg {
   pointer-events: auto;
-  font-size: 14px;
+  font-size: 13px;
   /deep/.el-dialog {
-    width: 710px;
+    width: 1100px;
+    height: 690px;
+    border: 1px solid #00a7e8;
     overflow: hidden;
     margin-top: 32px !important;
     margin-bottom: 0px;
@@ -407,13 +422,29 @@ export default {
       display: none;
     }
     .el-dialog__body {
-      height: 1022px;
-      padding: 22px 0px 19px 22px;
-      border: 1px solid #00a7e8;
+      width: 100%;
+      height: 100%;
+      padding: 0px;
       box-sizing: border-box;
+      position: relative;
       background-color: rgba($color: #004157, $alpha: 0.85);
     }
+    .map {
+      width: 100%;
+      height: 617px;
+    }
+    .overlayer {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 103px;
+      background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
     .title {
+      position: absolute;
       width: 218px;
       height: 30px;
       background: linear-gradient(90deg, #00d2ff 0%, rgba(0, 210, 255, 0) 100%);
@@ -421,13 +452,13 @@ export default {
       font-family: Source Han Sans CN;
       font-weight: 400;
       color: #fefefe;
-      padding-left: 17px;
+      left: 20px;
       line-height: 30px;
-      margin-bottom: 27px;
+      top: 20px;
+      padding-left: 17px;
     }
     .el-form {
       .el-form-item {
-        margin-bottom: 0.22rem;
         height: 26px;
         margin-bottom: 18px;
       }
@@ -439,20 +470,20 @@ export default {
         font-family: Source Han Sans CN;
         font-weight: 400;
         color: #fefefe;
-        width: 110px;
-        padding: 0px 15px 0px 0px;
+        width: 100px;
+        padding: 0px 10px 0px 0px;
         line-height: 26px;
       }
       .el-date-editor.el-input,
       .el-date-editor.el-input__inner {
-        width: 190px;
+        width: 160px;
       }
       .el-input--suffix .el-input__inner {
         padding-right: 20px;
       }
       .el-input__inner {
         color: #00caf6;
-        width: 190px;
+        width: 160px;
         height: 26px;
         line-height: 26px;
         border: 1px solid #00d2ff;
@@ -464,16 +495,29 @@ export default {
       }
       .el-textarea .el-textarea__inner {
         color: #00caf6;
-        width: 520px;
+        width: 430px;
         height: 80px;
         border: 1px solid #00d2ff;
         background-color: rgba($color: #09546d, $alpha: 0.3);
         border-radius: 0px;
       }
     }
+    .form {
+      width: 540px;
+      height: 462px;
+      position: absolute;
+      top: 58px;
+      right: 0px;
+      background-color: rgba($color: #004157, $alpha: 0.85);
+      box-sizing: border-box;
+      padding-top: 14px;
+    }
     .caseForm {
       overflow-y: auto;
+      height: 438px;
+      box-sizing: border-box;
       .step1 {
+        margin-left: 21px;
         margin-bottom: 11px;
         span:nth-child(1) {
           display: inline-block;
@@ -493,19 +537,16 @@ export default {
           font-family: Source Han Sans CN;
           font-weight: 400;
           color: #00d2ff;
+          line-height: 24px;
         }
       }
       .acceptPeople {
         margin-bottom: 33px;
-        .el-input__inner {
-          width: 330px;
-        }
       }
       .time {
-        margin-left: 30px;
+        margin-right: 0px;
       }
       .sex {
-        margin-left: 30px;
         .el-radio {
           color: #00caf6;
           margin-right: 28px;
@@ -525,16 +566,24 @@ export default {
           color: #00caf6;
         }
       }
-      .map {
-        height: 230px;
-        .mapBox {
-          width: 520px;
-          height: 230px;
-        }
-      }
       .des {
         height: 80px;
         margin-bottom: 27px;
+        margin-right: 0px;
+      }
+      .timeStyle {
+        .el-input__prefix {
+          display: none;
+        }
+        .el-input__inner {
+          padding: 0px 10px;
+        }
+        .el-input__suffix {
+          right: -2px;
+          .el-input__icon {
+            color: #00d1fe;
+          }
+        }
       }
       .select {
         box-sizing: border-box;
@@ -542,7 +591,7 @@ export default {
         flex-wrap: wrap;
         align-items: center;
         overflow-y: auto;
-        height: 28px;
+        height: 80px;
         width: 326px;
         border: 1px solid #00d2ff;
         > div {
@@ -665,8 +714,8 @@ export default {
     }
     .btns {
       position: absolute;
-      bottom: 29px;
-      right: 53px;
+      bottom: 21px;
+      right: 21px;
       span {
         cursor: pointer;
         box-sizing: border-box;
