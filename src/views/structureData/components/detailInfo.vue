@@ -3,7 +3,6 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="21.25%"
     class="detail-info browserScroll"
   >
     <div class="title">{{ title }}</div>
@@ -54,16 +53,31 @@
         <span>{{ deviceInfo.time }}</span>
       </el-form-item>
     </el-form>
-
-    <el-form :model="detailInfo" :inline="true" class="device-info-form">
-      <el-form-item
-        v-for="(item, index) in detailInfoItems"
-        :key="index"
-        :label="item.categorZH"
+    <span class="decorate" v-show="detailInfoItems.length > 0"></span>
+    <div class="infoList listScroll">
+      <template v-for="(item, index) in detailInfoItems">
+        <div :key="index">
+          <span class="txt">{{ item.categorZH + ":" }}</span>
+          <EllipsisTooltip
+            :contentText="item.valueStr"
+            class="valueStr"
+          ></EllipsisTooltip>
+        </div>
+      </template>
+      <!-- <el-form
+        :model="detailInfo"
+        :inline="true"
+        class="device-info-form people-info"
       >
-        <span>{{ item.valueStr }}</span>
-      </el-form-item>
-    </el-form>
+        <el-form-item
+          v-for="(item, index) in detailInfoItems"
+          :key="index"
+          :label="item.categorZH"
+        >
+          <span>{{ item.valueStr }}</span>
+        </el-form-item>
+      </el-form> -->
+    </div>
 
     <div class="confirm-tool">
       <div class="confirm-btn" @click="confirmClick">关闭</div>
@@ -103,6 +117,7 @@
 </template>
 
 <script>
+import EllipsisTooltip from '../../../components/ellipsisTooltip'
 export default {
   props: ['isShow', 'type', 'info'],
   data () {
@@ -135,6 +150,9 @@ export default {
       detailInfoItems: [],
       noPic: require('../../../assets/images/gisDispatch/no-pic.svg')
     }
+  },
+  components: {
+    EllipsisTooltip
   },
   watch: {
     isShow (newS) {
@@ -191,14 +209,14 @@ export default {
         // this.detailInfo.dowm = newI.pedestrian.attributeMap.pantsColor.valueStr
         // this.detailInfo.hairColor = newI.pedestrian.attributeMap.hairColor.valueStr
         this.detailInfoItems = []
-        let num = 0
+        // let num = 0
         if (!newI.pedestrian) return
         const attrs = newI.pedestrian.attributeMap
         for (const item in attrs) {
-          num += 1
-          if (num > 21) {
-            return
-          }
+          // num += 1
+          // if (num > 21) {
+          //   return
+          // }
           this.detailInfoItems.push(attrs[item])
         }
       }
@@ -247,15 +265,19 @@ export default {
 <style lang="scss" scoped>
 .detail-info.el-dialog__wrapper {
   /deep/.el-dialog {
+    width: 670px;
+    height: 510px;
+    border: 1px solid #00a7e8;
+    background-color: #004157;
+    box-sizing: border-box;
+    position: relative;
     .el-dialog__header {
       display: none;
     }
     .el-dialog__body {
       padding: 0px;
       width: 100%;
-      border: 1px solid #00a7e8;
-      background-color: #004157;
-      min-width: 400px;
+      height: 100%;
       .title {
         width: 218px;
         height: 30px;
@@ -274,8 +296,11 @@ export default {
       }
       .img-box {
         margin-top: 13px;
-        margin-left: 20px;
+        margin-left: 23px;
         margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        width: 174px;
         img {
           width: 174px;
           height: 174px;
@@ -286,6 +311,7 @@ export default {
           position: relative;
           width: 174px;
           height: 174px;
+          margin-bottom: 10px;
           span {
             position: absolute;
             display: inline-block;
@@ -294,15 +320,63 @@ export default {
           }
         }
       }
+      .decorate {
+        position: absolute;
+        display: inline;
+        width: 395px;
+        height: 1px;
+        background: #00caf6;
+        left: 224px;
+        top: 162px;
+      }
+      .infoList {
+        width: 442px;
+        max-height: 260px;
+        overflow-y: auto;
+        position: absolute;
+        left: 226px;
+        top: 163px;
+        color: #00d1ff;
+        font-size: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        padding-top: 20px;
+        > div {
+          width: 203px;
+          height: 30px;
+          line-height: 30px;
+          display: flex;
+          margin-right: 15px;
+          .txt {
+            //display: inline-block;
+            //width: 90px;
+            //text-align: right;
+            margin-right: 10px;
+          }
+          .valueStr {
+            color: #fff;
+            font-size: 16px;
+            max-width: 110px;
+          }
+        }
+      }
       .device-info-form {
-        margin-top: 20px;
+        width: 440px;
+        position: absolute;
+        left: 226px;
+        top: 58px;
         .el-form-item__label {
           color: #00d1ff;
-          margin-left: 20px;
+          line-height: 30px;
+          font-size: 16px;
+        }
+        .el-form-item__content {
+          line-height: 30px;
+          position: relative;
+          font-size: 16px;
         }
         .el-form-item {
-          margin-top: -20px;
-          font-size: 16px;
+          margin-bottom: 0px;
           span {
             color: white;
           }
@@ -310,9 +384,10 @@ export default {
       }
       .confirm-tool {
         height: 32px;
-        margin: 0 20px 20px 0;
+        position: absolute;
+        right: 26px;
+        bottom: 24px;
         .confirm-btn {
-          float: right;
           width: 87px;
           height: 32px;
           line-height: 32px;

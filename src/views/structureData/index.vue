@@ -39,17 +39,17 @@
               v-show="item.rect.show"
               :style="
                 'left:' +
-                  item.rect.left +
-                  '%;' +
-                  'top:' +
-                  item.rect.top +
-                  '%;' +
-                  'width:' +
-                  item.rect.width +
-                  '%;' +
-                  'height:' +
-                  item.rect.height +
-                  '%;'
+                item.rect.left +
+                '%;' +
+                'top:' +
+                item.rect.top +
+                '%;' +
+                'width:' +
+                item.rect.width +
+                '%;' +
+                'height:' +
+                item.rect.height +
+                '%;'
               "
             ></span>
           </div>
@@ -167,9 +167,9 @@ export default {
       }
       this.$axios
         .post(structureApi.dataList, param)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
-            res.data.data.captures.forEach(item => {
+            res.data.data.captures.forEach((item) => {
               item.captureTime = timeFormat(item.captureTime)
               item.rect = {
                 width: 0,
@@ -185,10 +185,12 @@ export default {
               // 计算识别框的位置和尺寸
               // const bWidth = this.$refs.bigImage[0].clientWidth
               // const bHeigth = this.$refs.bigImage[0].clientHeight
-              this.list.forEach(item => {
+              this.list.forEach((item) => {
                 if (!item.pedestrian) {
                   return
                 }
+                item.camera.longitude = parseFloat(item.camera.latitude).toFixed(7)
+                item.camera.latitude = parseFloat(item.camera.longitude).toFixed(7)
                 const w = item.pedestrian.position.width
                 const h = item.pedestrian.position.height
                 const left = item.pedestrian.position.start.x
@@ -209,7 +211,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('structureApi.dataList           a Err : ' + err)
         })
     },
@@ -345,13 +347,16 @@ export default {
     .text-base {
       margin-left: 10px;
       margin-right: 10px;
-    }
-    .address {
-      margin-top: 5px;
+      > div {
+        height: 30px;
+        display: flex;
+        align-items: center;
+      }
     }
     .item-text1 {
       font-size: 16px;
       color: #00d1ff;
+      line-height: 30px;
     }
     .item-text2 {
       display: inline-block;
@@ -361,6 +366,7 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
       vertical-align: top;
+      line-height: 30px;
     }
     span {
       max-width: 160px;
