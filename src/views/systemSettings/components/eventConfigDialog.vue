@@ -36,7 +36,7 @@
                       :style="{backgroundImage:'url('+caputrePic+')'}"
                     >
                        <!-- :style="{backgroundImage:'url('+caputrePic+')'}" -->
-                      <canvas-draw ref="mychild"  ></canvas-draw>
+                      <canvas-draw ref="mychild" @drawEnd="getPoints"></canvas-draw>
                     </div>
                     <LivePlayer
                       v-else
@@ -105,10 +105,10 @@
                     <el-button @click="goDraw">继续绘制</el-button>
                     <el-button @click="clearAllDraw">清除全部</el-button>
                   </div>
-                  <div class="areas">
+                  <div class="areas" v-if="areaArray&&areaArray.length>0">
                     <p>已绘制区域：</p>
-                    <div class="btns">
-                      <el-button v-for="(item,index) in 5" :key="index">
+                    <div class="btns" >
+                      <el-button v-for="(item,index) in areaArray" :key="index" @click="deleteCurArea">
                         区域{{index+1}}
                         <i class="el-icon-close el-icon-right"></i>
                       </el-button>
@@ -182,6 +182,7 @@ export default {
         { value: 4, label: '蓝色预警' }
       ],
       activeName: 0,
+      areaArray: [], // 传递给后台的数据
       tabPosition: 'left',
       // tabs 内容
       tabList: [
@@ -221,6 +222,8 @@ export default {
     },
     clearAllDraw () {
       this.$refs.mychild[0].clearAllDraw()
+      this.areaArray = []
+      console.dir(this.areaArray)
     },
     showVideoOrCapture () {
       this.isShowCapture = false
@@ -230,9 +233,20 @@ export default {
     cancel () {
       this.$emit('update:isShow', false)
     },
-
+    // tab 切换
     handleClick (tab, event) {
-      console.log(tab, event)
+      console.log('当前激活', this.activeName)
+      this.areaArray = []
+    },
+    getPoints (points) {
+      this.areaArray = JSON.parse(JSON.stringify(points))
+      console.log('收到的坐标', points)
+      console.log('当前激活', this.activeName)
+    },
+    deleteCurArea (index) {
+      this.areaArray.splice(index, 1)
+      console.log('传递给后台的坐标', this.areaArray)
+      this.$refs.mychild[0].clearCurDraw(index)
     }
   },
   mounted () {},
@@ -361,6 +375,7 @@ export default {
               div.canvas {
                 width: 100%;
                 height: 100%;
+                background-size:100% 100%;
               }
             }
             .tools {
