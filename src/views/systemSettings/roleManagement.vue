@@ -314,28 +314,28 @@ export default {
     },
     authConfirmClick (permissions) {
       this.showAuthorization = false
-      if (permissions && permissions.length) {
-        const param = {
-          menuIds: permissions,
-          roleCode: this.currentRole.roleCode
-        }
-        const _this = this
-        this.$axios
-          .post(backApi.roleAuth, param, {
-            headers: { 'Content-Type': 'application/json;charset=UTF-8' }
-          })
-          .then(res => {
-            if (res && res.data && res.data.code === 0) {
-              _this.getRoleList()
-              Notification({
-                title: '提示',
-                message: '操作成功',
-                type: 'success',
-                duration: 2 * 1000
-              })
-            }
-          })
+      // if (permissions && permissions.length) {
+      const param = {
+        menuIds: permissions,
+        roleCode: this.currentRole.roleCode
       }
+      const _this = this
+      this.$axios
+        .post(backApi.roleAuth, param, {
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+        })
+        .then(res => {
+          if (res && res.data && res.data.code === 0) {
+            _this.getRoleList()
+            Notification({
+              title: '提示',
+              message: '操作成功',
+              type: 'success',
+              duration: 2 * 1000
+            })
+          }
+        })
+      // }
     },
 
     // 查看角色时触发
