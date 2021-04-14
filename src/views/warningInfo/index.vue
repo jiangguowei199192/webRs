@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-09 14:20:06
+ * @LastEditTime: 2021-04-14 10:06:21
 -->
 <template>
   <div class="container">
@@ -228,6 +228,7 @@ export default {
         this.getList()
       }
     })
+    this.setTitle()
   },
 
   destroyed () {
@@ -323,12 +324,23 @@ export default {
     currentPageChange (curPage) {
       this.currentPage = curPage
       this.getList()
+      this.setTitle()
     },
 
     sizeChange (size) {
       this.pageSize = size
       this.currentPage = 1
       this.getList()
+      this.setTitle()
+    },
+
+    setTitle () {
+      const pages = document.querySelectorAll('.number')
+      pages.forEach(t => {
+        setTimeout(() => {
+          t.setAttribute('title', t.childNodes[0].nodeValue)
+        }, 300)
+      })
     },
 
     showDetailInfoClick (item, index) {
