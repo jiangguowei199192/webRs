@@ -1,7 +1,7 @@
 .el-notification {
-  border    : 1px solid rgb(103, 194, 58);
+  border: 1px solid rgb(103, 194, 58);
   background: #142943;
-  z-index   : 10000000 !important;
+  z-index: 10000000 !important;
 
   .el-notification__title,
   .el-notification__content,
@@ -20,18 +20,18 @@
 }
 
 .el-input-group__append {
-  margin : 0px;
+  margin: 0px;
   padding: 0px 10px;
 }
 
 //回放视频下载弹窗中，分页组件的页面数选择下拉框的样式
 .el-select-dropdown.pageSelect {
-  border          : 1px solid rgba(54, 143, 187, 1);
+  border: 1px solid rgba(54, 143, 187, 1);
   background-color: #0f283c;
 
   .el-select-dropdown__item {
-    color      : rgba(54, 143, 187, 1);
-    height     : 24px;
+    color: rgba(54, 143, 187, 1);
+    height: 24px;
     line-height: 24px;
   }
 
@@ -58,12 +58,12 @@
   }
 
   .el-pagination__total {
-    height     : 24px;
+    height: 24px;
     line-height: 24px;
   }
 
   span {
-    color    : #fff;
+    color: #fff;
     font-size: 13px;
   }
 
@@ -72,23 +72,28 @@
   }
 
   .el-pager li {
-    border       : 1px solid rgba(60, 154, 206, 1);
+    border: 1px solid rgba(60, 154, 206, 1);
     border-radius: 4px;
-    width        : 24px;
-    height       : 24px;
-    background   : transparent;
-    text-align   : center;
-    line-height  : 24px;
-    color        : rgba(60, 154, 206, 1);
-    font-size    : 13px;
-    padding      : 0px;
-    min-width    : 24px;
-    margin-right : 10px;
+    min-width: 24px;
+    max-width: 38px;
+    height: 24px;
+    background: transparent;
+    text-align: center;
+    line-height: 24px;
+    color: rgba(60, 154, 206, 1);
+    font-size: 13px;
+    padding: 0px;
+    margin-right: 10px;
+    padding: 0 3px;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .el-pager li.active {
     background: rgba(60, 154, 206, 1);
-    color     : #fff;
+    color: #fff;
   }
 
   .btn-prev {
@@ -96,59 +101,63 @@
   }
 
   button {
-    padding         : 0px !important;
+    padding: 0px !important;
     background-color: transparent;
-    min-width       : 24px;
-    height          : 24px;
+    min-width: 24px;
+    height: 24px;
 
     i {
-      border       : 1px solid rgba(60, 154, 206, 1);
+      border: 1px solid rgba(60, 154, 206, 1);
       border-radius: 4px;
-      width        : 22px;
-      height       : 22px;
-      background   : transparent;
-      text-align   : center;
-      line-height  : 22px;
-      color        : rgba(60, 154, 206, 1);
-      font-size    : 16px;
-      padding      : 0px;
+      width: 22px;
+      height: 22px;
+      background: transparent;
+      text-align: center;
+      line-height: 22px;
+      color: rgba(60, 154, 206, 1);
+      font-size: 16px;
+      padding: 0px;
     }
   }
 
   button:active {
     i {
       background: rgba(60, 154, 206, 1);
-      color     : #fff;
+      color: #fff;
     }
   }
 
   button[disabled] {
     i {
       background: transparent;
-      color     : rgba(60, 154, 206, 1);
+      color: rgba(60, 154, 206, 1);
     }
   }
 
   .el-input__inner {
     border-radius: 0px;
-    width        : 100px;
-    height       : 24px;
-    line-height  : 24px;
-    border       : 1px solid rgba(54, 143, 187, 1);
-    padding      : 0px 30px 0px 10px;
-    background   : transparent;
-    color        : rgba(54, 143, 187, 1);
+    width: 100px;
+    height: 24px;
+    line-height: 24px;
+    border: 1px solid rgba(54, 143, 187, 1);
+    padding: 0px 30px 0px 10px;
+    background: transparent;
+    color: rgba(54, 143, 187, 1);
   }
 
   .el-input__icon {
-    color      : rgba(54, 143, 187, 1);
+    color: rgba(54, 143, 187, 1);
     line-height: 28px;
+  }
+
+  .el-pagination__editor {
+    margin-right: 20px;
   }
 }
 
 // 火点火情页面图片显示弹窗样式
 .el-dialog-custom {
-  width     : 1080px;
+  width: 1080px;
   background: transparent;
 
   .el-dialog__header {
@@ -156,29 +165,29 @@
   }
 
   .el-dialog__body {
-    width  : 1080px;
-    height : 720px;
+    width: 1080px;
+    height: 720px;
     padding: 0px;
   }
 
   #iframe {
-    width : 100%;
+    width: 100%;
     height: 100%;
   }
 
   .picture,
   .video {
     cursor: pointer;
-    width : 100%;
+    width: 100%;
     height: 100%;
   }
 }
 
 .el-dialog-struct {
-  font-size     : 12px;
-  max-width     : 1080px;
-  width         : auto;
-  background    : transparent;
+  font-size: 12px;
+  max-width: 1080px;
+  width: auto;
+  background: transparent;
   pointer-events: none;
 
   .el-dialog__header {
@@ -191,20 +200,20 @@
 
   .structImg {
     max-width: 1080px;
-    margin   : 0 auto;
+    margin: 0 auto;
   }
 
   .detectBox {
     display: inline-block;
-    border : 1px solid red;
+    border: 1px solid red;
   }
 }
 
 // 地图底图选择弹窗样式
 .el-popover-custom {
-  padding         : 10px 12px 4px 12px;
+  padding: 10px 12px 4px 12px;
   background-color: #00000066;
-  border          : none;
+  border: none;
 
   .popper__arrow {
     display: none;
@@ -212,23 +221,23 @@
 }
 
 .el-popover-custom:after {
-  border           : solid transparent;
-  content          : " ";
-  height           : 0;
-  width            : 0;
-  position         : absolute;
-  pointer-events   : none;
-  left             : 100%;
-  top              : 50%;
-  margin-top       : -10px;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  left: 100%;
+  top: 50%;
+  margin-top: -10px;
   border-left-color: #00000066;
-  border-width     : 10px;
+  border-width: 10px;
 }
 
 // 设置-用户管理-更多-弹窗
 .el-popover-more {
   background-color: #00000066;
-  border          : none;
+  border: none;
 }
 
 .el-popover-more[x-placement^="right"] .popper__arrow::after {
@@ -249,7 +258,7 @@
 
 .home {
   .el-input__inner {
-    height     : 34px;
+    height: 34px;
     line-height: 34px;
   }
 
@@ -270,12 +279,12 @@
 
 .el-tooltip__popper.is-dark {
   margin-bottom: 5px;
-  padding      : 5px 9px;
-  background   : #246d83;
+  padding: 5px 9px;
+  background: #246d83;
   border-radius: 0px;
-  box-sizing   : border-box;
-  color        : #fefefe;
-  border       : 1px solid #00b7ff;
+  box-sizing: border-box;
+  color: #fefefe;
+  border: 1px solid #00b7ff;
 }
 
 input::-webkit-outer-spin-button,
@@ -294,37 +303,37 @@ input[type="number"] {
 }
 
 .manageTable.el-table {
-  color     : #c5f3ff;
+  color: #c5f3ff;
   background: transparent;
-  border    : none;
+  border: none;
 
   /* 表格表头样式 */
   .el-table__header-wrapper th {
-    color           : #c5f3ff;
-    font-size       : 16px;
-    height          : 40px;
-    padding         : 0;
+    color: #c5f3ff;
+    font-size: 16px;
+    height: 40px;
+    padding: 0;
     background-color: rgba(53, 176, 220, 0.66);
   }
 
   .el-table__body-wrapper {
-    height    : 570px;
+    height: 570px;
     overflow-y: auto;
   }
 
   /* 表格每行高度*/
   .el-table__body td {
     background-color: transparent;
-    font-size       : 16px;
-    padding         : 0;
-    height          : 45px;
+    font-size: 16px;
+    padding: 0;
+    height: 45px;
   }
 
   /* 所有单元格颜色、无边框 */
   td,
   tr,
   th {
-    border          : none;
+    border: none;
     background-color: transparent;
   }
 
@@ -335,12 +344,12 @@ input[type="number"] {
   /* 复选框样式 */
   .el-checkbox__inner {
     background-color: transparent;
-    border-color    : #c5f3ff;
-    border-radius   : 0px;
+    border-color: #c5f3ff;
+    border-radius: 0px;
   }
 
   /*鼠标移入某行时的背景色*/
-  tbody tr:hover>td {
+  tbody tr:hover > td {
     background-color: transparent;
   }
 }
@@ -354,22 +363,22 @@ input[type="number"] {
 /* table头部操作工具 */
 .mainBox {
   box-sizing: border-box;
-  padding   : 12px 15px;
+  padding: 12px 15px;
 
   .toolBox {
-    display    : flex;
+    display: flex;
     align-items: center;
 
     .select,
     .search {
-      width : 150px;
+      width: 150px;
       height: 34px;
 
       .el-input__inner {
-        background   : rgba(9, 84, 109, 0.3);
+        background: rgba(9, 84, 109, 0.3);
         border-radius: 0px;
-        border       : 1px solid #1eb0fc;
-        color        : #c5f3ff;
+        border: 1px solid #1eb0fc;
+        color: #c5f3ff;
       }
     }
 
@@ -378,8 +387,8 @@ input[type="number"] {
     }
 
     .search {
-      width       : 450px;
-      margin-left : 10px;
+      width: 450px;
+      margin-left: 10px;
       margin-right: 10px;
 
       /deep/.el-input__inner {
@@ -388,13 +397,13 @@ input[type="number"] {
     }
 
     .btn {
-      box-sizing : border-box;
-      width      : 80px;
-      height     : 34px;
-      background : linear-gradient(120deg, #086384, #0b779e);
-      display    : flex;
+      box-sizing: border-box;
+      width: 80px;
+      height: 34px;
+      background: linear-gradient(120deg, #086384, #0b779e);
+      display: flex;
       align-items: center;
-      cursor     : pointer;
+      cursor: pointer;
 
       span {
         color: #c5f3ff;
@@ -402,7 +411,7 @@ input[type="number"] {
 
       img {
         margin-right: 6px;
-        margin-left : 9px;
+        margin-left: 9px;
       }
     }
 
@@ -412,11 +421,11 @@ input[type="number"] {
   }
 
   .tablTool {
-    display        : flex;
+    display: flex;
     justify-content: space-between;
-    margin-top     : 10px;
-    margin-left    : 41px;
-    margin-bottom  : 13px;
+    margin-top: 10px;
+    margin-left: 41px;
+    margin-bottom: 13px;
 
     .left {
       span:nth-child(2) {
@@ -424,10 +433,10 @@ input[type="number"] {
       }
 
       span:nth-child(4) {
-        margin-left  : 30px;
-        color        : #1d9fe5;
+        margin-left: 30px;
+        color: #1d9fe5;
         border-bottom: solid 1px #1d9fe5;
-        cursor       : pointer;
+        cursor: pointer;
       }
     }
 
@@ -435,19 +444,19 @@ input[type="number"] {
       margin-left: 15px;
 
       span {
-        text-align : center;
-        display    : inline-block;
-        width      : 54px;
-        height     : 30px;
-        background : #1eb0fc;
-        cursor     : pointer;
+        text-align: center;
+        display: inline-block;
+        width: 54px;
+        height: 30px;
+        background: #1eb0fc;
+        cursor: pointer;
         line-height: 30px;
       }
 
       span:nth-child(2) {
-        width      : 96px;
+        width: 96px;
         margin-left: 12px;
-        background : #ff0000;
+        background: #ff0000;
       }
     }
   }
@@ -460,30 +469,30 @@ input[type="number"] {
   }
 
   .el-dialog__body {
-    padding         : 0 20px;
-    width           : 100%;
-    border          : 1px solid #00a7e8;
+    padding: 0 20px;
+    width: 100%;
+    border: 1px solid #00a7e8;
     background-color: rgba(0, 65, 87, 0.85);
 
     .add-dict-header {
-      height       : 40px;
+      height: 40px;
       border-bottom: 1px solid #00a7e8;
 
       .header-icon {
-        display         : inline-block;
-        width           : 19px;
-        height          : 16px;
+        display: inline-block;
+        width: 19px;
+        height: 16px;
         background-image: url("../assets/images/fire_title.png");
-        background-size : 100% 100%;
-        margin-top      : 15px;
+        background-size: 100% 100%;
+        margin-top: 15px;
       }
 
       .header-text {
-        display       : inline-block;
+        display: inline-block;
         vertical-align: top;
-        font-size     : 14px;
-        color         : #fff;
-        margin        : 13px 0 0 10px;
+        font-size: 14px;
+        color: #fff;
+        margin: 13px 0 0 10px;
       }
     }
   }
@@ -491,60 +500,60 @@ input[type="number"] {
 
 .iconPopover {
   .iconBox {
-    width     : 240px;
-    height    : 91px;
+    width: 240px;
+    height: 91px;
     background: #121e3a;
-    display   : flex;
-    flex-wrap : wrap;
-    padding   : 13px 8px 8px 8px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 13px 8px 8px 8px;
     box-sizing: border-box;
-    border    : 1px solid #27bce5;
-    overflow  : auto;
+    border: 1px solid #27bce5;
+    overflow: auto;
 
     .icon {
-      display        : inline-block;
-      width          : 28px;
-      height         : 28px;
-      margin-right   : 12px;
-      margin-left    : 12px;
-      margin-bottom  : 5px;
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      margin-right: 12px;
+      margin-left: 12px;
+      margin-bottom: 5px;
       background-size: cover !important;
-      cursor         : pointer;
+      cursor: pointer;
     }
   }
 
   .selectBox {
-    width     : 256px;
+    width: 256px;
     max-height: 186px;
     background: #121e3a;
-    border    : 1px solid #27bce5;
+    border: 1px solid #27bce5;
 
     .searchModel {
-      margin-top : 8px;
+      margin-top: 8px;
       margin-left: 8px;
-      width      : 240px;
+      width: 240px;
 
       .el-input__inner {
         background-color: transparent;
-        border          : 1px solid #27bce5;
-        border-right    : 0px solid transparent;
-        height          : 22px;
-        color           : #ffffff;
-        padding         : 0px 6px;
+        border: 1px solid #27bce5;
+        border-right: 0px solid transparent;
+        height: 22px;
+        color: #ffffff;
+        padding: 0px 6px;
       }
 
       .el-input-group__append {
-        border     : 1px solid #27bce5;
+        border: 1px solid #27bce5;
         border-left: 0px solid transparent;
-        padding    : 0px 0px;
-        background : transparent;
+        padding: 0px 0px;
+        background: transparent;
 
         .el-button {
-          height    : 20px;
+          height: 20px;
           background: transparent;
-          margin    : 0px;
-          padding   : 0px 0px;
-          width     : 24px;
+          margin: 0px;
+          padding: 0px 0px;
+          width: 24px;
 
           .el-icon-search {
             color: #ffffff;
@@ -554,29 +563,29 @@ input[type="number"] {
     }
 
     .modelList {
-      margin    : 8px;
-      width     : 240px;
+      margin: 8px;
+      width: 240px;
       max-height: 140px;
       overflow-x: hidden;
-      color     : #c5f3ff;
+      color: #c5f3ff;
 
       .modelItem {
-        width        : 228px;
-        padding      : 0px 6px;
+        width: 228px;
+        padding: 0px 6px;
         margin-bottom: 8px;
-        height       : 14px;
-        font-size    : 12px;
-        cursor       : pointer;
-        overflow     : hidden;
+        height: 14px;
+        font-size: 12px;
+        cursor: pointer;
+        overflow: hidden;
         text-overflow: ellipsis;
-        white-space  : nowrap;
+        white-space: nowrap;
       }
     }
   }
 }
 
 .iconPopover.el-popover {
-  border : none;
+  border: none;
   padding: 0px;
 
   .popper__arrow {
@@ -584,71 +593,71 @@ input[type="number"] {
   }
 
   .close {
-    display   : inline-block;
-    width     : 12px;
-    height    : 12px;
-    position  : absolute;
-    top       : 4px;
-    right     : 4px;
-    cursor    : pointer;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    cursor: pointer;
     background: url(../assets/images/close.png) no-repeat;
   }
 }
 
 /* 图标input框样式 */
 .iconTool {
-  display    : inline-block;
-  height     : 40px;
-  display    : flex;
+  display: inline-block;
+  height: 40px;
+  display: flex;
   align-items: center;
-  width      : 150px;
+  width: 150px;
 
   .icon {
     //margin-top: 5px;
-    width        : 30px;
-    height       : 30px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    margin-right : 8px;
+    margin-right: 8px;
   }
 
   .chooseBox {
-    box-sizing     : border-box;
-    display        : flex;
-    width          : 100px;
-    height         : 24px;
-    border         : 1px solid #1ea7f0;
-    color          : #aaa;
-    font-size      : 12px;
-    line-height    : 24px;
-    align-items    : center;
+    box-sizing: border-box;
+    display: flex;
+    width: 100px;
+    height: 24px;
+    border: 1px solid #1ea7f0;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 24px;
+    align-items: center;
     justify-content: center;
-    cursor         : pointer;
+    cursor: pointer;
 
     .btn {
-      width       : 12px;
-      height      : 12px;
+      width: 12px;
+      height: 12px;
       margin-right: 8px;
     }
   }
 }
 
 .handelBtns {
-  margin    : 25px 20px 20px 0;
+  margin: 25px 20px 20px 0;
   text-align: right;
 
   span {
-    cursor       : pointer;
-    box-sizing   : border-box;
-    display      : inline-block;
-    width        : 66px;
-    height       : 30px;
-    background   : transparent;
-    border       : 1px solid #1eb0fc;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 66px;
+    height: 30px;
+    background: transparent;
+    border: 1px solid #1eb0fc;
     border-radius: 4px;
-    font-size    : 14px;
-    line-height  : 30px;
-    color        : #1eb0fc;
-    text-align   : center;
+    font-size: 14px;
+    line-height: 30px;
+    color: #1eb0fc;
+    text-align: center;
   }
 
   span:active {
@@ -657,41 +666,41 @@ input[type="number"] {
 
   span:nth-child(2) {
     margin-left: 20px;
-    background : #1eb0fc;
-    color      : #fff;
+    background: #1eb0fc;
+    color: #fff;
   }
 }
 
 // message消息提示
 .el-message {
-  width        : 289px;
-  height       : 33px;
-  line-height  : 33px;
-  background   : #00a7e8;
-  border       : none;
+  width: 289px;
+  height: 33px;
+  line-height: 33px;
+  background: #00a7e8;
+  border: none;
   border-radius: 2px;
 }
 
 .el-message__content {
-  font-size  : 14px;
-  color      : #fff !important;
+  font-size: 14px;
+  color: #fff !important;
   margin-left: 20px !important;
 }
 
 .el-message__icon {
-  width    : 18px;
-  height   : 18px;
+  width: 18px;
+  height: 18px;
   font-size: 22px;
 }
 
 .el-message__icon.el-icon-success {
   background: url(../assets/images/structureData/success.svg) no-repeat;
-  color     : transparent;
+  color: transparent;
 }
 
 .el-message__icon.el-icon-error {
   background: url(../assets/images/structureData/error.svg) no-repeat;
-  color     : transparent;
+  color: transparent;
 }
 
 //调度平台新增案件，人员分派下拉选框弹窗
@@ -702,48 +711,48 @@ input[type="number"] {
     margin-bottom: 14px;
 
     .el-input__suffix {
-      width          : 16px;
-      height         : 21px;
-      background     : url("../assets/images/gisDispatch/search.svg");
+      width: 16px;
+      height: 21px;
+      background: url("../assets/images/gisDispatch/search.svg");
       background-size: 100% 100%;
-      top            : 4px;
-      right          : 14px;
+      top: 4px;
+      right: 14px;
     }
 
     .el-input__inner {
-      color        : #00caf6;
-      width        : 308px;
-      height       : 30px;
-      line-height  : 30px;
-      border       : 1px solid #00d2ff;
+      color: #00caf6;
+      width: 308px;
+      height: 30px;
+      line-height: 30px;
+      border: 1px solid #00d2ff;
       border-radius: 0px;
-      background   : rgba(9, 84, 109, 0.3);
+      background: rgba(9, 84, 109, 0.3);
     }
   }
 }
 
 .people-selec-Popper.el-select-dropdown {
-  padding      : 10px;
+  padding: 10px;
   border-radius: 0px;
-  background   : #053d4f;
-  border       : 1px solid #00d2ff;
+  background: #053d4f;
+  border: 1px solid #00d2ff;
 
   .el-select-dropdown__item {
-    color        : #fff;
-    height       : 20px;
-    line-height  : 20px;
+    color: #fff;
+    height: 20px;
+    line-height: 20px;
     margin-bottom: 12px;
-    padding      : 0px;
+    padding: 0px;
 
     .check {
-      display        : inline-block;
-      width          : 14px;
-      height         : 14px;
-      background     : url("../assets/images/gisDispatch/unselect.svg");
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      background: url("../assets/images/gisDispatch/unselect.svg");
       background-size: 100% 100%;
-      position       : relative;
-      top            : 3px;
-      margin-right   : 15px;
+      position: relative;
+      top: 3px;
+      margin-right: 15px;
     }
   }
 
@@ -757,13 +766,13 @@ input[type="number"] {
   }
 
   .el-select-dropdown__item.selected {
-    color           : #fff;
+    color: #fff;
     background-color: transparent;
-    font-weight     : 400;
+    font-weight: 400;
   }
 
   .el-select-dropdown__item.selected .check {
-    background     : url("../assets/images/gisDispatch/select.svg");
+    background: url("../assets/images/gisDispatch/select.svg");
     background-size: 100% 100%;
   }
 
@@ -786,15 +795,15 @@ input[type="number"] {
 
 //异常处理，预案Popover样式
 .planPopover.el-popover {
-  box-sizing   : border-box;
-  background   : rgba(0, 65, 87, 0.8);
-  color        : #ffffff;
-  border       : none;
-  padding      : 20px 15px 15px 14px;
-  width        : 249px;
-  height       : 89px;
-  line-height  : 18px;
-  font-size    : 12px;
+  box-sizing: border-box;
+  background: rgba(0, 65, 87, 0.8);
+  color: #ffffff;
+  border: none;
+  padding: 20px 15px 15px 14px;
+  width: 249px;
+  height: 89px;
+  line-height: 18px;
+  font-size: 12px;
   border-radius: 0px;
 
   .popper__arrow {
@@ -802,14 +811,14 @@ input[type="number"] {
   }
 
   .close {
-    position       : absolute;
-    cursor         : pointer;
-    height         : 12px;
-    width          : 12px;
-    background     : url(../assets/images/gisDispatch/x.svg) no-repeat;
+    position: absolute;
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    background: url(../assets/images/gisDispatch/x.svg) no-repeat;
     background-size: 100% 100%;
-    right          : 3px;
-    top            : 3px;
+    right: 3px;
+    top: 3px;
   }
 }
 
@@ -824,7 +833,7 @@ input[type="number"] {
 .mapResForm::-webkit-scrollbar-thumb {
   /*滚动条里面小方块*/
   border-radius: 4px !important;
-  background   : #1eb0fc !important;
+  background: #1eb0fc !important;
 }
 
 .mapResForm::-webkit-scrollbar-track {
@@ -835,63 +844,63 @@ input[type="number"] {
 //地图数据资源设置表单样式
 .mapResForm {
   overflow-y: auto;
-  width     : 100%;
-  height    : 100%;
+  width: 100%;
+  height: 100%;
 
   .nameTooltip {
-    width      : 150px;
-    color      : #c0c4cc;
-    border     : 1px solid #209cdf55;
-    height     : 24px;
+    width: 150px;
+    color: #c0c4cc;
+    border: 1px solid #209cdf55;
+    height: 24px;
     line-height: 22px;
-    position   : relative;
-    top        : 8px;
-    font-size  : 14px;
-    padding    : 0px 8px;
+    position: relative;
+    top: 8px;
+    font-size: 14px;
+    padding: 0px 8px;
   }
 
   .pTitle {
-    width        : 490px;
-    height       : 34px;
-    box-sizing   : border-box;
-    margin-left  : 12px;
+    width: 490px;
+    height: 34px;
+    box-sizing: border-box;
+    margin-left: 12px;
     border-bottom: 1px solid #00ccff;
-    margin-top   : 20px;
+    margin-top: 20px;
 
     span:nth-child(1) {
-      display        : inline-block;
-      width          : 21px;
-      height         : 16px;
-      background     : url("../assets/images/fire_title.png") no-repeat;
+      display: inline-block;
+      width: 21px;
+      height: 16px;
+      background: url("../assets/images/fire_title.png") no-repeat;
       background-size: 100% 100%;
-      margin-right   : 10px;
-      position       : relative;
-      top            : 3px;
+      margin-right: 10px;
+      position: relative;
+      top: 3px;
     }
 
     span:nth-child(2) {
       line-height: 34px;
-      color      : #fff;
-      font-size  : 14px;
+      color: #fff;
+      font-size: 14px;
     }
   }
 
   .el-form-item__label {
-    font-size  : 12px;
-    color      : #fff;
+    font-size: 12px;
+    color: #fff;
     line-height: 40px;
-    width      : 100px;
+    width: 100px;
   }
 
   .el-form-item__content {
-    font-size  : 12px;
+    font-size: 12px;
     line-height: 40px;
-    padding    : 0px 3px 0px 0px;
+    padding: 0px 3px 0px 0px;
   }
 
   .el-form-item {
     margin-bottom: 0px;
-    margin-right : 0px;
+    margin-right: 0px;
   }
 
   .note.el-form-item {
@@ -899,13 +908,13 @@ input[type="number"] {
   }
 
   .el-input__inner {
-    background   : transparent;
+    background: transparent;
     border-radius: 0px;
-    border       : none;
-    width        : 150px;
-    height       : 24px;
-    color        : #fff;
-    padding      : 0px;
+    border: none;
+    width: 150px;
+    height: 24px;
+    color: #fff;
+    padding: 0px;
   }
 
   .el-form-item__error {
@@ -913,16 +922,16 @@ input[type="number"] {
   }
 
   .active .el-input__inner {
-    border    : 1px solid #209cdf;
+    border: 1px solid #209cdf;
     background: rgba(9, 84, 109, 0.3);
-    padding   : 0px 8px;
+    padding: 0px 8px;
   }
 
   .el-input .el-input__inner:disabled,
   .el-select .el-input.is-disabled .el-input__inner:hover {
     background: transparent;
-    border    : 1px solid #209cdf55;
-    padding   : 0px 8px;
+    border: 1px solid #209cdf55;
+    padding: 0px 8px;
   }
 
   .el-input__inner:disabled {
@@ -931,19 +940,19 @@ input[type="number"] {
 
   .rangeInput .el-input__inner {
     border-radius: 0px;
-    width        : 60px;
-    height       : 24px;
-    color        : #fff;
+    width: 60px;
+    height: 24px;
+    color: #fff;
 
-    border    : 1px solid #209cdf;
+    border: 1px solid #209cdf;
     background: rgba(9, 84, 109, 0.3);
-    padding   : 0px 8px;
+    padding: 0px 8px;
   }
 
   .el-date-editor .el-input__inner {
-    border    : 1px solid #209cdf;
+    border: 1px solid #209cdf;
     background: rgba(9, 84, 109, 0.3);
-    padding   : 0px 0px 0px 32px;
+    padding: 0px 0px 0px 32px;
   }
 
   .el-date-editor.is-disabled .el-input__inner {
@@ -951,35 +960,35 @@ input[type="number"] {
   }
 
   .el-textarea__inner {
-    background   : transparent;
+    background: transparent;
     border-radius: 0px;
-    border       : none;
-    width        : 400px;
-    height       : 78px;
-    color        : #fff;
-    font-size    : 12px;
-    padding      : 0px;
-    position     : relative;
-    top          : 10px;
+    border: none;
+    width: 400px;
+    height: 78px;
+    color: #fff;
+    font-size: 12px;
+    padding: 0px;
+    position: relative;
+    top: 10px;
   }
 
   .el-textarea__inner:disabled {
-    cursor    : default;
+    cursor: default;
     background: transparent;
-    border    : 1px solid #209cdf55;
-    padding   : 5px 8px;
-    top       : 0px;
+    border: 1px solid #209cdf55;
+    padding: 5px 8px;
+    top: 0px;
   }
 
   .el-textarea.active .el-textarea__inner {
-    border    : 1px solid #1eb0fc;
+    border: 1px solid #1eb0fc;
     background: rgba(9, 84, 109, 0.3);
-    padding   : 5px 8px;
-    top       : 0px;
+    padding: 5px 8px;
+    top: 0px;
   }
 
   .el-textarea .el-textarea__inner {
-    font-size  : 13.33px;
+    font-size: 13.33px;
     font-weight: 400;
     font-family: Arial;
   }
@@ -990,7 +999,6 @@ input[type="number"] {
 
   .el-select .el-input.is-disabled,
   .el-cascader .el-input.is-disabled {
-
     .el-input__inner,
     .el-input__icon {
       cursor: default;
@@ -1006,7 +1014,7 @@ input[type="number"] {
   }
 
   .el-cascader:not(.is-disabled):hover .el-input__inner {
-    cursor      : pointer;
+    cursor: pointer;
     border-color: #209cdf;
   }
 
@@ -1015,59 +1023,59 @@ input[type="number"] {
   }
 
   .el-input-number {
-    width      : 96px;
-    height     : 24px;
+    width: 96px;
+    height: 24px;
     line-height: 24px;
 
     .el-input-number__decrease,
     .el-input-number__increase {
-      top       : 1px;
-      width     : 24px;
-      height    : auto;
+      top: 1px;
+      width: 24px;
+      height: auto;
       background: #00a0e9;
-      color     : #fff;
-      font-size : 13px;
+      color: #fff;
+      font-size: 13px;
     }
 
     .el-input-number__decrease {
-      top         : 0;
-      left        : 0;
+      top: 0;
+      left: 0;
       border-right: none;
     }
 
     .el-input-number__increase {
-      right      : 0;
-      top        : 0;
+      right: 0;
+      top: 0;
       border-left: none;
     }
 
     .el-input__inner {
-      width       : 48px;
-      height      : 24px;
-      border      : 1px solid #00a0e9;
-      background  : transparent;
-      margin-left : 24px;
+      width: 48px;
+      height: 24px;
+      border: 1px solid #00a0e9;
+      background: transparent;
+      margin-left: 24px;
       margin-right: 24px;
-      box-sizing  : border-box;
-      padding     : 0px;
+      box-sizing: border-box;
+      padding: 0px;
     }
   }
 
   .el-color-picker {
-    height  : 24px;
+    height: 24px;
     position: relative;
-    top     : 8px;
+    top: 8px;
 
     .el-icon-close:before {
       display: none;
     }
 
     .el-color-picker__trigger {
-      width        : 150px;
-      height       : 24px;
-      border       : 1px solid #1eb0fc;
+      width: 150px;
+      height: 24px;
+      border: 1px solid #1eb0fc;
       border-radius: 0px;
-      padding      : 0px;
+      padding: 0px;
 
       .el-icon-arrow-down:before {
         display: none;
@@ -1088,18 +1096,19 @@ input[type="number"] {
 
   .listForm {
     .del {
-      display        : inline-block;
-      margin-top     : 9px;
-      margin-left    : 468px;
-      width          : 15px;
-      height         : 16px;
-      background     : url(../assets/images/backgroundManagement/delete.png) no-repeat;
+      display: inline-block;
+      margin-top: 9px;
+      margin-left: 468px;
+      width: 15px;
+      height: 16px;
+      background: url(../assets/images/backgroundManagement/delete.png)
+        no-repeat;
       background-size: 100% 100%;
-      cursor         : pointer;
+      cursor: pointer;
     }
 
     .el-form {
-      margin-top   : 1px;
+      margin-top: 1px;
       margin-bottom: 20px;
     }
   }
