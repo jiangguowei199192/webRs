@@ -461,6 +461,9 @@ export default {
           background: #39a4dd;
           color: #fff;
         }
+        div:active {
+          opacity: 0.8;
+        }
       }
       div.remark {
         margin-top: 10px;
