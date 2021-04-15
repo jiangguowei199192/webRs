@@ -161,67 +161,33 @@ export default {
         switch (this.type) {
           case '人': {
             this.title = '人员信息'
-            // this.detailInfoItems = [
-            //   { label: '性别:', prop: 'six' },
-            //   { label: '年龄组:', prop: 'age' },
-            //   { label: '上衣:', prop: 'coat' },
-            //   { label: '下衣:', prop: 'dowm' },
-            //   { label: '发色:', prop: 'hairColor' }
-            // ]
             break
           }
           case '车': {
             this.title = '车信息'
-            // this.detailInfoItems = [
-            //   { label: '类型:', prop: 'carType' },
-            //   { label: '品牌:', prop: 'carBrand' },
-            //   { label: '款式:', prop: 'carStyle' },
-            //   { label: '颜色:', prop: 'carColor' },
-            //   { label: '车牌号:', prop: 'carNumber' }
-            // ]
             break
           }
           case '船': {
             this.title = '船信息'
-            // this.detailInfoItems = [
-            //   { label: '类型:', prop: 'boatType' },
-            //   { label: '方向:', prop: 'boatDirection' }
-            // ]
             break
           }
           default:
             break
         }
-        // this.$nextTick(() => {
-        //   this.setRectPosition()
-        // })
-        this.$nextTick(() => {
-          this.$refs.list.scrollTop = 0
-        })
-      }
-    },
-    info (newI) {
-      if (newI) {
+        const newI = this.info
         this.deviceInfo.deviceName = newI.camera.name
         this.deviceInfo.address =
           newI.camera.latitude + ',' + newI.camera.longitude
         this.deviceInfo.time = newI.captureTime
 
-        // this.detailInfo.six = newI.pedestrian.attributeMap.genderCode.valueStr
-        // this.detailInfo.age = newI.pedestrian.attributeMap.ageType.valueStr
-        // this.detailInfo.coat = newI.pedestrian.attributeMap.coatColor.valueStr
-        // this.detailInfo.dowm = newI.pedestrian.attributeMap.pantsColor.valueStr
-        // this.detailInfo.hairColor = newI.pedestrian.attributeMap.hairColor.valueStr
-        // let num = 0
         if (!newI.pedestrian) return
         const attrs = newI.pedestrian.attributeMap
         for (const item in attrs) {
-          // num += 1
-          // if (num > 21) {
-          //   return
-          // }
           this.detailInfoItems.push(attrs[item])
         }
+        this.$nextTick(() => {
+          this.$refs.list.scrollTop = 0
+        })
       }
     }
   },
