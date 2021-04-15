@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-08 11:54:33
+ * @LastEditTime: 2021-04-15 19:25:06
 -->
 <template>
   <div>
@@ -17,26 +17,44 @@
       <div class="monitor-content">
         <div class="people-test">
           <span class="fl test-title">人员检测：</span>
-          <el-switch class="fl" v-model="peopleStatus"> </el-switch>
+          <el-switch
+            class="fl"
+            v-model="peopleStatus"
+            @change="switchStatusChange(0)"
+          >
+          </el-switch>
         </div>
         <div class="car-test">
           <span class="fl test-title">车辆检测：</span>
-          <el-switch class="fl" v-model="carStatus"> </el-switch>
+          <el-switch
+            class="fl"
+            v-model="carStatus"
+            @change="switchStatusChange(2)"
+          >
+          </el-switch>
         </div>
         <div class="boat-test">
           <span class="fl test-title">船只检测：</span>
-          <el-switch class="fl" v-model="boatStatus"> </el-switch>
+          <el-switch
+            class="fl"
+            v-model="boatStatus"
+            @change="switchStatusChange(1)"
+          >
+          </el-switch>
         </div>
       </div>
       <div class="handelBtns">
-        <span @click.stop="updateIsShow()">取消</span>
-        <span>确定</span>
+        <span @click.stop="updateIsShow">取消</span>
+        <span @click.stop="monitorTypeSubmit">确定</span>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { settingApi } from '@/api/setting'
+import { EventBus } from '@/utils/eventBus.js'
+
 export default {
   props: {
     isShow: { type: Boolean, required: true },
@@ -48,20 +66,88 @@ export default {
       placeholder: '请输入',
       peopleStatus: true,
       carStatus: true,
-      boatStatus: true
+      boatStatus: true,
+      people_status: null,
+      car_status: null,
+      boat_status: null,
+      checkedDevice: '',
+      params: {},
+      deviceConfigList: []
     }
   },
 
   watch: {
-    isShow (val) {}
+    isShow (val) {
+      if (val) {
+        EventBus.$on('clickRow', info => {
+          this.checkedDevice = info
+          // console.log('checkedDevice:', this.checkedDevice)
+        })
+      }
+    }
   },
 
   mounted () {},
 
   methods: {
-    // 更新isShow状态
     updateIsShow () {
       this.$emit('update:isShow', false)
+    },
+
+    switchStatusChange (handelType) {
+      if (
+        this.peopleStatus === true ||
+        this.carStatus === true ||
+        this.boatStatus === true
+      ) {
+        this.people_status = this.car_status = this.boat_status = 1
+      }
+      if (
+        this.peopleStatus === false ||
+        this.carStatus === false ||
+        this.boatStatus === false
+      ) {
+        this.people_status = this.car_status = this.boat_status = 0
+      }
+
+      if (handelType === 0) {
+        this.params = {
+          algorithmType: handelType,
+          deviceCode: this.checkedDevice.deviceCode,
+          status: this.people_status,
+          type: Number(1)
+        }
+      } else if (handelType === 1) {
+        this.params = {
+          algorithmType: handelType,
+          deviceCode: this.checkedDevice.deviceCode,
+          status: this.car_status,
+          type: Number(1)
+        }
+      } else if (handelType === 2) {
+        this.params = {
+          algorithmType: handelType,
+          deviceCode: this.checkedDevice.deviceCode,
+          status: this.boat_status,
+          type: Number(1)
+        }
+      }
+      console.log(this.params)
+    },
+
+    monitorTypeSubmit () {
+      this.$axios
+        .post(settingApi.addDeviceConfig, this.params)
+        .then(res => {
+          console.log('新增设备事件/告警接口返回:', res)
+          if (res && res.data && res.data.code === 0) {
+            this.deviceConfigList = res.data.data.data
+            this.updateIsShow()
+          }
+        })
+        .catch(err => {
+          console.log('settingApi.addDeviceConfig Err : ' + err)
+        })
     }
   }
 }

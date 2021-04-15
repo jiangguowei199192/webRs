@@ -10,6 +10,7 @@
       :row-style="changeRowStyle"
       :cell-style="changeCellStyle"
       :row-class-name="tableRowClassName"
+      @row-click="onRowClick"
       @selection-change="selectionChange"
     >
       <el-table-column
@@ -106,8 +107,6 @@
         align="center"
         :label="handle.label"
         :width="handle.width"
-        :style="handle.style"
-        label-class-name="handleColumn"
       >
         <template v-slot="scope">
           <div class="handleBox">
@@ -275,7 +274,12 @@ export default {
     tableRowClassName ({ row, rowIndex }) {
       row.row_index = rowIndex
     },
-
+    /**
+     *  row点击
+     */
+    onRowClick (row) {
+      this.$emit('onRowClick', row)
+    },
     /**
      *  修改表格row样式
      */
@@ -386,22 +390,6 @@ export default {
                 } else if (d.alarmStatus === 'mistaken') {
                   d.alarmStatus = '误报'
                 }
-                // if (d.deviceCode) {
-                //   d.deviceCode =
-                //     '船舶出现' +
-                //     ',人员入侵' +
-                //     ',钓鱼行为' +
-                //     ',非法捕捞' +
-                //     ',车辆违停'
-                // }
-                // if (d.deviceAddress) {
-                //   d.deviceAddress =
-                //     '车辆检测' +
-                //     ',船只检测' +
-                //     ',人员检测' +
-                //     ',口罩检测' +
-                //     ',电子围栏'
-                // }
                 if (d.alarmTime) {
                   d.alarmTime = timeFormat(d.alarmTime)
                 }

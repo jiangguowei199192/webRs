@@ -39,13 +39,13 @@ export default {
           { label: '设备名称', value: 'deviceName' },
           {
             label: '配置告警类型',
-            value: 'deviceCode',
+            value: 'alarmInfo',
             type: 'eventConfig',
             width: '244'
           },
           {
             label: '实时检测配置',
-            value: 'deviceAddress',
+            value: 'realMonitor',
             type: 'realDetect',
             width: '244'
           },

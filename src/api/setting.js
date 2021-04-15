@@ -18,6 +18,7 @@ export const settingApi = {
   queryDevicePage: '/cloud-video/device/queryPage', // 设置：设备接入-分页查询设备列表
   getDistrictList: '/cloud-video/deptAndDevice/getDistrictList', // 设置：设备接入-查询行政区列表
   changeDeviceStatus: '/cloud-video/device/changeDeviceStatus', // 设置：设备接入-修改启用状态
+  addDeviceConfig: '/cloud-video/deviceConfig/add', // 设置：新增设备事件/告警
   addGDJK: '/cloud-video/device/addGDJK', // 设置：设备接入-添加高点
   addWRJ: '/cloud-video/device/addWRJ', // 设置：设备接入-添加无人机
   deleteDevice: '/cloud-video/device/delete', // 设置：设备接入-删除设备

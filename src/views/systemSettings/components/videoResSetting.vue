@@ -100,6 +100,7 @@
         :checkedList.sync="checkedList"
         @handleClick="handleClick"
         @switchClick="switchClick"
+        @onRowClick="onRowClick"
       ></PageTable>
     </div>
     <component ref="dlg" :is="dlgView"></component>
@@ -440,6 +441,12 @@ export default {
           })
         }
       })
+    },
+    /**
+     * 点击表单row
+     */
+    onRowClick (data) {
+      EventBus.$emit('clickRow', data)
     }
   }
 }
