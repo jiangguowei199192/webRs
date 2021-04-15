@@ -300,7 +300,7 @@ export default {
     cursor: default;
     float: left;
     width: 286px;
-    height: 899px;
+    height: 902px;
     background: url(../../assets/images/backgroundManagement/left_menu.svg)
       no-repeat center/100% 100%;
     .setting-left-item {

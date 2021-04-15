@@ -430,6 +430,7 @@ export default {
             duration: 2 * 1000
           })
           this.getList()
+          EventBus.$emit('checkedDevice', data)
         } else {
           Notification({
             title: '提示',

@@ -9,6 +9,7 @@
       :height="tableHeight"
       :row-style="changeRowStyle"
       :cell-style="changeCellStyle"
+      :row-class-name="tableRowClassName"
       @selection-change="selectionChange"
     >
       <el-table-column
@@ -75,7 +76,10 @@
                   :contentText="scope.row[item.value]"
                 ></EllipsisTooltip>
               </div>
-              <div v-show="scope.row[item.value].split(',').length >= 2">
+              <div
+                class="toolBox"
+                v-show="scope.row[item.value].split(',').length >= 2"
+              >
                 <EllipsisTooltip
                   class="tool-span"
                   :contentText="scope.row[item.value].split(',')[0]"
@@ -84,11 +88,8 @@
                   class="tool-span"
                   :contentText="scope.row[item.value].split(',')[1]"
                 ></EllipsisTooltip>
-                <span :title="scope.row[item.value]">
-                  <EllipsisTooltip
-                    class="tool-span"
-                    :contentText="'...'"
-                  ></EllipsisTooltip>
+                <span class="tool-span" :title="scope.row[item.value]">
+                  <EllipsisTooltip :contentText="'...'"></EllipsisTooltip>
                 </span>
               </div>
             </div>
@@ -105,13 +106,15 @@
         align="center"
         :label="handle.label"
         :width="handle.width"
+        :style="handle.style"
+        label-class-name="handleColumn"
       >
         <template v-slot="scope">
-          <div class="handerBox">
+          <div class="handleBox">
             <template v-for="(item, index) in handle.btList">
               <!-- 操作按钮 -->
               <span
-                class="btn"
+                class="handle-btn"
                 :key="index"
                 @click="handleClick(item.event, scope.row)"
                 >{{ item.label }}</span
@@ -143,6 +146,7 @@
 import globalApi from '@/utils/globalApi'
 import { timeFormat } from '@/utils/date'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
+import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   name: 'PageTable',
@@ -225,7 +229,9 @@ export default {
         }
       },
       serverUrl: globalApi.headImg,
-      picList: ''
+      picList: '',
+      tagBtns: [],
+      selectDevice: ''
     }
   },
   watch: {
@@ -238,7 +244,38 @@ export default {
     }
   },
 
+  mounted () {
+    EventBus.$on('checkedDevice', info => {
+      this.selectDevice = info
+      // console.log('selectDevice:', this.selectDevice)
+    })
+
+    setTimeout(() => {
+      var btns = document.querySelectorAll('.handle-btn')
+      var result = []
+      btns.forEach(t => {
+        if (t.innerText === '实时检测' || t.innerText === '事件配置') {
+          result.push(t)
+        }
+      })
+      for (let i = 0; i < result.length; i += 2) {
+        this.tagBtns.push(result.slice(i, i + 2))
+      }
+      this.tagBtns.map((item, index) => {
+        return Object.assign(item, { t_index: index })
+      })
+      // console.log(this.tagBtns)
+    }, 300)
+  },
+
   methods: {
+    /**
+     *  给row添加索引
+     */
+    tableRowClassName ({ row, rowIndex }) {
+      row.row_index = rowIndex
+    },
+
     /**
      *  修改表格row样式
      */
@@ -257,9 +294,37 @@ export default {
      *  修改表格cell样式
      */
     changeCellStyle (data) {
+      // console.log(data)
       if (data.column.label === '状态') {
         if (data.row.alarmStatus === '误报') return 'color: #ee2618'
         else return 'color: #18ee58'
+      } else if (data.column.label === '操作') {
+        this.tagBtns.forEach(t => {
+          if (
+            this.selectDevice.row_index === t.t_index &&
+            data.row.deviceStatus === false
+          ) {
+            console.log('关闭')
+            // t.map(r => {
+            //   r.style.background = '#a0a0a0'
+            //   r.style.cursor = 'not-allowed'
+            //   // r.style.pointerEvents = 'none'
+            //   return r.style
+            // })
+          }
+          if (
+            this.selectDevice.row_index === t.t_index &&
+            data.row.deviceStatus === true
+          ) {
+            console.log('开启')
+            // t.map(r => {
+            //   r.style.background = ''
+            //   r.style.cursor = ''
+            //   // r.style.pointerEvents = ''
+            //   return r.style
+            // })
+          }
+        })
       } else return ''
     },
     /**
@@ -321,22 +386,22 @@ export default {
                 } else if (d.alarmStatus === 'mistaken') {
                   d.alarmStatus = '误报'
                 }
-                if (d.deviceCode) {
-                  d.deviceCode =
-                    '船舶出现' +
-                    ',人员入侵' +
-                    ',钓鱼行为' +
-                    ',非法捕捞' +
-                    ',车辆违停'
-                }
-                if (d.deviceAddress) {
-                  d.deviceAddress =
-                    '车辆检测' +
-                    ',船只检测' +
-                    ',人员检测' +
-                    ',口罩检测' +
-                    ',电子围栏'
-                }
+                // if (d.deviceCode) {
+                //   d.deviceCode =
+                //     '船舶出现' +
+                //     ',人员入侵' +
+                //     ',钓鱼行为' +
+                //     ',非法捕捞' +
+                //     ',车辆违停'
+                // }
+                // if (d.deviceAddress) {
+                //   d.deviceAddress =
+                //     '车辆检测' +
+                //     ',船只检测' +
+                //     ',人员检测' +
+                //     ',口罩检测' +
+                //     ',电子围栏'
+                // }
                 if (d.alarmTime) {
                   d.alarmTime = timeFormat(d.alarmTime)
                 }
@@ -395,8 +460,8 @@ export default {
 
 <style lang="scss" scoped>
 .tableBox {
-  .handerBox {
-    .btn {
+  .handleBox {
+    .handle-btn {
       display: inline-block;
       // width: 40px;
       padding: 0 5px;
@@ -407,8 +472,8 @@ export default {
       color: #fefefe;
       line-height: 26px;
     }
-    .btn:not(:last-child) {
-      margin-right: 18px;
+    .handle-btn:not(:last-child) {
+      margin-right: 15px;
     }
   }
   .picBox {
@@ -432,7 +497,7 @@ export default {
       font-size: 14px;
       margin-right: 5px;
     }
-    .tool-span:last-child {
+    .toolBox > .tool-span:nth-child(3) {
       width: 40px;
       font-size: 20px;
       cursor: progress;
