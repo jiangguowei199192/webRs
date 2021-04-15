@@ -6,18 +6,18 @@
         <img src="../../../assets/images/backgroundManagement/X.svg" />
       </div>
       <div class="config-content">
-        <el-tabs :tab-position="tabPosition" v-model="activeName" @tab-click="handleClick">
+        <el-tabs :tab-position="tabPosition" v-model="activeType" @tab-click="handleClick">
           <el-tab-pane
             v-for="(item, index) in tabList"
             :key="index"
             :label="item.title"
             :name="item.name"
           >
-            <div class="tab-pane-header" >
+            <div class="tab-pane-header">
               <span>{{ item.title }}</span>
               <span>{{ item.describe }}</span>
             </div>
-            <div class="tab-pane-detail" v-if="index==activeName" >
+            <div class="tab-pane-detail" v-if="index==activeType">
               <div class="descript">
                 <span>事件状态：</span>
                 <el-switch v-model="value" active-color="#1EB0FC" inactive-color="#DCDFE6"></el-switch>
@@ -28,15 +28,15 @@
               </div>
               <div class="drawCanvas">
                 <div class="left">
-                  <div class="content">
+                  <div class="content" ref="content">
                     <!-- <img src="../../../assets/images/Login/video-bg.jpg"  /> -->
                     <div
                       class="canvas"
                       v-if="isShowCapture"
                       :style="{backgroundImage:'url('+caputrePic+')'}"
                     >
-                       <!-- :style="{backgroundImage:'url('+caputrePic+')'}" -->
-                      <canvas-draw ref="mychild" @drawEnd="getPoints"></canvas-draw>
+                      <!-- :style="{backgroundImage:'url('+caputrePic+')'}" -->
+                      <canvas-draw ref="mychild" @drawEnd="getPoints" :areaArray="areaArray"></canvas-draw>
                     </div>
                     <LivePlayer
                       v-else
@@ -107,8 +107,12 @@
                   </div>
                   <div class="areas" v-if="areaArray&&areaArray.length>0">
                     <p>已绘制区域：</p>
-                    <div class="btns" >
-                      <el-button v-for="(item,index) in areaArray" :key="index" @click="deleteCurArea">
+                    <div class="btns">
+                      <el-button
+                        v-for="(item,index) in areaArray"
+                        :key="index"
+                        @click="deleteCurArea"
+                      >
                         区域{{index+1}}
                         <i class="el-icon-close el-icon-right"></i>
                       </el-button>
@@ -119,7 +123,12 @@
               <div class="selectBox">
                 <div class="select">
                   <span>有效时间：</span>
-                  <el-date-picker v-model="date" type="datetime" placeholder="选择日期时间"></el-date-picker>
+                  <el-date-picker
+                    v-model="date"
+                    type="datetime"
+                    placeholder="选择日期时间"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                  ></el-date-picker>
                 </div>
 
                 <div class="select">
@@ -140,7 +149,7 @@
       </div>
       <div class="handelBtns">
         <span @click.stop=" cancel()">取消</span>
-        <span>确定</span>
+        <span @click="confirmAjax">确定</span>
       </div>
     </el-dialog>
   </div>
@@ -181,8 +190,15 @@ export default {
         { value: 3, label: '黄色预警' },
         { value: 4, label: '蓝色预警' }
       ],
-      activeName: 0,
-      areaArray: [], // 传递给后台的数据
+      activeType: 0,
+      areaArray: [
+        {
+          points: [
+            { pointX: 100, pointY: 100 },
+            { pointX: 200, pointY: 200 }
+          ]
+        }
+      ], // 传递给后台的数据
       tabPosition: 'left',
       // tabs 内容
       tabList: [
@@ -222,7 +238,7 @@ export default {
     },
     clearAllDraw () {
       this.$refs.mychild[0].clearAllDraw()
-      this.areaArray = []
+      // this.areaArray = []
       console.dir(this.areaArray)
     },
     showVideoOrCapture () {
@@ -235,18 +251,38 @@ export default {
     },
     // tab 切换
     handleClick (tab, event) {
-      console.log('当前激活', this.activeName)
+      console.log('当前激活', this.activeType)
       this.areaArray = []
     },
     getPoints (points) {
+      console.log('组件绘制的原始坐标', points)
       this.areaArray = JSON.parse(JSON.stringify(points))
-      console.log('收到的坐标', points)
-      console.log('当前激活', this.activeName)
+      // this.transferToAlgorithmPix(this.areaArray)
     },
     deleteCurArea (index) {
-      this.areaArray.splice(index, 1)
-      console.log('传递给后台的坐标', this.areaArray)
+      // this.areaArray.splice(index, 1)
       this.$refs.mychild[0].clearCurDraw(index)
+    },
+    transferToAlgorithmPix (pointsArray) {
+      const contentStyle = window.getComputedStyle(this.$refs.content[0])
+      const width = parseInt(contentStyle.width)
+      const height = parseInt(contentStyle.height)
+      console.log('width', width)
+      console.log('height', height)
+
+      pointsArray.forEach(area => {
+        area.points.forEach(pixObj => {
+          pixObj.pointX =
+            Math.round((pixObj.pointX / width) * 1280 * 100) / 100
+          pixObj.pointY =
+            Math.round((pixObj.pointY / height) * 720 * 100) / 100
+        })
+      })
+      return pointsArray
+    },
+    confirmAjax () {
+      console.log(this.transferToAlgorithmPix(this.areaArray))
+      console.log(this.date)
     }
   },
   mounted () {},
@@ -375,7 +411,7 @@ export default {
               div.canvas {
                 width: 100%;
                 height: 100%;
-                background-size:100% 100%;
+                background-size: 100% 100%;
               }
             }
             .tools {
