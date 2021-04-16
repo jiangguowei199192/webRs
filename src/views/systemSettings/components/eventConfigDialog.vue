@@ -158,6 +158,7 @@
 <script>
 import LivePlayer from '@liveqing/liveplayer'
 import canvasDraw from './canvasDraw'
+import { settingApi } from '@/api/setting'
 export default {
   components: {
     LivePlayer,
@@ -253,6 +254,7 @@ export default {
     handleClick (tab, event) {
       console.log('当前激活', this.activeType)
       this.areaArray = []
+      this.$axios.post(settingApi.getDevevicConfig)
     },
     getPoints (points) {
       console.log('组件绘制的原始坐标', points)
@@ -262,6 +264,19 @@ export default {
     deleteCurArea (index) {
       // this.areaArray.splice(index, 1)
       this.$refs.mychild[0].clearCurDraw(index)
+    },
+    getConfigInfo (algorithmType) {
+      const params = {
+        accessType: this.curData.accessType,
+        algorithmType,
+        channelInfo: this.curData.channelInfo,
+        deviceCode: this.curData.deviceCode,
+        deviceTypeCode: this.curData.deviceTypeCode,
+        type: 2
+      }
+      this.$axios.post(settingApi.queryDeviceConfig, params).then(res => {
+        console.log(res)
+      })
     },
     transferToAlgorithmPix (pointsArray) {
       const contentStyle = window.getComputedStyle(this.$refs.content[0])
@@ -287,7 +302,25 @@ export default {
   },
   mounted () {},
   watch: {
-    isShow (val) {}
+    activeType (val, ov) {
+      switch (Number(val)) {
+        case 0:
+          this.getConfigInfo(4)
+          break
+        case 1:
+          this.getConfigInfo(3)
+          break
+        case 2:
+          this.getConfigInfo(6)
+          break
+        case 3:
+          this.getConfigInfo(5)
+          break
+
+        default:
+          break
+      }
+    }
   }
 }
 </script>
