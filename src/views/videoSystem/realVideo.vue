@@ -1770,7 +1770,8 @@ export default {
       console.log('收到人员检测事件', info)
       this.totalVideosArray.forEach((item, index) => {
         if (
-          item.id === info.channelID
+          item.id === info.channelID &&
+          info.algorithmType === 0
         ) {
           if (info.targetNum > 0) {
             // this.$notify.closeAll()
