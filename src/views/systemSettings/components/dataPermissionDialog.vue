@@ -46,7 +46,11 @@
               style="height: 422px; margin-top: 10px; margin-left: 16px"
               :filter-node-method="filterNode"
               @check-change="deptTree1Change"
-            ></el-tree>
+            >
+              <span class="custom-tree-node" slot-scope="{ node }">
+                <span :title="node.label">{{ node.label }}</span>
+              </span>
+            </el-tree>
           </div>
         </div>
       </el-tab-pane>
@@ -67,7 +71,11 @@
                 :current-node-key="selectedDept2.id"
                 class="dept-tree listScroll"
                 style="margin: 0 0px 0 20px; height: 400px"
-              ></el-tree>
+              >
+                <span class="custom-tree-node" slot-scope="{ node }">
+                  <span :title="node.label">{{ node.label }}</span>
+                </span>
+              </el-tree>
             </div>
 
             <div class="account-div">
@@ -426,6 +434,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.custom-tree-node {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .permission-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
@@ -556,7 +570,6 @@ export default {
         color: #fff;
         .el-tree-node {
           .el-tree-node__content {
-            display: block !important;
             height: 30px;
             line-height: 30px;
             border: 1px solid transparent;
