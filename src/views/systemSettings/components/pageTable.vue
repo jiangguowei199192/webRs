@@ -145,7 +145,7 @@
 import globalApi from '@/utils/globalApi'
 import { timeFormat } from '@/utils/date'
 import EllipsisTooltip from '@/components/ellipsisTooltip'
-import { EventBus } from '@/utils/eventBus.js'
+// import { EventBus } from '@/utils/eventBus.js'
 
 export default {
   name: 'PageTable',
@@ -244,11 +244,6 @@ export default {
   },
 
   mounted () {
-    EventBus.$on('checkedDevice', info => {
-      this.selectDevice = info
-      // console.log('selectDevice:', this.selectDevice)
-    })
-
     setTimeout(() => {
       var btns = document.querySelectorAll('.handle-btn')
       var result = []
@@ -303,33 +298,61 @@ export default {
         if (data.row.alarmStatus === '误报') return 'color: #ee2618'
         else return 'color: #18ee58'
       } else if (data.column.label === '操作') {
-        this.tagBtns.forEach(t => {
-          if (
-            this.selectDevice.row_index === t.t_index &&
-            data.row.deviceStatus === false
-          ) {
-            console.log('关闭')
-            // t.map(r => {
-            //   r.style.background = '#a0a0a0'
-            //   r.style.cursor = 'not-allowed'
-            //   // r.style.pointerEvents = 'none'
-            //   return r.style
-            // })
-          }
-          if (
-            this.selectDevice.row_index === t.t_index &&
-            data.row.deviceStatus === true
-          ) {
-            console.log('开启')
-            // t.map(r => {
-            //   r.style.background = ''
-            //   r.style.cursor = ''
-            //   // r.style.pointerEvents = ''
-            //   return r.style
-            // })
-          }
-        })
+        // console.log("操作");
       } else return ''
+
+      this.tagBtns.forEach(t => {
+        // 无人机/下线/空设备
+        if (
+          (data.row.deviceTypeCode === 'WRJ' && t.t_index === data.rowIndex) ||
+          (data.row.deviceTypeCode === 'GDJK' &&
+            (data.row.onlineStatus === 'offline' ||
+              data.row.onlineStatus === 'empty') &&
+            t.t_index === data.rowIndex)
+        ) {
+          t.map(r => {
+            r.style.display = 'none'
+            return r.style
+          })
+        }
+        if (
+          data.row.deviceTypeCode === 'GDJK' &&
+          data.row.onlineStatus === 'online' &&
+          t.t_index === data.rowIndex
+        ) {
+          t.map(r => {
+            r.style.display = ''
+            return r.style
+          })
+        }
+        // 高点在线设备
+        if (
+          data.row.deviceTypeCode === 'GDJK' &&
+          data.row.deviceStatus === false &&
+          t.t_index === data.rowIndex
+        ) {
+          t.map(r => {
+            r.style.background = '#ff0000'
+            r.style.opacity = '0.75'
+            r.style.cursor = 'not-allowed'
+            r.style.pointerEvents = 'none'
+            return r.style
+          })
+        }
+        if (
+          data.row.deviceTypeCode === 'GDJK' &&
+          data.row.deviceStatus === true &&
+          t.t_index === data.rowIndex
+        ) {
+          t.map(r => {
+            r.style.background = ''
+            r.style.opacity = ''
+            r.style.cursor = ''
+            r.style.pointerEvents = ''
+            return r.style
+          })
+        }
+      })
     },
     /**
      *  清空选中

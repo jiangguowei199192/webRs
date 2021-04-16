@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-15 19:25:06
+ * @LastEditTime: 2021-04-16 10:27:35
 -->
 <template>
   <div>
@@ -70,9 +70,10 @@ export default {
       people_status: null,
       car_status: null,
       boat_status: null,
-      checkedDevice: '',
+      checkDevice: '',
       params: {},
-      deviceConfigList: []
+      deviceConfigList: [],
+      queryStatusList: []
     }
   },
 
@@ -80,9 +81,12 @@ export default {
     isShow (val) {
       if (val) {
         EventBus.$on('clickRow', info => {
-          this.checkedDevice = info
-          // console.log('checkedDevice:', this.checkedDevice)
+          this.checkDevice = info
+          // console.log('checkDevice:', this.checkDevice)
         })
+        setTimeout(() => {
+          this.queryDeviceConfig()
+        }, 300)
       }
     }
   },
@@ -113,26 +117,26 @@ export default {
       if (handelType === 0) {
         this.params = {
           algorithmType: handelType,
-          deviceCode: this.checkedDevice.deviceCode,
+          deviceCode: this.checkDevice.deviceCode,
           status: this.people_status,
           type: Number(1)
         }
       } else if (handelType === 1) {
         this.params = {
           algorithmType: handelType,
-          deviceCode: this.checkedDevice.deviceCode,
-          status: this.car_status,
+          deviceCode: this.checkDevice.deviceCode,
+          status: this.boat_status,
           type: Number(1)
         }
       } else if (handelType === 2) {
         this.params = {
           algorithmType: handelType,
-          deviceCode: this.checkedDevice.deviceCode,
-          status: this.boat_status,
+          deviceCode: this.checkDevice.deviceCode,
+          status: this.car_status,
           type: Number(1)
         }
       }
-      console.log(this.params)
+      // console.log(this.params)
     },
 
     monitorTypeSubmit () {
@@ -141,12 +145,34 @@ export default {
         .then(res => {
           console.log('新增设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {
-            this.deviceConfigList = res.data.data.data
+            this.deviceConfigList = res.data.data
             this.updateIsShow()
           }
         })
         .catch(err => {
           console.log('settingApi.addDeviceConfig Err : ' + err)
+        })
+    },
+
+    queryDeviceConfig () {
+      var params = {
+        accessType: this.checkDevice.accessType,
+        algorithmType: 1,
+        channelInfo: this.checkDevice.channelInfo,
+        deviceCode: this.checkDevice.deviceCode,
+        deviceTypeCode: this.checkDevice.deviceTypeCode,
+        type: 1
+      }
+      this.$axios
+        .post(settingApi.queryDeviceConfig, params)
+        .then(res => {
+          console.log('查询设备事件/告警接口返回:', res)
+          if (res && res.data && res.data.code === 0) {
+            this.queryStatusList = res.data.data
+          }
+        })
+        .catch(err => {
+          console.log('settingApi.queryDeviceConfig Err : ' + err)
         })
     }
   }
