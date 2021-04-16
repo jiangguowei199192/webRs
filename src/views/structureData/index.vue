@@ -66,8 +66,8 @@
             <span class="item-text1">地址：</span>
             <span
               class="item-text2"
-              :title="item.camera.latitude + ',' + item.camera.longitude"
-              >{{ item.camera.latitude + "," + item.camera.longitude }}</span
+              :title="item.camera.longitude + ',' + item.camera.latitude"
+              >{{ item.camera.longitude + "," + item.camera.latitude }}</span
             >
           </div>
           <div class="address">
@@ -189,8 +189,8 @@ export default {
                 if (!item.pedestrian) {
                   return
                 }
-                item.camera.longitude = parseFloat(item.camera.latitude).toFixed(7)
-                item.camera.latitude = parseFloat(item.camera.longitude).toFixed(7)
+                item.camera.longitude = parseFloat(item.camera.longitude).toFixed(7)
+                item.camera.latitude = parseFloat(item.camera.latitude).toFixed(7)
                 const w = item.pedestrian.position.width
                 const h = item.pedestrian.position.height
                 const left = item.pedestrian.position.start.x

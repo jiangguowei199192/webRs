@@ -177,7 +177,7 @@ export default {
         const newI = this.info
         this.deviceInfo.deviceName = newI.camera.name
         this.deviceInfo.address =
-          newI.camera.latitude + ',' + newI.camera.longitude
+          newI.camera.longitude + ',' + newI.camera.latitude
         this.deviceInfo.time = newI.captureTime
 
         if (!newI.pedestrian) return
