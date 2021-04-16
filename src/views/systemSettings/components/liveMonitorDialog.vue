@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-16 10:27:35
+ * @LastEditTime: 2021-04-16 15:01:50
 -->
 <template>
   <div>
@@ -45,7 +45,7 @@
       </div>
       <div class="handelBtns">
         <span @click.stop="updateIsShow">取消</span>
-        <span @click.stop="monitorTypeSubmit">确定</span>
+        <span @click.stop="changeTypeSubmit">确定</span>
       </div>
     </el-dialog>
   </div>
@@ -119,6 +119,7 @@ export default {
           algorithmType: handelType,
           deviceCode: this.checkDevice.deviceCode,
           status: this.people_status,
+          streamType: null,
           type: Number(1)
         }
       } else if (handelType === 1) {
@@ -126,6 +127,7 @@ export default {
           algorithmType: handelType,
           deviceCode: this.checkDevice.deviceCode,
           status: this.boat_status,
+          streamType: null,
           type: Number(1)
         }
       } else if (handelType === 2) {
@@ -133,20 +135,18 @@ export default {
           algorithmType: handelType,
           deviceCode: this.checkDevice.deviceCode,
           status: this.car_status,
+          streamType: null,
           type: Number(1)
         }
       }
       // console.log(this.params)
-    },
-
-    monitorTypeSubmit () {
       this.$axios
         .post(settingApi.addDeviceConfig, this.params)
         .then(res => {
           console.log('新增设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
             this.deviceConfigList = res.data.data
-            this.updateIsShow()
           }
         })
         .catch(err => {
@@ -154,10 +154,20 @@ export default {
         })
     },
 
+    changeTypeSubmit () {
+      this.$notify.closeAll()
+      this.$notify.success({
+        title: '提示',
+        message: '操作成功!',
+        duration: 3 * 1000
+      })
+      this.updateIsShow()
+    },
+
     queryDeviceConfig () {
       var params = {
         accessType: this.checkDevice.accessType,
-        algorithmType: 1,
+        algorithmType: null,
         channelInfo: this.checkDevice.channelInfo,
         deviceCode: this.checkDevice.deviceCode,
         deviceTypeCode: this.checkDevice.deviceTypeCode,
@@ -169,6 +179,30 @@ export default {
           console.log('查询设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {
             this.queryStatusList = res.data.data
+            this.queryStatusList.forEach(t => {
+              if (t.status === 0) {
+                t.status = false
+              } else if (t.status === 1) {
+                t.status = true
+              }
+              if (
+                t.deviceCode !== null &&
+                t.algorithmType !== null &&
+                t.deviceCode === this.checkDevice.deviceCode
+              ) {
+                switch (t.algorithmType) {
+                  case 0:
+                    this.peopleStatus = t.status
+                    break
+                  case 1:
+                    this.carStatus = t.status
+                    break
+                  case 2:
+                    this.boatStatus = t.status
+                    break
+                }
+              }
+            })
           }
         })
         .catch(err => {

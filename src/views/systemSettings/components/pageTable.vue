@@ -334,7 +334,6 @@ export default {
           t.map(r => {
             r.style.background = '#ff0000'
             r.style.opacity = '0.75'
-            r.style.cursor = 'not-allowed'
             r.style.pointerEvents = 'none'
             return r.style
           })
@@ -347,7 +346,6 @@ export default {
           t.map(r => {
             r.style.background = ''
             r.style.opacity = ''
-            r.style.cursor = ''
             r.style.pointerEvents = ''
             return r.style
           })
