@@ -270,6 +270,9 @@ export default {
     }
     .rightTalk {
       text-align: right;
+      .msg {
+        text-align: left;
+      }
     }
   }
 }

@@ -475,7 +475,7 @@ export default {
         font-size: 14px;
         padding-right: 8px;
         margin-top: 50px;
-        padding: 0px 15px;
+        padding: 1px 15px;
       }
     }
   }
