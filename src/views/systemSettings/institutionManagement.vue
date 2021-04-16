@@ -51,7 +51,7 @@
         :props="{
           children: 'children',
           label: 'deptName',
-          value: 'deptCode'
+          value: 'deptCode',
         }"
         default-expand-all
         @node-click="deptTreeClick"
@@ -62,7 +62,11 @@
         class="dept-tree"
         @node-contextmenu="deptTreeRightCick"
         :filter-node-method="filterNode"
-      ></el-tree>
+      >
+        <span class="custom-tree-node" slot-scope="{ node }">
+          <span :title="node.label">{{ node.label }}</span>
+        </span>
+      </el-tree>
       <div class="add-institution-btn" @click="addDeptClick">╋ 新增机构</div>
     </div>
     <div class="right-div">
@@ -289,7 +293,7 @@ export default {
   methods: {
     async getDeptTree () {
       var _this = this
-      this.$axios.post(backApi.getDeptTree).then(res => {
+      this.$axios.post(backApi.getDeptTree).then((res) => {
         if (res && res.data && res.data.code === 0) {
           _this.deptTree = this.handleDeptTree(res.data.data)
           if (_this.deptTree.length > 0) {
@@ -301,7 +305,7 @@ export default {
     },
     // children为" "时置为null
     handleDeptTree (tree) {
-      tree.forEach(item => {
+      tree.forEach((item) => {
         if (item.children) {
           if (item.children.length <= 0) {
             item.children = null
@@ -325,7 +329,7 @@ export default {
         .post(backApi.getPeoplePage, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.peopleList = res.data.data.records
             _this.currentPage = res.data.data.current
@@ -344,7 +348,7 @@ export default {
         .post(iconLibaryApi.getAllPic, params, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.iconList = res.data.data.records
           }
@@ -393,7 +397,7 @@ export default {
         .post(backApi.deptInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.deptDetail = res.data.data
             _this.showEditDept = true
@@ -421,7 +425,7 @@ export default {
         .post(backApi.editDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.getDeptTree()
             Notification({
@@ -442,7 +446,7 @@ export default {
         .post(backApi.deptInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.showDeptInfo = true
             _this.deptDetail = res.data.data
@@ -463,7 +467,7 @@ export default {
         .post(backApi.deleteDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.getDeptTree()
             _this.peopleSearch = ''
@@ -503,7 +507,7 @@ export default {
         .post(backApi.addDept, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.getDeptTree()
             Notification({
@@ -543,7 +547,7 @@ export default {
         .post(backApi.peopleInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.peopleInfo = res.data.data
           }
@@ -584,7 +588,7 @@ export default {
         .post(backApi.addPeople, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.data) {
             _this.getPeoplePage()
             Notification({
@@ -610,7 +614,7 @@ export default {
         .post(backApi.peopleInfo, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.code === 0) {
             _this.peopleInfo = res.data.data
             this.showEditPeople = true
@@ -637,7 +641,7 @@ export default {
         .post(backApi.editPeople, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.data) {
             _this.getPeoplePage()
             Notification({
@@ -669,7 +673,7 @@ export default {
       this.showDeleteTip = false
 
       var peopleIds = []
-      this.selectedPeoples.forEach(item => {
+      this.selectedPeoples.forEach((item) => {
         peopleIds.push(item.id)
       })
       const param = { ids: peopleIds }
@@ -678,7 +682,7 @@ export default {
         .post(backApi.deletePeople, param, {
           headers: { 'Content-Type': 'application/json;charset=UTF-8' }
         })
-        .then(res => {
+        .then((res) => {
           if (res && res.data && res.data.data) {
             _this.getPeoplePage()
             Notification({
@@ -695,6 +699,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.custom-tree-node {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .title {
   height: 54px;
   font-size: 16px;
