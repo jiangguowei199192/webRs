@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-17 15:09:12
+ * @LastEditTime: 2021-04-17 15:29:07
 -->
 <template>
   <div>
@@ -71,7 +71,6 @@ export default {
       car_status: null,
       boat_status: null,
       checkDevice: '',
-      params: {},
       deviceConfigList: [],
       queryStatusList: []
     }
@@ -114,7 +113,7 @@ export default {
         this.people_status = this.car_status = this.boat_status = 0
       }
 
-      this.params = {
+      var params = {
         algorithmType: handelType,
         deviceCode: this.checkDevice.deviceCode,
         status: `${handelType === 0 ? this.people_status : ''}${
@@ -125,7 +124,7 @@ export default {
       }
       // console.log(this.params)
       this.$axios
-        .post(settingApi.addDeviceConfig, this.params)
+        .post(settingApi.addDeviceConfig, params)
         .then(res => {
           // console.log('新增设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {

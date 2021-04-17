@@ -40,6 +40,7 @@
               maxlength="30"
               show-word-limit
               class="word"
+              @blur="checkRemark(remark)"
             ></el-input>
             <div class="btns">
               <div @click="remark = ''">取消</div>
@@ -176,6 +177,7 @@ import { structureApi } from '@/api/structureData.js'
 import LivePlayer from '@liveqing/liveplayer'
 import timeBar from './components/timeBar'
 import globalApi from '../../utils/globalApi'
+
 export default {
   props: {
     dialogVisible: {
@@ -310,7 +312,7 @@ export default {
       }
       this.$axios
         .post(structureApi.updateAlarm, params)
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             this.$message({
               message: '告警核实结果状态修改成功 !',
@@ -319,9 +321,12 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
+    },
+    checkRemark (val) {
+      if (!val) this.$message.error('请输入备注 !')
     },
     // 添加备注
     addRemark () {
@@ -329,24 +334,26 @@ export default {
         alarmId: this.info.id,
         authorId: JSON.parse(localStorage.getItem('userDetail')).customerId,
         authName: JSON.parse(localStorage.getItem('userDetail')).username,
-        remark: this.remark
+        remark: this.remark ? this.remark : this.checkRemark()
       }
-      this.$axios
-        .post(structureApi.insertAlarmRemark, params)
-        .then((res) => {
-          if (res && res.data && res.data.code === 0) {
-            this.$message({
-              message: '添加备注成功 !',
-              type: 'success',
-              duration: 3 * 1000
-            })
-            this.getRemarkList()
-            this.remark = ''
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      if (params.remark) {
+        this.$axios
+          .post(structureApi.insertAlarmRemark, params)
+          .then(res => {
+            if (res && res.data && res.data.code === 0) {
+              this.$message({
+                message: '添加备注成功 !',
+                type: 'success',
+                duration: 3 * 1000
+              })
+              this.getRemarkList()
+              this.remark = ''
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
     },
     getRemarkList () {
       const params = {
@@ -356,7 +363,7 @@ export default {
       }
       this.$axios
         .post(structureApi.queryAlarmRemarkList, params)
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.code === 0) {
             const data = res.data.data
             this.remarkList = data.data
@@ -364,7 +371,7 @@ export default {
             this.remarkList = []
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
         })
     },
