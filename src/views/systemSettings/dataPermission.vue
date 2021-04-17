@@ -312,7 +312,11 @@ export default {
         })
       } else if (this.selectedResources.length === 1) {
         // 获取授权详情进行回显
-        const param = { id: this.selectedResources[0].id }
+        const param = {
+          id: !this.selectedType.isRes
+            ? this.selectedResources[0].deviceCode
+            : this.selectedResources[0].id
+        }
         const _this = this
         this.$axios
           .post(backApi.authDetail, param, {
