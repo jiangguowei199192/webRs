@@ -39,17 +39,17 @@
               v-show="item.rect.show"
               :style="
                 'left:' +
-                item.rect.left +
-                '%;' +
-                'top:' +
-                item.rect.top +
-                '%;' +
-                'width:' +
-                item.rect.width +
-                '%;' +
-                'height:' +
-                item.rect.height +
-                '%;'
+                  item.rect.left +
+                  '%;' +
+                  'top:' +
+                  item.rect.top +
+                  '%;' +
+                  'width:' +
+                  item.rect.width +
+                  '%;' +
+                  'height:' +
+                  item.rect.height +
+                  '%;'
               "
             ></span>
           </div>
@@ -131,7 +131,6 @@ export default {
     var end = new Date()
     this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
     this.dateRange[1] = end.getTime()
-
     this.getList()
   },
   methods: {
@@ -162,14 +161,14 @@ export default {
         currentPage: this.currentPage,
         pageSize: this.pageSize,
         timeType: 0,
-        startTime: this.dateRange[0],
-        endTime: this.dateRange[1]
+        startTime: this.dateRange ? this.dateRange[0] : '',
+        endTime: this.dateRange ? this.dateRange[1] : ''
       }
       this.$axios
         .post(structureApi.dataList, param)
-        .then((res) => {
+        .then(res => {
           if (res.data.code === 0) {
-            res.data.data.captures.forEach((item) => {
+            res.data.data.captures.forEach(item => {
               item.captureTime = timeFormat(item.captureTime)
               item.rect = {
                 width: 0,
@@ -185,12 +184,16 @@ export default {
               // 计算识别框的位置和尺寸
               // const bWidth = this.$refs.bigImage[0].clientWidth
               // const bHeigth = this.$refs.bigImage[0].clientHeight
-              this.list.forEach((item) => {
+              this.list.forEach(item => {
                 if (!item.pedestrian) {
                   return
                 }
-                item.camera.longitude = parseFloat(item.camera.longitude).toFixed(7)
-                item.camera.latitude = parseFloat(item.camera.latitude).toFixed(7)
+                item.camera.longitude = parseFloat(
+                  item.camera.longitude
+                ).toFixed(7)
+                item.camera.latitude = parseFloat(item.camera.latitude).toFixed(
+                  7
+                )
                 const w = item.pedestrian.position.width
                 const h = item.pedestrian.position.height
                 const left = item.pedestrian.position.start.x
@@ -211,7 +214,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('structureApi.dataList           a Err : ' + err)
         })
     },
@@ -222,8 +225,8 @@ export default {
 
     // 按日期搜索列表
     dateSearchChange () {
-      this.startTime = this.dateRange[0]
-      this.endTime = this.dateRange[1]
+      // this.startTime = this.dateRange[0]
+      // this.endTime = this.dateRange[1]
       this.currentPage = 1
       this.getList()
     },

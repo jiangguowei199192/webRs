@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-17 11:13:50
+ * @LastEditTime: 2021-04-17 13:48:37
 -->
 <template>
   <div class="container">
@@ -244,6 +244,7 @@ export default {
 
     // 默认日期范围(最近一周)
     setDateRange () {
+      if (!this.dateRange) this.dateRange = []
       var start = new Date()
       var end = new Date()
       this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
@@ -254,8 +255,12 @@ export default {
 
     getList () {
       var params = {
-        startTime: this.dateRange ? timeFormat3(this.dateRange[0]) : '',
-        endTime: this.dateRange ? timeFormat3(this.dateRange[1]) : '',
+        startTime: this.dateRange
+          ? timeFormat3(this.dateRange[0])
+          : timeFormat3(new Date()),
+        endTime: this.dateRange
+          ? timeFormat3(this.dateRange[1])
+          : timeFormat3(new Date()),
         currentPage: this.currentPage,
         sizeOfPage: this.pageSize,
         alarmStatus: this.query.alarmStatus,
