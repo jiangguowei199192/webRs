@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-03-30 11:45:51
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-14 10:06:21
+ * @LastEditTime: 2021-04-17 11:13:50
 -->
 <template>
   <div class="container">
@@ -213,12 +213,7 @@ export default {
   },
 
   created () {
-    // 默认的日期范围，最近一周
-    var start = new Date()
-    var end = new Date()
-    this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
-    this.dateRange[1] = end.getTime()
-    this.getList()
+    this.setDateRange()
   },
 
   mounted () {
@@ -246,6 +241,17 @@ export default {
         return url
       } else return srcUrl
     },
+
+    // 默认日期范围(最近一周)
+    setDateRange () {
+      var start = new Date()
+      var end = new Date()
+      this.dateRange[0] = start.getTime() - 1000 * 60 * 60 * 24 * 7
+      this.dateRange[1] = end.getTime()
+      this.$set(this.dateRange, [this.dateRange[0], this.dateRange[1]])
+      this.getList()
+    },
+
     getList () {
       var params = {
         startTime: timeFormat3(this.dateRange[0]),
@@ -318,7 +324,7 @@ export default {
       this.currentPage = 1
       this.query.alarmStatus = this.query.alarmLevel = this.query.alarmType =
         ''
-      this.getList()
+      this.setDateRange()
     },
 
     currentPageChange (curPage) {

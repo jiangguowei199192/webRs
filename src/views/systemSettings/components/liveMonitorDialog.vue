@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-16 15:01:50
+ * @LastEditTime: 2021-04-17 11:14:30
 -->
 <template>
   <div>
@@ -145,7 +145,6 @@ export default {
         .then(res => {
           console.log('新增设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {
-            this.$notify.closeAll()
             this.deviceConfigList = res.data.data
           }
         })
@@ -161,7 +160,9 @@ export default {
         message: '操作成功!',
         duration: 3 * 1000
       })
-      this.updateIsShow()
+      setTimeout(() => {
+        this.updateIsShow()
+      }, 300)
     },
 
     queryDeviceConfig () {

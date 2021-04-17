@@ -27,13 +27,9 @@ export default {
             label: '设备类型',
             value: 'deviceTypeCode',
             formatter: item => {
-              if (item.deviceTypeCode === 'GDJK') {
-                return '高点监控'
-              } else if (item.deviceTypeCode === 'WRJ') {
-                return '无人机'
-              } else {
-                return item.deviceTypeCode
-              }
+              if (item.deviceTypeCode === 'GDJK') return '高点监控'
+              else if (item.deviceTypeCode === 'WRJ') return '无人机'
+              else return item.deviceTypeCode
             }
           },
           { label: '设备名称', value: 'deviceName' },
@@ -50,7 +46,16 @@ export default {
             width: '244'
           },
           { label: '所属单位', value: 'deviceDeptName' },
-          { label: '在线状态', value: 'onlineStatus' },
+          {
+            label: '在线状态',
+            value: 'onlineStatus',
+            formatter: item => {
+              if (item.onlineStatus === 'online') return '在线'
+              else if (item.onlineStatus === 'offline') return '离线'
+              else if (item.onlineStatus === 'empty') return '空'
+              else return item.onlineStatus
+            }
+          },
           { label: '启用', value: 'deviceStatus', type: 'switch' }
         ],
         handle: {
