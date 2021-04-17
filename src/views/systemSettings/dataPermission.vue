@@ -87,7 +87,10 @@
       :depts="defaultAuthDepts"
       :radio="defauleAuthRadio"
       :users="defaultAuthUsers"
-      @close="showDataPermission = false"
+      @close="
+        showDataPermission = false;
+        defauleAuthRadio = '';
+      "
       @cancelClick="showDataPermission = false"
       @confirmClick="dataAuthConfirmClick"
     ></DataPermissionDialog>
