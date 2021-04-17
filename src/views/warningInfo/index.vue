@@ -257,10 +257,10 @@ export default {
       var params = {
         startTime: this.dateRange
           ? timeFormat3(this.dateRange[0])
-          : '',
+          : undefined,
         endTime: this.dateRange
           ? timeFormat3(this.dateRange[1])
-          : '',
+          : undefined,
         currentPage: this.currentPage,
         sizeOfPage: this.pageSize,
         alarmStatus: this.query.alarmStatus,
