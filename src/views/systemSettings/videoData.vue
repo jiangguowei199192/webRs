@@ -52,7 +52,7 @@ export default {
             formatter: item => {
               if (item.onlineStatus === 'online') return '在线'
               else if (item.onlineStatus === 'offline') return '离线'
-              else if (item.onlineStatus === 'empty') return '空'
+              else if (item.onlineStatus === 'empty') return '离线'
               else return item.onlineStatus
             }
           },

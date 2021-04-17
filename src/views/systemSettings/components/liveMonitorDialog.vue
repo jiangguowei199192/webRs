@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-17 11:14:30
+ * @LastEditTime: 2021-04-17 15:09:12
 -->
 <template>
   <div>
@@ -44,8 +44,8 @@
         </div>
       </div>
       <div class="handelBtns">
-        <span @click.stop="updateIsShow">取消</span>
-        <span @click.stop="changeTypeSubmit">确定</span>
+        <span @click.stop="updateIsShow">关闭</span>
+        <!-- <span @click.stop="changeTypeSubmit">确定</span> -->
       </div>
     </el-dialog>
   </div>
@@ -114,37 +114,27 @@ export default {
         this.people_status = this.car_status = this.boat_status = 0
       }
 
-      if (handelType === 0) {
-        this.params = {
-          algorithmType: handelType,
-          deviceCode: this.checkDevice.deviceCode,
-          status: this.people_status,
-          streamType: null,
-          type: Number(1)
-        }
-      } else if (handelType === 1) {
-        this.params = {
-          algorithmType: handelType,
-          deviceCode: this.checkDevice.deviceCode,
-          status: this.boat_status,
-          streamType: null,
-          type: Number(1)
-        }
-      } else if (handelType === 2) {
-        this.params = {
-          algorithmType: handelType,
-          deviceCode: this.checkDevice.deviceCode,
-          status: this.car_status,
-          streamType: null,
-          type: Number(1)
-        }
+      this.params = {
+        algorithmType: handelType,
+        deviceCode: this.checkDevice.deviceCode,
+        status: `${handelType === 0 ? this.people_status : ''}${
+          handelType === 1 ? this.boat_status : ''
+        }${handelType === 2 ? this.car_status : ''}`,
+        streamType: '',
+        type: Number(1)
       }
       // console.log(this.params)
       this.$axios
         .post(settingApi.addDeviceConfig, this.params)
         .then(res => {
-          console.log('新增设备事件/告警接口返回:', res)
+          // console.log('新增设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {
+            this.$notify.closeAll()
+            this.$notify.success({
+              title: '提示',
+              message: '操作成功!',
+              duration: 3 * 1000
+            })
             this.deviceConfigList = res.data.data
           }
         })
@@ -153,22 +143,10 @@ export default {
         })
     },
 
-    changeTypeSubmit () {
-      this.$notify.closeAll()
-      this.$notify.success({
-        title: '提示',
-        message: '操作成功!',
-        duration: 3 * 1000
-      })
-      setTimeout(() => {
-        this.updateIsShow()
-      }, 300)
-    },
-
     queryDeviceConfig () {
       var params = {
         accessType: this.checkDevice.accessType,
-        algorithmType: null,
+        algorithmType: '',
         channelInfo: this.checkDevice.channelInfo,
         deviceCode: this.checkDevice.deviceCode,
         deviceTypeCode: this.checkDevice.deviceTypeCode,
@@ -177,7 +155,7 @@ export default {
       this.$axios
         .post(settingApi.queryDeviceConfig, params)
         .then(res => {
-          console.log('查询设备事件/告警接口返回:', res)
+          // console.log('查询设备事件/告警接口返回:', res)
           if (res && res.data && res.data.code === 0) {
             this.queryStatusList = res.data.data
             this.queryStatusList.forEach(t => {
@@ -187,8 +165,8 @@ export default {
                 t.status = true
               }
               if (
-                t.deviceCode !== null &&
-                t.algorithmType !== null &&
+                t.deviceCode &&
+                t.algorithmType &&
                 t.deviceCode === this.checkDevice.deviceCode
               ) {
                 switch (t.algorithmType) {
@@ -274,7 +252,7 @@ export default {
         color: #1eb0fc;
         cursor: pointer;
       }
-      span:nth-child(2) {
+      span:last-child {
         margin-left: 20px;
         background: #1eb0fc;
         color: #fff;
