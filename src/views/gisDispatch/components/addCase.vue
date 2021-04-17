@@ -91,11 +91,19 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="举报电话 :" class="time" prop="reportTel">
-              <el-input
-                v-model="caseForm.reportTel"
-                :placeholder="placeholder"
-                maxlength="11"
-              ></el-input>
+              <el-tooltip
+                effect="dark"
+                :disabled="!stringIsNullOrEmpty(caseForm.reportTel)"
+                content="示例：135XXXXXXXX或027（区号）12345678"
+                placement="top"
+                :open-delay="500"
+              >
+                <el-input
+                  v-model.trim="caseForm.reportTel"
+                  placeholder="示例：135XXXXXXXX或027（区号）12345678"
+                  maxlength="11"
+                ></el-input>
+              </el-tooltip>
             </el-form-item>
             <el-form-item label="举报地址 :" prop="reportAddr">
               <el-input
@@ -192,6 +200,7 @@ import EllipsisTooltip from '../../../components/ellipsisTooltip'
 import assignMixin from '../mixins/assignMixin'
 import { settingApi } from '@/api/setting'
 import { formatDate } from '@/utils/date'
+import { stringIsNullOrEmpty } from '@/utils/validate'
 export default {
   props: {
     isShow: {
@@ -277,6 +286,7 @@ export default {
   },
   mounted () {},
   methods: {
+    stringIsNullOrEmpty,
     getMembersDone () {
       this.peoples.forEach((c) => {
         this.selectPeople(c)
@@ -371,6 +381,11 @@ export default {
      * 新增案件
      */
     submit () {
+      this.caseForm.caseName = this.caseForm.caseName.trim()
+      this.caseForm.caseName = this.caseForm.reportMan.trim()
+      this.caseForm.reportAddr = this.caseForm.reportAddr.trim()
+      this.caseForm.caseDesc = this.caseForm.caseDesc.trim()
+      this.caseForm.receivingAlarmMan = this.caseForm.receivingAlarmMan.trim()
       let v = false
       this.$refs.caseForm.validate((valid) => {
         v = valid

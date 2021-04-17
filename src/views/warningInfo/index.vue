@@ -254,8 +254,8 @@ export default {
 
     getList () {
       var params = {
-        startTime: timeFormat3(this.dateRange[0]),
-        endTime: timeFormat3(this.dateRange[1]),
+        startTime: this.dateRange ? timeFormat3(this.dateRange[0]) : '',
+        endTime: this.dateRange ? timeFormat3(this.dateRange[1]) : '',
         currentPage: this.currentPage,
         sizeOfPage: this.pageSize,
         alarmStatus: this.query.alarmStatus,
@@ -309,8 +309,8 @@ export default {
     },
 
     dateSearchChange () {
-      this.startTime = this.dateRange[0]
-      this.endTime = this.dateRange[1]
+      // this.startTime = this.dateRange[0]
+      // this.endTime = this.dateRange[1]
       this.currentPage = 1
       this.getList()
     },
