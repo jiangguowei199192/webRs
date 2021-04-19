@@ -201,9 +201,9 @@ export default {
       remarkList: [],
       tabIndex: 0,
       url: '',
-      // videoUrl: '',
-      videoUrl:
-        'http://119.3.108.251/videos/6C01728PA4A9A101/2021_04_13_19_45_24_955-boat-intrusion.mp4',
+      videoUrl: '',
+      // videoUrl:
+      //   'http://119.3.108.251/videos/6C01728PA4A9A101/2021_04_13_19_45_24_955-boat-intrusion.mp4',
       imgDialogVisible: false,
       clickImgSrc: '',
       isPlay: false,
@@ -218,16 +218,19 @@ export default {
 
   methods: {
     // 获取视频开始时间
-    getStartTime () {
-      if (!this.videoUrl) return
-      const s = this.videoUrl.lastIndexOf('/')
-      const str = this.videoUrl.slice(s + 1)
+    getStartTime (url) {
+      if (!url) {
+        this.videoUrl = ''
+        return
+      }
+      const s = url.lastIndexOf('/')
+      const str = url.slice(s + 1)
       const time1 = str.slice(0, 10)
       const time2 = str.slice(11, 19)
       this.videoStart =
         time1.replace(/_/g, '-') + ' ' + time2.replace(/_/g, ':')
 
-      this.videoUrl = this.replaceUrl(this.videoUrl)
+      this.videoUrl = this.replaceUrl(url)
     },
     // 替换算法的图片和视频地址
     replaceUrl (srcUrl) {
@@ -397,8 +400,7 @@ export default {
           this.duration = 0
           this.curTime = 0
           this.timeInit = false
-          this.getStartTime()
-          this.videoUrl = this.info.videoUrl
+          this.getStartTime(this.info.videoUrl)
           if (!this.videoInit) {
             this.play()
           }
