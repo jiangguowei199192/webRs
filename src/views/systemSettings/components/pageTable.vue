@@ -114,7 +114,19 @@
               <!-- 操作按钮 -->
               <span
                 class="handle-btn"
-                :key="index"
+                v-show="item.event === 'modify' || item.event === 'readonly'"
+                :key="index + '_m'"
+                @click="handleClick(item.event, scope.row)"
+                >{{ item.label }}</span
+              >
+              <span
+                class="handle-btn"
+                v-show="
+                  scope.row.deviceTypeCode === 'GDJK' &&
+                    scope.row.onlineStatus === 'online' &&
+                    (item.event === 'monitor' || item.event === 'config')
+                "
+                :key="index + '_n'"
                 @click="handleClick(item.event, scope.row)"
                 >{{ item.label }}</span
               >
@@ -259,7 +271,7 @@ export default {
         return Object.assign(item, { t_index: index })
       })
       // console.log(this.tagBtns)
-    }, 300)
+    }, 200)
   },
 
   methods: {
@@ -302,30 +314,7 @@ export default {
       } else return ''
 
       this.tagBtns.forEach(t => {
-        // 无人机/下线/空设备
-        if (
-          (data.row.deviceTypeCode === 'WRJ' && t.t_index === data.rowIndex) ||
-          (data.row.deviceTypeCode === 'GDJK' &&
-            (data.row.onlineStatus === 'offline' ||
-              data.row.onlineStatus === 'empty') &&
-            t.t_index === data.rowIndex)
-        ) {
-          t.map(r => {
-            r.style.display = 'none'
-            return r.style
-          })
-        }
-        if (
-          data.row.deviceTypeCode === 'GDJK' &&
-          data.row.onlineStatus === 'online' &&
-          t.t_index === data.rowIndex
-        ) {
-          t.map(r => {
-            r.style.display = ''
-            return r.style
-          })
-        }
-        // 高点在线设备
+        // 切换启用状态
         if (
           data.row.deviceTypeCode === 'GDJK' &&
           data.row.deviceStatus === false &&

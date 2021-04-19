@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-19 14:05:02
+ * @LastEditTime: 2021-04-19 16:39:24
 -->
 <template>
   <div>
@@ -85,7 +85,7 @@ export default {
         })
         setTimeout(() => {
           this.queryDeviceConfig()
-        }, 300)
+        }, 100)
       }
     }
   },
