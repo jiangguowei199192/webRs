@@ -3,8 +3,7 @@
     :visible="isShow"
     :close-on-click-modal="false"
     @close="$emit('close')"
-    width="1080px"
-    class="add-dept-dlg"
+    class="add-dept-dlg browserScroll"
   >
     <div class="add-dept-div">
       <gMap
@@ -17,7 +16,7 @@
 
       <div class="add-dept-header">
         <div class="header-icon"></div>
-        <div class="header-text">新增机构</div>
+        <div class="header-text">查看机构</div>
       </div>
 
       <!-- <div class="toolBox">
@@ -51,80 +50,79 @@
               ref="addDeptRef"
               :model="addDeptForm"
               :inline="true"
-              label-width="80px"
               class="add-dept-form"
             >
-              <el-form-item label="机构名称" prop="deptName">
+              <el-form-item label="机构名称 :" prop="deptName">
                 <el-input
                   v-model="deptInfo.deptName"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="机构地址" prop="address">
+              <el-form-item label="机构地址 :" prop="address">
                 <el-input
                   v-model="deptInfo.deptAddress"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="上级机构" prop="fatherDept">
+              <el-form-item label="上级机构 :" prop="fatherDept">
                 <el-input
                   v-model="deptInfo.parentDeptCodeName"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="机构电话">
+              <el-form-item label="机构电话 :">
                 <el-input
                   v-model="deptInfo.deptTel"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="机构编码">
+              <el-form-item label="机构编码 :">
                 <el-input
                   v-model="deptInfo.deptCode"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="机构简称">
+              <el-form-item label="机构简称 :">
                 <el-input
                   v-model="deptInfo.deptShortName"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="经度">
+              <el-form-item label="经度 :">
                 <el-input
                   v-model="deptInfo.deptLongitude"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="纬度">
+              <el-form-item label="纬度 :">
                 <el-input
                   v-model="deptInfo.deptLatitude"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="机构状态">
+              <el-form-item label="机构状态 :">
                 <el-input
                   v-model="deptInfo.deptStatus"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="排序" prop="num">
+              <el-form-item label="排序 :" prop="num">
                 <el-input
                   v-model="deptInfo.orderNum"
                   placeholder=""
                   :disabled="true"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="图标">
+              <el-form-item label="图标 :">
                 <div class="icon-tool">
                   <!-- <el-avatar :size="30" :src="deptIconUrl" @error="avatarError">
                     <img
@@ -134,7 +132,7 @@
                   <img :src="deptIconUrl || defIcon" class="icon" />
                 </div>
               </el-form-item>
-              <el-form-item label="备注">
+              <el-form-item label="备注 :">
                 <el-input
                   v-model="deptInfo.deptRemark"
                   placeholder=""
@@ -240,7 +238,7 @@ export default {
 
     clickToolItem (item) {
       if (item.name === 'point') {
-        this.toolItems.forEach((t) => {
+        this.toolItems.forEach(t => {
           if (item !== t) {
             t.isSelect = false
           }
@@ -305,6 +303,7 @@ export default {
 .add-dept-dlg.el-dialog__wrapper {
   background-color: rgba($color: #000, $alpha: 0.5);
   /deep/.el-dialog {
+    width: 1080px;
     background-color: transparent;
     overflow: hidden;
     .el-dialog__header {
@@ -365,9 +364,10 @@ export default {
       left: 1px;
       .header-icon {
         display: inline-block;
-        width: 22px;
+        width: 19px;
         height: 16px;
         background-image: url("../../../assets/images/fire_title.png");
+        background-size: 100% 100%;
         margin-top: 15px;
         margin-left: 18px;
       }
@@ -391,10 +391,11 @@ export default {
     }
     .add-dept-base {
       position: absolute;
-      width: 496px;
+      width: 522px;
       height: 449px;
       top: 97px;
       right: 0px;
+      background-color: rgba(0, 65, 87, 0.95);
       .fold-tool {
         float: left;
         width: 14px;
@@ -404,26 +405,25 @@ export default {
           width: 14px;
           height: 61px;
           top: 50%;
+          left: -13px;
           margin-top: -30px;
           background-image: url("../../../assets/images/backgroundManagement/fold.png");
+          background-size: 100% 100%;
           cursor: pointer;
         }
       }
       .add-dept-content {
-        float: right;
-        width: 456px;
-        height: 447px;
-        border: 1px solid #1eb0fc;
-        background-color: rgba(0, 65, 87, 0.95);
-        padding: 0 12px;
+        overflow-y: auto;
+        height: 100%;
         .content-header {
           height: 33px;
           border-bottom: 1px solid #1eb0fc;
           .icon {
             display: inline-block;
-            width: 22px;
+            width: 19px;
             height: 16px;
             background-image: url("../../../assets/images/fire_title.png");
+            background-size: 100% 100%;
             margin-top: 10px;
           }
           .text {
@@ -441,18 +441,18 @@ export default {
             background-color: rgba($color: #09546d, $alpha: 0.3);
             border-color: #1eb0fc;
             border-radius: 0;
-            width: 138px;
+            width: 142px;
             height: 24px;
             color: #fff;
             font-size: 12px;
           }
           .el-form-item {
             margin-top: -20px;
-            margin-right: 0px;
           }
           .el-form-item__label {
             color: #fff;
             font-size: 12px;
+            width: 100px;
           }
           .el-form-item__error {
             margin-top: -10px;
@@ -461,7 +461,7 @@ export default {
             background-color: rgba($color: #09546d, $alpha: 0.3);
             border-color: #1eb0fc;
             border-radius: 0;
-            width: 365px;
+            width: 390px;
             height: 78px;
             color: #fff;
             font-size: 12px;
@@ -476,6 +476,7 @@ export default {
             display: inline-block;
             height: 30px;
             vertical-align: middle;
+            margin: 8px 0 10px 0;
             .icon {
               width: 30px;
               height: 30px;
