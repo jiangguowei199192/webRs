@@ -113,20 +113,24 @@
             <template v-for="(item, index) in handle.btList">
               <!-- 操作按钮 -->
               <span
-                class="handle-btn"
+                class="handle_btn"
                 v-show="item.event === 'modify' || item.event === 'readonly'"
                 :key="index + '_m'"
                 @click="handleClick(item.event, scope.row)"
                 >{{ item.label }}</span
               >
               <span
-                class="handle-btn"
+                class="handle_btn"
                 v-show="
                   scope.row.deviceTypeCode === 'GDJK' &&
                     scope.row.onlineStatus === 'online' &&
                     (item.event === 'monitor' || item.event === 'config')
                 "
                 :key="index + '_n'"
+                :class="{
+                  handle_btn: scope.row.deviceStatus === true,
+                  dis_handle_btn: scope.row.deviceStatus === false
+                }"
                 @click="handleClick(item.event, scope.row)"
                 >{{ item.label }}</span
               >
@@ -240,9 +244,7 @@ export default {
         }
       },
       serverUrl: globalApi.headImg,
-      picList: '',
-      tagBtns: [],
-      selectDevice: ''
+      picList: ''
     }
   },
   watch: {
@@ -255,24 +257,7 @@ export default {
     }
   },
 
-  mounted () {
-    setTimeout(() => {
-      var btns = document.querySelectorAll('.handle-btn')
-      var result = []
-      btns.forEach(t => {
-        if (t.innerText === '实时检测' || t.innerText === '事件配置') {
-          result.push(t)
-        }
-      })
-      for (let i = 0; i < result.length; i += 2) {
-        this.tagBtns.push(result.slice(i, i + 2))
-      }
-      this.tagBtns.map((item, index) => {
-        return Object.assign(item, { t_index: index })
-      })
-      // console.log(this.tagBtns)
-    }, 200)
-  },
+  mounted () {},
 
   methods: {
     /**
@@ -312,34 +297,6 @@ export default {
       } else if (data.column.label === '操作') {
         // console.log("操作");
       } else return ''
-
-      this.tagBtns.forEach(t => {
-        // 切换启用状态
-        if (
-          data.row.deviceTypeCode === 'GDJK' &&
-          data.row.deviceStatus === false &&
-          t.t_index === data.rowIndex
-        ) {
-          t.map(r => {
-            r.style.background = '#ff0000'
-            r.style.opacity = '0.75'
-            r.style.pointerEvents = 'none'
-            return r.style
-          })
-        }
-        if (
-          data.row.deviceTypeCode === 'GDJK' &&
-          data.row.deviceStatus === true &&
-          t.t_index === data.rowIndex
-        ) {
-          t.map(r => {
-            r.style.background = ''
-            r.style.opacity = ''
-            r.style.pointerEvents = ''
-            return r.style
-          })
-        }
-      })
     },
     /**
      *  清空选中
@@ -459,7 +416,7 @@ export default {
 <style lang="scss" scoped>
 .tableBox {
   .handleBox {
-    .handle-btn {
+    .handle_btn {
       display: inline-block;
       // width: 40px;
       padding: 0 5px;
@@ -470,8 +427,13 @@ export default {
       color: #fefefe;
       line-height: 26px;
     }
-    .handle-btn:not(:last-child) {
+    .handle_btn:not(:last-child) {
       margin-right: 15px;
+    }
+    .dis_handle_btn {
+      background: #ff0000;
+      opacity: 0.75;
+      pointer-events: none;
     }
   }
   .picBox {
