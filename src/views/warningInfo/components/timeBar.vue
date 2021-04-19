@@ -2,7 +2,7 @@
   <div class="control">
     <div class="numContainer">
       <template v-for="(item, index) in points">
-        <span
+        <!-- <span
           v-if="index % 2 != 0"
           :key="index"
           class="point"
@@ -15,7 +15,13 @@
           class="num"
           ref="num"
           :style="'left:' + item.num + '%;'"
-          >{{ formatTime(index) }}</span
+          >{{ formatTime(index) }}</span -->
+        <span
+          :key="index"
+          class="num"
+          ref="num"
+          :style="'left:' + item.num + '%;'"
+          >{{ item.time }}</span
         >
       </template>
     </div>
@@ -27,7 +33,7 @@
             'width:' +
             (duration * secondWidth * 100.0) / barWidth +
             '%;' +
-            'left:50%'
+            'left:0%'
           "
         ></span>
         <div class="pointer" ref="pointer">
@@ -76,9 +82,12 @@ export default {
     }
   },
   mounted () {
+    // this.points = [
+    //   { point: 0, num: 0 },
+    //   { point: 0, num: 0 }
+    // ]
     this.points = [
-      { point: 0, num: 0 },
-      { point: 0, num: 0 }
+      { num: 0, time: formatDate(new Date(this.startTime), 'HH:mm:ss') }
     ]
     window.onresize = () => {
       this.calculateStep()
@@ -97,13 +106,13 @@ export default {
 
   methods: {
     setPointerPosition (seconds) {
-      this.$refs.pointer.style.left =
-        (((seconds + 40) * this.secondWidth -
-          this.pointerW +
-          this.pointerIconW) *
-          100.0) /
-          this.barWidth +
-        '%'
+      const max = this.barWidth - this.pointerW + this.pointerIconW
+      const left =
+        seconds >= this.duration
+          ? max
+          : seconds * this.secondWidth - this.pointerW + this.pointerIconW
+
+      this.$refs.pointer.style.left = (left * 100.0) / this.barWidth + '%'
     },
     /**
      * 初始化
@@ -122,21 +131,34 @@ export default {
       this.pointerLeft = -this.pointerW + this.pointerIconW
       this.barWidth = this.$refs.bar.clientWidth
       this.pointerIconW = this.$refs.icon.clientWidth / 2
-      this.numWidth = this.$refs.num[0].clientWidth / 2
-      this.circleWidth = this.$refs.circle[0].clientWidth / 2
-      this.step = this.barWidth / 8.0
-      this.secondWidth = this.barWidth / 80
+      // this.numWidth = this.$refs.num[0].clientWidth / 2
+      this.numWidth = this.$refs.num[0].clientWidth
+      // this.circleWidth = this.$refs.circle[0].clientWidth / 2
+      // this.step = this.barWidth / 8.0
+      this.secondWidth = (this.barWidth * 1.0) / this.duration
       this.points = []
-      for (let i = 0; i < 9; i++) {
-        const left =
-          ((i * this.step - this.circleWidth) * 100.0) / this.barWidth
-        if (i === 0) {
-          this.numWidth = 0
-        } else if (i === 8) {
-          this.numWidth = this.$refs.num[0].clientWidth
-        } else this.numWidth = this.$refs.num[0].clientWidth / 2
-        const left2 = ((i * this.step - this.numWidth) * 100.0) / this.barWidth
-        const n = { point: left, num: left2 }
+      // for (let i = 0; i < 9; i++) {
+      //   const left =
+      //     ((i * this.step - this.circleWidth) * 100.0) / this.barWidth
+      //   if (i === 0) {
+      //     this.numWidth = 0
+      //   } else if (i === 8) {
+      //     this.numWidth = this.$refs.num[0].clientWidth
+      //   } else this.numWidth = this.$refs.num[0].clientWidth / 2
+      //   const left2 = ((i * this.step - this.numWidth) * 100.0) / this.barWidth
+      //   const n = { point: left, num: left2 }
+      //   this.points.push(n)
+      // }
+      for (let i = 0; i < 2; i++) {
+        let left2 = 0
+        let time = formatDate(new Date(this.startTime), 'HH:mm:ss')
+        if (i === 1) {
+          left2 = ((this.barWidth - this.numWidth) * 100.0) / this.barWidth
+          const span =
+            new Date(this.startTime).getTime() + this.duration * 1000
+          time = formatDate(new Date(span), 'HH:mm:ss')
+        }
+        const n = { num: left2, time: time }
         this.points.push(n)
       }
     },
@@ -203,7 +225,7 @@ export default {
     .segment {
       position: absolute;
       height: 100%;
-      background: #00D8FF;
+      background: #00d8ff;
       opacity: 0.65;
     }
   }
@@ -215,6 +237,7 @@ export default {
     height: 22px;
     justify-content: space-between;
     align-items: center;
+    min-width: 67px;
     :nth-child(1) {
       padding: 1px 3px;
       font-weight: bold;
