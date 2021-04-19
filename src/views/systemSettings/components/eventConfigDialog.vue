@@ -20,7 +20,11 @@
             <div class="tab-pane-detail" v-if="index==activeType">
               <div class="descript">
                 <span>事件状态：</span>
-                <el-switch v-model="value" active-color="#1EB0FC" inactive-color="#DCDFE6"></el-switch>
+                <el-switch
+                  v-model="curEventObj.status"
+                  active-color="#1EB0FC"
+                  inactive-color="#DCDFE6"
+                ></el-switch>
               </div>
               <div class="descript">
                 <span>检测区域：</span>
@@ -124,7 +128,7 @@
                 <div class="select">
                   <span>有效时间：</span>
                   <el-date-picker
-                    v-model="date"
+                    v-model="curEventObj.validTime"
                     type="datetime"
                     placeholder="选择日期时间"
                     value-format="yyyy-MM-dd HH:mm:ss"
@@ -133,9 +137,9 @@
 
                 <div class="select">
                   <span>事件等级：</span>
-                  <el-select v-model="alarmLevel" placeholder="请选择">
+                  <el-select v-model="curEventObj.eventLevel" placeholder="请选择">
                     <el-option
-                      v-for="item in alarmLevelData"
+                      v-for="item in eventLevelData"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
@@ -182,12 +186,16 @@ export default {
       caputrePic: require('../../../assets/images/Login/video-bg.jpg'),
       isVisibleSelected: true,
       isShowCapture: true,
-      curEventObj: {}, // 保存当前数据
+      curEventObj: {
+        status: false,
+        validTime: '',
+        eventLevel: ''
+      }, // 保存当前数据
       streamUrl: '',
       value: true,
       date: '',
       alarmLevel: '',
-      alarmLevelData: [
+      eventLevelData: [
         { value: 1, label: '红色预警' },
         { value: 2, label: '橙色预警' },
         { value: 3, label: '黄色预警' },
@@ -335,8 +343,48 @@ export default {
       return pointsArray
     },
     confirmAjax () {
-      console.log(this.transferToAlgorithmPix(this.areaArray))
-      console.log(this.date)
+      if (!this.curEventObj.eventLevel) {
+        return this.$notify({
+          title: '提示',
+          message: '请选择事件等级！',
+          type: 'warning'
+        })
+      }
+      const params = {
+        area: this.areaArray,
+        backImgUrl: '',
+        deviceCode: this.curData.deviceCode,
+        drawType: 1,
+        eventLevel: this.curEventObj.eventLevel,
+        status: this.curEventObj.status ? 1 : 0,
+        streamType: this.isVisibleSelected ? '0' : '1',
+        type: 2,
+        validtime: this.curEventObj.validTime
+      }
+      switch (Number(this.activeType)) {
+        case 0:
+          params.algorithmType = 4
+          break
+        case 1:
+          params.algorithmType = 3
+          break
+        case 2:
+          params.algorithmType = 6
+          break
+        case 3:
+          params.algorithmType = 5
+          break
+        default:
+          break
+      }
+      console.log(this.curEventObj)
+      this.$axios.post(settingApi.addDeviceConfig, params).then(res => {
+        if (res && res.data && res.data.code === 0) {
+          const data = res.data.data
+          this.curEventObj = data[0]
+          this.areaArray = data[0].area || []
+        }
+      })
     }
   },
   watch: {
