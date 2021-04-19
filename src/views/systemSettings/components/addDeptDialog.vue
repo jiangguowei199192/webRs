@@ -176,6 +176,7 @@
                   placeholder="请输入"
                   type="textarea"
                   resize="none"
+                  maxlength="500"
                 ></el-input>
               </el-form-item>
             </el-form>
@@ -204,6 +205,10 @@ export default {
           this.deptIconUrl = ''
           this.addDeptForm.icon = ''
         }
+      } else {
+        setTimeout(() => {
+          this.$refs.gduMap.map2D._map.updateSize()
+        }, 200)
       }
     },
     deptInfo (newD) {
