@@ -59,12 +59,12 @@
                         src="../../../assets/images/backgroundManagement/play.svg"
                         alt
                         title="播放"
-                        @click="showVideoOrCapture"
+                        @click.stop="showVideoOrCapture"
                       />
                       <img
                         src="../../../assets/images/backgroundManagement/capture.svg"
                         title="截取"
-                        @click="isShowCapture=true"
+                        @click.stop="isShowCapture=true"
                         alt
                       />
                       <template>
@@ -77,7 +77,7 @@
                         <img
                           src="../../../assets/images/backgroundManagement/visible.svg"
                           title="可见光"
-                          @click.stop="isVisibleSelected=!isVisibleSelected"
+                          @click.stop="isVisibleSelected=true"
                           alt
                           v-else
                         />
@@ -88,7 +88,7 @@
                           title="红外光"
                           alt
                           v-if="isVisibleSelected"
-                          @click.stop="isVisibleSelected = !isVisibleSelected"
+                          @click.stop="isVisibleSelected = false"
                         />
                         <img
                           src="../../../assets/images/backgroundManagement/infrared-selected.svg"
@@ -182,6 +182,8 @@ export default {
       caputrePic: require('../../../assets/images/Login/video-bg.jpg'),
       isVisibleSelected: true,
       isShowCapture: true,
+      curEventObj: {}, // 保存当前数据
+      streamUrl: '',
       value: true,
       date: '',
       alarmLevel: '',
@@ -234,7 +236,6 @@ export default {
     // 继续绘制
     goDraw () {
       console.log(this.$refs.mychild)
-
       this.$refs.mychild[0].startDraw()
     },
     clearAllDraw () {
@@ -244,7 +245,24 @@ export default {
     },
     showVideoOrCapture () {
       this.isShowCapture = false
-      this.streamUrl = 'ws://122.112.217.132:8888/live/6C01728PA4A9A760.flv'
+      const streamObj = this.getCurVideoObj()
+
+      this.streamUrl = `ws://${streamObj.ip}:${streamObj.wsPort}/${streamObj.app}/${streamObj.stream}.flv`
+      console.log('当前播放地址', this.streamUrl)
+    },
+    getCurVideoObj () {
+      console.log('可见光被选中', this.isVisibleSelected)
+      console.log('视频数据', this.curEventObj)
+      for (let i = 0; i < this.curEventObj.videoUrls.length; i++) {
+        if (
+          (this.isVisibleSelected &&
+            this.curEventObj.videoUrls[i].streamType === '0') ||
+          (!this.isVisibleSelected &&
+            this.curEventObj.videoUrls[i].streamType === '1')
+        ) {
+          return this.curEventObj.videoUrls[i]
+        }
+      }
     },
     // 更新isShow状态
     cancel () {
@@ -292,7 +310,11 @@ export default {
       }
 
       this.$axios.post(settingApi.queryDeviceConfig, params).then(res => {
-        console.log(res)
+        if (res && res.data && res.data.code === 0) {
+          const data = res.data.data
+          this.curEventObj = data[0]
+          this.areaArray = data[0].area || []
+        }
       })
     },
     transferToAlgorithmPix (pointsArray) {
@@ -320,7 +342,7 @@ export default {
   watch: {
     isShow (nv, ov) {
       if (this.isShow) {
-        this.getConfigInfo(nv)
+        this.getConfigInfo()
       }
     }
   }
