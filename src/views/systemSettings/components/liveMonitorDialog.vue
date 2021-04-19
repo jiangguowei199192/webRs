@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-17 15:29:07
+ * @LastEditTime: 2021-04-19 14:05:02
 -->
 <template>
   <div>
@@ -162,10 +162,12 @@ export default {
                 t.status = false
               } else if (t.status === 1) {
                 t.status = true
+              } else {
+                t.status = false
               }
               if (
-                t.deviceCode &&
-                t.algorithmType &&
+                t.deviceCode != null &&
+                t.algorithmType != null &&
                 t.deviceCode === this.checkDevice.deviceCode
               ) {
                 switch (t.algorithmType) {
@@ -173,12 +175,14 @@ export default {
                     this.peopleStatus = t.status
                     break
                   case 1:
-                    this.carStatus = t.status
-                    break
-                  case 2:
                     this.boatStatus = t.status
                     break
+                  case 2:
+                    this.carStatus = t.status
+                    break
                 }
+              } else {
+                this.peopleStatus = this.carStatus = this.boatStatus = false
               }
             })
           }
