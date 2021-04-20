@@ -139,7 +139,7 @@ export default {
         fieldList: [],
         handle: {
           label: '操作',
-          width: '130',
+          width: '140',
           btList: [
             {
               label: '修改',

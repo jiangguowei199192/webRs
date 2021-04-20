@@ -114,7 +114,11 @@
               <!-- 操作按钮 -->
               <span
                 class="handle_btn"
-                v-show="item.event === 'modify' || item.event === 'readonly'"
+                v-show="
+                  item.event === 'modify' ||
+                    item.event === 'readonly' ||
+                    item.event === 'look'
+                "
                 :key="index + '_m'"
                 @click="handleClick(item.event, scope.row)"
                 >{{ item.label }}</span

@@ -132,7 +132,7 @@ export default {
         ],
         handle: {
           label: '操作',
-          width: '130',
+          width: '140',
           btList: [
             { label: '修改', event: 'modify' },
             { label: '查看', event: 'readonly' }
