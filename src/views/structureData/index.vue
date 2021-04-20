@@ -161,8 +161,8 @@ export default {
         currentPage: this.currentPage,
         pageSize: this.pageSize,
         timeType: 0,
-        startTime: this.dateRange ? this.dateRange[0] : '',
-        endTime: this.dateRange ? this.dateRange[1] : ''
+        startTime: this.dateRange ? this.dateRange[0] : undefined,
+        endTime: this.dateRange ? this.dateRange[1] : undefined
       }
       this.$axios
         .post(structureApi.dataList, param)

@@ -554,6 +554,7 @@ export default {
           padding-top: 10px;
           padding-left: 67px;
           width: 448px;
+          min-width: 350px;
           box-sizing: border-box;
           text-align: center;
         }
