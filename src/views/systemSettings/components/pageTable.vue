@@ -71,15 +71,15 @@
                 detectBox: item.type == 'realDetect'
               }"
             >
-              <div v-show="scope.row[item.value].split(',').length < 2">
+              <div v-show="scope.row[item.value].split(',').length <= 2">
                 <EllipsisTooltip
                   class="tool-span"
-                  :contentText="scope.row[item.value]"
+                  :contentText="scope.row[item.value].split(',')[0]"
                 ></EllipsisTooltip>
               </div>
               <div
                 class="toolBox"
-                v-show="scope.row[item.value].split(',').length >= 2"
+                v-show="scope.row[item.value].split(',').length > 2"
               >
                 <EllipsisTooltip
                   class="tool-span"
