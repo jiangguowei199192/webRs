@@ -9,18 +9,8 @@
       <div slot="left">
         <div class="leftContainer">
           <div class="tab">
-            <div
-              :class="{ active: isOnline }"
-              @click.stop="changeOnlineOrAll(true)"
-            >
-              在线
-            </div>
-            <div
-              :class="{ active: !isOnline }"
-              @click.stop="changeOnlineOrAll(false)"
-            >
-              全部
-            </div>
+            <div :class="{ active: isOnline }" @click.stop="changeOnlineOrAll(true)">在线</div>
+            <div :class="{ active: !isOnline }" @click.stop="changeOnlineOrAll(false)">全部</div>
           </div>
           <!-- 默认展示已选部分 -->
           <template v-if="isOnline">
@@ -55,14 +45,15 @@
                     }"
                     @click.stop="playDeviceVideo(item, list, index1, index2)"
                     :title="list.label"
-                    >{{
-                      list.label && list.label.length > 3
-                        ? list.label.slice(0, 3) + ".."
-                        : list.label
-                        ? list.label
-                        : "-"
-                    }}</el-button
                   >
+                    {{
+                    list.label && list.label.length > 3
+                    ? list.label.slice(0, 3) + ".."
+                    : list.label
+                    ? list.label
+                    : "-"
+                    }}
+                  </el-button>
                 </div>
               </div>
             </div>
@@ -96,10 +87,7 @@
             </div>
             <div v-if="curNode">当前选中:{{ curNode.parentLabel }}</div>
           </div>
-          <div
-            class="videoList"
-            :class="{ videolistFullscreenStyle: dialogVisible }"
-          >
+          <div class="videoList" :class="{ videolistFullscreenStyle: dialogVisible }">
             <div
               v-for="(item, index) in curVideosArray"
               :key="index"
@@ -125,13 +113,8 @@
               <!-- <img
                 :src="showVideoPageSize==9?nineSelectedPalace:ninePalace"
                 @click.stop="changeVideosType(9)"
-              /> -->
-              <el-tooltip
-                popper-class="gTooltip"
-                content="4宫格"
-                placement="top"
-                :open-delay="500"
-              >
+              />-->
+              <el-tooltip popper-class="gTooltip" content="4宫格" placement="top" :open-delay="500">
                 <img
                   :src="
                     showVideoPageSize == 4 ? fourSelectedPalace : fourPalace
@@ -139,12 +122,7 @@
                   @click.stop="changeVideosType(4)"
                 />
               </el-tooltip>
-              <el-tooltip
-                popper-class="gTooltip"
-                content="1宫格"
-                placement="top"
-                :open-delay="500"
-              >
+              <el-tooltip popper-class="gTooltip" content="1宫格" placement="top" :open-delay="500">
                 <img
                   :src="showVideoPageSize == 1 ? oneSelectedPalace : onePalace"
                   @click.stop="changeVideosType(1)"
@@ -152,37 +130,14 @@
               </el-tooltip>
             </div>
             <div class="centerTool">
-              <el-tooltip
-                popper-class="gTooltip"
-                content="停止"
-                placement="top"
-                :open-delay="500"
-              >
+              <el-tooltip popper-class="gTooltip" content="停止" placement="top" :open-delay="500">
                 <img :src="stop" @click="stopPlayRecord" />
               </el-tooltip>
-              <el-tooltip
-                popper-class="gTooltip"
-                content="播放"
-                placement="top"
-                :open-delay="500"
-              >
-                <img
-                  :src="play"
-                  @click="playRecord"
-                  v-show="!curPlayer.isPlay"
-                />
+              <el-tooltip popper-class="gTooltip" content="播放" placement="top" :open-delay="500">
+                <img :src="play" @click="playRecord" v-show="!curPlayer.isPlay" />
               </el-tooltip>
-              <el-tooltip
-                popper-class="gTooltip"
-                content="暂停"
-                placement="top"
-                :open-delay="500"
-              >
-                <img
-                  :src="pause"
-                  @click="pauseRecord"
-                  v-show="curPlayer.isPlay"
-                />
+              <el-tooltip popper-class="gTooltip" content="暂停" placement="top" :open-delay="500">
+                <img :src="pause" @click="pauseRecord" v-show="curPlayer.isPlay" />
               </el-tooltip>
             </div>
             <div class="rightTool">
@@ -196,21 +151,11 @@
                   @next-click="next"
                 ></el-pagination>
               </div>-->
-              <el-tooltip
-                popper-class="gTooltip"
-                content="下载"
-                placement="top"
-                :open-delay="500"
-              >
+              <el-tooltip popper-class="gTooltip" content="下载" placement="top" :open-delay="500">
                 <img :src="downloadIcon" @click.stop="download" />
                 <!-- <div class="download" @click="download" /> -->
               </el-tooltip>
-              <el-tooltip
-                popper-class="gTooltip"
-                content="全屏"
-                placement="top"
-                :open-delay="500"
-              >
+              <el-tooltip popper-class="gTooltip" content="全屏" placement="top" :open-delay="500">
                 <img :src="fullScreen" @click.stop="showFullScreen" />
               </el-tooltip>
             </div>
@@ -245,12 +190,8 @@
           <VideoWall :videoInfo="item" :key="index"  v-if="item.streamUrl" :playbackFullScreen="true"></VideoWall>
         </div>
       </div>
-    </div> -->
-    <el-dialog
-      :visible.sync="downloadDlgVisible"
-      class="downloadDlg"
-      width="803px"
-    >
+    </div>-->
+    <el-dialog :visible.sync="downloadDlgVisible" class="downloadDlg" width="803px">
       <div class="downloadContainer webFsScroll">
         <div class="title">
           <span>视频列表</span>
@@ -276,17 +217,14 @@
           >
             <el-table-column label width="33" align="center" :resizable="false">
               <template slot-scope="scope">
-                <el-radio v-model="radio" :label="scope.$index">{{
+                <el-radio v-model="radio" :label="scope.$index">
+                  {{
                   ""
-                }}</el-radio>
+                  }}
+                </el-radio>
               </template>
             </el-table-column>
-            <el-table-column
-              label="序号"
-              type="index"
-              align="center"
-              min-width="7%"
-            ></el-table-column>
+            <el-table-column label="序号" type="index" align="center" min-width="7%"></el-table-column>
             <el-table-column
               label="文件名"
               prop="fileName"
@@ -587,14 +525,14 @@ export default {
       // 如果展示全部设备，则不处理
       if (!this.isOnline) return
       if (device.children && device.children.length > 0) {
-        device.children.forEach((item) => {
+        device.children.forEach(item => {
           // 如果当前播放对象，下线了
           if (this.curPlayer && this.curPlayer.id === item.id) {
             this.stopPlayRecord()
           } else {
             // 视频墙中视频对象，下线
             var video = this.totalVideosArray.find(
-              (v) => v !== '' && v.id === item.id
+              v => v !== '' && v.id === item.id
             )
             if (video !== undefined) {
               var index = this.totalVideosArray.indexOf(video)
@@ -671,12 +609,12 @@ export default {
      * 初始化OnlineArray
      */
     initOnlineArray () {
-      this.onlineArray.forEach((item) => {
+      this.onlineArray.forEach(item => {
         if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
           delete item.isPlay
         }
         if (item.children && item.children.length > 0) {
-          item.children.forEach((list) => {
+          item.children.forEach(list => {
             list.isSelected = false
           })
         }
@@ -701,7 +639,7 @@ export default {
         this.onlineArray[index1].label +
         '-' +
         this.onlineArray[index1].children[index2].label
-      var player = this.totalVideosArray.find((v) => v.id === this.curNode.id)
+      var player = this.totalVideosArray.find(v => v.id === this.curNode.id)
       if (player === undefined) {
         player = ''
       }
@@ -709,9 +647,9 @@ export default {
 
       if (!this.onlineArray[index1].children[index2].isSelected) {
         // 默认去掉所有isSelected的样式
-        this.onlineArray.forEach((item) => {
+        this.onlineArray.forEach(item => {
           if (item.children && item.children.length > 0) {
-            item.children.forEach((list) => {
+            item.children.forEach(list => {
               list.isSelected = false
             })
           }
@@ -731,7 +669,7 @@ export default {
     activeOnlineArrayItem (id) {
       this.onlineArray.forEach((item, index) => {
         if (item.children && item.children.length > 0) {
-          item.children.forEach((list) => {
+          item.children.forEach(list => {
             list.isSelected = false
             if (list.id === id) {
               this.selectedIndex = index
@@ -788,7 +726,7 @@ export default {
       this.curNode = data
       this.curNode.parentLabel = pData.label + '-' + this.curNode.label
       this.curNode.pID = pData.id
-      var player = this.totalVideosArray.find((v) => v.id === data.id)
+      var player = this.totalVideosArray.find(v => v.id === data.id)
       if (player === undefined) {
         player = ''
       }
@@ -809,13 +747,13 @@ export default {
           period: date,
           secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
         })
-        .then((res) => {
+        .then(res => {
           var rs = res.data
           if (rs && rs.code === 0) {
             this.recordData = rs.data.paths
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('getMp4RecordFile Err : ' + err)
         })
     },
@@ -838,13 +776,13 @@ export default {
             date: timestamp
           }
         })
-        .then((res) => {
+        .then(res => {
           var rs = res.data
           if (rs && rs.code === 0) {
             this.snapList = rs.data
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('getSnapList Err : ' + err)
         })
     },
@@ -867,10 +805,10 @@ export default {
           period: date,
           secret: '035c73f7-bb6b-4889-a715-d9eb2d1925cc'
         })
-        .then((res) => {
+        .then(res => {
           var rs = res.data
           if (rs && rs.code === 0) {
-            rs.data.paths.forEach((p) => {
+            rs.data.paths.forEach(p => {
               var d = new Date(p.start_time * 1000)
               var start =
                 d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60
@@ -900,7 +838,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('getMp4RecordFile Err : ' + err)
         })
     },
@@ -957,7 +895,7 @@ export default {
 
       if (this.isOnline) {
         // 清除所有的在线设备播放样式
-        this.onlineArray.forEach((item) => {
+        this.onlineArray.forEach(item => {
           if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
             delete item.isPlay
           }
@@ -966,7 +904,7 @@ export default {
         const bs = document.querySelectorAll(
           '.el-tree-node__content span.is-leaf +span.custom-tree-node>span >b'
         )
-        bs.forEach((item) => {
+        bs.forEach(item => {
           item.parentElement.setAttribute('class', '')
         })
       }
@@ -1086,7 +1024,7 @@ export default {
             var item = this.onlineArray[j]
             if (item.children && item.children.length > 0) {
               var c = item.children.find(
-                (i) => i.id === this.curVideosArray[index].id
+                i => i.id === this.curVideosArray[index].id
               )
               if (c !== undefined) {
                 if (Object.prototype.hasOwnProperty.call(item, 'isPlay')) {
@@ -1305,7 +1243,7 @@ export default {
     findVideoControl () {
       if (!this.curPlayer) return undefined
       return this.$refs.videoCtrl.find(
-        (c) => c.videoInfo.id === this.curPlayer.id
+        c => c.videoInfo.id === this.curPlayer.id
       )
     },
 
@@ -1327,7 +1265,7 @@ export default {
       var time =
         parseInt(arry[0]) * 60 + parseInt(arry[1]) + parseInt(arry[2]) / 60
       var r = records.find(
-        (x) => x.start <= time && x.start + x.duration >= time
+        x => x.start <= time && x.start + x.duration >= time
       )
       // 是否需要跳转
       var jump = false
@@ -1337,7 +1275,7 @@ export default {
         jump = true
         jumpSeconds = (time - r.start) * 60
       } else {
-        r = records.find((x) => x.start > time)
+        r = records.find(x => x.start > time)
       }
 
       if (r === undefined) {
@@ -1511,23 +1449,26 @@ export default {
         font-size: 12px;
         font-weight: bold;
         box-sizing: border-box;
-        width: 74px;
+        width: 78px;
         height: 22px;
         line-height: 22px;
         border: 1px solid rgba(30, 176, 252, 1);
         padding: 0;
         background: #10243f;
         color: #1eb0fc;
-        text-align: right;
+        // text-align: right;
+        padding-left: 20px;
         padding-right: 8px;
         vertical-align: middle;
       }
       button.visible {
         background: url(../../assets/images/visible.png) no-repeat 4px center;
+        background-size: 14px 11px;
       }
       button.visibleSelected {
         background: url(../../assets/images/visible_selected.png) no-repeat 4px
           center;
+        background-size: 14px 11px;
       }
     }
   }

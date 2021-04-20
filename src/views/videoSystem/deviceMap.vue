@@ -220,7 +220,7 @@ export default {
       padding-top: 10px;
       height: 72px;
       background: url(../../assets/images/list-unselected.png) no-repeat;
-      background-size:100% 100%;
+      background-size: 100% 100%;
       width: 230px;
       box-sizing: border-box;
       p {
@@ -239,29 +239,33 @@ export default {
           font-size: 12px;
           font-weight: bold;
           box-sizing: border-box;
-          width: 74px;
+          width: 78px;
           height: 22px;
           line-height: 22px;
           border: 1px solid rgba(30, 176, 252, 1);
           padding: 0;
           background: #10243f;
           color: #1eb0fc;
-          text-align: right;
+          // text-align: right;
+          padding-left: 20px;
           padding-right: 8px;
           vertical-align: middle;
         }
         button.visible {
           background: url(../../assets/images/visible.png) no-repeat 4px center;
+          background-size: 14px 11px;
         }
         button.visibleSelected,
         button.curSelected {
           background: url(../../assets/images/visible_selected.png) no-repeat
             4px center;
+          background-size: 14px 11px;
         }
         button.visibleOffline {
           cursor: not-allowed;
           opacity: 0.5;
           background: url(../../assets/images/visible.png) no-repeat 4px center;
+          background-size: 14px 11px;
         }
       }
     }
