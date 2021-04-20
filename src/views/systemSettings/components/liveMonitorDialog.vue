@@ -4,7 +4,7 @@
  * @Author: liangkaiLee
  * @Date: 2021-04-05 15:35:59
  * @LastEditors: liangkaiLee
- * @LastEditTime: 2021-04-19 16:39:24
+ * @LastEditTime: 2021-04-20 11:00:19
 -->
 <template>
   <div>
@@ -64,9 +64,9 @@ export default {
   data () {
     return {
       placeholder: '请输入',
-      peopleStatus: true,
-      carStatus: true,
-      boatStatus: true,
+      peopleStatus: false,
+      carStatus: false,
+      boatStatus: false,
       people_status: null,
       car_status: null,
       boat_status: null,
@@ -98,20 +98,15 @@ export default {
     },
 
     switchStatusChange (handelType) {
-      if (
-        this.peopleStatus === true ||
-        this.carStatus === true ||
-        this.boatStatus === true
-      ) {
-        this.people_status = this.car_status = this.boat_status = 1
-      }
-      if (
-        this.peopleStatus === false ||
-        this.carStatus === false ||
-        this.boatStatus === false
-      ) {
-        this.people_status = this.car_status = this.boat_status = 0
-      }
+      this.people_status = this.peopleStatus
+      this.car_status = this.carStatus
+      this.boat_status = this.boatStatus
+      if (this.people_status === true) this.people_status = 1
+      else if (this.people_status === false) this.people_status = 0
+      if (this.car_status === true) this.car_status = 1
+      else if (this.car_status === false) this.car_status = 0
+      if (this.boat_status === true) this.boat_status = 1
+      else if (this.boat_status === false) this.boat_status = 0
 
       var params = {
         algorithmType: handelType,
@@ -122,7 +117,7 @@ export default {
         streamType: '',
         type: Number(1)
       }
-      // console.log(this.params)
+      // console.log(params)
       this.$axios
         .post(settingApi.addDeviceConfig, params)
         .then(res => {
