@@ -1767,12 +1767,12 @@ export default {
   mounted () {
     this.getPlayerStyle()
     EventBus.$on('peopleRealChange', info => {
-      console.log('收到人员检测事件', info)
       this.totalVideosArray.forEach((item, index) => {
         if (
           item.id === info.channelID &&
           info.algorithmType === 0
         ) {
+          console.log('收到人船检测事件')
           if (info.targetNum > 0) {
             // this.$notify.closeAll()
             // this.$notify.warning({ title: '提示', message: '发现疑似目标!' })
@@ -1803,6 +1803,7 @@ export default {
       this.curVideosArray.forEach((item, index) => {
         if (
           item.id === info.channelID
+        //  &&info.algorithmType === 0
         ) {
           this.$set(
             this.curVideosArray[index],

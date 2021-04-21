@@ -37,7 +37,7 @@
                     <div
                       class="canvas"
                       v-if="isShowCapture"
-                      :style="{backgroundImage:'url('+caputrePic+')'}"
+                      :style="{backgroundImage:'url('+ (coverImgUrl ? coverImgUrl : baseImg) +')'}"
                     >
                       <!-- :style="{backgroundImage:'url('+caputrePic+')'}" -->
                       <canvas-draw ref="mychild" @drawEnd="getPoints" :areaArray="areaArray"></canvas-draw>
@@ -104,7 +104,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="right">
+                <div class="right" v-if="isShowCapture">
                   <div class="btns">
                     <el-button @click="goDraw">继续绘制</el-button>
                     <el-button @click="clearAllDraw">清除全部</el-button>
@@ -163,6 +163,7 @@
 import LivePlayer from '@liveqing/liveplayer'
 import canvasDraw from './canvasDraw'
 import { settingApi } from '@/api/setting'
+import { timeFormat } from '@/utils/date'
 export default {
   components: {
     LivePlayer,
@@ -183,7 +184,8 @@ export default {
   },
   data () {
     return {
-      caputrePic: require('../../../assets/images/Login/video-bg.jpg'),
+      baseImg: require('../../../assets/images/Login/video-bg.jpg'),
+      coverImgUrl: '',
       isVisibleSelected: true,
       isShowCapture: true,
       curEventObj: {
@@ -192,9 +194,6 @@ export default {
         eventLevel: ''
       }, // 保存当前数据
       streamUrl: '',
-      value: true,
-      date: '',
-      alarmLevel: '',
       eventLevelData: [
         { value: 1, label: '红色预警' },
         { value: 2, label: '橙色预警' },
@@ -203,12 +202,18 @@ export default {
       ],
       activeType: 0,
       areaArray: [
-        {
-          points: [
-            { pointX: 100, pointY: 100 },
-            { pointX: 200, pointY: 200 }
-          ]
-        }
+        // {
+        //   points: [
+        //     { pointX: 100, pointY: 100 },
+        //     { pointX: 200, pointY: 200 }
+        //   ]
+        // },
+        // {
+        //   points: [
+        //     { pointX: 100, pointY: 100 },
+        //     { pointX: 200, pointY: 200 }
+        //   ]
+        // }
       ], // 传递给后台的数据
       tabPosition: 'left',
       // tabs 内容
@@ -259,8 +264,6 @@ export default {
       console.log('当前播放地址', this.streamUrl)
     },
     getCurVideoObj () {
-      console.log('可见光被选中', this.isVisibleSelected)
-      console.log('视频数据', this.curEventObj)
       for (let i = 0; i < this.curEventObj.videoUrls.length; i++) {
         if (
           (this.isVisibleSelected &&
@@ -280,6 +283,8 @@ export default {
     // tab 切换
     handleClick (tab, event) {
       console.log('当前激活', this.activeType)
+      this.isShowCapture = true
+      this.isVisibleSelected = true
       this.areaArray = []
       this.getConfigInfo()
     },
@@ -319,9 +324,12 @@ export default {
 
       this.$axios.post(settingApi.queryDeviceConfig, params).then(res => {
         if (res && res.data && res.data.code === 0) {
-          const data = res.data.data
-          this.curEventObj = data[0]
-          this.areaArray = data[0].area || []
+          const obj = res.data.data[0]
+          obj.status = obj.status === 1
+          obj.validTime = obj.validTime ? timeFormat(obj.validTime) : ''
+          this.curEventObj = obj
+          this.areaArray = JSON.parse(obj.area) || []
+          console.dir(this.areaArray)
         }
       })
     },
@@ -343,6 +351,7 @@ export default {
       return pointsArray
     },
     confirmAjax () {
+      console.dir(this.curEventObj)
       if (!this.curEventObj.eventLevel) {
         return this.$notify({
           title: '提示',
@@ -351,15 +360,15 @@ export default {
         })
       }
       const params = {
-        area: this.areaArray,
-        backImgUrl: '',
+        area: JSON.stringify(this.areaArray),
+        backImgUrl: this.coverImgUrl ? this.coverImgUrl : this.baseImg,
         deviceCode: this.curData.deviceCode,
         drawType: 1,
         eventLevel: this.curEventObj.eventLevel,
         status: this.curEventObj.status ? 1 : 0,
         streamType: this.isVisibleSelected ? '0' : '1',
-        type: 2,
-        validtime: this.curEventObj.validTime
+        // type: 2,
+        validTime: this.curEventObj.validTime
       }
       switch (Number(this.activeType)) {
         case 0:
@@ -380,9 +389,11 @@ export default {
       console.log(this.curEventObj)
       this.$axios.post(settingApi.addDeviceConfig, params).then(res => {
         if (res && res.data && res.data.code === 0) {
-          const data = res.data.data
-          this.curEventObj = data[0]
-          this.areaArray = data[0].area || []
+          this.$notify({
+            title: '提示',
+            message: '操作成功！',
+            type: 'warning'
+          })
         }
       })
     }
