@@ -328,12 +328,13 @@ export default {
           obj.status = obj.status === 1
           obj.validTime = obj.validTime ? timeFormat(obj.validTime) : ''
           this.curEventObj = obj
-          this.areaArray = JSON.parse(obj.area) || []
-          console.dir(this.areaArray)
+          this.areaArray = obj.area
+            ? this.transferToAlgorithmPix(JSON.parse(obj.area), false)
+            : []
         }
       })
     },
-    transferToAlgorithmPix (pointsArray) {
+    transferToAlgorithmPix (pointsArray, isAlgorithm = true) {
       const contentStyle = window.getComputedStyle(this.$refs.content[0])
       const width = parseInt(contentStyle.width)
       const height = parseInt(contentStyle.height)
@@ -342,10 +343,12 @@ export default {
 
       pointsArray.forEach(area => {
         area.points.forEach(pixObj => {
-          pixObj.pointX =
-            Math.round((pixObj.pointX / width) * 1280 * 100) / 100
-          pixObj.pointY =
-            Math.round((pixObj.pointY / height) * 720 * 100) / 100
+          pixObj.pointX = isAlgorithm
+            ? Math.round((pixObj.pointX / width) * 1280 * 100) / 100
+            : Math.round((pixObj.pointX / 1280) * width * 100) / 100
+          pixObj.pointY = isAlgorithm
+            ? Math.round((pixObj.pointY / height) * 720 * 100) / 100
+            : Math.round((pixObj.pointY / 720) * height * 100) / 100
         })
       })
       return pointsArray
@@ -360,7 +363,7 @@ export default {
         })
       }
       const params = {
-        area: JSON.stringify(this.areaArray),
+        area: JSON.stringify(this.transferToAlgorithmPix(this.areaArray)),
         backImgUrl: this.coverImgUrl ? this.coverImgUrl : this.baseImg,
         deviceCode: this.curData.deviceCode,
         drawType: 1,
