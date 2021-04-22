@@ -290,7 +290,7 @@ export default {
     },
     // 获取视频总时长
     onLoadedMetadata () {
-      this.duration = this.$refs.player.player.duration()
+      this.duration = Math.floor(this.$refs.player.player.duration())
       const me = this
       setTimeout(() => {
         me.pause()
