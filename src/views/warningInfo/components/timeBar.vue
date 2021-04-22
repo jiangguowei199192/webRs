@@ -53,8 +53,6 @@ export default {
       secondWidth: 0,
       pointerW: 0, // pointer宽度
       pointerLeft: 0, // pointer左边距
-      me: '',
-      isDrag: false,
       points: [],
       barWidth: 1,
       pointerIconW: 1, // pointer icon宽度
@@ -101,6 +99,9 @@ export default {
   watch: {
     curTime () {
       this.setPointerPosition(this.curTime)
+    },
+    duration () {
+      this.init()
     }
   },
 
