@@ -1772,7 +1772,7 @@ export default {
           item.id === info.channelID &&
           info.algorithmType === 0
         ) {
-          console.log('收到人船检测事件')
+          console.log('收到人船检测事件', info)
           if (info.targetNum > 0) {
             // this.$notify.closeAll()
             // this.$notify.warning({ title: '提示', message: '发现疑似目标!' })
@@ -1805,11 +1805,19 @@ export default {
           item.id === info.channelID &&
          info.algorithmType === 0
         ) {
-          this.$set(
-            this.curVideosArray[index],
-            'positionList',
-            info.targets
-          )
+          if (info.targetNum > 0) {
+            this.$set(
+              this.totalVideosArray[index],
+              'positionList',
+              info.targets
+            )
+          } else {
+            this.$set(
+              this.totalVideosArray[index],
+              'positionList',
+              []
+            )
+          }
           this.$set(
             this.totalVideosArray[index],
             'width',
