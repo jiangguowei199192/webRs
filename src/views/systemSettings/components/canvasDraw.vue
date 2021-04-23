@@ -5,7 +5,6 @@
 </template>
 
 <script >
-let illegalIntrusionAreaPix = []
 let flag = false
 let index = 0
 // const curPoints = []
@@ -20,47 +19,47 @@ export default {
   data () {
     return {
       cvs: '',
-      ctx: ''
+      ctx: '',
+      illegalIntrusionAreaPix: []
     }
   },
   methods: {
     // 鼠标按下方法
     mousedownHandler (event) {
       if (event.button === 0 && !flag) {
-        illegalIntrusionAreaPix[index].points.push({
+        this.illegalIntrusionAreaPix[index].points.push({
           pointX: event.offsetX,
           pointY: event.offsetY
         })
         // 只要有一个坐标
-        if (illegalIntrusionAreaPix[index].points.length >= 1) {
+        if (this.illegalIntrusionAreaPix[index].points.length >= 1) {
           this.cvs.addEventListener('mousemove', this.mousemoveHandler, false)
         }
-        this.drawPolygon(illegalIntrusionAreaPix[index].points)
+        this.drawPolygon(this.illegalIntrusionAreaPix[index].points)
       }
     },
     // 鼠标双击
     mousedbclick (event) {
-      // const cvs = document.getElementById('cvs')
       this.ctx.beginPath()
       // 文字
       this.ctx.font = '12px bold Arial'
       this.ctx.fillStyle = '#fff'
       this.ctx.textBaseline = 'bottom'
-      const curPoints = illegalIntrusionAreaPix[index].points
+      const curPoints = this.illegalIntrusionAreaPix[index].points
       this.ctx.fillText(
-        '区域一',
-        curPoints[curPoints.length - 1].x,
-        curPoints[curPoints.length - 1].y - 3
+        `区域${index + 1}`,
+        curPoints[curPoints.length - 1].pointX,
+        curPoints[curPoints.length - 1].pointY - 3
       )
-
+      this.illegalIntrusionAreaPix[index].regionName = `区域${index + 1}`
       flag = true
       this.cvs.removeEventListener('mousemove', this.mousemoveHandler)
-      this.$emit('drawEnd', illegalIntrusionAreaPix)
+      this.$emit('drawEnd', this.illegalIntrusionAreaPix)
     },
 
     // 绘制方法
     drawPolygon (points, fillText = false) {
-      console.log('前端当前绘制的坐标结构', points)
+      // console.log('前端当前绘制的坐标结构', points)
       // 先清空
       this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height)
       // 再绘制
@@ -79,17 +78,17 @@ export default {
       //   }
       // }
       // 文字
-      if (fillText) {
-        this.ctx.font = '12px bold Arial'
-        this.ctx.fillStyle = '#fff'
-        this.ctx.textBaseline = 'bottom'
-        const curPoints = illegalIntrusionAreaPix[index].points
-        this.ctx.fillText(
-          '区域一',
-          curPoints[curPoints.length - 1].x,
-          curPoints[curPoints.length - 1].y - 3
-        )
-      }
+      // if (fillText) {
+      //   this.ctx.font = '12px bold Arial'
+      //   this.ctx.fillStyle = '#fff'
+      //   this.ctx.textBaseline = 'bottom'
+      //   const curPoints = illegalIntrusionAreaPix[index].points
+      //   this.ctx.fillText(
+      //     '区域一',
+      //     curPoints[curPoints.length - 1].x,
+      //     curPoints[curPoints.length - 1].y - 3
+      //   )
+      // }
 
       this.ctx.strokeStyle = '#ffde00'
       this.ctx.lineWidth = 3
@@ -105,7 +104,7 @@ export default {
     // 鼠标移动的方法 contact
     mousemoveHandler (event) {
       this.drawPolygon(
-        illegalIntrusionAreaPix[index].points.concat({
+        this.illegalIntrusionAreaPix[index].points.concat({
           pointX: event.offsetX,
           pointY: event.offsetY
         })
@@ -114,43 +113,58 @@ export default {
     // 继续绘制
     startDraw () {
       // 点击继续绘制，清空所有数据
-      illegalIntrusionAreaPix = []
-      this.$emit('drawEnd', illegalIntrusionAreaPix)
+      this.illegalIntrusionAreaPix = []
+      this.$emit('drawEnd', this.illegalIntrusionAreaPix)
       this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height)
 
       flag = false
-      illegalIntrusionAreaPix.push({
+      this.illegalIntrusionAreaPix.push({
         points: []
       })
-      index = illegalIntrusionAreaPix.length - 1
+      index = this.illegalIntrusionAreaPix.length - 1
       this.cvs.addEventListener('mousedown', this.mousedownHandler, false)
       this.cvs.addEventListener('dblclick', this.mousedbclick, false)
     },
     // 清除所有
     clearAllDraw () {
       // const ctx = this.cvs.getContext('2d')
-      illegalIntrusionAreaPix = []
+      this.illegalIntrusionAreaPix = []
       this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height)
-      this.$emit('drawEnd', illegalIntrusionAreaPix)
+      this.$emit('drawEnd', this.illegalIntrusionAreaPix)
     },
     // 清除当前
     clearCurDraw (index) {
-      illegalIntrusionAreaPix.splice(index, 1)
-      this.$emit('drawEnd', illegalIntrusionAreaPix)
+      this.illegalIntrusionAreaPix.splice(index, 1)
+      this.$emit('drawEnd', this.illegalIntrusionAreaPix)
       this.drawPolygonAll()
     },
     drawPolygonAll () {
       this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height)
-      if (illegalIntrusionAreaPix && illegalIntrusionAreaPix.length > 0) {
-        for (let j = 0; j < illegalIntrusionAreaPix.length; j++) {
-          const curPointArray = illegalIntrusionAreaPix[j].points
+      if (
+        this.illegalIntrusionAreaPix &&
+        this.illegalIntrusionAreaPix.length > 0
+      ) {
+        for (let j = 0; j < this.illegalIntrusionAreaPix.length; j++) {
+          const curPointArray = this.illegalIntrusionAreaPix[j].points
           this.ctx.strokeStyle = '#ffde00'
           this.ctx.lineWidth = 3
           this.ctx.beginPath()
-          this.ctx.moveTo(curPointArray[0].pointX, curPointArray[0].pointY)
-          for (let i = 1; i < curPointArray.length; i++) {
-            this.ctx.lineTo(curPointArray[i].pointX, curPointArray[i].pointY)
+          if (curPointArray.length > 0) {
+            this.ctx.moveTo(curPointArray[0].pointX, curPointArray[0].pointY)
+            for (let i = 1; i < curPointArray.length; i++) {
+              this.ctx.lineTo(curPointArray[i].pointX, curPointArray[i].pointY)
+            }
+            // 绘制文字
+            this.ctx.font = '12px bold Arial'
+            this.ctx.fillStyle = '#fff'
+            this.ctx.textBaseline = 'bottom'
+            this.ctx.fillText(
+              `区域${j + 1}`,
+              curPointArray[curPointArray.length - 1].pointX,
+              curPointArray[curPointArray.length - 1].pointY - 3
+            )
           }
+
           this.ctx.closePath()
           this.ctx.stroke()
         }
@@ -166,10 +180,6 @@ export default {
     this.cvs = document.getElementById('cvs')
     this.ctx = this.cvs.getContext('2d')
     this.resizeCanvas()
-    setTimeout(() => {
-      illegalIntrusionAreaPix = JSON.parse(JSON.stringify(this.areaArray))
-      this.drawPolygonAll()
-    }, 300)
 
     // window.addEventListener('resize', () => {
     //   this.resizeCanvas()
@@ -186,7 +196,28 @@ export default {
     // })
   },
   watch: {
-    points () {}
+    areaArray: {
+      handler () {
+        this.$nextTick(() => {
+          this.cvs = document.getElementById('cvs')
+          this.ctx = this.cvs.getContext('2d')
+
+          this.illegalIntrusionAreaPix = JSON.parse(
+            JSON.stringify(this.areaArray)
+          )
+          if (this.illegalIntrusionAreaPix.length === 0) {
+            this.illegalIntrusionAreaPix = [{
+              regionName: '',
+              points: [
+              ]
+            }]
+          }
+          this.drawPolygonAll()
+        })
+      },
+      immediate: true,
+      deep: true
+    }
   }
 }
 

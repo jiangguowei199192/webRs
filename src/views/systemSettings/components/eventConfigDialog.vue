@@ -3,7 +3,7 @@
     <el-dialog :visible.sync="isShow" :close-on-click-modal="false" class="config-dlg dialog-wrap">
       <div class="config-header">
         {{ title }}
-        <img src="../../../assets/images/backgroundManagement/X.svg" />
+        <img src="../../../assets/images/backgroundManagement/X.svg" @click.stop="$emit('updateList')" />
       </div>
       <div class="config-content">
         <el-tabs :tab-position="tabPosition" v-model="activeType" @tab-click="handleClick">
@@ -184,7 +184,7 @@ export default {
   },
   data () {
     return {
-      baseImg: require('../../../assets/images/Login/video-bg.jpg'),
+      baseImg: require('../../../assets/images/backgroundManagement/canvas-bg.png'),
       coverImgUrl: '',
       isVisibleSelected: true,
       isShowCapture: true,
@@ -202,18 +202,6 @@ export default {
       ],
       activeType: 0,
       areaArray: [
-        // {
-        //   points: [
-        //     { pointX: 100, pointY: 100 },
-        //     { pointX: 200, pointY: 200 }
-        //   ]
-        // },
-        // {
-        //   points: [
-        //     { pointX: 100, pointY: 100 },
-        //     { pointX: 200, pointY: 200 }
-        //   ]
-        // }
       ], // 传递给后台的数据
       tabPosition: 'left',
       // tabs 内容
@@ -291,7 +279,7 @@ export default {
     getPoints (points) {
       console.log('组件绘制的原始坐标', points)
       this.areaArray = JSON.parse(JSON.stringify(points))
-      // this.transferToAlgorithmPix(this.areaArray)
+      console.log(this.areaArray)
     },
     deleteCurArea (index) {
       // this.areaArray.splice(index, 1)
@@ -328,9 +316,8 @@ export default {
           obj.status = obj.status === 1
           obj.validTime = obj.validTime ? timeFormat(obj.validTime) : ''
           this.curEventObj = obj
-          this.areaArray = obj.area
-            ? this.transferToAlgorithmPix(JSON.parse(obj.area), false)
-            : []
+          this.coverImgUrl = obj.backImgUrl ? obj.backImgUrl : ''
+          this.areaArray = obj.area ? this.transferToAlgorithmPix(JSON.parse(obj.area), false) : []
         }
       })
     },
@@ -363,8 +350,8 @@ export default {
         })
       }
       const params = {
-        area: JSON.stringify(this.transferToAlgorithmPix(this.areaArray)),
-        backImgUrl: this.coverImgUrl ? this.coverImgUrl : this.baseImg,
+        area: JSON.stringify(this.transferToAlgorithmPix(JSON.parse(JSON.stringify(this.areaArray)))),
+        backImgUrl: this.coverImgUrl ? this.coverImgUrl : '',
         deviceCode: this.curData.deviceCode,
         drawType: 1,
         eventLevel: this.curEventObj.eventLevel,
@@ -389,14 +376,14 @@ export default {
         default:
           break
       }
-      console.log(this.curEventObj)
       this.$axios.post(settingApi.addDeviceConfig, params).then(res => {
         if (res && res.data && res.data.code === 0) {
           this.$notify({
             title: '提示',
             message: '操作成功！',
-            type: 'warning'
+            type: 'success'
           })
+          this.$emit('updateList')
         }
       })
     }
@@ -595,7 +582,8 @@ export default {
                   margin-top: 10px !important;
                   i {
                     position: relative;
-                    right: -8px;
+                    left: 4px;
+                    top:-2px;
                     font-size: 12px;
                   }
                 }
@@ -618,6 +606,7 @@ export default {
               border-radius: 0;
               border: 1px solid #1eb0fc;
               background: #034157;
+              color: #C4F2FE;
             }
           }
           .select:nth-child(1) {

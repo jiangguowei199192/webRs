@@ -1802,8 +1802,8 @@ export default {
       })
       this.curVideosArray.forEach((item, index) => {
         if (
-          item.id === info.channelID
-        //  &&info.algorithmType === 0
+          item.id === info.channelID &&
+         info.algorithmType === 0
         ) {
           this.$set(
             this.curVideosArray[index],
