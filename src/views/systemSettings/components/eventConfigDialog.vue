@@ -86,7 +86,7 @@
                           v-else
                         />
                       </template>
-                      <template>
+                      <template v-if="activeType!=='1'">
                         <img
                           src="../../../assets/images/backgroundManagement/infrared.svg"
                           title="红外光"
@@ -270,7 +270,6 @@ export default {
     },
     // tab 切换
     handleClick (tab, event) {
-      console.log('当前激活', this.activeType)
       this.isShowCapture = true
       this.isVisibleSelected = true
       this.areaArray = []

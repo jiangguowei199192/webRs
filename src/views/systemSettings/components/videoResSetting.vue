@@ -122,6 +122,7 @@
       :isShow.sync="configIsShow"
       :curData="curData"
       title="事件配置"
+      @updateList="getList();configIsShow=false"
     ></EventConfigDialog>
   </div>
 </template>
