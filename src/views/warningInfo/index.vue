@@ -356,8 +356,8 @@ export default {
 
     showDetailInfoClick (item, index) {
       // console.dir(item)
+      this.detailInfo = JSON.parse(JSON.stringify(item))
       this.showDetailInfo = true
-      this.detailInfo = item
     }
   }
 }
