@@ -110,7 +110,6 @@
                 v-show="url"
                 :videoUrl="url"
                 :show-custom-button="false"
-                :muted="false"
                 :controls="false"
                 :autoplay="false"
                 oncontextmenu="return false"
@@ -202,8 +201,6 @@ export default {
       tabIndex: 0,
       url: '',
       videoUrl: '',
-      // videoUrl:
-      //   'http://119.3.108.251/videos/6C01728PA4A9A101/2021_04_13_19_45_24_955-boat-intrusion.mp4',
       imgDialogVisible: false,
       clickImgSrc: '',
       isPlay: false,
@@ -294,7 +291,7 @@ export default {
       const me = this
       setTimeout(() => {
         me.pause()
-      }, 200)
+      }, 500)
     },
     // 暂停
     pause () {
