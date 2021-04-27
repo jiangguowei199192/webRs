@@ -85,7 +85,7 @@
               :class="{
                 undispose: item.alarmStatus == 1,
                 abnormal: item.alarmStatus == 2,
-                distort: item.alarmStatus == 3
+                distort: item.alarmStatus == 3,
               }"
             >
               {{
@@ -97,17 +97,17 @@
             <span>|</span>
             <span
               :class="{
-                red_alert: item.alarmLevel == 1,
-                orange_alert: item.alarmLevel == 2,
-                yellow_alert: item.alarmLevel == 3,
-                blue_alert: item.alarmLevel == 4
+                red_alert: item.alarmLevel == 4,
+                orange_alert: item.alarmLevel == 3,
+                yellow_alert: item.alarmLevel == 2,
+                blue_alert: item.alarmLevel == 1,
               }"
             >
               {{
-                `${item.alarmLevel == 1 ? "红色预警" : ""}${
-                  item.alarmLevel == 2 ? "橙色预警" : ""
-                }${item.alarmLevel == 3 ? "黄色预警" : ""}${
-                  item.alarmLevel == 4 ? "蓝色预警" : ""
+                `${item.alarmLevel == 4 ? "红色预警" : ""}${
+                  item.alarmLevel == 3 ? "橙色预警" : ""
+                }${item.alarmLevel == 2 ? "黄色预警" : ""}${
+                  item.alarmLevel == 1 ? "蓝色预警" : ""
                 }`
               }}
             </span>
@@ -198,10 +198,10 @@ export default {
         { statusCode: 3, statusName: '误报' }
       ],
       caseLevel: [
-        { levelCode: 1, levelName: '红色预警' },
-        { levelCode: 2, levelName: '橙色预警' },
-        { levelCode: 3, levelName: '黄色预警' },
-        { levelCode: 4, levelName: '蓝色预警' }
+        { levelCode: 4, levelName: '红色预警' },
+        { levelCode: 3, levelName: '橙色预警' },
+        { levelCode: 2, levelName: '黄色预警' },
+        { levelCode: 1, levelName: '蓝色预警' }
       ],
       // 查询条件
       query: {
@@ -218,7 +218,7 @@ export default {
 
   mounted () {
     // 刷新告警设备列表
-    EventBus.$on('deviceUpdate', info => {
+    EventBus.$on('deviceUpdate', (info) => {
       if (info) {
         this.getList()
       }
@@ -255,12 +255,8 @@ export default {
 
     getList () {
       var params = {
-        startTime: this.dateRange
-          ? timeFormat3(this.dateRange[0])
-          : undefined,
-        endTime: this.dateRange
-          ? timeFormat3(this.dateRange[1])
-          : undefined,
+        startTime: this.dateRange ? timeFormat3(this.dateRange[0]) : undefined,
+        endTime: this.dateRange ? timeFormat3(this.dateRange[1]) : undefined,
         currentPage: this.currentPage,
         sizeOfPage: this.pageSize,
         alarmStatus: this.query.alarmStatus,
@@ -268,10 +264,10 @@ export default {
       }
       this.$axios
         .post(structureApi.queryAlarmList, params)
-        .then(res => {
+        .then((res) => {
           // console.log('设备列表返回:', res)
           if (res.data.code === 0) {
-            res.data.data.data.forEach(item => {
+            res.data.data.data.forEach((item) => {
               if (item.captureTime === 0) {
                 item.captureTime = timeFormat(new Date())
               } else {
@@ -286,7 +282,7 @@ export default {
             this.list = res.data.data.data
             this.pageTotal = res.data.data.total
             this.$nextTick(() => {
-              this.list.forEach(item => {
+              this.list.forEach((item) => {
                 if (item.sectionLocations) {
                   item.rect = {
                     show: false,
@@ -294,7 +290,7 @@ export default {
                   }
                   const imgW = item.imgeWidth
                   const imgH = item.imgeHeight
-                  item.sectionLocations.forEach(r => {
+                  item.sectionLocations.forEach((r) => {
                     item.rect.points.push({
                       width: (r.width * 100.0) / imgW,
                       height: (r.height * 100.0) / imgH,
@@ -308,7 +304,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('structureApi.alarmList Err : ' + err)
         })
     },
@@ -347,7 +343,7 @@ export default {
 
     setTitle () {
       const pages = document.querySelectorAll('.number')
-      pages.forEach(t => {
+      pages.forEach((t) => {
         setTimeout(() => {
           t.setAttribute('title', t.childNodes[0].nodeValue)
         }, 300)
