@@ -130,6 +130,7 @@ export default {
               duration: 3 * 1000
             })
             this.deviceConfigList = res.data.data
+            this.$emit('updateList')
           }
         })
         .catch(err => {

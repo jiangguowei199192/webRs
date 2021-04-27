@@ -115,6 +115,7 @@
       ref="disposeRecRef"
       :isShow.sync="monitorIsShow"
       title="实时检测"
+      @updateList="getList()"
     ></LiveMonitorDialog>
     <!-- 事件配置弹窗 -->
     <EventConfigDialog
