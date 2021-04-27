@@ -210,10 +210,10 @@ export default {
       }, // 保存当前数据
       streamUrl: '',
       eventLevelData: [
-        { value: 1, label: '红色预警' },
-        { value: 2, label: '橙色预警' },
-        { value: 3, label: '黄色预警' },
-        { value: 4, label: '蓝色预警' }
+        { value: 1, label: '蓝色预警' },
+        { value: 2, label: '黄色预警' },
+        { value: 3, label: '橙色预警' },
+        { value: 4, label: '红色预警' }
       ],
       activeType: 0,
       areaArray: [
