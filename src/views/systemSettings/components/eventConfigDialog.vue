@@ -132,6 +132,7 @@
                     type="datetime"
                     placeholder="选择日期时间"
                     value-format="yyyy-MM-dd HH:mm:ss"
+                    :picker-options="pickerOptions"
                   ></el-date-picker>
                 </div>
 
@@ -152,7 +153,7 @@
         </el-tabs>
       </div>
       <div class="handelBtns">
-        <span @click.stop=" cancel()">取消</span>
+        <span @click.stop="cancel">取消</span>
         <span @click="confirmAjax">确定</span>
       </div>
     </el-dialog>
@@ -184,6 +185,20 @@ export default {
   },
   data () {
     return {
+      pickerOptions: {
+        // 设置时分秒范围
+        selectableRange: (() => {
+          const data = new Date()
+          const hour = data.getHours()
+          const minute = data.getMinutes()
+          const second = data.getSeconds()
+          return [`${hour}:${minute}:${second} - 23:59:59`]
+        })(),
+        disabledDate (time) {
+          // 小于昨天此刻全部禁用（今天可选）
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
       baseImg: require('../../../assets/images/backgroundManagement/canvas-bg.png'),
       coverImgUrl: '',
       isVisibleSelected: true,
